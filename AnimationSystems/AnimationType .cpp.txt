@@ -1,0 +1,4 @@
+
+--- Module:   d:\Desarrollo\Game\AnimationSystems\AnimationType .cpp
+#include "VectorLib.h"
+d:\Desarrollo\Game\AnimationSystems\StdAfx.h(13): error 322: (Error -- Unable to open include file 'VectorLib.h')
