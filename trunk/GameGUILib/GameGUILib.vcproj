@@ -4,10 +4,6 @@
 	Version="9,00"
 	Name="GameGUILib"
 	ProjectGUID="{ACD90F68-D2E5-4C06-AACC-4678341B073B}"
-	SccProjectName="SAK"
-	SccAuxPath="SAK"
-	SccLocalPath="SAK"
-	SccProvider="SAK"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>

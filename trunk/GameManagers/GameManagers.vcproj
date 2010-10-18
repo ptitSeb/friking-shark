@@ -4,10 +4,6 @@
 	Version="9,00"
 	Name="GameManagers"
 	ProjectGUID="{1D4A1C4C-9DFC-42CD-9130-46E1AF644ADC}"
-	SccProjectName="SAK"
-	SccAuxPath="SAK"
-	SccLocalPath="SAK"
-	SccProvider="SAK"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>

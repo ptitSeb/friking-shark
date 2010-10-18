@@ -4,10 +4,6 @@
 	Version="9,00"
 	Name="GUISystems"
 	ProjectGUID="{FE431444-FD9A-445F-849A-428216B9F21C}"
-	SccProjectName="SAK"
-	SccAuxPath="SAK"
-	SccLocalPath="SAK"
-	SccProvider="SAK"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>

@@ -4,10 +4,6 @@
 	Version="9,00"
 	Name="GameEngine"
 	ProjectGUID="{61B2F331-26B7-4E41-9954-A3D7512D3546}"
-	SccProjectName="SAK"
-	SccAuxPath="SAK"
-	SccLocalPath="SAK"
-	SccProvider="SAK"
 	Keyword="MFCProj"
 	TargetFrameworkVersion="131072"
 	>

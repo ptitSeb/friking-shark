@@ -4,10 +4,6 @@
 	Version="9,00"
 	Name="VectorLib"
 	ProjectGUID="{E5D975D9-5FB1-4FDA-8075-3007BF987B1F}"
-	SccProjectName="SAK"
-	SccAuxPath="SAK"
-	SccLocalPath="SAK"
-	SccProvider="SAK"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>

@@ -5,10 +5,6 @@
 	Name="GameRunTime"
 	ProjectGUID="{BE131682-BAEB-4D76-8947-4F334C9DE3EB}"
 	RootNamespace="GameRunTime"
-	SccProjectName="SAK"
-	SccAuxPath="SAK"
-	SccLocalPath="SAK"
-	SccProvider="SAK"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>

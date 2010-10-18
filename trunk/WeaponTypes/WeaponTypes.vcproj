@@ -4,10 +4,6 @@
 	Version="9,00"
 	Name="WeaponTypes"
 	ProjectGUID="{CC28F93D-D498-4180-8CF6-6E7F8158EA02}"
-	SccProjectName="SAK"
-	SccAuxPath="SAK"
-	SccLocalPath="SAK"
-	SccProvider="SAK"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>

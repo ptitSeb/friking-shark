@@ -4,10 +4,6 @@
 	Version="9,00"
 	Name="LayoutLib"
 	ProjectGUID="{53F82305-411B-420E-9FB3-BB3C5FC65C10}"
-	SccProjectName="SAK"
-	SccAuxPath="SAK"
-	SccLocalPath="SAK"
-	SccProvider="SAK"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>

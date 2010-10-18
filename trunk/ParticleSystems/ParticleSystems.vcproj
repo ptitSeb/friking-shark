@@ -4,10 +4,6 @@
 	Version="9,00"
 	Name="ParticleSystems"
 	ProjectGUID="{A6CAB817-DCD3-438B-B458-B1E0DF3A307C}"
-	SccProjectName="SAK"
-	SccAuxPath="SAK"
-	SccLocalPath="SAK"
-	SccProvider="SAK"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
