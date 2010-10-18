@@ -4,10 +4,6 @@
 	Version="9,00"
 	Name="IATestSystems"
 	ProjectGUID="{E6053A26-852E-4653-A4D5-AF5BCD0B7E94}"
-	SccProjectName="SAK"
-	SccAuxPath="SAK"
-	SccLocalPath="SAK"
-	SccProvider="SAK"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>

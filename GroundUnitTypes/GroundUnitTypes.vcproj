@@ -4,10 +4,6 @@
 	Version="9,00"
 	Name="GroundUnitTypes"
 	ProjectGUID="{D4DC7494-41AC-41EC-B269-4398A87A4734}"
-	SccProjectName="SAK"
-	SccAuxPath="SAK"
-	SccLocalPath="SAK"
-	SccProvider="SAK"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>

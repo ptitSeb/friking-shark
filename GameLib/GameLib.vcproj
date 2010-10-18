@@ -4,10 +4,6 @@
 	Version="9,00"
 	Name="GameLib"
 	ProjectGUID="{2FD9DB84-B33B-4B8A-B51F-6939783489EC}"
-	SccProjectName="SAK"
-	SccAuxPath="SAK"
-	SccLocalPath="SAK"
-	SccProvider="SAK"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
