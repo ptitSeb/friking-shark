@@ -1,0 +1,67 @@
+#include "StdAfx.h"
+#include "GameRunTimeLib.h"
+#include ".\systemloaderhelper.h"
+
+CSystemLoaderHelper::CSystemLoaderHelper(void)
+{
+}
+
+CSystemLoaderHelper::~CSystemLoaderHelper(void)
+{
+  unsigned x=0;
+}
+
+ISystem *CSystemLoaderHelper::LoadSystem(std::string sFile,std::string sSystemName)
+{
+	CConfigFile configFile;
+	if(configFile.Open(sFile))
+	{
+		return LoadSystem(configFile.GetRoot(),sSystemName);
+	}
+	return NULL;
+}
+
+ISystem *CSystemLoaderHelper::LoadSystem(ISystemPersistencyNode *piParent,std::string sSystemName)
+{
+    bool bResult=true;
+    ISystemPersistencyNode  *piNode=piParent->GetNode(sSystemName);
+    ISystem                 *piSystem=NULL;
+
+		if(piNode==NULL){return NULL;}
+
+    ISystemManager *piSystemManager=GetSystemManager();
+    piSystem=piSystemManager->CreateSystem(sSystemName);
+    if(piSystem!=NULL)
+		{
+			if(SUCCEEDED(m_Modules.PersistencyLoad(piNode)))
+			{
+					unsigned x=0;
+					for(x=0;x<m_Modules.m_dModules.size();x++)
+					{
+							if(bResult)
+							{
+									ISystemModule *piModule=NULL;
+									bResult=piSystem->LoadModule(m_Modules.m_dModules[x].sPath,&piModule);
+									REL(piModule);
+							}
+					}
+					// Carga de objetos.
+					PersistencyLoad(piNode);
+					for(x=0;x<m_dObjects.size();x++)
+					{
+						m_dObjects[x].Detach();
+					}
+					m_dObjects.clear();
+			}
+			else
+			{
+					piSystemManager->UnregisterSystem(piSystem);
+			}
+		}
+    REL(piSystemManager);
+    if(!bResult){REL(piSystem);}
+    return piSystem;
+}
+
+
+
