@@ -1,0 +1,162 @@
+#include "StdAfx.h"
+#include ".\IAEntityBase.h"
+#include ".\steeringbehaviours.h"
+#include ".\IATestUtils.h"
+
+CSteeringBehaviours::CSteeringBehaviours(void)
+{
+}
+
+CSteeringBehaviours::~CSteeringBehaviours(void)
+{
+}
+
+CVector CSteeringBehaviours::Seek(CIAEntityBase *pEntity,CVector &vTarget)
+{
+	CVector vDesiredDir=vTarget-pEntity->GetPosition();
+	vDesiredDir.N();
+	vDesiredDir*=pEntity->GetMaxVelocity();
+	CVector vCurrentDir=pEntity->GetVelocity();
+	CVector vForce=vDesiredDir-vCurrentDir;
+	return vForce;
+}
+
+CVector CSteeringBehaviours::Flee(CIAEntityBase *pEntity,CVector &vTarget)
+{
+	CVector vDesiredDir=pEntity->GetPosition()-vTarget;
+	vDesiredDir.N();
+	vDesiredDir*=pEntity->GetMaxVelocity();
+	CVector vCurrentDir=pEntity->GetVelocity();
+	CVector vForce=vDesiredDir-vCurrentDir;
+	return vForce;
+}
+
+
+CVector CSteeringBehaviours::Arrive(CIAEntityBase *pEntity,CVector &vTarget,ESBArriveSpeed eArriveSpeed)
+{
+	CVector vDesiredDir=vTarget-pEntity->GetPosition();
+	double dDistance=vDesiredDir.N();
+
+	if(dDistance<=0.0){return CVector(0,0,0);}
+
+	const double dDeleterationFactor=0.3;
+
+	double dSpeed=dDistance/(((double)eArriveSpeed)*dDeleterationFactor);
+	if(dSpeed>pEntity->GetMaxVelocity()){dSpeed=pEntity->GetMaxVelocity();}
+
+	CVector vDesiredVelocity=vDesiredDir*dSpeed;
+	CVector vForce=vDesiredVelocity-pEntity->GetVelocity();
+	return vForce;
+}
+
+
+CVector CSteeringBehaviours::Pursue(CIAEntityBase *pEntity,CIAEntityBase *pTarget,CVector *pOutEstimatedPosition)
+{
+	CVector vEntityDistance=pTarget->GetPosition()-pEntity->GetPosition();
+	double dRelativeHeading=pTarget->GetVelocity()*pEntity->GetVelocity();
+
+	if(vEntityDistance*pEntity->GetVelocity()>0 && dRelativeHeading<-0.95)
+	{
+		*pOutEstimatedPosition=pTarget->GetPosition();
+		return Seek(pEntity,pTarget->GetPosition());
+	}
+
+	double dLookAheadTime=((double)vEntityDistance)/((double)pEntity->GetMaxVelocity()+(double)pTarget->GetVelocity());
+	*pOutEstimatedPosition=pTarget->GetPosition()+pTarget->GetVelocity()*dLookAheadTime;
+	return Seek(pEntity,*pOutEstimatedPosition);
+}
+
+CVector CSteeringBehaviours::Evade(CIAEntityBase *pEntity,CIAEntityBase *pTarget,CVector *pOutEstimatedPosition)
+{
+	CVector vEntityDistance=pTarget->GetPosition()-pEntity->GetPosition();
+	double dRelativeHeading=pTarget->GetHeading()*pEntity->GetHeading();
+
+	if(vEntityDistance*pEntity->GetHeading()>0 && dRelativeHeading<-0.95)
+	{
+		*pOutEstimatedPosition=pTarget->GetPosition();
+		return Flee(pEntity,pTarget->GetPosition());
+	}
+
+	double dLookAheadTime=((double)vEntityDistance)/((double)pEntity->GetMaxVelocity()+(double)pTarget->GetVelocity());
+	*pOutEstimatedPosition=pTarget->GetPosition()+pTarget->GetVelocity()*dLookAheadTime;
+	return Flee(pEntity,*pOutEstimatedPosition);
+}
+//returns a random double between zero and 1
+inline double RandFloat()      {return ((rand())/(RAND_MAX+1.0));}
+
+//returns a random double in the range -1 < n < 1
+inline double RandomClamped()    {return RandFloat() - RandFloat();}
+
+
+CVector CSteeringBehaviours::Wander(CIAEntityBase *pEntity,double dDistance,double dRadius,double dJitter,double dTimeFraction)
+{
+	double dJitterFraction=dJitter*dTimeFraction;
+	m_vWanderTarget+=CVector(RandomClamped()*dJitterFraction,RandomClamped()*dJitterFraction,0);
+	m_vWanderTarget.N();
+	m_vWanderTarget*=dRadius;
+
+	CVector localTarget=m_vWanderTarget+CVector(dDistance,0,0);
+	CMatrix mEntityToWorld;
+	CVector worldTarget=localTarget;
+	CVector vAxisX,vAxisY;
+	vAxisX=pEntity->GetHeading();
+	vAxisX.N();
+	vAxisY=pEntity->GetHeading()^CVector(0,0,1);
+	vAxisY.N();
+	mEntityToWorld.Ref(vAxisX,vAxisY,CVector(0,0,1));
+	worldTarget*=mEntityToWorld;
+	mEntityToWorld.T(pEntity->GetPosition());
+	worldTarget*=mEntityToWorld;
+	m_vLastWanderTarget=worldTarget;
+
+	return (worldTarget-pEntity->GetPosition());
+}
+
+void CSteeringBehaviours::RenderWanderLocal(CIAEntityBase *pEntity,double dDistance,double dRadius,double dJitter)
+{
+	glColor3d(1,1,1);
+	Circle3D(dDistance,0,dRadius);
+}
+
+void CSteeringBehaviours::RenderWanderGlobal(CIAEntityBase *pEntity,double dDistance,double dRadius,double dJitter)
+{
+	CVector localTarget=m_vLastWanderTarget;
+	RenderBox(localTarget-CVector(5,5,5),localTarget+CVector(5,5,5),CVector(1,0,1));
+}
+
+CVector CSteeringBehaviours::Interpose(CIAEntityBase *pEntity,CIAEntityBase *pTarget1,CIAEntityBase *pTarget2,CVector *pOutEstimatedPosition)
+{
+	CVector vMidway=(pTarget1->GetPosition()+pTarget2->GetPosition())*0.5;
+	double dMidwayDistance=(vMidway-pEntity->GetPosition()).N();
+	double dTimeToMidway=dMidwayDistance/pEntity->GetMaxVelocity();
+	CVector vTarget;
+	vTarget+=pTarget1->GetPosition()+pTarget1->GetVelocity()*dTimeToMidway;
+	vTarget+=pTarget2->GetPosition()+pTarget2->GetVelocity()*dTimeToMidway;
+	vTarget*=0.5;
+	*pOutEstimatedPosition=vTarget;
+	return Arrive(pEntity,vTarget,eSBArriveSpeed_Fast);
+}
+
+CVector CSteeringBehaviours::OffsetPursue(CIAEntityBase *pEntity,CIAEntityBase *pTarget,CVector &vOffset)
+{
+	CVector vWorldTarget;
+	CVector vAxisX,vAxisY;
+	CMatrix mEntityToWorld;
+	vAxisX=pTarget->GetHeading();
+	vAxisX.N();
+	vAxisY=pTarget->GetHeading()^CVector(0,0,1);
+	vAxisY.N();
+
+	vWorldTarget=vOffset;
+	mEntityToWorld.Ref(vAxisX,vAxisY,CVector(0,0,1));
+	vWorldTarget*=mEntityToWorld;
+	mEntityToWorld.T(pTarget->GetPosition());
+	vWorldTarget*=mEntityToWorld;
+
+	// Try to predict the offset position in the future.
+
+	CVector vWorldOffset=vWorldTarget-pEntity->GetPosition();
+	double dTime=vWorldOffset/(pEntity->GetMaxVelocity()+(double)pTarget->GetVelocity());
+
+	return Arrive(pEntity,vWorldTarget+pTarget->GetVelocity()*dTime,eSBArriveSpeed_Fast);
+}
