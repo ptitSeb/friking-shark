@@ -82,8 +82,8 @@ void CPlayAreaEntity::OnRemoved(IEntity *pUnit)
     m_piEntity=NULL;
 }
 
-void CPlayAreaEntity::SetPosition(CVector &vPosition){m_vPosition=vPosition;}
-void CPlayAreaEntity::SetAngles(CVector &vAngles){m_vAngles=vAngles;}
+void CPlayAreaEntity::SetPosition(const CVector &vPosition){m_vPosition=vPosition;}
+void CPlayAreaEntity::SetAngles(const CVector &vAngles){m_vAngles=vAngles;}
 void CPlayAreaEntity::SetEntityType(IEntityType *piEntityType)
 {
 	m_EntityType.Attach(piEntityType);
