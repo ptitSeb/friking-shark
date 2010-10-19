@@ -5,12 +5,13 @@
 
 CSystem::CSystem(ISystemManager *piSystemManager)
 {
-	m_piSystemManager=piSystemManager;
+	m_piSystemManager=ADD(piSystemManager);
     m_piSystem=NULL;
 }
 
 CSystem::~CSystem(void)
 {
+	REL(m_piSystemManager);
 }
 
 bool CSystem::Init(std::string sClass,std::string sName,ISystem *piSystem)
