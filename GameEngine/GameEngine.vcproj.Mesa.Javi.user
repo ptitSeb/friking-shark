@@ -9,8 +9,8 @@
 			Name="Debug|Win32"
 			>
 			<DebugSettings
-				Command="D:\Desarrollo\Game\Demo\Bin\Debug\GameEngine.exe"
-				WorkingDirectory="D:\Desarrollo\Game\Demo\"
+				Command="$(ProjectDir)\..\Demo\Bin\$(ConfigurationName)\GameEngine.exe"
+				WorkingDirectory="$(ProjectDir)\..\Demo"
 				CommandArguments=""
 				Attach="false"
 				DebuggerType="3"
@@ -37,8 +37,8 @@
 			Name="Release|Win32"
 			>
 			<DebugSettings
-				Command="D:\Desarrollo\Game\Demo\Bin\Release\GameEngine.exe"
-				WorkingDirectory="D:\Desarrollo\Game\Demo\"
+				Command="$(ProjectDir)\..\Demo\Bin\$(ConfigurationName)\GameEngine.exe"
+				WorkingDirectory="$(ProjectDir)\..\Demo"
 				CommandArguments=""
 				Attach="false"
 				DebuggerType="3"

@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="D:\Desarrollo\Game\GameRunTime"
+				AdditionalIncludeDirectories="..\GameRunTime"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -107,7 +107,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="D:\Desarrollo\Game\GameRunTime"
+				AdditionalIncludeDirectories="..\GameRunTime"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="true"
@@ -162,7 +162,7 @@
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories="D:\Desarrollo\Game\GameRunTime"
+						AdditionalIncludeDirectories="..\GameRunTime"
 					/>
 				</FileConfiguration>
 			</File>

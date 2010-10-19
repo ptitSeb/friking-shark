@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="D:\Desarrollo\Game\GameRunTime;D:\Desarrollo\Game\GameRunTimeLib;D:\Desarrollo\Game\VectorLib"
+				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\VectorLib"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_LIB"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -119,7 +119,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="D:\Desarrollo\Game\GameRunTimeLib;D:\Desarrollo\Game\GameRunTime;D:\Desarrollo\Game\VectorLib"
+				AdditionalIncludeDirectories="..\GameRunTimeLib;..\GameRunTime;..\VectorLib"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_LIB"
 				StringPooling="true"
 				RuntimeLibrary="2"
