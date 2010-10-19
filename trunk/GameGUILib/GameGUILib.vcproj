@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="D:\Desarrollo\Game\GameGUI;D:\Desarrollo\Game\GameRunTimeLib;D:\Desarrollo\Game\GameRunTime;D:\Desarrollo\Game\GameLib;D:\Desarrollo\Game\GameGraphics;D:\Desarrollo\Game\VectorLib"
+				AdditionalIncludeDirectories="..\GameGUI;..\GameRunTimeLib;..\GameRunTime;..\GameLib;..\GameGraphics;..\VectorLib"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -107,7 +107,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="D:\Desarrollo\Game\GameGUI;D:\Desarrollo\Game\GameRunTimeLib;D:\Desarrollo\Game\GameRunTime;D:\Desarrollo\Game\GameLib;D:\Desarrollo\Game\GameGraphics;D:\Desarrollo\Game\VectorLib"
+				AdditionalIncludeDirectories="..\GameGUI;..\GameRunTimeLib;..\GameRunTime;..\GameLib;..\GameGraphics;..\VectorLib"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="true"

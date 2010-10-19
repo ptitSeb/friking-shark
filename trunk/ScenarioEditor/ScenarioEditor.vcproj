@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="D:\Desarrollo\Game\GameRunTime;D:\Desarrollo\Game\GameRunTimeLib;D:\Desarrollo\Game\VectorLib;D:\Desarrollo\Game\GameLib;D:\Desarrollo\Game\GameGUI;D:\Desarrollo\Game\GameGUILib;D:\Desarrollo\Game\GameGraphics;D:\Desarrollo\Game\PlayAreaElements;D:\Desarrollo\Game\GameManagers"
+				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameLib;..\GameGUI;..\GameGUILib;..\GameGraphics;..\PlayAreaElements;..\GameManagers"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;SCENARIOEDITOR_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -62,7 +62,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="D:\Desarrollo\Game\GameRunTime\Debug;D:\Desarrollo\Game\GameRunTimeLib\Debug;D:\Desarrollo\Game\GameEntityLib\Debug;D:\Desarrollo\Game\GameLib\Debug;D:\Desarrollo\Game\VectorLib\Debug;D:\Desarrollo\Game\GUISystemsLib\Debug;D:\Desarrollo\Game\GameGUILib\Debug"
+				AdditionalLibraryDirectories="..\GameRunTime\Debug;..\GameRunTimeLib\Debug;..\GameEntityLib\Debug;..\GameLib\Debug;..\VectorLib\Debug;..\GUISystemsLib\Debug;..\GameGUILib\Debug"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/ScenarioEditor.pdb"
 				SubSystem="2"
@@ -118,7 +118,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="D:\Desarrollo\Game\GameRunTime;D:\Desarrollo\Game\GameRunTimeLib;D:\Desarrollo\Game\VectorLib;D:\Desarrollo\Game\GameLib;D:\Desarrollo\Game\GameGUI;D:\Desarrollo\Game\GameGUILib;D:\Desarrollo\Game\GameGraphics;D:\Desarrollo\Game\PlayAreaElements;D:\Desarrollo\Game\GameManagers"
+				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameLib;..\GameGUI;..\GameGUILib;..\GameGraphics;..\PlayAreaElements;..\GameManagers"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;_USRDLL;SCENARIOEDITOR_EXPORTS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -138,7 +138,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="D:\Desarrollo\Game\GameRunTime\Release;D:\Desarrollo\Game\GameRunTimeLib\Release;D:\Desarrollo\Game\GameEntityLib\Release;D:\Desarrollo\Game\GameLib\Release;D:\Desarrollo\Game\VectorLib\Release;D:\Desarrollo\Game\GUISystemsLib\Release;D:\Desarrollo\Game\GameGUILib\Release"
+				AdditionalLibraryDirectories="..\GameRunTime\Release;..\GameRunTimeLib\Release;..\GameEntityLib\Release;..\GameLib\Release;..\VectorLib\Release;..\GUISystemsLib\Release;..\GameGUILib\Release"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
