@@ -9,7 +9,9 @@ CSystemObjectBase::CSystemObjectBase(void)
 {
 	m_piSystem=NULL;
 #ifdef _DEBUG
-	GetSystemManager()->DebugRegisterObject(this);
+	ISystemManager *piManager=GetSystemManager();
+	piManager->DebugRegisterObject(this);
+	REL(piManager);
 #endif
 }
 
@@ -17,7 +19,9 @@ CSystemObjectBase::~CSystemObjectBase(void)
 {
 	_ASSERTE(m_piSystem==NULL);
 #ifdef _DEBUG
-	GetSystemManager()->DebugUnregisterObject(this);
+	ISystemManager *piManager=GetSystemManager();
+	piManager->DebugUnregisterObject(this);
+	REL(piManager);
 #endif
 }
 
@@ -33,7 +37,9 @@ bool CSystemObjectBase::Init(std::string sClass,std::string sName,ISystem *piSys
     m_piSystem=ADD(piSystem);
     if(m_piSystem && m_sName!=""){piSystem->RegisterObject(this);}
 #ifdef _DEBUG
-	GetSystemManager()->DebugRegisterObject(this);
+	ISystemManager *piManager=GetSystemManager();
+	piManager->DebugRegisterObject(this);
+	REL(piManager);
 #endif
 	return true;
 }
