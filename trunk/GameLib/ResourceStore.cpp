@@ -10,11 +10,11 @@
 #include "GameRunTimeLib.h"
 #include "ResourceStore.h"
 #include "GLProcs.h"
-#include "..\..\JPEGLibrary\inc\jpegdecoder.h"
+#include "..\JPEGLibrary\inc\jpegdecoder.h"
 #ifdef _DEBUG
-#pragma comment(lib,"..\\..\\JPEGLibrary\\lib\\jpgdlib_d.lib")
+#pragma comment(lib,"..\\JPEGLibrary\\lib\\jpgdlib_d.lib")
 #else
-#pragma comment(lib,"..\\..\\JPEGLibrary\\lib\\jpgdlib.lib")
+#pragma comment(lib,"..\\JPEGLibrary\\lib\\jpgdlib.lib")
 #endif
 #pragma warning ( disable : 4244 4018 )
 
