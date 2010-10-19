@@ -6,10 +6,18 @@
 
 #define CONFIG_FILE_DELIMITER " \t\r\n="
 
-CConfigFileNode::CConfigFileNode()
+CConfigFileNode::CConfigFileNode(CConfigFileNode *pParent)
 {
+	m_pParent=pParent;
 	m_bHasValue=false;
 }
+
+CConfigFileNode::CConfigFileNode()
+{
+	m_pParent=NULL;
+	m_bHasValue=false;
+}
+
 
 CConfigFileNode::~CConfigFileNode()
 {
@@ -40,7 +48,7 @@ CConfigFileNode *CConfigFileNode::GetAddNode_Internal(const char *pNodePath,bool
         {
             if(bAdd)
             {
-                CConfigFileNode *pNode=new CConfigFileNode;
+                CConfigFileNode *pNode=new CConfigFileNode(this);
                 pNode->m_sName=sSubNodeName;
                 m_mNodes.insert(std::pair<std::string,CConfigFileNode*>(sSubNodeName,pNode));
 				m_vNodes.push_back(pNode);
@@ -64,7 +72,7 @@ CConfigFileNode *CConfigFileNode::GetAddNode_Internal(const char *pNodePath,bool
         {
             if(bAdd)
             {
-                CConfigFileNode *pNode=new CConfigFileNode;
+                CConfigFileNode *pNode=new CConfigFileNode(this);
                 pNode->m_sName=pNodePath;
                 m_mNodes.insert(std::pair<std::string,CConfigFileNode*>(pNodePath,pNode));
 				m_vNodes.push_back(pNode);
@@ -144,6 +152,23 @@ const char *CConfigFileNode::GetValue(){return m_bHasValue?m_sValue.c_str():NULL
 void CConfigFileNode::SetValue(const char *psValue){m_bHasValue=true;m_sValue=psValue;}
 void CConfigFileNode::SetValue(std::string &sValue){m_bHasValue=true;m_sValue=sValue;}
 void CConfigFileNode::RemoveValue(){m_bHasValue=false;m_sValue="";}
+
+std::string CConfigFileNode::GetDebugInfoPath()
+{
+	if(m_pParent)
+	{
+		return m_pParent->GetDebugInfoPath()+"\\"+m_sName;
+	}
+	else
+	{
+		return m_sParentFileName;
+	}
+}
+
+void CConfigFileNode::SetFileName( std::string &sFileName )
+{
+	m_sParentFileName=sFileName;
+}
 
 CConfigFile::CConfigFile(void)
 {
@@ -252,7 +277,7 @@ bool CConfigFile::Open(const char *pFileName)
 
     dwFileLength=GetFileSize(m_hFile,NULL);
     if(!dwFileLength){return false;}
-    
+    m_RootNode.SetFileName((std::string)pFileName);
     DWORD  dwRead=0;
     m_pBuffer=new char [dwFileLength+1];
 	// se reserva el triple porque la normalizacion puede meter 2 espacio por cada llave encontrada
@@ -424,7 +449,7 @@ bool CConfigFile::Open(const char *pFileName)
 			}
 
 	
-			pLastNode=new CConfigFileNode;
+			pLastNode=new CConfigFileNode(pCurrentNode);
 			pLastNode->m_sName=pName;
 			pCurrentNode->m_mNodes.insert(std::pair<std::string,CConfigFileNode*>(pName,pLastNode));
 			pCurrentNode->m_vNodes.push_back(pLastNode);
@@ -451,6 +476,7 @@ bool CConfigFile::Save(const char *pFileName)
     if(m_hFile!=INVALID_HANDLE_VALUE)
     {
         m_dwSaveTabCount=0;
+		m_RootNode.SetFileName((std::string)pFileName);
         SaveNode(&m_RootNode);
         CloseHandle(m_hFile);
         m_hFile=INVALID_HANDLE_VALUE;

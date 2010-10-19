@@ -38,14 +38,15 @@ ISystem *CSystemLoaderHelper::LoadSystem(ISystemPersistencyNode *piParent,std::s
 					unsigned x=0;
 					for(x=0;x<m_Modules.m_dModules.size();x++)
 					{
-							if(bResult)
-							{
-									ISystemModule *piModule=NULL;
-									bResult=piSystem->LoadModule(m_Modules.m_dModules[x].sPath,&piModule);
-									REL(piModule);
-							}
+						ISystemModule *piModule=NULL;
+						if(!piSystem->LoadModule(m_Modules.m_dModules[x].sPath,&piModule))
+						{
+							bResult=false;
+							RTTRACE("CSystemLoaderHelper::LoadSystem -> Failed to load Module %s in System %s",m_Modules.m_dModules[x].sPath.c_str(),sSystemName.c_str());
+						}
+						REL(piModule);
 					}
-					// Carga de objetos.
+						// Carga de objetos.
 					PersistencyLoad(piNode);
 					for(x=0;x<m_dObjects.size();x++)
 					{
@@ -59,7 +60,11 @@ ISystem *CSystemLoaderHelper::LoadSystem(ISystemPersistencyNode *piParent,std::s
 			}
 		}
     REL(piSystemManager);
-    if(!bResult){REL(piSystem);}
+    if(!bResult)
+	{
+		if(piSystem){piSystem->Destroy();}
+		REL(piSystem);
+	}
     return piSystem;
 }
 
