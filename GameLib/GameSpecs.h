@@ -641,8 +641,8 @@ struct IPlayAreaElement:virtual public ISystemUnknown
 
 struct IPlayAreaEntity:virtual public IPlayAreaElement
 {
-	virtual void SetPosition(CVector &vPosition)=0;
-	virtual void SetAngles(CVector &vAngles)=0;
+	virtual void SetPosition(const CVector &vPosition)=0;
+	virtual void SetAngles(const CVector &vAngles)=0;
 	virtual void SetEntityType(IEntityType *piEntityType)=0;
 
 	virtual CVector GetPosition()=0;
