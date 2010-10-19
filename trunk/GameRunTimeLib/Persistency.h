@@ -227,44 +227,38 @@ void	FreePersistencyItemList(IMRPersistencyItem ***ppiList);
     static HRESULT MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentSimpleReferenceT<className> *prop)\
     {\
         if(piNode==NULL){return E_FAIL;}\
-        HRESULT hr=S_OK,finalhr=S_OK;\
         IMRPersistencyItem **ppiList=MRGetPropertyMap(prop->GetValueAddress());\
-        int x=0;\
-        while(ppiList[x]!=NULL){hr=ppiList[x]->Save(piNode->AddNode(ppiList[x]->GetName()));if(FAILED(hr)){finalhr=hr;};delete ppiList[x];ppiList[x]=NULL;x++;}\
-        delete [] ppiList;ppiList=NULL;\
+		HRESULT finalhr=PersistencyItemListSave(ppiList,piNode,NULL);\
+		FreePersistencyItemList(&ppiList);\
         return finalhr;\
     }\
     static HRESULT MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentSimpleReferenceT<className> *prop)\
     {\
         if(piNode==NULL){return E_FAIL;}\
-        HRESULT hr=S_OK,finalhr=S_OK;\
-        IMRPersistencyItem **ppiList=MRGetPropertyMap(prop->GetValueAddress());\
-        int x=0;\
-        while(ppiList[x]!=NULL){hr=ppiList[x]->Load(piNode->GetNode(ppiList[x]->GetName()));if(FAILED(hr)){finalhr=hr;};delete ppiList[x];ppiList[x]=NULL;x++;}\
-        delete [] ppiList;ppiList=NULL;\
+		IMRPersistencyItem **ppiList=MRGetPropertyMap(prop->GetValueAddress());\
+		HRESULT finalhr=PersistencyItemListLoad(ppiList,piNode,NULL);\
+		FreePersistencyItemList(&ppiList);\
         return finalhr;\
     }\
     static HRESULT MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentSimpleReferenceT<className> *prop)\
     {\
         if(piNode==NULL){return E_FAIL;}\
-        piNode->DeleteNode(prop->GetName());\
-        return S_OK;\
+		IMRPersistencyItem **ppiList=MRGetPropertyMap(prop->GetValueAddress());\
+		HRESULT finalhr=PersistencyItemListRemove(ppiList,piNode,NULL);\
+		FreePersistencyItemList(&ppiList);\
+		return S_OK;\
     }\
     static void MRPersistencyInitialize(CMRPersistentSimpleReferenceT<className> *prop)\
     {\
-        HRESULT hr=S_OK,finalhr=S_OK;\
-        IMRPersistencyItem **ppiList=MRGetPropertyMap(prop->GetValueAddress());\
-        int x=0;\
-        while(ppiList[x]!=NULL){ppiList[x]->Initialize();if(FAILED(hr)){finalhr=hr;};delete ppiList[x];ppiList[x]=NULL;x++;}\
-        delete [] ppiList;ppiList=NULL;\
+		IMRPersistencyItem **ppiList=MRGetPropertyMap(prop->GetValueAddress());\
+		PersistencyItemListInitialize(ppiList,NULL);\
+		FreePersistencyItemList(&ppiList);\
     }\
     static void MRPersistencyFree(CMRPersistentSimpleReferenceT<className> *prop)\
     {\
-        HRESULT hr=S_OK,finalhr=S_OK;\
-        IMRPersistencyItem **ppiList=MRGetPropertyMap(prop->GetValueAddress());\
-        int x=0;\
-        while(ppiList[x]!=NULL){ppiList[x]->Free();if(FAILED(hr)){finalhr=hr;};delete ppiList[x];ppiList[x]=NULL;x++;}\
-        delete [] ppiList;ppiList=NULL;\
+		IMRPersistencyItem **ppiList=MRGetPropertyMap(prop->GetValueAddress());\
+		PersistencyItemListFree(ppiList,NULL);\
+		FreePersistencyItemList(&ppiList);\
     }\
     static IMRPersistencyItem **MRGetPropertyMap(className *pInstance)	\
     {													\

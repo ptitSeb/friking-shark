@@ -12,6 +12,8 @@ class CConfigFileNode: public ISystemPersistencyNode
 	bool										m_bHasValue;
     std::multimap<std::string,CConfigFileNode*>	m_mNodes;
 	std::vector<CConfigFileNode *>				m_vNodes; // para mantener el orden de carga
+	CConfigFileNode								*m_pParent;
+	std::string 								m_sParentFileName; // File Name for debugging pourposes (only for root nodes)
 
     CConfigFileNode *GetAddNode_Internal(const char *pNodePath,bool bAdd);
 
@@ -32,9 +34,14 @@ public:
 	virtual ISystemPersistencyNode *GetNode(const char *id);
 	virtual ISystemPersistencyNode *GetNode(unsigned long nIndex);
 	virtual unsigned long			GetNodeCount();
+
+	virtual void SetFileName(std::string &sFileName);
+	std::string  GetDebugInfoPath();
+
 	virtual void DeleteNode(std::string &id);
 	virtual void DeleteNode(const char *id);
 
+	CConfigFileNode(CConfigFileNode *pParent);
 	CConfigFileNode();
     ~CConfigFileNode();
 };

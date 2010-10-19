@@ -83,6 +83,8 @@ public:
 	virtual void					RemoveValue()=0;
 	virtual void DeleteNode(std::string &id)=0;
 	virtual void DeleteNode(const char *id)=0;
+
+	virtual std::string GetDebugInfoPath()=0;
 };
 
 class ISystemSerializable:virtual public ISystemUnknown

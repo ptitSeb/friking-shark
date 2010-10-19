@@ -69,6 +69,10 @@ bool CSystemObjectWrapper::Attach(ISystem *piSystem,std::string sName)
     bool bOk=false;
     ISystemObject *piObject=NULL;
     if(piSystem->GetObject(sName,&piObject)){bOk=Attach(piObject);}
+	if(!bOk)
+	{
+		RTTRACE("CSystemObjectWrapper::Attach -> Failed to attach to  System: %s, Object:%s",piSystem->GetName().c_str(),sName.c_str());
+	}
     REL(piObject);
     return bOk;
 }
@@ -184,6 +188,10 @@ bool CSystemObjectWrapper::Create(std::string sSystem,std::string sClass,std::st
     _ASSERTE(piSystem);
     if(piSystem){bOk=Create(piSystem,sClass,sName);}
     if(piObject){bOk=GetInterfaces(piObject);}
+	if(!bOk)
+	{
+		RTTRACE("CSystemObjectWrapper::Create -> Failed to create System: %s, Class: %s, Object:%s",sSystem.c_str(),sClass.c_str(),sName.c_str());
+	}
     REL(piManager);
     REL(piSystem);
     REL(piObject);

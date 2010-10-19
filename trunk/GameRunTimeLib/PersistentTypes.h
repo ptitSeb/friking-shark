@@ -61,7 +61,11 @@ HRESULT MRLoadFromContainer(ISystemPersistencyNode *piNode,CMRPersistentReferenc
         if(SUCCEEDED(hr)){pItem->GetValueAddress()->insert(pItem->GetValueAddress()->end(),*pRef->GetValueAddress());}
         delete pRef;
         pRef=NULL;
-        if(FAILED(hr)){finalhr=hr;}
+        if(FAILED(hr))
+		{
+			RTTRACE("GameRunTimeLib::MRLoadFromContainer-> Failed To Load container item %s, result 0x%08x",piChildNode->GetDebugInfoPath().c_str(),hr);
+			finalhr=hr;
+		}
     }
 
     return finalhr;
@@ -85,7 +89,11 @@ HRESULT MRSaveToContainer(ISystemPersistencyNode *piNode,CMRPersistentReferenceT
 			ISystemPersistencyNode *piChildNode=piNode->AddNode(sItemName);
             CMRPersistentSimpleReferenceT<CONTAINED_TYPE> *pRef=MRCreateReference(&(*i),sItemName);
             hr=MRPersistencySave(piChildNode,pRef);
-            if(FAILED(hr)){finalhr=hr;}
+            if(FAILED(hr))
+			{
+				RTTRACE("GameRunTimeLib::MRLoadFromContainer-> Failed To Save container item %s, result 0x%08x",piChildNode->GetDebugInfoPath().c_str(),hr);
+				finalhr=hr;
+			}
             delete pRef;
             pRef=NULL;
         }
