@@ -57,7 +57,7 @@ static void APIENTRY InitBlendColor (GLclampf red, GLclampf green, GLclampf blue
 	extproc = (void *) wglGetProcAddress("glBlendColor");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -73,7 +73,7 @@ static void APIENTRY InitBlendEquation (GLenum mode)
 	extproc = (void *) wglGetProcAddress("glBlendEquation");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -89,7 +89,7 @@ static void APIENTRY InitDrawRangeElements (GLenum mode, GLuint start, GLuint en
 	extproc = (void *) wglGetProcAddress("glDrawRangeElements");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -105,7 +105,7 @@ static void APIENTRY InitColorTable (GLenum target, GLenum internalformat, GLsiz
 	extproc = (void *) wglGetProcAddress("glColorTable");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -121,7 +121,7 @@ static void APIENTRY InitColorTableParameterfv (GLenum target, GLenum pname, con
 	extproc = (void *) wglGetProcAddress("glColorTableParameterfv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -137,7 +137,7 @@ static void APIENTRY InitColorTableParameteriv (GLenum target, GLenum pname, con
 	extproc = (void *) wglGetProcAddress("glColorTableParameteriv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -153,7 +153,7 @@ static void APIENTRY InitCopyColorTable (GLenum target, GLenum internalformat, G
 	extproc = (void *) wglGetProcAddress("glCopyColorTable");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -169,7 +169,7 @@ static void APIENTRY InitGetColorTable (GLenum target, GLenum format, GLenum typ
 	extproc = (void *) wglGetProcAddress("glGetColorTable");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -185,7 +185,7 @@ static void APIENTRY InitGetColorTableParameterfv (GLenum target, GLenum pname, 
 	extproc = (void *) wglGetProcAddress("glGetColorTableParameterfv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -201,7 +201,7 @@ static void APIENTRY InitGetColorTableParameteriv (GLenum target, GLenum pname, 
 	extproc = (void *) wglGetProcAddress("glGetColorTableParameteriv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -217,7 +217,7 @@ static void APIENTRY InitColorSubTable (GLenum target, GLsizei start, GLsizei co
 	extproc = (void *) wglGetProcAddress("glColorSubTable");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -233,7 +233,7 @@ static void APIENTRY InitCopyColorSubTable (GLenum target, GLsizei start, GLint 
 	extproc = (void *) wglGetProcAddress("glCopyColorSubTable");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -249,7 +249,7 @@ static void APIENTRY InitConvolutionFilter1D (GLenum target, GLenum internalform
 	extproc = (void *) wglGetProcAddress("glConvolutionFilter1D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -265,7 +265,7 @@ static void APIENTRY InitConvolutionFilter2D (GLenum target, GLenum internalform
 	extproc = (void *) wglGetProcAddress("glConvolutionFilter2D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -281,7 +281,7 @@ static void APIENTRY InitConvolutionParameterf (GLenum target, GLenum pname, GLf
 	extproc = (void *) wglGetProcAddress("glConvolutionParameterf");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -297,7 +297,7 @@ static void APIENTRY InitConvolutionParameterfv (GLenum target, GLenum pname, co
 	extproc = (void *) wglGetProcAddress("glConvolutionParameterfv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -313,7 +313,7 @@ static void APIENTRY InitConvolutionParameteri (GLenum target, GLenum pname, GLi
 	extproc = (void *) wglGetProcAddress("glConvolutionParameteri");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -329,7 +329,7 @@ static void APIENTRY InitConvolutionParameteriv (GLenum target, GLenum pname, co
 	extproc = (void *) wglGetProcAddress("glConvolutionParameteriv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -345,7 +345,7 @@ static void APIENTRY InitCopyConvolutionFilter1D (GLenum target, GLenum internal
 	extproc = (void *) wglGetProcAddress("glCopyConvolutionFilter1D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -361,7 +361,7 @@ static void APIENTRY InitCopyConvolutionFilter2D (GLenum target, GLenum internal
 	extproc = (void *) wglGetProcAddress("glCopyConvolutionFilter2D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -377,7 +377,7 @@ static void APIENTRY InitGetConvolutionFilter (GLenum target, GLenum format, GLe
 	extproc = (void *) wglGetProcAddress("glGetConvolutionFilter");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -393,7 +393,7 @@ static void APIENTRY InitGetConvolutionParameterfv (GLenum target, GLenum pname,
 	extproc = (void *) wglGetProcAddress("glGetConvolutionParameterfv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -409,7 +409,7 @@ static void APIENTRY InitGetConvolutionParameteriv (GLenum target, GLenum pname,
 	extproc = (void *) wglGetProcAddress("glGetConvolutionParameteriv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -425,7 +425,7 @@ static void APIENTRY InitGetSeparableFilter (GLenum target, GLenum format, GLenu
 	extproc = (void *) wglGetProcAddress("glGetSeparableFilter");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -441,7 +441,7 @@ static void APIENTRY InitSeparableFilter2D (GLenum target, GLenum internalformat
 	extproc = (void *) wglGetProcAddress("glSeparableFilter2D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -457,7 +457,7 @@ static void APIENTRY InitGetHistogram (GLenum target, GLboolean reset, GLenum fo
 	extproc = (void *) wglGetProcAddress("glGetHistogram");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -473,7 +473,7 @@ static void APIENTRY InitGetHistogramParameterfv (GLenum target, GLenum pname, G
 	extproc = (void *) wglGetProcAddress("glGetHistogramParameterfv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -489,7 +489,7 @@ static void APIENTRY InitGetHistogramParameteriv (GLenum target, GLenum pname, G
 	extproc = (void *) wglGetProcAddress("glGetHistogramParameteriv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -505,7 +505,7 @@ static void APIENTRY InitGetMinmax (GLenum target, GLboolean reset, GLenum forma
 	extproc = (void *) wglGetProcAddress("glGetMinmax");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -521,7 +521,7 @@ static void APIENTRY InitGetMinmaxParameterfv (GLenum target, GLenum pname, GLfl
 	extproc = (void *) wglGetProcAddress("glGetMinmaxParameterfv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -537,7 +537,7 @@ static void APIENTRY InitGetMinmaxParameteriv (GLenum target, GLenum pname, GLin
 	extproc = (void *) wglGetProcAddress("glGetMinmaxParameteriv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -553,7 +553,7 @@ static void APIENTRY InitHistogram (GLenum target, GLsizei width, GLenum interna
 	extproc = (void *) wglGetProcAddress("glHistogram");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -569,7 +569,7 @@ static void APIENTRY InitMinmax (GLenum target, GLenum internalformat, GLboolean
 	extproc = (void *) wglGetProcAddress("glMinmax");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -585,7 +585,7 @@ static void APIENTRY InitResetHistogram (GLenum target)
 	extproc = (void *) wglGetProcAddress("glResetHistogram");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -601,7 +601,7 @@ static void APIENTRY InitResetMinmax (GLenum target)
 	extproc = (void *) wglGetProcAddress("glResetMinmax");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -617,7 +617,7 @@ static void APIENTRY InitTexImage3D (GLenum target, GLint level, GLint internalf
 	extproc = (void *) wglGetProcAddress("glTexImage3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -633,7 +633,7 @@ static void APIENTRY InitTexSubImage3D (GLenum target, GLint level, GLint xoffse
 	extproc = (void *) wglGetProcAddress("glTexSubImage3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -649,7 +649,7 @@ static void APIENTRY InitCopyTexSubImage3D (GLenum target, GLint level, GLint xo
 	extproc = (void *) wglGetProcAddress("glCopyTexSubImage3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -665,7 +665,7 @@ static void APIENTRY InitActiveTexture (GLenum texture)
 	extproc = (void *) wglGetProcAddress("glActiveTexture");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -681,7 +681,7 @@ static void APIENTRY InitClientActiveTexture (GLenum texture)
 	extproc = (void *) wglGetProcAddress("glClientActiveTexture");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -697,7 +697,7 @@ static void APIENTRY InitMultiTexCoord1d (GLenum target, GLdouble s)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord1d");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -713,7 +713,7 @@ static void APIENTRY InitMultiTexCoord1dv (GLenum target, const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord1dv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -729,7 +729,7 @@ static void APIENTRY InitMultiTexCoord1f (GLenum target, GLfloat s)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord1f");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -745,7 +745,7 @@ static void APIENTRY InitMultiTexCoord1fv (GLenum target, const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord1fv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -761,7 +761,7 @@ static void APIENTRY InitMultiTexCoord1i (GLenum target, GLint s)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord1i");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -777,7 +777,7 @@ static void APIENTRY InitMultiTexCoord1iv (GLenum target, const GLint *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord1iv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -793,7 +793,7 @@ static void APIENTRY InitMultiTexCoord1s (GLenum target, GLshort s)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord1s");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -809,7 +809,7 @@ static void APIENTRY InitMultiTexCoord1sv (GLenum target, const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord1sv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -825,7 +825,7 @@ static void APIENTRY InitMultiTexCoord2d (GLenum target, GLdouble s, GLdouble t)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord2d");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -841,7 +841,7 @@ static void APIENTRY InitMultiTexCoord2dv (GLenum target, const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord2dv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -857,7 +857,7 @@ static void APIENTRY InitMultiTexCoord2f (GLenum target, GLfloat s, GLfloat t)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord2f");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -873,7 +873,7 @@ static void APIENTRY InitMultiTexCoord2fv (GLenum target, const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord2fv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -889,7 +889,7 @@ static void APIENTRY InitMultiTexCoord2i (GLenum target, GLint s, GLint t)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord2i");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -905,7 +905,7 @@ static void APIENTRY InitMultiTexCoord2iv (GLenum target, const GLint *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord2iv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -921,7 +921,7 @@ static void APIENTRY InitMultiTexCoord2s (GLenum target, GLshort s, GLshort t)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord2s");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -937,7 +937,7 @@ static void APIENTRY InitMultiTexCoord2sv (GLenum target, const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord2sv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -953,7 +953,7 @@ static void APIENTRY InitMultiTexCoord3d (GLenum target, GLdouble s, GLdouble t,
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord3d");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -969,7 +969,7 @@ static void APIENTRY InitMultiTexCoord3dv (GLenum target, const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord3dv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -985,7 +985,7 @@ static void APIENTRY InitMultiTexCoord3f (GLenum target, GLfloat s, GLfloat t, G
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord3f");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1001,7 +1001,7 @@ static void APIENTRY InitMultiTexCoord3fv (GLenum target, const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord3fv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1017,7 +1017,7 @@ static void APIENTRY InitMultiTexCoord3i (GLenum target, GLint s, GLint t, GLint
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord3i");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1033,7 +1033,7 @@ static void APIENTRY InitMultiTexCoord3iv (GLenum target, const GLint *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord3iv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1049,7 +1049,7 @@ static void APIENTRY InitMultiTexCoord3s (GLenum target, GLshort s, GLshort t, G
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord3s");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1065,7 +1065,7 @@ static void APIENTRY InitMultiTexCoord3sv (GLenum target, const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord3sv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1081,7 +1081,7 @@ static void APIENTRY InitMultiTexCoord4d (GLenum target, GLdouble s, GLdouble t,
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord4d");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1097,7 +1097,7 @@ static void APIENTRY InitMultiTexCoord4dv (GLenum target, const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord4dv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1113,7 +1113,7 @@ static void APIENTRY InitMultiTexCoord4f (GLenum target, GLfloat s, GLfloat t, G
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord4f");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1129,7 +1129,7 @@ static void APIENTRY InitMultiTexCoord4fv (GLenum target, const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord4fv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1145,7 +1145,7 @@ static void APIENTRY InitMultiTexCoord4i (GLenum target, GLint s, GLint t, GLint
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord4i");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1161,7 +1161,7 @@ static void APIENTRY InitMultiTexCoord4iv (GLenum target, const GLint *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord4iv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1177,7 +1177,7 @@ static void APIENTRY InitMultiTexCoord4s (GLenum target, GLshort s, GLshort t, G
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord4s");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1193,7 +1193,7 @@ static void APIENTRY InitMultiTexCoord4sv (GLenum target, const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord4sv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1209,7 +1209,7 @@ static void APIENTRY InitLoadTransposeMatrixf (const GLfloat *m)
 	extproc = (void *) wglGetProcAddress("glLoadTransposeMatrixf");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1225,7 +1225,7 @@ static void APIENTRY InitLoadTransposeMatrixd (const GLdouble *m)
 	extproc = (void *) wglGetProcAddress("glLoadTransposeMatrixd");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1241,7 +1241,7 @@ static void APIENTRY InitMultTransposeMatrixf (const GLfloat *m)
 	extproc = (void *) wglGetProcAddress("glMultTransposeMatrixf");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1257,7 +1257,7 @@ static void APIENTRY InitMultTransposeMatrixd (const GLdouble *m)
 	extproc = (void *) wglGetProcAddress("glMultTransposeMatrixd");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1273,7 +1273,7 @@ static void APIENTRY InitSampleCoverage (GLclampf value, GLboolean invert)
 	extproc = (void *) wglGetProcAddress("glSampleCoverage");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1289,7 +1289,7 @@ static void APIENTRY InitCompressedTexImage3D (GLenum target, GLint level, GLenu
 	extproc = (void *) wglGetProcAddress("glCompressedTexImage3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1305,7 +1305,7 @@ static void APIENTRY InitCompressedTexImage2D (GLenum target, GLint level, GLenu
 	extproc = (void *) wglGetProcAddress("glCompressedTexImage2D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1321,7 +1321,7 @@ static void APIENTRY InitCompressedTexImage1D (GLenum target, GLint level, GLenu
 	extproc = (void *) wglGetProcAddress("glCompressedTexImage1D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1337,7 +1337,7 @@ static void APIENTRY InitCompressedTexSubImage3D (GLenum target, GLint level, GL
 	extproc = (void *) wglGetProcAddress("glCompressedTexSubImage3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1353,7 +1353,7 @@ static void APIENTRY InitCompressedTexSubImage2D (GLenum target, GLint level, GL
 	extproc = (void *) wglGetProcAddress("glCompressedTexSubImage2D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1369,7 +1369,7 @@ static void APIENTRY InitCompressedTexSubImage1D (GLenum target, GLint level, GL
 	extproc = (void *) wglGetProcAddress("glCompressedTexSubImage1D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1385,7 +1385,7 @@ static void APIENTRY InitGetCompressedTexImage (GLenum target, GLint level, GLvo
 	extproc = (void *) wglGetProcAddress("glGetCompressedTexImage");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1401,7 +1401,7 @@ static void APIENTRY InitBlendFuncSeparate (GLenum sfactorRGB, GLenum dfactorRGB
 	extproc = (void *) wglGetProcAddress("glBlendFuncSeparate");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1417,7 +1417,7 @@ static void APIENTRY InitFogCoordf (GLfloat coord)
 	extproc = (void *) wglGetProcAddress("glFogCoordf");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1433,7 +1433,7 @@ static void APIENTRY InitFogCoordfv (const GLfloat *coord)
 	extproc = (void *) wglGetProcAddress("glFogCoordfv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1449,7 +1449,7 @@ static void APIENTRY InitFogCoordd (GLdouble coord)
 	extproc = (void *) wglGetProcAddress("glFogCoordd");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1465,7 +1465,7 @@ static void APIENTRY InitFogCoorddv (const GLdouble *coord)
 	extproc = (void *) wglGetProcAddress("glFogCoorddv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1481,7 +1481,7 @@ static void APIENTRY InitFogCoordPointer (GLenum type, GLsizei stride, const GLv
 	extproc = (void *) wglGetProcAddress("glFogCoordPointer");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1497,7 +1497,7 @@ static void APIENTRY InitMultiDrawArrays (GLenum mode, GLint *first, GLsizei *co
 	extproc = (void *) wglGetProcAddress("glMultiDrawArrays");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1513,7 +1513,7 @@ static void APIENTRY InitMultiDrawElements (GLenum mode, const GLsizei *count, G
 	extproc = (void *) wglGetProcAddress("glMultiDrawElements");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1529,7 +1529,7 @@ static void APIENTRY InitPointParameterf (GLenum pname, GLfloat param)
 	extproc = (void *) wglGetProcAddress("glPointParameterf");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1545,7 +1545,7 @@ static void APIENTRY InitPointParameterfv (GLenum pname, const GLfloat *params)
 	extproc = (void *) wglGetProcAddress("glPointParameterfv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1561,7 +1561,7 @@ static void APIENTRY InitPointParameteri (GLenum pname, GLint param)
 	extproc = (void *) wglGetProcAddress("glPointParameteri");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1577,7 +1577,7 @@ static void APIENTRY InitPointParameteriv (GLenum pname, const GLint *params)
 	extproc = (void *) wglGetProcAddress("glPointParameteriv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1593,7 +1593,7 @@ static void APIENTRY InitSecondaryColor3b (GLbyte red, GLbyte green, GLbyte blue
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3b");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1609,7 +1609,7 @@ static void APIENTRY InitSecondaryColor3bv (const GLbyte *v)
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3bv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1625,7 +1625,7 @@ static void APIENTRY InitSecondaryColor3d (GLdouble red, GLdouble green, GLdoubl
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3d");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1641,7 +1641,7 @@ static void APIENTRY InitSecondaryColor3dv (const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3dv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1657,7 +1657,7 @@ static void APIENTRY InitSecondaryColor3f (GLfloat red, GLfloat green, GLfloat b
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3f");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1673,7 +1673,7 @@ static void APIENTRY InitSecondaryColor3fv (const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3fv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1689,7 +1689,7 @@ static void APIENTRY InitSecondaryColor3i (GLint red, GLint green, GLint blue)
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3i");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1705,7 +1705,7 @@ static void APIENTRY InitSecondaryColor3iv (const GLint *v)
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3iv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1721,7 +1721,7 @@ static void APIENTRY InitSecondaryColor3s (GLshort red, GLshort green, GLshort b
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3s");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1737,7 +1737,7 @@ static void APIENTRY InitSecondaryColor3sv (const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3sv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1753,7 +1753,7 @@ static void APIENTRY InitSecondaryColor3ub (GLubyte red, GLubyte green, GLubyte 
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3ub");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1769,7 +1769,7 @@ static void APIENTRY InitSecondaryColor3ubv (const GLubyte *v)
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3ubv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1785,7 +1785,7 @@ static void APIENTRY InitSecondaryColor3ui (GLuint red, GLuint green, GLuint blu
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3ui");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1801,7 +1801,7 @@ static void APIENTRY InitSecondaryColor3uiv (const GLuint *v)
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3uiv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1817,7 +1817,7 @@ static void APIENTRY InitSecondaryColor3us (GLushort red, GLushort green, GLusho
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3us");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1833,7 +1833,7 @@ static void APIENTRY InitSecondaryColor3usv (const GLushort *v)
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3usv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1849,7 +1849,7 @@ static void APIENTRY InitSecondaryColorPointer (GLint size, GLenum type, GLsizei
 	extproc = (void *) wglGetProcAddress("glSecondaryColorPointer");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1865,7 +1865,7 @@ static void APIENTRY InitWindowPos2d (GLdouble x, GLdouble y)
 	extproc = (void *) wglGetProcAddress("glWindowPos2d");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1881,7 +1881,7 @@ static void APIENTRY InitWindowPos2dv (const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos2dv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1897,7 +1897,7 @@ static void APIENTRY InitWindowPos2f (GLfloat x, GLfloat y)
 	extproc = (void *) wglGetProcAddress("glWindowPos2f");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1913,7 +1913,7 @@ static void APIENTRY InitWindowPos2fv (const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos2fv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1929,7 +1929,7 @@ static void APIENTRY InitWindowPos2i (GLint x, GLint y)
 	extproc = (void *) wglGetProcAddress("glWindowPos2i");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1945,7 +1945,7 @@ static void APIENTRY InitWindowPos2iv (const GLint *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos2iv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1961,7 +1961,7 @@ static void APIENTRY InitWindowPos2s (GLshort x, GLshort y)
 	extproc = (void *) wglGetProcAddress("glWindowPos2s");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1977,7 +1977,7 @@ static void APIENTRY InitWindowPos2sv (const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos2sv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -1993,7 +1993,7 @@ static void APIENTRY InitWindowPos3d (GLdouble x, GLdouble y, GLdouble z)
 	extproc = (void *) wglGetProcAddress("glWindowPos3d");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2009,7 +2009,7 @@ static void APIENTRY InitWindowPos3dv (const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos3dv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2025,7 +2025,7 @@ static void APIENTRY InitWindowPos3f (GLfloat x, GLfloat y, GLfloat z)
 	extproc = (void *) wglGetProcAddress("glWindowPos3f");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2041,7 +2041,7 @@ static void APIENTRY InitWindowPos3fv (const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos3fv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2057,7 +2057,7 @@ static void APIENTRY InitWindowPos3i (GLint x, GLint y, GLint z)
 	extproc = (void *) wglGetProcAddress("glWindowPos3i");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2073,7 +2073,7 @@ static void APIENTRY InitWindowPos3iv (const GLint *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos3iv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2089,7 +2089,7 @@ static void APIENTRY InitWindowPos3s (GLshort x, GLshort y, GLshort z)
 	extproc = (void *) wglGetProcAddress("glWindowPos3s");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2105,7 +2105,7 @@ static void APIENTRY InitWindowPos3sv (const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos3sv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2121,7 +2121,7 @@ static void APIENTRY InitGenQueries (GLsizei n, GLuint *ids)
 	extproc = (void *) wglGetProcAddress("glGenQueries");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2137,7 +2137,7 @@ static void APIENTRY InitDeleteQueries (GLsizei n, const GLuint *ids)
 	extproc = (void *) wglGetProcAddress("glDeleteQueries");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2153,7 +2153,7 @@ static GLboolean APIENTRY InitIsQuery (GLuint id)
 	extproc = (void *) wglGetProcAddress("glIsQuery");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -2169,7 +2169,7 @@ static void APIENTRY InitBeginQuery (GLenum target, GLuint id)
 	extproc = (void *) wglGetProcAddress("glBeginQuery");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2185,7 +2185,7 @@ static void APIENTRY InitEndQuery (GLenum target)
 	extproc = (void *) wglGetProcAddress("glEndQuery");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2201,7 +2201,7 @@ static void APIENTRY InitGetQueryiv (GLenum target, GLenum pname, GLint *params)
 	extproc = (void *) wglGetProcAddress("glGetQueryiv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2217,7 +2217,7 @@ static void APIENTRY InitGetQueryObjectiv (GLuint id, GLenum pname, GLint *param
 	extproc = (void *) wglGetProcAddress("glGetQueryObjectiv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2233,7 +2233,7 @@ static void APIENTRY InitGetQueryObjectuiv (GLuint id, GLenum pname, GLuint *par
 	extproc = (void *) wglGetProcAddress("glGetQueryObjectuiv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2249,7 +2249,7 @@ static void APIENTRY InitBindBuffer (GLenum target, GLuint buffer)
 	extproc = (void *) wglGetProcAddress("glBindBuffer");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2265,7 +2265,7 @@ static void APIENTRY InitDeleteBuffers (GLsizei n, const GLuint *buffers)
 	extproc = (void *) wglGetProcAddress("glDeleteBuffers");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2281,7 +2281,7 @@ static void APIENTRY InitGenBuffers (GLsizei n, GLuint *buffers)
 	extproc = (void *) wglGetProcAddress("glGenBuffers");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2297,7 +2297,7 @@ static GLboolean APIENTRY InitIsBuffer (GLuint buffer)
 	extproc = (void *) wglGetProcAddress("glIsBuffer");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -2313,7 +2313,7 @@ static void APIENTRY InitBufferData (GLenum target, GLsizeiptr size, const GLvoi
 	extproc = (void *) wglGetProcAddress("glBufferData");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2329,7 +2329,7 @@ static void APIENTRY InitBufferSubData (GLenum target, GLintptr offset, GLsizeip
 	extproc = (void *) wglGetProcAddress("glBufferSubData");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2345,7 +2345,7 @@ static void APIENTRY InitGetBufferSubData (GLenum target, GLintptr offset, GLsiz
 	extproc = (void *) wglGetProcAddress("glGetBufferSubData");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2361,7 +2361,7 @@ static GLvoid* APIENTRY InitMapBuffer (GLenum target, GLenum access)
 	extproc = (void *) wglGetProcAddress("glMapBuffer");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -2377,7 +2377,7 @@ static GLboolean APIENTRY InitUnmapBuffer (GLenum target)
 	extproc = (void *) wglGetProcAddress("glUnmapBuffer");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -2393,7 +2393,7 @@ static void APIENTRY InitGetBufferParameteriv (GLenum target, GLenum pname, GLin
 	extproc = (void *) wglGetProcAddress("glGetBufferParameteriv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2409,7 +2409,7 @@ static void APIENTRY InitGetBufferPointerv (GLenum target, GLenum pname, GLvoid*
 	extproc = (void *) wglGetProcAddress("glGetBufferPointerv");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2425,7 +2425,7 @@ static void APIENTRY InitActiveTextureARB (GLenum texture)
 	extproc = (void *) wglGetProcAddress("glActiveTextureARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2441,7 +2441,7 @@ static void APIENTRY InitClientActiveTextureARB (GLenum texture)
 	extproc = (void *) wglGetProcAddress("glClientActiveTextureARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2457,7 +2457,7 @@ static void APIENTRY InitMultiTexCoord1dARB (GLenum target, GLdouble s)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord1dARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2473,7 +2473,7 @@ static void APIENTRY InitMultiTexCoord1dvARB (GLenum target, const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord1dvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2489,7 +2489,7 @@ static void APIENTRY InitMultiTexCoord1fARB (GLenum target, GLfloat s)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord1fARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2505,7 +2505,7 @@ static void APIENTRY InitMultiTexCoord1fvARB (GLenum target, const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord1fvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2521,7 +2521,7 @@ static void APIENTRY InitMultiTexCoord1iARB (GLenum target, GLint s)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord1iARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2537,7 +2537,7 @@ static void APIENTRY InitMultiTexCoord1ivARB (GLenum target, const GLint *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord1ivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2553,7 +2553,7 @@ static void APIENTRY InitMultiTexCoord1sARB (GLenum target, GLshort s)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord1sARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2569,7 +2569,7 @@ static void APIENTRY InitMultiTexCoord1svARB (GLenum target, const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord1svARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2585,7 +2585,7 @@ static void APIENTRY InitMultiTexCoord2dARB (GLenum target, GLdouble s, GLdouble
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord2dARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2601,7 +2601,7 @@ static void APIENTRY InitMultiTexCoord2dvARB (GLenum target, const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord2dvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2617,7 +2617,7 @@ static void APIENTRY InitMultiTexCoord2fARB (GLenum target, GLfloat s, GLfloat t
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord2fARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2633,7 +2633,7 @@ static void APIENTRY InitMultiTexCoord2fvARB (GLenum target, const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord2fvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2649,7 +2649,7 @@ static void APIENTRY InitMultiTexCoord2iARB (GLenum target, GLint s, GLint t)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord2iARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2665,7 +2665,7 @@ static void APIENTRY InitMultiTexCoord2ivARB (GLenum target, const GLint *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord2ivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2681,7 +2681,7 @@ static void APIENTRY InitMultiTexCoord2sARB (GLenum target, GLshort s, GLshort t
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord2sARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2697,7 +2697,7 @@ static void APIENTRY InitMultiTexCoord2svARB (GLenum target, const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord2svARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2713,7 +2713,7 @@ static void APIENTRY InitMultiTexCoord3dARB (GLenum target, GLdouble s, GLdouble
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord3dARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2729,7 +2729,7 @@ static void APIENTRY InitMultiTexCoord3dvARB (GLenum target, const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord3dvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2745,7 +2745,7 @@ static void APIENTRY InitMultiTexCoord3fARB (GLenum target, GLfloat s, GLfloat t
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord3fARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2761,7 +2761,7 @@ static void APIENTRY InitMultiTexCoord3fvARB (GLenum target, const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord3fvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2777,7 +2777,7 @@ static void APIENTRY InitMultiTexCoord3iARB (GLenum target, GLint s, GLint t, GL
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord3iARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2793,7 +2793,7 @@ static void APIENTRY InitMultiTexCoord3ivARB (GLenum target, const GLint *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord3ivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2809,7 +2809,7 @@ static void APIENTRY InitMultiTexCoord3sARB (GLenum target, GLshort s, GLshort t
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord3sARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2825,7 +2825,7 @@ static void APIENTRY InitMultiTexCoord3svARB (GLenum target, const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord3svARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2841,7 +2841,7 @@ static void APIENTRY InitMultiTexCoord4dARB (GLenum target, GLdouble s, GLdouble
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord4dARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2857,7 +2857,7 @@ static void APIENTRY InitMultiTexCoord4dvARB (GLenum target, const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord4dvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2873,7 +2873,7 @@ static void APIENTRY InitMultiTexCoord4fARB (GLenum target, GLfloat s, GLfloat t
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord4fARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2889,7 +2889,7 @@ static void APIENTRY InitMultiTexCoord4fvARB (GLenum target, const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord4fvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2905,7 +2905,7 @@ static void APIENTRY InitMultiTexCoord4iARB (GLenum target, GLint s, GLint t, GL
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord4iARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2921,7 +2921,7 @@ static void APIENTRY InitMultiTexCoord4ivARB (GLenum target, const GLint *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord4ivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2937,7 +2937,7 @@ static void APIENTRY InitMultiTexCoord4sARB (GLenum target, GLshort s, GLshort t
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord4sARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2953,7 +2953,7 @@ static void APIENTRY InitMultiTexCoord4svARB (GLenum target, const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord4svARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2969,7 +2969,7 @@ static void APIENTRY InitLoadTransposeMatrixfARB (const GLfloat *m)
 	extproc = (void *) wglGetProcAddress("glLoadTransposeMatrixfARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -2985,7 +2985,7 @@ static void APIENTRY InitLoadTransposeMatrixdARB (const GLdouble *m)
 	extproc = (void *) wglGetProcAddress("glLoadTransposeMatrixdARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3001,7 +3001,7 @@ static void APIENTRY InitMultTransposeMatrixfARB (const GLfloat *m)
 	extproc = (void *) wglGetProcAddress("glMultTransposeMatrixfARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3017,7 +3017,7 @@ static void APIENTRY InitMultTransposeMatrixdARB (const GLdouble *m)
 	extproc = (void *) wglGetProcAddress("glMultTransposeMatrixdARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3033,7 +3033,7 @@ static void APIENTRY InitSampleCoverageARB (GLclampf value, GLboolean invert)
 	extproc = (void *) wglGetProcAddress("glSampleCoverageARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3049,7 +3049,7 @@ static void APIENTRY InitCompressedTexImage3DARB (GLenum target, GLint level, GL
 	extproc = (void *) wglGetProcAddress("glCompressedTexImage3DARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3065,7 +3065,7 @@ static void APIENTRY InitCompressedTexImage2DARB (GLenum target, GLint level, GL
 	extproc = (void *) wglGetProcAddress("glCompressedTexImage2DARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3081,7 +3081,7 @@ static void APIENTRY InitCompressedTexImage1DARB (GLenum target, GLint level, GL
 	extproc = (void *) wglGetProcAddress("glCompressedTexImage1DARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3097,7 +3097,7 @@ static void APIENTRY InitCompressedTexSubImage3DARB (GLenum target, GLint level,
 	extproc = (void *) wglGetProcAddress("glCompressedTexSubImage3DARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3113,7 +3113,7 @@ static void APIENTRY InitCompressedTexSubImage2DARB (GLenum target, GLint level,
 	extproc = (void *) wglGetProcAddress("glCompressedTexSubImage2DARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3129,7 +3129,7 @@ static void APIENTRY InitCompressedTexSubImage1DARB (GLenum target, GLint level,
 	extproc = (void *) wglGetProcAddress("glCompressedTexSubImage1DARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3145,7 +3145,7 @@ static void APIENTRY InitGetCompressedTexImageARB (GLenum target, GLint level, G
 	extproc = (void *) wglGetProcAddress("glGetCompressedTexImageARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3161,7 +3161,7 @@ static void APIENTRY InitPointParameterfARB (GLenum pname, GLfloat param)
 	extproc = (void *) wglGetProcAddress("glPointParameterfARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3177,7 +3177,7 @@ static void APIENTRY InitPointParameterfvARB (GLenum pname, const GLfloat *param
 	extproc = (void *) wglGetProcAddress("glPointParameterfvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3193,7 +3193,7 @@ static void APIENTRY InitWeightbvARB (GLint size, const GLbyte *weights)
 	extproc = (void *) wglGetProcAddress("glWeightbvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3209,7 +3209,7 @@ static void APIENTRY InitWeightsvARB (GLint size, const GLshort *weights)
 	extproc = (void *) wglGetProcAddress("glWeightsvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3225,7 +3225,7 @@ static void APIENTRY InitWeightivARB (GLint size, const GLint *weights)
 	extproc = (void *) wglGetProcAddress("glWeightivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3241,7 +3241,7 @@ static void APIENTRY InitWeightfvARB (GLint size, const GLfloat *weights)
 	extproc = (void *) wglGetProcAddress("glWeightfvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3257,7 +3257,7 @@ static void APIENTRY InitWeightdvARB (GLint size, const GLdouble *weights)
 	extproc = (void *) wglGetProcAddress("glWeightdvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3273,7 +3273,7 @@ static void APIENTRY InitWeightubvARB (GLint size, const GLubyte *weights)
 	extproc = (void *) wglGetProcAddress("glWeightubvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3289,7 +3289,7 @@ static void APIENTRY InitWeightusvARB (GLint size, const GLushort *weights)
 	extproc = (void *) wglGetProcAddress("glWeightusvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3305,7 +3305,7 @@ static void APIENTRY InitWeightuivARB (GLint size, const GLuint *weights)
 	extproc = (void *) wglGetProcAddress("glWeightuivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3321,7 +3321,7 @@ static void APIENTRY InitWeightPointerARB (GLint size, GLenum type, GLsizei stri
 	extproc = (void *) wglGetProcAddress("glWeightPointerARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3337,7 +3337,7 @@ static void APIENTRY InitVertexBlendARB (GLint count)
 	extproc = (void *) wglGetProcAddress("glVertexBlendARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3353,7 +3353,7 @@ static void APIENTRY InitCurrentPaletteMatrixARB (GLint index)
 	extproc = (void *) wglGetProcAddress("glCurrentPaletteMatrixARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3369,7 +3369,7 @@ static void APIENTRY InitMatrixIndexubvARB (GLint size, const GLubyte *indices)
 	extproc = (void *) wglGetProcAddress("glMatrixIndexubvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3385,7 +3385,7 @@ static void APIENTRY InitMatrixIndexusvARB (GLint size, const GLushort *indices)
 	extproc = (void *) wglGetProcAddress("glMatrixIndexusvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3401,7 +3401,7 @@ static void APIENTRY InitMatrixIndexuivARB (GLint size, const GLuint *indices)
 	extproc = (void *) wglGetProcAddress("glMatrixIndexuivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3417,7 +3417,7 @@ static void APIENTRY InitMatrixIndexPointerARB (GLint size, GLenum type, GLsizei
 	extproc = (void *) wglGetProcAddress("glMatrixIndexPointerARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3433,7 +3433,7 @@ static void APIENTRY InitWindowPos2dARB (GLdouble x, GLdouble y)
 	extproc = (void *) wglGetProcAddress("glWindowPos2dARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3449,7 +3449,7 @@ static void APIENTRY InitWindowPos2dvARB (const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos2dvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3465,7 +3465,7 @@ static void APIENTRY InitWindowPos2fARB (GLfloat x, GLfloat y)
 	extproc = (void *) wglGetProcAddress("glWindowPos2fARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3481,7 +3481,7 @@ static void APIENTRY InitWindowPos2fvARB (const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos2fvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3497,7 +3497,7 @@ static void APIENTRY InitWindowPos2iARB (GLint x, GLint y)
 	extproc = (void *) wglGetProcAddress("glWindowPos2iARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3513,7 +3513,7 @@ static void APIENTRY InitWindowPos2ivARB (const GLint *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos2ivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3529,7 +3529,7 @@ static void APIENTRY InitWindowPos2sARB (GLshort x, GLshort y)
 	extproc = (void *) wglGetProcAddress("glWindowPos2sARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3545,7 +3545,7 @@ static void APIENTRY InitWindowPos2svARB (const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos2svARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3561,7 +3561,7 @@ static void APIENTRY InitWindowPos3dARB (GLdouble x, GLdouble y, GLdouble z)
 	extproc = (void *) wglGetProcAddress("glWindowPos3dARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3577,7 +3577,7 @@ static void APIENTRY InitWindowPos3dvARB (const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos3dvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3593,7 +3593,7 @@ static void APIENTRY InitWindowPos3fARB (GLfloat x, GLfloat y, GLfloat z)
 	extproc = (void *) wglGetProcAddress("glWindowPos3fARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3609,7 +3609,7 @@ static void APIENTRY InitWindowPos3fvARB (const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos3fvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3625,7 +3625,7 @@ static void APIENTRY InitWindowPos3iARB (GLint x, GLint y, GLint z)
 	extproc = (void *) wglGetProcAddress("glWindowPos3iARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3641,7 +3641,7 @@ static void APIENTRY InitWindowPos3ivARB (const GLint *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos3ivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3657,7 +3657,7 @@ static void APIENTRY InitWindowPos3sARB (GLshort x, GLshort y, GLshort z)
 	extproc = (void *) wglGetProcAddress("glWindowPos3sARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3673,7 +3673,7 @@ static void APIENTRY InitWindowPos3svARB (const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos3svARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3689,7 +3689,7 @@ static void APIENTRY InitVertexAttrib1dARB (GLuint index, GLdouble x)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib1dARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3705,7 +3705,7 @@ static void APIENTRY InitVertexAttrib1dvARB (GLuint index, const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib1dvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3721,7 +3721,7 @@ static void APIENTRY InitVertexAttrib1fARB (GLuint index, GLfloat x)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib1fARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3737,7 +3737,7 @@ static void APIENTRY InitVertexAttrib1fvARB (GLuint index, const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib1fvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3753,7 +3753,7 @@ static void APIENTRY InitVertexAttrib1sARB (GLuint index, GLshort x)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib1sARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3769,7 +3769,7 @@ static void APIENTRY InitVertexAttrib1svARB (GLuint index, const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib1svARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3785,7 +3785,7 @@ static void APIENTRY InitVertexAttrib2dARB (GLuint index, GLdouble x, GLdouble y
 	extproc = (void *) wglGetProcAddress("glVertexAttrib2dARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3801,7 +3801,7 @@ static void APIENTRY InitVertexAttrib2dvARB (GLuint index, const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib2dvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3817,7 +3817,7 @@ static void APIENTRY InitVertexAttrib2fARB (GLuint index, GLfloat x, GLfloat y)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib2fARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3833,7 +3833,7 @@ static void APIENTRY InitVertexAttrib2fvARB (GLuint index, const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib2fvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3849,7 +3849,7 @@ static void APIENTRY InitVertexAttrib2sARB (GLuint index, GLshort x, GLshort y)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib2sARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3865,7 +3865,7 @@ static void APIENTRY InitVertexAttrib2svARB (GLuint index, const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib2svARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3881,7 +3881,7 @@ static void APIENTRY InitVertexAttrib3dARB (GLuint index, GLdouble x, GLdouble y
 	extproc = (void *) wglGetProcAddress("glVertexAttrib3dARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3897,7 +3897,7 @@ static void APIENTRY InitVertexAttrib3dvARB (GLuint index, const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib3dvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3913,7 +3913,7 @@ static void APIENTRY InitVertexAttrib3fARB (GLuint index, GLfloat x, GLfloat y, 
 	extproc = (void *) wglGetProcAddress("glVertexAttrib3fARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3929,7 +3929,7 @@ static void APIENTRY InitVertexAttrib3fvARB (GLuint index, const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib3fvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3945,7 +3945,7 @@ static void APIENTRY InitVertexAttrib3sARB (GLuint index, GLshort x, GLshort y, 
 	extproc = (void *) wglGetProcAddress("glVertexAttrib3sARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3961,7 +3961,7 @@ static void APIENTRY InitVertexAttrib3svARB (GLuint index, const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib3svARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3977,7 +3977,7 @@ static void APIENTRY InitVertexAttrib4NbvARB (GLuint index, const GLbyte *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4NbvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -3993,7 +3993,7 @@ static void APIENTRY InitVertexAttrib4NivARB (GLuint index, const GLint *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4NivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4009,7 +4009,7 @@ static void APIENTRY InitVertexAttrib4NsvARB (GLuint index, const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4NsvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4025,7 +4025,7 @@ static void APIENTRY InitVertexAttrib4NubARB (GLuint index, GLubyte x, GLubyte y
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4NubARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4041,7 +4041,7 @@ static void APIENTRY InitVertexAttrib4NubvARB (GLuint index, const GLubyte *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4NubvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4057,7 +4057,7 @@ static void APIENTRY InitVertexAttrib4NuivARB (GLuint index, const GLuint *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4NuivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4073,7 +4073,7 @@ static void APIENTRY InitVertexAttrib4NusvARB (GLuint index, const GLushort *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4NusvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4089,7 +4089,7 @@ static void APIENTRY InitVertexAttrib4bvARB (GLuint index, const GLbyte *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4bvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4105,7 +4105,7 @@ static void APIENTRY InitVertexAttrib4dARB (GLuint index, GLdouble x, GLdouble y
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4dARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4121,7 +4121,7 @@ static void APIENTRY InitVertexAttrib4dvARB (GLuint index, const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4dvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4137,7 +4137,7 @@ static void APIENTRY InitVertexAttrib4fARB (GLuint index, GLfloat x, GLfloat y, 
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4fARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4153,7 +4153,7 @@ static void APIENTRY InitVertexAttrib4fvARB (GLuint index, const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4fvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4169,7 +4169,7 @@ static void APIENTRY InitVertexAttrib4ivARB (GLuint index, const GLint *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4ivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4185,7 +4185,7 @@ static void APIENTRY InitVertexAttrib4sARB (GLuint index, GLshort x, GLshort y, 
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4sARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4201,7 +4201,7 @@ static void APIENTRY InitVertexAttrib4svARB (GLuint index, const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4svARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4217,7 +4217,7 @@ static void APIENTRY InitVertexAttrib4ubvARB (GLuint index, const GLubyte *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4ubvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4233,7 +4233,7 @@ static void APIENTRY InitVertexAttrib4uivARB (GLuint index, const GLuint *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4uivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4249,7 +4249,7 @@ static void APIENTRY InitVertexAttrib4usvARB (GLuint index, const GLushort *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4usvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4265,7 +4265,7 @@ static void APIENTRY InitVertexAttribPointerARB (GLuint index, GLint size, GLenu
 	extproc = (void *) wglGetProcAddress("glVertexAttribPointerARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4281,7 +4281,7 @@ static void APIENTRY InitEnableVertexAttribArrayARB (GLuint index)
 	extproc = (void *) wglGetProcAddress("glEnableVertexAttribArrayARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4297,7 +4297,7 @@ static void APIENTRY InitDisableVertexAttribArrayARB (GLuint index)
 	extproc = (void *) wglGetProcAddress("glDisableVertexAttribArrayARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4313,7 +4313,7 @@ static void APIENTRY InitProgramStringARB (GLenum target, GLenum format, GLsizei
 	extproc = (void *) wglGetProcAddress("glProgramStringARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4329,7 +4329,7 @@ static void APIENTRY InitBindProgramARB (GLenum target, GLuint program)
 	extproc = (void *) wglGetProcAddress("glBindProgramARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4345,7 +4345,7 @@ static void APIENTRY InitDeleteProgramsARB (GLsizei n, const GLuint *programs)
 	extproc = (void *) wglGetProcAddress("glDeleteProgramsARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4361,7 +4361,7 @@ static void APIENTRY InitGenProgramsARB (GLsizei n, GLuint *programs)
 	extproc = (void *) wglGetProcAddress("glGenProgramsARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4377,7 +4377,7 @@ static void APIENTRY InitProgramEnvParameter4dARB (GLenum target, GLuint index, 
 	extproc = (void *) wglGetProcAddress("glProgramEnvParameter4dARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4393,7 +4393,7 @@ static void APIENTRY InitProgramEnvParameter4dvARB (GLenum target, GLuint index,
 	extproc = (void *) wglGetProcAddress("glProgramEnvParameter4dvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4409,7 +4409,7 @@ static void APIENTRY InitProgramEnvParameter4fARB (GLenum target, GLuint index, 
 	extproc = (void *) wglGetProcAddress("glProgramEnvParameter4fARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4425,7 +4425,7 @@ static void APIENTRY InitProgramEnvParameter4fvARB (GLenum target, GLuint index,
 	extproc = (void *) wglGetProcAddress("glProgramEnvParameter4fvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4441,7 +4441,7 @@ static void APIENTRY InitProgramLocalParameter4dARB (GLenum target, GLuint index
 	extproc = (void *) wglGetProcAddress("glProgramLocalParameter4dARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4457,7 +4457,7 @@ static void APIENTRY InitProgramLocalParameter4dvARB (GLenum target, GLuint inde
 	extproc = (void *) wglGetProcAddress("glProgramLocalParameter4dvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4473,7 +4473,7 @@ static void APIENTRY InitProgramLocalParameter4fARB (GLenum target, GLuint index
 	extproc = (void *) wglGetProcAddress("glProgramLocalParameter4fARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4489,7 +4489,7 @@ static void APIENTRY InitProgramLocalParameter4fvARB (GLenum target, GLuint inde
 	extproc = (void *) wglGetProcAddress("glProgramLocalParameter4fvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4505,7 +4505,7 @@ static void APIENTRY InitGetProgramEnvParameterdvARB (GLenum target, GLuint inde
 	extproc = (void *) wglGetProcAddress("glGetProgramEnvParameterdvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4521,7 +4521,7 @@ static void APIENTRY InitGetProgramEnvParameterfvARB (GLenum target, GLuint inde
 	extproc = (void *) wglGetProcAddress("glGetProgramEnvParameterfvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4537,7 +4537,7 @@ static void APIENTRY InitGetProgramLocalParameterdvARB (GLenum target, GLuint in
 	extproc = (void *) wglGetProcAddress("glGetProgramLocalParameterdvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4553,7 +4553,7 @@ static void APIENTRY InitGetProgramLocalParameterfvARB (GLenum target, GLuint in
 	extproc = (void *) wglGetProcAddress("glGetProgramLocalParameterfvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4569,7 +4569,7 @@ static void APIENTRY InitGetProgramivARB (GLenum target, GLenum pname, GLint *pa
 	extproc = (void *) wglGetProcAddress("glGetProgramivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4585,7 +4585,7 @@ static void APIENTRY InitGetProgramStringARB (GLenum target, GLenum pname, GLvoi
 	extproc = (void *) wglGetProcAddress("glGetProgramStringARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4601,7 +4601,7 @@ static void APIENTRY InitGetVertexAttribdvARB (GLuint index, GLenum pname, GLdou
 	extproc = (void *) wglGetProcAddress("glGetVertexAttribdvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4617,7 +4617,7 @@ static void APIENTRY InitGetVertexAttribfvARB (GLuint index, GLenum pname, GLflo
 	extproc = (void *) wglGetProcAddress("glGetVertexAttribfvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4633,7 +4633,7 @@ static void APIENTRY InitGetVertexAttribivARB (GLuint index, GLenum pname, GLint
 	extproc = (void *) wglGetProcAddress("glGetVertexAttribivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4649,7 +4649,7 @@ static void APIENTRY InitGetVertexAttribPointervARB (GLuint index, GLenum pname,
 	extproc = (void *) wglGetProcAddress("glGetVertexAttribPointervARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4665,7 +4665,7 @@ static GLboolean APIENTRY InitIsProgramARB (GLuint program)
 	extproc = (void *) wglGetProcAddress("glIsProgramARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -4681,7 +4681,7 @@ static void APIENTRY InitBindBufferARB (GLenum target, GLuint buffer)
 	extproc = (void *) wglGetProcAddress("glBindBufferARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4697,7 +4697,7 @@ static void APIENTRY InitDeleteBuffersARB (GLsizei n, const GLuint *buffers)
 	extproc = (void *) wglGetProcAddress("glDeleteBuffersARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4713,7 +4713,7 @@ static void APIENTRY InitGenBuffersARB (GLsizei n, GLuint *buffers)
 	extproc = (void *) wglGetProcAddress("glGenBuffersARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4729,7 +4729,7 @@ static GLboolean APIENTRY InitIsBufferARB (GLuint buffer)
 	extproc = (void *) wglGetProcAddress("glIsBufferARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -4745,7 +4745,7 @@ static void APIENTRY InitBufferDataARB (GLenum target, GLsizeiptrARB size, const
 	extproc = (void *) wglGetProcAddress("glBufferDataARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4761,7 +4761,7 @@ static void APIENTRY InitBufferSubDataARB (GLenum target, GLintptrARB offset, GL
 	extproc = (void *) wglGetProcAddress("glBufferSubDataARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4777,7 +4777,7 @@ static void APIENTRY InitGetBufferSubDataARB (GLenum target, GLintptrARB offset,
 	extproc = (void *) wglGetProcAddress("glGetBufferSubDataARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4793,7 +4793,7 @@ static GLvoid* APIENTRY InitMapBufferARB (GLenum target, GLenum access)
 	extproc = (void *) wglGetProcAddress("glMapBufferARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -4809,7 +4809,7 @@ static GLboolean APIENTRY InitUnmapBufferARB (GLenum target)
 	extproc = (void *) wglGetProcAddress("glUnmapBufferARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -4825,7 +4825,7 @@ static void APIENTRY InitGetBufferParameterivARB (GLenum target, GLenum pname, G
 	extproc = (void *) wglGetProcAddress("glGetBufferParameterivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4841,7 +4841,7 @@ static void APIENTRY InitGetBufferPointervARB (GLenum target, GLenum pname, GLvo
 	extproc = (void *) wglGetProcAddress("glGetBufferPointervARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4857,7 +4857,7 @@ static void APIENTRY InitGenQueriesARB (GLsizei n, GLuint *ids)
 	extproc = (void *) wglGetProcAddress("glGenQueriesARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4873,7 +4873,7 @@ static void APIENTRY InitDeleteQueriesARB (GLsizei n, const GLuint *ids)
 	extproc = (void *) wglGetProcAddress("glDeleteQueriesARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4889,7 +4889,7 @@ static GLboolean APIENTRY InitIsQueryARB (GLuint id)
 	extproc = (void *) wglGetProcAddress("glIsQueryARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -4905,7 +4905,7 @@ static void APIENTRY InitBeginQueryARB (GLenum target, GLuint id)
 	extproc = (void *) wglGetProcAddress("glBeginQueryARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4921,7 +4921,7 @@ static void APIENTRY InitEndQueryARB (GLenum target)
 	extproc = (void *) wglGetProcAddress("glEndQueryARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4937,7 +4937,7 @@ static void APIENTRY InitGetQueryivARB (GLenum target, GLenum pname, GLint *para
 	extproc = (void *) wglGetProcAddress("glGetQueryivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4953,7 +4953,7 @@ static void APIENTRY InitGetQueryObjectivARB (GLuint id, GLenum pname, GLint *pa
 	extproc = (void *) wglGetProcAddress("glGetQueryObjectivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4969,7 +4969,7 @@ static void APIENTRY InitGetQueryObjectuivARB (GLuint id, GLenum pname, GLuint *
 	extproc = (void *) wglGetProcAddress("glGetQueryObjectuivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -4985,7 +4985,7 @@ static void APIENTRY InitDeleteObjectARB (GLhandleARB obj)
 	extproc = (void *) wglGetProcAddress("glDeleteObjectARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5001,7 +5001,7 @@ static GLhandleARB APIENTRY InitGetHandleARB (GLenum pname)
 	extproc = (void *) wglGetProcAddress("glGetHandleARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -5017,7 +5017,7 @@ static void APIENTRY InitDetachObjectARB (GLhandleARB containerObj, GLhandleARB 
 	extproc = (void *) wglGetProcAddress("glDetachObjectARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5033,7 +5033,7 @@ static GLhandleARB APIENTRY InitCreateShaderObjectARB (GLenum shaderType)
 	extproc = (void *) wglGetProcAddress("glCreateShaderObjectARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -5049,7 +5049,7 @@ static void APIENTRY InitShaderSourceARB (GLhandleARB shaderObj, GLsizei count, 
 	extproc = (void *) wglGetProcAddress("glShaderSourceARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5065,7 +5065,7 @@ static void APIENTRY InitCompileShaderARB (GLhandleARB shaderObj)
 	extproc = (void *) wglGetProcAddress("glCompileShaderARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5081,7 +5081,7 @@ static GLhandleARB APIENTRY InitCreateProgramObjectARB (void)
 	extproc = (void *) wglGetProcAddress("glCreateProgramObjectARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -5097,7 +5097,7 @@ static void APIENTRY InitAttachObjectARB (GLhandleARB containerObj, GLhandleARB 
 	extproc = (void *) wglGetProcAddress("glAttachObjectARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5113,7 +5113,7 @@ static void APIENTRY InitLinkProgramARB (GLhandleARB programObj)
 	extproc = (void *) wglGetProcAddress("glLinkProgramARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5129,7 +5129,7 @@ static void APIENTRY InitUseProgramObjectARB (GLhandleARB programObj)
 	extproc = (void *) wglGetProcAddress("glUseProgramObjectARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5145,7 +5145,7 @@ static void APIENTRY InitValidateProgramARB (GLhandleARB programObj)
 	extproc = (void *) wglGetProcAddress("glValidateProgramARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5161,7 +5161,7 @@ static void APIENTRY InitUniform1fARB (GLint location, GLfloat v0)
 	extproc = (void *) wglGetProcAddress("glUniform1fARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5177,7 +5177,7 @@ static void APIENTRY InitUniform2fARB (GLint location, GLfloat v0, GLfloat v1)
 	extproc = (void *) wglGetProcAddress("glUniform2fARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5193,7 +5193,7 @@ static void APIENTRY InitUniform3fARB (GLint location, GLfloat v0, GLfloat v1, G
 	extproc = (void *) wglGetProcAddress("glUniform3fARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5209,7 +5209,7 @@ static void APIENTRY InitUniform4fARB (GLint location, GLfloat v0, GLfloat v1, G
 	extproc = (void *) wglGetProcAddress("glUniform4fARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5225,7 +5225,7 @@ static void APIENTRY InitUniform1iARB (GLint location, GLint v0)
 	extproc = (void *) wglGetProcAddress("glUniform1iARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5241,7 +5241,7 @@ static void APIENTRY InitUniform2iARB (GLint location, GLint v0, GLint v1)
 	extproc = (void *) wglGetProcAddress("glUniform2iARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5257,7 +5257,7 @@ static void APIENTRY InitUniform3iARB (GLint location, GLint v0, GLint v1, GLint
 	extproc = (void *) wglGetProcAddress("glUniform3iARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5273,7 +5273,7 @@ static void APIENTRY InitUniform4iARB (GLint location, GLint v0, GLint v1, GLint
 	extproc = (void *) wglGetProcAddress("glUniform4iARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5289,7 +5289,7 @@ static void APIENTRY InitUniform1fvARB (GLint location, GLsizei count, const GLf
 	extproc = (void *) wglGetProcAddress("glUniform1fvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5305,7 +5305,7 @@ static void APIENTRY InitUniform2fvARB (GLint location, GLsizei count, const GLf
 	extproc = (void *) wglGetProcAddress("glUniform2fvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5321,7 +5321,7 @@ static void APIENTRY InitUniform3fvARB (GLint location, GLsizei count, const GLf
 	extproc = (void *) wglGetProcAddress("glUniform3fvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5337,7 +5337,7 @@ static void APIENTRY InitUniform4fvARB (GLint location, GLsizei count, const GLf
 	extproc = (void *) wglGetProcAddress("glUniform4fvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5353,7 +5353,7 @@ static void APIENTRY InitUniform1ivARB (GLint location, GLsizei count, const GLi
 	extproc = (void *) wglGetProcAddress("glUniform1ivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5369,7 +5369,7 @@ static void APIENTRY InitUniform2ivARB (GLint location, GLsizei count, const GLi
 	extproc = (void *) wglGetProcAddress("glUniform2ivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5385,7 +5385,7 @@ static void APIENTRY InitUniform3ivARB (GLint location, GLsizei count, const GLi
 	extproc = (void *) wglGetProcAddress("glUniform3ivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5401,7 +5401,7 @@ static void APIENTRY InitUniform4ivARB (GLint location, GLsizei count, const GLi
 	extproc = (void *) wglGetProcAddress("glUniform4ivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5417,7 +5417,7 @@ static void APIENTRY InitUniformMatrix2fvARB (GLint location, GLsizei count, GLb
 	extproc = (void *) wglGetProcAddress("glUniformMatrix2fvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5433,7 +5433,7 @@ static void APIENTRY InitUniformMatrix3fvARB (GLint location, GLsizei count, GLb
 	extproc = (void *) wglGetProcAddress("glUniformMatrix3fvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5449,7 +5449,7 @@ static void APIENTRY InitUniformMatrix4fvARB (GLint location, GLsizei count, GLb
 	extproc = (void *) wglGetProcAddress("glUniformMatrix4fvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5465,7 +5465,7 @@ static void APIENTRY InitGetObjectParameterfvARB (GLhandleARB obj, GLenum pname,
 	extproc = (void *) wglGetProcAddress("glGetObjectParameterfvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5481,7 +5481,7 @@ static void APIENTRY InitGetObjectParameterivARB (GLhandleARB obj, GLenum pname,
 	extproc = (void *) wglGetProcAddress("glGetObjectParameterivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5497,7 +5497,7 @@ static void APIENTRY InitGetInfoLogARB (GLhandleARB obj, GLsizei maxLength, GLsi
 	extproc = (void *) wglGetProcAddress("glGetInfoLogARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5513,7 +5513,7 @@ static void APIENTRY InitGetAttachedObjectsARB (GLhandleARB containerObj, GLsize
 	extproc = (void *) wglGetProcAddress("glGetAttachedObjectsARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5529,7 +5529,7 @@ static GLint APIENTRY InitGetUniformLocationARB (GLhandleARB programObj, const G
 	extproc = (void *) wglGetProcAddress("glGetUniformLocationARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -5545,7 +5545,7 @@ static void APIENTRY InitGetActiveUniformARB (GLhandleARB programObj, GLuint ind
 	extproc = (void *) wglGetProcAddress("glGetActiveUniformARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5561,7 +5561,7 @@ static void APIENTRY InitGetUniformfvARB (GLhandleARB programObj, GLint location
 	extproc = (void *) wglGetProcAddress("glGetUniformfvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5577,7 +5577,7 @@ static void APIENTRY InitGetUniformivARB (GLhandleARB programObj, GLint location
 	extproc = (void *) wglGetProcAddress("glGetUniformivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5593,7 +5593,7 @@ static void APIENTRY InitGetShaderSourceARB (GLhandleARB obj, GLsizei maxLength,
 	extproc = (void *) wglGetProcAddress("glGetShaderSourceARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5609,7 +5609,7 @@ static void APIENTRY InitBindAttribLocationARB (GLhandleARB programObj, GLuint i
 	extproc = (void *) wglGetProcAddress("glBindAttribLocationARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5625,7 +5625,7 @@ static void APIENTRY InitGetActiveAttribARB (GLhandleARB programObj, GLuint inde
 	extproc = (void *) wglGetProcAddress("glGetActiveAttribARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5641,7 +5641,7 @@ static GLint APIENTRY InitGetAttribLocationARB (GLhandleARB programObj, const GL
 	extproc = (void *) wglGetProcAddress("glGetAttribLocationARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -5657,7 +5657,7 @@ static void APIENTRY InitBlendColorEXT (GLclampf red, GLclampf green, GLclampf b
 	extproc = (void *) wglGetProcAddress("glBlendColorEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5673,7 +5673,7 @@ static void APIENTRY InitPolygonOffsetEXT (GLfloat factor, GLfloat bias)
 	extproc = (void *) wglGetProcAddress("glPolygonOffsetEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5689,7 +5689,7 @@ static void APIENTRY InitTexImage3DEXT (GLenum target, GLint level, GLenum inter
 	extproc = (void *) wglGetProcAddress("glTexImage3DEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5705,7 +5705,7 @@ static void APIENTRY InitTexSubImage3DEXT (GLenum target, GLint level, GLint xof
 	extproc = (void *) wglGetProcAddress("glTexSubImage3DEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5721,7 +5721,7 @@ static void APIENTRY InitGetTexFilterFuncSGIS (GLenum target, GLenum filter, GLf
 	extproc = (void *) wglGetProcAddress("glGetTexFilterFuncSGIS");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5737,7 +5737,7 @@ static void APIENTRY InitTexFilterFuncSGIS (GLenum target, GLenum filter, GLsize
 	extproc = (void *) wglGetProcAddress("glTexFilterFuncSGIS");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5753,7 +5753,7 @@ static void APIENTRY InitTexSubImage1DEXT (GLenum target, GLint level, GLint xof
 	extproc = (void *) wglGetProcAddress("glTexSubImage1DEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5769,7 +5769,7 @@ static void APIENTRY InitTexSubImage2DEXT (GLenum target, GLint level, GLint xof
 	extproc = (void *) wglGetProcAddress("glTexSubImage2DEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5785,7 +5785,7 @@ static void APIENTRY InitCopyTexImage1DEXT (GLenum target, GLint level, GLenum i
 	extproc = (void *) wglGetProcAddress("glCopyTexImage1DEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5801,7 +5801,7 @@ static void APIENTRY InitCopyTexImage2DEXT (GLenum target, GLint level, GLenum i
 	extproc = (void *) wglGetProcAddress("glCopyTexImage2DEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5817,7 +5817,7 @@ static void APIENTRY InitCopyTexSubImage1DEXT (GLenum target, GLint level, GLint
 	extproc = (void *) wglGetProcAddress("glCopyTexSubImage1DEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5833,7 +5833,7 @@ static void APIENTRY InitCopyTexSubImage2DEXT (GLenum target, GLint level, GLint
 	extproc = (void *) wglGetProcAddress("glCopyTexSubImage2DEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5849,7 +5849,7 @@ static void APIENTRY InitCopyTexSubImage3DEXT (GLenum target, GLint level, GLint
 	extproc = (void *) wglGetProcAddress("glCopyTexSubImage3DEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5865,7 +5865,7 @@ static void APIENTRY InitGetHistogramEXT (GLenum target, GLboolean reset, GLenum
 	extproc = (void *) wglGetProcAddress("glGetHistogramEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5881,7 +5881,7 @@ static void APIENTRY InitGetHistogramParameterfvEXT (GLenum target, GLenum pname
 	extproc = (void *) wglGetProcAddress("glGetHistogramParameterfvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5897,7 +5897,7 @@ static void APIENTRY InitGetHistogramParameterivEXT (GLenum target, GLenum pname
 	extproc = (void *) wglGetProcAddress("glGetHistogramParameterivEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5913,7 +5913,7 @@ static void APIENTRY InitGetMinmaxEXT (GLenum target, GLboolean reset, GLenum fo
 	extproc = (void *) wglGetProcAddress("glGetMinmaxEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5929,7 +5929,7 @@ static void APIENTRY InitGetMinmaxParameterfvEXT (GLenum target, GLenum pname, G
 	extproc = (void *) wglGetProcAddress("glGetMinmaxParameterfvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5945,7 +5945,7 @@ static void APIENTRY InitGetMinmaxParameterivEXT (GLenum target, GLenum pname, G
 	extproc = (void *) wglGetProcAddress("glGetMinmaxParameterivEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5961,7 +5961,7 @@ static void APIENTRY InitHistogramEXT (GLenum target, GLsizei width, GLenum inte
 	extproc = (void *) wglGetProcAddress("glHistogramEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5977,7 +5977,7 @@ static void APIENTRY InitMinmaxEXT (GLenum target, GLenum internalformat, GLbool
 	extproc = (void *) wglGetProcAddress("glMinmaxEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -5993,7 +5993,7 @@ static void APIENTRY InitResetHistogramEXT (GLenum target)
 	extproc = (void *) wglGetProcAddress("glResetHistogramEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6009,7 +6009,7 @@ static void APIENTRY InitResetMinmaxEXT (GLenum target)
 	extproc = (void *) wglGetProcAddress("glResetMinmaxEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6025,7 +6025,7 @@ static void APIENTRY InitConvolutionFilter1DEXT (GLenum target, GLenum internalf
 	extproc = (void *) wglGetProcAddress("glConvolutionFilter1DEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6041,7 +6041,7 @@ static void APIENTRY InitConvolutionFilter2DEXT (GLenum target, GLenum internalf
 	extproc = (void *) wglGetProcAddress("glConvolutionFilter2DEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6057,7 +6057,7 @@ static void APIENTRY InitConvolutionParameterfEXT (GLenum target, GLenum pname, 
 	extproc = (void *) wglGetProcAddress("glConvolutionParameterfEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6073,7 +6073,7 @@ static void APIENTRY InitConvolutionParameterfvEXT (GLenum target, GLenum pname,
 	extproc = (void *) wglGetProcAddress("glConvolutionParameterfvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6089,7 +6089,7 @@ static void APIENTRY InitConvolutionParameteriEXT (GLenum target, GLenum pname, 
 	extproc = (void *) wglGetProcAddress("glConvolutionParameteriEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6105,7 +6105,7 @@ static void APIENTRY InitConvolutionParameterivEXT (GLenum target, GLenum pname,
 	extproc = (void *) wglGetProcAddress("glConvolutionParameterivEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6121,7 +6121,7 @@ static void APIENTRY InitCopyConvolutionFilter1DEXT (GLenum target, GLenum inter
 	extproc = (void *) wglGetProcAddress("glCopyConvolutionFilter1DEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6137,7 +6137,7 @@ static void APIENTRY InitCopyConvolutionFilter2DEXT (GLenum target, GLenum inter
 	extproc = (void *) wglGetProcAddress("glCopyConvolutionFilter2DEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6153,7 +6153,7 @@ static void APIENTRY InitGetConvolutionFilterEXT (GLenum target, GLenum format, 
 	extproc = (void *) wglGetProcAddress("glGetConvolutionFilterEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6169,7 +6169,7 @@ static void APIENTRY InitGetConvolutionParameterfvEXT (GLenum target, GLenum pna
 	extproc = (void *) wglGetProcAddress("glGetConvolutionParameterfvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6185,7 +6185,7 @@ static void APIENTRY InitGetConvolutionParameterivEXT (GLenum target, GLenum pna
 	extproc = (void *) wglGetProcAddress("glGetConvolutionParameterivEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6201,7 +6201,7 @@ static void APIENTRY InitGetSeparableFilterEXT (GLenum target, GLenum format, GL
 	extproc = (void *) wglGetProcAddress("glGetSeparableFilterEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6217,7 +6217,7 @@ static void APIENTRY InitSeparableFilter2DEXT (GLenum target, GLenum internalfor
 	extproc = (void *) wglGetProcAddress("glSeparableFilter2DEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6233,7 +6233,7 @@ static void APIENTRY InitColorTableSGI (GLenum target, GLenum internalformat, GL
 	extproc = (void *) wglGetProcAddress("glColorTableSGI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6249,7 +6249,7 @@ static void APIENTRY InitColorTableParameterfvSGI (GLenum target, GLenum pname, 
 	extproc = (void *) wglGetProcAddress("glColorTableParameterfvSGI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6265,7 +6265,7 @@ static void APIENTRY InitColorTableParameterivSGI (GLenum target, GLenum pname, 
 	extproc = (void *) wglGetProcAddress("glColorTableParameterivSGI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6281,7 +6281,7 @@ static void APIENTRY InitCopyColorTableSGI (GLenum target, GLenum internalformat
 	extproc = (void *) wglGetProcAddress("glCopyColorTableSGI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6297,7 +6297,7 @@ static void APIENTRY InitGetColorTableSGI (GLenum target, GLenum format, GLenum 
 	extproc = (void *) wglGetProcAddress("glGetColorTableSGI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6313,7 +6313,7 @@ static void APIENTRY InitGetColorTableParameterfvSGI (GLenum target, GLenum pnam
 	extproc = (void *) wglGetProcAddress("glGetColorTableParameterfvSGI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6329,7 +6329,7 @@ static void APIENTRY InitGetColorTableParameterivSGI (GLenum target, GLenum pnam
 	extproc = (void *) wglGetProcAddress("glGetColorTableParameterivSGI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6345,7 +6345,7 @@ static void APIENTRY InitPixelTexGenSGIX (GLenum mode)
 	extproc = (void *) wglGetProcAddress("glPixelTexGenSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6361,7 +6361,7 @@ static void APIENTRY InitPixelTexGenParameteriSGIS (GLenum pname, GLint param)
 	extproc = (void *) wglGetProcAddress("glPixelTexGenParameteriSGIS");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6377,7 +6377,7 @@ static void APIENTRY InitPixelTexGenParameterivSGIS (GLenum pname, const GLint *
 	extproc = (void *) wglGetProcAddress("glPixelTexGenParameterivSGIS");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6393,7 +6393,7 @@ static void APIENTRY InitPixelTexGenParameterfSGIS (GLenum pname, GLfloat param)
 	extproc = (void *) wglGetProcAddress("glPixelTexGenParameterfSGIS");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6409,7 +6409,7 @@ static void APIENTRY InitPixelTexGenParameterfvSGIS (GLenum pname, const GLfloat
 	extproc = (void *) wglGetProcAddress("glPixelTexGenParameterfvSGIS");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6425,7 +6425,7 @@ static void APIENTRY InitGetPixelTexGenParameterivSGIS (GLenum pname, GLint *par
 	extproc = (void *) wglGetProcAddress("glGetPixelTexGenParameterivSGIS");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6441,7 +6441,7 @@ static void APIENTRY InitGetPixelTexGenParameterfvSGIS (GLenum pname, GLfloat *p
 	extproc = (void *) wglGetProcAddress("glGetPixelTexGenParameterfvSGIS");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6457,7 +6457,7 @@ static void APIENTRY InitTexImage4DSGIS (GLenum target, GLint level, GLenum inte
 	extproc = (void *) wglGetProcAddress("glTexImage4DSGIS");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6473,7 +6473,7 @@ static void APIENTRY InitTexSubImage4DSGIS (GLenum target, GLint level, GLint xo
 	extproc = (void *) wglGetProcAddress("glTexSubImage4DSGIS");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6489,7 +6489,7 @@ static GLboolean APIENTRY InitAreTexturesResidentEXT (GLsizei n, const GLuint *t
 	extproc = (void *) wglGetProcAddress("glAreTexturesResidentEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -6505,7 +6505,7 @@ static void APIENTRY InitBindTextureEXT (GLenum target, GLuint texture)
 	extproc = (void *) wglGetProcAddress("glBindTextureEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6521,7 +6521,7 @@ static void APIENTRY InitDeleteTexturesEXT (GLsizei n, const GLuint *textures)
 	extproc = (void *) wglGetProcAddress("glDeleteTexturesEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6537,7 +6537,7 @@ static void APIENTRY InitGenTexturesEXT (GLsizei n, GLuint *textures)
 	extproc = (void *) wglGetProcAddress("glGenTexturesEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6553,7 +6553,7 @@ static GLboolean APIENTRY InitIsTextureEXT (GLuint texture)
 	extproc = (void *) wglGetProcAddress("glIsTextureEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -6569,7 +6569,7 @@ static void APIENTRY InitPrioritizeTexturesEXT (GLsizei n, const GLuint *texture
 	extproc = (void *) wglGetProcAddress("glPrioritizeTexturesEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6585,7 +6585,7 @@ static void APIENTRY InitDetailTexFuncSGIS (GLenum target, GLsizei n, const GLfl
 	extproc = (void *) wglGetProcAddress("glDetailTexFuncSGIS");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6601,7 +6601,7 @@ static void APIENTRY InitGetDetailTexFuncSGIS (GLenum target, GLfloat *points)
 	extproc = (void *) wglGetProcAddress("glGetDetailTexFuncSGIS");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6617,7 +6617,7 @@ static void APIENTRY InitSharpenTexFuncSGIS (GLenum target, GLsizei n, const GLf
 	extproc = (void *) wglGetProcAddress("glSharpenTexFuncSGIS");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6633,7 +6633,7 @@ static void APIENTRY InitGetSharpenTexFuncSGIS (GLenum target, GLfloat *points)
 	extproc = (void *) wglGetProcAddress("glGetSharpenTexFuncSGIS");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6649,7 +6649,7 @@ static void APIENTRY InitSampleMaskSGIS (GLclampf value, GLboolean invert)
 	extproc = (void *) wglGetProcAddress("glSampleMaskSGIS");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6665,7 +6665,7 @@ static void APIENTRY InitSamplePatternSGIS (GLenum pattern)
 	extproc = (void *) wglGetProcAddress("glSamplePatternSGIS");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6681,7 +6681,7 @@ static void APIENTRY InitArrayElementEXT (GLint i)
 	extproc = (void *) wglGetProcAddress("glArrayElementEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6697,7 +6697,7 @@ static void APIENTRY InitColorPointerEXT (GLint size, GLenum type, GLsizei strid
 	extproc = (void *) wglGetProcAddress("glColorPointerEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6713,7 +6713,7 @@ static void APIENTRY InitDrawArraysEXT (GLenum mode, GLint first, GLsizei count)
 	extproc = (void *) wglGetProcAddress("glDrawArraysEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6729,7 +6729,7 @@ static void APIENTRY InitEdgeFlagPointerEXT (GLsizei stride, GLsizei count, cons
 	extproc = (void *) wglGetProcAddress("glEdgeFlagPointerEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6745,7 +6745,7 @@ static void APIENTRY InitGetPointervEXT (GLenum pname, GLvoid* *params)
 	extproc = (void *) wglGetProcAddress("glGetPointervEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6761,7 +6761,7 @@ static void APIENTRY InitIndexPointerEXT (GLenum type, GLsizei stride, GLsizei c
 	extproc = (void *) wglGetProcAddress("glIndexPointerEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6777,7 +6777,7 @@ static void APIENTRY InitNormalPointerEXT (GLenum type, GLsizei stride, GLsizei 
 	extproc = (void *) wglGetProcAddress("glNormalPointerEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6793,7 +6793,7 @@ static void APIENTRY InitTexCoordPointerEXT (GLint size, GLenum type, GLsizei st
 	extproc = (void *) wglGetProcAddress("glTexCoordPointerEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6809,7 +6809,7 @@ static void APIENTRY InitVertexPointerEXT (GLint size, GLenum type, GLsizei stri
 	extproc = (void *) wglGetProcAddress("glVertexPointerEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6825,7 +6825,7 @@ static void APIENTRY InitBlendEquationEXT (GLenum mode)
 	extproc = (void *) wglGetProcAddress("glBlendEquationEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6841,7 +6841,7 @@ static void APIENTRY InitSpriteParameterfSGIX (GLenum pname, GLfloat param)
 	extproc = (void *) wglGetProcAddress("glSpriteParameterfSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6857,7 +6857,7 @@ static void APIENTRY InitSpriteParameterfvSGIX (GLenum pname, const GLfloat *par
 	extproc = (void *) wglGetProcAddress("glSpriteParameterfvSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6873,7 +6873,7 @@ static void APIENTRY InitSpriteParameteriSGIX (GLenum pname, GLint param)
 	extproc = (void *) wglGetProcAddress("glSpriteParameteriSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6889,7 +6889,7 @@ static void APIENTRY InitSpriteParameterivSGIX (GLenum pname, const GLint *param
 	extproc = (void *) wglGetProcAddress("glSpriteParameterivSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6905,7 +6905,7 @@ static void APIENTRY InitPointParameterfEXT (GLenum pname, GLfloat param)
 	extproc = (void *) wglGetProcAddress("glPointParameterfEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6921,7 +6921,7 @@ static void APIENTRY InitPointParameterfvEXT (GLenum pname, const GLfloat *param
 	extproc = (void *) wglGetProcAddress("glPointParameterfvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6937,7 +6937,7 @@ static void APIENTRY InitPointParameterfSGIS (GLenum pname, GLfloat param)
 	extproc = (void *) wglGetProcAddress("glPointParameterfSGIS");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6953,7 +6953,7 @@ static void APIENTRY InitPointParameterfvSGIS (GLenum pname, const GLfloat *para
 	extproc = (void *) wglGetProcAddress("glPointParameterfvSGIS");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -6969,7 +6969,7 @@ static GLint APIENTRY InitGetInstrumentsSGIX (void)
 	extproc = (void *) wglGetProcAddress("glGetInstrumentsSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -6985,7 +6985,7 @@ static void APIENTRY InitInstrumentsBufferSGIX (GLsizei size, GLint *buffer)
 	extproc = (void *) wglGetProcAddress("glInstrumentsBufferSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7001,7 +7001,7 @@ static GLint APIENTRY InitPollInstrumentsSGIX (GLint *marker_p)
 	extproc = (void *) wglGetProcAddress("glPollInstrumentsSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -7017,7 +7017,7 @@ static void APIENTRY InitReadInstrumentsSGIX (GLint marker)
 	extproc = (void *) wglGetProcAddress("glReadInstrumentsSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7033,7 +7033,7 @@ static void APIENTRY InitStartInstrumentsSGIX (void)
 	extproc = (void *) wglGetProcAddress("glStartInstrumentsSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7049,7 +7049,7 @@ static void APIENTRY InitStopInstrumentsSGIX (GLint marker)
 	extproc = (void *) wglGetProcAddress("glStopInstrumentsSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7065,7 +7065,7 @@ static void APIENTRY InitFrameZoomSGIX (GLint factor)
 	extproc = (void *) wglGetProcAddress("glFrameZoomSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7081,7 +7081,7 @@ static void APIENTRY InitTagSampleBufferSGIX (void)
 	extproc = (void *) wglGetProcAddress("glTagSampleBufferSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7097,7 +7097,7 @@ static void APIENTRY InitDeformationMap3dSGIX (GLenum target, GLdouble u1, GLdou
 	extproc = (void *) wglGetProcAddress("glDeformationMap3dSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7113,7 +7113,7 @@ static void APIENTRY InitDeformationMap3fSGIX (GLenum target, GLfloat u1, GLfloa
 	extproc = (void *) wglGetProcAddress("glDeformationMap3fSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7129,7 +7129,7 @@ static void APIENTRY InitDeformSGIX (GLbitfield mask)
 	extproc = (void *) wglGetProcAddress("glDeformSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7145,7 +7145,7 @@ static void APIENTRY InitLoadIdentityDeformationMapSGIX (GLbitfield mask)
 	extproc = (void *) wglGetProcAddress("glLoadIdentityDeformationMapSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7161,7 +7161,7 @@ static void APIENTRY InitReferencePlaneSGIX (const GLdouble *equation)
 	extproc = (void *) wglGetProcAddress("glReferencePlaneSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7177,7 +7177,7 @@ static void APIENTRY InitFlushRasterSGIX (void)
 	extproc = (void *) wglGetProcAddress("glFlushRasterSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7193,7 +7193,7 @@ static void APIENTRY InitFogFuncSGIS (GLsizei n, const GLfloat *points)
 	extproc = (void *) wglGetProcAddress("glFogFuncSGIS");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7209,7 +7209,7 @@ static void APIENTRY InitGetFogFuncSGIS (GLfloat *points)
 	extproc = (void *) wglGetProcAddress("glGetFogFuncSGIS");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7225,7 +7225,7 @@ static void APIENTRY InitImageTransformParameteriHP (GLenum target, GLenum pname
 	extproc = (void *) wglGetProcAddress("glImageTransformParameteriHP");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7241,7 +7241,7 @@ static void APIENTRY InitImageTransformParameterfHP (GLenum target, GLenum pname
 	extproc = (void *) wglGetProcAddress("glImageTransformParameterfHP");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7257,7 +7257,7 @@ static void APIENTRY InitImageTransformParameterivHP (GLenum target, GLenum pnam
 	extproc = (void *) wglGetProcAddress("glImageTransformParameterivHP");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7273,7 +7273,7 @@ static void APIENTRY InitImageTransformParameterfvHP (GLenum target, GLenum pnam
 	extproc = (void *) wglGetProcAddress("glImageTransformParameterfvHP");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7289,7 +7289,7 @@ static void APIENTRY InitGetImageTransformParameterivHP (GLenum target, GLenum p
 	extproc = (void *) wglGetProcAddress("glGetImageTransformParameterivHP");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7305,7 +7305,7 @@ static void APIENTRY InitGetImageTransformParameterfvHP (GLenum target, GLenum p
 	extproc = (void *) wglGetProcAddress("glGetImageTransformParameterfvHP");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7321,7 +7321,7 @@ static void APIENTRY InitColorSubTableEXT (GLenum target, GLsizei start, GLsizei
 	extproc = (void *) wglGetProcAddress("glColorSubTableEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7337,7 +7337,7 @@ static void APIENTRY InitCopyColorSubTableEXT (GLenum target, GLsizei start, GLi
 	extproc = (void *) wglGetProcAddress("glCopyColorSubTableEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7353,7 +7353,7 @@ static void APIENTRY InitHintPGI (GLenum target, GLint mode)
 	extproc = (void *) wglGetProcAddress("glHintPGI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7369,7 +7369,7 @@ static void APIENTRY InitColorTableEXT (GLenum target, GLenum internalFormat, GL
 	extproc = (void *) wglGetProcAddress("glColorTableEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7385,7 +7385,7 @@ static void APIENTRY InitGetColorTableEXT (GLenum target, GLenum format, GLenum 
 	extproc = (void *) wglGetProcAddress("glGetColorTableEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7401,7 +7401,7 @@ static void APIENTRY InitGetColorTableParameterivEXT (GLenum target, GLenum pnam
 	extproc = (void *) wglGetProcAddress("glGetColorTableParameterivEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7417,7 +7417,7 @@ static void APIENTRY InitGetColorTableParameterfvEXT (GLenum target, GLenum pnam
 	extproc = (void *) wglGetProcAddress("glGetColorTableParameterfvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7433,7 +7433,7 @@ static void APIENTRY InitGetListParameterfvSGIX (GLuint list, GLenum pname, GLfl
 	extproc = (void *) wglGetProcAddress("glGetListParameterfvSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7449,7 +7449,7 @@ static void APIENTRY InitGetListParameterivSGIX (GLuint list, GLenum pname, GLin
 	extproc = (void *) wglGetProcAddress("glGetListParameterivSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7465,7 +7465,7 @@ static void APIENTRY InitListParameterfSGIX (GLuint list, GLenum pname, GLfloat 
 	extproc = (void *) wglGetProcAddress("glListParameterfSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7481,7 +7481,7 @@ static void APIENTRY InitListParameterfvSGIX (GLuint list, GLenum pname, const G
 	extproc = (void *) wglGetProcAddress("glListParameterfvSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7497,7 +7497,7 @@ static void APIENTRY InitListParameteriSGIX (GLuint list, GLenum pname, GLint pa
 	extproc = (void *) wglGetProcAddress("glListParameteriSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7513,7 +7513,7 @@ static void APIENTRY InitListParameterivSGIX (GLuint list, GLenum pname, const G
 	extproc = (void *) wglGetProcAddress("glListParameterivSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7529,7 +7529,7 @@ static void APIENTRY InitIndexMaterialEXT (GLenum face, GLenum mode)
 	extproc = (void *) wglGetProcAddress("glIndexMaterialEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7545,7 +7545,7 @@ static void APIENTRY InitIndexFuncEXT (GLenum func, GLclampf ref)
 	extproc = (void *) wglGetProcAddress("glIndexFuncEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7561,7 +7561,7 @@ static void APIENTRY InitLockArraysEXT (GLint first, GLsizei count)
 	extproc = (void *) wglGetProcAddress("glLockArraysEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7577,7 +7577,7 @@ static void APIENTRY InitUnlockArraysEXT (void)
 	extproc = (void *) wglGetProcAddress("glUnlockArraysEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7593,7 +7593,7 @@ static void APIENTRY InitCullParameterdvEXT (GLenum pname, GLdouble *params)
 	extproc = (void *) wglGetProcAddress("glCullParameterdvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7609,7 +7609,7 @@ static void APIENTRY InitCullParameterfvEXT (GLenum pname, GLfloat *params)
 	extproc = (void *) wglGetProcAddress("glCullParameterfvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7625,7 +7625,7 @@ static void APIENTRY InitFragmentColorMaterialSGIX (GLenum face, GLenum mode)
 	extproc = (void *) wglGetProcAddress("glFragmentColorMaterialSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7641,7 +7641,7 @@ static void APIENTRY InitFragmentLightfSGIX (GLenum light, GLenum pname, GLfloat
 	extproc = (void *) wglGetProcAddress("glFragmentLightfSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7657,7 +7657,7 @@ static void APIENTRY InitFragmentLightfvSGIX (GLenum light, GLenum pname, const 
 	extproc = (void *) wglGetProcAddress("glFragmentLightfvSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7673,7 +7673,7 @@ static void APIENTRY InitFragmentLightiSGIX (GLenum light, GLenum pname, GLint p
 	extproc = (void *) wglGetProcAddress("glFragmentLightiSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7689,7 +7689,7 @@ static void APIENTRY InitFragmentLightivSGIX (GLenum light, GLenum pname, const 
 	extproc = (void *) wglGetProcAddress("glFragmentLightivSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7705,7 +7705,7 @@ static void APIENTRY InitFragmentLightModelfSGIX (GLenum pname, GLfloat param)
 	extproc = (void *) wglGetProcAddress("glFragmentLightModelfSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7721,7 +7721,7 @@ static void APIENTRY InitFragmentLightModelfvSGIX (GLenum pname, const GLfloat *
 	extproc = (void *) wglGetProcAddress("glFragmentLightModelfvSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7737,7 +7737,7 @@ static void APIENTRY InitFragmentLightModeliSGIX (GLenum pname, GLint param)
 	extproc = (void *) wglGetProcAddress("glFragmentLightModeliSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7753,7 +7753,7 @@ static void APIENTRY InitFragmentLightModelivSGIX (GLenum pname, const GLint *pa
 	extproc = (void *) wglGetProcAddress("glFragmentLightModelivSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7769,7 +7769,7 @@ static void APIENTRY InitFragmentMaterialfSGIX (GLenum face, GLenum pname, GLflo
 	extproc = (void *) wglGetProcAddress("glFragmentMaterialfSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7785,7 +7785,7 @@ static void APIENTRY InitFragmentMaterialfvSGIX (GLenum face, GLenum pname, cons
 	extproc = (void *) wglGetProcAddress("glFragmentMaterialfvSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7801,7 +7801,7 @@ static void APIENTRY InitFragmentMaterialiSGIX (GLenum face, GLenum pname, GLint
 	extproc = (void *) wglGetProcAddress("glFragmentMaterialiSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7817,7 +7817,7 @@ static void APIENTRY InitFragmentMaterialivSGIX (GLenum face, GLenum pname, cons
 	extproc = (void *) wglGetProcAddress("glFragmentMaterialivSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7833,7 +7833,7 @@ static void APIENTRY InitGetFragmentLightfvSGIX (GLenum light, GLenum pname, GLf
 	extproc = (void *) wglGetProcAddress("glGetFragmentLightfvSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7849,7 +7849,7 @@ static void APIENTRY InitGetFragmentLightivSGIX (GLenum light, GLenum pname, GLi
 	extproc = (void *) wglGetProcAddress("glGetFragmentLightivSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7865,7 +7865,7 @@ static void APIENTRY InitGetFragmentMaterialfvSGIX (GLenum face, GLenum pname, G
 	extproc = (void *) wglGetProcAddress("glGetFragmentMaterialfvSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7881,7 +7881,7 @@ static void APIENTRY InitGetFragmentMaterialivSGIX (GLenum face, GLenum pname, G
 	extproc = (void *) wglGetProcAddress("glGetFragmentMaterialivSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7897,7 +7897,7 @@ static void APIENTRY InitLightEnviSGIX (GLenum pname, GLint param)
 	extproc = (void *) wglGetProcAddress("glLightEnviSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7913,7 +7913,7 @@ static void APIENTRY InitDrawRangeElementsEXT (GLenum mode, GLuint start, GLuint
 	extproc = (void *) wglGetProcAddress("glDrawRangeElementsEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7929,7 +7929,7 @@ static void APIENTRY InitApplyTextureEXT (GLenum mode)
 	extproc = (void *) wglGetProcAddress("glApplyTextureEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7945,7 +7945,7 @@ static void APIENTRY InitTextureLightEXT (GLenum pname)
 	extproc = (void *) wglGetProcAddress("glTextureLightEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7961,7 +7961,7 @@ static void APIENTRY InitTextureMaterialEXT (GLenum face, GLenum mode)
 	extproc = (void *) wglGetProcAddress("glTextureMaterialEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7977,7 +7977,7 @@ static void APIENTRY InitAsyncMarkerSGIX (GLuint marker)
 	extproc = (void *) wglGetProcAddress("glAsyncMarkerSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -7993,7 +7993,7 @@ static GLint APIENTRY InitFinishAsyncSGIX (GLuint *markerp)
 	extproc = (void *) wglGetProcAddress("glFinishAsyncSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -8009,7 +8009,7 @@ static GLint APIENTRY InitPollAsyncSGIX (GLuint *markerp)
 	extproc = (void *) wglGetProcAddress("glPollAsyncSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -8025,7 +8025,7 @@ static GLuint APIENTRY InitGenAsyncMarkersSGIX (GLsizei range)
 	extproc = (void *) wglGetProcAddress("glGenAsyncMarkersSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -8041,7 +8041,7 @@ static void APIENTRY InitDeleteAsyncMarkersSGIX (GLuint marker, GLsizei range)
 	extproc = (void *) wglGetProcAddress("glDeleteAsyncMarkersSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8057,7 +8057,7 @@ static GLboolean APIENTRY InitIsAsyncMarkerSGIX (GLuint marker)
 	extproc = (void *) wglGetProcAddress("glIsAsyncMarkerSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -8073,7 +8073,7 @@ static void APIENTRY InitVertexPointervINTEL (GLint size, GLenum type, const GLv
 	extproc = (void *) wglGetProcAddress("glVertexPointervINTEL");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8089,7 +8089,7 @@ static void APIENTRY InitNormalPointervINTEL (GLenum type, const GLvoid* *pointe
 	extproc = (void *) wglGetProcAddress("glNormalPointervINTEL");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8105,7 +8105,7 @@ static void APIENTRY InitColorPointervINTEL (GLint size, GLenum type, const GLvo
 	extproc = (void *) wglGetProcAddress("glColorPointervINTEL");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8121,7 +8121,7 @@ static void APIENTRY InitTexCoordPointervINTEL (GLint size, GLenum type, const G
 	extproc = (void *) wglGetProcAddress("glTexCoordPointervINTEL");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8137,7 +8137,7 @@ static void APIENTRY InitPixelTransformParameteriEXT (GLenum target, GLenum pnam
 	extproc = (void *) wglGetProcAddress("glPixelTransformParameteriEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8153,7 +8153,7 @@ static void APIENTRY InitPixelTransformParameterfEXT (GLenum target, GLenum pnam
 	extproc = (void *) wglGetProcAddress("glPixelTransformParameterfEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8169,7 +8169,7 @@ static void APIENTRY InitPixelTransformParameterivEXT (GLenum target, GLenum pna
 	extproc = (void *) wglGetProcAddress("glPixelTransformParameterivEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8185,7 +8185,7 @@ static void APIENTRY InitPixelTransformParameterfvEXT (GLenum target, GLenum pna
 	extproc = (void *) wglGetProcAddress("glPixelTransformParameterfvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8201,7 +8201,7 @@ static void APIENTRY InitSecondaryColor3bEXT (GLbyte red, GLbyte green, GLbyte b
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3bEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8217,7 +8217,7 @@ static void APIENTRY InitSecondaryColor3bvEXT (const GLbyte *v)
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3bvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8233,7 +8233,7 @@ static void APIENTRY InitSecondaryColor3dEXT (GLdouble red, GLdouble green, GLdo
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3dEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8249,7 +8249,7 @@ static void APIENTRY InitSecondaryColor3dvEXT (const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3dvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8265,7 +8265,7 @@ static void APIENTRY InitSecondaryColor3fEXT (GLfloat red, GLfloat green, GLfloa
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3fEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8281,7 +8281,7 @@ static void APIENTRY InitSecondaryColor3fvEXT (const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3fvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8297,7 +8297,7 @@ static void APIENTRY InitSecondaryColor3iEXT (GLint red, GLint green, GLint blue
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3iEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8313,7 +8313,7 @@ static void APIENTRY InitSecondaryColor3ivEXT (const GLint *v)
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3ivEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8329,7 +8329,7 @@ static void APIENTRY InitSecondaryColor3sEXT (GLshort red, GLshort green, GLshor
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3sEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8345,7 +8345,7 @@ static void APIENTRY InitSecondaryColor3svEXT (const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3svEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8361,7 +8361,7 @@ static void APIENTRY InitSecondaryColor3ubEXT (GLubyte red, GLubyte green, GLuby
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3ubEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8377,7 +8377,7 @@ static void APIENTRY InitSecondaryColor3ubvEXT (const GLubyte *v)
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3ubvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8393,7 +8393,7 @@ static void APIENTRY InitSecondaryColor3uiEXT (GLuint red, GLuint green, GLuint 
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3uiEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8409,7 +8409,7 @@ static void APIENTRY InitSecondaryColor3uivEXT (const GLuint *v)
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3uivEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8425,7 +8425,7 @@ static void APIENTRY InitSecondaryColor3usEXT (GLushort red, GLushort green, GLu
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3usEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8441,7 +8441,7 @@ static void APIENTRY InitSecondaryColor3usvEXT (const GLushort *v)
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3usvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8457,7 +8457,7 @@ static void APIENTRY InitSecondaryColorPointerEXT (GLint size, GLenum type, GLsi
 	extproc = (void *) wglGetProcAddress("glSecondaryColorPointerEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8473,7 +8473,7 @@ static void APIENTRY InitTextureNormalEXT (GLenum mode)
 	extproc = (void *) wglGetProcAddress("glTextureNormalEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8489,7 +8489,7 @@ static void APIENTRY InitMultiDrawArraysEXT (GLenum mode, GLint *first, GLsizei 
 	extproc = (void *) wglGetProcAddress("glMultiDrawArraysEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8505,7 +8505,7 @@ static void APIENTRY InitMultiDrawElementsEXT (GLenum mode, const GLsizei *count
 	extproc = (void *) wglGetProcAddress("glMultiDrawElementsEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8521,7 +8521,7 @@ static void APIENTRY InitFogCoordfEXT (GLfloat coord)
 	extproc = (void *) wglGetProcAddress("glFogCoordfEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8537,7 +8537,7 @@ static void APIENTRY InitFogCoordfvEXT (const GLfloat *coord)
 	extproc = (void *) wglGetProcAddress("glFogCoordfvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8553,7 +8553,7 @@ static void APIENTRY InitFogCoorddEXT (GLdouble coord)
 	extproc = (void *) wglGetProcAddress("glFogCoorddEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8569,7 +8569,7 @@ static void APIENTRY InitFogCoorddvEXT (const GLdouble *coord)
 	extproc = (void *) wglGetProcAddress("glFogCoorddvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8585,7 +8585,7 @@ static void APIENTRY InitFogCoordPointerEXT (GLenum type, GLsizei stride, const 
 	extproc = (void *) wglGetProcAddress("glFogCoordPointerEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8601,7 +8601,7 @@ static void APIENTRY InitTangent3bEXT (GLbyte tx, GLbyte ty, GLbyte tz)
 	extproc = (void *) wglGetProcAddress("glTangent3bEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8617,7 +8617,7 @@ static void APIENTRY InitTangent3bvEXT (const GLbyte *v)
 	extproc = (void *) wglGetProcAddress("glTangent3bvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8633,7 +8633,7 @@ static void APIENTRY InitTangent3dEXT (GLdouble tx, GLdouble ty, GLdouble tz)
 	extproc = (void *) wglGetProcAddress("glTangent3dEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8649,7 +8649,7 @@ static void APIENTRY InitTangent3dvEXT (const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glTangent3dvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8665,7 +8665,7 @@ static void APIENTRY InitTangent3fEXT (GLfloat tx, GLfloat ty, GLfloat tz)
 	extproc = (void *) wglGetProcAddress("glTangent3fEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8681,7 +8681,7 @@ static void APIENTRY InitTangent3fvEXT (const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glTangent3fvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8697,7 +8697,7 @@ static void APIENTRY InitTangent3iEXT (GLint tx, GLint ty, GLint tz)
 	extproc = (void *) wglGetProcAddress("glTangent3iEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8713,7 +8713,7 @@ static void APIENTRY InitTangent3ivEXT (const GLint *v)
 	extproc = (void *) wglGetProcAddress("glTangent3ivEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8729,7 +8729,7 @@ static void APIENTRY InitTangent3sEXT (GLshort tx, GLshort ty, GLshort tz)
 	extproc = (void *) wglGetProcAddress("glTangent3sEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8745,7 +8745,7 @@ static void APIENTRY InitTangent3svEXT (const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glTangent3svEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8761,7 +8761,7 @@ static void APIENTRY InitBinormal3bEXT (GLbyte bx, GLbyte by, GLbyte bz)
 	extproc = (void *) wglGetProcAddress("glBinormal3bEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8777,7 +8777,7 @@ static void APIENTRY InitBinormal3bvEXT (const GLbyte *v)
 	extproc = (void *) wglGetProcAddress("glBinormal3bvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8793,7 +8793,7 @@ static void APIENTRY InitBinormal3dEXT (GLdouble bx, GLdouble by, GLdouble bz)
 	extproc = (void *) wglGetProcAddress("glBinormal3dEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8809,7 +8809,7 @@ static void APIENTRY InitBinormal3dvEXT (const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glBinormal3dvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8825,7 +8825,7 @@ static void APIENTRY InitBinormal3fEXT (GLfloat bx, GLfloat by, GLfloat bz)
 	extproc = (void *) wglGetProcAddress("glBinormal3fEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8841,7 +8841,7 @@ static void APIENTRY InitBinormal3fvEXT (const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glBinormal3fvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8857,7 +8857,7 @@ static void APIENTRY InitBinormal3iEXT (GLint bx, GLint by, GLint bz)
 	extproc = (void *) wglGetProcAddress("glBinormal3iEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8873,7 +8873,7 @@ static void APIENTRY InitBinormal3ivEXT (const GLint *v)
 	extproc = (void *) wglGetProcAddress("glBinormal3ivEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8889,7 +8889,7 @@ static void APIENTRY InitBinormal3sEXT (GLshort bx, GLshort by, GLshort bz)
 	extproc = (void *) wglGetProcAddress("glBinormal3sEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8905,7 +8905,7 @@ static void APIENTRY InitBinormal3svEXT (const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glBinormal3svEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8921,7 +8921,7 @@ static void APIENTRY InitTangentPointerEXT (GLenum type, GLsizei stride, const G
 	extproc = (void *) wglGetProcAddress("glTangentPointerEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8937,7 +8937,7 @@ static void APIENTRY InitBinormalPointerEXT (GLenum type, GLsizei stride, const 
 	extproc = (void *) wglGetProcAddress("glBinormalPointerEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8953,7 +8953,7 @@ static void APIENTRY InitFinishTextureSUNX (void)
 	extproc = (void *) wglGetProcAddress("glFinishTextureSUNX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8969,7 +8969,7 @@ static void APIENTRY InitGlobalAlphaFactorbSUN (GLbyte factor)
 	extproc = (void *) wglGetProcAddress("glGlobalAlphaFactorbSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -8985,7 +8985,7 @@ static void APIENTRY InitGlobalAlphaFactorsSUN (GLshort factor)
 	extproc = (void *) wglGetProcAddress("glGlobalAlphaFactorsSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9001,7 +9001,7 @@ static void APIENTRY InitGlobalAlphaFactoriSUN (GLint factor)
 	extproc = (void *) wglGetProcAddress("glGlobalAlphaFactoriSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9017,7 +9017,7 @@ static void APIENTRY InitGlobalAlphaFactorfSUN (GLfloat factor)
 	extproc = (void *) wglGetProcAddress("glGlobalAlphaFactorfSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9033,7 +9033,7 @@ static void APIENTRY InitGlobalAlphaFactordSUN (GLdouble factor)
 	extproc = (void *) wglGetProcAddress("glGlobalAlphaFactordSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9049,7 +9049,7 @@ static void APIENTRY InitGlobalAlphaFactorubSUN (GLubyte factor)
 	extproc = (void *) wglGetProcAddress("glGlobalAlphaFactorubSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9065,7 +9065,7 @@ static void APIENTRY InitGlobalAlphaFactorusSUN (GLushort factor)
 	extproc = (void *) wglGetProcAddress("glGlobalAlphaFactorusSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9081,7 +9081,7 @@ static void APIENTRY InitGlobalAlphaFactoruiSUN (GLuint factor)
 	extproc = (void *) wglGetProcAddress("glGlobalAlphaFactoruiSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9097,7 +9097,7 @@ static void APIENTRY InitReplacementCodeuiSUN (GLuint code)
 	extproc = (void *) wglGetProcAddress("glReplacementCodeuiSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9113,7 +9113,7 @@ static void APIENTRY InitReplacementCodeusSUN (GLushort code)
 	extproc = (void *) wglGetProcAddress("glReplacementCodeusSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9129,7 +9129,7 @@ static void APIENTRY InitReplacementCodeubSUN (GLubyte code)
 	extproc = (void *) wglGetProcAddress("glReplacementCodeubSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9145,7 +9145,7 @@ static void APIENTRY InitReplacementCodeuivSUN (const GLuint *code)
 	extproc = (void *) wglGetProcAddress("glReplacementCodeuivSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9161,7 +9161,7 @@ static void APIENTRY InitReplacementCodeusvSUN (const GLushort *code)
 	extproc = (void *) wglGetProcAddress("glReplacementCodeusvSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9177,7 +9177,7 @@ static void APIENTRY InitReplacementCodeubvSUN (const GLubyte *code)
 	extproc = (void *) wglGetProcAddress("glReplacementCodeubvSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9193,7 +9193,7 @@ static void APIENTRY InitReplacementCodePointerSUN (GLenum type, GLsizei stride,
 	extproc = (void *) wglGetProcAddress("glReplacementCodePointerSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9209,7 +9209,7 @@ static void APIENTRY InitColor4ubVertex2fSUN (GLubyte r, GLubyte g, GLubyte b, G
 	extproc = (void *) wglGetProcAddress("glColor4ubVertex2fSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9225,7 +9225,7 @@ static void APIENTRY InitColor4ubVertex2fvSUN (const GLubyte *c, const GLfloat *
 	extproc = (void *) wglGetProcAddress("glColor4ubVertex2fvSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9241,7 +9241,7 @@ static void APIENTRY InitColor4ubVertex3fSUN (GLubyte r, GLubyte g, GLubyte b, G
 	extproc = (void *) wglGetProcAddress("glColor4ubVertex3fSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9257,7 +9257,7 @@ static void APIENTRY InitColor4ubVertex3fvSUN (const GLubyte *c, const GLfloat *
 	extproc = (void *) wglGetProcAddress("glColor4ubVertex3fvSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9273,7 +9273,7 @@ static void APIENTRY InitColor3fVertex3fSUN (GLfloat r, GLfloat g, GLfloat b, GL
 	extproc = (void *) wglGetProcAddress("glColor3fVertex3fSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9289,7 +9289,7 @@ static void APIENTRY InitColor3fVertex3fvSUN (const GLfloat *c, const GLfloat *v
 	extproc = (void *) wglGetProcAddress("glColor3fVertex3fvSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9305,7 +9305,7 @@ static void APIENTRY InitNormal3fVertex3fSUN (GLfloat nx, GLfloat ny, GLfloat nz
 	extproc = (void *) wglGetProcAddress("glNormal3fVertex3fSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9321,7 +9321,7 @@ static void APIENTRY InitNormal3fVertex3fvSUN (const GLfloat *n, const GLfloat *
 	extproc = (void *) wglGetProcAddress("glNormal3fVertex3fvSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9337,7 +9337,7 @@ static void APIENTRY InitColor4fNormal3fVertex3fSUN (GLfloat r, GLfloat g, GLflo
 	extproc = (void *) wglGetProcAddress("glColor4fNormal3fVertex3fSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9353,7 +9353,7 @@ static void APIENTRY InitColor4fNormal3fVertex3fvSUN (const GLfloat *c, const GL
 	extproc = (void *) wglGetProcAddress("glColor4fNormal3fVertex3fvSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9369,7 +9369,7 @@ static void APIENTRY InitTexCoord2fVertex3fSUN (GLfloat s, GLfloat t, GLfloat x,
 	extproc = (void *) wglGetProcAddress("glTexCoord2fVertex3fSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9385,7 +9385,7 @@ static void APIENTRY InitTexCoord2fVertex3fvSUN (const GLfloat *tc, const GLfloa
 	extproc = (void *) wglGetProcAddress("glTexCoord2fVertex3fvSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9401,7 +9401,7 @@ static void APIENTRY InitTexCoord4fVertex4fSUN (GLfloat s, GLfloat t, GLfloat p,
 	extproc = (void *) wglGetProcAddress("glTexCoord4fVertex4fSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9417,7 +9417,7 @@ static void APIENTRY InitTexCoord4fVertex4fvSUN (const GLfloat *tc, const GLfloa
 	extproc = (void *) wglGetProcAddress("glTexCoord4fVertex4fvSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9433,7 +9433,7 @@ static void APIENTRY InitTexCoord2fColor4ubVertex3fSUN (GLfloat s, GLfloat t, GL
 	extproc = (void *) wglGetProcAddress("glTexCoord2fColor4ubVertex3fSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9449,7 +9449,7 @@ static void APIENTRY InitTexCoord2fColor4ubVertex3fvSUN (const GLfloat *tc, cons
 	extproc = (void *) wglGetProcAddress("glTexCoord2fColor4ubVertex3fvSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9465,7 +9465,7 @@ static void APIENTRY InitTexCoord2fColor3fVertex3fSUN (GLfloat s, GLfloat t, GLf
 	extproc = (void *) wglGetProcAddress("glTexCoord2fColor3fVertex3fSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9481,7 +9481,7 @@ static void APIENTRY InitTexCoord2fColor3fVertex3fvSUN (const GLfloat *tc, const
 	extproc = (void *) wglGetProcAddress("glTexCoord2fColor3fVertex3fvSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9497,7 +9497,7 @@ static void APIENTRY InitTexCoord2fNormal3fVertex3fSUN (GLfloat s, GLfloat t, GL
 	extproc = (void *) wglGetProcAddress("glTexCoord2fNormal3fVertex3fSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9513,7 +9513,7 @@ static void APIENTRY InitTexCoord2fNormal3fVertex3fvSUN (const GLfloat *tc, cons
 	extproc = (void *) wglGetProcAddress("glTexCoord2fNormal3fVertex3fvSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9529,7 +9529,7 @@ static void APIENTRY InitTexCoord2fColor4fNormal3fVertex3fSUN (GLfloat s, GLfloa
 	extproc = (void *) wglGetProcAddress("glTexCoord2fColor4fNormal3fVertex3fSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9545,7 +9545,7 @@ static void APIENTRY InitTexCoord2fColor4fNormal3fVertex3fvSUN (const GLfloat *t
 	extproc = (void *) wglGetProcAddress("glTexCoord2fColor4fNormal3fVertex3fvSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9561,7 +9561,7 @@ static void APIENTRY InitTexCoord4fColor4fNormal3fVertex4fSUN (GLfloat s, GLfloa
 	extproc = (void *) wglGetProcAddress("glTexCoord4fColor4fNormal3fVertex4fSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9577,7 +9577,7 @@ static void APIENTRY InitTexCoord4fColor4fNormal3fVertex4fvSUN (const GLfloat *t
 	extproc = (void *) wglGetProcAddress("glTexCoord4fColor4fNormal3fVertex4fvSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9593,7 +9593,7 @@ static void APIENTRY InitReplacementCodeuiVertex3fSUN (GLuint rc, GLfloat x, GLf
 	extproc = (void *) wglGetProcAddress("glReplacementCodeuiVertex3fSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9609,7 +9609,7 @@ static void APIENTRY InitReplacementCodeuiVertex3fvSUN (const GLuint *rc, const 
 	extproc = (void *) wglGetProcAddress("glReplacementCodeuiVertex3fvSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9625,7 +9625,7 @@ static void APIENTRY InitReplacementCodeuiColor4ubVertex3fSUN (GLuint rc, GLubyt
 	extproc = (void *) wglGetProcAddress("glReplacementCodeuiColor4ubVertex3fSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9641,7 +9641,7 @@ static void APIENTRY InitReplacementCodeuiColor4ubVertex3fvSUN (const GLuint *rc
 	extproc = (void *) wglGetProcAddress("glReplacementCodeuiColor4ubVertex3fvSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9657,7 +9657,7 @@ static void APIENTRY InitReplacementCodeuiColor3fVertex3fSUN (GLuint rc, GLfloat
 	extproc = (void *) wglGetProcAddress("glReplacementCodeuiColor3fVertex3fSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9673,7 +9673,7 @@ static void APIENTRY InitReplacementCodeuiColor3fVertex3fvSUN (const GLuint *rc,
 	extproc = (void *) wglGetProcAddress("glReplacementCodeuiColor3fVertex3fvSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9689,7 +9689,7 @@ static void APIENTRY InitReplacementCodeuiNormal3fVertex3fSUN (GLuint rc, GLfloa
 	extproc = (void *) wglGetProcAddress("glReplacementCodeuiNormal3fVertex3fSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9705,7 +9705,7 @@ static void APIENTRY InitReplacementCodeuiNormal3fVertex3fvSUN (const GLuint *rc
 	extproc = (void *) wglGetProcAddress("glReplacementCodeuiNormal3fVertex3fvSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9721,7 +9721,7 @@ static void APIENTRY InitReplacementCodeuiColor4fNormal3fVertex3fSUN (GLuint rc,
 	extproc = (void *) wglGetProcAddress("glReplacementCodeuiColor4fNormal3fVertex3fSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9737,7 +9737,7 @@ static void APIENTRY InitReplacementCodeuiColor4fNormal3fVertex3fvSUN (const GLu
 	extproc = (void *) wglGetProcAddress("glReplacementCodeuiColor4fNormal3fVertex3fvSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9753,7 +9753,7 @@ static void APIENTRY InitReplacementCodeuiTexCoord2fVertex3fSUN (GLuint rc, GLfl
 	extproc = (void *) wglGetProcAddress("glReplacementCodeuiTexCoord2fVertex3fSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9769,7 +9769,7 @@ static void APIENTRY InitReplacementCodeuiTexCoord2fVertex3fvSUN (const GLuint *
 	extproc = (void *) wglGetProcAddress("glReplacementCodeuiTexCoord2fVertex3fvSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9785,7 +9785,7 @@ static void APIENTRY InitReplacementCodeuiTexCoord2fNormal3fVertex3fSUN (GLuint 
 	extproc = (void *) wglGetProcAddress("glReplacementCodeuiTexCoord2fNormal3fVertex3fSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9801,7 +9801,7 @@ static void APIENTRY InitReplacementCodeuiTexCoord2fNormal3fVertex3fvSUN (const 
 	extproc = (void *) wglGetProcAddress("glReplacementCodeuiTexCoord2fNormal3fVertex3fvSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9817,7 +9817,7 @@ static void APIENTRY InitReplacementCodeuiTexCoord2fColor4fNormal3fVertex3fSUN (
 	extproc = (void *) wglGetProcAddress("glReplacementCodeuiTexCoord2fColor4fNormal3fVertex3fSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9833,7 +9833,7 @@ static void APIENTRY InitReplacementCodeuiTexCoord2fColor4fNormal3fVertex3fvSUN 
 	extproc = (void *) wglGetProcAddress("glReplacementCodeuiTexCoord2fColor4fNormal3fVertex3fvSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9849,7 +9849,7 @@ static void APIENTRY InitBlendFuncSeparateEXT (GLenum sfactorRGB, GLenum dfactor
 	extproc = (void *) wglGetProcAddress("glBlendFuncSeparateEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9865,7 +9865,7 @@ static void APIENTRY InitBlendFuncSeparateINGR (GLenum sfactorRGB, GLenum dfacto
 	extproc = (void *) wglGetProcAddress("glBlendFuncSeparateINGR");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9881,7 +9881,7 @@ static void APIENTRY InitVertexWeightfEXT (GLfloat weight)
 	extproc = (void *) wglGetProcAddress("glVertexWeightfEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9897,7 +9897,7 @@ static void APIENTRY InitVertexWeightfvEXT (const GLfloat *weight)
 	extproc = (void *) wglGetProcAddress("glVertexWeightfvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9913,7 +9913,7 @@ static void APIENTRY InitVertexWeightPointerEXT (GLsizei size, GLenum type, GLsi
 	extproc = (void *) wglGetProcAddress("glVertexWeightPointerEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9929,7 +9929,7 @@ static void APIENTRY InitFlushVertexArrayRangeNV (void)
 	extproc = (void *) wglGetProcAddress("glFlushVertexArrayRangeNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9945,7 +9945,7 @@ static void APIENTRY InitVertexArrayRangeNV (GLsizei length, const GLvoid *point
 	extproc = (void *) wglGetProcAddress("glVertexArrayRangeNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9961,7 +9961,7 @@ static void APIENTRY InitCombinerParameterfvNV (GLenum pname, const GLfloat *par
 	extproc = (void *) wglGetProcAddress("glCombinerParameterfvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9977,7 +9977,7 @@ static void APIENTRY InitCombinerParameterfNV (GLenum pname, GLfloat param)
 	extproc = (void *) wglGetProcAddress("glCombinerParameterfNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -9993,7 +9993,7 @@ static void APIENTRY InitCombinerParameterivNV (GLenum pname, const GLint *param
 	extproc = (void *) wglGetProcAddress("glCombinerParameterivNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10009,7 +10009,7 @@ static void APIENTRY InitCombinerParameteriNV (GLenum pname, GLint param)
 	extproc = (void *) wglGetProcAddress("glCombinerParameteriNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10025,7 +10025,7 @@ static void APIENTRY InitCombinerInputNV (GLenum stage, GLenum portion, GLenum v
 	extproc = (void *) wglGetProcAddress("glCombinerInputNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10041,7 +10041,7 @@ static void APIENTRY InitCombinerOutputNV (GLenum stage, GLenum portion, GLenum 
 	extproc = (void *) wglGetProcAddress("glCombinerOutputNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10057,7 +10057,7 @@ static void APIENTRY InitFinalCombinerInputNV (GLenum variable, GLenum input, GL
 	extproc = (void *) wglGetProcAddress("glFinalCombinerInputNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10073,7 +10073,7 @@ static void APIENTRY InitGetCombinerInputParameterfvNV (GLenum stage, GLenum por
 	extproc = (void *) wglGetProcAddress("glGetCombinerInputParameterfvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10089,7 +10089,7 @@ static void APIENTRY InitGetCombinerInputParameterivNV (GLenum stage, GLenum por
 	extproc = (void *) wglGetProcAddress("glGetCombinerInputParameterivNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10105,7 +10105,7 @@ static void APIENTRY InitGetCombinerOutputParameterfvNV (GLenum stage, GLenum po
 	extproc = (void *) wglGetProcAddress("glGetCombinerOutputParameterfvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10121,7 +10121,7 @@ static void APIENTRY InitGetCombinerOutputParameterivNV (GLenum stage, GLenum po
 	extproc = (void *) wglGetProcAddress("glGetCombinerOutputParameterivNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10137,7 +10137,7 @@ static void APIENTRY InitGetFinalCombinerInputParameterfvNV (GLenum variable, GL
 	extproc = (void *) wglGetProcAddress("glGetFinalCombinerInputParameterfvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10153,7 +10153,7 @@ static void APIENTRY InitGetFinalCombinerInputParameterivNV (GLenum variable, GL
 	extproc = (void *) wglGetProcAddress("glGetFinalCombinerInputParameterivNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10169,7 +10169,7 @@ static void APIENTRY InitResizeBuffersMESA (void)
 	extproc = (void *) wglGetProcAddress("glResizeBuffersMESA");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10185,7 +10185,7 @@ static void APIENTRY InitWindowPos2dMESA (GLdouble x, GLdouble y)
 	extproc = (void *) wglGetProcAddress("glWindowPos2dMESA");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10201,7 +10201,7 @@ static void APIENTRY InitWindowPos2dvMESA (const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos2dvMESA");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10217,7 +10217,7 @@ static void APIENTRY InitWindowPos2fMESA (GLfloat x, GLfloat y)
 	extproc = (void *) wglGetProcAddress("glWindowPos2fMESA");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10233,7 +10233,7 @@ static void APIENTRY InitWindowPos2fvMESA (const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos2fvMESA");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10249,7 +10249,7 @@ static void APIENTRY InitWindowPos2iMESA (GLint x, GLint y)
 	extproc = (void *) wglGetProcAddress("glWindowPos2iMESA");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10265,7 +10265,7 @@ static void APIENTRY InitWindowPos2ivMESA (const GLint *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos2ivMESA");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10281,7 +10281,7 @@ static void APIENTRY InitWindowPos2sMESA (GLshort x, GLshort y)
 	extproc = (void *) wglGetProcAddress("glWindowPos2sMESA");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10297,7 +10297,7 @@ static void APIENTRY InitWindowPos2svMESA (const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos2svMESA");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10313,7 +10313,7 @@ static void APIENTRY InitWindowPos3dMESA (GLdouble x, GLdouble y, GLdouble z)
 	extproc = (void *) wglGetProcAddress("glWindowPos3dMESA");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10329,7 +10329,7 @@ static void APIENTRY InitWindowPos3dvMESA (const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos3dvMESA");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10345,7 +10345,7 @@ static void APIENTRY InitWindowPos3fMESA (GLfloat x, GLfloat y, GLfloat z)
 	extproc = (void *) wglGetProcAddress("glWindowPos3fMESA");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10361,7 +10361,7 @@ static void APIENTRY InitWindowPos3fvMESA (const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos3fvMESA");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10377,7 +10377,7 @@ static void APIENTRY InitWindowPos3iMESA (GLint x, GLint y, GLint z)
 	extproc = (void *) wglGetProcAddress("glWindowPos3iMESA");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10393,7 +10393,7 @@ static void APIENTRY InitWindowPos3ivMESA (const GLint *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos3ivMESA");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10409,7 +10409,7 @@ static void APIENTRY InitWindowPos3sMESA (GLshort x, GLshort y, GLshort z)
 	extproc = (void *) wglGetProcAddress("glWindowPos3sMESA");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10425,7 +10425,7 @@ static void APIENTRY InitWindowPos3svMESA (const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos3svMESA");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10441,7 +10441,7 @@ static void APIENTRY InitWindowPos4dMESA (GLdouble x, GLdouble y, GLdouble z, GL
 	extproc = (void *) wglGetProcAddress("glWindowPos4dMESA");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10457,7 +10457,7 @@ static void APIENTRY InitWindowPos4dvMESA (const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos4dvMESA");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10473,7 +10473,7 @@ static void APIENTRY InitWindowPos4fMESA (GLfloat x, GLfloat y, GLfloat z, GLflo
 	extproc = (void *) wglGetProcAddress("glWindowPos4fMESA");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10489,7 +10489,7 @@ static void APIENTRY InitWindowPos4fvMESA (const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos4fvMESA");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10505,7 +10505,7 @@ static void APIENTRY InitWindowPos4iMESA (GLint x, GLint y, GLint z, GLint w)
 	extproc = (void *) wglGetProcAddress("glWindowPos4iMESA");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10521,7 +10521,7 @@ static void APIENTRY InitWindowPos4ivMESA (const GLint *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos4ivMESA");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10537,7 +10537,7 @@ static void APIENTRY InitWindowPos4sMESA (GLshort x, GLshort y, GLshort z, GLsho
 	extproc = (void *) wglGetProcAddress("glWindowPos4sMESA");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10553,7 +10553,7 @@ static void APIENTRY InitWindowPos4svMESA (const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glWindowPos4svMESA");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10569,7 +10569,7 @@ static void APIENTRY InitMultiModeDrawArraysIBM (const GLenum *mode, const GLint
 	extproc = (void *) wglGetProcAddress("glMultiModeDrawArraysIBM");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10585,7 +10585,7 @@ static void APIENTRY InitMultiModeDrawElementsIBM (const GLenum *mode, const GLs
 	extproc = (void *) wglGetProcAddress("glMultiModeDrawElementsIBM");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10601,7 +10601,7 @@ static void APIENTRY InitColorPointerListIBM (GLint size, GLenum type, GLint str
 	extproc = (void *) wglGetProcAddress("glColorPointerListIBM");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10617,7 +10617,7 @@ static void APIENTRY InitSecondaryColorPointerListIBM (GLint size, GLenum type, 
 	extproc = (void *) wglGetProcAddress("glSecondaryColorPointerListIBM");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10633,7 +10633,7 @@ static void APIENTRY InitEdgeFlagPointerListIBM (GLint stride, const GLboolean* 
 	extproc = (void *) wglGetProcAddress("glEdgeFlagPointerListIBM");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10649,7 +10649,7 @@ static void APIENTRY InitFogCoordPointerListIBM (GLenum type, GLint stride, cons
 	extproc = (void *) wglGetProcAddress("glFogCoordPointerListIBM");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10665,7 +10665,7 @@ static void APIENTRY InitIndexPointerListIBM (GLenum type, GLint stride, const G
 	extproc = (void *) wglGetProcAddress("glIndexPointerListIBM");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10681,7 +10681,7 @@ static void APIENTRY InitNormalPointerListIBM (GLenum type, GLint stride, const 
 	extproc = (void *) wglGetProcAddress("glNormalPointerListIBM");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10697,7 +10697,7 @@ static void APIENTRY InitTexCoordPointerListIBM (GLint size, GLenum type, GLint 
 	extproc = (void *) wglGetProcAddress("glTexCoordPointerListIBM");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10713,7 +10713,7 @@ static void APIENTRY InitVertexPointerListIBM (GLint size, GLenum type, GLint st
 	extproc = (void *) wglGetProcAddress("glVertexPointerListIBM");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10729,7 +10729,7 @@ static void APIENTRY InitTbufferMask3DFX (GLuint mask)
 	extproc = (void *) wglGetProcAddress("glTbufferMask3DFX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10745,7 +10745,7 @@ static void APIENTRY InitSampleMaskEXT (GLclampf value, GLboolean invert)
 	extproc = (void *) wglGetProcAddress("glSampleMaskEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10761,7 +10761,7 @@ static void APIENTRY InitSamplePatternEXT (GLenum pattern)
 	extproc = (void *) wglGetProcAddress("glSamplePatternEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10777,7 +10777,7 @@ static void APIENTRY InitTextureColorMaskSGIS (GLboolean red, GLboolean green, G
 	extproc = (void *) wglGetProcAddress("glTextureColorMaskSGIS");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10793,7 +10793,7 @@ static void APIENTRY InitIglooInterfaceSGIX (GLenum pname, const GLvoid *params)
 	extproc = (void *) wglGetProcAddress("glIglooInterfaceSGIX");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10809,7 +10809,7 @@ static void APIENTRY InitDeleteFencesNV (GLsizei n, const GLuint *fences)
 	extproc = (void *) wglGetProcAddress("glDeleteFencesNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10825,7 +10825,7 @@ static void APIENTRY InitGenFencesNV (GLsizei n, GLuint *fences)
 	extproc = (void *) wglGetProcAddress("glGenFencesNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10841,7 +10841,7 @@ static GLboolean APIENTRY InitIsFenceNV (GLuint fence)
 	extproc = (void *) wglGetProcAddress("glIsFenceNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -10857,7 +10857,7 @@ static GLboolean APIENTRY InitTestFenceNV (GLuint fence)
 	extproc = (void *) wglGetProcAddress("glTestFenceNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -10873,7 +10873,7 @@ static void APIENTRY InitGetFenceivNV (GLuint fence, GLenum pname, GLint *params
 	extproc = (void *) wglGetProcAddress("glGetFenceivNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10889,7 +10889,7 @@ static void APIENTRY InitFinishFenceNV (GLuint fence)
 	extproc = (void *) wglGetProcAddress("glFinishFenceNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10905,7 +10905,7 @@ static void APIENTRY InitSetFenceNV (GLuint fence, GLenum condition)
 	extproc = (void *) wglGetProcAddress("glSetFenceNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10921,7 +10921,7 @@ static void APIENTRY InitMapControlPointsNV (GLenum target, GLuint index, GLenum
 	extproc = (void *) wglGetProcAddress("glMapControlPointsNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10937,7 +10937,7 @@ static void APIENTRY InitMapParameterivNV (GLenum target, GLenum pname, const GL
 	extproc = (void *) wglGetProcAddress("glMapParameterivNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10953,7 +10953,7 @@ static void APIENTRY InitMapParameterfvNV (GLenum target, GLenum pname, const GL
 	extproc = (void *) wglGetProcAddress("glMapParameterfvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10969,7 +10969,7 @@ static void APIENTRY InitGetMapControlPointsNV (GLenum target, GLuint index, GLe
 	extproc = (void *) wglGetProcAddress("glGetMapControlPointsNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -10985,7 +10985,7 @@ static void APIENTRY InitGetMapParameterivNV (GLenum target, GLenum pname, GLint
 	extproc = (void *) wglGetProcAddress("glGetMapParameterivNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11001,7 +11001,7 @@ static void APIENTRY InitGetMapParameterfvNV (GLenum target, GLenum pname, GLflo
 	extproc = (void *) wglGetProcAddress("glGetMapParameterfvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11017,7 +11017,7 @@ static void APIENTRY InitGetMapAttribParameterivNV (GLenum target, GLuint index,
 	extproc = (void *) wglGetProcAddress("glGetMapAttribParameterivNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11033,7 +11033,7 @@ static void APIENTRY InitGetMapAttribParameterfvNV (GLenum target, GLuint index,
 	extproc = (void *) wglGetProcAddress("glGetMapAttribParameterfvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11049,7 +11049,7 @@ static void APIENTRY InitEvalMapsNV (GLenum target, GLenum mode)
 	extproc = (void *) wglGetProcAddress("glEvalMapsNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11065,7 +11065,7 @@ static void APIENTRY InitCombinerStageParameterfvNV (GLenum stage, GLenum pname,
 	extproc = (void *) wglGetProcAddress("glCombinerStageParameterfvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11081,7 +11081,7 @@ static void APIENTRY InitGetCombinerStageParameterfvNV (GLenum stage, GLenum pna
 	extproc = (void *) wglGetProcAddress("glGetCombinerStageParameterfvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11097,7 +11097,7 @@ static GLboolean APIENTRY InitAreProgramsResidentNV (GLsizei n, const GLuint *pr
 	extproc = (void *) wglGetProcAddress("glAreProgramsResidentNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -11113,7 +11113,7 @@ static void APIENTRY InitBindProgramNV (GLenum target, GLuint id)
 	extproc = (void *) wglGetProcAddress("glBindProgramNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11129,7 +11129,7 @@ static void APIENTRY InitDeleteProgramsNV (GLsizei n, const GLuint *programs)
 	extproc = (void *) wglGetProcAddress("glDeleteProgramsNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11145,7 +11145,7 @@ static void APIENTRY InitExecuteProgramNV (GLenum target, GLuint id, const GLflo
 	extproc = (void *) wglGetProcAddress("glExecuteProgramNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11161,7 +11161,7 @@ static void APIENTRY InitGenProgramsNV (GLsizei n, GLuint *programs)
 	extproc = (void *) wglGetProcAddress("glGenProgramsNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11177,7 +11177,7 @@ static void APIENTRY InitGetProgramParameterdvNV (GLenum target, GLuint index, G
 	extproc = (void *) wglGetProcAddress("glGetProgramParameterdvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11193,7 +11193,7 @@ static void APIENTRY InitGetProgramParameterfvNV (GLenum target, GLuint index, G
 	extproc = (void *) wglGetProcAddress("glGetProgramParameterfvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11209,7 +11209,7 @@ static void APIENTRY InitGetProgramivNV (GLuint id, GLenum pname, GLint *params)
 	extproc = (void *) wglGetProcAddress("glGetProgramivNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11225,7 +11225,7 @@ static void APIENTRY InitGetProgramStringNV (GLuint id, GLenum pname, GLubyte *p
 	extproc = (void *) wglGetProcAddress("glGetProgramStringNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11241,7 +11241,7 @@ static void APIENTRY InitGetTrackMatrixivNV (GLenum target, GLuint address, GLen
 	extproc = (void *) wglGetProcAddress("glGetTrackMatrixivNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11257,7 +11257,7 @@ static void APIENTRY InitGetVertexAttribdvNV (GLuint index, GLenum pname, GLdoub
 	extproc = (void *) wglGetProcAddress("glGetVertexAttribdvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11273,7 +11273,7 @@ static void APIENTRY InitGetVertexAttribfvNV (GLuint index, GLenum pname, GLfloa
 	extproc = (void *) wglGetProcAddress("glGetVertexAttribfvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11289,7 +11289,7 @@ static void APIENTRY InitGetVertexAttribivNV (GLuint index, GLenum pname, GLint 
 	extproc = (void *) wglGetProcAddress("glGetVertexAttribivNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11305,7 +11305,7 @@ static void APIENTRY InitGetVertexAttribPointervNV (GLuint index, GLenum pname, 
 	extproc = (void *) wglGetProcAddress("glGetVertexAttribPointervNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11321,7 +11321,7 @@ static GLboolean APIENTRY InitIsProgramNV (GLuint id)
 	extproc = (void *) wglGetProcAddress("glIsProgramNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -11337,7 +11337,7 @@ static void APIENTRY InitLoadProgramNV (GLenum target, GLuint id, GLsizei len, c
 	extproc = (void *) wglGetProcAddress("glLoadProgramNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11353,7 +11353,7 @@ static void APIENTRY InitProgramParameter4dNV (GLenum target, GLuint index, GLdo
 	extproc = (void *) wglGetProcAddress("glProgramParameter4dNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11369,7 +11369,7 @@ static void APIENTRY InitProgramParameter4dvNV (GLenum target, GLuint index, con
 	extproc = (void *) wglGetProcAddress("glProgramParameter4dvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11385,7 +11385,7 @@ static void APIENTRY InitProgramParameter4fNV (GLenum target, GLuint index, GLfl
 	extproc = (void *) wglGetProcAddress("glProgramParameter4fNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11401,7 +11401,7 @@ static void APIENTRY InitProgramParameter4fvNV (GLenum target, GLuint index, con
 	extproc = (void *) wglGetProcAddress("glProgramParameter4fvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11417,7 +11417,7 @@ static void APIENTRY InitProgramParameters4dvNV (GLenum target, GLuint index, GL
 	extproc = (void *) wglGetProcAddress("glProgramParameters4dvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11433,7 +11433,7 @@ static void APIENTRY InitProgramParameters4fvNV (GLenum target, GLuint index, GL
 	extproc = (void *) wglGetProcAddress("glProgramParameters4fvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11449,7 +11449,7 @@ static void APIENTRY InitRequestResidentProgramsNV (GLsizei n, const GLuint *pro
 	extproc = (void *) wglGetProcAddress("glRequestResidentProgramsNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11465,7 +11465,7 @@ static void APIENTRY InitTrackMatrixNV (GLenum target, GLuint address, GLenum ma
 	extproc = (void *) wglGetProcAddress("glTrackMatrixNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11481,7 +11481,7 @@ static void APIENTRY InitVertexAttribPointerNV (GLuint index, GLint fsize, GLenu
 	extproc = (void *) wglGetProcAddress("glVertexAttribPointerNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11497,7 +11497,7 @@ static void APIENTRY InitVertexAttrib1dNV (GLuint index, GLdouble x)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib1dNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11513,7 +11513,7 @@ static void APIENTRY InitVertexAttrib1dvNV (GLuint index, const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib1dvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11529,7 +11529,7 @@ static void APIENTRY InitVertexAttrib1fNV (GLuint index, GLfloat x)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib1fNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11545,7 +11545,7 @@ static void APIENTRY InitVertexAttrib1fvNV (GLuint index, const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib1fvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11561,7 +11561,7 @@ static void APIENTRY InitVertexAttrib1sNV (GLuint index, GLshort x)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib1sNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11577,7 +11577,7 @@ static void APIENTRY InitVertexAttrib1svNV (GLuint index, const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib1svNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11593,7 +11593,7 @@ static void APIENTRY InitVertexAttrib2dNV (GLuint index, GLdouble x, GLdouble y)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib2dNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11609,7 +11609,7 @@ static void APIENTRY InitVertexAttrib2dvNV (GLuint index, const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib2dvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11625,7 +11625,7 @@ static void APIENTRY InitVertexAttrib2fNV (GLuint index, GLfloat x, GLfloat y)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib2fNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11641,7 +11641,7 @@ static void APIENTRY InitVertexAttrib2fvNV (GLuint index, const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib2fvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11657,7 +11657,7 @@ static void APIENTRY InitVertexAttrib2sNV (GLuint index, GLshort x, GLshort y)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib2sNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11673,7 +11673,7 @@ static void APIENTRY InitVertexAttrib2svNV (GLuint index, const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib2svNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11689,7 +11689,7 @@ static void APIENTRY InitVertexAttrib3dNV (GLuint index, GLdouble x, GLdouble y,
 	extproc = (void *) wglGetProcAddress("glVertexAttrib3dNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11705,7 +11705,7 @@ static void APIENTRY InitVertexAttrib3dvNV (GLuint index, const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib3dvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11721,7 +11721,7 @@ static void APIENTRY InitVertexAttrib3fNV (GLuint index, GLfloat x, GLfloat y, G
 	extproc = (void *) wglGetProcAddress("glVertexAttrib3fNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11737,7 +11737,7 @@ static void APIENTRY InitVertexAttrib3fvNV (GLuint index, const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib3fvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11753,7 +11753,7 @@ static void APIENTRY InitVertexAttrib3sNV (GLuint index, GLshort x, GLshort y, G
 	extproc = (void *) wglGetProcAddress("glVertexAttrib3sNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11769,7 +11769,7 @@ static void APIENTRY InitVertexAttrib3svNV (GLuint index, const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib3svNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11785,7 +11785,7 @@ static void APIENTRY InitVertexAttrib4dNV (GLuint index, GLdouble x, GLdouble y,
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4dNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11801,7 +11801,7 @@ static void APIENTRY InitVertexAttrib4dvNV (GLuint index, const GLdouble *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4dvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11817,7 +11817,7 @@ static void APIENTRY InitVertexAttrib4fNV (GLuint index, GLfloat x, GLfloat y, G
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4fNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11833,7 +11833,7 @@ static void APIENTRY InitVertexAttrib4fvNV (GLuint index, const GLfloat *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4fvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11849,7 +11849,7 @@ static void APIENTRY InitVertexAttrib4sNV (GLuint index, GLshort x, GLshort y, G
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4sNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11865,7 +11865,7 @@ static void APIENTRY InitVertexAttrib4svNV (GLuint index, const GLshort *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4svNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11881,7 +11881,7 @@ static void APIENTRY InitVertexAttrib4ubNV (GLuint index, GLubyte x, GLubyte y, 
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4ubNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11897,7 +11897,7 @@ static void APIENTRY InitVertexAttrib4ubvNV (GLuint index, const GLubyte *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4ubvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11913,7 +11913,7 @@ static void APIENTRY InitVertexAttribs1dvNV (GLuint index, GLsizei count, const 
 	extproc = (void *) wglGetProcAddress("glVertexAttribs1dvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11929,7 +11929,7 @@ static void APIENTRY InitVertexAttribs1fvNV (GLuint index, GLsizei count, const 
 	extproc = (void *) wglGetProcAddress("glVertexAttribs1fvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11945,7 +11945,7 @@ static void APIENTRY InitVertexAttribs1svNV (GLuint index, GLsizei count, const 
 	extproc = (void *) wglGetProcAddress("glVertexAttribs1svNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11961,7 +11961,7 @@ static void APIENTRY InitVertexAttribs2dvNV (GLuint index, GLsizei count, const 
 	extproc = (void *) wglGetProcAddress("glVertexAttribs2dvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11977,7 +11977,7 @@ static void APIENTRY InitVertexAttribs2fvNV (GLuint index, GLsizei count, const 
 	extproc = (void *) wglGetProcAddress("glVertexAttribs2fvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -11993,7 +11993,7 @@ static void APIENTRY InitVertexAttribs2svNV (GLuint index, GLsizei count, const 
 	extproc = (void *) wglGetProcAddress("glVertexAttribs2svNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12009,7 +12009,7 @@ static void APIENTRY InitVertexAttribs3dvNV (GLuint index, GLsizei count, const 
 	extproc = (void *) wglGetProcAddress("glVertexAttribs3dvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12025,7 +12025,7 @@ static void APIENTRY InitVertexAttribs3fvNV (GLuint index, GLsizei count, const 
 	extproc = (void *) wglGetProcAddress("glVertexAttribs3fvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12041,7 +12041,7 @@ static void APIENTRY InitVertexAttribs3svNV (GLuint index, GLsizei count, const 
 	extproc = (void *) wglGetProcAddress("glVertexAttribs3svNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12057,7 +12057,7 @@ static void APIENTRY InitVertexAttribs4dvNV (GLuint index, GLsizei count, const 
 	extproc = (void *) wglGetProcAddress("glVertexAttribs4dvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12073,7 +12073,7 @@ static void APIENTRY InitVertexAttribs4fvNV (GLuint index, GLsizei count, const 
 	extproc = (void *) wglGetProcAddress("glVertexAttribs4fvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12089,7 +12089,7 @@ static void APIENTRY InitVertexAttribs4svNV (GLuint index, GLsizei count, const 
 	extproc = (void *) wglGetProcAddress("glVertexAttribs4svNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12105,7 +12105,7 @@ static void APIENTRY InitVertexAttribs4ubvNV (GLuint index, GLsizei count, const
 	extproc = (void *) wglGetProcAddress("glVertexAttribs4ubvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12121,7 +12121,7 @@ static void APIENTRY InitTexBumpParameterivATI (GLenum pname, const GLint *param
 	extproc = (void *) wglGetProcAddress("glTexBumpParameterivATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12137,7 +12137,7 @@ static void APIENTRY InitTexBumpParameterfvATI (GLenum pname, const GLfloat *par
 	extproc = (void *) wglGetProcAddress("glTexBumpParameterfvATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12153,7 +12153,7 @@ static void APIENTRY InitGetTexBumpParameterivATI (GLenum pname, GLint *param)
 	extproc = (void *) wglGetProcAddress("glGetTexBumpParameterivATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12169,7 +12169,7 @@ static void APIENTRY InitGetTexBumpParameterfvATI (GLenum pname, GLfloat *param)
 	extproc = (void *) wglGetProcAddress("glGetTexBumpParameterfvATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12185,7 +12185,7 @@ static GLuint APIENTRY InitGenFragmentShadersATI (GLuint range)
 	extproc = (void *) wglGetProcAddress("glGenFragmentShadersATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -12201,7 +12201,7 @@ static void APIENTRY InitBindFragmentShaderATI (GLuint id)
 	extproc = (void *) wglGetProcAddress("glBindFragmentShaderATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12217,7 +12217,7 @@ static void APIENTRY InitDeleteFragmentShaderATI (GLuint id)
 	extproc = (void *) wglGetProcAddress("glDeleteFragmentShaderATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12233,7 +12233,7 @@ static void APIENTRY InitBeginFragmentShaderATI (void)
 	extproc = (void *) wglGetProcAddress("glBeginFragmentShaderATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12249,7 +12249,7 @@ static void APIENTRY InitEndFragmentShaderATI (void)
 	extproc = (void *) wglGetProcAddress("glEndFragmentShaderATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12265,7 +12265,7 @@ static void APIENTRY InitPassTexCoordATI (GLuint dst, GLuint coord, GLenum swizz
 	extproc = (void *) wglGetProcAddress("glPassTexCoordATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12281,7 +12281,7 @@ static void APIENTRY InitSampleMapATI (GLuint dst, GLuint interp, GLenum swizzle
 	extproc = (void *) wglGetProcAddress("glSampleMapATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12297,7 +12297,7 @@ static void APIENTRY InitColorFragmentOp1ATI (GLenum op, GLuint dst, GLuint dstM
 	extproc = (void *) wglGetProcAddress("glColorFragmentOp1ATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12313,7 +12313,7 @@ static void APIENTRY InitColorFragmentOp2ATI (GLenum op, GLuint dst, GLuint dstM
 	extproc = (void *) wglGetProcAddress("glColorFragmentOp2ATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12329,7 +12329,7 @@ static void APIENTRY InitColorFragmentOp3ATI (GLenum op, GLuint dst, GLuint dstM
 	extproc = (void *) wglGetProcAddress("glColorFragmentOp3ATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12345,7 +12345,7 @@ static void APIENTRY InitAlphaFragmentOp1ATI (GLenum op, GLuint dst, GLuint dstM
 	extproc = (void *) wglGetProcAddress("glAlphaFragmentOp1ATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12361,7 +12361,7 @@ static void APIENTRY InitAlphaFragmentOp2ATI (GLenum op, GLuint dst, GLuint dstM
 	extproc = (void *) wglGetProcAddress("glAlphaFragmentOp2ATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12377,7 +12377,7 @@ static void APIENTRY InitAlphaFragmentOp3ATI (GLenum op, GLuint dst, GLuint dstM
 	extproc = (void *) wglGetProcAddress("glAlphaFragmentOp3ATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12393,7 +12393,7 @@ static void APIENTRY InitSetFragmentShaderConstantATI (GLuint dst, const GLfloat
 	extproc = (void *) wglGetProcAddress("glSetFragmentShaderConstantATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12409,7 +12409,7 @@ static void APIENTRY InitPNTrianglesiATI (GLenum pname, GLint param)
 	extproc = (void *) wglGetProcAddress("glPNTrianglesiATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12425,7 +12425,7 @@ static void APIENTRY InitPNTrianglesfATI (GLenum pname, GLfloat param)
 	extproc = (void *) wglGetProcAddress("glPNTrianglesfATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12441,7 +12441,7 @@ static GLuint APIENTRY InitNewObjectBufferATI (GLsizei size, const GLvoid *point
 	extproc = (void *) wglGetProcAddress("glNewObjectBufferATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -12457,7 +12457,7 @@ static GLboolean APIENTRY InitIsObjectBufferATI (GLuint buffer)
 	extproc = (void *) wglGetProcAddress("glIsObjectBufferATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -12473,7 +12473,7 @@ static void APIENTRY InitUpdateObjectBufferATI (GLuint buffer, GLuint offset, GL
 	extproc = (void *) wglGetProcAddress("glUpdateObjectBufferATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12489,7 +12489,7 @@ static void APIENTRY InitGetObjectBufferfvATI (GLuint buffer, GLenum pname, GLfl
 	extproc = (void *) wglGetProcAddress("glGetObjectBufferfvATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12505,7 +12505,7 @@ static void APIENTRY InitGetObjectBufferivATI (GLuint buffer, GLenum pname, GLin
 	extproc = (void *) wglGetProcAddress("glGetObjectBufferivATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12521,7 +12521,7 @@ static void APIENTRY InitFreeObjectBufferATI (GLuint buffer)
 	extproc = (void *) wglGetProcAddress("glFreeObjectBufferATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12537,7 +12537,7 @@ static void APIENTRY InitArrayObjectATI (GLenum array, GLint size, GLenum type, 
 	extproc = (void *) wglGetProcAddress("glArrayObjectATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12553,7 +12553,7 @@ static void APIENTRY InitGetArrayObjectfvATI (GLenum array, GLenum pname, GLfloa
 	extproc = (void *) wglGetProcAddress("glGetArrayObjectfvATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12569,7 +12569,7 @@ static void APIENTRY InitGetArrayObjectivATI (GLenum array, GLenum pname, GLint 
 	extproc = (void *) wglGetProcAddress("glGetArrayObjectivATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12585,7 +12585,7 @@ static void APIENTRY InitVariantArrayObjectATI (GLuint id, GLenum type, GLsizei 
 	extproc = (void *) wglGetProcAddress("glVariantArrayObjectATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12601,7 +12601,7 @@ static void APIENTRY InitGetVariantArrayObjectfvATI (GLuint id, GLenum pname, GL
 	extproc = (void *) wglGetProcAddress("glGetVariantArrayObjectfvATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12617,7 +12617,7 @@ static void APIENTRY InitGetVariantArrayObjectivATI (GLuint id, GLenum pname, GL
 	extproc = (void *) wglGetProcAddress("glGetVariantArrayObjectivATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12633,7 +12633,7 @@ static void APIENTRY InitBeginVertexShaderEXT (void)
 	extproc = (void *) wglGetProcAddress("glBeginVertexShaderEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12649,7 +12649,7 @@ static void APIENTRY InitEndVertexShaderEXT (void)
 	extproc = (void *) wglGetProcAddress("glEndVertexShaderEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12665,7 +12665,7 @@ static void APIENTRY InitBindVertexShaderEXT (GLuint id)
 	extproc = (void *) wglGetProcAddress("glBindVertexShaderEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12681,7 +12681,7 @@ static GLuint APIENTRY InitGenVertexShadersEXT (GLuint range)
 	extproc = (void *) wglGetProcAddress("glGenVertexShadersEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -12697,7 +12697,7 @@ static void APIENTRY InitDeleteVertexShaderEXT (GLuint id)
 	extproc = (void *) wglGetProcAddress("glDeleteVertexShaderEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12713,7 +12713,7 @@ static void APIENTRY InitShaderOp1EXT (GLenum op, GLuint res, GLuint arg1)
 	extproc = (void *) wglGetProcAddress("glShaderOp1EXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12729,7 +12729,7 @@ static void APIENTRY InitShaderOp2EXT (GLenum op, GLuint res, GLuint arg1, GLuin
 	extproc = (void *) wglGetProcAddress("glShaderOp2EXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12745,7 +12745,7 @@ static void APIENTRY InitShaderOp3EXT (GLenum op, GLuint res, GLuint arg1, GLuin
 	extproc = (void *) wglGetProcAddress("glShaderOp3EXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12761,7 +12761,7 @@ static void APIENTRY InitSwizzleEXT (GLuint res, GLuint in, GLenum outX, GLenum 
 	extproc = (void *) wglGetProcAddress("glSwizzleEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12777,7 +12777,7 @@ static void APIENTRY InitWriteMaskEXT (GLuint res, GLuint in, GLenum outX, GLenu
 	extproc = (void *) wglGetProcAddress("glWriteMaskEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12793,7 +12793,7 @@ static void APIENTRY InitInsertComponentEXT (GLuint res, GLuint src, GLuint num)
 	extproc = (void *) wglGetProcAddress("glInsertComponentEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12809,7 +12809,7 @@ static void APIENTRY InitExtractComponentEXT (GLuint res, GLuint src, GLuint num
 	extproc = (void *) wglGetProcAddress("glExtractComponentEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12825,7 +12825,7 @@ static GLuint APIENTRY InitGenSymbolsEXT (GLenum datatype, GLenum storagetype, G
 	extproc = (void *) wglGetProcAddress("glGenSymbolsEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -12841,7 +12841,7 @@ static void APIENTRY InitSetInvariantEXT (GLuint id, GLenum type, const GLvoid *
 	extproc = (void *) wglGetProcAddress("glSetInvariantEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12857,7 +12857,7 @@ static void APIENTRY InitSetLocalConstantEXT (GLuint id, GLenum type, const GLvo
 	extproc = (void *) wglGetProcAddress("glSetLocalConstantEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12873,7 +12873,7 @@ static void APIENTRY InitVariantbvEXT (GLuint id, const GLbyte *addr)
 	extproc = (void *) wglGetProcAddress("glVariantbvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12889,7 +12889,7 @@ static void APIENTRY InitVariantsvEXT (GLuint id, const GLshort *addr)
 	extproc = (void *) wglGetProcAddress("glVariantsvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12905,7 +12905,7 @@ static void APIENTRY InitVariantivEXT (GLuint id, const GLint *addr)
 	extproc = (void *) wglGetProcAddress("glVariantivEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12921,7 +12921,7 @@ static void APIENTRY InitVariantfvEXT (GLuint id, const GLfloat *addr)
 	extproc = (void *) wglGetProcAddress("glVariantfvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12937,7 +12937,7 @@ static void APIENTRY InitVariantdvEXT (GLuint id, const GLdouble *addr)
 	extproc = (void *) wglGetProcAddress("glVariantdvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12953,7 +12953,7 @@ static void APIENTRY InitVariantubvEXT (GLuint id, const GLubyte *addr)
 	extproc = (void *) wglGetProcAddress("glVariantubvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12969,7 +12969,7 @@ static void APIENTRY InitVariantusvEXT (GLuint id, const GLushort *addr)
 	extproc = (void *) wglGetProcAddress("glVariantusvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -12985,7 +12985,7 @@ static void APIENTRY InitVariantuivEXT (GLuint id, const GLuint *addr)
 	extproc = (void *) wglGetProcAddress("glVariantuivEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13001,7 +13001,7 @@ static void APIENTRY InitVariantPointerEXT (GLuint id, GLenum type, GLuint strid
 	extproc = (void *) wglGetProcAddress("glVariantPointerEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13017,7 +13017,7 @@ static void APIENTRY InitEnableVariantClientStateEXT (GLuint id)
 	extproc = (void *) wglGetProcAddress("glEnableVariantClientStateEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13033,7 +13033,7 @@ static void APIENTRY InitDisableVariantClientStateEXT (GLuint id)
 	extproc = (void *) wglGetProcAddress("glDisableVariantClientStateEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13049,7 +13049,7 @@ static GLuint APIENTRY InitBindLightParameterEXT (GLenum light, GLenum value)
 	extproc = (void *) wglGetProcAddress("glBindLightParameterEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -13065,7 +13065,7 @@ static GLuint APIENTRY InitBindMaterialParameterEXT (GLenum face, GLenum value)
 	extproc = (void *) wglGetProcAddress("glBindMaterialParameterEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -13081,7 +13081,7 @@ static GLuint APIENTRY InitBindTexGenParameterEXT (GLenum unit, GLenum coord, GL
 	extproc = (void *) wglGetProcAddress("glBindTexGenParameterEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -13097,7 +13097,7 @@ static GLuint APIENTRY InitBindTextureUnitParameterEXT (GLenum unit, GLenum valu
 	extproc = (void *) wglGetProcAddress("glBindTextureUnitParameterEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -13113,7 +13113,7 @@ static GLuint APIENTRY InitBindParameterEXT (GLenum value)
 	extproc = (void *) wglGetProcAddress("glBindParameterEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -13129,7 +13129,7 @@ static GLboolean APIENTRY InitIsVariantEnabledEXT (GLuint id, GLenum cap)
 	extproc = (void *) wglGetProcAddress("glIsVariantEnabledEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -13145,7 +13145,7 @@ static void APIENTRY InitGetVariantBooleanvEXT (GLuint id, GLenum value, GLboole
 	extproc = (void *) wglGetProcAddress("glGetVariantBooleanvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13161,7 +13161,7 @@ static void APIENTRY InitGetVariantIntegervEXT (GLuint id, GLenum value, GLint *
 	extproc = (void *) wglGetProcAddress("glGetVariantIntegervEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13177,7 +13177,7 @@ static void APIENTRY InitGetVariantFloatvEXT (GLuint id, GLenum value, GLfloat *
 	extproc = (void *) wglGetProcAddress("glGetVariantFloatvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13193,7 +13193,7 @@ static void APIENTRY InitGetVariantPointervEXT (GLuint id, GLenum value, GLvoid*
 	extproc = (void *) wglGetProcAddress("glGetVariantPointervEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13209,7 +13209,7 @@ static void APIENTRY InitGetInvariantBooleanvEXT (GLuint id, GLenum value, GLboo
 	extproc = (void *) wglGetProcAddress("glGetInvariantBooleanvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13225,7 +13225,7 @@ static void APIENTRY InitGetInvariantIntegervEXT (GLuint id, GLenum value, GLint
 	extproc = (void *) wglGetProcAddress("glGetInvariantIntegervEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13241,7 +13241,7 @@ static void APIENTRY InitGetInvariantFloatvEXT (GLuint id, GLenum value, GLfloat
 	extproc = (void *) wglGetProcAddress("glGetInvariantFloatvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13257,7 +13257,7 @@ static void APIENTRY InitGetLocalConstantBooleanvEXT (GLuint id, GLenum value, G
 	extproc = (void *) wglGetProcAddress("glGetLocalConstantBooleanvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13273,7 +13273,7 @@ static void APIENTRY InitGetLocalConstantIntegervEXT (GLuint id, GLenum value, G
 	extproc = (void *) wglGetProcAddress("glGetLocalConstantIntegervEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13289,7 +13289,7 @@ static void APIENTRY InitGetLocalConstantFloatvEXT (GLuint id, GLenum value, GLf
 	extproc = (void *) wglGetProcAddress("glGetLocalConstantFloatvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13305,7 +13305,7 @@ static void APIENTRY InitVertexStream1sATI (GLenum stream, GLshort x)
 	extproc = (void *) wglGetProcAddress("glVertexStream1sATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13321,7 +13321,7 @@ static void APIENTRY InitVertexStream1svATI (GLenum stream, const GLshort *coord
 	extproc = (void *) wglGetProcAddress("glVertexStream1svATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13337,7 +13337,7 @@ static void APIENTRY InitVertexStream1iATI (GLenum stream, GLint x)
 	extproc = (void *) wglGetProcAddress("glVertexStream1iATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13353,7 +13353,7 @@ static void APIENTRY InitVertexStream1ivATI (GLenum stream, const GLint *coords)
 	extproc = (void *) wglGetProcAddress("glVertexStream1ivATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13369,7 +13369,7 @@ static void APIENTRY InitVertexStream1fATI (GLenum stream, GLfloat x)
 	extproc = (void *) wglGetProcAddress("glVertexStream1fATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13385,7 +13385,7 @@ static void APIENTRY InitVertexStream1fvATI (GLenum stream, const GLfloat *coord
 	extproc = (void *) wglGetProcAddress("glVertexStream1fvATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13401,7 +13401,7 @@ static void APIENTRY InitVertexStream1dATI (GLenum stream, GLdouble x)
 	extproc = (void *) wglGetProcAddress("glVertexStream1dATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13417,7 +13417,7 @@ static void APIENTRY InitVertexStream1dvATI (GLenum stream, const GLdouble *coor
 	extproc = (void *) wglGetProcAddress("glVertexStream1dvATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13433,7 +13433,7 @@ static void APIENTRY InitVertexStream2sATI (GLenum stream, GLshort x, GLshort y)
 	extproc = (void *) wglGetProcAddress("glVertexStream2sATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13449,7 +13449,7 @@ static void APIENTRY InitVertexStream2svATI (GLenum stream, const GLshort *coord
 	extproc = (void *) wglGetProcAddress("glVertexStream2svATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13465,7 +13465,7 @@ static void APIENTRY InitVertexStream2iATI (GLenum stream, GLint x, GLint y)
 	extproc = (void *) wglGetProcAddress("glVertexStream2iATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13481,7 +13481,7 @@ static void APIENTRY InitVertexStream2ivATI (GLenum stream, const GLint *coords)
 	extproc = (void *) wglGetProcAddress("glVertexStream2ivATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13497,7 +13497,7 @@ static void APIENTRY InitVertexStream2fATI (GLenum stream, GLfloat x, GLfloat y)
 	extproc = (void *) wglGetProcAddress("glVertexStream2fATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13513,7 +13513,7 @@ static void APIENTRY InitVertexStream2fvATI (GLenum stream, const GLfloat *coord
 	extproc = (void *) wglGetProcAddress("glVertexStream2fvATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13529,7 +13529,7 @@ static void APIENTRY InitVertexStream2dATI (GLenum stream, GLdouble x, GLdouble 
 	extproc = (void *) wglGetProcAddress("glVertexStream2dATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13545,7 +13545,7 @@ static void APIENTRY InitVertexStream2dvATI (GLenum stream, const GLdouble *coor
 	extproc = (void *) wglGetProcAddress("glVertexStream2dvATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13561,7 +13561,7 @@ static void APIENTRY InitVertexStream3sATI (GLenum stream, GLshort x, GLshort y,
 	extproc = (void *) wglGetProcAddress("glVertexStream3sATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13577,7 +13577,7 @@ static void APIENTRY InitVertexStream3svATI (GLenum stream, const GLshort *coord
 	extproc = (void *) wglGetProcAddress("glVertexStream3svATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13593,7 +13593,7 @@ static void APIENTRY InitVertexStream3iATI (GLenum stream, GLint x, GLint y, GLi
 	extproc = (void *) wglGetProcAddress("glVertexStream3iATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13609,7 +13609,7 @@ static void APIENTRY InitVertexStream3ivATI (GLenum stream, const GLint *coords)
 	extproc = (void *) wglGetProcAddress("glVertexStream3ivATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13625,7 +13625,7 @@ static void APIENTRY InitVertexStream3fATI (GLenum stream, GLfloat x, GLfloat y,
 	extproc = (void *) wglGetProcAddress("glVertexStream3fATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13641,7 +13641,7 @@ static void APIENTRY InitVertexStream3fvATI (GLenum stream, const GLfloat *coord
 	extproc = (void *) wglGetProcAddress("glVertexStream3fvATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13657,7 +13657,7 @@ static void APIENTRY InitVertexStream3dATI (GLenum stream, GLdouble x, GLdouble 
 	extproc = (void *) wglGetProcAddress("glVertexStream3dATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13673,7 +13673,7 @@ static void APIENTRY InitVertexStream3dvATI (GLenum stream, const GLdouble *coor
 	extproc = (void *) wglGetProcAddress("glVertexStream3dvATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13689,7 +13689,7 @@ static void APIENTRY InitVertexStream4sATI (GLenum stream, GLshort x, GLshort y,
 	extproc = (void *) wglGetProcAddress("glVertexStream4sATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13705,7 +13705,7 @@ static void APIENTRY InitVertexStream4svATI (GLenum stream, const GLshort *coord
 	extproc = (void *) wglGetProcAddress("glVertexStream4svATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13721,7 +13721,7 @@ static void APIENTRY InitVertexStream4iATI (GLenum stream, GLint x, GLint y, GLi
 	extproc = (void *) wglGetProcAddress("glVertexStream4iATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13737,7 +13737,7 @@ static void APIENTRY InitVertexStream4ivATI (GLenum stream, const GLint *coords)
 	extproc = (void *) wglGetProcAddress("glVertexStream4ivATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13753,7 +13753,7 @@ static void APIENTRY InitVertexStream4fATI (GLenum stream, GLfloat x, GLfloat y,
 	extproc = (void *) wglGetProcAddress("glVertexStream4fATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13769,7 +13769,7 @@ static void APIENTRY InitVertexStream4fvATI (GLenum stream, const GLfloat *coord
 	extproc = (void *) wglGetProcAddress("glVertexStream4fvATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13785,7 +13785,7 @@ static void APIENTRY InitVertexStream4dATI (GLenum stream, GLdouble x, GLdouble 
 	extproc = (void *) wglGetProcAddress("glVertexStream4dATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13801,7 +13801,7 @@ static void APIENTRY InitVertexStream4dvATI (GLenum stream, const GLdouble *coor
 	extproc = (void *) wglGetProcAddress("glVertexStream4dvATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13817,7 +13817,7 @@ static void APIENTRY InitNormalStream3bATI (GLenum stream, GLbyte nx, GLbyte ny,
 	extproc = (void *) wglGetProcAddress("glNormalStream3bATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13833,7 +13833,7 @@ static void APIENTRY InitNormalStream3bvATI (GLenum stream, const GLbyte *coords
 	extproc = (void *) wglGetProcAddress("glNormalStream3bvATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13849,7 +13849,7 @@ static void APIENTRY InitNormalStream3sATI (GLenum stream, GLshort nx, GLshort n
 	extproc = (void *) wglGetProcAddress("glNormalStream3sATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13865,7 +13865,7 @@ static void APIENTRY InitNormalStream3svATI (GLenum stream, const GLshort *coord
 	extproc = (void *) wglGetProcAddress("glNormalStream3svATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13881,7 +13881,7 @@ static void APIENTRY InitNormalStream3iATI (GLenum stream, GLint nx, GLint ny, G
 	extproc = (void *) wglGetProcAddress("glNormalStream3iATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13897,7 +13897,7 @@ static void APIENTRY InitNormalStream3ivATI (GLenum stream, const GLint *coords)
 	extproc = (void *) wglGetProcAddress("glNormalStream3ivATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13913,7 +13913,7 @@ static void APIENTRY InitNormalStream3fATI (GLenum stream, GLfloat nx, GLfloat n
 	extproc = (void *) wglGetProcAddress("glNormalStream3fATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13929,7 +13929,7 @@ static void APIENTRY InitNormalStream3fvATI (GLenum stream, const GLfloat *coord
 	extproc = (void *) wglGetProcAddress("glNormalStream3fvATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13945,7 +13945,7 @@ static void APIENTRY InitNormalStream3dATI (GLenum stream, GLdouble nx, GLdouble
 	extproc = (void *) wglGetProcAddress("glNormalStream3dATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13961,7 +13961,7 @@ static void APIENTRY InitNormalStream3dvATI (GLenum stream, const GLdouble *coor
 	extproc = (void *) wglGetProcAddress("glNormalStream3dvATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13977,7 +13977,7 @@ static void APIENTRY InitClientActiveVertexStreamATI (GLenum stream)
 	extproc = (void *) wglGetProcAddress("glClientActiveVertexStreamATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -13993,7 +13993,7 @@ static void APIENTRY InitVertexBlendEnviATI (GLenum pname, GLint param)
 	extproc = (void *) wglGetProcAddress("glVertexBlendEnviATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14009,7 +14009,7 @@ static void APIENTRY InitVertexBlendEnvfATI (GLenum pname, GLfloat param)
 	extproc = (void *) wglGetProcAddress("glVertexBlendEnvfATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14025,7 +14025,7 @@ static void APIENTRY InitElementPointerATI (GLenum type, const GLvoid *pointer)
 	extproc = (void *) wglGetProcAddress("glElementPointerATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14041,7 +14041,7 @@ static void APIENTRY InitDrawElementArrayATI (GLenum mode, GLsizei count)
 	extproc = (void *) wglGetProcAddress("glDrawElementArrayATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14057,7 +14057,7 @@ static void APIENTRY InitDrawRangeElementArrayATI (GLenum mode, GLuint start, GL
 	extproc = (void *) wglGetProcAddress("glDrawRangeElementArrayATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14073,7 +14073,7 @@ static void APIENTRY InitDrawMeshArraysSUN (GLenum mode, GLint first, GLsizei co
 	extproc = (void *) wglGetProcAddress("glDrawMeshArraysSUN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14089,7 +14089,7 @@ static void APIENTRY InitGenOcclusionQueriesNV (GLsizei n, GLuint *ids)
 	extproc = (void *) wglGetProcAddress("glGenOcclusionQueriesNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14105,7 +14105,7 @@ static void APIENTRY InitDeleteOcclusionQueriesNV (GLsizei n, const GLuint *ids)
 	extproc = (void *) wglGetProcAddress("glDeleteOcclusionQueriesNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14121,7 +14121,7 @@ static GLboolean APIENTRY InitIsOcclusionQueryNV (GLuint id)
 	extproc = (void *) wglGetProcAddress("glIsOcclusionQueryNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -14137,7 +14137,7 @@ static void APIENTRY InitBeginOcclusionQueryNV (GLuint id)
 	extproc = (void *) wglGetProcAddress("glBeginOcclusionQueryNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14153,7 +14153,7 @@ static void APIENTRY InitEndOcclusionQueryNV (void)
 	extproc = (void *) wglGetProcAddress("glEndOcclusionQueryNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14169,7 +14169,7 @@ static void APIENTRY InitGetOcclusionQueryivNV (GLuint id, GLenum pname, GLint *
 	extproc = (void *) wglGetProcAddress("glGetOcclusionQueryivNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14185,7 +14185,7 @@ static void APIENTRY InitGetOcclusionQueryuivNV (GLuint id, GLenum pname, GLuint
 	extproc = (void *) wglGetProcAddress("glGetOcclusionQueryuivNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14201,7 +14201,7 @@ static void APIENTRY InitPointParameteriNV (GLenum pname, GLint param)
 	extproc = (void *) wglGetProcAddress("glPointParameteriNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14217,7 +14217,7 @@ static void APIENTRY InitPointParameterivNV (GLenum pname, const GLint *params)
 	extproc = (void *) wglGetProcAddress("glPointParameterivNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14233,7 +14233,7 @@ static void APIENTRY InitActiveStencilFaceEXT (GLenum face)
 	extproc = (void *) wglGetProcAddress("glActiveStencilFaceEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14249,7 +14249,7 @@ static void APIENTRY InitElementPointerAPPLE (GLenum type, const GLvoid *pointer
 	extproc = (void *) wglGetProcAddress("glElementPointerAPPLE");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14265,7 +14265,7 @@ static void APIENTRY InitDrawElementArrayAPPLE (GLenum mode, GLint first, GLsize
 	extproc = (void *) wglGetProcAddress("glDrawElementArrayAPPLE");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14281,7 +14281,7 @@ static void APIENTRY InitDrawRangeElementArrayAPPLE (GLenum mode, GLuint start, 
 	extproc = (void *) wglGetProcAddress("glDrawRangeElementArrayAPPLE");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14297,7 +14297,7 @@ static void APIENTRY InitMultiDrawElementArrayAPPLE (GLenum mode, const GLint *f
 	extproc = (void *) wglGetProcAddress("glMultiDrawElementArrayAPPLE");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14313,7 +14313,7 @@ static void APIENTRY InitMultiDrawRangeElementArrayAPPLE (GLenum mode, GLuint st
 	extproc = (void *) wglGetProcAddress("glMultiDrawRangeElementArrayAPPLE");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14329,7 +14329,7 @@ static void APIENTRY InitGenFencesAPPLE (GLsizei n, GLuint *fences)
 	extproc = (void *) wglGetProcAddress("glGenFencesAPPLE");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14345,7 +14345,7 @@ static void APIENTRY InitDeleteFencesAPPLE (GLsizei n, const GLuint *fences)
 	extproc = (void *) wglGetProcAddress("glDeleteFencesAPPLE");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14361,7 +14361,7 @@ static void APIENTRY InitSetFenceAPPLE (GLuint fence)
 	extproc = (void *) wglGetProcAddress("glSetFenceAPPLE");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14377,7 +14377,7 @@ static GLboolean APIENTRY InitIsFenceAPPLE (GLuint fence)
 	extproc = (void *) wglGetProcAddress("glIsFenceAPPLE");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -14393,7 +14393,7 @@ static GLboolean APIENTRY InitTestFenceAPPLE (GLuint fence)
 	extproc = (void *) wglGetProcAddress("glTestFenceAPPLE");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -14409,7 +14409,7 @@ static void APIENTRY InitFinishFenceAPPLE (GLuint fence)
 	extproc = (void *) wglGetProcAddress("glFinishFenceAPPLE");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14425,7 +14425,7 @@ static GLboolean APIENTRY InitTestObjectAPPLE (GLenum object, GLuint name)
 	extproc = (void *) wglGetProcAddress("glTestObjectAPPLE");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -14441,7 +14441,7 @@ static void APIENTRY InitFinishObjectAPPLE (GLenum object, GLint name)
 	extproc = (void *) wglGetProcAddress("glFinishObjectAPPLE");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14457,7 +14457,7 @@ static void APIENTRY InitBindVertexArrayAPPLE (GLuint array)
 	extproc = (void *) wglGetProcAddress("glBindVertexArrayAPPLE");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14473,7 +14473,7 @@ static void APIENTRY InitDeleteVertexArraysAPPLE (GLsizei n, const GLuint *array
 	extproc = (void *) wglGetProcAddress("glDeleteVertexArraysAPPLE");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14489,7 +14489,7 @@ static void APIENTRY InitGenVertexArraysAPPLE (GLsizei n, const GLuint *arrays)
 	extproc = (void *) wglGetProcAddress("glGenVertexArraysAPPLE");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14505,7 +14505,7 @@ static GLboolean APIENTRY InitIsVertexArrayAPPLE (GLuint array)
 	extproc = (void *) wglGetProcAddress("glIsVertexArrayAPPLE");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -14521,7 +14521,7 @@ static void APIENTRY InitVertexArrayRangeAPPLE (GLsizei length, GLvoid *pointer)
 	extproc = (void *) wglGetProcAddress("glVertexArrayRangeAPPLE");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14537,7 +14537,7 @@ static void APIENTRY InitFlushVertexArrayRangeAPPLE (GLsizei length, GLvoid *poi
 	extproc = (void *) wglGetProcAddress("glFlushVertexArrayRangeAPPLE");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14553,7 +14553,7 @@ static void APIENTRY InitVertexArrayParameteriAPPLE (GLenum pname, GLint param)
 	extproc = (void *) wglGetProcAddress("glVertexArrayParameteriAPPLE");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14569,7 +14569,7 @@ static void APIENTRY InitDrawBuffersATI (GLsizei n, const GLenum *bufs)
 	extproc = (void *) wglGetProcAddress("glDrawBuffersATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14585,7 +14585,7 @@ static void APIENTRY InitProgramNamedParameter4fNV (GLuint id, GLsizei len, cons
 	extproc = (void *) wglGetProcAddress("glProgramNamedParameter4fNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14601,7 +14601,7 @@ static void APIENTRY InitProgramNamedParameter4dNV (GLuint id, GLsizei len, cons
 	extproc = (void *) wglGetProcAddress("glProgramNamedParameter4dNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14617,7 +14617,7 @@ static void APIENTRY InitProgramNamedParameter4fvNV (GLuint id, GLsizei len, con
 	extproc = (void *) wglGetProcAddress("glProgramNamedParameter4fvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14633,7 +14633,7 @@ static void APIENTRY InitProgramNamedParameter4dvNV (GLuint id, GLsizei len, con
 	extproc = (void *) wglGetProcAddress("glProgramNamedParameter4dvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14649,7 +14649,7 @@ static void APIENTRY InitGetProgramNamedParameterfvNV (GLuint id, GLsizei len, c
 	extproc = (void *) wglGetProcAddress("glGetProgramNamedParameterfvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14665,7 +14665,7 @@ static void APIENTRY InitGetProgramNamedParameterdvNV (GLuint id, GLsizei len, c
 	extproc = (void *) wglGetProcAddress("glGetProgramNamedParameterdvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14681,7 +14681,7 @@ static void APIENTRY InitVertex2hNV (GLhalfNV x, GLhalfNV y)
 	extproc = (void *) wglGetProcAddress("glVertex2hNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14697,7 +14697,7 @@ static void APIENTRY InitVertex2hvNV (const GLhalfNV *v)
 	extproc = (void *) wglGetProcAddress("glVertex2hvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14713,7 +14713,7 @@ static void APIENTRY InitVertex3hNV (GLhalfNV x, GLhalfNV y, GLhalfNV z)
 	extproc = (void *) wglGetProcAddress("glVertex3hNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14729,7 +14729,7 @@ static void APIENTRY InitVertex3hvNV (const GLhalfNV *v)
 	extproc = (void *) wglGetProcAddress("glVertex3hvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14745,7 +14745,7 @@ static void APIENTRY InitVertex4hNV (GLhalfNV x, GLhalfNV y, GLhalfNV z, GLhalfN
 	extproc = (void *) wglGetProcAddress("glVertex4hNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14761,7 +14761,7 @@ static void APIENTRY InitVertex4hvNV (const GLhalfNV *v)
 	extproc = (void *) wglGetProcAddress("glVertex4hvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14777,7 +14777,7 @@ static void APIENTRY InitNormal3hNV (GLhalfNV nx, GLhalfNV ny, GLhalfNV nz)
 	extproc = (void *) wglGetProcAddress("glNormal3hNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14793,7 +14793,7 @@ static void APIENTRY InitNormal3hvNV (const GLhalfNV *v)
 	extproc = (void *) wglGetProcAddress("glNormal3hvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14809,7 +14809,7 @@ static void APIENTRY InitColor3hNV (GLhalfNV red, GLhalfNV green, GLhalfNV blue)
 	extproc = (void *) wglGetProcAddress("glColor3hNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14825,7 +14825,7 @@ static void APIENTRY InitColor3hvNV (const GLhalfNV *v)
 	extproc = (void *) wglGetProcAddress("glColor3hvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14841,7 +14841,7 @@ static void APIENTRY InitColor4hNV (GLhalfNV red, GLhalfNV green, GLhalfNV blue,
 	extproc = (void *) wglGetProcAddress("glColor4hNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14857,7 +14857,7 @@ static void APIENTRY InitColor4hvNV (const GLhalfNV *v)
 	extproc = (void *) wglGetProcAddress("glColor4hvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14873,7 +14873,7 @@ static void APIENTRY InitTexCoord1hNV (GLhalfNV s)
 	extproc = (void *) wglGetProcAddress("glTexCoord1hNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14889,7 +14889,7 @@ static void APIENTRY InitTexCoord1hvNV (const GLhalfNV *v)
 	extproc = (void *) wglGetProcAddress("glTexCoord1hvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14905,7 +14905,7 @@ static void APIENTRY InitTexCoord2hNV (GLhalfNV s, GLhalfNV t)
 	extproc = (void *) wglGetProcAddress("glTexCoord2hNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14921,7 +14921,7 @@ static void APIENTRY InitTexCoord2hvNV (const GLhalfNV *v)
 	extproc = (void *) wglGetProcAddress("glTexCoord2hvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14937,7 +14937,7 @@ static void APIENTRY InitTexCoord3hNV (GLhalfNV s, GLhalfNV t, GLhalfNV r)
 	extproc = (void *) wglGetProcAddress("glTexCoord3hNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14953,7 +14953,7 @@ static void APIENTRY InitTexCoord3hvNV (const GLhalfNV *v)
 	extproc = (void *) wglGetProcAddress("glTexCoord3hvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14969,7 +14969,7 @@ static void APIENTRY InitTexCoord4hNV (GLhalfNV s, GLhalfNV t, GLhalfNV r, GLhal
 	extproc = (void *) wglGetProcAddress("glTexCoord4hNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -14985,7 +14985,7 @@ static void APIENTRY InitTexCoord4hvNV (const GLhalfNV *v)
 	extproc = (void *) wglGetProcAddress("glTexCoord4hvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15001,7 +15001,7 @@ static void APIENTRY InitMultiTexCoord1hNV (GLenum target, GLhalfNV s)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord1hNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15017,7 +15017,7 @@ static void APIENTRY InitMultiTexCoord1hvNV (GLenum target, const GLhalfNV *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord1hvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15033,7 +15033,7 @@ static void APIENTRY InitMultiTexCoord2hNV (GLenum target, GLhalfNV s, GLhalfNV 
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord2hNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15049,7 +15049,7 @@ static void APIENTRY InitMultiTexCoord2hvNV (GLenum target, const GLhalfNV *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord2hvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15065,7 +15065,7 @@ static void APIENTRY InitMultiTexCoord3hNV (GLenum target, GLhalfNV s, GLhalfNV 
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord3hNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15081,7 +15081,7 @@ static void APIENTRY InitMultiTexCoord3hvNV (GLenum target, const GLhalfNV *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord3hvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15097,7 +15097,7 @@ static void APIENTRY InitMultiTexCoord4hNV (GLenum target, GLhalfNV s, GLhalfNV 
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord4hNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15113,7 +15113,7 @@ static void APIENTRY InitMultiTexCoord4hvNV (GLenum target, const GLhalfNV *v)
 	extproc = (void *) wglGetProcAddress("glMultiTexCoord4hvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15129,7 +15129,7 @@ static void APIENTRY InitFogCoordhNV (GLhalfNV fog)
 	extproc = (void *) wglGetProcAddress("glFogCoordhNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15145,7 +15145,7 @@ static void APIENTRY InitFogCoordhvNV (const GLhalfNV *fog)
 	extproc = (void *) wglGetProcAddress("glFogCoordhvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15161,7 +15161,7 @@ static void APIENTRY InitSecondaryColor3hNV (GLhalfNV red, GLhalfNV green, GLhal
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3hNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15177,7 +15177,7 @@ static void APIENTRY InitSecondaryColor3hvNV (const GLhalfNV *v)
 	extproc = (void *) wglGetProcAddress("glSecondaryColor3hvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15193,7 +15193,7 @@ static void APIENTRY InitVertexWeighthNV (GLhalfNV weight)
 	extproc = (void *) wglGetProcAddress("glVertexWeighthNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15209,7 +15209,7 @@ static void APIENTRY InitVertexWeighthvNV (const GLhalfNV *weight)
 	extproc = (void *) wglGetProcAddress("glVertexWeighthvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15225,7 +15225,7 @@ static void APIENTRY InitVertexAttrib1hNV (GLuint index, GLhalfNV x)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib1hNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15241,7 +15241,7 @@ static void APIENTRY InitVertexAttrib1hvNV (GLuint index, const GLhalfNV *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib1hvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15257,7 +15257,7 @@ static void APIENTRY InitVertexAttrib2hNV (GLuint index, GLhalfNV x, GLhalfNV y)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib2hNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15273,7 +15273,7 @@ static void APIENTRY InitVertexAttrib2hvNV (GLuint index, const GLhalfNV *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib2hvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15289,7 +15289,7 @@ static void APIENTRY InitVertexAttrib3hNV (GLuint index, GLhalfNV x, GLhalfNV y,
 	extproc = (void *) wglGetProcAddress("glVertexAttrib3hNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15305,7 +15305,7 @@ static void APIENTRY InitVertexAttrib3hvNV (GLuint index, const GLhalfNV *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib3hvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15321,7 +15321,7 @@ static void APIENTRY InitVertexAttrib4hNV (GLuint index, GLhalfNV x, GLhalfNV y,
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4hNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15337,7 +15337,7 @@ static void APIENTRY InitVertexAttrib4hvNV (GLuint index, const GLhalfNV *v)
 	extproc = (void *) wglGetProcAddress("glVertexAttrib4hvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15353,7 +15353,7 @@ static void APIENTRY InitVertexAttribs1hvNV (GLuint index, GLsizei n, const GLha
 	extproc = (void *) wglGetProcAddress("glVertexAttribs1hvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15369,7 +15369,7 @@ static void APIENTRY InitVertexAttribs2hvNV (GLuint index, GLsizei n, const GLha
 	extproc = (void *) wglGetProcAddress("glVertexAttribs2hvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15385,7 +15385,7 @@ static void APIENTRY InitVertexAttribs3hvNV (GLuint index, GLsizei n, const GLha
 	extproc = (void *) wglGetProcAddress("glVertexAttribs3hvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15401,7 +15401,7 @@ static void APIENTRY InitVertexAttribs4hvNV (GLuint index, GLsizei n, const GLha
 	extproc = (void *) wglGetProcAddress("glVertexAttribs4hvNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15417,7 +15417,7 @@ static void APIENTRY InitPixelDataRangeNV (GLenum target, GLsizei length, GLvoid
 	extproc = (void *) wglGetProcAddress("glPixelDataRangeNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15433,7 +15433,7 @@ static void APIENTRY InitFlushPixelDataRangeNV (GLenum target)
 	extproc = (void *) wglGetProcAddress("glFlushPixelDataRangeNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15449,7 +15449,7 @@ static void APIENTRY InitPrimitiveRestartNV (void)
 	extproc = (void *) wglGetProcAddress("glPrimitiveRestartNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15465,7 +15465,7 @@ static void APIENTRY InitPrimitiveRestartIndexNV (GLuint index)
 	extproc = (void *) wglGetProcAddress("glPrimitiveRestartIndexNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15481,7 +15481,7 @@ static GLvoid* APIENTRY InitMapObjectBufferATI (GLuint buffer)
 	extproc = (void *) wglGetProcAddress("glMapObjectBufferATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -15497,7 +15497,7 @@ static void APIENTRY InitUnmapObjectBufferATI (GLuint buffer)
 	extproc = (void *) wglGetProcAddress("glUnmapObjectBufferATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15513,7 +15513,7 @@ static void APIENTRY InitStencilOpSeparateATI (GLenum face, GLenum sfail, GLenum
 	extproc = (void *) wglGetProcAddress("glStencilOpSeparateATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15529,7 +15529,7 @@ static void APIENTRY InitStencilFuncSeparateATI (GLenum frontfunc, GLenum backfu
 	extproc = (void *) wglGetProcAddress("glStencilFuncSeparateATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15545,7 +15545,7 @@ static void APIENTRY InitVertexAttribArrayObjectATI (GLuint index, GLint size, G
 	extproc = (void *) wglGetProcAddress("glVertexAttribArrayObjectATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15561,7 +15561,7 @@ static void APIENTRY InitGetVertexAttribArrayObjectfvATI (GLuint index, GLenum p
 	extproc = (void *) wglGetProcAddress("glGetVertexAttribArrayObjectfvATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15577,7 +15577,7 @@ static void APIENTRY InitGetVertexAttribArrayObjectivATI (GLuint index, GLenum p
 	extproc = (void *) wglGetProcAddress("glGetVertexAttribArrayObjectivATI");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15593,7 +15593,7 @@ static void APIENTRY InitDepthBoundsEXT (GLclampd zmin, GLclampd zmax)
 	extproc = (void *) wglGetProcAddress("glDepthBoundsEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15609,7 +15609,7 @@ static void APIENTRY InitBlendEquationSeparateEXT (GLenum modeRGB, GLenum modeAl
 	extproc = (void *) wglGetProcAddress("glBlendEquationSeparateEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15625,7 +15625,7 @@ static void APIENTRY InitAddSwapHintRectWIN (GLint x, GLint y, GLsizei width, GL
 	extproc = (void *) wglGetProcAddress("glAddSwapHintRectWIN");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15643,7 +15643,7 @@ static HANDLE WINAPI InitCreateBufferRegionARB (HDC hDC, int iLayerPlane, UINT u
 	extproc = (void *) wglGetProcAddress("wglCreateBufferRegionARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -15659,7 +15659,7 @@ static VOID WINAPI InitDeleteBufferRegionARB (HANDLE hRegion)
 	extproc = (void *) wglGetProcAddress("wglDeleteBufferRegionARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15675,7 +15675,7 @@ static BOOL WINAPI InitSaveBufferRegionARB (HANDLE hRegion, int x, int y, int wi
 	extproc = (void *) wglGetProcAddress("wglSaveBufferRegionARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -15691,7 +15691,7 @@ static BOOL WINAPI InitRestoreBufferRegionARB (HANDLE hRegion, int x, int y, int
 	extproc = (void *) wglGetProcAddress("wglRestoreBufferRegionARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -15707,7 +15707,7 @@ static const WINAPI InitGetExtensionsStringARB (HDC hdc)
 	extproc = (void *) wglGetProcAddress("wglGetExtensionsStringARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -15723,7 +15723,7 @@ static BOOL WINAPI InitGetPixelFormatAttribivARB (HDC hdc, int iPixelFormat, int
 	extproc = (void *) wglGetProcAddress("wglGetPixelFormatAttribivARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -15739,7 +15739,7 @@ static BOOL WINAPI InitGetPixelFormatAttribfvARB (HDC hdc, int iPixelFormat, int
 	extproc = (void *) wglGetProcAddress("wglGetPixelFormatAttribfvARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -15755,7 +15755,7 @@ static BOOL WINAPI InitChoosePixelFormatARB (HDC hdc, const int *piAttribIList, 
 	extproc = (void *) wglGetProcAddress("wglChoosePixelFormatARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -15771,7 +15771,7 @@ static BOOL WINAPI InitMakeContextCurrentARB (HDC hDrawDC, HDC hReadDC, HGLRC hg
 	extproc = (void *) wglGetProcAddress("wglMakeContextCurrentARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -15787,7 +15787,7 @@ static HDC WINAPI InitGetCurrentReadDCARB (void)
 	extproc = (void *) wglGetProcAddress("wglGetCurrentReadDCARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -15803,7 +15803,7 @@ static HPBUFFERARB WINAPI InitCreatePbufferARB (HDC hDC, int iPixelFormat, int i
 	extproc = (void *) wglGetProcAddress("wglCreatePbufferARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -15819,7 +15819,7 @@ static HDC WINAPI InitGetPbufferDCARB (HPBUFFERARB hPbuffer)
 	extproc = (void *) wglGetProcAddress("wglGetPbufferDCARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -15835,7 +15835,7 @@ static int WINAPI InitReleasePbufferDCARB (HPBUFFERARB hPbuffer, HDC hDC)
 	extproc = (void *) wglGetProcAddress("wglReleasePbufferDCARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -15851,7 +15851,7 @@ static BOOL WINAPI InitDestroyPbufferARB (HPBUFFERARB hPbuffer)
 	extproc = (void *) wglGetProcAddress("wglDestroyPbufferARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -15867,7 +15867,7 @@ static BOOL WINAPI InitQueryPbufferARB (HPBUFFERARB hPbuffer, int iAttribute, in
 	extproc = (void *) wglGetProcAddress("wglQueryPbufferARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -15883,7 +15883,7 @@ static BOOL WINAPI InitBindTexImageARB (HPBUFFERARB hPbuffer, int iBuffer)
 	extproc = (void *) wglGetProcAddress("wglBindTexImageARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -15899,7 +15899,7 @@ static BOOL WINAPI InitReleaseTexImageARB (HPBUFFERARB hPbuffer, int iBuffer)
 	extproc = (void *) wglGetProcAddress("wglReleaseTexImageARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -15915,7 +15915,7 @@ static BOOL WINAPI InitSetPbufferAttribARB (HPBUFFERARB hPbuffer, const int *piA
 	extproc = (void *) wglGetProcAddress("wglSetPbufferAttribARB");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -15931,7 +15931,7 @@ static GLboolean WINAPI InitCreateDisplayColorTableEXT (GLushort id)
 	extproc = (void *) wglGetProcAddress("wglCreateDisplayColorTableEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -15947,7 +15947,7 @@ static GLboolean WINAPI InitLoadDisplayColorTableEXT (const GLushort *table, GLu
 	extproc = (void *) wglGetProcAddress("wglLoadDisplayColorTableEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -15963,7 +15963,7 @@ static GLboolean WINAPI InitBindDisplayColorTableEXT (GLushort id)
 	extproc = (void *) wglGetProcAddress("wglBindDisplayColorTableEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -15979,7 +15979,7 @@ static VOID WINAPI InitDestroyDisplayColorTableEXT (GLushort id)
 	extproc = (void *) wglGetProcAddress("wglDestroyDisplayColorTableEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -15995,7 +15995,7 @@ static const WINAPI InitGetExtensionsStringEXT (void)
 	extproc = (void *) wglGetProcAddress("wglGetExtensionsStringEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16011,7 +16011,7 @@ static BOOL WINAPI InitMakeContextCurrentEXT (HDC hDrawDC, HDC hReadDC, HGLRC hg
 	extproc = (void *) wglGetProcAddress("wglMakeContextCurrentEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16027,7 +16027,7 @@ static HDC WINAPI InitGetCurrentReadDCEXT (void)
 	extproc = (void *) wglGetProcAddress("wglGetCurrentReadDCEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16043,7 +16043,7 @@ static HPBUFFEREXT WINAPI InitCreatePbufferEXT (HDC hDC, int iPixelFormat, int i
 	extproc = (void *) wglGetProcAddress("wglCreatePbufferEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16059,7 +16059,7 @@ static HDC WINAPI InitGetPbufferDCEXT (HPBUFFEREXT hPbuffer)
 	extproc = (void *) wglGetProcAddress("wglGetPbufferDCEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16075,7 +16075,7 @@ static int WINAPI InitReleasePbufferDCEXT (HPBUFFEREXT hPbuffer, HDC hDC)
 	extproc = (void *) wglGetProcAddress("wglReleasePbufferDCEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16091,7 +16091,7 @@ static BOOL WINAPI InitDestroyPbufferEXT (HPBUFFEREXT hPbuffer)
 	extproc = (void *) wglGetProcAddress("wglDestroyPbufferEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16107,7 +16107,7 @@ static BOOL WINAPI InitQueryPbufferEXT (HPBUFFEREXT hPbuffer, int iAttribute, in
 	extproc = (void *) wglGetProcAddress("wglQueryPbufferEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16123,7 +16123,7 @@ static BOOL WINAPI InitGetPixelFormatAttribivEXT (HDC hdc, int iPixelFormat, int
 	extproc = (void *) wglGetProcAddress("wglGetPixelFormatAttribivEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16139,7 +16139,7 @@ static BOOL WINAPI InitGetPixelFormatAttribfvEXT (HDC hdc, int iPixelFormat, int
 	extproc = (void *) wglGetProcAddress("wglGetPixelFormatAttribfvEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16155,7 +16155,7 @@ static BOOL WINAPI InitChoosePixelFormatEXT (HDC hdc, const int *piAttribIList, 
 	extproc = (void *) wglGetProcAddress("wglChoosePixelFormatEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16171,7 +16171,7 @@ static BOOL WINAPI InitSwapIntervalEXT (int interval)
 	extproc = (void *) wglGetProcAddress("wglSwapIntervalEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16187,7 +16187,7 @@ static int WINAPI InitGetSwapIntervalEXT (void)
 	extproc = (void *) wglGetProcAddress("wglGetSwapIntervalEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16203,7 +16203,7 @@ static void WINAPI InitGenFramebuffersEXT (GLsizei a, GLuint *b)
 	extproc = (void *) wglGetProcAddress("glGenFramebuffersEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return ;
 	}
 
@@ -16219,7 +16219,7 @@ static void WINAPI InitDeleteFramebuffersEXT (GLsizei a,const GLuint *b)
 	extproc = (void *) wglGetProcAddress("glDeleteFramebuffersEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return ;
 	}
 
@@ -16235,7 +16235,7 @@ static void WINAPI InitBindFramebufferEXT (GLenum a, GLuint b)
 	extproc = (void *) wglGetProcAddress("glBindFramebufferEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return ;
 	}
 
@@ -16250,7 +16250,7 @@ static void WINAPI InitFramebufferTexture2DEXT(GLenum a, GLenum b, GLenum c, GLu
 	extproc = (void *) wglGetProcAddress("glFramebufferTexture2DEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return ;
 	}
 
@@ -16266,7 +16266,7 @@ static GLenum WINAPI InitCheckFramebufferStatusEXT(GLenum a)
 	extproc = (void *) wglGetProcAddress("glCheckFramebufferStatusEXT");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16282,7 +16282,7 @@ static void APIENTRY InitDeleteRenderbuffersEXT (GLsizei n, const GLuint* render
     extproc = (void *) wglGetProcAddress("glDeleteRenderbuffersEXT");
 
     if (extproc == NULL) {
-        _ASSERT(0);
+        //_ASSERT(0);
         return;
     }
 
@@ -16297,7 +16297,7 @@ static void APIENTRY InitFramebufferRenderbufferEXT (GLenum target, GLenum attac
     extproc = (void *) wglGetProcAddress("glFramebufferRenderbufferEXT");
 
     if (extproc == NULL) {
-        _ASSERT(0);
+        //_ASSERT(0);
         return;
     }
 
@@ -16313,7 +16313,7 @@ static void APIENTRY InitGenRenderbuffersEXT (GLsizei n, GLuint* renderbuffers)
     extproc = (void *) wglGetProcAddress("glGenRenderbuffersEXT");
 
     if (extproc == NULL) {
-        _ASSERT(0);
+        //_ASSERT(0);
         return;
     }
 
@@ -16329,7 +16329,7 @@ static void APIENTRY InitBindRenderbufferEXT (GLenum target, GLuint renderbuffer
     extproc = (void *) wglGetProcAddress("glBindRenderbufferEXT");
 
     if (extproc == NULL) {
-        _ASSERT(0);
+        //_ASSERT(0);
         return;
     }
 
@@ -16345,7 +16345,7 @@ static void APIENTRY InitRenderbufferStorageEXT (GLenum target, GLenum internalf
     extproc = (void *) wglGetProcAddress("glRenderbufferStorageEXT");
 
     if (extproc == NULL) {
-        _ASSERT(0);
+        //_ASSERT(0);
         return;
     }
 
@@ -16361,7 +16361,7 @@ static void* WINAPI InitAllocateMemoryNV (GLsizei size, GLfloat readfreq, GLfloa
 	extproc = (void *) wglGetProcAddress("wglAllocateMemoryNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16377,7 +16377,7 @@ static void WINAPI InitFreeMemoryNV (void)
 	extproc = (void *) wglGetProcAddress("wglFreeMemoryNV");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return;
 	}
 
@@ -16393,7 +16393,7 @@ static BOOL WINAPI InitGetSyncValuesOML (HDC hdc, INT64 *ust, INT64 *msc, INT64 
 	extproc = (void *) wglGetProcAddress("wglGetSyncValuesOML");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16409,7 +16409,7 @@ static BOOL WINAPI InitGetMscRateOML (HDC hdc, INT32 *numerator, INT32 *denomina
 	extproc = (void *) wglGetProcAddress("wglGetMscRateOML");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16425,7 +16425,7 @@ static INT64 WINAPI InitSwapBuffersMscOML (HDC hdc, INT64 target_msc, INT64 divi
 	extproc = (void *) wglGetProcAddress("wglSwapBuffersMscOML");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16441,7 +16441,7 @@ static INT64 WINAPI InitSwapLayerBuffersMscOML (HDC hdc, int fuPlanes, INT64 tar
 	extproc = (void *) wglGetProcAddress("wglSwapLayerBuffersMscOML");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16457,7 +16457,7 @@ static BOOL WINAPI InitWaitForMscOML (HDC hdc, INT64 target_msc, INT64 divisor, 
 	extproc = (void *) wglGetProcAddress("wglWaitForMscOML");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16473,7 +16473,7 @@ static BOOL WINAPI InitWaitForSbcOML (HDC hdc, INT64 target_sbc, INT64 *ust, INT
 	extproc = (void *) wglGetProcAddress("wglWaitForSbcOML");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16489,7 +16489,7 @@ static BOOL WINAPI InitGetDigitalVideoParametersI3D (HDC hDC, int iAttribute, in
 	extproc = (void *) wglGetProcAddress("wglGetDigitalVideoParametersI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16505,7 +16505,7 @@ static BOOL WINAPI InitSetDigitalVideoParametersI3D (HDC hDC, int iAttribute, co
 	extproc = (void *) wglGetProcAddress("wglSetDigitalVideoParametersI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16521,7 +16521,7 @@ static BOOL WINAPI InitGetGammaTableParametersI3D (HDC hDC, int iAttribute, int 
 	extproc = (void *) wglGetProcAddress("wglGetGammaTableParametersI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16537,7 +16537,7 @@ static BOOL WINAPI InitSetGammaTableParametersI3D (HDC hDC, int iAttribute, cons
 	extproc = (void *) wglGetProcAddress("wglSetGammaTableParametersI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16553,7 +16553,7 @@ static BOOL WINAPI InitGetGammaTableI3D (HDC hDC, int iEntries, USHORT *puRed, U
 	extproc = (void *) wglGetProcAddress("wglGetGammaTableI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16569,7 +16569,7 @@ static BOOL WINAPI InitSetGammaTableI3D (HDC hDC, int iEntries, const USHORT *pu
 	extproc = (void *) wglGetProcAddress("wglSetGammaTableI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16585,7 +16585,7 @@ static BOOL WINAPI InitEnableGenlockI3D (HDC hDC)
 	extproc = (void *) wglGetProcAddress("wglEnableGenlockI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16601,7 +16601,7 @@ static BOOL WINAPI InitDisableGenlockI3D (HDC hDC)
 	extproc = (void *) wglGetProcAddress("wglDisableGenlockI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16617,7 +16617,7 @@ static BOOL WINAPI InitIsEnabledGenlockI3D (HDC hDC, BOOL *pFlag)
 	extproc = (void *) wglGetProcAddress("wglIsEnabledGenlockI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16633,7 +16633,7 @@ static BOOL WINAPI InitGenlockSourceI3D (HDC hDC, UINT uSource)
 	extproc = (void *) wglGetProcAddress("wglGenlockSourceI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16649,7 +16649,7 @@ static BOOL WINAPI InitGetGenlockSourceI3D (HDC hDC, UINT *uSource)
 	extproc = (void *) wglGetProcAddress("wglGetGenlockSourceI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16665,7 +16665,7 @@ static BOOL WINAPI InitGenlockSourceEdgeI3D (HDC hDC, UINT uEdge)
 	extproc = (void *) wglGetProcAddress("wglGenlockSourceEdgeI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16681,7 +16681,7 @@ static BOOL WINAPI InitGetGenlockSourceEdgeI3D (HDC hDC, UINT *uEdge)
 	extproc = (void *) wglGetProcAddress("wglGetGenlockSourceEdgeI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16697,7 +16697,7 @@ static BOOL WINAPI InitGenlockSampleRateI3D (HDC hDC, UINT uRate)
 	extproc = (void *) wglGetProcAddress("wglGenlockSampleRateI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16713,7 +16713,7 @@ static BOOL WINAPI InitGetGenlockSampleRateI3D (HDC hDC, UINT *uRate)
 	extproc = (void *) wglGetProcAddress("wglGetGenlockSampleRateI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16729,7 +16729,7 @@ static BOOL WINAPI InitGenlockSourceDelayI3D (HDC hDC, UINT uDelay)
 	extproc = (void *) wglGetProcAddress("wglGenlockSourceDelayI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16745,7 +16745,7 @@ static BOOL WINAPI InitGetGenlockSourceDelayI3D (HDC hDC, UINT *uDelay)
 	extproc = (void *) wglGetProcAddress("wglGetGenlockSourceDelayI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16761,7 +16761,7 @@ static BOOL WINAPI InitQueryGenlockMaxSourceDelayI3D (HDC hDC, UINT *uMaxLineDel
 	extproc = (void *) wglGetProcAddress("wglQueryGenlockMaxSourceDelayI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16777,7 +16777,7 @@ static LPVOID WINAPI InitCreateImageBufferI3D (HDC hDC, DWORD dwSize, UINT uFlag
 	extproc = (void *) wglGetProcAddress("wglCreateImageBufferI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16793,7 +16793,7 @@ static BOOL WINAPI InitDestroyImageBufferI3D (HDC hDC, LPVOID pAddress)
 	extproc = (void *) wglGetProcAddress("wglDestroyImageBufferI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16809,7 +16809,7 @@ static BOOL WINAPI InitAssociateImageBufferEventsI3D (HDC hDC, const HANDLE *pEv
 	extproc = (void *) wglGetProcAddress("wglAssociateImageBufferEventsI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16825,7 +16825,7 @@ static BOOL WINAPI InitReleaseImageBufferEventsI3D (HDC hDC, const LPVOID *pAddr
 	extproc = (void *) wglGetProcAddress("wglReleaseImageBufferEventsI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16841,7 +16841,7 @@ static BOOL WINAPI InitEnableFrameLockI3D (void)
 	extproc = (void *) wglGetProcAddress("wglEnableFrameLockI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16857,7 +16857,7 @@ static BOOL WINAPI InitDisableFrameLockI3D (void)
 	extproc = (void *) wglGetProcAddress("wglDisableFrameLockI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16873,7 +16873,7 @@ static BOOL WINAPI InitIsEnabledFrameLockI3D (BOOL *pFlag)
 	extproc = (void *) wglGetProcAddress("wglIsEnabledFrameLockI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16889,7 +16889,7 @@ static BOOL WINAPI InitQueryFrameLockMasterI3D (BOOL *pFlag)
 	extproc = (void *) wglGetProcAddress("wglQueryFrameLockMasterI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16905,7 +16905,7 @@ static BOOL WINAPI InitGetFrameUsageI3D (float *pUsage)
 	extproc = (void *) wglGetProcAddress("wglGetFrameUsageI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16921,7 +16921,7 @@ static BOOL WINAPI InitBeginFrameTrackingI3D (void)
 	extproc = (void *) wglGetProcAddress("wglBeginFrameTrackingI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16937,7 +16937,7 @@ static BOOL WINAPI InitEndFrameTrackingI3D (void)
 	extproc = (void *) wglGetProcAddress("wglEndFrameTrackingI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16953,7 +16953,7 @@ static BOOL WINAPI InitQueryFrameTrackingI3D (DWORD *pFrameCount, DWORD *pMissed
 	extproc = (void *) wglGetProcAddress("wglQueryFrameTrackingI3D");
 
 	if (extproc == NULL) {
-		_ASSERT(0);
+		//_ASSERT(0);
 		return 0;
 	}
 
@@ -16968,7 +16968,7 @@ static void APIENTRY InitGenerateMipmapEXT (GLenum target)
     extproc = (void *) wglGetProcAddress("glGenerateMipmapEXT");
 
     if (extproc == NULL) {
-        _ASSERT(0);
+        //_ASSERT(0);
         return;
     }
 
