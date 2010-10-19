@@ -34,8 +34,8 @@ public:
  
 	//	IPlayAreaEntity
 
-	void SetPosition(CVector &vPosition);
-	void SetAngles(CVector &vAngles);
+	void SetPosition(const CVector &vPosition);
+	void SetAngles(const CVector &vAngles);
 	void SetEntityType(IEntityType *piEntityType);
 
 	CVector GetPosition();
