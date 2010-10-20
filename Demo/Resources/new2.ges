@@ -10,7 +10,7 @@ AreaDeJuego
 			Angulos=-0.000000,-90.000000,0.000000
 			AspectRatio=0.700000
 			FarPlane=10000.000000
-			NearPlane=10000.000000
+			NearPlane=10.000000
 			Posicion=1691.150504,207.965199,9.315498
 		}
 		Name=PlayCamera
