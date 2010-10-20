@@ -128,6 +128,7 @@ bool CSystemObjectWrapper::Load(ISystemPersistencyNode *piNode,std::string sName
 					}
 					else
 					{
+						RTTRACE("CSystemObjectWrapper::Load -> Failed to unserialize System: %s, Class: %s, Object:%s",sSystem.c_str(),sClass.c_str(),sName.c_str());
 						return false;
 					}
 				}
@@ -165,7 +166,15 @@ bool CSystemObjectWrapper::Save(ISystemPersistencyNode *piNode,std::string sName
         if(m_piSerializable)
         {
             ISystemPersistencyNode *piChild=piNode->AddNode("Data");
-            if(piChild){return m_piSerializable->Serialize(piChild);}
+            if(piChild)
+			{
+				bool bOk=m_piSerializable->Serialize(piChild);
+				if(!bOk)
+				{
+					RTTRACE("CSystemObjectWrapper::Save -> Failed to serialize System: %s, Class: %s, Object:%s",m_piObject->GetSystemName().c_str(),m_piObject->GetClass().c_str(),m_piObject->GetName().c_str());
+				}
+				return bOk;
+			}
         }
         else
         {
