@@ -62,7 +62,7 @@ public:\
 };\
 static HRESULT MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){return pItem->GetValueAddress()->Save(piNode,pItem->GetName())?S_OK:E_FAIL;}\
 static HRESULT MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){return pItem->GetValueAddress()->Load(piNode,pItem->GetName())?S_OK:E_FAIL;}\
-static HRESULT MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){piNode->DeleteNode(pItem->GetName());return S_OK;}\
+static HRESULT MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){if(piNode){piNode->DeleteNode(pItem->GetName());}return S_OK;}\
 static void    MRPersistencyInitialize(CMRPersistentReferenceT<WRAPPER_NAME> *pItem){}\
 static void    MRPersistencyFree(CMRPersistentReferenceT<WRAPPER_NAME> *pItem){pItem->GetValueAddress()->Detach();}
 
@@ -94,7 +94,7 @@ public:\
 };\
 	static HRESULT MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){return pItem->GetValueAddress()->Save(piNode,pItem->GetName())?S_OK:E_FAIL;}\
 	static HRESULT MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){return pItem->GetValueAddress()->Load(piNode,pItem->GetName())?S_OK:E_FAIL;}\
-	static HRESULT MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){piNode->DeleteNode(pItem->GetName());return S_OK;}\
+	static HRESULT MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){if(piNode){piNode->DeleteNode(pItem->GetName());}return S_OK;}\
 	static void    MRPersistencyInitialize(CMRPersistentReferenceT<WRAPPER_NAME> *pItem){}\
 	static void    MRPersistencyFree(CMRPersistentReferenceT<WRAPPER_NAME> *pItem){pItem->GetValueAddress()->Detach();}
 
