@@ -90,8 +90,6 @@ bool CGameRender::Init(std::string sClass,std::string sName,ISystem *piSystem)
 {
 	bool bOk=CSystemObjectBase::Init(sClass,sName,piSystem);
 	m_EntityManager.Attach("GameSystem","EntityManager");
-	m_PlayAreaManager.Attach("GameSystem","PlayAreaManager");
-	m_WorldManager.Attach("GameSystem","WorldManager");
 	return bOk;
 }
 
