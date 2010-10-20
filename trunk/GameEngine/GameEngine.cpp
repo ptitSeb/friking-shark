@@ -12,7 +12,7 @@ DECLARE_CUSTOM_WRAPPER1(CGameGUIManagerWrapper,IGameGUIManager,m_piInterface);
 DECLARE_CUSTOM_WRAPPER1(CGameWindowWrapper,IGameWindow,m_piWindow);
 
 string g_sRootFolder;
-string g_sInitialConfigFile="Resources\\Scripts\\GameGUI.cfg";
+string g_sInitialConfigFile="Scripts\\GameGUI.cfg";
 
 CGameEngineApp::CGameEngineApp()
 {
@@ -82,6 +82,15 @@ void CGameEngineApp::Run()
 
 void CGameEngineApp::InterpretCommandLine()
 {
+	char szExecutableFullPath[MAX_PATH]={0};
+	char szExecutableFolder[MAX_PATH]={0};
+	char szExecutableDrive[MAX_PATH]={0};
+	GetModuleFileName(NULL,szExecutableFullPath,sizeof(szExecutableFullPath));
+	_splitpath(szExecutableFullPath,szExecutableDrive,szExecutableFolder,NULL,NULL);
+	g_sRootFolder=szExecutableDrive;
+	g_sRootFolder+=szExecutableFolder;
+	g_sRootFolder+="..\\..\\Resources\\";
+
 	wchar_t *pWCommand=GetCommandLineW();
 
 	int nArgs=0;

@@ -11,7 +11,7 @@
 			<DebugSettings
 				Command="$(ProjectDir)\..\Demo\Bin\$(ConfigurationName)\GameEngine.exe"
 				WorkingDirectory="$(ProjectDir)\..\Demo"
-				CommandArguments="-config Resources\$(ProjectName)\$(ProjectName).cfg"
+				CommandArguments="-config $(ProjectName)\$(ProjectName).cfg"
 				Attach="false"
 				DebuggerType="3"
 				Remote="1"
@@ -39,7 +39,7 @@
 			<DebugSettings
 				Command="$(ProjectDir)\..\Demo\Bin\$(ConfigurationName)\GameEngine.exe"
 				WorkingDirectory="$(ProjectDir)\..\Demo"
-				CommandArguments="-config Resources\$(ProjectName)\$(ProjectName).cfg"
+				CommandArguments="-config $(ProjectName)\$(ProjectName).cfg"
 				Attach="false"
 				DebuggerType="3"
 				Remote="1"

@@ -294,8 +294,6 @@ bool CScenarioEditorMainWindow::Unserialize(ISystemPersistencyNode *piNode)
 
 		m_piGUIManager->SetFocus(this);
 	}
-	SetCurrentDirectory("Resources");
-
 	m_piSTEntityLayerObjectLabel->Activate(false);
 	m_piSTEntityObjectLabel->Activate(false);
 	m_piSTFormationObjectLabel->Activate(false);
