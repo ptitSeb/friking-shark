@@ -48,7 +48,6 @@ bool CGameInterface::InitWindow(IGameWindow *piParent,bool bPopup)
 	if(m_piSTObjectCount){m_piSTObjectCount->Show(m_bShowPerformanceIndicators);}
 	if(m_piSTEntityCount){m_piSTEntityCount->Show(m_bShowPerformanceIndicators);}
 
-	SetCurrentDirectory("Resources");
 	LoadScenario("C:\\TerrainGenerator\\Resources\\new2.ges");
 	StartGame();
 	return bResult;
