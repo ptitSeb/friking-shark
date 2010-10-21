@@ -6,30 +6,16 @@
 
 CSoundAnimationObjectType::CSoundAnimationObjectType()
 {
-  m_piSoundType=NULL;
   m_dwStartTime=0;
   m_dwEndTime=0;
 }
 
 CSoundAnimationObjectType::~CSoundAnimationObjectType()
 {
-    REL(m_piSoundType);
 }
 
 IAnimationObject *CSoundAnimationObjectType::CreateInstance(IAnimation *piAnimation,DWORD dwCurrentTime)
 {
-    if(m_piSoundType==NULL)
-    {
-        ISystemManager  *piSystemManager=GetSystemManager();
-        ISystem         *piSystem=NULL;
-        ISystemObject   *piObject=NULL;
-        if(piSystemManager){piSystem=piSystemManager->GetSystem("Animations");}
-        if(piSystem){piSystem->GetObject(m_sSoundType,&piObject);}
-        if(piObject){m_piSoundType=QI(ISoundType,piObject);}
-        REL(piSystemManager);
-        REL(piSystem);
-        REL(piObject);
-    }
     CSoundAnimationObject *pSound=new CSoundAnimationObject(this,piAnimation);
     return pSound;
 }
@@ -49,9 +35,9 @@ void CSoundAnimationObject::Activate(DWORD dwCurrentTime)
 {
     if(m_piSound){delete m_piSound;m_piSound=NULL;}
     CAnimationObjectBase::Activate(dwCurrentTime);
-    if(m_pType->m_piSoundType)
+    if(m_pType->m_SoundType.m_piSoundType)
     {
-      m_piSound=m_pType->m_piSoundType->CreateInstance(m_piAnimation->GetEntity(),dwCurrentTime);
+      m_piSound=m_pType->m_SoundType.m_piSoundType->CreateInstance(m_piAnimation->GetEntity(),dwCurrentTime);
       if(m_piSound){m_piSound->Activate(dwCurrentTime);}
     }
 }

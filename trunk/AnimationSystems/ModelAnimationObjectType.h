@@ -2,18 +2,13 @@
 
 #include "GameGraphics.h"
 
-DECLARE_CUSTOM_WRAPPER1(CShaderWrapper,IGenericShader,m_piShader);
-DECLARE_CUSTOM_WRAPPER1(CModelWrapper,IGenericModel,m_piModel);
-
 class CModelAnimationObjectType: public CAnimationObjectTypeBase
 {
 public:
 
-	CShaderWrapper   m_ShaderWrapper;
-	CModelWrapper    m_ModelWrapper;
+	CGenericShaderWrapper   m_ShaderWrapper;
+	CGenericModelWrapper    m_ModelWrapper;
 
-    string      m_sModel;
-    string      m_sShader;
     float       m_dFps;
     DWORD       m_dwStartTime;
     DWORD       m_dwEndTime;
@@ -29,8 +24,8 @@ public:
 
     BEGIN_PROP_MAP(CModelAnimationObjectType)
         PROP_CLASS_CHAIN(CAnimationObjectTypeBase)
-        PROP(m_sModel,"Modelo")
-        PROP_FLAGS(m_sShader,"Shader",MRPF_NORMAL|MRPF_OPTIONAL)
+        PROP(m_ModelWrapper,"Modelo")
+        PROP_FLAGS(m_ShaderWrapper,"Shader",MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_VALUE_FLAGS(m_bCastShadow,"EmiteSombras",true,MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_VALUE_FLAGS(m_dFps,"Fps",50.0,MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_VALUE_FLAGS(m_bCyclic,"Repetir",false,MRPF_NORMAL|MRPF_OPTIONAL)

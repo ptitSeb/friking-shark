@@ -15,7 +15,6 @@ CTextureParticleType::~CTextureParticleType()
 
 IParticle *CTextureParticleType::CreateInstance(IParticleEmitter *piEmiter,DWORD dwCurrentTime)
 {
-  if(m_Texture.m_piTexture==NULL){m_Texture.Attach("GameResources",m_sTexture);}
   CTextureParticle *pParticle=new CTextureParticle(this,piEmiter);
   return pParticle;
 }

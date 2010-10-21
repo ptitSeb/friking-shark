@@ -18,17 +18,12 @@ CModelAnimationObjectType::~CModelAnimationObjectType()
 
 IAnimationObject *CModelAnimationObjectType::CreateInstance(IAnimation *piAnimation,DWORD dwCurrentTime)
 {
-    if(m_ModelWrapper.m_piModel==NULL && m_sModel!=""){m_ModelWrapper.Attach("GameResources",m_sModel);}
-	if(m_ShaderWrapper.m_piShader==NULL && m_sShader!=""){m_ShaderWrapper.Attach("Animations",m_sShader);}
-
     CModelAnimationObject *pParticle=new CModelAnimationObject(this,piAnimation);
     return pParticle;
 }
 
 void CModelAnimationObjectType::DesignRender( IGenericRender *piRender,CVector &vPosition,CVector &vAngles ,bool bSelected)
 {
-	if(m_ModelWrapper.m_piModel==NULL && m_sModel!=""){m_ModelWrapper.Attach("GameResources",m_sModel);}
-	if(m_ShaderWrapper.m_piShader==NULL && m_sShader!=""){m_ShaderWrapper.Attach("Animations",m_sShader);}
 	if(m_ModelWrapper.m_piModel)
 	{
 		if(bSelected)

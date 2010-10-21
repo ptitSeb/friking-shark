@@ -10,8 +10,6 @@ class CEntityTypeBase: virtual public CSystemObjectBase,virtual public IEntityTy
 
     deque<CAnimationTypeWrapper>  m_dAnimations;
     deque<CWeaponTypeWrapper>     m_dWeapons;
-    deque<string>                 m_dAnimationNames;
-    deque<string>                 m_dWeaponNames;
     CVector                       m_vBBoxMins;
     CVector                       m_vBBoxMaxs;
     bool                          m_bSolid;
@@ -23,7 +21,6 @@ protected:
 
     virtual void	InitializeEntity(CEntityBase *piEntity,DWORD dwCurrentTime);
 
-	void AttachAnimations();
 	virtual void	GetBBox(CVector *pvMins,CVector *pvMaxs);
 	virtual CVector	GetSize();
 	virtual void	DesignRender(IGenericRender *piRender,CVector &vPosition,CVector &vAngles,bool bSelected);
@@ -34,8 +31,8 @@ protected:
 public:
 
     BEGIN_PROP_MAP(CEntityTypeBase);
-        PROP(m_dAnimationNames,"Animaciones")
-        PROP_FLAGS(m_dWeaponNames,"Armas",MRPF_NORMAL|MRPF_OPTIONAL)
+        PROP(m_dAnimations,"Animaciones")
+        PROP_FLAGS(m_dWeapons,"Armas",MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_FLAGS(m_vBBoxMins,"BBoxMins",MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_FLAGS(m_vBBoxMaxs,"BBoxMaxs",MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_VALUE_FLAGS(m_bSolid,"Solido",false,MRPF_NORMAL|MRPF_OPTIONAL)

@@ -11,48 +11,11 @@ CProjectileLauncherType::CProjectileLauncherType(void)
 
 CProjectileLauncherType::~CProjectileLauncherType(void)
 {
-  size_t nLevel=0,nProjectile=0;
-  for(nLevel=0;nLevel<m_dLevels.size();nLevel++)
-  {
-    SProjectileLauncherLevel *pLevel=&m_dLevels[nLevel];
-    for(nProjectile=0;nProjectile<pLevel->dProjectiles.size();nProjectile++)
-    {
-      REL(pLevel->dProjectiles[nProjectile].piProjectileEntityType);
-    }
-  }
 }
 
 IWeapon *CProjectileLauncherType::CreateInstance(IEntity *piEntity,DWORD dwCurrentTime)
 {
   size_t nLevel=0,nProjectile=0;
-
-  // Cuando se crea la instancia del primer objeto se intentan resolver los tipos de entidades
-  // de los proyectiles para que la instanciacion despues sea mas rapida.
-
-  if(!m_bProjectileEntityTypesResolved)
-  {
-    ISystemManager  *piSystemManager=GetSystemManager();
-    ISystem         *piSystem=NULL;
-    if(piSystemManager){piSystem=piSystemManager->GetSystem("WeaponTypes");}
-    if(piSystem)
-    {
-      for(nLevel=0;nLevel<m_dLevels.size();nLevel++)
-      {
-        SProjectileLauncherLevel *pLevel=&m_dLevels[nLevel];
-        for(nProjectile=0;nProjectile<pLevel->dProjectiles.size();nProjectile++)
-        {
-          ISystemObject   *piObject=NULL;
-          if(piSystem){piSystem->GetObject(pLevel->dProjectiles[nProjectile].sProjectileEntityType,&piObject);}
-          if(piObject){pLevel->dProjectiles[nProjectile].piProjectileEntityType=QI(IEntityType,piObject);}
-          REL(piObject);
-        }
-      }
-      m_bProjectileEntityTypesResolved=true;
-    }
-    REL(piSystemManager);
-    REL(piSystem);
-  }
-
   CProjectileLauncher *pProyectileLauncher=new CProjectileLauncher(this,piEntity,dwCurrentTime);
   return pProyectileLauncher;
 }
@@ -122,7 +85,7 @@ void CProjectileLauncher::Fire(DWORD dwCurrentTime)
     for(nProjectile=0;nProjectile<m_pCurrentLevel->dProjectiles.size();nProjectile++)
     {
       SProjectileLauncherProjectile *pProjectileInfo=&m_pCurrentLevel->dProjectiles[nProjectile];
-      if(pProjectileInfo->piProjectileEntityType)
+      if(pProjectileInfo->projectileEntityType.m_piEntityType)
       {
         CVector vAngles,vForward,vRight,vUp;
 
@@ -146,7 +109,7 @@ void CProjectileLauncher::Fire(DWORD dwCurrentTime)
           continue;
         }
 
-        IEntity *piProjectile=pProjectileInfo->piProjectileEntityType->CreateInstance(m_piEntity,dwCurrentTime);
+        IEntity *piProjectile=pProjectileInfo->projectileEntityType.m_piEntityType->CreateInstance(m_piEntity,dwCurrentTime);
         if(piProjectile)
         {
           SPhysicInfo *pProjectilePhysicInfo=piProjectile->GetPhysicInfo();

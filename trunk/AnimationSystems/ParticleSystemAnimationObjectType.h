@@ -1,14 +1,12 @@
 #pragma once
 
-struct IParticleSystemType;
-struct IParticleSystem;
+DECLARE_CUSTOM_WRAPPER1(CParticleSystemTypeWrapper,IParticleSystemType,m_piParticleSystemType);
 
 class CParticleSystemAnimationObjectType: public CAnimationObjectTypeBase
 {
 public:
 
-    IParticleSystemType *m_piParticleSystemType;
-    string               m_sParticleSystemType;
+    CParticleSystemTypeWrapper m_ParticleSystemType;
     CVector              m_vPosition;
     DWORD                m_dwStartTime;
     DWORD                m_dwEndTime;
@@ -18,7 +16,7 @@ public:
 
     BEGIN_PROP_MAP(CParticleSystemAnimationObjectType)
         PROP_CLASS_CHAIN(CAnimationObjectTypeBase)
-        PROP(m_sParticleSystemType,"SistemaDeParticulas")
+        PROP(m_ParticleSystemType,"SistemaDeParticulas")
         PROP_FLAGS(m_vPosition,"Posicion",MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_VALUE_FLAGS(m_bTrackEntity,"Seguimiento",false,MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_VALUE_FLAGS(m_dwStartTime,"TiempoInicio",0,MRPF_NORMAL|MRPF_OPTIONAL)
