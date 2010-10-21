@@ -1,3 +1,5 @@
+#ifndef _GAME_SPECS_INCLUDED_
+#define _GAME_SPECS_INCLUDED_
 
 #define PHYSIC_METER						1.0
 #define PHYSIC_SECOND						1000.0
@@ -730,3 +732,4 @@ struct IPlayer
 
   virtual ~IPlayer(){}
 };
+#endif

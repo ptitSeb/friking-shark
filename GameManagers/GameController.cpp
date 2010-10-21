@@ -46,9 +46,9 @@ bool CGameController::SetupGame()
 	m_piResourcesSystem=systemLoader.LoadSystem("Scripts\\GameResources.cfg","GameResources");
 	m_piParticleSystemTypesSystem=systemLoader.LoadSystem("Scripts\\ParticleSystems.cfg","ParticleSystems");
 	m_piAnimationTypesSystem=systemLoader.LoadSystem("Scripts\\Animations.cfg","Animations");
+	m_piWeaponTypesSystem=systemLoader.LoadSystem("Scripts\\WeaponTypes.cfg","WeaponTypes");
 	m_piEntityTypesSystem=systemLoader.LoadSystem("Scripts\\EntityTypes.cfg","EntityTypes");
 	m_piFormationTypesSystem=systemLoader.LoadSystem("Scripts\\FormationTypes.cfg","FormationTypes");
-	m_piWeaponTypesSystem=systemLoader.LoadSystem("Scripts\\WeaponTypes.cfg","WeaponTypes");
 	return true;
 }
 

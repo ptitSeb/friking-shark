@@ -32,6 +32,10 @@ bool COpenGLModel::LoadFromFile()
 
 	CResourceStore *pStore=new CResourceStore;
 	CModel *pModel=pStore->LoadModel(m_sFileName);
+	if(!pModel)
+	{
+		RTTRACE("COpenGLModel::LoadFromFile -> Failed to load model %s",m_sFileName.c_str());
+	}
 
 	for(int x=0;pModel && x<pModel->m_nAnimations;x++)
 	{

@@ -1,21 +1,19 @@
 #pragma once
 
-struct ISoundType;
-struct ISound;
+DECLARE_CUSTOM_WRAPPER1(CSoundTypeWrapper,ISoundType,m_piSoundType);
 
 class CSoundAnimationObjectType: public CAnimationObjectTypeBase
 {
 public:
 
-    ISoundType          *m_piSoundType;
-    string               m_sSoundType;
+    CSoundTypeWrapper    m_SoundType;
     DWORD                m_dwStartTime;
     DWORD                m_dwEndTime;
 
     IAnimationObject *CreateInstance(IAnimation *piAnimation,DWORD dwCurrentTime);
 
     BEGIN_PROP_MAP(CSoundAnimationObjectType)
-        PROP(m_sSoundType,"TipoDeSonido")
+        PROP(m_SoundType,"TipoDeSonido")
         PROP_VALUE_FLAGS(m_dwStartTime,"TiempoInicio",0,MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_VALUE_FLAGS(m_dwEndTime,"TiempoFin",0,MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_CLASS_CHAIN(CAnimationObjectTypeBase)

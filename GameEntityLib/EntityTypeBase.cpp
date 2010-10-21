@@ -15,8 +15,6 @@ CEntityTypeBase::~CEntityTypeBase(void){}
 
 void CEntityTypeBase::InitializeEntity(CEntityBase *pEntity,DWORD dwCurrentTime)
 {
-	AttachAnimations();
-
 	unsigned long x;
     for(x=0;x<m_dAnimations.size();x++)
     {
@@ -24,19 +22,7 @@ void CEntityTypeBase::InitializeEntity(CEntityBase *pEntity,DWORD dwCurrentTime)
         IAnimation      *piAnimation=piAnimationType->CreateInstance(pEntity,dwCurrentTime);
         if(piAnimation){pEntity->AddAnimation(x,piAnimation);}
     }
-
-    if(m_dWeapons.size()==0)
-    {
-      bool bFailed=false;
-      for(x=0;x<m_dWeaponNames.size();x++)
-      {
-        CWeaponTypeWrapper wrapper;
-        if(!wrapper.Attach("WeaponTypes",m_dWeaponNames[x])){bFailed=true;break;}
-        m_dWeapons.push_back(wrapper);
-      }
-      if(bFailed){m_dWeapons.clear();}
-    }
-
+	
     for(x=0;x<m_dWeapons.size();x++)
     {
       IWeaponType  *piWeaponType=m_dWeapons[x].m_piWeaponType;
@@ -75,33 +61,14 @@ double CEntityTypeBase::DesignGetRadius()
 
 void CEntityTypeBase::DesignRender(IGenericRender *piRender,CVector &vPosition,CVector &vAngles, bool bSelected)
 {
-	AttachAnimations();
-
 	if(m_dAnimations.size())
 	{
 		m_dAnimations[0].m_piAnimationType->DesignRender(piRender,vPosition,vAngles,bSelected);
 	}
 }
 
-void CEntityTypeBase::AttachAnimations()
-{
-	unsigned x;
-	if(m_dAnimations.size()==0)
-	{
-		bool bFailed=false;
-		for(x=0;x<m_dAnimationNames.size();x++)
-		{
-			CAnimationTypeWrapper wrapper;
-			if(!wrapper.Attach("Animations",m_dAnimationNames[x])){bFailed=true;break;}
-			m_dAnimations.push_back(wrapper);
-		}
-		if(bFailed){m_dAnimations.clear();}
-	}
-}
-
 void CEntityTypeBase::DesignGetBBox( CVector *pvMins,CVector *pvMaxs )
 {
-	AttachAnimations();
 	if(m_dAnimations.size())
 	{
 		m_dAnimations[0].m_piAnimationType->DesignGetBBox(pvMins,pvMaxs);

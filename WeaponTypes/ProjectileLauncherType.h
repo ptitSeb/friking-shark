@@ -10,15 +10,14 @@ struct SProjectileLauncherProjectile
   CVector     vOrigin;
   CVector     vDirection;
   double      dVelocity;
-  string      sProjectileEntityType;
-  IEntityType *piProjectileEntityType;
+  CEntityTypeWrapper projectileEntityType;
   DWORD       dwReferenceSystem;
 
-  SProjectileLauncherProjectile(){piProjectileEntityType=NULL;}
+  SProjectileLauncherProjectile(){}
 };
 
 BEGIN_STRUCT_PROPS(SProjectileLauncherProjectile)
-  PROP(sProjectileEntityType,"Entidad");
+  PROP(projectileEntityType,"Entidad");
   PROP_VALUE_FLAGS(vOrigin,"Origen",Origin,MRPF_NORMAL|MRPF_OPTIONAL);
   PROP_VALUE_FLAGS(vDirection,"Direccion",CVector(1,0,0),MRPF_NORMAL|MRPF_OPTIONAL);
   PROP_VALUE_FLAGS(dVelocity,"Velocidad",CVector(1,0,0),MRPF_NORMAL|MRPF_OPTIONAL);

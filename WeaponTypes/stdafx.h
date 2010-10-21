@@ -15,3 +15,5 @@
 #include "GameEntityLib.h"
 
 // TODO: reference additional headers your program requires here
+
+DECLARE_CUSTOM_WRAPPER1(CEntityTypeWrapper,IEntityType,m_piEntityType);

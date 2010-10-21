@@ -101,13 +101,13 @@ bool COpenGLTexture::LoadFromFile()
 				else
 				{
 					bResult=false;
-					//LOG_ERROR_AND_EXIT("Error","El tamaño de la textura de alpha \"%s\" y el de la textura \"%s\" deben ser iguales",pAlphaFile->c_str(),path.c_str());
+					RTTRACE("COpenGLTexture::LoadFromFile -> Texture %s size does not match with alpha texture %s",m_sFileName.c_str(),m_sAlphaFileName.c_str());
 				}
 			}
 			else
 			{
-				//bResult=false;
-				//LOG_ERROR_AND_EXIT("Error","No se ha podido cargar la textura de alpha \"%s\" para la textura \"%s\"",pAlphaFile->c_str(),path.c_str());
+				bResult=false;
+				RTTRACE("COpenGLTexture::LoadFromFile -> Failed to load alpha texture %s",m_sAlphaFileName.c_str());
 			} 
 			if(pAlphaBuffer){delete [] pAlphaBuffer;pAlphaBuffer=NULL;}
 		}	
@@ -144,6 +144,7 @@ bool COpenGLTexture::LoadFromFile()
 	}
 	else
 	{
+		RTTRACE("COpenGLTexture::LoadFromFile -> Failed to load texture %s",m_sFileName.c_str());
 		bResult=false;
 	}
 
@@ -163,6 +164,7 @@ bool COpenGLTexture::LoadFromFile()
 		}
 		m_bRenderTarget=false;
 	}
+
 	return bResult;
 }
 

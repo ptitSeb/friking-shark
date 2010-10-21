@@ -1,12 +1,10 @@
 #include "StdAfx.h"
 #include ".\AnimationSystems.h"
 #include ".\AnimationObjectBase.h"
-#include ".\ParticleSystems.h"
 #include ".\ParticleSystemAnimationObjecttype.h"
 
 CParticleSystemAnimationObjectType::CParticleSystemAnimationObjectType()
 {
-    m_piParticleSystemType=NULL;
     m_dwStartTime=0;
     m_dwEndTime=0;
     m_bTrackEntity=false;
@@ -14,23 +12,10 @@ CParticleSystemAnimationObjectType::CParticleSystemAnimationObjectType()
 
 CParticleSystemAnimationObjectType::~CParticleSystemAnimationObjectType()
 {
-    REL(m_piParticleSystemType);
 }
 
 IAnimationObject *CParticleSystemAnimationObjectType::CreateInstance(IAnimation *piAnimation,DWORD dwCurrentTime)
 {
-    if(m_piParticleSystemType==NULL)
-    {
-        ISystemManager  *piSystemManager=GetSystemManager();
-        ISystem         *piSystem=NULL;
-        ISystemObject   *piObject=NULL;
-        if(piSystemManager){piSystem=piSystemManager->GetSystem("ParticleSystems");}
-        if(piSystem){piSystem->GetObject(m_sParticleSystemType,&piObject);}
-        if(piObject){m_piParticleSystemType=QI(IParticleSystemType,piObject);}
-        REL(piSystemManager);
-        REL(piSystem);
-        REL(piObject);
-    }
     CParticleSystemAnimationObject *pParticle=new CParticleSystemAnimationObject(this,piAnimation);
     return pParticle;
 }
@@ -59,14 +44,14 @@ void CParticleSystemAnimationObject::CheckActivation(DWORD dwCurrentTime)
     DWORD dwRelativeTime=dwCurrentTime-m_piAnimation->GetCurrentTimeBase();
     if(m_piParticleSystem==NULL)
     {
-        if(m_pType->m_piParticleSystemType && dwRelativeTime>=m_pType->m_dwStartTime)
+        if(m_pType->m_ParticleSystemType.m_piParticleSystemType && dwRelativeTime>=m_pType->m_dwStartTime)
         {
-            m_piParticleSystem=m_pType->m_piParticleSystemType->CreateInstance(dwCurrentTime);
+            m_piParticleSystem=m_pType->m_ParticleSystemType.m_piParticleSystemType->CreateInstance(dwCurrentTime);
         }
     }
     else
     {
-        if(m_pType->m_piParticleSystemType && m_pType->m_dwEndTime && dwRelativeTime>=m_pType->m_dwEndTime)
+        if(m_pType->m_ParticleSystemType.m_piParticleSystemType && m_pType->m_dwEndTime && dwRelativeTime>=m_pType->m_dwEndTime)
         {
             Deactivate();
         }
