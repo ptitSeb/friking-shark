@@ -1472,9 +1472,10 @@ void COpenGLRender::EndStagedRendering()
 
 		m_ShadowTexture.m_piTexture->StartRenderingToTexture();
 
+		glPushAttrib(GL_ALL_ATTRIB_BITS);
 		
 		glEnable( GL_POLYGON_OFFSET_FILL );
-		glPolygonOffset( 1.0, 1.0 );
+		glPolygonOffset( 2, 1.0 );
 
 		// Render Shadows
 		glMatrixMode(GL_PROJECTION);
@@ -1519,7 +1520,7 @@ void COpenGLRender::EndStagedRendering()
 		SetRenderState(m_sStagedRenderingState,true);
 
 		SetViewport(rPreviousViewport.left, rPreviousViewport.top, rPreviousViewport.right-rPreviousViewport.left, rPreviousViewport.bottom-rPreviousViewport.top);
-		SetPerspectiveProjection(dPreviousViewAngle,dPreviousNearPlane,dPreviousFarPlane);
+		SetPerspectiveProjection(dPreviousViewAngle,m_dStagedRenderingMinZ,m_dStagedRenderingMaxZ+1.0);
 		SetCamera(vPreviousCameraPosition,vPreviousCameraAngles.c[YAW],vPreviousCameraAngles.c[PITCH],vPreviousCameraAngles.c[ROLL]);
 
 		//glPushAttrib(GL_ALL_ATTRIB_BITS);
@@ -1665,6 +1666,7 @@ void COpenGLRender::EndStagedRendering()
 	}
 	else
 	{
+		SetPerspectiveProjection(m_dPerspectiveViewAngle,m_dStagedRenderingMinZ,m_dStagedRenderingMaxZ+1.0);
 		RenderAllStages(false,true);
 	}
 
