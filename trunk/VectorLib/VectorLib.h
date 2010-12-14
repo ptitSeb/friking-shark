@@ -143,8 +143,8 @@ public:
 	CBSPNode *pChild[2];
 	CBSPNode *pParent;
 
-	virtual int			GetContent(CVector position);
-	virtual CTraceInfo	GetTrace(CVector p1,CVector p2,CVector realp1,CVector realp2);
+	virtual int			GetContent(const CVector &position);
+	virtual CTraceInfo	GetTrace(const CVector &p1,const CVector &p2,const CVector &realp1,const CVector &realp2);
 	virtual CTraceInfo	GetObjectTrace(const CVector &p1,const CVector &p2,const CVector &vPosition,const CVector &vAngles,const CVector &vMins,const CVector &vMaxs);
 
 	CBSPNode(CBSPNode *parent,CPlane p,int c,CBSPNode *p1,CBSPNode *p2){_debugtag_='B';pParent=parent;m_pDrawNode=NULL;plane=p;content=c;pChild[0]=p1,pChild[1]=p2;}
