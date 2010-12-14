@@ -76,6 +76,8 @@ bool COpenGLTexture::LoadFromFile()
 	bool bResult=true;
 	DWORD	 dwColorType=HasAlphaChannel()?GL_RGBA:GL_RGB;
 
+	RTTRACE("COpenGLTexture::LoadFromFile -> Loading texture %s",m_sFileName.c_str());
+
 	if(LoadTextureImageHelper(m_sFileName,dwColorType,&m_dwWidth,&m_dwHeight,&m_pBuffer))
 	{
 		if(m_sAlphaFileName!="")
@@ -164,6 +166,8 @@ bool COpenGLTexture::LoadFromFile()
 		}
 		m_bRenderTarget=false;
 	}
+
+	RTTRACE("COpenGLTexture::LoadFromFile -> Finishing loading texture %s",m_sFileName.c_str());
 
 	return bResult;
 }
