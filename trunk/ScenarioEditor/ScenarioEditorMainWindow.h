@@ -363,6 +363,8 @@ public:
 
 	void ProcessFileNew();
 	void ProcessFileOpen();
+
+	void OpenScenario( std::string sScenario );
 	void ProcessFileSave();
 	void ProcessFileSaveAs();
 	void ProcessFileExit();
