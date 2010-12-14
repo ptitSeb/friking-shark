@@ -56,14 +56,14 @@ void CFighter::OnKilled()
 
 bool CFighter::OnCollision(IEntity *piOther,CVector &vCollisionPos)
 {
-  if(*piOther->GetEntityClass()=="CWorldEntity")
-  {
-    if(GetCurrentAnimation()!=2 && m_dAnimations.size()>2)
-    {
-      SetCurrentAnimation(2);
-    }
-    Remove();
-  }
+	if(GetCurrentAnimation()==1 && piOther->GetAlignment()!=ENTITY_ALIGNMENT_PLAYER)
+	{
+		if(GetCurrentAnimation()!=2 && m_dAnimations.size()>2)
+		{
+			SetCurrentAnimation(2);
+		}
+		Remove();
+	} 
 	else if(m_dHealth>0 && piOther->GetAlignment()!=m_dwAlignment)
 	{
 		piOther->OnDamage(m_dHealth,this);
