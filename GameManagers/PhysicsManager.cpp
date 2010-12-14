@@ -46,7 +46,9 @@ void CPhysicManager::Stop(){}
 
 CVector CPhysicManager::ProcessPhysicInfo(SPhysicInfo *pInfo,double dInterval)
 {    
-    // Se aplica la velocidad angular
+	pInfo->bOnSurface=false;
+
+   // Se aplica la velocidad angular
     pInfo->vAngles+=pInfo->vAngleVelocity*dInterval;
     for(int c=0;c<3;c++)
     {
@@ -102,7 +104,8 @@ void EntityOperation_CheckCollision(IEntity *piOther,void *pParam1,void *pParam2
 
     if(piOther==piEntity){return;}
     if(pOtherPhysicInfo->dwBoundsType==PHYSIC_BOUNDS_TYPE_NONE){return;}
-    if(pOtherPhysicInfo->dwBoundsType==PHYSIC_BOUNDS_TYPE_BBOX)
+
+	if(pOtherPhysicInfo->dwBoundsType==PHYSIC_BOUNDS_TYPE_BBOX)
     {
         bool bInMovementBox=true;
         for(int x=0;x<3;x++)
@@ -165,40 +168,69 @@ void EntityOperation_CheckCollision(IEntity *piOther,void *pParam1,void *pParam2
         pInfo->traceInfo=piOther->GetTrace(pInfo->vOrigin,pInfo->vDestination);
         if(pInfo->traceInfo.m_bTraceHit)
         {
+			//RTTRACE("%s Hit! fraction %f",piEntity->GetEntityClass()->c_str(),pInfo->traceInfo.m_dTraceFraction);
             CVector vDir=pInfo->vDestination-pInfo->vOrigin;
             double vlen=vDir.N();
             double dStart=pInfo->traceInfo.m_vTracePlane.GetSide(pInfo->vOrigin);
             bool bWasOnSurface=dStart<FP_PRECISION*11.0;
-            //pInfo->traceInfo("dStart %f, bWasOnSurface %d",dStart,bWasOnSurface);
+            //RTTRACE("%s dStart %f, bWasOnSurface %d",piEntity->GetEntityClass()->c_str(),dStart,bWasOnSurface);
             if(pPhysicInfo->dwCollisionType==PHYSIC_COLLISION_TYPE_STUCK)
             {
-                pInfo->traceInfo.m_vTracePos=pInfo->traceInfo.m_vTracePos-vDir*(FP_PRECISION*10.0);
+				if(!bWasOnSurface)
+				{
+					pInfo->vDestination=pInfo->traceInfo.m_vTracePos=pInfo->traceInfo.m_vTracePos-vDir*(FP_PRECISION*2.0);
+				}
+				else
+				{
+					pInfo->vDestination=pInfo->traceInfo.m_vTracePos=pInfo->vOrigin;
+				}
+
+				pPhysicInfo->bOnSurface=true;
+				pPhysicInfo->surfacePlane=pInfo->traceInfo.m_vTracePlane;
 				pPhysicInfo->vVelocity=Origin;
 				
             }
             else if(pPhysicInfo->dwCollisionType==PHYSIC_COLLISION_TYPE_SLIDE)
             {
+				int nIterations=0;
                 CVector vImpact=pInfo->vOrigin;
                 CTraceInfo tempTrace;
                 tempTrace=pInfo->traceInfo;
                 while(tempTrace.m_bTraceHit)
                 {
-                    double dEnd=-tempTrace.m_vTracePlane.GetSide(pInfo->vDestination);
-                    vImpact=tempTrace.m_vTracePos-vDir*(dEnd+FP_PRECISION*10.0);
+//					RTTRACE("Iteration %d, HIT: normal %.05f,%.05f,%.05f, d:%.05f     Orig:%.05f,%.05f,%.05f    Dest:%.05f,%.05f,%.05f    Hit:%.05f,%.05f,%.05f",nIterations,tempTrace.m_vTracePlane.c[0],tempTrace.m_vTracePlane.c[1],tempTrace.m_vTracePlane.c[2],tempTrace.m_vTracePlane.d,vImpact.c[0],vImpact.c[1],vImpact.c[2],pInfo->vDestination.c[0],pInfo->vDestination.c[1],pInfo->vDestination.c[2],tempTrace.m_vTracePos.c[0],tempTrace.m_vTracePos.c[1],tempTrace.m_vTracePos.c[2]);
+		            double dEnd=-tempTrace.m_vTracePlane.GetSide(pInfo->vDestination);
+                    vImpact=tempTrace.m_vTracePos-vDir*(dEnd+FP_PRECISION*2.0);
 
                     vDir=pInfo->vDestination-vImpact;
                     vlen=vDir.N();
 
-                    pInfo->vDestination=pInfo->vDestination+tempTrace.m_vTracePlane*(dEnd+FP_PRECISION*10.0);
+                    pInfo->vDestination=pInfo->vDestination+tempTrace.m_vTracePlane*(dEnd+FP_PRECISION*2.0);
                     tempTrace.m_vTracePos=pInfo->vDestination;
+
+					CVector vPlaneNormal=tempTrace.m_vTracePlane;
+					double dDistance=(vPlaneNormal*pPhysicInfo->vVelocity);
+					pPhysicInfo->vVelocity-=vPlaneNormal*dDistance;
+					pPhysicInfo->bOnSurface=true;
+					pPhysicInfo->surfacePlane=tempTrace.m_vTracePlane;
+
                     tempTrace=piOther->GetTrace(vImpact,pInfo->vDestination);
                     pInfo->traceInfo.m_vTracePos=tempTrace.m_vTracePos;
+					nIterations++;
+
                 }
+
+				/*
                 double dFinalVel=pPhysicInfo->vVelocity;
-                if(!bWasOnSurface)
+                if(bWasOnSurface)
                 {
-                    dFinalVel*=pPhysicInfo->dSlideFactor;
-                }
+                    //dFinalVel*=pPhysicInfo->dSlideFactor;
+					double dSize=tempTrace.m_vTracePlane.GetSide(pInfo->vDestination);
+					if(dSize<0)
+					{
+						pPhysicInfo->vVelocity+=tempTrace.m_vTracePlane*dSize;
+					}
+                }*/
             }
             else if(pPhysicInfo->dwCollisionType==PHYSIC_COLLISION_TYPE_BOUNCE)
             {
@@ -214,7 +246,7 @@ void EntityOperation_CheckCollision(IEntity *piOther,void *pParam1,void *pParam2
 
             if(pInfo->traceInfo.m_bTraceHit)
             {
-                if(!piEntity->OnCollision(piOther,pInfo->traceInfo.m_vTracePos))
+                if(!piEntity->OnCollision(piOther,pInfo->traceInfo.m_vTracePos) && !bWasOnSurface)
                 {
                     pInfo->traceInfo.m_vTracePos=pInfo->vDestination;
                 }
@@ -228,10 +260,12 @@ void EntityOperation_ProcessPhysicFrame(IEntity *piEntity,void *pParam1,void *pP
 {
     if(piEntity->IsRemoved()){return;}
 
+
     double dTimeFraction=*((double *)pParam2);
     CPhysicManager *pThis=(CPhysicManager *)pParam1;
     SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();
-    CVector vNewPos=pThis->ProcessPhysicInfo(pPhysicInfo,dTimeFraction);
+//	RTTRACE("%s ------ Starting : %f",piEntity->GetEntityClass()->c_str(),pPhysicInfo->vPosition.c[1]);
+   CVector vNewPos=pThis->ProcessPhysicInfo(pPhysicInfo,dTimeFraction);
     if( (vNewPos!=pPhysicInfo->vPosition || pPhysicInfo->dwMoveType==PHYSIC_MOVE_TYPE_CUSTOM) && 
         pPhysicInfo->dwBoundsType!=PHYSIC_BOUNDS_TYPE_NONE && 
         pPhysicInfo->dwBoundsType!=PHYSIC_BOUNDS_TYPE_BSP)
@@ -258,6 +292,7 @@ void EntityOperation_ProcessPhysicFrame(IEntity *piEntity,void *pParam1,void *pP
     {
         pPhysicInfo->vPosition=vNewPos;
     }
+//	RTTRACE("%s ------ Finished : %f",piEntity->GetEntityClass()->c_str(),pPhysicInfo->vPosition.c[1]);
 }
 
 void CPhysicManager::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
