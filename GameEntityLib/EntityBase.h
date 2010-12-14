@@ -3,10 +3,13 @@
 #include "GameRuntimeLib.h"
 #include "AnimationSystems.h"
 #include "EntityTypeBase.h"
+#include "SteeringBehaviours.h"
 
 class CEntityBase: public IEntity, public CPublisherBase, public CSubscriberBase
 {
 protected:
+	CSteeringBehaviours m_Behaviours;
+
     IEntityManager *GetEntityManager();
     IPhysicManager *GetPhysicManager();
     IFrameManager  *GetFrameManager();
@@ -86,6 +89,8 @@ public:
     bool OnCollision(IEntity *pOther,CVector &vCollisionPos); 
     void OnDamage(double dDamage,IEntity *pAggresor);
     virtual void OnKilled();
+
+	// Steering Behaviours
 
     // Animaciones
     void AddAnimation(unsigned index,IAnimation *piAnimation);
