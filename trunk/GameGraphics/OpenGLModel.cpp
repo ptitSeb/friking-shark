@@ -30,6 +30,9 @@ bool COpenGLModel::LoadFromFile()
 {
 	RemoveAnimations();
 
+	RTTRACE("COpenGLModel::LoadFromFile -> Loading model %s",m_sFileName.c_str());
+
+
 	CResourceStore *pStore=new CResourceStore;
 	CModel *pModel=pStore->LoadModel(m_sFileName);
 	if(!pModel)
@@ -207,6 +210,9 @@ bool COpenGLModel::LoadFromFile()
 
 	delete pStore;
 	UpdateFrameBuffers();
+
+	RTTRACE("COpenGLModel::LoadFromFile -> Finished loading model %s",m_sFileName.c_str());
+
 	return pModel!=NULL;
 }
 

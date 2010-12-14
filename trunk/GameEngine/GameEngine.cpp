@@ -43,6 +43,7 @@ void CGameEngineApp::Run()
 	if(g_sRootFolder!="")
 	{
 		SetCurrentDirectory(g_sRootFolder.c_str());
+		RTTRACE("CGameEngineApp::Run -> Setting root folder to %s",g_sRootFolder.c_str());
 	}
 	if(configFile.Open(g_sInitialConfigFile))
 	{
@@ -60,7 +61,16 @@ void CGameEngineApp::Run()
 
 			piGameSystem->Destroy();
 		}
+		else
+		{
+			RTTRACE("CGameEngineApp::Run -> Failed to create GameGUI system");
+		}
+
 		REL(piGameSystem);
+	}
+	else
+	{
+		RTTRACE("CGameEngineApp::Run -> Failed to open configuration file %s",g_sInitialConfigFile.c_str());
 	}
 	REL(piPathControl);
 
@@ -89,7 +99,7 @@ void CGameEngineApp::InterpretCommandLine()
 	_splitpath(szExecutableFullPath,szExecutableDrive,szExecutableFolder,NULL,NULL);
 	g_sRootFolder=szExecutableDrive;
 	g_sRootFolder+=szExecutableFolder;
-	g_sRootFolder+="..\\..\\Resources\\";
+	g_sRootFolder+="..\\..\\Resources";
 
 	wchar_t *pWCommand=GetCommandLineW();
 
