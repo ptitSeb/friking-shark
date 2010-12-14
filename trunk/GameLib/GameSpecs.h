@@ -4,7 +4,7 @@
 #define PHYSIC_METER						1.0
 #define PHYSIC_SECOND						1000.0
 
-#define PHYSIC_FORCE_NORMAL					1 // es una fuerza normal, que se aplica y genera una velocidad que depende de la masa del objeto
+#define PHYSIC_FORCE_NORMAL					1 // es una fuerza normal, que se aplica y genera una aceleracion que depende de la masa del objeto
 #define PHYSIC_FORCE_CONSTANT_ACCELERATION	2 // es un fuerza que es proporcional a la masa del objeto (la gravedad), genera una aceleracion constante.
 
 #define PHYSIC_MOVE_TYPE_NONE				0 // Para entidades que no se mueven
@@ -85,10 +85,15 @@ struct SPhysicInfo
     double					dMass;
     CVector					vAngles;
     CVector					vAngleVelocity;
+	CVector					vForward;
     CVector					vMins;
     CVector					vMaxs;
     vector<SPhysicForce>	vForces;
     SPhysicForce			fOwnForce;
+	double					dMaxVelocity;
+	double					dMaxForce;
+	bool					bOnSurface;
+	CPlane					surfacePlane;
 
     SPhysicInfo()
     {
@@ -98,6 +103,9 @@ struct SPhysicInfo
         dMass=1.0;
         dBounceFactor=1.0;
         dSlideFactor=1.0;
+		dMaxVelocity=0;
+		dMaxForce=0;
+		bOnSurface=false;
     }
 };
 
@@ -152,26 +160,6 @@ struct IGameRender:virtual public ISystemUnknown
     virtual DWORD	ToggleFlag(DWORD dwFlag)=0;
 
 	virtual void    Render(IGenericRender *piRender,IGenericCamera *piCamera)=0;
-/*
-    virtual int		AddLight(CLight *pLight)=0;
-
-	virtual void	RenderBBox(CVector vMins,CVector vMaxs)=0;
-    virtual void	RenderTextureRect(CTexture *pTexture,CVector vCenter,CVector vAxis1,CVector vAxis2,double s1,double s2)=0;
-    virtual void	RenderTextureRect(int nTextureIndex,CVector vCenter,CVector vAxis1,CVector vAxis2,double s1,double s2)=0;
- 
-
-	virtual void    RenderModel(IGenericModel *piModel,unsigned long nAnimation,unsigned long nFrame,bool bApplyModelMaterials)=0;
-
-    virtual IDynamicLight  *AllocDynamicLight()=0;
-    virtual void			FreeDynamicLight(IDynamicLight *pLight)=0;
-
-    virtual void	PrepareOpenGLLighting(IEntity *piEntity)=0;
-    virtual void	UnPrepareOpenGLLighting(IEntity *piEntity)=0;
-*/
-//	virtual void     SetCamera(IGenericCamera *piCamera)=0;
-//	virtual IGenericCamera *GetCamera()=0;
-
-	//virtual void	ResetLights()=0;
 };
 
 
