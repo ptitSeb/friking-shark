@@ -70,7 +70,7 @@ std::string CVector::ToString(const CVector &vVector,bool bIncludeParenthesis)
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-int CBSPNode::GetContent(CVector position)
+int CBSPNode::GetContent(const CVector &position)
 {
 	if(content!=CONTENT_NODE)
 	{
@@ -90,7 +90,7 @@ int CBSPNode::GetContent(CVector position)
 	}
 	_ASSERTE(plane.c[0]!=0 || plane.c[1]!=0 || plane.c[2]!=0);
 	double side=plane.GetSide(position);
-	if(side>=FP_PRECISION)
+	if(side>=0)//FP_PRECISION)
 	{
 		_ASSERTE(pChild[0]);
 		return pChild[0]->GetContent(position);
@@ -118,7 +118,7 @@ int CBSPNode::GetContent(CVector position)
 	*/
 }
 
-CTraceInfo CBSPNode::GetTrace(CVector p1,CVector p2,CVector realp1,CVector realp2)
+CTraceInfo CBSPNode::GetTrace(const CVector &p1,const CVector &p2,const CVector &realp1,const CVector &realp2)
 {
  	CTraceInfo trace;
 	double side1=plane.GetSide(p1);
@@ -179,19 +179,19 @@ CTraceInfo CBSPNode::GetTrace(CVector p1,CVector p2,CVector realp1,CVector realp
 	// apoyan los Polygonos y como todos sabemos un Polygono es finito y un plano es infinito.
 
 
-	int content=pChild[side]->GetContent(trace.m_vTracePos);
-	if(content==CONTENT_SOLID)
+	int tempContent=pChild[side]->GetContent(trace.m_vTracePos);
+	if(tempContent==CONTENT_SOLID)
 	{
-		trace.m_nTraceContent=content;
+		trace.m_nTraceContent=tempContent;
 		// Si el contenido en el punto de corte de este plano es solido este es el punto de corte.
 		return trace;
 	}
 	else
 	{
-		int content=pChild[otherside]->GetContent(trace.m_vTracePos);
-		if(content==CONTENT_SOLID)
+		int tempContent=pChild[otherside]->GetContent(trace.m_vTracePos);
+		if(tempContent==CONTENT_SOLID)
 		{
-			trace.m_nTraceContent=content;
+			trace.m_nTraceContent=tempContent;
 			// Si el contenido en el punto de corte de el otro lado del plano de corte es solido este es el punto de corte.
 			return trace;
 		}
@@ -2285,9 +2285,13 @@ CTraceInfo CBSPNode::GetObjectTrace(const CVector &p1,const CVector &p2,const CV
 			finalInfo.m_vTracePos+=vUp*info.m_vTracePos.c[1];
 			finalInfo.m_dTraceFraction=info.m_dTraceFraction;
 			finalInfo.m_nTraceContent=info.m_nTraceContent;
-#pragma message("CUIDADO!!!!!!! En GetObjectTrace queda por implementar el cambio de sistema referencia del plano de hit!!!!")
-			// queda por hacer el cambio del sistema de referencia del plano desde el sistema de ref del objeto al del mundo
-			//finalInfo.m_vTracePlane=info.m_vTracePlane;
+
+			CVector vPlaneNormal;
+			vPlaneNormal+=vForward*info.m_vTracePlane.c[0];
+			vPlaneNormal+=vRight*info.m_vTracePlane.c[2];
+			vPlaneNormal+=vUp*info.m_vTracePlane.c[1];
+			vPlaneNormal.N();
+			finalInfo.m_vTracePlane=CPlane(vPlaneNormal,finalInfo.m_vTracePos);
 		}
 	}
 	return finalInfo;
