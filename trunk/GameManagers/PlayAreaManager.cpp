@@ -193,7 +193,7 @@ void CPlayAreaManager::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
 	}
 
 	// Comprobar si el Jugador ha llegado al final, si lo ha hecho finalizar la partida.
-	if(m_piPlayerEntity->GetHealth()>0 && m_bScenarioCompleted==false)
+	if(m_piPlayerEntity && m_piPlayerEntity->GetHealth()>0 && m_bScenarioCompleted==false)
 	{
 		double dTotalDistance=m_vPlayerRouteEnd-m_vPlayerRouteStart;
 		double dCompletedDistance=m_vPlayMovementPos-m_vPlayerRouteStart;
@@ -232,7 +232,7 @@ void CPlayAreaManager::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
 		}
 	}
 
-	if(m_bProcessingPlayerIntroPhase1)
+	if(m_piPlayerEntity && m_bProcessingPlayerIntroPhase1)
 	{
 		double dTargetForward=m_dPlayMovementMinForward+(m_dPlayMovementMaxForward-m_dPlayMovementMinForward)*0.2;
 		if(m_dPlayMovementCurrentForward<(dTargetForward-5))
@@ -247,7 +247,7 @@ void CPlayAreaManager::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
 		}
 	}
 
-	if(m_bProcessingPlayerOutroPhase1)
+	if(m_piPlayerEntity && m_bProcessingPlayerOutroPhase1)
 	{
 		bool bCentered=true;
 		double dTargetRight=0;
@@ -280,7 +280,7 @@ void CPlayAreaManager::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
 		}
 	}
 
-	if(m_bProcessingPlayerOutroPhase2)
+	if(m_piPlayerEntity && m_bProcessingPlayerOutroPhase2)
 	{
 		double dSpeed=m_piPlayer->GetSpeed();
 		m_piPlayer->SetSpeed(dSpeed*(1.0+2*m_FrameManagerWrapper.m_piFrameManager->GetTimeFraction()));
@@ -291,7 +291,7 @@ void CPlayAreaManager::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
 			m_bProcessingPlayerOutroPhase2=false;
 		}
 	}
-	if(!m_bProcessingPlayerIntroPhase1 && !m_bProcessingPlayerOutroPhase1 && !m_bProcessingPlayerOutroPhase2 && !m_bScenarioCompleted)
+	if(m_piPlayerEntity && !m_bProcessingPlayerIntroPhase1 && !m_bProcessingPlayerOutroPhase1 && !m_bProcessingPlayerOutroPhase2 && !m_bScenarioCompleted)
 	{
 		m_vPlayMovementPos+=m_vPlayMovementForward*dTimeFraction*m_dPlayMovementSpeed;
 	}
