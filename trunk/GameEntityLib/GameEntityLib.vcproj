@@ -190,6 +190,10 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\SteeringBehaviours.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -218,6 +222,10 @@
 			</File>
 			<File
 				RelativePath=".\stdafx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SteeringBehaviours.h"
 				>
 			</File>
 		</Filter>
