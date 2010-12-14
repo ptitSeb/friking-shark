@@ -451,6 +451,7 @@ bool CScenarioEditorMainWindow::Unserialize(ISystemPersistencyNode *piNode)
 	m_FrameManager.Attach("GameSystem","FrameManager");
 	m_WorldManagerWrapper.Attach("GameSystem","WorldManager");
 	
+//	OpenScenario("C:\\TerrainGenerator\\Resources\\IA.ges");
 	return bOk;
 }
 
@@ -829,17 +830,8 @@ void CScenarioEditorMainWindow::ProcessFileOpen()
 	std::string sScenario=m_sFile;
 	if(OpenFileDialog("Load scenario...","Scenario files (*.ges)\0*.ges\0\0",&sScenario))
 	{
-		Reset();
-		m_GameControllerWrapper.m_piGameController->LoadScenario(sScenario);	
-		m_sFile=sScenario;
-		UpdateColorLayerControls();
-		UpdateHeightLayerControls();
-		UpdateEntityLayerControls();
-		UpdateEntityControls();
-		UpdateFormationControls();
-		UpdateLayerPanel();
-		UpdateCaption();
-		CenterCamera();
+		OpenScenario(sScenario);
+
 	}
 }
 
@@ -3191,4 +3183,19 @@ double CScenarioEditorMainWindow::GetAirPlaneAbsoluteHeight()
 	}
 	REL(piModel);
 	return dAirPlaneHeight;
+}
+
+void CScenarioEditorMainWindow::OpenScenario( std::string sScenario )
+{
+	Reset();
+	m_GameControllerWrapper.m_piGameController->LoadScenario(sScenario);	
+	m_sFile=sScenario;
+	UpdateColorLayerControls();
+	UpdateHeightLayerControls();
+	UpdateEntityLayerControls();
+	UpdateEntityControls();
+	UpdateFormationControls();
+	UpdateLayerPanel();
+	UpdateCaption();
+	CenterCamera();
 }
