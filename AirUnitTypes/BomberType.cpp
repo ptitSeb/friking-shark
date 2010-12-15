@@ -73,7 +73,7 @@ void CBomber::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
     if(!m_piRoute){return;}
     if(m_nRoutePoint>=m_piRoute->GetPointCount()-1){return;}
 
-    CVector vDir=m_piRoute->GetPoint(m_nRoutePoint+1)-m_PhysicInfo.vPosition;
+    CVector vDir=m_piRoute->GetAbsolutePoint(m_nRoutePoint+1)-m_PhysicInfo.vPosition;
     double dDist=vDir.N();
     if(dDist/2.0<m_PhysicInfo.vVelocity)
     {

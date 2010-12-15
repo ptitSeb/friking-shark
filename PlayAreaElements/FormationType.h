@@ -1,46 +1,6 @@
 #pragma once
 
-struct SRoutePoint
-{
-public:
-
-    bool        bAbsolutePoint; // si es falso son valores de 0 a 1 relativos al plano de juego aereo
-    CVector     vPosition;
-};
-
-BEGIN_STRUCT_PROPS(SRoutePoint)
-    PROP(vPosition,"Posicion")
-    PROP_VALUE_FLAGS(bAbsolutePoint,"Absoluto",true,MRPF_NORMAL|MRPF_OPTIONAL)
-END_STRUCT_PROPS()
-
-class CRoute:public IRoute
-{
-    deque<SRoutePoint>   m_dPoints;
-    bool                 m_bCyclic;
-
-
-public:
-	CVector GetAbsoluteRoutePoint(SRoutePoint *p);
-
-    CRoute();
-
-	CVector     GetRelativePoint(unsigned int nIndex);
-	unsigned    GetPointCount();
-	CVector		GetAbsolutePoint(unsigned nIndex);
-	CVector     GetPoint(unsigned nIndex);
-    CVector     GetDirection(unsigned nSection);
-    unsigned    GetNextPointIndex(unsigned nIndex);
-    void        ProcessPoint(IEntity *piEntity,DWORD dwCurrentFrame,double dTimeFraction);
-
-    BEGIN_PROP_MAP(CRoute)
-        PROP(m_dPoints,"Puntos")
-        PROP(m_bCyclic,"Ciclica")
-    END_PROP_MAP()
-	CVector GetPlayAreaElementRoutePoint(CVector vPlayAreaElementPos,SRoutePoint *pPoint);
-	CVector GetPlayAreaElementPoint(CVector vPlayAreaElementPos,unsigned nIndex);
-};
-
-DECLARE_SERIALIZABLE(CRoute);
+#include "Route.h"
 
 struct SFormationElement
 {

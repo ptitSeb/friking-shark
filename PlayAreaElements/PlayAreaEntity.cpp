@@ -114,3 +114,10 @@ CTraceInfo CPlayAreaEntity::DesignGetTrace( const CVector &p1,const CVector &p2 
 		return m_EntityType.m_piEntityType->DesignGetTrace(m_vPosition,m_vAngles,p1,p2);
 	}
 }
+
+unsigned int CPlayAreaEntity::GetRoutePoints(){return m_Route.GetPointCount();}
+bool CPlayAreaEntity::GetRoutePoint( unsigned int nIndex,SRoutePoint *psPoint ){return m_Route.GetPoint(nIndex,psPoint);}
+bool CPlayAreaEntity::AddRoutePoint( unsigned int nIndex,const SRoutePoint &sPoint ){return m_Route.AddPoint(nIndex,sPoint);}
+bool CPlayAreaEntity::SetRoutePoint( unsigned int nIndex,const SRoutePoint &sPoint ){return m_Route.SetPoint(nIndex,sPoint);}
+void CPlayAreaEntity::RemoveRoutePoint( unsigned int nIndex ){m_Route.RemovePoint(nIndex);}
+void CPlayAreaEntity::ClearRoute(){return m_Route.Clear();}
