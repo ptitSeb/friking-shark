@@ -166,7 +166,7 @@ struct IGameRender:virtual public ISystemUnknown
 struct IRoute
 {
     virtual unsigned    GetPointCount()=0;
-    virtual CVector     GetPoint(unsigned nIndex)=0;
+    virtual CVector     GetAbsolutePoint(unsigned nIndex)=0;
     virtual CVector     GetDirection(unsigned nSection)=0;
     virtual unsigned    GetNextPointIndex(unsigned nIndex)=0;
     virtual void        ProcessPoint(IEntity *piEntity,DWORD dwCurrentFrame,double dTimeFraction)=0;
@@ -616,6 +616,15 @@ struct SPlayAreaInfo
 #define KEY_PAUSE		7
 #define KEY_PROCESS_ONE_FRAME		8
 
+struct SRoutePoint
+{
+public:
+
+	bool        bAbsolutePoint; // si es falso son valores de 0 a 1 relativos al plano de juego aereo
+	CVector     vPosition;
+};
+
+
 struct IPlayAreaElement:virtual public ISystemUnknown
 {
     virtual void Activate(DWORD dwCurrentTime)=0;
@@ -638,6 +647,13 @@ struct IPlayAreaEntity:virtual public IPlayAreaElement
 	virtual CVector GetPosition()=0;
 	virtual CVector GetAngles()=0;
 	virtual void	GetEntityType(IEntityType **piEntityType)=0;
+
+	virtual unsigned int GetRoutePoints()=0;
+	virtual bool 		 GetRoutePoint(unsigned int nIndex,SRoutePoint *psPoint)=0;
+	virtual bool 		 AddRoutePoint(unsigned int nIndex,const SRoutePoint &sPoint)=0;
+	virtual bool 		 SetRoutePoint(unsigned int nIndex,const SRoutePoint &sPoint)=0;
+	virtual void		 RemoveRoutePoint(unsigned int nIndex)=0;
+	virtual void 		 ClearRoute()=0;
 };
 	
 

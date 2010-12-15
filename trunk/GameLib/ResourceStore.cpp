@@ -661,7 +661,6 @@ CTexture *CResourceStore::LoadTexture(string sName,COLORREF *pColorKey,string *p
 	}
 	else
 	{
-		#pragma message ("Falta el control de errores en la carga de texturas LOG_ERROR_AND_EXIT")
 		//LOG_ERROR_AND_EXIT("Error","No se ha podido carga la textura %s",path.c_str());
 	}
 

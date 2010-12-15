@@ -34,6 +34,8 @@ CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 	m_bShowSunPanel=false;
 	m_bShowSkyPanel=false;
 	m_bShowPlayAreaPanel=false;
+	m_bEditingEntityRoute=false;
+
 	m_dwNexControlKey=0;
 	m_bTextures=1;
 	m_bFog=1;
@@ -145,9 +147,10 @@ CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 	m_piSTEntityYaw=NULL;
 	m_piBTEntityDecreaseYaw=NULL;
 	m_piBTEntityIncreaseYaw=NULL;
-	m_piBTEntityConsiderAsTerrain=NULL;
-	m_piBTEntityLocked=NULL;
-	
+	m_piBTEntityEditRoute=NULL;
+	m_piBTEntityRemovePoint=NULL;
+	m_piBTEntityClearRoute=NULL;
+
 	m_piBTFormationRemove=NULL;
 	m_piSTFormationName=NULL;
 	m_piBTFormationSample=NULL;
@@ -358,8 +361,9 @@ bool CScenarioEditorMainWindow::Unserialize(ISystemPersistencyNode *piNode)
 	SUBSCRIBE_TO_CAST(m_piBTEntitySample,IGameGUIButtonEvents);
 	SUBSCRIBE_TO_CAST(m_piBTEntityDecreaseYaw,IGameGUIButtonEvents);
 	SUBSCRIBE_TO_CAST(m_piBTEntityIncreaseYaw,IGameGUIButtonEvents);
-	SUBSCRIBE_TO_CAST(m_piBTEntityConsiderAsTerrain,IGameGUIButtonEvents);
-	SUBSCRIBE_TO_CAST(m_piBTEntityLocked,IGameGUIButtonEvents);
+	SUBSCRIBE_TO_CAST(m_piBTEntityEditRoute,IGameGUIButtonEvents);
+	SUBSCRIBE_TO_CAST(m_piBTEntityRemovePoint,IGameGUIButtonEvents);
+	SUBSCRIBE_TO_CAST(m_piBTEntityClearRoute,IGameGUIButtonEvents);
 
 	SUBSCRIBE_TO_CAST(m_piBTFormationRemove,IGameGUIButtonEvents);
 	SUBSCRIBE_TO_CAST(m_piBTFormationSample,IGameGUIButtonEvents);
@@ -451,7 +455,7 @@ bool CScenarioEditorMainWindow::Unserialize(ISystemPersistencyNode *piNode)
 	m_FrameManager.Attach("GameSystem","FrameManager");
 	m_WorldManagerWrapper.Attach("GameSystem","WorldManager");
 	
-//	OpenScenario("C:\\TerrainGenerator\\Resources\\IA.ges");
+	OpenScenario("C:\\Game\\Demo\\MinimalResources\\test1.ges");
 	return bOk;
 }
 
@@ -1503,12 +1507,17 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			if(vAngles.c[YAW]<0){vAngles.c[YAW]=360+vAngles.c[YAW];}
 			pEntity->m_piPlayAreaEntity->SetAngles(vAngles);
 			UpdateTexturization();
-		}/*
-		else if(piControl==m_piBTEntityConsiderAsTerrain)
+		}
+		else if(m_piBTEntityEditRoute==piControl)
 		{
-			pObject->m_ObjectConfig.bConsiderAsTerrain=!pObject->m_ObjectConfig.bConsiderAsTerrain;
-		}	
-		*/
+			m_bEditingEntityRoute=!m_bEditingEntityRoute;
+		}
+		else if(m_piBTEntityClearRoute==piControl)
+		{
+		}
+		else if(m_piBTEntityRemovePoint==piControl)
+		{
+		}
 	}
 	if(pFormation)
 	{
@@ -1946,16 +1955,20 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 	m_piBTShowTerrainPanel->SetBackgroundColor(CVector(1,1,1),m_bShowTerrainPanel?0.5:0.3);
 	m_piBTShowFilePanel->SetBackgroundColor(CVector(1,1,1),m_bShowFilePanel?0.5:0.3);
 
-	m_piGRGeneralPanel->Show(m_bShowGeneralPanel && m_bShowTerrainPanel);
-	m_piGRWaterPanel->Show(m_bShowWaterPanel && m_bShowTerrainPanel);
-	m_piGRFogPanel->Show(m_bShowFogPanel && m_bShowTerrainPanel);
-	m_piGRSunPanel->Show(m_bShowSunPanel && m_bShowTerrainPanel);
-	m_piGRSkyPanel->Show(m_bShowSkyPanel && m_bShowTerrainPanel);
-	m_piGRPlayAreaPanel->Show(m_bShowPlayAreaPanel && m_bShowTerrainPanel);
-	m_piGREntitiesPanel->Show(m_bShowEntitiesPanel);
-	m_piGRFormationsPanel->Show(m_bShowFormationsPanel);
+	m_piBTShowEntitiesPanel->Show(!m_bEditingEntityRoute);
+	m_piBTShowFormationsPanel->Show(!m_bEditingEntityRoute);
+	m_piBTShowTerrainPanel->Show(!m_bEditingEntityRoute);
+
+	m_piGRGeneralPanel->Show(m_bShowGeneralPanel && m_bShowTerrainPanel && !m_bEditingEntityRoute);
+	m_piGRWaterPanel->Show(m_bShowWaterPanel && m_bShowTerrainPanel && !m_bEditingEntityRoute);
+	m_piGRFogPanel->Show(m_bShowFogPanel && m_bShowTerrainPanel && !m_bEditingEntityRoute);
+	m_piGRSunPanel->Show(m_bShowSunPanel && m_bShowTerrainPanel && !m_bEditingEntityRoute);
+	m_piGRSkyPanel->Show(m_bShowSkyPanel && m_bShowTerrainPanel && !m_bEditingEntityRoute);
+	m_piGRPlayAreaPanel->Show(m_bShowPlayAreaPanel && m_bShowTerrainPanel && !m_bEditingEntityRoute);
+	m_piGREntitiesPanel->Show(m_bShowEntitiesPanel && !m_bEditingEntityRoute);
+	m_piGRFormationsPanel->Show(m_bShowFormationsPanel && !m_bEditingEntityRoute);
+	m_piGRTerrainPanel->Show(m_bShowTerrainPanel && !m_bEditingEntityRoute);
 	m_piGROptionsPanel->Show(m_bShowOptionsPanel);
-	m_piGRTerrainPanel->Show(m_bShowTerrainPanel);
 	m_piGRFile->Show(m_bShowFilePanel);
 	m_piGRHeightLayerPanel->Show(false);
 	m_piGRColorLayerPanel->Show(false);
@@ -2052,20 +2065,13 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 		m_piSTEntityName->SetText(m_vEntityControls[m_nSelectedEntity]->m_piObject->GetName());
 		m_piSTEntityObjectLabel->SetObject(m_vEntityControls[m_nSelectedEntity]->m_piDesignObject);
 		m_piGREntityPanel->Show(m_bShowEntitiesPanel);
+		m_piBTEntityRemovePoint->Show(m_bEditingEntityRoute);
+		m_piBTEntityClearRoute->Show(m_bEditingEntityRoute);
 
 		CVector vAngles=m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetAngles();
 		char A[MAX_PATH];
 		sprintf(A,"Yaw      : %.02f",vAngles.c[YAW]);
 		m_piSTEntityYaw->SetText(A);
-/*
-		sprintf(A,"Height   : %.02f",m_vEntityControls[m_nSelectedEntity]->m_ObjectConfig.dHeight);
-		m_piSTEntityHeight->SetText(A);
-
-		m_piBTEntityGroundTied->SetText(m_vEntityControls[m_nSelectedEntity]->m_ObjectConfig.bGroundTied?"From Ground":"Absolute");
-		m_piBTEntityConsiderAsTerrain->SetText(m_vEntityControls[m_nSelectedEntity]->m_ObjectConfig.bConsiderAsTerrain?"Is Terrain":"Is Object");
-		m_piBTEntityLocked->SetText(m_vEntityControls[m_nSelectedEntity]->m_ObjectConfig.bLocked?"Locked":"Unlocked");
-		m_piBTEntityLocked->SetBackgroundColor(m_vEntityControls[m_nSelectedEntity]->m_ObjectConfig.bLocked?CVector(0.8,0.8,0.0):CVector(0.6,0.6,0.0),1.0);
-*/
 	}
 	if(m_nSelectedFormation!=-1)
 	{
@@ -2509,6 +2515,11 @@ void CScenarioEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 
 void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 {
+	if(m_bEditingEntityRoute)
+	{
+		return;
+	}
+
 	if(m_vEntityControls.size()==0 && m_vFormationControls.size()==0){return;}
 
 	GLint  viewport[4]={0};
@@ -2564,6 +2575,7 @@ void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
+	RTTRACE("Checking Hits");
 
 	int nNewIndex=-1;
 	double dCurrentMin=100000000.0;
@@ -2577,8 +2589,11 @@ void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 			int nMax=*pSelectionBuffer++;
 			for(int y=0;y<nIds;y++,pSelectionBuffer++)
 			{
+				RTTRACE("Hit with id %d depth %d",*pSelectionBuffer,nMin);
+
 				if(y==0 && nMin<dCurrentMin)
 				{
+					RTTRACE("   Selected");
 					nNewIndex=*pSelectionBuffer;
 					dCurrentMin=nMin;
 				}
@@ -2595,7 +2610,7 @@ void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 		int nNewSelection=nNewIndex;
 		if(m_nSelectedEntity==nNewSelection)
 		{
-			if(nNewSelection!=-1 /*&& !m_vEntityControls[nNewSelection]->m_ObjectConfig.bLocked*/)
+			if(nNewSelection!=-1)
 			{
 				if(DetectDrag(dx,dy))
 				{
@@ -2627,7 +2642,7 @@ void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 		int nNewSelection=nNewIndex-SELECT_FORMATION_BASE_INDEX;
 		if(m_nSelectedFormation==nNewSelection)
 		{
-			if(nNewSelection!=-1 /*&& !m_vEntityControls[nNewSelection]->m_ObjectConfig.bLocked*/)
+			if(nNewSelection!=-1)
 			{
 				if(DetectDrag(dx,dy))
 				{

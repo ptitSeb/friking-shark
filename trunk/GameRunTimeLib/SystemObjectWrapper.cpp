@@ -103,11 +103,16 @@ bool CSystemObjectWrapper::Load(ISystemPersistencyNode *piNode,std::string sName
 	ISystemPersistencyNode *piSystemNode=piNode->GetNode("System");
 	ISystemPersistencyNode *piClassNode=piNode->GetNode("Class");
 	ISystemPersistencyNode *piNameNode=piNode->GetNode("Name");
-
-	std::string sSystem,sClass,sObjectName;
+	ISystemPersistencyNode *piConfigSource=piNode->GetNode("Config");
+	
+	std::string sSystem,sClass,sObjectName,sConfigFile,sConfigNode,sConfigSource;
 	sSystem=piSystemNode?piSystemNode->GetValue():"";
 	sClass=piClassNode?piClassNode->GetValue():"";
 	sObjectName=piNameNode?piNameNode->GetValue():"";
+	sConfigSource=piConfigSource?piConfigSource->GetValue():"";
+	size_t pos=sConfigSource.find(":");
+	sConfigFile=pos!=std::string::npos?sConfigSource.substr(0,pos):sConfigSource;
+	sConfigNode=pos!=std::string::npos?sConfigSource.substr(pos):"";
 
 	if( piSystemNode)
 	{
@@ -122,7 +127,19 @@ bool CSystemObjectWrapper::Load(ISystemPersistencyNode *piNode,std::string sName
 				ISystemPersistencyNode *piChild=piNode->GetNode("Data");
 				if(m_piSerializable && piChild)
 				{
-					if(m_piSerializable->Unserialize(piChild))
+					ISystemPersistencyNode *piPersistencyNode=piChild;
+					
+					CConfigFile sourceConfigFile;
+					if(sConfigSource.length())
+					{
+						if(!sourceConfigFile.Open(sConfigFile))
+						{
+							RTTRACE("CSystemObjectWrapper::Load -> Failed to unserialize System: %s, Class: %s, Object:%s from %s",sSystem.c_str(),sClass.c_str(),sName.c_str(),sConfigSource.c_str());
+							return false;
+						}
+						piPersistencyNode=sConfigNode.length()?sourceConfigFile.GetNode(sConfigNode):sourceConfigFile.GetRoot();
+					}
+					if(m_piSerializable->Unserialize(piPersistencyNode))
 					{
 						return true;
 					}

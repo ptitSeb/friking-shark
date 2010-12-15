@@ -2,104 +2,6 @@
 #include ".\formationtype.h"
 #include "GameGraphics.h"
 
-CRoute::CRoute()
-{
-    m_bCyclic=false;
-}
-
-unsigned CRoute::GetPointCount()
-{
-    return (unsigned)m_dPoints.size();
-}
-
-CVector CRoute::GetAbsoluteRoutePoint(SRoutePoint *pPoint)
-{
-    if(pPoint->bAbsolutePoint){return pPoint->vPosition;}
-    CVector vPos;
-    CVector vMins,vMaxs;
-	g_PlayAreaManagerWrapper.AddRef();
-    g_PlayAreaManagerWrapper.m_piInterface->GetVisibleAirPlayPlane(&vMins,&vMaxs);
-    CVector vSize=vMaxs-vMins;
-    CVector vTempPos=pPoint->vPosition;
-    vTempPos=g_PlayAreaManagerWrapper.m_piInterface->GetPlayMovementRight()*pPoint->vPosition.c[0];
-    vTempPos+=g_PlayAreaManagerWrapper.m_piInterface->GetPlayMovementForward()*pPoint->vPosition.c[1];
-    for(int x=0;x<3;x++)
-    {   
-        vPos.c[x]=vMins[x]+vTempPos.c[x]*vSize.c[x]*0.5+vSize.c[x]/2;
-    }
-	g_PlayAreaManagerWrapper.Release();
-    return vPos;
-}
-
-CVector CRoute::GetPlayAreaElementRoutePoint(CVector vPlayAreaElementPos,SRoutePoint *pPoint)
-{
-	CVector vPos;
-	CVector vMins,vMaxs;
-	g_PlayAreaManagerWrapper.AddRef();
-	g_PlayAreaManagerWrapper.m_piInterface->GetVisibleAirPlayPlane(&vMins,&vMaxs);
-	CVector vSize=vMaxs-vMins;
-	CVector vTempPos;
-	vTempPos=g_PlayAreaManagerWrapper.m_piInterface->GetPlayMovementRight()*pPoint->vPosition.c[0];
-	vTempPos+=g_PlayAreaManagerWrapper.m_piInterface->GetPlayMovementForward()*(pPoint->vPosition.c[1]-1.0);
-	for(int x=0;x<3;x++)
-	{   
-		vPos.c[x]=vPlayAreaElementPos.c[x]+vTempPos.c[x]*vSize.c[x]*0.5;
-	}
-	g_PlayAreaManagerWrapper.Release();
-	return vPos;
-}
-
-CVector	CRoute::GetPlayAreaElementPoint(CVector vPlayAreaElementPos,unsigned nIndex)
-{
-	if(nIndex>=m_dPoints.size()){return Origin;}
-	return GetPlayAreaElementRoutePoint(vPlayAreaElementPos,&m_dPoints[nIndex]);
-}
-
-CVector	CRoute::GetAbsolutePoint(unsigned nIndex)
-{
-	if(nIndex>=m_dPoints.size()){return Origin;}
-	return GetAbsoluteRoutePoint(&m_dPoints[nIndex]);
-}
-
-CVector CRoute::GetPoint(unsigned nIndex)
-{
-    CVector vReturnPoint;
-    unsigned nCount=(unsigned)m_dPoints.size();
-    if(nCount==0){return Origin;}
-    if(nIndex>=nCount)
-    {
-        vReturnPoint=GetAbsoluteRoutePoint(&m_dPoints[nCount-1]);
-    }
-    else
-    {
-        vReturnPoint=GetAbsoluteRoutePoint(&m_dPoints[nIndex]);
-    }
-    return vReturnPoint;
-}
-
-CVector CRoute::GetDirection(unsigned nSection)
-{
-    CVector p1=GetPoint(nSection),p2=GetPoint(nSection+1);
-    CVector vDir=p2-p1;
-    vDir.N();
-    return vDir;
-}
-unsigned CRoute::GetNextPointIndex(unsigned nIndex)
-{
-    unsigned nCount=(unsigned)m_dPoints.size();
-    if(nIndex<(nCount-1)){return nIndex+1;}
-    if(m_bCyclic && nIndex==(nCount-1)){return 0;}
-    return nIndex;// ultimo punto de una ruta no ciclica o esta fuera de rango
-}
-
-void CRoute::ProcessPoint(IEntity *piEntity,DWORD dwCurrentFrame,double dTimeFraction){}
-
-CVector CRoute::GetRelativePoint(unsigned int nIndex)
-{
-	if(nIndex>=m_dPoints.size()){return Origin;}
-	return m_dPoints[nIndex].bAbsolutePoint?Origin:m_dPoints[nIndex].vPosition;
-}
-
 CFormationType::CFormationType()
 {
 }
@@ -298,7 +200,7 @@ bool CFormation::ProcessFrame(DWORD dwCurrentTime,double dInterval)
         if(pElement->m_dwCreatedEntities==0 || dwCurrentTime>(pElement->m_dwLastEntityTime+pElement->m_pFormationTypeElement->m_dwTimeBetweenEntities))
         {
             IEntity *piEntity=pElement->m_pFormationTypeElement->m_piEntityType->CreateInstance(NULL,dwCurrentTime);
-            piEntity->GetPhysicInfo()->vPosition=pElement->m_pFormationTypeElement->m_Route.GetPoint(0);
+            piEntity->GetPhysicInfo()->vPosition=pElement->m_pFormationTypeElement->m_Route.GetAbsolutePoint(0);
             AnglesFromVector(pElement->m_pFormationTypeElement->m_Route.GetDirection(0),&piEntity->GetPhysicInfo()->vAngles);
             piEntity->SetRoute(&pElement->m_pFormationTypeElement->m_Route);
             AddEntity(piEntity);

@@ -87,7 +87,7 @@ void CFighter::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
 
   m_dwNextProcessFrame=dwCurrentTime+10;
 
-  CVector vDest=m_piRoute->GetPoint(m_piRoute->GetNextPointIndex(m_nRoutePoint));
+  CVector vDest=m_piRoute->GetAbsolutePoint(m_piRoute->GetNextPointIndex(m_nRoutePoint));
   CVector vDir=vDest-m_PhysicInfo.vPosition;
   double dDist=vDir.N();
   if(dDist<m_pType->m_dMaxSpeed/4.0)
