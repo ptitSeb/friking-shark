@@ -105,10 +105,10 @@ public:
 	bool				m_bShowSkyPanel;
 	bool				m_bShowPlayAreaPanel;
 
-	bool				m_bEditingEntityRoute;
 	int					m_nSelectedRoutePoint;
 
 	bool				m_bMovingObject;
+	bool				m_bMovingRoutePoint;
 	CVector				m_vObjectOriginalPosition;
 	CVector				m_vCursorOriginalPosition;
 
@@ -223,8 +223,6 @@ public:
 	IGameGUILabel  *m_piSTEntityYaw;
 	IGameGUIButton *m_piBTEntityDecreaseYaw;
 	IGameGUIButton *m_piBTEntityIncreaseYaw;
-	IGameGUIButton *m_piBTEntityEditRoute;
-	IGameGUIButton *m_piBTEntityRemovePoint;
 	IGameGUIButton *m_piBTEntityClearRoute;
 
 	// Formation
@@ -465,8 +463,6 @@ public:
 		CHILD_MAP_ENTRY("EntityYaw",m_piSTEntityYaw);
 		CHILD_MAP_ENTRY("EntityDecreaseYaw",m_piBTEntityDecreaseYaw);
 		CHILD_MAP_ENTRY("EntityIncreaseYaw",m_piBTEntityIncreaseYaw);
-		CHILD_MAP_ENTRY("EntityEditRoute",m_piBTEntityEditRoute);
-		CHILD_MAP_ENTRY("EntityRemovePoint",m_piBTEntityRemovePoint);
 		CHILD_MAP_ENTRY("EntityClearRoute",m_piBTEntityClearRoute);
 
 		CHILD_MAP_ENTRY("FormationPanel",m_piGRFormationPanel);
