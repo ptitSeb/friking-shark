@@ -106,6 +106,8 @@ public:
 	bool				m_bShowPlayAreaPanel;
 
 	bool				m_bEditingEntityRoute;
+	int					m_nSelectedRoutePoint;
+
 	bool				m_bMovingObject;
 	CVector				m_vObjectOriginalPosition;
 	CVector				m_vCursorOriginalPosition;
@@ -636,6 +638,7 @@ public:
 
 	CScenarioEditorMainWindow(void);
 	~CScenarioEditorMainWindow(void);
+	void RenderRoute( IGenericRender * piRender, int nSelectedEntity, int nSelectedRoutePoint );
 };
 
 
