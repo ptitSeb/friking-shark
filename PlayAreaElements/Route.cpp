@@ -105,7 +105,7 @@ bool CRoute::AddPoint(unsigned int nIndex,const SRoutePoint &sPoint)
 	if(nIndex>m_vPoints.size()){return false;}
 	if(nIndex==m_vPoints.size()){m_vPoints.push_back(sPoint);return true;}
 	vector<SRoutePoint>::iterator i=m_vPoints.begin();
-	for(int x=0;x=m_vPoints.size();x++,i++)
+	for(int x=0;x<m_vPoints.size();x++,i++)
 	{
 		if(x==nIndex)
 		{
@@ -126,7 +126,7 @@ bool CRoute::SetPoint(unsigned int nIndex,const SRoutePoint &sPoint)
 void CRoute::RemovePoint(unsigned int nIndex)
 {
 	vector<SRoutePoint>::iterator i=m_vPoints.begin();
-	for(int x=0;x=m_vPoints.size();x++,i++)
+	for(int x=0;x<m_vPoints.size();x++,i++)
 	{
 		if(x==nIndex){m_vPoints.erase(i);break;}
 	}
