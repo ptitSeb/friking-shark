@@ -17,6 +17,7 @@ extern CSystemModuleHelper *g_pSystemModuleHelper;
 CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 {
 	m_bMovingObject=false;
+	m_bMovingRoutePoint=false;
 	m_bAutoGenerateBSP=true;
 	m_bAutoUpdateBSP=false;
 	
@@ -34,7 +35,6 @@ CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 	m_bShowSunPanel=false;
 	m_bShowSkyPanel=false;
 	m_bShowPlayAreaPanel=false;
-	m_bEditingEntityRoute=false;
 	m_nSelectedRoutePoint=-1;
 
 	m_dwNexControlKey=0;
@@ -148,8 +148,6 @@ CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 	m_piSTEntityYaw=NULL;
 	m_piBTEntityDecreaseYaw=NULL;
 	m_piBTEntityIncreaseYaw=NULL;
-	m_piBTEntityEditRoute=NULL;
-	m_piBTEntityRemovePoint=NULL;
 	m_piBTEntityClearRoute=NULL;
 
 	m_piBTFormationRemove=NULL;
@@ -362,8 +360,6 @@ bool CScenarioEditorMainWindow::Unserialize(ISystemPersistencyNode *piNode)
 	SUBSCRIBE_TO_CAST(m_piBTEntitySample,IGameGUIButtonEvents);
 	SUBSCRIBE_TO_CAST(m_piBTEntityDecreaseYaw,IGameGUIButtonEvents);
 	SUBSCRIBE_TO_CAST(m_piBTEntityIncreaseYaw,IGameGUIButtonEvents);
-	SUBSCRIBE_TO_CAST(m_piBTEntityEditRoute,IGameGUIButtonEvents);
-	SUBSCRIBE_TO_CAST(m_piBTEntityRemovePoint,IGameGUIButtonEvents);
 	SUBSCRIBE_TO_CAST(m_piBTEntityClearRoute,IGameGUIButtonEvents);
 
 	SUBSCRIBE_TO_CAST(m_piBTFormationRemove,IGameGUIButtonEvents);
@@ -456,7 +452,7 @@ bool CScenarioEditorMainWindow::Unserialize(ISystemPersistencyNode *piNode)
 	m_FrameManager.Attach("GameSystem","FrameManager");
 	m_WorldManagerWrapper.Attach("GameSystem","WorldManager");
 	
-	OpenScenario("D:\\Desarrollo\\Game\\Demo\\MinimalResources\\test1.ges");
+	//OpenScenario("C:\\Game\\Demo\\MinimalResources\\test1.ges");
 	return bOk;
 }
 
@@ -518,7 +514,7 @@ void CScenarioEditorMainWindow::Reset()
 	m_bShowOptionsPanel=false;
 	m_bSimulationStarted=false;
 	m_bInspectionMode=false;
-	m_bEditingEntityRoute=false;
+	m_bMovingRoutePoint=false;
 	m_nSelectedRoutePoint=-1;
 
 	UpdateCaption();
@@ -1488,23 +1484,10 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			pEntity->m_piPlayAreaEntity->SetAngles(vAngles);
 			UpdateTexturization();
 		}
-		else if(m_piBTEntityEditRoute==piControl)
-		{
-			m_bEditingEntityRoute=!m_bEditingEntityRoute;
-			m_nSelectedRoutePoint=-1;
-		}
 		else if(m_piBTEntityClearRoute==piControl)
 		{
 			pEntity->m_piPlayAreaEntity->ClearRoute();
 			m_nSelectedRoutePoint=-1;
-		}
-		else if(m_piBTEntityRemovePoint==piControl)
-		{
-			pEntity->m_piPlayAreaEntity->RemoveRoutePoint(m_nSelectedRoutePoint);
-			if(m_nSelectedRoutePoint>=pEntity->m_piPlayAreaEntity->GetRoutePoints())
-			{
-				m_nSelectedRoutePoint=pEntity->m_piPlayAreaEntity->GetRoutePoints()-1;
-			}
 		}
 	}
 	if(pFormation)
@@ -1943,19 +1926,15 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 	m_piBTShowTerrainPanel->SetBackgroundColor(CVector(1,1,1),m_bShowTerrainPanel?0.5:0.3);
 	m_piBTShowFilePanel->SetBackgroundColor(CVector(1,1,1),m_bShowFilePanel?0.5:0.3);
 
-	m_piBTShowEntitiesPanel->Show(!m_bEditingEntityRoute);
-	m_piBTShowFormationsPanel->Show(!m_bEditingEntityRoute);
-	m_piBTShowTerrainPanel->Show(!m_bEditingEntityRoute);
-
-	m_piGRGeneralPanel->Show(m_bShowGeneralPanel && m_bShowTerrainPanel && !m_bEditingEntityRoute);
-	m_piGRWaterPanel->Show(m_bShowWaterPanel && m_bShowTerrainPanel && !m_bEditingEntityRoute);
-	m_piGRFogPanel->Show(m_bShowFogPanel && m_bShowTerrainPanel && !m_bEditingEntityRoute);
-	m_piGRSunPanel->Show(m_bShowSunPanel && m_bShowTerrainPanel && !m_bEditingEntityRoute);
-	m_piGRSkyPanel->Show(m_bShowSkyPanel && m_bShowTerrainPanel && !m_bEditingEntityRoute);
-	m_piGRPlayAreaPanel->Show(m_bShowPlayAreaPanel && m_bShowTerrainPanel && !m_bEditingEntityRoute);
-	m_piGREntitiesPanel->Show(m_bShowEntitiesPanel && !m_bEditingEntityRoute);
-	m_piGRFormationsPanel->Show(m_bShowFormationsPanel && !m_bEditingEntityRoute);
-	m_piGRTerrainPanel->Show(m_bShowTerrainPanel && !m_bEditingEntityRoute);
+	m_piGRGeneralPanel->Show(m_bShowGeneralPanel && m_bShowTerrainPanel);
+	m_piGRWaterPanel->Show(m_bShowWaterPanel && m_bShowTerrainPanel);
+	m_piGRFogPanel->Show(m_bShowFogPanel && m_bShowTerrainPanel);
+	m_piGRSunPanel->Show(m_bShowSunPanel && m_bShowTerrainPanel);
+	m_piGRSkyPanel->Show(m_bShowSkyPanel && m_bShowTerrainPanel);
+	m_piGRPlayAreaPanel->Show(m_bShowPlayAreaPanel && m_bShowTerrainPanel);
+	m_piGREntitiesPanel->Show(m_bShowEntitiesPanel);
+	m_piGRFormationsPanel->Show(m_bShowFormationsPanel);
+	m_piGRTerrainPanel->Show(m_bShowTerrainPanel);
 	m_piGROptionsPanel->Show(m_bShowOptionsPanel);
 	m_piGRFile->Show(m_bShowFilePanel);
 	m_piGRHeightLayerPanel->Show(false);
@@ -2053,8 +2032,6 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 		m_piSTEntityName->SetText(m_vEntityControls[m_nSelectedEntity]->m_piObject->GetName());
 		m_piSTEntityObjectLabel->SetObject(m_vEntityControls[m_nSelectedEntity]->m_piDesignObject);
 		m_piGREntityPanel->Show(m_bShowEntitiesPanel);
-		m_piBTEntityRemovePoint->Show(m_bEditingEntityRoute);
-		m_piBTEntityClearRoute->Show(m_bEditingEntityRoute);
 
 		CVector vAngles=m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetAngles();
 		char A[MAX_PATH];
@@ -2493,20 +2470,75 @@ void CScenarioEditorMainWindow::CenterCamera()
 
 void CScenarioEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(nKey==VK_ESCAPE)
+	if(nKey==VK_DELETE)
 	{
 		*pbProcessed=true;
-
-		ProcessFileExit();
+		if(m_nSelectedEntity!=-1 && m_nSelectedRoutePoint!=-1)
+		{
+			m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->RemoveRoutePoint(m_nSelectedRoutePoint);
+			if(m_nSelectedRoutePoint>=m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetRoutePoints())
+			{
+				m_nSelectedRoutePoint=m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetRoutePoints()-1;
+			}
+		}
+	}
+	if(nKey==VK_INSERT)
+	{
+		*pbProcessed=true;
+		if(m_nSelectedEntity!=-1)
+		{
+			SRoutePoint sRoutePoint;
+			sRoutePoint.bAbsolutePoint=true;
+			if(m_nSelectedRoutePoint==-1)
+			{
+				CVector vForward;
+				VectorsFromAngles(m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetAngles(),&vForward);
+				sRoutePoint.vPosition=m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetPosition();
+				sRoutePoint.vPosition+=vForward*(m_vEntityControls[m_nSelectedEntity]->m_piEntityType->DesignGetRadius()*2.0);
+			}
+			else
+			{
+				SRoutePoint sOldPoint1;
+				SRoutePoint sOldPoint2;
+				if(m_nSelectedRoutePoint>0)
+				{
+					m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetRoutePoint(m_nSelectedRoutePoint-1,&sOldPoint1);
+				}
+				else
+				{
+					sOldPoint1.vPosition=m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetPosition();
+				}
+				m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetRoutePoint(m_nSelectedRoutePoint,&sOldPoint2);
+				CVector vDirection=sOldPoint2.vPosition-sOldPoint1.vPosition;
+				vDirection.N();
+				sRoutePoint.vPosition+=sOldPoint2.vPosition+vDirection*(m_vEntityControls[m_nSelectedEntity]->m_piEntityType->DesignGetRadius());
+			}
+			m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->AddRoutePoint(m_nSelectedRoutePoint+1,sRoutePoint);
+			m_nSelectedRoutePoint=m_nSelectedRoutePoint+1;
+		}
+	}
+	if(nKey==VK_ESCAPE)
+	{
+		if(m_nSelectedEntity!=-1 || m_nSelectedEntityLayer!=-1 || 
+			m_nSelectedFormation!=-1 || m_nSelectedRoutePoint!=-1)
+		{
+			m_nSelectedEntity=-1;
+			m_nSelectedEntityLayer=-1 ;
+			m_nSelectedFormation=-1;
+			m_nSelectedRoutePoint=-1;
+		}
+		else
+		{
+			ProcessFileExit();
+		}
+		*pbProcessed=true;
 	}
 }
 
 void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 {
-	if(m_bEditingEntityRoute)
+	if(m_nSelectedEntity!=-1)
 	{
-		if(m_nSelectedEntity==-1){return;}
-
 		if(nButton==MK_LBUTTON)
 		{
 			m_Render.m_piRender->StartSelection(m_rRealRect,m_Camera.m_piCamera,dx,dy,10);
@@ -2524,7 +2556,7 @@ void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 				{
 					if(DetectDrag(dx,dy))
 					{
-						m_bMovingObject=true;
+						m_bMovingRoutePoint=true;
 						m_piGUIManager->SetMouseCapture(this);
 						SRoutePoint point;
 						m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetRoutePoint(nNewSelection,&point);
@@ -2534,17 +2566,11 @@ void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 				}
 			}
 			m_nSelectedRoutePoint=nNewSelection;
-
+			if(m_nSelectedRoutePoint!=-1)
+			{
+				return;
+			}
 		}
-		else if(nButton==MK_RBUTTON)
-		{
-			SRoutePoint sRoutePoint;
-			sRoutePoint.bAbsolutePoint=true;
-			GetTerrainCoordinatesFromCursorPos(dx,dy,false,&sRoutePoint.vPosition);
-			m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->AddRoutePoint(m_nSelectedRoutePoint+1,sRoutePoint);
-			m_nSelectedRoutePoint=m_nSelectedRoutePoint+1;
-		}
-		return;
 	}
 
 	if(m_vEntityControls.size()==0 && m_vFormationControls.size()==0){return;}
@@ -2726,7 +2752,7 @@ bool CScenarioEditorMainWindow::GetTerrainCoordinatesFromCursorPos(double x,doub
 
 void CScenarioEditorMainWindow::OnMouseMove( double x,double y )
 {
-	if(m_bMovingObject && m_bEditingEntityRoute && m_nSelectedRoutePoint!=-1)
+	if(m_bMovingRoutePoint && m_nSelectedRoutePoint!=-1)
 	{
 		SEntityControls *pObject=m_vEntityControls[m_nSelectedEntity];
 		CVector vTemp;
@@ -2764,6 +2790,7 @@ void CScenarioEditorMainWindow::OnMouseUp( int nButton,double x,double y )
 	if(piCapture==this){m_piGUIManager->ReleaseMouseCapture();}
 	REL(piCapture);
 	m_bMovingObject=false;
+	m_bMovingRoutePoint=false;
 }
 
 void CScenarioEditorMainWindow::StopGameSimulation()
