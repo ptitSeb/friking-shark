@@ -2094,3 +2094,76 @@ void COpenGLRender::AddShader( const SShaderKey &key )
 		m_mShaders[key]=wrapper;
 	}
 }
+
+void COpenGLRender::StartSelection(SGameRect rWindowRect,IGenericCamera *piCamera,double dx,double dy,double dPrecision)
+{
+	GLint  viewport[4]={0};
+	double dNearPlane=0,dFarPlane=0;
+	double dRoll=piCamera->GetAngles().c[ROLL];
+	double dPitch=piCamera->GetAngles().c[PITCH];
+	double dYaw=piCamera->GetAngles().c[YAW];
+	CVector vPosition=piCamera->GetPosition();
+	piCamera->GetClippingPlanes(dNearPlane,dFarPlane);
+
+	glSelectBuffer(SELECTION_BUFFER_SIZE,m_pSelectionBuffer);
+	glRenderMode(GL_SELECT);
+
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glGetIntegerv(GL_VIEWPORT,viewport);
+	glViewport(viewport[0],viewport[1],viewport[2],viewport[3]);
+	gluPickMatrix(rWindowRect.x+dx,rWindowRect.y+dy,dPrecision,dPrecision,viewport);
+	gluPerspective(piCamera->GetViewAngle(),rWindowRect.w/rWindowRect.h,dNearPlane,dFarPlane);
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+
+	glLoadIdentity();
+	glRotated((0-dRoll)	,AxisPosZ.c[0],AxisPosZ.c[1],AxisPosZ.c[2]);
+	glRotated((0-dPitch),AxisPosX.c[0],AxisPosX.c[1],AxisPosX.c[2]);
+	glRotated((0-(dYaw-90))	,AxisPosY.c[0],AxisPosY.c[1],AxisPosY.c[2]);
+	glTranslated(-vPosition.c[0],-vPosition.c[1],-vPosition.c[2]);
+	glInitNames();
+	glPushName(0);
+}
+
+void COpenGLRender::SetSelectionId( unsigned int nId )
+{
+	glPopName();
+	glPushName(nId);
+}
+
+int COpenGLRender::EndSelection()
+{
+	glPopName();
+	glFlush();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+
+	int nNewIndex=-1;
+	double dCurrentMin=100000000.0;
+	int nHits = glRenderMode(GL_RENDER);
+	if(nHits)
+	{
+		GLuint *pSelectionBuffer=m_pSelectionBuffer;
+
+		for(int x=0;x<nHits;x++)
+		{
+			int nIds=*pSelectionBuffer++;
+			int nMin=*pSelectionBuffer++;
+			int nMax=*pSelectionBuffer++;
+			for(int y=0;y<nIds;y++,pSelectionBuffer++)
+			{
+				if(y==0 && nMin<dCurrentMin)
+				{
+					nNewIndex=*pSelectionBuffer;
+					dCurrentMin=nMin;
+				}
+			}
+		}
+	}
+	return nNewIndex;
+}

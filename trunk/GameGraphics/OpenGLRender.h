@@ -3,6 +3,7 @@
 #define TEXTURE_PARTICLE_BUFFER_SIZE 1024
 #define LINE_BUFFER_SIZE			 1024
 #define POINT_BUFFER_SIZE			 1024
+#define SELECTION_BUFFER_SIZE		 1024
 
 struct SRenderState
 {
@@ -305,6 +306,7 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	RECT	m_rViewportRect;
 
 	bool		 m_bStagedRendering;
+	GLuint		 m_pSelectionBuffer[SELECTION_BUFFER_SIZE];
 
 	SRenderOptions m_sRenderOptions;
 
@@ -498,11 +500,17 @@ public:
 	void PushOptions();
 	void PopOptions();
 
-	// IOpenGLRender
+	// Staged Rendering
 
 	void StartStagedRendering();
 	void EndStagedRendering();
 	bool IsRenderingWithShader();
+
+	// Selection
+
+	void StartSelection(SGameRect rWindowRect,IGenericCamera *piCamera,double dx,double dy,double dPrecision);
+	void SetSelectionId(unsigned int nId);
+	int EndSelection();
 
 	IOpenGLViewport *GetOpenGLViewPort(); // solo valido entre StartFrame y EndFrame.
 

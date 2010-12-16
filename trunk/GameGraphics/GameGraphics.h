@@ -2,6 +2,64 @@
 
 #include "GameRuntimeLib.h"
 
+struct SGameRect;
+
+struct SGamePos
+{
+	double x;
+	double y;
+
+	void ClipToUnit();
+	void ClipToRect(SGameRect *pRect);
+	void CenterOnRect(SGameRect *pRect);
+
+	SGamePos(double _x,double _y);
+	SGamePos();
+};
+
+struct SGameSize
+{
+	double w;
+	double h;
+
+	SGameSize(double _w,double _h);
+	SGameSize();
+};
+
+struct SGameRect
+{
+	double x;
+	double y;
+	double w;
+	double h;
+
+	void ClipToUnit();
+	void ClipToRect(SGameRect *pRect);
+	void CenterOnRect(SGameRect *pRect);
+
+	bool Contains(SGamePos point);
+
+	SGameRect(double _x,double _y,double _w,double _h);
+	SGameRect();
+};
+
+BEGIN_STRUCT_PROPS(SGameRect)
+	PROP_VALUE(x,"x",0)
+	PROP_VALUE(y,"y",0)
+	PROP_VALUE(w,"w",0)
+	PROP_VALUE(h,"h",0)
+END_STRUCT_PROPS()
+
+BEGIN_STRUCT_PROPS(SGameSize)
+	PROP_VALUE(w,"w",0)
+	PROP_VALUE(h,"h",0)
+END_STRUCT_PROPS()
+
+BEGIN_STRUCT_PROPS(SGamePos)
+	PROP_VALUE(x,"x",0)
+	PROP_VALUE(y,"y",0)
+END_STRUCT_PROPS()
+
 typedef enum eTextAlignment
 {
 	eTextAlignment_None		=0x0000,
@@ -257,6 +315,10 @@ public:
 
 	virtual void StartStagedRendering()=0;
 	virtual void EndStagedRendering()=0;
+
+	virtual void StartSelection(SGameRect rWindowRect,IGenericCamera *piCamera,double dx,double dy,double dPrecision)=0;
+	virtual void SetSelectionId(unsigned int nId)=0;
+	virtual int  EndSelection()=0;
 
 	virtual bool IsRenderingWithShader()=0;
 
