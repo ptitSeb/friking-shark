@@ -12,6 +12,8 @@ CSteeringBehaviours::CSteeringBehaviours(void)
 	m_pInterposeTarget1=NULL;
 	m_pInterposeTarget2=NULL;
 	m_pOffsetPursueTarget=NULL;
+	m_piRoute=NULL;
+	m_nRoutePoint=0;
 
 	m_bWanderEnabled=false;
 	m_dWanderDistance=30;
@@ -174,7 +176,27 @@ CVector CSteeringBehaviours::ProcessBehaviours(IEntity *piEntity,double dTimeFra
 	if(m_bWanderEnabled){vForce+=Wander(piEntity,m_dWanderDistance,m_dWanderRadius,m_dWanderJitter,dTimeFraction)*piEntity->GetPhysicInfo()->dMass;}
 	if(m_pOffsetPursueTarget){vForce+=OffsetPursue(piEntity,m_pOffsetPursueTarget,m_vOffsetPursueOffset);}
 	if(m_pInterposeTarget1 && m_pInterposeTarget2){vForce+=Interpose(piEntity,m_pInterposeTarget1,m_pInterposeTarget2,&m_vInterposeEstimatedPosition);}
-	//vForce*=piEntity->GetPhysicInfo()->dMaxForce;
+	if(m_piRoute && m_nRoutePoint<m_piRoute->GetPointCount())
+	{
+		CVector vPos=m_piRoute->GetAbsolutePoint(m_nRoutePoint);
+		double dDistance=vPos-piEntity->GetPhysicInfo()->vPosition;
+		double dVelocity=piEntity->GetPhysicInfo()->vVelocity;
+		if(dDistance<dVelocity)
+		{
+			// change point
+			m_nRoutePoint=m_piRoute->GetNextPointIndex(m_nRoutePoint);
+			vPos=m_piRoute->GetAbsolutePoint(m_nRoutePoint);
+		}
+		unsigned int nNextPoint=m_piRoute->GetNextPointIndex(m_nRoutePoint);
+		if(nNextPoint==m_nRoutePoint)
+		{
+			vForce+=Arrive(piEntity,vPos,eSBArriveSpeed_Fast);
+		}
+		else
+		{
+			vForce+=Seek(piEntity,vPos);
+		}
+	}
 	return vForce;
 }
 

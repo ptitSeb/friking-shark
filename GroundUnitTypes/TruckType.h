@@ -26,10 +26,10 @@ class CTruck: public CEntityBase
 	IEntity *m_piTarget;
     CTruckType  *m_pType;
 public:
-    void OnKilled();
+	void SetRoute(IRoute *piRoute);
+	void OnKilled();
 	void ProcessFrame(DWORD dwCurrentTime,double dTimeFraction);
 
     CTruck(CTruckType *pType);
-	static void AcquireTargetOperation(IEntity *piEntity,void *pParam1,void *pParam2);
 	void Render(IGenericRender *piRender,IGenericCamera *piCamera);
 };

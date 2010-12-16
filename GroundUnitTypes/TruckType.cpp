@@ -57,12 +57,6 @@ void CTruck::OnKilled()
 
 void CTruck::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
 {
-	if(m_piTarget==NULL)
-	{
-		GetEntityManager()->PerformUnaryOperation(AcquireTargetOperation,this,NULL);
-
-		m_Behaviours.ArriveTarget(m_piTarget,eSBArriveSpeed_Fast);
-	}
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
 
 	RTTRACE("On surface %d",m_PhysicInfo.bOnSurface);
@@ -84,16 +78,6 @@ void CTruck::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
 	}
 	m_PhysicInfo.vAngles=AnglesFromVector(m_PhysicInfo.vVelocity);
 }
-void CTruck::AcquireTargetOperation(IEntity *piEntity,void *pParam1,void *pParam2)
-{
-/*
-	CTruck *pThis=(CTruck *)pParam1;
-	if(piEntity!=pThis && *piEntity->GetEntityName()!="World")
-	{
-		pThis->m_piTarget=piEntity;
-	}
-*/
-}   
 
 void CTruck::Render(IGenericRender *piRender,IGenericCamera *piCamera)
 {
@@ -104,4 +88,10 @@ void CTruck::Render(IGenericRender *piRender,IGenericCamera *piCamera)
 	CVector vVelocityDir=m_PhysicInfo.vVelocity;
 	vVelocityDir.N();
 	piRender->RenderLine(m_PhysicInfo.vPosition,m_PhysicInfo.vPosition+vVelocityDir*m_PhysicInfo.dMaxVelocity,CVector(0,0.5,0));
+}
+
+void CTruck::SetRoute( IRoute *piRoute )
+{
+	CEntityBase::SetRoute(piRoute);
+	m_Behaviours.FollowRoute(piRoute);
 }

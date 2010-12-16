@@ -22,6 +22,8 @@ class CSteeringBehaviours
 	IEntity *m_pInterposeTarget1;
 	IEntity *m_pInterposeTarget2;
 	IEntity *m_pOffsetPursueTarget;
+	IRoute  *m_piRoute;
+	unsigned int m_nRoutePoint;
 	ESBArriveSpeed m_eArriveSpeed;
 
 	CVector m_vPursueEstimatedPosition;
@@ -53,6 +55,7 @@ public:
 	void    Wander(bool bEnabled,double dDistance,double dRadius,double dJitter){m_bWanderEnabled=bEnabled;m_dWanderDistance=dDistance;m_dWanderRadius=dRadius;m_dWanderJitter=dJitter;}
 	void    Interpose(IEntity *pTarget1,IEntity *pTarget2){m_pInterposeTarget1=pTarget1;m_pInterposeTarget2=pTarget2;}
 	void    OffsetPursue(IEntity *pTarget,CVector &vOffset){m_pOffsetPursueTarget=pTarget;m_vOffsetPursueOffset=vOffset;}
+	void    FollowRoute(IRoute *piRoute){m_piRoute=piRoute;m_nRoutePoint=0;}
 
 	CVector ProcessBehaviours(IEntity *piEntity,double dTimeFraction);
 
