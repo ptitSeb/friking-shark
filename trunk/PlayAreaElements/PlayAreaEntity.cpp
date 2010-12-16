@@ -55,6 +55,7 @@ void CPlayAreaEntity::Activate(DWORD dwCurrentTime)
         m_piEntity=m_EntityType.m_piEntityType->CreateInstance(NULL,dwCurrentTime);
         m_piEntity->GetPhysicInfo()->vPosition=m_vPosition;
         m_piEntity->GetPhysicInfo()->vAngles=m_vAngles;
+		if(m_Route.GetPointCount()){m_piEntity->SetRoute(&m_Route);}
         SUBSCRIBE_TO(m_piEntity,IEntityEvents);
     }
 }

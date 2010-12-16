@@ -26,7 +26,7 @@ AreaDeJuego
 			Data
 			{
 				Angulos=0.000000,0.000000,0.000000
-				Posicion=181.950639,-7.122847,-39.999800
+				Posicion=-63.797008,15.998702,-39.999800
 				Ruta
 				{
 					Ciclica=0
@@ -94,7 +94,7 @@ AreaDeJuego
 			Data
 			{
 				Bonus
-				Posicion=-28.366306,1.768066,18.891220
+				Posicion=139.119182,1.768066,18.891220
 				Tipo
 				{
 					Name=CuñaPorDelante
