@@ -31,6 +31,53 @@ AreaDeJuego
 				{
 					Ciclica=0
 					Puntos
+					{
+						Item0
+						{
+							Absoluto=1
+							Posicion=179.137115,-39.999800,-142.152439
+						}
+						Item1
+						{
+							Absoluto=1
+							Posicion=262.659877,-39.999800,-139.648947
+						}
+						Item2
+						{
+							Absoluto=1
+							Posicion=262.296432,-39.999800,-63.284329
+						}
+						Item3
+						{
+							Absoluto=1
+							Posicion=332.245035,-39.999800,-61.740496
+						}
+						Item4
+						{
+							Absoluto=1
+							Posicion=332.577336,-39.999800,-1.422240
+						}
+						Item5
+						{
+							Absoluto=1
+							Posicion=261.353326,-39.999800,-0.423182
+						}
+						Item6
+						{
+							Absoluto=1
+							Posicion=261.951195,-39.999800,71.354964
+						}
+						Item7
+						{
+							Absoluto=1
+							Posicion=185.913238,-39.999800,77.272040
+						}
+						Item8
+						{
+							Absoluto=1
+							Posicion=184.274553,-39.999800,13.830168
+						}
+					}
 				}
 				Tipo
 				{
@@ -92,7 +139,7 @@ Terrain
 		Class=Model
 		Data
 		{
-			Archivo="C:\\Game\\Demo\\MinimalResources\\Models\\TerrenoIA.ASE"
+			Archivo="Models\\TerrenoIA.ASE"
 			AutoGenerateBSP=1
 			AutoUpdateBSP=1
 			LoadBSP=1
@@ -100,14 +147,14 @@ Terrain
 		Name=""
 		System=GameResources
 	}
-	BaseModelFile="C:\\Game\\Demo\\MinimalResources\\Models\\TerrenoIA.ASE"
+	BaseModelFile="Models\\TerrenoIA.ASE"
 	ColorLayers
 	ColorMap
 	{
 		Class=Texture
 		Data
 		{
-			Archivo="C:\\Game\\Demo\\MinimalResources\\Textures\\fuego_alpha.bmp"
+			Archivo="Textures\\fuego_alpha.bmp"
 			ArchivoAlpha=""
 			ColorKey=0.000000,0.000000,0.000000
 			UsarColorKey=0
@@ -115,7 +162,7 @@ Terrain
 		Name=""
 		System=GameResources
 	}
-	ColorMapFile="C:\\Game\\Demo\\MinimalResources\\Textures\\fuego_alpha.bmp"
+	ColorMapFile="Textures\\fuego_alpha.bmp"
 	Fog
 	{
 		Color=1.000000,1.000000,1.000000
@@ -133,7 +180,7 @@ Terrain
 				HorzResolution=4.500000
 				MaxHeight=1.000000
 				MinHeight=0.000000
-				Texture="C:\\Game\\Demo\\MinimalResources\\Textures\\rtice_1.bmp"
+				Texture="Textures\\rtice_1.bmp"
 				VertResolution=5.000000
 			}
 			Texture
@@ -141,7 +188,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo="C:\\Game\\Demo\\MinimalResources\\Textures\\rtice_1.bmp"
+					Archivo="Textures\\rtice_1.bmp"
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0

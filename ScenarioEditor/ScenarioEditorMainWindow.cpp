@@ -35,6 +35,7 @@ CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 	m_bShowSkyPanel=false;
 	m_bShowPlayAreaPanel=false;
 	m_bEditingEntityRoute=false;
+	m_nSelectedRoutePoint=-1;
 
 	m_dwNexControlKey=0;
 	m_bTextures=1;
@@ -455,7 +456,7 @@ bool CScenarioEditorMainWindow::Unserialize(ISystemPersistencyNode *piNode)
 	m_FrameManager.Attach("GameSystem","FrameManager");
 	m_WorldManagerWrapper.Attach("GameSystem","WorldManager");
 	
-	OpenScenario("C:\\Game\\Demo\\MinimalResources\\test1.ges");
+	OpenScenario("D:\\Desarrollo\\Game\\Demo\\MinimalResources\\test1.ges");
 	return bOk;
 }
 
@@ -517,6 +518,8 @@ void CScenarioEditorMainWindow::Reset()
 	m_bShowOptionsPanel=false;
 	m_bSimulationStarted=false;
 	m_bInspectionMode=false;
+	m_bEditingEntityRoute=false;
+	m_nSelectedRoutePoint=-1;
 
 	UpdateCaption();
 }
@@ -727,33 +730,10 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 			CVector vAngles=m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetAngles();
 			m_vEntityControls[m_nSelectedEntity]->m_piDesignObject->DesignRender(piRender,vPos,vAngles,true);
 		}
+
+		RenderRoute(piRender,m_nSelectedEntity,m_nSelectedRoutePoint);
+
 		piRender->EndStagedRendering();
-
-/*
-		if(m_bShowPlayAreaPanel)
-		{
-			glPushAttrib(GL_ALL_ATTRIB_BITS);
-			CVector vPlayAreaMins,vPlayAreaMaxs;
-			SPlayAreaConfig vPlayAreaConfig;
-			m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&vPlayAreaConfig);
-			m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetAirPlayPlane(&vPlayAreaMins,&vPlayAreaMaxs);
-			CVector vCenter=(vPlayAreaMaxs+vPlayAreaMins)*0.5;
-			CVector vSize=(vPlayAreaMaxs-vPlayAreaMins);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			glDisable(GL_TEXTURE_2D);
-			glColor4d(1,1,1,0.1);
-			piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2]);
-			//Left scroll
-			glColor4d(1,1,1,0.05);
-			piRender->RenderRect(vCenter-CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
-			//Right scroll
-			glColor4d(1,1,1,0.05);
-			piRender->RenderRect(vCenter+CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
-
-			glPopAttrib();
-		}*/
-
 	}
 	m_Render.m_piRender->PopOptions();
 	m_Render.m_piRender->PopState();
@@ -1511,12 +1491,20 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		else if(m_piBTEntityEditRoute==piControl)
 		{
 			m_bEditingEntityRoute=!m_bEditingEntityRoute;
+			m_nSelectedRoutePoint=-1;
 		}
 		else if(m_piBTEntityClearRoute==piControl)
 		{
+			pEntity->m_piPlayAreaEntity->ClearRoute();
+			m_nSelectedRoutePoint=-1;
 		}
 		else if(m_piBTEntityRemovePoint==piControl)
 		{
+			pEntity->m_piPlayAreaEntity->RemoveRoutePoint(m_nSelectedRoutePoint);
+			if(m_nSelectedRoutePoint>=pEntity->m_piPlayAreaEntity->GetRoutePoints())
+			{
+				m_nSelectedRoutePoint=pEntity->m_piPlayAreaEntity->GetRoutePoints()-1;
+			}
 		}
 	}
 	if(pFormation)
@@ -2517,89 +2505,65 @@ void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 {
 	if(m_bEditingEntityRoute)
 	{
+		if(m_nSelectedEntity==-1){return;}
+
+		if(nButton==MK_LBUTTON)
+		{
+			m_Render.m_piRender->StartSelection(m_rRealRect,m_Camera.m_piCamera,dx,dy,10);
+			for(unsigned x=0;x<m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetRoutePoints();x++)
+			{
+				SRoutePoint point;
+				m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetRoutePoint(x,&point);
+				m_Render.m_piRender->SetSelectionId(x);
+				m_Render.m_piRender->RenderPoint(point.vPosition,x==m_nSelectedRoutePoint?10:5,CVector(0.8,0.8,0.8),1.0);
+			}
+			int nNewSelection=m_Render.m_piRender->EndSelection();
+			if(m_nSelectedRoutePoint==nNewSelection)
+			{
+				if(nNewSelection!=-1)
+				{
+					if(DetectDrag(dx,dy))
+					{
+						m_bMovingObject=true;
+						m_piGUIManager->SetMouseCapture(this);
+						SRoutePoint point;
+						m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetRoutePoint(nNewSelection,&point);
+						m_vObjectOriginalPosition=point.vPosition;
+						GetTerrainCoordinatesFromCursorPos(dx,dy,false,&m_vCursorOriginalPosition);
+					}
+				}
+			}
+			m_nSelectedRoutePoint=nNewSelection;
+
+		}
+		else if(nButton==MK_RBUTTON)
+		{
+			SRoutePoint sRoutePoint;
+			sRoutePoint.bAbsolutePoint=true;
+			GetTerrainCoordinatesFromCursorPos(dx,dy,false,&sRoutePoint.vPosition);
+			m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->AddRoutePoint(m_nSelectedRoutePoint+1,sRoutePoint);
+			m_nSelectedRoutePoint=m_nSelectedRoutePoint+1;
+		}
 		return;
 	}
 
 	if(m_vEntityControls.size()==0 && m_vFormationControls.size()==0){return;}
 
-	GLint  viewport[4]={0};
-	GLuint buffer[1024];
-	GLuint *pSelectionBuffer=buffer;
-
-	double dNearPlane=0,dFarPlane=0;
-	m_Camera.m_piCamera->GetClippingPlanes(dNearPlane,dFarPlane);
-
-	glSelectBuffer(1024,pSelectionBuffer);
-	glRenderMode(GL_SELECT);
-
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	glGetIntegerv(GL_VIEWPORT,viewport);
-	glViewport(viewport[0],viewport[1],viewport[2],viewport[3]);
-	gluPickMatrix(m_rRealRect.x+dx,m_rRealRect.y+dy,2,2,viewport);
-	gluPerspective(m_Camera.m_piCamera->GetViewAngle(),m_rRealRect.w/m_rRealRect.h,dNearPlane,dFarPlane);
-
-	double dRoll=m_Camera.m_piCamera->GetAngles().c[ROLL];
-	double dPitch=m_Camera.m_piCamera->GetAngles().c[PITCH];
-	double dYaw=m_Camera.m_piCamera->GetAngles().c[YAW];
-	CVector vPosition=m_Camera.m_piCamera->GetPosition();
-
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-
-	glLoadIdentity();
-	glRotated((0-dRoll)	,AxisPosZ.c[0],AxisPosZ.c[1],AxisPosZ.c[2]);
-	glRotated((0-dPitch),AxisPosX.c[0],AxisPosX.c[1],AxisPosX.c[2]);
-	glRotated((0-(dYaw-90))	,AxisPosY.c[0],AxisPosY.c[1],AxisPosY.c[2]);
-	glTranslated(-vPosition.c[0],-vPosition.c[1],-vPosition.c[2]);
-	glInitNames();
+	m_Render.m_piRender->StartSelection(m_rRealRect,m_Camera.m_piCamera,dx,dy,5);
 
 	for(int x=0;x<m_vEntityControls.size();x++)
 	{
-		glPushName(x);
+		m_Render.m_piRender->SetSelectionId(x);
 		SEntityControls *pEntity=m_vEntityControls[x];
 		pEntity->m_piPlayAreaEntity->DesignRender(m_Render.m_piRender,false);
-		glPopName();
 	}
 	for(int x=0;x<m_vFormationControls.size();x++)
 	{
-		glPushName(SELECT_FORMATION_BASE_INDEX+x);
+		m_Render.m_piRender->SetSelectionId(SELECT_FORMATION_BASE_INDEX+x);
 		SFormationControls *pFormation=m_vFormationControls[x];
 		pFormation->m_piPlayAreaFormation->DesignRender(m_Render.m_piRender,false);
-		glPopName();
 	}
-
-	glFlush();
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
-	RTTRACE("Checking Hits");
-
-	int nNewIndex=-1;
-	double dCurrentMin=100000000.0;
-	int nHits = glRenderMode(GL_RENDER);
-	if(nHits)
-	{
-		for(int x=0;x<nHits;x++)
-		{
-			int nIds=*pSelectionBuffer++;
-			int nMin=*pSelectionBuffer++;
-			int nMax=*pSelectionBuffer++;
-			for(int y=0;y<nIds;y++,pSelectionBuffer++)
-			{
-				RTTRACE("Hit with id %d depth %d",*pSelectionBuffer,nMin);
-
-				if(y==0 && nMin<dCurrentMin)
-				{
-					RTTRACE("   Selected");
-					nNewIndex=*pSelectionBuffer;
-					dCurrentMin=nMin;
-				}
-			}
-		}
-	}
+	int nNewIndex=m_Render.m_piRender->EndSelection();
 	if(nNewIndex==-1)
 	{
 		m_nSelectedFormation=-1;
@@ -2762,7 +2726,19 @@ bool CScenarioEditorMainWindow::GetTerrainCoordinatesFromCursorPos(double x,doub
 
 void CScenarioEditorMainWindow::OnMouseMove( double x,double y )
 {
-	if(m_bMovingObject && m_nSelectedEntity!=-1)
+	if(m_bMovingObject && m_bEditingEntityRoute && m_nSelectedRoutePoint!=-1)
+	{
+		SEntityControls *pObject=m_vEntityControls[m_nSelectedEntity];
+		CVector vTemp;
+		if(GetTerrainCoordinatesFromCursorPos(x,y,false,&vTemp))
+		{
+			SRoutePoint point;
+			point.vPosition=vTemp;
+			point.bAbsolutePoint=true;
+			pObject->m_piPlayAreaEntity->SetRoutePoint(m_nSelectedRoutePoint,point);
+		}
+	}
+	else if(m_bMovingObject && m_nSelectedEntity!=-1)
 	{
 		SEntityControls *pObject=m_vEntityControls[m_nSelectedEntity];
 		CVector vTemp;
@@ -2771,7 +2747,7 @@ void CScenarioEditorMainWindow::OnMouseMove( double x,double y )
 			pObject->m_piPlayAreaEntity->SetPosition(vTemp);
 		}
 	}
-	if(m_bMovingObject && m_nSelectedFormation!=-1)
+	else if(m_bMovingObject && m_nSelectedFormation!=-1)
 	{
 		SFormationControls *pObject=m_vFormationControls[m_nSelectedFormation];
 		CVector vTemp;
@@ -3213,4 +3189,23 @@ void CScenarioEditorMainWindow::OpenScenario( std::string sScenario )
 	UpdateLayerPanel();
 	UpdateCaption();
 	CenterCamera();
+}
+
+void CScenarioEditorMainWindow::RenderRoute( IGenericRender * piRender, int nSelectedEntity, int nSelectedRoutePoint )
+{
+	if(m_nSelectedEntity==-1){return;}
+	SEntityControls *pEntity=m_vEntityControls[nSelectedEntity];
+	piRender->PushState();
+	piRender->DeactivateDepth();
+
+	CVector vPreviousPoint=pEntity->m_piPlayAreaEntity->GetPosition();
+	for(unsigned x=0;x<pEntity->m_piPlayAreaEntity->GetRoutePoints();x++)
+	{
+		SRoutePoint point;
+		pEntity->m_piPlayAreaEntity->GetRoutePoint(x,&point);
+		piRender->RenderLine(vPreviousPoint,point.vPosition,CVector(0.8,0.8,0.8));
+		piRender->RenderPoint(point.vPosition,nSelectedRoutePoint==x?10:5,nSelectedRoutePoint==x?CVector(0,0,0.8):CVector(0.8,0.8,0.8),1.0);
+		vPreviousPoint=point.vPosition;
+	}
+	piRender->PopState();
 }
