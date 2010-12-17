@@ -57,6 +57,7 @@ public:
 
 	// Events received from the manager
 
+	void    OnCharacter( int nKey,bool *pbProcessed);
 	void 	OnKeyDown(int nKey,bool *pbProcessed);
 	void 	OnKeyUp(int nKey,bool *pbProcessed);
 

@@ -174,6 +174,11 @@ void CGameMainWindow::EnumerateChildren(IGameWindowEnumerationCallback *piCallba
 	}
 }
 
+void CGameMainWindow::OnCharacter( int nKey,bool *pbProcessed )
+{
+
+}
+
 void CGameMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 {
 	if(nKey==VK_ESCAPE)

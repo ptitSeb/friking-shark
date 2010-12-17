@@ -345,6 +345,9 @@ void CGameWindowBase::EnumerateChildren(IGameWindowEnumerationCallback *piCallba
 	}
 }
 
+void CGameWindowBase::OnCharacter(int nCharacter,bool *pbProcessed)
+{
+}
 void CGameWindowBase::OnKeyDown(int nKey,bool *pbProcessed)
 {
 }

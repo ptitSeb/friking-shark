@@ -140,6 +140,7 @@ public:
 
 	// Events received from the manager
 
+	virtual void OnCharacter(int wCharacter,bool *pbProcessed)=0;
 	virtual void OnKeyDown(int nKey,bool *pbProcessed)=0;
 	virtual void OnKeyUp(int nKey,bool *pbProcessed)=0;
 
@@ -185,6 +186,13 @@ public:
 	virtual eTextAlignment		GetHorizontalAlignment()=0;
 	virtual eTextAlignment		GetVerticalAlignment()=0;
 
+};
+
+class IGameGUIEdit: virtual public IGameGUILabel
+{
+public:
+	virtual void	GetBorderColor(CVector *pvColor,double *pdAlpha)=0;
+	virtual void	SetBorderColor(CVector vColor,double dAlpha)=0;
 };
 
 class IGameGUIButton : virtual public IGameGUILabel
