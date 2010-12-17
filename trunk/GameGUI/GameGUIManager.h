@@ -25,6 +25,7 @@ class CGameGUIManager :	virtual public CSystemObjectBase,virtual public IGameGUI
 	IGameWindow *GetWindowFromPos(SGamePos *pPosition,bool bOnlyActive);
 	IGameWindow *GetWindowFromPos(IGameWindow *piWindow,SGamePos *pPosition,bool bOnlyActive);
 
+	void OnCharacter(WORD wCharacter);
 	void OnKeyDown(WORD wKeyState);
 	void OnKeyUp(WORD wKeyState);
 

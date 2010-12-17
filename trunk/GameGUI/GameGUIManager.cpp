@@ -451,6 +451,7 @@ IGameWindow *CGameGUIManager::GetMainWindow()
 
 LRESULT CGameGUIManager::OnProcessMessage(LRESULT dwPreviousResult,HWND hWnd,UINT  uMsg, WPARAM  wParam,LPARAM  lParam)
 {
+	if(uMsg==WM_CHAR){OnCharacter((WORD)wParam);return 0L;}
 	if(uMsg==WM_KEYDOWN){OnKeyDown((WORD)wParam);return 0L;}
 	if(uMsg==WM_KEYUP){OnKeyUp((WORD)wParam);return 0L;}
 	if(uMsg==WM_SIZE || uMsg==WM_MOVE)
@@ -575,6 +576,32 @@ void CGameGUIManager::OnMouseMove(unsigned x,unsigned y)
 		piWindow->OnMouseMove(pos.x-rRect.x,pos.y-rRect.y);
 	}
 	REL(piWindow);
+}
+
+void CGameGUIManager::OnCharacter(WORD wCharacter)
+{
+	if(m_piFocusedWindow)
+	{
+		bool				 bProcessed=false;
+		IGameWindow *piWindow=m_piFocusedWindow;
+		ADD(piWindow);
+
+		while(piWindow)
+		{
+			piWindow->OnCharacter(wCharacter,&bProcessed);
+			if(piWindow->IsPopup() || bProcessed)
+			{
+				REL(piWindow);
+				break;
+			}
+			else
+			{
+				IGameWindow *piParent=piWindow->GetParent();
+				REL(piWindow);
+				piWindow=piParent;
+			}
+		}
+	}
 }
 
 void CGameGUIManager::OnKeyDown(WORD wKeyState)
