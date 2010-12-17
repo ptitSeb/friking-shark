@@ -21,15 +21,35 @@ bool CPlayAreaEntity::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInf
 	bool bCurrentlyInPlayArea=Util_IsInPlayArea(m_vPosition,pAreaInfo);
 	bCurrentlyInPlayArea=bCurrentlyInPlayArea||Util_IsInPlayArea(m_vPosition-CVector(m_dRadius,0,0),pAreaInfo);
 	bCurrentlyInPlayArea=bCurrentlyInPlayArea||Util_IsInPlayArea(m_vPosition+CVector(m_dRadius,0,0),pAreaInfo);
-    if(!m_bActive && bCurrentlyInPlayArea)
-    {
-        Activate(dwCurrentTime);
-    }
-    else if(m_bActive && !bCurrentlyInPlayArea)
-    {
-        Deactivate();
-    }
-    return m_bActive;
+
+	if(m_bActive)
+	{
+		if(m_piEntity)
+		{
+			bool bEntityCurrentlyInPlayArea=Util_IsInPlayArea(m_piEntity->GetPhysicInfo()->vPosition,pAreaInfo);
+			bEntityCurrentlyInPlayArea=bEntityCurrentlyInPlayArea||Util_IsInPlayArea(m_piEntity->GetPhysicInfo()->vPosition-CVector(m_dRadius,0,0),pAreaInfo);
+			bEntityCurrentlyInPlayArea=bEntityCurrentlyInPlayArea||Util_IsInPlayArea(m_piEntity->GetPhysicInfo()->vPosition+CVector(m_dRadius,0,0),pAreaInfo);
+			if(!bEntityCurrentlyInPlayArea)
+			{
+				UNSUBSCRIBE_FROM_CAST(m_piEntity,IEntityEvents);
+				m_piEntity->Remove();
+				m_piEntity=NULL;
+			}		
+		}
+		if(!m_piEntity && !bCurrentlyInPlayArea)
+		{
+			Deactivate();
+		}
+
+	}
+	else
+	{
+		if(bCurrentlyInPlayArea)
+		{
+			Activate(dwCurrentTime);
+		}
+	}
+	return m_bActive;
 }
 
 bool CPlayAreaEntity::Init(std::string sClass,std::string sName,ISystem *piSystem)
