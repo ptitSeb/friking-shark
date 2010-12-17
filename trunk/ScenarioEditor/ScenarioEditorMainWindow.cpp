@@ -20,6 +20,7 @@ CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 	m_bMovingRoutePoint=false;
 	m_bAutoGenerateBSP=true;
 	m_bAutoUpdateBSP=false;
+	m_bRenderPlayArea=false;
 	
 	m_bInspectionMode=false;
 	m_bShowTerrainPanel=true;
@@ -550,6 +551,11 @@ void CScenarioEditorMainWindow::ProcessInput(double dTimeFraction,double dRealTi
 			m_bTextures=!m_bTextures;
 			m_dwNexControlKey=GetTickCount()+500;
 		}
+		if(m_piGUIManager->IsKeyDown('P'))
+		{
+			m_bRenderPlayArea=!m_bRenderPlayArea;
+			m_dwNexControlKey=GetTickCount()+500;
+		}
 		if(m_piGUIManager->IsKeyDown('G'))
 		{
 			m_bFog=!m_bFog;
@@ -731,8 +737,44 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 
 		piRender->EndStagedRendering();
 	}
+
 	m_Render.m_piRender->PopOptions();
 	m_Render.m_piRender->PopState();
+
+
+	if(m_bRenderPlayArea)
+	{
+		m_Render.m_piRender->PushState();
+		m_Render.m_piRender->ActivateBlending();
+		CVector vPlayAreaMins,vPlayAreaMaxs;
+		SPlayAreaConfig vPlayAreaConfig;
+		m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&vPlayAreaConfig);
+		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetAirPlayPlane(&vPlayAreaMins,&vPlayAreaMaxs);
+		CVector vCenter=(vPlayAreaMaxs+vPlayAreaMins)*0.5;
+		CVector vSize=(vPlayAreaMaxs-vPlayAreaMins);
+
+		piRender->ActivateSolid();
+
+		piRender->SetColor(CVector(1,1,1),0.1);
+		piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2]);
+		//Left scroll
+		piRender->SetColor(CVector(1,1,1),0.05);
+		piRender->RenderRect(vCenter-CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
+		//Right scroll
+		piRender->SetColor(CVector(1,1,1),0.05);
+		piRender->RenderRect(vCenter+CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
+
+		piRender->DeactivateDepth();
+		piRender->DeactivateSolid();
+
+		piRender->SetColor(CVector(1,1,1),1.0);
+		piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2]);
+		piRender->RenderRect(vCenter-CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
+		piRender->RenderRect(vCenter+CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
+
+		m_Render.m_piRender->PopState();
+	}
+
 
 	CVector vSunPosition;
 	m_Render.m_piRender->GetSunLight(&vSunPosition,NULL,NULL);

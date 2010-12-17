@@ -104,6 +104,7 @@ public:
 	bool				m_bShowSunPanel;
 	bool				m_bShowSkyPanel;
 	bool				m_bShowPlayAreaPanel;
+	bool				m_bRenderPlayArea;
 
 	int					m_nSelectedRoutePoint;
 
