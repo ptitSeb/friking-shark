@@ -53,8 +53,6 @@ CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 	m_nSelectedEntity=-1;
 	m_nSelectedFormation=-1;
 	m_piSTFps=NULL;
-	m_piSTVertexOverhead=NULL;
-	m_piSTFaceOverhead=NULL;
 
 	m_piGROptionsPanel=NULL;
 	m_piGRTerrainPanel=NULL;
@@ -627,19 +625,22 @@ void CScenarioEditorMainWindow::ProcessKey(SHORT nKey,double dTimeFraction,doubl
 	}
 
 }
-void CScenarioEditorMainWindow::SetupRenderOptions(IGenericRender *piRender)
+void CScenarioEditorMainWindow::SetupRenderOptions(IGenericRender *piRender,IGenericCamera *piCamera)
 {
+	double cx=m_rRealRect.h*piCamera->GetAspectRatio();
+	double dx=(m_rRealRect.w-cx)*0.5;
+
 	double dNearPlane=0,dFarPlane=0;
 	CVector vAngles,vPosition;
-	vAngles=m_Camera.m_piCamera->GetAngles();
-	vPosition=m_Camera.m_piCamera->GetPosition();
-	m_Camera.m_piCamera->GetClippingPlanes(dNearPlane,dFarPlane);
-	double dViewAngle=m_Camera.m_piCamera->GetViewAngle();
+	vAngles=piCamera->GetAngles();
+	vPosition=piCamera->GetPosition();
+	piCamera->GetClippingPlanes(dNearPlane,dFarPlane);
+	double dViewAngle=piCamera->GetViewAngle();
 
+	piRender->SetViewport(dx,0,cx,m_rRealRect.h);
 	piRender->SetPerspectiveProjection(dViewAngle,dNearPlane,dFarPlane);
 	piRender->SetCamera(vPosition,vAngles.c[YAW],vAngles.c[PITCH],vAngles.c[ROLL]);
 }
-CVector vSunAngles;
 
 void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 {
@@ -647,6 +648,7 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 	{
 		return;
 	}
+	m_Camera.m_piCamera->SetAspectRatio(m_rRealRect.w/m_rRealRect.h);
 
 	m_FrameManager.m_piFrameManager->ProcessFrame();
 	ProcessInput(m_FrameManager.m_piFrameManager->GetTimeFraction(),m_FrameManager.m_piFrameManager->GetRealTimeFraction());
@@ -663,59 +665,24 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 	m_bShaders?m_Render.m_piRender->EnableShaders():m_Render.m_piRender->DisableShaders();
 	m_bFog?m_Render.m_piRender->EnableHeightFog():m_Render.m_piRender->DisableHeightFog();
 
-	char A[200];
-	sprintf(A,"Shader: %s",m_Render.m_piRender->AreShadersEnabled()?"yes":"no");
-	m_piSTVertexOverhead->SetText(A);
-
 	if(m_bSimulationStarted)
 	{
-
 		m_PlayAreaManagerWrapper.m_piPlayAreaManager->ProcessInput(m_piGUIManager);
 		m_GameControllerWrapper.m_piGameController->ProcessFrame(m_FrameManager.m_piFrameManager->GetCurrentTime(),m_FrameManager.m_piFrameManager->GetTimeFraction());
-		IGenericCamera *piCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera();
+		IGenericCamera *piPlayCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera();
+		IGenericCamera *piCamera=NULL;
+		piCamera=ADD(m_bInspectionMode?m_Camera.m_piCamera:piPlayCamera);
 		if(piCamera)
 		{
-			double dAspectRatio=m_rRealRect.h/m_rRealRect.w;
-			double dNearPlane=0,dFarPlane=0;
-			CVector vAngles,vPosition;
-			double dViewAngle=0;
-			double dPlayAreaAspectRatio=1;
-
-			if(m_bInspectionMode)
-			{
-				dViewAngle=m_Camera.m_piCamera->GetViewAngle();
-				dPlayAreaAspectRatio=m_Camera.m_piCamera->GetAspectRatio();
-				m_Camera.m_piCamera->GetClippingPlanes(dNearPlane,dFarPlane);
-				vAngles=m_Camera.m_piCamera->GetAngles();
-				vPosition=m_Camera.m_piCamera->GetPosition();
-			}
-			else
-			{
-				dViewAngle=piCamera->GetViewAngle();
-				dPlayAreaAspectRatio=piCamera->GetAspectRatio();
-				piCamera->GetClippingPlanes(dNearPlane,dFarPlane);
-				vAngles=piCamera->GetAngles();
-				vPosition=piCamera->GetPosition();
-
-				m_Camera.m_piCamera->SetAngles(piCamera->GetAngles());
-				m_Camera.m_piCamera->SetPosition(piCamera->GetPosition());
-				m_Camera.m_piCamera->SetViewAngle(piCamera->GetViewAngle());
-				m_Camera.m_piCamera->SetClippingPlanes(dNearPlane,dFarPlane);
-			}
-
-			double cx=m_rRealRect.h*dPlayAreaAspectRatio;
-			double dx=(m_rRealRect.w-cx)*0.5;
-			piRender->SetViewport(dx,0,cx,m_rRealRect.h);
-			piRender->SetPerspectiveProjection(dViewAngle,dNearPlane,dFarPlane);
-			piRender->SetCamera(vPosition,vAngles.c[YAW],vAngles.c[PITCH],vAngles.c[ROLL]);
-
+			SetupRenderOptions(piRender,piCamera);
 			m_GameRenderWrapper.m_piRender->Render(piRender,piCamera);
 		}
 		REL(piCamera);
+		REL(piPlayCamera);
 	}
 	else
 	{
-		SetupRenderOptions(piRender);
+		SetupRenderOptions(piRender,m_Camera.m_piCamera);
 		piRender->StartStagedRendering();
 		
 		m_WorldManagerWrapper.m_piWorldManager->SetupRenderingEnvironment(piRender);
@@ -781,49 +748,13 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 	m_Render.m_piRender->RenderPoint(vSunPosition,10,CVector(0,0,1),1.0);
 	m_Render.m_piRender->RenderLine(vSunPosition,vSunPosition+CVector(0,-vSunPosition.c[1],0),CVector(0,0,1),0x8888);
 	
-	double dAspectRatio=m_rRealRect.h/m_rRealRect.w;
-	double dNearPlane=0,dFarPlane=0;
-	double dViewAngle=m_Camera.m_piCamera->GetViewAngle();
-	CVector vAngles,vPosition;
-
-	m_Camera.m_piCamera->SetAspectRatio(dAspectRatio);
-	m_Camera.m_piCamera->GetClippingPlanes(dNearPlane,dFarPlane);
-	vAngles=m_Camera.m_piCamera->GetAngles();
-	vPosition=m_Camera.m_piCamera->GetPosition();
-
 	if(m_piSTFps)
 	{
 		char A[200];
 		sprintf(A,"Fps: %.02f",m_FrameManager.m_piFrameManager->GetCurrentFps());
 		m_piSTFps->SetText(A);
 	}
-	double dVertexOverhead=0,dFaceOverHead=0;
-	bool bOverHeadData=m_WorldManagerWrapper.m_piTerrain->GetTerrainStats(&dVertexOverhead,&dFaceOverHead);
-	if(m_piSTVertexOverhead)
-	{
-		/*if(!bOverHeadData)
-		{
-			m_piSTVertexOverhead->SetText("Shader: N/A");
-		}
-		else
-		{ */
 
-		//}
-	}
-	if(m_piSTFaceOverhead)
-	{
-		CFrame *pOriginalFrame=NULL;
-		if(!bOverHeadData)
-		{
-			m_piSTFaceOverhead->SetText("Faces   : N/A");
-		}
-		else
-		{
-			char A[200];
-			sprintf(A,"Faces   : %.02f%%",(float)dFaceOverHead);
-			m_piSTFaceOverhead->SetText(A);
-		}
-	}
 	UpdateLayerPanel();
 }
 void CScenarioEditorMainWindow::ProcessFileNew()

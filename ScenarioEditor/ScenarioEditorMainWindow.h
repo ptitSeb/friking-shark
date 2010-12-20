@@ -124,8 +124,6 @@ public:
 
 
 	IGameGUILabel *m_piSTFps;
-	IGameGUILabel *m_piSTVertexOverhead;
-	IGameGUILabel *m_piSTFaceOverhead;
 
 	IGameWindow	  *m_piGRHeightLayerPanel;
 	IGameWindow	  *m_piGRColorLayerPanel;
@@ -376,8 +374,6 @@ public:
 
 	BEGIN_CHILD_MAP()
 		CHILD_MAP_ENTRY("FPS",m_piSTFps);
-		CHILD_MAP_ENTRY("VertexOverHead",m_piSTVertexOverhead);
-		CHILD_MAP_ENTRY("FaceOverHead",m_piSTFaceOverhead);
 		CHILD_MAP_ENTRY("Options",m_piBTShowOptionsPanel);
 		CHILD_MAP_ENTRY("Terrain",m_piBTShowTerrainPanel);
 		CHILD_MAP_ENTRY("Entities",m_piBTShowEntitiesPanel);
@@ -617,7 +613,7 @@ public:
 
 	bool GetHeightAt(CVector vPoint,bool bIgnoreTerrainObjects, double *pdHeight);
 
-	void SetupRenderOptions(IGenericRender *piRender);
+	void SetupRenderOptions(IGenericRender *piRender,IGenericCamera *piCamera);
 
 	bool GetTerrainCoordinatesFromCursorPos(double x,double y,bool bIgnoreTerrainObjects, CVector *pTerrainPos);
 	bool GetAirPlaneCoordinatesFromCursorPos(double x,double y,CVector *pAirPlanePos);
