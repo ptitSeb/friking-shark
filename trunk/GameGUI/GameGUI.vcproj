@@ -196,6 +196,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GameGUIEdit.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\GameGUIGroup.cpp"
 				>
 			</File>
@@ -243,6 +247,10 @@
 			</File>
 			<File
 				RelativePath=".\GameGUIButton.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GameGUIEdit.h"
 				>
 			</File>
 			<File
