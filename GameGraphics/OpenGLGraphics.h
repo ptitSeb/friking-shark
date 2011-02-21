@@ -1,7 +1,6 @@
 #pragma once
 
-#include <gl\gl.h>
-#include <gl\glu.h>
+#include <GL/gl.h>
 
 class CPreprocessedRenderBuffer;
 
@@ -21,10 +20,6 @@ public:
 class IOpenGLViewport: virtual public ISystemUnknown
 {
 public:
-
-	virtual HGLRC GetRenderContext()=0;
-	virtual HDC	 GetDeviceContext()=0;
-
 	virtual void SetCurrentRenderTarget(bool bSetAsCurrent)=0;
 };
 

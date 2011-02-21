@@ -1,6 +1,6 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "GameGUILib.h"
-#include ".\gameguigroup.h"
+#include "GameGUIGroup.h"
 
 CGameGUIGroup::CGameGUIGroup(void)
 {

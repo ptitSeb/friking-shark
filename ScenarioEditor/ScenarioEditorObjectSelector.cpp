@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "ScenarioEditorObjectSelector.h"
 
 #define BUTTON_INTERNAL_MARGIN	4.0

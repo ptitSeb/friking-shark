@@ -1,6 +1,6 @@
 #pragma once
 
-DECLARE_CUSTOM_WRAPPER1(CParticleTypeWrapper,IParticleType,m_piParticleType);
+DECLARE_CUSTOM_WRAPPER1(CParticleTypeWrapper,IParticleType,m_piParticleType)
 
 class CParticleEmitterType: virtual public CSystemObjectBase,virtual public IParticleEmitterType
 {

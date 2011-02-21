@@ -1,11 +1,13 @@
 #pragma once
-#pragma comment (lib , "GameRunTimeLib.lib")
 
 #include <set>
 #include <list>
 #include <deque>
 #include <map>
 #include <vector>
+
+void RTTRACE(const char *format, ...);
+
 #include "GameRunTime.h"
 #include "SystemUnknownBase.h"
 #include "EventBase.h"
@@ -16,8 +18,6 @@
 #include "SystemModuleHelpers.h"
 #include "SystemObjectWrapper.h"
 #include "SystemLoaderHelper.h"
-
-void RTTRACE(const char *format, ...);
 
 template<typename ITF> 
 void GetSystemObjects(std::string sSystem,std::vector<ITF *> *pvObjects)

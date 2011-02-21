@@ -1,6 +1,6 @@
-#include "StdAfx.h"
+#include "./stdafx.h"
 #include "WeaponTypes.h"
-#include ".\projectilelaunchertype.h"
+#include "ProjectileLauncherType.h"
 
 CProjectileLauncherType::CProjectileLauncherType(void)
 {
@@ -15,8 +15,7 @@ CProjectileLauncherType::~CProjectileLauncherType(void)
 
 IWeapon *CProjectileLauncherType::CreateInstance(IEntity *piEntity,DWORD dwCurrentTime)
 {
-  size_t nLevel=0,nProjectile=0;
-  CProjectileLauncher *pProyectileLauncher=new CProjectileLauncher(this,piEntity,dwCurrentTime);
+ CProjectileLauncher *pProyectileLauncher=new CProjectileLauncher(this,piEntity,dwCurrentTime);
   return pProyectileLauncher;
 }
 

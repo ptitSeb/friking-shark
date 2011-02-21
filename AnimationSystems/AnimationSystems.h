@@ -1,5 +1,7 @@
-#pragma once
-#include "GameRuntimeLib.h"
+#ifndef __ANIMATION_SYSTEMS__
+#define __ANIMATION_SYSTEMS__
+
+#include "GameRunTimeLib.h"
 
 struct IAnimation;
 struct IAnimationType;
@@ -56,3 +58,5 @@ struct IAnimation
 
     virtual ~IAnimation(){}
 };
+
+#endif

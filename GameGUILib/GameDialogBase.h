@@ -1,5 +1,5 @@
 #pragma once
-#include "gamewindowbase.h"
+#include "GameDialogBase.h"
 
 class CGameDialogBase :	virtual public CGameWindowBase, virtual public IGameDialog
 {

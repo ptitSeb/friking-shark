@@ -1,7 +1,7 @@
-#include "StdAfx.h"
+#include "./stdafx.h"
 #include "GameGraphics.h"
-#include ".\PlayAreaElementBase.h"
-#include ".\PlayAreaEntity.h"
+#include "PlayAreaElementBase.h"
+#include "PlayAreaEntity.h"
 
 CPlayAreaEntity::CPlayAreaEntity()
 {

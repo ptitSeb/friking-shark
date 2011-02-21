@@ -80,7 +80,7 @@ HRESULT MRSaveToContainer(ISystemPersistencyNode *piNode,CMRPersistentReferenceT
     HRESULT hr=S_OK,finalhr=S_OK;
     if(SUCCEEDED(finalhr))
     {
-        T1::iterator i;
+        typename T1::iterator i;
 		int x=0;
         for(x=0,i=pItem->GetValueAddress()->begin();i!=pItem->GetValueAddress()->end();i++,x++)
         {

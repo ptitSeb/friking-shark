@@ -1,7 +1,7 @@
-#include "StdAfx.h"
-#include "GameRuntimeLib.h"
+#include "./stdafx.h"
+#include "GameRunTimeLib.h"
 #include "GameGUILib.h"
-#include ".\GameSimpleDialog.h"
+#include "GameSimpleDialog.h"
 
 CGameSimpleDialog::CGameSimpleDialog(void)
 {

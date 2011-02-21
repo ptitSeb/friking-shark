@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "./StdAfx.h"
 #include "QuakeFiles.h"
 #include "float.h"
 #include <string>
@@ -91,68 +91,69 @@ bool CMdlFileType::Open(const char *pFileName)
 	m_nOpenGLSkinWidth=0;
 	m_nOpenGLSkinHeigth=0;
 
-	DWORD dwRead=0;
 	int x=0;
 	int i=1,j=1;
 	long Tipo_Frame=0;
 	long Tipo_Skin=0;
 	
-	HANDLE hFile=CreateFile(pFileName,GENERIC_READ,FILE_SHARE_READ|FILE_SHARE_WRITE,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
-	if(hFile==INVALID_HANDLE_VALUE){MessageBox(NULL,pFileName,"Imposible abrir el modelo",MB_OK);return false;}
+	FILE *pFile=fopen(pFileName,"rb");
+	if(pFile==NULL){return false;}
 
 	// Header
-	ReadFile(hFile,&m_Header,sizeof(m_Header),&dwRead,NULL);
+	bool bOk=(fread(&m_Header,sizeof(m_Header),1,pFile)==1);
+	if(bOk)
+	{
+	  m_nSkins=m_Header.nSkins; 		// skins simples
+	  m_nFrames=m_Header.nFrames; 		// frames simples
 
-	m_nSkins=m_Header.nSkins; 		// skins simples
-	m_nFrames=m_Header.nFrames; 		// frames simples
+	  m_pSkinVertexes	=new SMdlSkinVertex[m_Header.nVertexes];
+	  m_pTriangles	=new SMdlTriangle[m_Header.nTriangles];
 
-	m_pSkinVertexes	=new SMdlSkinVertex[m_Header.nVertexes];
-	m_pTriangles	=new SMdlTriangle[m_Header.nTriangles];
-
-	while(m_nOpenGLSkinWidth<m_Header.nSkinWidth){m_nOpenGLSkinWidth=pow(2.0,i);i++;}
-	while(m_nOpenGLSkinHeigth<m_Header.nSkinHeight){m_nOpenGLSkinHeigth=pow(2.0,j);j++;}
-	
+	  while(m_nOpenGLSkinWidth<m_Header.nSkinWidth){m_nOpenGLSkinWidth=pow(2.0,i);i++;}
+	  while(m_nOpenGLSkinHeigth<m_Header.nSkinHeight){m_nOpenGLSkinHeigth=pow(2.0,j);j++;}
+	}
+	  
 	// Se leen los skins...
 	
-	for(x=0;x<m_Header.nSkins;x++)
+	for(x=0;bOk && x<m_Header.nSkins;x++)
 	{
 		// Si el tipo del m_pSkins es 1 se trata de un
 		// grupo de skins que contiene varias imagenes
 		// seguidas.
 
-		ReadFile(hFile,&Tipo_Skin,sizeof(Tipo_Skin),&dwRead,NULL);
-		if(Tipo_Skin==0)
+		bOk=(fread(&Tipo_Skin,sizeof(Tipo_Skin),1,pFile)==1);
+		if(bOk && Tipo_Skin==0)
 		{
 			m_pSkins[x]=new SMdlSkin;
 			m_pSkins[x]->pPixels=new unsigned char [m_Header.nSkinHeight*m_Header.nSkinWidth];
-			ReadFile(hFile,m_pSkins[x]->pPixels,m_Header.nSkinHeight*m_Header.nSkinWidth,&dwRead,NULL);
+			bOk=(fread(m_pSkins[x]->pPixels,m_Header.nSkinHeight*m_Header.nSkinWidth,1,pFile)==1);
 		}
 	}
 	
-	ReadFile(hFile,m_pSkinVertexes,m_Header.nVertexes*sizeof(SMdlSkinVertex),&dwRead,NULL);
-	ReadFile(hFile,m_pTriangles,m_Header.nTriangles*sizeof(SMdlTriangle),&dwRead,NULL);
+	if(bOk){bOk=(fread(m_pSkinVertexes,m_Header.nVertexes*sizeof(SMdlSkinVertex),1,pFile)==1);}
+	if(bOk){bOk=(fread(m_pTriangles,m_Header.nTriangles*sizeof(SMdlTriangle),1,pFile)==1);}
 	
 	// Se leen los Frames...
 	
-	for(x=0;x<m_Header.nFrames;x++)
+	for(x=0;bOk && x<m_Header.nFrames;x++)
 	{
 		// Si el tipo del frame es 1 se trata de un
 		// grupo de skins que contiene varias imagenes
 		// seguidas.
 
-		if(!ReadFile(hFile,&Tipo_Frame,sizeof(Tipo_Frame),&dwRead,NULL)){MessageBox(NULL,"Tipo de skin","Error leyendo un modelo",MB_OK);return false;}
-		if(Tipo_Frame==0)
+		bOk=(fread(&Tipo_Frame,sizeof(Tipo_Frame),1,pFile)==1);
+		if(bOk && Tipo_Frame==0)
 		{
 			m_pFrames[x]=new SMdlFrame;
 			m_pFrames[x]->pnVertexIndexes=new SMdlCompressedVertex[m_Header.nVertexes];
-			ReadFile(hFile,m_pFrames[x],sizeof(SMdlFrame)-4,&dwRead,NULL);
-			ReadFile(hFile,m_pFrames[x]->pnVertexIndexes,sizeof(SMdlCompressedVertex)*m_Header.nVertexes,&dwRead,NULL);
+			if(bOk){bOk=(fread(m_pFrames[x],sizeof(SMdlFrame)-4,1,pFile)==1);}
+			if(bOk){bOk=(fread(m_pFrames[x]->pnVertexIndexes,sizeof(SMdlCompressedVertex)*m_Header.nVertexes,1,pFile)==1);}
 		}
 	}
 	
-	if(hFile!=INVALID_HANDLE_VALUE){CloseHandle(hFile);}
+	if(pFile!=NULL){fclose(pFile);pFile=NULL;}
 	
-	return true;
+	return bOk;
 }
 
 void CMdlFileType::Close()
@@ -218,7 +219,7 @@ CPolyhedron *CMdlFileType::GetPolyhedron(int frame,int skin)
 		t1=vTriangleVertexes[1]-vTriangleVertexes[0];
 		t2=vTriangleVertexes[2]-vTriangleVertexes[0];
 		t3=t1^t2;
-		if(!_isnan(t3.c[0]) && !_isnan(t3.c[1]) && !_isnan(t3.c[2]) && 
+		if(!isnan(t3.c[0]) && !isnan(t3.c[1]) && !isnan(t3.c[2]) && 
 			(t3.c[0]!=0 || t3.c[1]!=0 || t3.c[2]!=0))
 		{
 			CPolygon *pPolygon=new CPolygon(3,vTriangleVertexes);
@@ -246,8 +247,7 @@ CMapFileBrush::CMapFileBrush()
 
 CMapFileBrush::~CMapFileBrush()
 {
-	int x;
-	for(x=0;x<m_vPolygons.size();x++)
+	for(unsigned int x=0;x<m_vPolygons.size();x++)
 	{
 		CMapFilePolygon *pPolygon=m_vPolygons[x];
 		delete pPolygon;
@@ -319,7 +319,6 @@ CMapFileBrush *CMapFileType::ReadBrush(char *pBuffer,DWORD *pOffset,DWORD fileLe
 			CVector vTextScale;
 
 			SMapFileVertexTextureInfo info;
-			char sTextureName[MAX_PATH]={0};
 			pTempBuffer=strtok(pBuffer+*pOffset,"(, )");
 			if(pTempBuffer){strcpy(info.sFileName,pTempBuffer);(*pOffset)=pTempBuffer-pBuffer+strlen(pTempBuffer)+1;}
 			pTempBuffer=strtok(pBuffer+*pOffset,"(, )");
@@ -368,7 +367,7 @@ CMapFileBrush *CMapFileType::ReadBrush(char *pBuffer,DWORD *pOffset,DWORD fileLe
 	CPolyhedron		*pPolyhedron=PolyhedronFromConvexRegion(nPlanes,pPlanes);
 	if(pPolyhedron)
 	{
-		for(int x=0;x<pPolyhedron->m_vPolygons.size();x++)
+		for(unsigned int x=0;x<pPolyhedron->m_vPolygons.size();x++)
 		{
 			CPolygon		*pPolygon=pPolyhedron->m_vPolygons[x];
 			CMapFilePolygon	*pMapPolygon=new CMapFilePolygon(*pPolygon);
@@ -377,7 +376,7 @@ CMapFileBrush *CMapFileType::ReadBrush(char *pBuffer,DWORD *pOffset,DWORD fileLe
 				if(pMapPolygon->m_Plane==pPlanes[z])
 				{
 					strcpy(pMapPolygon->m_sTextName,vTextureInfo[z].sFileName);
-					for(int y=0;y<pMapPolygon->m_nVertexes;y++)
+					for(unsigned int y=0;y<pMapPolygon->m_nVertexes;y++)
 					{
 						//CVector temp=pMapPolygon->m_Plane*pMapPolygon->m_pVertexes[y];
 						CVector dist=(pMapPolygon->m_pVertexes[y]-pMapPolygon->m_pVertexes[0]);
@@ -402,12 +401,12 @@ bool CMapFileType::Open(const char *pMap)
 	char *pBuffer=new char [MAX_TEXT_FILE_LENGHT];
 	DWORD fileLen=0;
 	DWORD offset=0;
-	HANDLE hFile=CreateFile(pMap,GENERIC_READ,0,NULL,OPEN_EXISTING,0,NULL);
-	if(hFile!=INVALID_HANDLE_VALUE)
+	FILE *pFile=fopen(pMap,"rb");
+	if(pFile!=NULL)
 	{
-		ReadFile(hFile,pBuffer,MAX_TEXT_FILE_LENGHT,&fileLen,NULL);
-		CloseHandle(hFile);
-		hFile=INVALID_HANDLE_VALUE;
+		fileLen=fread(pBuffer,1,MAX_TEXT_FILE_LENGHT,pFile);
+		fclose(pFile);
+		pFile=NULL;
 	}
 	if(!fileLen){return false;}
 
@@ -427,7 +426,6 @@ bool CMapFileType::Open(const char *pMap)
 					if(pBuffer[offset]=='{')
 					{
 						offset++;
-						DWORD dwTempOffset=offset;
 						CMapFileBrush *pBrush=ReadBrush(pBuffer,&offset,fileLen,0.0);
 						if(pBrush)
 						{
@@ -450,7 +448,7 @@ bool CMapFileType::Open(const char *pMap)
 		}
 	}
 	delete [] pBuffer;
-	return TRUE;
+	return true;
 }
 
 void CMapFileType::Close()

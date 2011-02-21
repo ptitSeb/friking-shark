@@ -23,12 +23,14 @@
 #define JPEG_DECODER_H
 //------------------------------------------------------------------------------
 #include "main.h"
-//------------------------------------------------------------------------------
-// Define SUPPORT_X86ASM to include the inline x86 assembler code.
-#define SUPPORT_X86ASM
-//------------------------------------------------------------------------------
-// Define SUPPORT_MMX to include MMX support.
-#define SUPPORT_MMX
+#ifndef _DO_NOT_USE_ASSEMBLER_
+	//------------------------------------------------------------------------------
+	// Define SUPPORT_X86ASM to include the inline x86 assembler code.
+	#define SUPPORT_X86ASM
+	//------------------------------------------------------------------------------
+	// Define SUPPORT_MMX to include MMX support.
+	#define SUPPORT_MMX
+#endif
 //------------------------------------------------------------------------------
 #define JPGD_INBUFSIZE       4096
 //------------------------------------------------------------------------------
@@ -371,8 +373,10 @@ typedef jpeg_decoder_file_stream *Pjpeg_decoder_file_stream;
 #define BLOCK_TYPE int16
 //------------------------------------------------------------------------------
 // Disable no return value warning, for rol() method
+#ifdef WIN32
 #pragma warning(push)
 #pragma warning( disable : 4035 4799 )
+#endif
 //------------------------------------------------------------------------------
 class jpeg_decoder
 {
@@ -480,26 +484,26 @@ private:
 
   void find_eoi(void);
 //------------------
-  inline uint jpeg_decoder::rol(uint i, uchar j);
-  inline uint jpeg_decoder::get_char(void);
-  inline uint jpeg_decoder::get_char(bool *Ppadding_flag);
-  inline void jpeg_decoder::stuff_char(uchar q);
-  inline uchar jpeg_decoder::get_octet(void);
-  inline uint jpeg_decoder::get_bits_1(int num_bits);
-  inline uint jpeg_decoder::get_bits_2(int numbits);
-  inline int jpeg_decoder::huff_decode(Phuff_tables_t Ph);
+  inline uint rol(uint i, uchar j);
+  inline uint get_char(void);
+  inline uint get_char(bool *Ppadding_flag);
+  inline void stuff_char(uchar q);
+  inline uchar get_octet(void);
+  inline uint get_bits_1(int num_bits);
+  inline uint get_bits_2(int numbits);
+  inline int huff_decode(Phuff_tables_t Ph);
 #ifdef SUPPORT_X86ASM
-  inline uint jpeg_decoder::huff_extend(uint i, int c);
+  inline uint huff_extend(uint i, int c);
 #endif
-  inline uchar jpeg_decoder::clamp(int i);
+  inline uchar clamp(int i);
 
 #ifdef SUPPORT_MMX
-  inline uint jpeg_decoder::get_high_byte_mmx(void);
-  inline uint jpeg_decoder::get_high_word_mmx(void);
-  inline void jpeg_decoder::get_bits_2_mmx_init(void);
-  inline void jpeg_decoder::get_bits_2_mmx_deinit(void);
-  inline uint jpeg_decoder::get_bits_2_mmx(int numbits);
-  inline int jpeg_decoder::huff_decode_mmx(Phuff_tables_t Ph);
+  inline uint get_high_byte_mmx(void);
+  inline uint get_high_word_mmx(void);
+  inline void get_bits_2_mmx_init(void);
+  inline void get_bits_2_mmx_deinit(void);
+  inline uint get_bits_2_mmx(int numbits);
+  inline int huff_decode_mmx(Phuff_tables_t Ph);
 #endif
 //------------------
   int   image_x_size;
@@ -676,7 +680,9 @@ public:
 //------------------------------------------------------------------------------
 #include "jpegdecoder.inl"
 //------------------------------------------------------------------------------
+#ifdef WIN32
 #pragma warning(pop)
+#endif
 //------------------------------------------------------------------------------
 typedef jpeg_decoder *Pjpeg_decoder;
 //------------------------------------------------------------------------------

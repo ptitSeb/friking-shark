@@ -1,6 +1,6 @@
-#include "StdAfx.h"
-#include ".\particlesystems.h"
-#include ".\particlemodifiertype.h"
+#include "./stdafx.h"
+#include "ParticleSystems.h"
+#include "ParticleModifierType.h"
 
 CParticleModifierType::CParticleModifierType(void)
 {

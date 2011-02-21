@@ -1,11 +1,9 @@
-#include "StdAfx.h"
+#include "./stdafx.h"
 #include "OpenGLGraphics.h"
 #include "OpenGLRender.h"
-#include "..\GameGUI\GameGUI.h"
-DECLARE_CUSTOM_WRAPPER1(CGameGUIManagerWrapper,IGameGUIManager,m_piInterface);
+#include "GameGUI.h"
 
-
-
+DECLARE_CUSTOM_WRAPPER1(CGameGUIManagerWrapper,IGameGUIManager,m_piInterface)
 
 COpenGLRender::COpenGLRender(void)
 {
@@ -160,8 +158,9 @@ void COpenGLRender::SetCamera(const CVector &vPosition,double dYaw, double dPitc
 	{
 		m_bHardwareSupportRead=true;
 
+		RTTRACE("COpenGLRender -> shaders disabled!!!");
 		GLhandleARB hFakeShaderProgram=glCreateProgramObjectARB();
-		m_sHardwareSupport.bShaders=(hFakeShaderProgram!=NULL);
+		m_sHardwareSupport.bShaders=false;(hFakeShaderProgram!=0);
 		if(hFakeShaderProgram){glDeleteObjectARB(hFakeShaderProgram);hFakeShaderProgram=NULL;}
 
 		glGetIntegerv(GL_MAX_LIGHTS,&m_sHardwareSupport.nMaxLights);
@@ -221,8 +220,6 @@ void COpenGLRender::SetClipRect(double x,double y,double cx, double cy)
 void COpenGLRender::Clear(const CVector &vColor,double dAlpha)
 {
 	CVector vOrigin(m_dProyectionWidth*0.5,m_dProyectionHeight*0.5,0);
-	double s1=m_dProyectionWidth;
-	double s2=m_dProyectionHeight;
 
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 
@@ -441,6 +438,18 @@ void COpenGLRender::RenderRect(const CVector &vCenter,const CVector &vAxisW,cons
 	glVertex3dv(vTemp[1].c);
 	glVertex3dv(vTemp[2].c);
 	glVertex3dv(vTemp[3].c);
+	glEnd();
+}
+
+void COpenGLRender::RenderPolygon(unsigned int nVertexes,const CVector *pVertexes,const CVector *pColors)
+{
+	glBegin(GL_QUADS);
+	for(unsigned int x=0;x<nVertexes;x++)
+	{
+	  if(pColors){glColor4d(pColors[x].c[0],pColors[x].c[1],pColors[x].c[2],m_dAlpha);}
+	  glVertex3dv(pVertexes[x].c);
+	}
+	glColor4d(m_vColor.c[0],m_vColor.c[1],m_vColor.c[2],m_dAlpha);
 	glEnd();
 }
 
@@ -1147,7 +1156,7 @@ void COpenGLRender::RenderModel(const CVector &vOrigin,const CVector &vOrientati
 								CLine lCutSegment;
 								if(CPolygon::Divide(m_CameraFustrumPlanes[y],&polygons[x],&fake1,&fake2,NULL,&lCutSegment)>1)
 								{
-									int nLineCutPlanes[2];
+									int nLineCutPlanes[2]={0};
 									if(y==0 || y==2){nLineCutPlanes[0]=1;nLineCutPlanes[1]=3;}
 									if(y==1 || y==3){nLineCutPlanes[0]=0;nLineCutPlanes[1]=2;}
 
@@ -1371,7 +1380,7 @@ void COpenGLRender::EndStagedRendering()
 		{
 			if(m_ShadowShader.Create(m_piSystem,"Shader",""))
 			{
-				m_ShadowShader.m_piShader->Load("Shaders\\ShadowBufferShader-Vertex.c","Shaders\\ShadowBufferShader-Fragment.c","");
+				m_ShadowShader.m_piShader->Load("Shaders/ShadowBufferShader-Vertex.c","Shaders/ShadowBufferShader-Fragment.c","");
 			}
 		}
 	}
@@ -1412,8 +1421,6 @@ void COpenGLRender::EndStagedRendering()
 	if(m_sRenderOptions.bEnableShadows && m_ShadowTexture.m_piTexture && m_sHardwareSupport.nMaxTextureUnits>1)
 	{
 		RECT   rPreviousViewport=m_rViewportRect;
-		double dPreviousNearPlane=m_dPerspectiveNearPlane;
-		double dPreviousFarPlane=m_dPerspectiveFarPlane;
 		double dPreviousViewAngle=m_dPerspectiveViewAngle;
 		double dPreviousViewAspect=((m_rViewportRect.bottom-m_rViewportRect.top)==0)?1:(double)(m_rViewportRect.right-m_rViewportRect.left)/(double)(m_rViewportRect.bottom-m_rViewportRect.top);
 		CVector vPreviousCameraPosition=m_vCameraPos;
@@ -1425,7 +1432,6 @@ void COpenGLRender::EndStagedRendering()
 		CVector *pVolumeToUse=pvShadowVolume;
 		for(int x=0;x<8;x++){vVolumeMidPoint+=pVolumeToUse[x];}
 		vVolumeMidPoint/=8.0;
-		CVector pvCameraVolumeLightSpace[8];
 		CVector vLightRight,vLightUp;
 
 		vLightForward=vVolumeMidPoint-m_SunLight.m_piLight->GetPosition();
@@ -2082,7 +2088,7 @@ void COpenGLRender::AddShader( const SShaderKey &key )
 	CGenericShaderWrapper wrapper;
 	if(wrapper.Create(m_piSystem,"Shader",""))
 	{
-		wrapper.m_piShader->Load("Shaders\\RenderShader-Vertex.c","Shaders\\RenderShader-Fragment.c",sPreprocessor);
+		wrapper.m_piShader->Load("Shaders/RenderShader-Vertex.c","Shaders/RenderShader-Fragment.c",sPreprocessor);
 		wrapper.m_piShader->Activate();
 		if(key.nTextureUnits>=1){wrapper.m_piShader->AddUniform("Texture0",(int)0);}
 		if(key.nTextureUnits>=2){wrapper.m_piShader->AddUniform("Texture1",(int)1);}
@@ -2154,7 +2160,7 @@ int COpenGLRender::EndSelection()
 		{
 			int nIds=*pSelectionBuffer++;
 			int nMin=*pSelectionBuffer++;
-			int nMax=*pSelectionBuffer++;
+			pSelectionBuffer++;// nMax
 			for(int y=0;y<nIds;y++,pSelectionBuffer++)
 			{
 				if(y==0 && nMin<dCurrentMin)

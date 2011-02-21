@@ -1,6 +1,6 @@
-#include "StdAfx.h"
-#include "GameRuntimeLib.h"
-#include ".\physicsmanager.h"
+#include "./stdafx.h"
+#include "GameRunTimeLib.h"
+#include "PhysicsManager.h"
 
 CPhysicManager::CPhysicManager()
 {
@@ -236,8 +236,6 @@ void EntityOperation_CheckCollision(IEntity *piOther,void *pParam1,void *pParam2
             {
                 double vVel=pPhysicInfo->vVelocity;
                 pInfo->traceInfo.m_vTracePos-=vDir*(FP_PRECISION*10.0);
-
-                double dEnd=-pInfo->traceInfo.m_vTracePlane.GetSide(pInfo->vDestination);
 
                 CVector vNewDir=(vDir+pInfo->traceInfo.m_vTracePlane*2.0);
                 vNewDir.N();

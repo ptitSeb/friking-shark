@@ -1,6 +1,6 @@
-#include "StdAfx.h"
-#include ".\GameRunTimeLib.h"
-#include ".\persistenttypes.h"
+#include "stdafx.h"
+#include "./GameRunTimeLib.h"
+#include "./PersistentTypes.h"
 
 HRESULT MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<DWORD> *pItem)
 {
@@ -114,7 +114,6 @@ HRESULT MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenc
 
 HRESULT MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<std::string> *pItem)
 {
-	char sTemp[1024]={0};
 	if(piNode){piNode->SetValue(pItem->GetValueAddress()->c_str());}
 	return piNode?S_OK:E_FAIL;
 }

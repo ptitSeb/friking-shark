@@ -60,11 +60,11 @@ public:\
     ~WRAPPER_NAME(){REL(VARNAME);}\
     INTERFACE *VARNAME;\
 };\
-static HRESULT MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){return pItem->GetValueAddress()->Save(piNode,pItem->GetName())?S_OK:E_FAIL;}\
-static HRESULT MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){return pItem->GetValueAddress()->Load(piNode,pItem->GetName())?S_OK:E_FAIL;}\
-static HRESULT MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){if(piNode){piNode->DeleteNode(pItem->GetName());}return S_OK;}\
-static void    MRPersistencyInitialize(CMRPersistentReferenceT<WRAPPER_NAME> *pItem){}\
-static void    MRPersistencyFree(CMRPersistentReferenceT<WRAPPER_NAME> *pItem){pItem->GetValueAddress()->Detach();}
+__UNUSED_ATTRIB__ static HRESULT MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){return pItem->GetValueAddress()->Save(piNode,pItem->GetName())?S_OK:E_FAIL;}\
+__UNUSED_ATTRIB__ static HRESULT MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){return pItem->GetValueAddress()->Load(piNode,pItem->GetName())?S_OK:E_FAIL;}\
+__UNUSED_ATTRIB__ static HRESULT MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){if(piNode){piNode->DeleteNode(pItem->GetName());}return S_OK;}\
+__UNUSED_ATTRIB__ static void    MRPersistencyInitialize(CMRPersistentReferenceT<WRAPPER_NAME> *pItem){}\
+__UNUSED_ATTRIB__ static void    MRPersistencyFree(CMRPersistentReferenceT<WRAPPER_NAME> *pItem){pItem->GetValueAddress()->Detach();}
 
 #define DECLARE_CUSTOM_WRAPPER2(WRAPPER_NAME,INTERFACE1,VARNAME1,INTERFACE2,VARNAME2)\
 class WRAPPER_NAME:public CSystemObjectWrapper\
@@ -92,10 +92,10 @@ public:\
 	INTERFACE1 *VARNAME1;\
 	INTERFACE2 *VARNAME2;\
 };\
-	static HRESULT MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){return pItem->GetValueAddress()->Save(piNode,pItem->GetName())?S_OK:E_FAIL;}\
-	static HRESULT MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){return pItem->GetValueAddress()->Load(piNode,pItem->GetName())?S_OK:E_FAIL;}\
-	static HRESULT MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){if(piNode){piNode->DeleteNode(pItem->GetName());}return S_OK;}\
-	static void    MRPersistencyInitialize(CMRPersistentReferenceT<WRAPPER_NAME> *pItem){}\
-	static void    MRPersistencyFree(CMRPersistentReferenceT<WRAPPER_NAME> *pItem){pItem->GetValueAddress()->Detach();}
+	__UNUSED_ATTRIB__ static HRESULT MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){return pItem->GetValueAddress()->Save(piNode,pItem->GetName())?S_OK:E_FAIL;}\
+	__UNUSED_ATTRIB__ static HRESULT MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){return pItem->GetValueAddress()->Load(piNode,pItem->GetName())?S_OK:E_FAIL;}\
+	__UNUSED_ATTRIB__ static HRESULT MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){if(piNode){piNode->DeleteNode(pItem->GetName());}return S_OK;}\
+	__UNUSED_ATTRIB__ static void    MRPersistencyInitialize(CMRPersistentReferenceT<WRAPPER_NAME> *pItem){}\
+	__UNUSED_ATTRIB__ static void    MRPersistencyFree(CMRPersistentReferenceT<WRAPPER_NAME> *pItem){pItem->GetValueAddress()->Detach();}
 
 

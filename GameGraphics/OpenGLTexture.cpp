@@ -1,4 +1,5 @@
-#include "StdAfx.h"
+
+#include "./stdafx.h"
 #include "OpenGLGraphics.h"
 #include "OpenGLTexture.h"
 
@@ -17,6 +18,7 @@ COpenGLTexture::COpenGLTexture(void)
 	m_nFrameBuffer=0;
 	m_nFrameBufferDepth=0;
 
+#ifdef WIN32
 	m_hPBufferDC=NULL;
 	m_hPBufferRC=NULL;
 	m_nPBufferPixelFormatIndex=0;
@@ -24,6 +26,7 @@ COpenGLTexture::COpenGLTexture(void)
 
 	m_hPBufferOldDC=NULL;
 	m_hPBufferOldRC=NULL;
+#endif
 }
 
 void COpenGLTexture::Clear()
@@ -34,9 +37,11 @@ void COpenGLTexture::Clear()
 		m_pBuffer=NULL;
 	}
 	
+#ifdef WIN32
 	if(m_hPBufferRC){wglDeleteContext(m_hPBufferRC);m_hPBufferRC=NULL;}
 	if(m_hPBufferDC){wglReleasePbufferDCARB(m_hPBuffer,m_hPBufferDC);m_hPBufferDC=NULL;}
 	if(m_hPBuffer){wglDestroyPbufferARB(m_hPBuffer);m_hPBuffer=NULL;}
+#endif
 
 	if(m_nFrameBuffer)
 	{
@@ -75,8 +80,6 @@ bool COpenGLTexture::LoadFromFile()
 {
 	bool bResult=true;
 	DWORD	 dwColorType=HasAlphaChannel()?GL_RGBA:GL_RGB;
-
-	RTTRACE("COpenGLTexture::LoadFromFile -> Loading texture %s",m_sFileName.c_str());
 
 	if(LoadTextureImageHelper(m_sFileName,dwColorType,&m_dwWidth,&m_dwHeight,&m_pBuffer))
 	{
@@ -146,10 +149,9 @@ bool COpenGLTexture::LoadFromFile()
 	}
 	else
 	{
-		RTTRACE("COpenGLTexture::LoadFromFile -> Failed to load texture %s",m_sFileName.c_str());
 		bResult=false;
 	}
-
+	
 	if(bResult)
 	{
 		glGenTextures(1,&m_nTextureIndex);
@@ -165,9 +167,13 @@ bool COpenGLTexture::LoadFromFile()
 			gluBuild2DMipmaps(GL_TEXTURE_2D,dwColorType==GL_RGBA?4:3,m_dwWidth,m_dwHeight,dwColorType,GL_UNSIGNED_BYTE,m_pBuffer);
 		}
 		m_bRenderTarget=false;
+		
+		RTTRACE("COpenGLTexture::LoadFromFile -> Loaded texture %s",m_sFileName.c_str());
 	}
-
-	RTTRACE("COpenGLTexture::LoadFromFile -> Finishing loading texture %s",m_sFileName.c_str());
+	else
+	{
+		RTTRACE("COpenGLTexture::LoadFromFile -> Failed to load texture %s",m_sFileName.c_str());
+	}
 
 	return bResult;
 }
@@ -229,7 +235,6 @@ bool COpenGLTexture::CreateFrameBuffer(bool bDepth)
 
 	if(m_nTextureIndex && m_nFrameBuffer && (m_nFrameBufferDepth|| bDepth))
 	{
-		GLenum error=0;
 		m_bRenderTarget=true;
 
 		glBindTexture(GL_TEXTURE_2D,m_nTextureIndex);
@@ -290,7 +295,6 @@ bool COpenGLTexture::CreateBackBuffer(bool bDepth)
 		glGetIntegerv(GL_VIEWPORT,pViewPort);
 		while((int)m_dwWidth>pViewPort[2]){m_dwWidth/=2;}
 		while((int)m_dwHeight>pViewPort[3]){m_dwHeight/=2;}
-		GLenum error=0;
 		m_bRenderTarget=true;
 
 		glBindTexture(GL_TEXTURE_2D,m_nTextureIndex);
@@ -335,6 +339,7 @@ bool COpenGLTexture::CreateBackBuffer(bool bDepth)
 
 bool COpenGLTexture::CreatePBuffer(bool bDepth)
 {
+#ifdef WIN32
 	if(bDepth){return false;}
 
 	HDC   hdc=wglGetCurrentDC();
@@ -363,7 +368,6 @@ bool COpenGLTexture::CreatePBuffer(bool bDepth)
 				nMaxDepthFormatIndex=pFormats[x];
 			}
 		}
-
 		if(nMaxDepthFormatIndex!=-1)
 		{
 			m_nPBufferPixelFormatIndex=nMaxDepthFormatIndex;
@@ -405,6 +409,9 @@ bool COpenGLTexture::CreatePBuffer(bool bDepth)
 	{
 		return false;
 	}
+#else
+	return false;
+#endif
 }
 
 bool COpenGLTexture::Create( unsigned nWidth,unsigned nHeight )
@@ -469,6 +476,7 @@ bool COpenGLTexture::StartRenderingToTexture()
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,m_nFrameBufferDepth);
 		return true;
 	}
+#ifdef WIN32
 	// PBuffer Implementation
 	else if(m_hPBufferRC)
 	{
@@ -478,6 +486,7 @@ bool COpenGLTexture::StartRenderingToTexture()
 		wglMakeCurrent(m_hPBufferDC,m_hPBufferRC);
 		return true;
 	}
+#endif
 	else if(m_bDepth)
 	{
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
@@ -499,6 +508,7 @@ bool COpenGLTexture::StartRenderingToTexture()
 
 void COpenGLTexture::StopRenderingToTexture()
 {
+#ifdef WIN32
 	// PBuffer implementation
 	if(m_hPBufferRC)
 	{
@@ -506,8 +516,10 @@ void COpenGLTexture::StopRenderingToTexture()
 		m_hPBufferOldDC=NULL;
 		m_hPBufferOldRC=NULL;
 	}
+	else
+#endif
 	// FrameBuffer Implementation
-	else if(m_nFrameBuffer)
+	if(m_nFrameBuffer)
 	{
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,0);
 		glPopAttrib();
@@ -532,13 +544,16 @@ void COpenGLTexture::StopRenderingToTexture()
 bool COpenGLTexture::PrepareTexture(IGenericRender *piRender,int nTextureLevel)
 {
 	bool bShader=piRender->IsRenderingWithShader();
+#ifdef WIN32
 	if(m_hPBuffer)
 	{
 		glActiveTexture(GL_TEXTURE0_ARB+nTextureLevel);
 		if(!bShader){glEnable(GL_TEXTURE_2D);}
 		wglBindTexImageARB(m_hPBuffer,WGL_FRONT_LEFT_ARB);
 	}
-	else if(m_nFrameBuffer)
+	else 
+#endif
+	if(m_nFrameBuffer)
 	{
 		glActiveTexture(GL_TEXTURE0_ARB+nTextureLevel);
 		if(!bShader){glEnable(GL_TEXTURE_2D);}
@@ -562,6 +577,7 @@ bool COpenGLTexture::PrepareTexture(IGenericRender *piRender,int nTextureLevel)
 void COpenGLTexture::UnprepareTexture(IGenericRender *piRender,int nTextureLevel)
 {
 	bool bShader=piRender->IsRenderingWithShader();
+#ifdef WIN32
 	if(m_hPBuffer)
 	{
 		wglReleaseTexImageARB(m_hPBuffer,WGL_FRONT_LEFT_ARB);
@@ -569,7 +585,9 @@ void COpenGLTexture::UnprepareTexture(IGenericRender *piRender,int nTextureLevel
 		if(!bShader){glDisable(GL_TEXTURE_2D);}
 		glBindTexture(GL_TEXTURE_2D,0);
 	}
-	else if(m_nFrameBuffer)
+	else 
+#endif
+	if(m_nFrameBuffer)
 	{
 		glActiveTexture(GL_TEXTURE0_ARB+nTextureLevel);
 		if(!bShader){glDisable(GL_TEXTURE_2D);}

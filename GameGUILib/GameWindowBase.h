@@ -5,9 +5,9 @@
 
 #define BEGIN_CHILD_MAP() bool MapChildren(bool bMapping/*false=Unmapping*/){bool bResult=true;
 #define CHILD_MAP_ENTRY(_text,_interface) CHILD_MAP_ENTRY_FLAGS(_text,_interface,CMEF_MANDATORY)
-#define CHILD_MAP_ENTRY_FLAGS(_text,_interface,_flags) if(!bMapping){REL(_interface);}else{if(bResult){IGameWindow *piControl=FindChild(_text);if(piControl==NULL){if((_flags&CMEF_OPTIONAL)==0){	bResult=false;}}else{_interface=__make_qi(piControl,_interface,__FILE__,__LINE__);REL(piControl);if(_interface==NULL){if((_flags&CMEF_OPTIONAL)==0){bResult=false;}}}}}
+#define CHILD_MAP_ENTRY_FLAGS(_text,_interface,_flags) if(!bMapping){REL(_interface);}else{if(bResult){IGameWindow *piControl=FindChild(_text);if(piControl==NULL){if((_flags&CMEF_OPTIONAL)==0){	bResult=false;}}else{_interface=__make_qi(piControl,_interface,__FILE__,__LINE__);REL(piControl);if(_interface==NULL){if((_flags&CMEF_OPTIONAL)==0){bResult=false;}}}if(!bResult){RTTRACE("Failed to map child window %s, interface %s",_text,#_interface);}}}
 #define CHILD_MAP_ENTRY_EX(_text,_interface,_eventInterface) CHILD_MAP_ENTRY_EX_FLAGS(_text,_interface,_eventInterface,CMEF_MANDATORY)
-#define CHILD_MAP_ENTRY_EX_FLAGS(_text,_interface,_eventInterface,_flags) if(!bMapping){if(_interface){IPublisher *piPublisher=NULL;	piPublisher=dynamic_cast<IPublisher*>(_interface);	if(piPublisher){UNSUBSCRIBE_FROM_PUBLISHER(piPublisher);}}REL(_interface);}else{if(bResult){IGameWindow *piControl=FindChild(_text);if(piControl==NULL){if((_flags&CMEF_OPTIONAL)==0){bResult=false;}}else{_interface=__make_qi(piControl,_interface,__FILE__,__LINE__);REL(piControl);if(_interface==NULL){if((_flags&CMEF_OPTIONAL)==0){bResult=false;}}else{IPublisher *piPublisher=NULL;piPublisher=dynamic_cast<IPublisher*>(_interface);if(piPublisher==NULL){REL(_interface);if((_flags&CMEF_OPTIONAL)==0){bResult=false;}}else{if(SUBSCRIBE_TO(piPublisher,_eventInterface)==false){REL(_interface);if((_flags&CMEF_OPTIONAL)==0){bResult=false;}}}}}}}
+#define CHILD_MAP_ENTRY_EX_FLAGS(_text,_interface,_eventInterface,_flags) if(!bMapping){if(_interface){IPublisher *piPublisher=NULL;	piPublisher=dynamic_cast<IPublisher*>(_interface);	if(piPublisher){UNSUBSCRIBE_FROM_PUBLISHER(piPublisher);}}REL(_interface);}else{if(bResult){IGameWindow *piControl=FindChild(_text);if(piControl==NULL){if((_flags&CMEF_OPTIONAL)==0){bResult=false;}}else{_interface=__make_qi(piControl,_interface,__FILE__,__LINE__);REL(piControl);if(_interface==NULL){if((_flags&CMEF_OPTIONAL)==0){bResult=false;}}else{IPublisher *piPublisher=NULL;piPublisher=dynamic_cast<IPublisher*>(_interface);if(piPublisher==NULL){REL(_interface);if((_flags&CMEF_OPTIONAL)==0){bResult=false;}}else{if(SUBSCRIBE_TO(piPublisher,_eventInterface)==false){REL(_interface);if((_flags&CMEF_OPTIONAL)==0){bResult=false;}}}}}if(!bResult){RTTRACE("Failed to map child window %s, interface %s",_text,#_interface);}}}
 #define END_CHILD_MAP() return bResult;}
 
 DECLARE_CUSTOM_WRAPPER1(CGameWindowWrapper,IGameWindow,m_piWindow)
@@ -16,14 +16,9 @@ DECLARE_CUSTOM_WRAPPER1(CGenericFontWrapper,IGenericFont,m_piFont)
 DECLARE_CUSTOM_WRAPPER1(CGenericModelWrapper,IGenericModel,m_piModel)
 DECLARE_CUSTOM_WRAPPER1(CGenericCameraWrapper,IGenericCamera,m_piCamera)
 
-
-enum EMessageDialogType
-{
-	eMessageDialogType_Info,
-	eMessageDialogType_Warning,
-	eMessageDialogType_Error,
-	eMessageDialogType_Question
-};
+DECLARE_CUSTOM_WRAPPER1(CMessageDialogWrapper,IGameGUIMessageDialog,m_piMessageDialog)
+DECLARE_CUSTOM_WRAPPER1(CConfirmDialogWrapper,IGameGUIConfirmDialog,m_piConfirmDialog)
+DECLARE_CUSTOM_WRAPPER1(CColorDialogWrapper,IGameGUIColorDialog,m_piColorDialog)
 
 class CGameWindowBase :	virtual public CSystemObjectBase, virtual public IGameWindow
 {

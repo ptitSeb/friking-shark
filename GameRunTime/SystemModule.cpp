@@ -1,10 +1,19 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "GameRunTimeLib.h"
-#include ".\systemmodule.h"
+#include "SystemModule.h"
+
+#ifndef WIN32
+	#include <dlfcn.h>
+#endif
 
 CSystemModule::CSystemModule(void)
 {
-    m_hModule=NULL;
+#ifdef WIN32
+	m_hModule=NULL;
+#else
+	m_pLibrary=NULL;
+#endif
+	
     m_piSystem=NULL;
     m_bRegistered=false;
 }
@@ -16,12 +25,31 @@ CSystemModule::~CSystemModule(void)
 bool CSystemModule::Init(std::string sPath,ISystem *piSystem)
 {
     bool bOk=false;
+	std::string sFileName=sPath;
     m_sPath=sPath;
-    m_hModule=LoadLibrary(sPath.c_str());
-    if(m_hModule==NULL)
+#ifdef WIN32	
+	char fileName[MAX_PATH]={0},fileExt[MAX_PATH]={0};
+	_splitpath(sPath.c_str(),NULL,NULL,fileName,fileExt);
+	sFileName+=fileName;
+	sFileName+=fileExt;
+	
+	m_hModule=LoadLibrary(sPath.c_str());
+	bOk=(m_hModule!=NULL);
+#else
+	const char *pFileStart=strrchr(sPath.c_str(),'/');
+	sFileName=pFileStart?pFileStart:sPath.c_str();
+
+
+	m_pLibrary=dlopen(sPath.c_str(),RTLD_LOCAL|RTLD_LAZY);
+	bOk=(m_pLibrary!=NULL);
+	if(!bOk)
+	{
+	  RTTRACE("Failed to load library : %s : %s",sPath.c_str(),dlerror());
+	}
+#endif
+    if(!bOk)
     {
-      char fileName[MAX_PATH]={0},fileExt[MAX_PATH]={0};
-      _splitpath(sPath.c_str(),NULL,NULL,fileName,fileExt);
+	  
       std::set<std::string> sPaths;
       std::set<std::string>::iterator iPaths;
       ISystemManager *piSystemManager=GetSystemManager();
@@ -33,28 +61,46 @@ bool CSystemModule::Init(std::string sPath,ISystem *piSystem)
         for(iPaths=sPaths.begin();iPaths!=sPaths.end();iPaths++)
         {
           std::string sAlternatePath=*iPaths;
-          sAlternatePath+=fileName;
-          sAlternatePath+=fileExt;
+          sAlternatePath+=sFileName;
+#ifdef WIN32
           m_hModule=LoadLibrary(sAlternatePath.c_str());
           if(m_hModule!=NULL){break;}
+#else
+		  m_pLibrary=dlopen(sAlternatePath.c_str(),RTLD_LOCAL|RTLD_LAZY);
+		  if(m_pLibrary!=NULL){break;}
+#endif
         }
       }
-			REL(piSystemManager);
-			REL(piPathControl);
+	  REL(piSystemManager);
+	  REL(piPathControl);
     }
+#ifdef WIN32    
     if(m_hModule)
     {
         m_pSystemModuleRegister=(tSystemModuleRegister)GetProcAddress(m_hModule,"SystemModuleRegister");
         m_pSystemModuleUnregister=(tSystemModuleUnregister)GetProcAddress(m_hModule,"SystemModuleUnregister");
         if(m_pSystemModuleRegister!=NULL && m_pSystemModuleRegister!=NULL){bOk=true;}
     }
+#else
+    if(m_pLibrary)
+    {
+        m_pSystemModuleRegister=reinterpret_cast<tSystemModuleRegister>(reinterpret_cast<size_t>(dlsym(m_pLibrary,"SystemModuleRegister")));
+        m_pSystemModuleUnregister=reinterpret_cast<tSystemModuleUnregister>(reinterpret_cast<size_t>(dlsym(m_pLibrary,"SystemModuleUnregister")));
+        if(m_pSystemModuleRegister!=NULL && m_pSystemModuleRegister!=NULL){bOk=true;}
+    }
+#endif
+
     if(bOk){bOk=m_bRegistered=piSystem->RegisterModule(this);}
     if(bOk){bOk=m_pSystemModuleRegister(piSystem);}
     if(bOk){m_piSystem=ADD(piSystem);}
     if(!bOk)
     {
         if(m_bRegistered){piSystem->UnregisterModule(this);m_bRegistered=false;}
+#ifdef WIN32
         if(m_hModule){FreeLibrary(m_hModule);m_hModule=NULL;}
+#else
+        if(m_pLibrary){dlclose(m_pLibrary);m_pLibrary=NULL;}
+#endif
         m_pSystemModuleRegister=NULL;
         m_pSystemModuleUnregister=NULL;        
         m_sPath="";
@@ -66,7 +112,11 @@ void CSystemModule::Destroy()
 {
     if(m_pSystemModuleUnregister){m_pSystemModuleUnregister(m_piSystem);}
     if(m_bRegistered){m_piSystem->UnregisterModule(this);m_bRegistered=false;}
+#ifdef WIN32
     if(m_hModule){FreeLibrary(m_hModule);m_hModule=NULL;}
+#else
+    if(m_pLibrary){dlclose(m_pLibrary);m_pLibrary=NULL;}
+#endif
     REL(m_piSystem);
 }
 

@@ -31,7 +31,7 @@
 			*MAP_CLASS "Bitmap"
 			*MAP_SUBNO 1
 			*MAP_AMOUNT 1.00000000
-			*BITMAP "D:\Desarrollo\3DTest\GameEngine\Resources\Textures\AMX30_cuerpo.jpg"
+			*BITMAP "AMX30_cuerpo.jpg"
 			*MAP_TYPE Screen
 			*UVW_U_OFFSET 0.00000000
 			*UVW_V_OFFSET 0.00000000
@@ -67,7 +67,7 @@
 			*MAP_CLASS "Bitmap"
 			*MAP_SUBNO 1
 			*MAP_AMOUNT 1.00000000
-			*BITMAP "D:\Desarrollo\3DTest\GameEngine\Resources\Textures\AMX30_torreta.jpg"
+			*BITMAP "AMX30_torreta.jpg"
 			*MAP_TYPE Screen
 			*UVW_U_OFFSET 0.00000000
 			*UVW_V_OFFSET 0.00000000
@@ -103,7 +103,7 @@
 			*MAP_CLASS "Bitmap"
 			*MAP_SUBNO 1
 			*MAP_AMOUNT 1.00000000
-			*BITMAP "D:\Desarrollo\3DTest\GameEngine\Resources\Textures\AMX30_cabina.jpg"
+			*BITMAP "AMX30_cabina.jpg"
 			*MAP_TYPE Screen
 			*UVW_U_OFFSET 0.00000000
 			*UVW_V_OFFSET 0.00000000
@@ -139,7 +139,7 @@
 			*MAP_CLASS "Bitmap"
 			*MAP_SUBNO 1
 			*MAP_AMOUNT 1.00000000
-			*BITMAP "D:\Desarrollo\3DTest\GameEngine\Resources\Textures\AMX30_tubo.jpg"
+			*BITMAP "AMX30_tubo.jpg"
 			*MAP_TYPE Screen
 			*UVW_U_OFFSET 0.00000000
 			*UVW_V_OFFSET 0.00000000

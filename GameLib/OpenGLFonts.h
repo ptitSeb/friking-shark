@@ -2,47 +2,43 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_OPENGLFONTS_H__DE1FEA63_D852_4B3D_961F_FCFD967AE520__INCLUDED_)
-#define AFX_OPENGLFONTS_H__DE1FEA63_D852_4B3D_961F_FCFD967AE520__INCLUDED_
+#ifndef __OPENGL_FONTS__
+#define __OPENGL_FONTS__
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
+#ifndef WIN32
+#include <X11/Xlib.h>
+#include <X11/Xatom.h>
+#include <GL/glx.h>
+#endif
 
+#define FONT_NAME_MAX 128
 struct SOpenGLFontInfo
 {
-	char sName[LF_FACESIZE];
-	int  nHeight;
-	int  nTexturesBaseIndex;
+	char sName[FONT_NAME_MAX];
+#ifdef WIN32
 	HFONT hFont;
 	TEXTMETRIC sFontMetrics;
+#else
+	XFontStruct *pFontStruct;
+#endif
+	int  nMetricDescent;
+	int  nHeight;
+	int  nTexturesBaseIndex;
+	
+	bool operator <(const SOpenGLFontInfo &font) const;
+	bool operator !=(const SOpenGLFontInfo &font) const;
 
-
-	SOpenGLFontInfo()
-	{
-		hFont=NULL;
-		sName[0]=0;
-		nHeight=0;
-		nTexturesBaseIndex=0;
-		memset(&sFontMetrics,0,sizeof(sFontMetrics));
-	}
-
-	bool operator <(const SOpenGLFontInfo &font) const
-	{
-		if(nHeight<font.nHeight){return true;}
-		if(nHeight>font.nHeight){return false;}
-		return strcmp(sName,font.sName)<0;
-	}
-	bool operator !=(const SOpenGLFontInfo &font) const
-	{
-		return (nHeight!=font.nHeight || strcmp(sName,font.sName)!=0);
-	}
+	SOpenGLFontInfo();
 };
 
 class COpenGLFonts
 {
 	static std::set<SOpenGLFontInfo> g_sTextures;
 	static SOpenGLFontInfo			 g_CurrentFont;
+	
+#ifndef WIN32
+	static Display 					*g_pDisplay;
+#endif
 
 	static void DrawText_Internal(char *text);
 public:
@@ -59,4 +55,4 @@ public:
 
 };
 
-#endif // !defined(AFX_OPENGLFONTS_H__DE1FEA63_D852_4B3D_961F_FCFD967AE520__INCLUDED_)
+#endif 

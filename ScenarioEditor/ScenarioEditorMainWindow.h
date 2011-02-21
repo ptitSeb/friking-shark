@@ -4,8 +4,8 @@
 #include "ScenarioEditorColorSelector.h"
 #include "ScenarioEditorObjectSelector.h"
 
-DECLARE_CUSTOM_WRAPPER1(CScenarioEditorColorSelectorWrapper,IScenarioEditorColorSelector,m_piColorSelector);
-DECLARE_CUSTOM_WRAPPER1(CScenarioEditorObjectSelectorWrapper,IScenarioEditorObjectSelector,m_piObjectSelector);
+DECLARE_CUSTOM_WRAPPER1(CScenarioEditorColorSelectorWrapper,IScenarioEditorColorSelector,m_piColorSelector)
+DECLARE_CUSTOM_WRAPPER1(CScenarioEditorObjectSelectorWrapper,IScenarioEditorObjectSelector,m_piObjectSelector)
 
 #define KEY_FORWARD		1
 #define KEY_BACK		2
@@ -360,7 +360,7 @@ public:
 	CWorldManagerWrapper	 m_WorldManagerWrapper;
 
 	void ProcessInput(double dTimeFraction,double dRealTimeFraction);
-	void ProcessKey(SHORT nKey,double dTimeFraction,double dRealTimeFraction);
+	void ProcessKey(WORD nKey,double dTimeFraction,double dRealTimeFraction);
 
 	void ProcessFileNew();
 	void ProcessFileOpen();

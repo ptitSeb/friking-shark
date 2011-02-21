@@ -1,7 +1,7 @@
 #pragma once
 
-#include "GameRuntimeLib.h"
-#include "GameGraphics.h"
+#include <GameRunTimeLib.h>
+#include <GameGraphics.h>
 
 class IGameWindow;
 
@@ -12,7 +12,16 @@ enum eGameGUIReferenceSystem
 	eGameGUIReferenceSystem_Relative
 };
 
-DECLARE_SERIALIZABLE_ENUMERATION(eGameGUIReferenceSystem);
+
+enum EMessageDialogType
+{
+	eMessageDialogType_Info,
+	eMessageDialogType_Warning,
+	eMessageDialogType_Error,
+	eMessageDialogType_Question
+};
+
+DECLARE_SERIALIZABLE_ENUMERATION(eGameGUIReferenceSystem)
 
 struct SGameScreenProperties
 {
@@ -33,8 +42,8 @@ BEGIN_STRUCT_PROPS(SGameScreenProperties)
 // Se ha pasado el codigo de default al Unserialize del GUIManager.
 	PROP_FLAGS(rWindowRect,"WindowRect",MRPF_NORMAL|MRPF_OPTIONAL) 
 	PROP_FLAGS(sFullScreenResolution,"Resolution",MRPF_NORMAL|MRPF_OPTIONAL)
-	PROP_VALUE_FLAGS(bFullScreen,"FullScreen",FALSE,MRPF_NORMAL|MRPF_OPTIONAL)
-	PROP_VALUE_FLAGS(bWindowCentered,"CenterWindow",TRUE,MRPF_NORMAL|MRPF_OPTIONAL)
+	PROP_VALUE_FLAGS(bFullScreen,"FullScreen",false,MRPF_NORMAL|MRPF_OPTIONAL)
+	PROP_VALUE_FLAGS(bWindowCentered,"CenterWindow",true,MRPF_NORMAL|MRPF_OPTIONAL)
 	PROP_VALUE_FLAGS(eWindowReferenceSystem,"WindowReferenceSystem",eGameGUIReferenceSystem_Relative,MRPF_NORMAL|MRPF_OPTIONAL)
 	PROP_VALUE_FLAGS(dFullScreenRefreshRate,"RefreshRate",0,MRPF_NORMAL|MRPF_OPTIONAL)
 	PROP_VALUE_FLAGS(dFullScreenRefreshBitsPerPixel,"BitsPerPixel",0,MRPF_NORMAL|MRPF_OPTIONAL)
@@ -85,8 +94,10 @@ public:
 	virtual void		 EnumeratePopups(IGameWindowEnumerationCallback *piCallback)=0;
 	virtual void		 GetPopups(std::vector<IGameWindow *> *pvPopups)=0;
 
-	void GetScreenProperties(SGameScreenProperties *pProperties);
-	void SetScreenProperties(SGameScreenProperties *pProperties);
+	virtual bool 		 DetectDrag(double dx,double dy)=0;
+	
+	virtual void GetScreenProperties(SGameScreenProperties *pProperties)=0;
+	virtual void SetScreenProperties(SGameScreenProperties *pProperties)=0;
 };
 
 class IGameWindow: virtual public ISystemObject
@@ -207,3 +218,28 @@ public:
 
 	 virtual ~IGameGUIButtonEvents(){}
 };
+
+class IGameGUIMessageDialog: virtual public ISystemUnknown
+{
+public:
+
+	virtual void ShowMessage(IGameWindow *piParent,std::string sText,std::string sTitle,EMessageDialogType eType)=0;
+};
+
+
+class IGameGUIConfirmDialog: virtual public ISystemUnknown
+{
+public:
+
+	virtual bool Confirm(IGameWindow *piParent,std::string sText,std::string sTitle,EMessageDialogType eType)=0;
+};
+
+
+class IGameGUIColorDialog: virtual public ISystemUnknown
+{
+public:
+
+	virtual bool SelectColor(IGameWindow *piParent,std::string sTitle,CVector *pvColor)=0;
+};
+
+

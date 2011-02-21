@@ -1,7 +1,7 @@
-#include "StdAfx.h"
-#include ".\AnimationSystems.h"
-#include ".\AnimationObjectBase.h"
-#include ".\EventAnimationObjecttype.h"
+#include "./stdafx.h"
+#include "AnimationSystems.h"
+#include "AnimationObjectBase.h"
+#include "EventAnimationObjectType.h"
 
 CEventAnimationObjectType::CEventAnimationObjectType()
 {

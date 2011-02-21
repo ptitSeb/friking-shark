@@ -1,6 +1,6 @@
-#include "StdAfx.h"
-#include ".\iaentitybase.h"
-#include ".\IATestUtils.h"
+#include "stdafx.h"
+#include "IAEntityBase.h"
+#include "IATestUtils.h"
 
 CIAEntityBase::CIAEntityBase()
 {
@@ -47,7 +47,6 @@ void CIAEntityBase::Render()
 	CVector vVelocity=m_vVelocity;
 	CVector vMins(0-m_dSize,0-m_dSize,0-m_dSize);
 	CVector vMaxs(m_dSize,m_dSize,m_dSize);
-	double dForce=vForce.N();
 	double dVelocity=vVelocity.N();
 
 	CVector vAhead=m_vVelocity;
@@ -89,9 +88,9 @@ void CIAEntityBase::Render()
 void CIAEntityBase::ProcessIA(double dTimeFraction)
 {
 	m_vForce=CVector(0,0,0);
-	if(m_pSeekTarget){m_vForce+=m_Behaviours.Seek(this,m_pSeekTarget->GetPosition());}
-	if(m_pFleeTarget){m_vForce+=m_Behaviours.Flee(this,m_pFleeTarget->GetPosition());}
-	if(m_pArriveTarget){m_vForce+=m_Behaviours.Arrive(this,m_pArriveTarget->GetPosition(),m_eArriveSpeed);}
+	if(m_pSeekTarget){CVector vPos=m_pSeekTarget->GetPosition();m_vForce+=m_Behaviours.Seek(this,vPos);}
+	if(m_pFleeTarget){CVector vPos=m_pFleeTarget->GetPosition();m_vForce+=m_Behaviours.Flee(this,vPos);}
+	if(m_pArriveTarget){CVector vPos=m_pArriveTarget->GetPosition();m_vForce+=m_Behaviours.Arrive(this,vPos,m_eArriveSpeed);}
 	if(m_pPursueTarget){m_vForce+=m_Behaviours.Pursue(this,m_pPursueTarget,&m_vPursueEstimatedPosition);}
 	if(m_pEvadeTarget){m_vForce+=m_Behaviours.Evade(this,m_pEvadeTarget,&m_vEvadeEstimatedPosition);}
 	if(m_bWanderEnabled){m_vForce+=m_Behaviours.Wander(this,m_dWanderDistance,m_dWanderRadius,m_dWanderJitter,dTimeFraction)*m_dMass;}

@@ -1,5 +1,5 @@
-#include "StdAfx.h"
-#include ".\openglmodel.h"
+#include "./stdafx.h"
+#include "OpenGLModel.h"
 
 COpenGLModel::COpenGLModel(void)
 {
@@ -30,12 +30,13 @@ bool COpenGLModel::LoadFromFile()
 {
 	RemoveAnimations();
 
-	RTTRACE("COpenGLModel::LoadFromFile -> Loading model %s",m_sFileName.c_str());
-
-
 	CResourceStore *pStore=new CResourceStore;
 	CModel *pModel=pStore->LoadModel(m_sFileName);
-	if(!pModel)
+	if(pModel)
+	{
+	  	RTTRACE("COpenGLModel::LoadFromFile -> Loaded model %s",m_sFileName.c_str());
+	}
+	else
 	{
 		RTTRACE("COpenGLModel::LoadFromFile -> Failed to load model %s",m_sFileName.c_str());
 	}
@@ -82,7 +83,8 @@ bool COpenGLModel::LoadFromFile()
 							COpenGLModelVertexKey key(pPolygon->m_pVertexes[v],pPolygon->m_pTextureCoords[v],pPolygon->m_pVertexNormals[v],pPolygon->m_pVertexColors?pPolygon->m_pVertexColors[v]:RGBToVector(pMaterial->cAmbientColor),mVertexes.size());
 							if(mVertexes.find(key)==mVertexes.end())
 							{
-								mVertexes[key]=mVertexes.size();
+								int nIndex=mVertexes.size();
+								mVertexes[key]=nIndex;
 							}
 						}
 					}
@@ -165,9 +167,9 @@ bool COpenGLModel::LoadFromFile()
 	if(pFrame)
 	{	
 		CBSPNode *pModelBSP=NULL;;
-		char sGBSFile[MAX_PATH]={0},sDrive[MAX_PATH]={0},sPath[MAX_PATH]={0},sFileName[MAX_PATH]={0},sExt[MAX_PATH]={0},sOldDirectory[MAX_PATH]={0};
-		_splitpath(m_sFileName.c_str(),sDrive,sPath,sFileName,sExt);
-		sprintf(sGBSFile,"%s%s%s.gbs",sDrive,sPath,sFileName);
+		char sGBSFile[MAX_PATH]={0};
+		strcpy(sGBSFile,m_sFileName.c_str());
+		ReplaceExtension(sGBSFile,".gbs");
 
 		bool bGenerateBSP=false;
 		vector<CPolygon*> vGeometry;
@@ -210,8 +212,6 @@ bool COpenGLModel::LoadFromFile()
 
 	delete pStore;
 	UpdateFrameBuffers();
-
-	RTTRACE("COpenGLModel::LoadFromFile -> Finished loading model %s",m_sFileName.c_str());
 
 	return pModel!=NULL;
 }
@@ -617,7 +617,6 @@ void COpenGLModel::PrepareRenderBuffer(IGenericRender *piRender, unsigned int nA
 			}
 		}
 	}
-	int tex=0,vert=0;
 	if(pBuffer->nBufferObject)
 	{
 		glBindBuffer(GL_ARRAY_BUFFER,pBuffer->nBufferObject);

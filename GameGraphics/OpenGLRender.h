@@ -419,6 +419,7 @@ public:
 	void RenderBBox(const CVector &vOrigin,const CVector &vOrientation,const CVector &vMins,const CVector &vMaxs,const CVector &vColor,unsigned long nStipple=0x8888);
 	void RenderLine(const CVector &v1,const CVector &v2,const CVector &vColor,unsigned long nStipple);
 	void RenderRect(const CVector &vCenter,const CVector &vAxisW,const CVector &vAxisH,double w,double h);
+	void RenderPolygon(unsigned int nVertexes,const CVector *pVertexes,const CVector *pColors);
 	void RenderPyramid(const CVector &vTopVertex,const CVector &vSizes,bool bSolid);
 	void RenderPyramid(const CVector &vTopVertex,double dUpperSizeX,double dUpperSizeZ,double dLowerSizeX,double dLowerSizeZ,double dHeight,bool bSolid);
 

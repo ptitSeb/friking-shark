@@ -1,6 +1,6 @@
-#include "StdAfx.h"
-#include "GameRuntimeLib.h"
-#include ".\entitymanager.h"
+#include "./stdafx.h"
+#include "GameRunTimeLib.h"
+#include "EntityManager.h"
 
 CEntityManager::CEntityManager()
 {

@@ -25,7 +25,7 @@ public:
     PROP_VALUE_FLAGS(m_dwTimeToWaitToAcquireTargets,"TiempoInicioBusquedaObjetivos",300,MRPF_NORMAL|MRPF_OPTIONAL)
     PROP_VALUE_FLAGS(m_dwMaximunTargetsToAcquire,"NumeroMaximoObjetivos",0,MRPF_NORMAL|MRPF_OPTIONAL)
     PROP_CLASS_CHAIN(CEntityTypeBase)
-  END_PROP_MAP();
+  END_PROP_MAP()
 
   CHomingMissileProjectileType();
   ~CHomingMissileProjectileType();

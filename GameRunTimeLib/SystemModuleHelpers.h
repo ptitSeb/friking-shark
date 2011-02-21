@@ -20,11 +20,12 @@ class CSystemModuleHelper
     ISystemClass *m_pSystemClasses[256];
     int           m_nSystemClasses;
 
-		HINSTANCE			m_hInstance;
+	HINSTANCE	m_hInstance;
 
 public:
     HINSTANCE GetInstance();
-		void AddClass(ISystemClass *piClass);
+	
+	void AddClass(ISystemClass *piClass);
     void RegisterClasses(ISystem *piSystem);
     void UnregisterClasses(ISystem *piSystem);
 
@@ -32,6 +33,7 @@ public:
     ~CSystemModuleHelper();
 };
 
+#ifdef WIN32
 #define BEGIN_SYSTEM_MODULE() \
     CSystemModuleHelper *g_pSystemModuleHelper=NULL;\
     void CSystemModuleHelper_BuildClassMap(CSystemModuleHelper *pModuleHelper)\
@@ -54,4 +56,18 @@ public:
         }\
         return TRUE;\
     }
-
+#else
+#define BEGIN_SYSTEM_MODULE() \
+    void CSystemModuleHelper_BuildClassMap(CSystemModuleHelper *pModuleHelper)\
+    {
+#define SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CLASS,NAME) {ISystemClass *piClass=new CSystemClassHelperT<CLASS>(NAME);pModuleHelper->AddClass(piClass);REL(piClass);}
+#define SYSTEM_MODULE_CUSTOM_CLASS_FACTORY_ENTRY(INSTANCE) pModuleHelper->AddClass(INSTANCE);REL(INSTANCE);
+#define END_SYSTEM_MODULE()\
+    }\
+    CSystemModuleHelper g_SystemModuleHelper(NULL,CSystemModuleHelper_BuildClassMap);\
+    extern "C" \
+    {\
+        bool SystemModuleRegister(ISystem *piSystem){g_SystemModuleHelper.RegisterClasses(piSystem);return true;}\
+        void SystemModuleUnregister(ISystem *piSystem){g_SystemModuleHelper.UnregisterClasses(piSystem);}\
+    }
+#endif

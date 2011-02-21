@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "./StdAfx.h"
 #include <windows.h>
 #include <stdlib.h>
 #include "BMPFiles.h"
@@ -1084,3 +1084,156 @@ int MRDrawText(HDC dc, char *text, COLORREF backColor, COLORREF foreColor, RECT 
 	DeleteObject(hFont);
 	return res;
 }
+
+#pragma pack(push,1)
+struct BMPFILEHEADER
+{
+  uint16_t bfType; 
+  uint32_t bfSize; 
+  uint16_t bfReserved1; 
+  uint16_t bfReserved2; 
+  uint32_t bfOffBits; 
+};
+struct BMPINFOHEADER 
+{ 
+  uint32_t biSize; 
+  uint32_t biWidth; 
+  uint32_t biHeight; 
+  uint16_t biPlanes; 
+  uint16_t biBitCount;
+  uint32_t biCompression; 
+  uint32_t biSizeImage; 
+  uint32_t biXPelsPerMeter; 
+  uint32_t biYPelsPerMeter; 
+  uint32_t biClrUsed; 
+  uint32_t biClrImportant; 
+}; 
+#pragma pack(pop)
+/*
+int SaveBMPFile(const char *pFile,unsigned int nBits,unsigned int nHeight,unsigned int nWidth,void *pPixels)
+{
+	BMPFILEHEADER fileHeader={0};
+	BMPINFOHEADER fileInfo={0};
+	
+	FILE *pFile=fopen(pFile,"wb");
+	if(!pFile){return false;}
+	fileHeader.bfType = 0x4d42;
+	fileHeader.bfSize = 0; 
+	fileHeader.bfReserved1 = 0; 
+	fileHeader.bfReserved2 = 0; 
+
+	// Make room for the header
+	bool bOk=(fwrite(&fileHeader,sizeof(fileHeader),1,pFile)==1);
+	if(bOk)
+	{
+		fileInfo.biSize=sizeof(fileInfo);
+		fileInfo.biWidth=nWidth;
+		fileInfo.biHeight=nHeight;
+		fileInfo.biPlanes=1;
+		fileInfo.biBitCount=nBits;
+		fileInfo.biCompression=0;//BI_RGB
+		fileInfo.biSizeImage=(nBits>>3)*nHeight*nWidth; 
+		fileInfo.biXPelsPerMeter=1; 
+		fileInfo.biYPelsPerMeter=1; 
+		bOk=(fwrite(&fileHeader,sizeof(fileHeader),1,pFile)==1);
+	}
+	
+	if(bOk)
+	{
+		// Update header
+		fileHeader.bfSize = ftell(pFile); 
+		fileHeader.bfOffBits = fileHeader.bfSize; 
+		fseek(pFile,0,SEEK_SET);
+		bOk=(fwrite(&fileHeader,sizeof(fileHeader),1,pFile)==1);
+	}
+	
+	*size = m_height * m_width * m_bitcount/8;
+	*buffer = new BYTE[*size];
+	
+	int lineSize = m_width * m_bitcount/8;
+	int paddedLineSize = (lineSize/4)*4;
+	if(paddedLineSize < lineSize){paddedLineSize += 4;}
+
+	BYTE *bufferPointer = (*buffer) + (lineSize * (m_height-1));
+	BYTE *imagePointer = (BYTE *)m_bits;
+
+	int x, y;
+	for(x = m_height-1; x >= 0; x--)
+	{
+		for(y = 0; y < lineSize; y+=3)
+		{
+			bufferPointer[y]   = imagePointer[y+2];
+			bufferPointer[y+1] = imagePointer[y+1];
+			bufferPointer[y+2] = imagePointer[y];
+		}
+		 
+		bufferPointer -= lineSize;
+		imagePointer  += paddedLineSize;
+	}	
+
+	fclose(pFile);
+	pFile=NULL;
+	return bOk;
+}*/
+
+int SaveBMPFile(const char *pFile,unsigned int nBits,unsigned int nHeight,unsigned int nWidth,void *pPixels)
+{
+}
+
+int LoadBMPFile(const char *pFile,unsigned int nBits,unsigned int *pnHeight,unsigned int *pnWidth,void **ppPixels)
+{
+	BMPFILEHEADER fileHeader={0};
+	BMPINFOHEADER fileInfo={0};
+	
+	FILE *pFile=fopen(pFile,"rb");
+	if(!pFile){return false;}
+	// Make room for the header
+	bool bOk=(fread(&fileHeader,sizeof(fileHeader),1,pFile)==1);
+	if(bOk){bOk=(fileHeader.bfType == 0x4d42);}
+	if(bOk){bOk=(fread(&fileInfo,sizeof(fileInfo),1,pFile)==1);}
+	if(bOk){bOk=(fileInfo.biSize==sizeof(fileInfo));}
+	if(bOk){bOk=(fileInfo.biPlanes==1);}
+	if(bOk){bOk=(fileInfo.biBitCount==24 || fileInfo.biBitCount==32);}
+	if(bOk){bOk=(fileInfo.biCompression==0);} // BI_RGB
+	if(bOk){fseek(pFile,fileHeader.bfOffBits,SEEK_SET);}
+	if(bOk)
+	{
+		unsigned char *pFileBits=(unsigned char*)malloc(fileInfo.biSizeImage);
+		if(bOk){bOk=(fread(pFileBits,fileInfo.biSizeImage,1,pFile)==1);}
+		if(bOk)
+		{
+			*pnHeight=fileInfo.biHeight;
+			*pnWidth=fileInfo.biWidth;
+			**ppPixels = (char*)malloc(fileInfo.biHeight * fileInfo.biWidth * nBits/8];
+			// Set alpha to 1
+			if(nBits==32){memset(*ppPixels,0xFF,fileInfo.biHeight * fileInfo.biWidth * nBits/8);}
+			
+			int lineSize = fileInfo.biWidth * nBits/8;
+			int paddedLineSize = (lineSize/4)*4;
+			if(paddedLineSize < lineSize){paddedLineSize += 4;}
+
+			unsigned char *bufferPointer = (*ppPixels) + (lineSize * (fileInfo.biHeight-1));
+			unsigned char *imagePointer = pFileBits;
+
+			int x, y;
+			for(x = fileInfo.biHeight-1; x >= 0; x--)
+			{
+				for(y = 0; y < lineSize; y+=3)
+				{
+					bufferPointer[y]   = imagePointer[y+2];
+					bufferPointer[y+1] = imagePointer[y+1];
+					bufferPointer[y+2] = imagePointer[y];
+				}
+				bufferPointer -= lineSize;
+				imagePointer  += paddedLineSize;
+			}
+		}
+		free(pFileBits);
+		pFileBits=NULL;
+	}
+
+	fclose(pFile);
+	pFile=NULL;
+	return bOk;
+}
+

@@ -1,8 +1,8 @@
-#include "StdAfx.h"
+#include "./stdafx.h"
 #include "GUISystems.h"
-#include "GameRuntimeLib.h"
+#include "GameRunTimeLib.h"
 #include "GameGUILib.h"
-#include ".\gameinterface.h"
+#include "GameInterface.h"
 #include "PlayAreaElements.h"
 
 #define MOVEMENT_TYPE_UNKNOWN	0
@@ -48,7 +48,7 @@ bool CGameInterface::InitWindow(IGameWindow *piParent,bool bPopup)
 	if(m_piSTObjectCount){m_piSTObjectCount->Show(m_bShowPerformanceIndicators);}
 	if(m_piSTEntityCount){m_piSTEntityCount->Show(m_bShowPerformanceIndicators);}
 
-	LoadScenario("C:\\TerrainGenerator\\Resources\\new2.ges");
+	LoadScenario("/home/javi/workspace/Game/Demo/Resources/new2.ges");
 	StartGame();
 	return bResult;
 }
@@ -66,7 +66,7 @@ bool CGameInterface::LoadScenario(std::string sScenario)
 	bool bResult=true;
 
 	CSystemLoaderHelper     systemLoader;
-	m_piGameSystem=systemLoader.LoadSystem("Scripts\\GameSystem.cfg","GameSystem");
+	m_piGameSystem=systemLoader.LoadSystem("Scripts/GameSystem.cfg","GameSystem");
 
 	m_GameControllerWrapper.Attach("GameSystem","GameController");
 	m_GameControllerWrapper.m_piGameController->SetupGame();
@@ -176,10 +176,11 @@ void CGameInterface::CloseScenario()
 	m_GameControllerWrapper.Detach();
 	m_RenderWrapper.Detach();
 
-	if(m_piGameSystem){m_piGameSystem->DestroyAllObjects();}
-	if(m_piGameSystem){m_piGameSystem->Destroy();}
 	m_InspectionCamera.Destroy();
 	m_PlayCamera.Detach();
+
+	if(m_piGameSystem){m_piGameSystem->DestroyAllObjects();}
+	if(m_piGameSystem){m_piGameSystem->Destroy();}
 	REL(m_piGameSystem);
 	REL(m_piSystemManager);
 	m_bCompleted=false;
@@ -211,13 +212,13 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 	}
 	if(m_EntityManagerWrapper.m_piEntityManager)
 	{
-		sprintf(sTempText,"%u entities",m_EntityManagerWrapper.m_piEntityManager->GetEntityCount());
+		sprintf(sTempText,"%u entities",(unsigned int)m_EntityManagerWrapper.m_piEntityManager->GetEntityCount());
 		if(m_piSTEntityCount){m_piSTEntityCount->SetText(sTempText);}
 	}
 	if(m_EntityManagerWrapper.m_piEntityManager)
 	{
 		ISystemManager *piSystemManager=GetSystemManager();
-		sprintf(sTempText,"%u objects",piSystemManager->DebugGetRegisteredObjectCount());
+		sprintf(sTempText,"%u objects",(unsigned int)piSystemManager->DebugGetRegisteredObjectCount());
 		if(m_piSTObjectCount){m_piSTObjectCount->SetText(sTempText);}
 		REL(piSystemManager);
 	}
@@ -250,7 +251,7 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 	ProcessInput();
 	
 	if((m_dwMovementType==MOVEMENT_TYPE_PLAY)||
-		(m_dwMovementType==MOVEMENT_TYPE_INSPECT && GetKeyState(VK_LSHIFT)&0x8000))
+		(m_dwMovementType==MOVEMENT_TYPE_INSPECT && m_piGUIManager->IsKeyDown(VK_LSHIFT)))
 	{
 		m_PlayAreaManagerWrapper.m_piPlayAreaManager->ProcessInput(m_piGUIManager);
 	}
@@ -329,19 +330,19 @@ void CGameInterface::ProcessInput()
 	}
 }
 
-void CGameInterface::MoveInspection(SHORT nKey)
+void CGameInterface::MoveInspection(WORD nKey)
 {
 	double dForwardSpeed=m_dMovementInspectionSpeed*m_FrameManagerWrapper.m_piFrameManager->GetRealTimeFraction();
-	if(GetKeyState(VK_LSHIFT)&0x8000){dForwardSpeed*=3.0;}
-	if(nKey==KEY_FORWARD)	{m_InspectionCamera.m_piCamera->SetPosition(m_InspectionCamera.m_piCamera->GetPosition()+m_InspectionCamera.m_piCamera->GetForwardVector()*(dForwardSpeed));}
-	else if(nKey==KEY_BACK)	{m_InspectionCamera.m_piCamera->SetPosition(m_InspectionCamera.m_piCamera->GetPosition()-m_InspectionCamera.m_piCamera->GetForwardVector()*(dForwardSpeed));}
-	else if(nKey==KEY_LEFT)	{m_InspectionCamera.m_piCamera->SetPosition(m_InspectionCamera.m_piCamera->GetPosition()-m_InspectionCamera.m_piCamera->GetRightVector()*(dForwardSpeed));}
-	else if(nKey==KEY_RIGHT){m_InspectionCamera.m_piCamera->SetPosition(m_InspectionCamera.m_piCamera->GetPosition()+m_InspectionCamera.m_piCamera->GetRightVector()*(dForwardSpeed));}
-	else if(nKey==KEY_UP)	{m_InspectionCamera.m_piCamera->SetPosition(m_InspectionCamera.m_piCamera->GetPosition()+m_InspectionCamera.m_piCamera->GetUpVector()*(dForwardSpeed));}
-	else if(nKey==KEY_DOWN)	{m_InspectionCamera.m_piCamera->SetPosition(m_InspectionCamera.m_piCamera->GetPosition()-m_InspectionCamera.m_piCamera->GetUpVector()*(dForwardSpeed));}
+	if(m_piGUIManager->IsKeyDown(VK_LSHIFT)){dForwardSpeed*=3.0;}
+	if(nKey==KEY_FORWARD)	{CVector vCameraPos=m_InspectionCamera.m_piCamera->GetPosition()+m_InspectionCamera.m_piCamera->GetForwardVector()*(dForwardSpeed);m_InspectionCamera.m_piCamera->SetPosition(vCameraPos);}
+	else if(nKey==KEY_BACK)	{CVector vCameraPos=m_InspectionCamera.m_piCamera->GetPosition()-m_InspectionCamera.m_piCamera->GetForwardVector()*(dForwardSpeed);m_InspectionCamera.m_piCamera->SetPosition(vCameraPos);}
+	else if(nKey==KEY_LEFT)	{CVector vCameraPos=m_InspectionCamera.m_piCamera->GetPosition()-m_InspectionCamera.m_piCamera->GetRightVector()*(dForwardSpeed);m_InspectionCamera.m_piCamera->SetPosition(vCameraPos);}
+	else if(nKey==KEY_RIGHT){CVector vCameraPos=m_InspectionCamera.m_piCamera->GetPosition()+m_InspectionCamera.m_piCamera->GetRightVector()*(dForwardSpeed);m_InspectionCamera.m_piCamera->SetPosition(vCameraPos);}
+	else if(nKey==KEY_UP)	{CVector vCameraPos=m_InspectionCamera.m_piCamera->GetPosition()+m_InspectionCamera.m_piCamera->GetUpVector()*(dForwardSpeed);m_InspectionCamera.m_piCamera->SetPosition(vCameraPos);}
+	else if(nKey==KEY_DOWN)	{CVector vCameraPos=m_InspectionCamera.m_piCamera->GetPosition()-m_InspectionCamera.m_piCamera->GetUpVector()*(dForwardSpeed);m_InspectionCamera.m_piCamera->SetPosition(vCameraPos);}
 }
 
-void CGameInterface::ProcessKey(SHORT nKey)
+void CGameInterface::ProcessKey(WORD nKey)
 {
 	// en modo de inspeccion todos los movimientos se calculan en tiempo realm no en el tiempo
 	// del sistema de entidades.
@@ -364,7 +365,7 @@ void CGameInterface::ProcessKey(SHORT nKey)
 		}
 	}
 
-	if(m_dwMovementType==MOVEMENT_TYPE_INSPECT && (GetKeyState(VK_LSHIFT)&0x8000)==0)
+	if(m_dwMovementType==MOVEMENT_TYPE_INSPECT && (m_piGUIManager->IsKeyDown(VK_LSHIFT))==0)
 	{
 		MoveInspection(nKey);
 	}
@@ -412,7 +413,6 @@ void CGameInterface::OnMouseMove(double x,double y)
 		if(m_InspectionMovementStartPoint.x!=x || m_InspectionMovementStartPoint.y!=y)
 		{
 			CVector vMove(x-m_InspectionMovementStartPoint.x,-1*(y-m_InspectionMovementStartPoint.y),0);
-			double dAspectRatio=m_rRealRect.w?m_rRealRect.h/m_rRealRect.w:1;
 
 			double dAmmount1=-vMove.c[0]/2.0;
 			double dAmmount2=vMove.c[1]/2.0;

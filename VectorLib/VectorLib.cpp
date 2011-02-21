@@ -2,12 +2,13 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "./StdAfx.h"
 #include "VectorLib.h"
 #include "float.h"
-#include "utilities.h"
-#include "glprocs.h"
+#include "Utilities.h"
 #include <crtdbg.h>
+#include <GL/gl.h>
+#include <algorithm>
 
 //#define _DISABLE_OPTIMIZATIONS
 
@@ -1140,7 +1141,7 @@ CBSPNode *BSPFromPolygonVector(CBSPNode *pParent,int nDepth,std::vector<CPolygon
 {
 	if(pPolys->size()==0)
 	{
-		if(dwLeafContentType==CONTENT_NODE)
+		if(dwLeafContentType==(DWORD)CONTENT_NODE)
 		{
 			return NULL;
 		}
@@ -1153,8 +1154,8 @@ CBSPNode *BSPFromPolygonVector(CBSPNode *pParent,int nDepth,std::vector<CPolygon
 
 	CBSPNode *pNode=new CBSPNode(pParent,(*pPolys)[nCandidateIndex]->m_Plane,CONTENT_NODE);
 	std::vector<CPolygon *> vSidePolys[2];
-	unsigned x=0,nPolys=pPolys->size();
-	for(x=0;x<nPolys;x++)
+	int nPolys=pPolys->size();
+	for(int x=0;x<nPolys;x++)
 	{
 		if(x==nCandidateIndex){continue;}
 
@@ -1209,8 +1210,8 @@ CBSPNode *BSPFromPolygonVector(CBSPNode *pParent,int nDepth,std::vector<CPolygon
 	{
 		pNode->m_pDrawNode=new CBSPDrawNode(pNode);
 		pNode->m_pDrawNode->m_nDepth=nDepth;
-		for(x=0;x<vSidePolys[0].size();x++){pNode->m_pDrawNode->m_mPolygons[vSidePolys[0][x]]=0;}
-		for(x=0;x<vSidePolys[1].size();x++){pNode->m_pDrawNode->m_mPolygons[vSidePolys[1][x]]=1;}
+		for(unsigned int x=0;x<vSidePolys[0].size();x++){pNode->m_pDrawNode->m_mPolygons[vSidePolys[0][x]]=0;}
+		for(unsigned int x=0;x<vSidePolys[1].size();x++){pNode->m_pDrawNode->m_mPolygons[vSidePolys[1][x]]=1;}
 		
 		CPolygon *pNodePoly=new CPolygon((*pPolys)[0]->m_nVertexes,(*pPolys)[0]->m_pVertexes);
 		pNode->m_pDrawNode->m_mPolygons[pNodePoly]=2;
@@ -1219,8 +1220,8 @@ CBSPNode *BSPFromPolygonVector(CBSPNode *pParent,int nDepth,std::vector<CPolygon
 	}
 	else
 	{
-		for(x=0;x<vSidePolys[0].size();x++){CPolygon *pPoly=vSidePolys[0][x];delete pPoly;}
-		for(x=0;x<vSidePolys[1].size();x++){CPolygon *pPoly=vSidePolys[1][x];delete pPoly;}
+		for(unsigned int x=0;x<vSidePolys[0].size();x++){CPolygon *pPoly=vSidePolys[0][x];delete pPoly;}
+		for(unsigned int x=0;x<vSidePolys[1].size();x++){CPolygon *pPoly=vSidePolys[1][x];delete pPoly;}
 	}
 	return pNode;
 }
@@ -1784,7 +1785,7 @@ CPolyhedron *PolyhedronFromConvexRegion(int nPlanes,CPlane *pPlanes)
 			}
 		}
 		
-		int nPoints=vPoints.size();
+	//	int nPoints=vPoints.size();
 	//	_MRT("Ending Polygon %d with %d points",x,nPoints);
 		// Una vez que se tienen todos los puntos de corte de ese plano, se ordenan en sentido horario para 
 		// construir el poligono. 
@@ -1798,7 +1799,6 @@ CPolyhedron *PolyhedronFromConvexRegion(int nPlanes,CPlane *pPlanes)
 		//		Si algun punto esta en el exterior se pasa al siguiente punto
 		// Se repite el proceso mientras queden puntos.
 
-		bool bFound=false;
 		std::vector<CVector> vRemainingPoints;
 		std::vector<CVector> vPolygon;
 		vRemainingPoints=vPoints;
@@ -2027,7 +2027,6 @@ void RemoveInternalFaces(std::list<CPolyhedron*> *plOriginalPolyhedron,std::list
 	do
 	{
 		bAnyCut=false;
-		int nPolCount=plOriginalPolyhedron->size();
 		int nCurrentPol=0;
 		for(iOrig=plOriginalPolyhedron->begin();iOrig!=plOriginalPolyhedron->end();iOrig++,nCurrentPol++)
 		{
@@ -2052,7 +2051,6 @@ void RemoveInternalFaces(std::list<CPolyhedron*> *plOriginalPolyhedron,std::list
 			for(iPolygon=pPolyhedron->m_vPolygons.begin();iPolygon!=pPolyhedron->m_vPolygons.end();iPolygon++)
 			{
 				CPolygon *pPolygon1=*iPolygon;
-				bool bDuplicated=false;
 				for(iProcessed2=mPolyhedrons.begin();iProcessed2!=mPolyhedrons.end();iProcessed2++)
 				{
 					CPolyhedron *pPolyhedron2=iProcessed2->second;
@@ -2201,7 +2199,8 @@ CTexture::~CTexture()
 {
 	m_nWidth=0;
 	m_nHeight=0;
-	if(m_pPixels!=NULL){delete [] m_pPixels;m_pPixels=NULL;}
+    #pragma message("Cuidado con este cast a char*")
+	if(m_pPixels!=NULL){delete [] (char*)m_pPixels;m_pPixels=NULL;}
 }
 
 CVector CTexture::GetPixelColor( unsigned long x, unsigned long y )
@@ -2220,14 +2219,14 @@ CVector CTexture::GetPixelColor( unsigned long x, unsigned long y )
 CVector	CalcMins(CVector &v1,CVector &v2)
 {
 	CVector v;
-	for(int c=0;c<3;c++){v.c[c]=min(v1.c[c],v2.c[c]);}
+	for(int c=0;c<3;c++){v.c[c]=std::min(v1.c[c],v2.c[c]);}
 	return v;
 }
 
 CVector	CalcMaxs(CVector &v1,CVector &v2)
 {
 	CVector v;
-	for(int c=0;c<3;c++){v.c[c]=max(v1.c[c],v2.c[c]);}
+	for(int c=0;c<3;c++){v.c[c]=std::max(v1.c[c],v2.c[c]);}
 	return v;
 }
 
@@ -2298,7 +2297,7 @@ CTraceInfo CBSPNode::GetObjectTrace(const CVector &p1,const CVector &p2,const CV
 }
 
 // From http://www.deadbeef.com/index.php/converting_rgb_to_hsv_in_c
-CVector RGBToHSV(CVector &v1)
+CVector RGBToHSV(const CVector &v1)
 {
 	// RGB are from 0..1, H is from 0..360, SV from 0..1
 	CVector vHSV;
@@ -2323,6 +2322,49 @@ CVector RGBToHSV(CVector &v1)
 	if (vHSV.c[0]<0){vHSV.c[0]+=360;}
 	if (vHSV.c[0]>=360){vHSV.c[0]-=360;}
 	return vHSV;
+}
+// From http://splinter.com.au/blog/?p=29
+CVector HSVToRGB(const CVector &hsv)
+{
+  double H = hsv.c[0];
+  double S = hsv.c[1];
+  double V = hsv.c[2];
+  while (H < 0) { H += 360; };
+  while (H >= 360) { H -= 360; };
+  double R, G, B;
+  if (V <= 0)
+  {R = G = B = 0;}
+  else if (S <= 0)
+  {R = G = B = V;}
+  else
+  {
+    double hf = H / 60.0;
+    int i = (int)floor(hf);
+    double f = hf - i;
+    double pv = V * (1 - S);
+    double qv = V * (1 - S * f);
+    double tv = V * (1 - S * (1 - f));
+    switch (i)
+    {
+	  case 0:R = V;G = tv;B = pv;break;
+      case 1:R = qv;G = V;B = pv;break;
+      case 2:R = pv;G = V;B = tv;break;
+      case 3:R = pv;G = qv;B = V;break;
+      case 4:R = tv;G = pv;B = V;break;
+      case 5:R = V;G = pv;B = qv;break;
+      case 6:R = V;G = tv;B = pv;break;
+      case -1:R = V;G = pv;B = qv;break;
+      default:R = G = B = V;break;
+    }
+  }
+  if(R>1.0){R=1.0;}
+  if(G>1.0){G=1.0;}
+  if(B>1.0){B=1.0;}
+  if(R<0.0){R=0.0;}
+  if(G<0.0){G=0.0;}
+  if(B<0.0){B=0.0;}
+  CVector rgb(R,G,B);
+  return rgb;
 }
 
 CVector HSVDifference(CVector &v1,CVector &v2)
@@ -2556,8 +2598,8 @@ double GetBBoxRadius( const CVector &vMins,const CVector &vMaxs )
 	double dRadius=0;
 	for(int r=0;r<3;r++)
 	{
-		double dDimensionMax=max(fabs(vMaxs.c[r]),fabs(vMins.c[r]));
-		dRadius=max(dRadius,dDimensionMax);
+		double dDimensionMax=std::max(fabs(vMaxs.c[r]),fabs(vMins.c[r]));
+		dRadius=std::max(dRadius,dDimensionMax);
 	}
 	return dRadius;
 }

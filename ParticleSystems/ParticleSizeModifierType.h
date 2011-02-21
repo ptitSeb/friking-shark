@@ -6,10 +6,10 @@ struct SSizeTransition
     double  value;
 };
 
-BEGIN_STRUCT_PROPS(SSizeTransition);
-    PROP(dTime,"Tiempo");
-    PROP(value,"Valor");
-END_STRUCT_PROPS();
+BEGIN_STRUCT_PROPS(SSizeTransition)
+    PROP(dTime,"Tiempo")
+    PROP(value,"Valor")
+END_STRUCT_PROPS()
 
 class CParticleSizeModifierType:public CParticleModifierType
 {
@@ -25,14 +25,14 @@ public:
 
     IParticleModifier *CreateInstance(DWORD dwCurrentTime);
 
-    BEGIN_PROP_MAP(CParticleSizeModifierType);
-        PROP_CLASS_CHAIN(CParticleModifierType);
+    BEGIN_PROP_MAP(CParticleSizeModifierType)
+        PROP_CLASS_CHAIN(CParticleModifierType)
         PROP_VALUE_FLAGS(m_dStartSize,"TamañoInicial",1,MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_VALUE_FLAGS(m_dEndSize,"TamañoFinal",1,MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_VALUE_FLAGS(m_dSizeTransitionStart,"InicioTransicionTamaño",0,MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_VALUE_FLAGS(m_dSizeTransitionEnd,"FinTransicionTamaño",1,MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_FLAGS(m_dIntermediateSizeTransitions,"TransicionesIntermediasTamaño",MRPF_NORMAL|MRPF_OPTIONAL)
-    END_PROP_MAP();
+    END_PROP_MAP()
 
     CParticleSizeModifierType();
     ~CParticleSizeModifierType();

@@ -445,7 +445,7 @@ struct SPlayAreaConfig
 	double dCameraViewAngle;
 	double dAirPlaneHeight;
 
-	SPlayAreaConfig(){dCameraScroll=0;dCameraDistance=0;dCameraAspectRatio=0;dCameraSpeed=0;dCameraViewAngle=0;}
+	SPlayAreaConfig(){dCameraScroll=0;dCameraDistance=0;dCameraAspectRatio=0;dCameraSpeed=0;dCameraViewAngle=0;dAirPlaneHeight=0;}
 };
 
 struct IPlayAreaDesign:virtual public IDesign

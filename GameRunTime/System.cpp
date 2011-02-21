@@ -1,7 +1,7 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "GameRunTimeLib.h"
-#include ".\system.h"
-#include ".\SystemModule.h"
+#include "System.h"
+#include "SystemModule.h"
 
 CSystem::CSystem(ISystemManager *piSystemManager)
 {
@@ -151,7 +151,7 @@ bool CSystem::GetObject(std::string sName,ISystemObject **ppiObject)
     *ppiObject=i->second;
     ADD(*ppiObject);
     return true;
-};
+}
 
 bool CSystem::CreateObject(std::string sClass,ISystemObject **ppiObject)
 {
@@ -171,7 +171,7 @@ bool CSystem::CreateObject(std::string sClass,ISystemObject **ppiObject)
         return true;
     }
     return false;
-};
+}
 
 bool CSystem::CreateObject(std::string sClass,std::string sName,ISystemObject **ppiObject)
 {

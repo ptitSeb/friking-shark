@@ -1,6 +1,6 @@
-#include "StdAfx.h"
-#include ".\particlesystems.h"
-#include ".\particleemittertype.h"
+#include "./stdafx.h"
+#include "ParticleSystems.h"
+#include "ParticleEmitterType.h"
 
 CParticleEmitterType::CParticleEmitterType()
 {

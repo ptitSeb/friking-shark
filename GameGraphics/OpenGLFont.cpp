@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "./stdafx.h"
 #include "OpenGLGraphics.h"
 #include "OpenGLFont.h"
 
@@ -148,8 +148,8 @@ void COpenGLFont::CalcTextSize(double dFontHeight,const char *pText,double *pdWi
 		while(pText[x]!=0)
 		{
 			double dCharWidth,dCharHeight;
-			dCharWidth=m_vTextureFontCharacters[pText[x]].dPixelW*dSizeFactor;
-			dCharHeight=m_vTextureFontCharacters[pText[x]].dPixelH*dSizeFactor;
+			dCharWidth=m_vTextureFontCharacters[(int)pText[x]].dPixelW*dSizeFactor;
+			dCharHeight=m_vTextureFontCharacters[(int)pText[x]].dPixelH*dSizeFactor;
 			(*pdWidth)+=dCharWidth;
 			if(x!=0){(*pdWidth)+=m_dTextureFontCharacterSeparation*dSizeFactor;}
 			if(dCharHeight>(*pdHeight)){(*pdHeight)=dCharHeight;}
@@ -158,7 +158,7 @@ void COpenGLFont::CalcTextSize(double dFontHeight,const char *pText,double *pdWi
 	}
 	else
 	{
-		COpenGLFonts::LoadFont(const_cast<char*>(m_sSystemFontName.c_str()),(int)dFontHeight);
+		COpenGLFonts::SetCurrentFont(const_cast<char*>(m_sSystemFontName.c_str()),(int)dFontHeight);
 		COpenGLFonts::CalcTextSize(pText,pdWidth,pdHeight);
 	}
 }
@@ -183,7 +183,7 @@ void COpenGLFont::RenderText(double dFontHeight,double x,double y,const char *pT
 		while(pText[x]!=0)
 		{
 			CVector vAxis2=vOrientation^AxisPosZ;
-			SOpenGLFontCharacterData *pCharacterData=&m_vTextureFontCharacters[pText[x]];
+			SOpenGLFontCharacterData *pCharacterData=&m_vTextureFontCharacters[(int)pText[x]];
 
 			if(pText[x]!=' ')
 			{
@@ -210,7 +210,7 @@ void COpenGLFont::RenderText(double dFontHeight,double x,double y,const char *pT
 	}
 	else
 	{
-		COpenGLFonts::LoadFont(const_cast<char*>(m_sSystemFontName.c_str()),(int)dFontHeight);
+		COpenGLFonts::SetCurrentFont(const_cast<char*>(m_sSystemFontName.c_str()),(int)dFontHeight);
 		COpenGLFonts::DrawText(x,y,pText);
 	}
 }
@@ -224,6 +224,7 @@ void COpenGLFont::RenderTextEx(double dFontHeight,double x,double y,double w,dou
 
 	switch(dwHorzAlign)
 	{
+	case eTextAlignment_None:
 	case eTextAlignment_Left:
 		dPosX=x;
 		break;
@@ -236,6 +237,7 @@ void COpenGLFont::RenderTextEx(double dFontHeight,double x,double y,double w,dou
 	}
 	switch(dwVertAlign)
 	{
+	case eTextAlignment_None:
 	case eTextAlignment_Top:
 		dPosY=(y+h)-dTextH;
 		break;
@@ -246,6 +248,10 @@ void COpenGLFont::RenderTextEx(double dFontHeight,double x,double y,double w,dou
 		dPosY=y+(h*0.5)-(dTextH*0.5);
 		break;
 	}
-
 	RenderText(dFontHeight,dPosX,dPosY,pText);
+	//RTTRACE("COpenGLFonts::RenderTextEx -> W: %d,%d - %d,%d: '%s', H%d,V%d",(int)x,(int)y,(int)w,(int)h,pText,dwHorzAlign,dwVertAlign);
+	//RTTRACE("COpenGLFonts::RenderTextEx -> T: %d x %d",(int)dTextW,(int)dTextH);
+	//RTTRACE("COpenGLFonts::RenderTextEx -> P: %d x %d",(int)dPosX,(int)dPosY);
 }
+
+

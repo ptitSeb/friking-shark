@@ -1,6 +1,8 @@
-#include "StdAfx.h"
-#include ".\gamewindowbase.h"
+#include "./stdafx.h"
+#include "GameWindowBase.h"
+#ifdef WIN32
 #include "commdlg.h"
+#endif
 
 
 CGameWindowBase::CGameWindowBase(void)
@@ -235,15 +237,24 @@ void CGameWindowBase::SetFont(IGenericFont *piFont,double dSize)
 
 void CGameWindowBase::GetFont(IGenericFont **ppiFont,double *pdSize)
 {
-	if(m_Font.m_piFont==NULL)
+	double dParentSize=0;
+	if(ppiFont)
 	{
-		m_piParent->GetFont(ppiFont,pdSize);
+	  if(m_Font.m_piFont==NULL)
+	  {
+		  m_piParent->GetFont(ppiFont,&dParentSize);
+	  }
+	  else
+	  {
+		  ADD(m_Font.m_piFont);
+		  (*ppiFont)=m_Font.m_piFont;
+	  }
 	}
-	else
+	if(pdSize)
 	{
-		ADD(m_Font.m_piFont);
-		(*ppiFont)=m_Font.m_piFont;
-		(*pdSize)=m_dFontSize;
+	  if(m_dFontSize>0){(*pdSize)=m_dFontSize;}
+	  else
+	  {m_piParent->GetFont(NULL,pdSize);}
 	}
 }
 
@@ -457,6 +468,7 @@ void	CGameWindowBase::SetBackgroundColor(CVector vColor,double dAlpha)
 
 bool CGameWindowBase::OpenFileDialog(std::string sTitle,const char *psFilter,std::string *psFile)
 {
+#ifdef WIN32
 	GUITHREADINFO threadInfo={0};
 	threadInfo.cbSize=sizeof(threadInfo);
 	GetGUIThreadInfo(GetCurrentThreadId(),&threadInfo);
@@ -476,10 +488,14 @@ bool CGameWindowBase::OpenFileDialog(std::string sTitle,const char *psFilter,std
 	if(bOk){*psFile=sFileName;}
 	ShowCursor(false);
 	return bOk;
+#else
+	return false;
+#endif
 }
 
 bool CGameWindowBase::SaveFileDialog(std::string sTitle,const char *psFilter,std::string *psFile,bool bOverWriteWarn)
 {
+#ifdef WIN32
 	GUITHREADINFO threadInfo={0};
 	threadInfo.cbSize=sizeof(threadInfo);
 	GetGUIThreadInfo(GetCurrentThreadId(),&threadInfo);
@@ -500,73 +516,38 @@ bool CGameWindowBase::SaveFileDialog(std::string sTitle,const char *psFilter,std
 	if(bOk){*psFile=sFileName;}
 	ShowCursor(false);
 	return bOk;
+#else
+	return false;
+#endif
 }
 
 bool CGameWindowBase::SelectColorDialog(std::string sTitle,CVector *pvColor)
 {
-	COLORREF customcolors[16]={0};
-	GUITHREADINFO threadInfo={0};
-	threadInfo.cbSize=sizeof(threadInfo);
-	GetGUIThreadInfo(GetCurrentThreadId(),&threadInfo);
-
-	CHOOSECOLOR colorInfo={0};
-	colorInfo.lStructSize=sizeof(colorInfo);
-	colorInfo.hwndOwner=threadInfo.hwndActive;
-	colorInfo.rgbResult=VectorToRGB(pvColor);
-	colorInfo.Flags=CC_ANYCOLOR|CC_RGBINIT|CC_FULLOPEN;
-	colorInfo.lpCustColors=customcolors;
-	ShowCursor(true);
-	bool bOk=(ChooseColor(&colorInfo)==TRUE);
-	ShowCursor(false);
-	if(bOk)
-	{
-		*pvColor=RGBToVector(colorInfo.rgbResult);
-	}
+	CColorDialogWrapper dialog;
+	dialog.Attach("GameGUI","ColorDialog");
+	bool bOk=false;
+	if(dialog.m_piColorDialog){bOk=dialog.m_piColorDialog->SelectColor(this,sTitle,pvColor);}
 	return bOk;
 }
 
 bool CGameWindowBase::ConfirmDialog(std::string sText,std::string sTitle,EMessageDialogType eType)
-{
-	COLORREF customcolors[16]={0};
-	GUITHREADINFO threadInfo={0};
-	threadInfo.cbSize=sizeof(threadInfo);
-	GetGUIThreadInfo(GetCurrentThreadId(),&threadInfo);
-	DWORD dwFlags=MB_YESNO;
-	if(eType==eMessageDialogType_Info){dwFlags|=MB_ICONINFORMATION;}
-	if(eType==eMessageDialogType_Warning){dwFlags|=MB_ICONEXCLAMATION;}
-	if(eType==eMessageDialogType_Error){dwFlags|=MB_ICONERROR;}
-	if(eType==eMessageDialogType_Question){dwFlags|=MB_ICONQUESTION;}
-	ShowCursor(true);
-	bool bYes=(MessageBox(threadInfo.hwndActive,sText.c_str(),sTitle.c_str(),dwFlags)==IDYES);
-	ShowCursor(false);
-	return bYes;
+{	
+	CConfirmDialogWrapper dialog;
+	dialog.Attach("GameGUI","ConfirmDialog");
+	bool bOk=false;
+	if(dialog.m_piConfirmDialog){bOk=dialog.m_piConfirmDialog->Confirm(this,sText,sTitle,eType);}
+	return bOk;
 }
 
 void CGameWindowBase::MessageDialog(std::string sText,std::string sTitle,EMessageDialogType eType)
 {
-	COLORREF customcolors[16]={0};
-	GUITHREADINFO threadInfo={0};
-	threadInfo.cbSize=sizeof(threadInfo);
-	GetGUIThreadInfo(GetCurrentThreadId(),&threadInfo);
-	DWORD dwFlags=MB_OK;
-	if(eType==eMessageDialogType_Info){dwFlags|=MB_ICONINFORMATION;}
-	if(eType==eMessageDialogType_Warning){dwFlags|=MB_ICONEXCLAMATION;}
-	if(eType==eMessageDialogType_Error){dwFlags|=MB_ICONERROR;}
-	if(eType==eMessageDialogType_Question){dwFlags|=MB_ICONQUESTION;}
-
-	ShowCursor(true);
-	MessageBox(threadInfo.hwndActive,sText.c_str(),sTitle.c_str(),dwFlags);
-	ShowCursor(false);
+	CMessageDialogWrapper dialog;
+	dialog.Attach("GameGUI","MessageDialog");
+	if(dialog.m_piMessageDialog){dialog.m_piMessageDialog->ShowMessage(this,sText,sTitle,eType);}
 }
 
 bool CGameWindowBase::DetectDrag(double dx,double dy)
 {
-	GUITHREADINFO threadInfo={0};
-	threadInfo.cbSize=sizeof(threadInfo);
-	GetGUIThreadInfo(GetCurrentThreadId(),&threadInfo);
-	DWORD dwFlags=MB_OK;
-	POINT pt;
-	pt.x=(LONG)dx;
-	pt.y=(LONG)((m_rRealRect.h-1)-dy);
-	return (DragDetect(threadInfo.hwndActive,pt)?true:false);
+  if(!m_piGUIManager){return false;}
+  return m_piGUIManager->DetectDrag(m_rRealRect.x+dx,m_rRealRect.y+dy);
 }

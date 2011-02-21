@@ -1,7 +1,7 @@
-#include "StdAfx.h"
-#include "GameRuntimeLib.h"
+#include "./stdafx.h"
+#include "GameRunTimeLib.h"
 #include "GameGUILib.h"
-#include ".\gamesidepanel.h"
+#include "GameSidePanel.h"
 
 CGameSidePanel::CGameSidePanel(void)
 {
@@ -30,7 +30,7 @@ void CGameSidePanel::DestroyWindow()
 	CGameWindowBase::DestroyWindow();
 }
 
-void CGameSidePanel::UpdatePlayerData(CGameSidePanelPlayerData *pPlayerData,char *pPlayerName)
+void CGameSidePanel::UpdatePlayerData(CGameSidePanelPlayerData *pPlayerData,const char *pPlayerName)
 {
 	DWORD nPoints=0;
 	DWORD nLivesLeft=0;

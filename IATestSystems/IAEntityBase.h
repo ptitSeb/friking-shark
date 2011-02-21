@@ -1,6 +1,6 @@
 #pragma once
 
-#include ".\steeringbehaviours.h"
+#include "SteeringBehaviours.h"
 
 #define RENDER_FLAGS_NONE		0x0000
 #define RENDER_FLAGS_AXISES		0x0001
@@ -60,11 +60,11 @@ public:
 	unsigned long GetRenderFlags(){return m_dwRenderFlags;};
 
 	void    SetSize(double dSize){m_dSize=dSize;}
-	void    SetColor(CVector &vColor){m_vColor=vColor;}
-	void    SetPosition(CVector &vPosition){m_vPosition=vPosition;}
-	void    SetVelocity(CVector &vVelocity){m_vVelocity=vVelocity;}
-	void    SetHeading(CVector &vHeading){m_vHeading=vHeading;}
-	void    SetForce(CVector &vForce){m_vForce=vForce;}
+	void    SetColor(CVector vColor){m_vColor=vColor;}
+	void    SetPosition(CVector vPosition){m_vPosition=vPosition;}
+	void    SetVelocity(CVector vVelocity){m_vVelocity=vVelocity;}
+	void    SetHeading(CVector vHeading){m_vHeading=vHeading;}
+	void    SetForce(CVector vForce){m_vForce=vForce;}
 	void    SetMass(double dMass){m_dMass=dMass;}
 	void    SetMaxVelocity(double dMaxVelocity){m_dMaxVelocity=dMaxVelocity;}
 	void    SetMaxForce(double dMaxForce){m_dMaxForce=dMaxForce;}
@@ -72,7 +72,7 @@ public:
 
 	void    SeekTarget(CIAEntityBase *pTarget){m_pSeekTarget=pTarget;}
 	void    FleeTarget(CIAEntityBase *pTarget){m_pFleeTarget=pTarget;}
-	void    ArriveTarget(CIAEntityBase *pTarget,ESBArriveSpeed eArriveSpeed){m_pArriveTarget=pTarget;m_eArriveSpeed;}
+	void    ArriveTarget(CIAEntityBase *pTarget,ESBArriveSpeed eArriveSpeed){m_pArriveTarget=pTarget;m_eArriveSpeed=eArriveSpeed;}
 	void    PursueTarget(CIAEntityBase *pTarget){m_pPursueTarget=pTarget;}
 	void    EvadeTarget(CIAEntityBase *pTarget){m_pEvadeTarget=pTarget;}
 	void    Wander(bool bEnabled,double dDistance,double dRadius,double dJitter){m_bWanderEnabled=bEnabled;m_dWanderDistance=dDistance;m_dWanderRadius=dRadius;m_dWanderJitter=dJitter;}

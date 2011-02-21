@@ -1,5 +1,5 @@
-#include "StdAfx.h"
-#include ".\fightertype.h"
+#include "./stdafx.h"
+#include "FighterType.h"
 
 CFighterType::CFighterType()
 {
@@ -92,7 +92,7 @@ void CFighter::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
   double dDist=vDir.N();
   if(dDist<m_pType->m_dMaxSpeed/4.0)
   {
-    unsigned nNext=m_piRoute->GetNextPointIndex(m_nRoutePoint);
+    int nNext=m_piRoute->GetNextPointIndex(m_nRoutePoint);
     if(nNext==m_nRoutePoint)
     {
       Remove();

@@ -1,5 +1,5 @@
-#include "StdAfx.h"
-#include ".\gameguiutil.h"
+#include "./stdafx.h"
+#include "GameGUIUtil.h"
 
 SGamePos::SGamePos():x(0),y(0)
 {
@@ -88,3 +88,5 @@ void SGameRect::CenterOnRect(SGameRect *pRect)
 	x=(pRect->w-w)/2;
 	y=(pRect->h-h)/2;
 }
+
+SVideoMode::SVideoMode(){w=h=bpp=rate=0;}

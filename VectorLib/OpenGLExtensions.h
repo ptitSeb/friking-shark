@@ -2,14 +2,12 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_OPENGLEXTENSIONS_H__2551247B_561E_4A58_A30C_E0A884C25DAB__INCLUDED_)
-#define AFX_OPENGLEXTENSIONS_H__2551247B_561E_4A58_A30C_E0A884C25DAB__INCLUDED_
+#ifndef _OPENGL_EXTENSIONS_
+#define _OPENGL_EXTENSIONS_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-
-#pragma warning ( disable : 4786 )
+#ifdef WIN32
+	#pragma warning ( disable : 4786 )
+#endif
 
 #include <set>
 #include <string>
@@ -33,4 +31,4 @@ public:
 
 };
 
-#endif // !defined(AFX_OPENGLEXTENSIONS_H__2551247B_561E_4A58_A30C_E0A884C25DAB__INCLUDED_)
+#endif 

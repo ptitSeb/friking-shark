@@ -1,6 +1,6 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "GameGUILib.h"
-#include ".\gameguiedit.h"
+#include "GameGUIEdit.h"
 
 #define EDITOR_BORDER_SIZE 1.0
 #define EDITOR_TEXT_MARGIN 2.0
@@ -100,7 +100,7 @@ void CGameGUIEdit::OnCharacter( int nKey,bool *pbProcessed )
 {
 	if(nKey<32){return;}
 
-	unsigned long nCommand=0,nPreviousCommand=0;
+	unsigned long nCommand=0;
 	char sCommand[10*1024];
 	strcpy(sCommand,m_sText.c_str());
 	nCommand=m_sText.length();
@@ -120,7 +120,7 @@ void CGameGUIEdit::OnCharacter( int nKey,bool *pbProcessed )
 
 void CGameGUIEdit::OnKeyDown( int nKey,bool *pbProcessed )
 {
-	unsigned long nCommand=0,nPreviousCommand=0;
+	int nCommand=0;
 	char sCommand[10*1024];
 	strcpy(sCommand,m_sText.c_str());
 	nCommand=m_sText.length();

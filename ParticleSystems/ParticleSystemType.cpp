@@ -1,6 +1,6 @@
-#include "StdAfx.h"
-#include ".\particlesystems.h"
-#include ".\particlesystemtype.h"
+#include "./stdafx.h"
+#include "ParticleSystems.h"
+#include "ParticleSystemType.h"
 
 CParticleSystemType::CParticleSystemType(void){}
 CParticleSystemType::~CParticleSystemType(void){}

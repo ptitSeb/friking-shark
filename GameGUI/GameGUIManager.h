@@ -1,7 +1,7 @@
 #pragma once
 
-DECLARE_CUSTOM_WRAPPER1(CRenderWrapper,IGenericRender,m_piRender);
-DECLARE_CUSTOM_WRAPPER1(CViewportWrapper,IGenericViewport,m_piViewport);
+DECLARE_CUSTOM_WRAPPER1(CRenderWrapper,IGenericRender,m_piRender)
+DECLARE_CUSTOM_WRAPPER1(CViewportWrapper,IGenericViewport,m_piViewport)
 
 class CGameGUIManager :	virtual public CSystemObjectBase,virtual public IGameGUIManager,virtual public IGenericViewportCallBack
 {
@@ -11,7 +11,7 @@ class CGameGUIManager :	virtual public CSystemObjectBase,virtual public IGameGUI
 
 	bool		m_bShowMouseCursor;
 	bool		m_bScreenSettingsChanged;
-	DEVMODE m_OldScreenDeviceSettings;
+	SVideoMode  m_sOldVideoMode;
 	SGameScreenProperties m_sScreenProperties;
 
 	CRenderWrapper m_Render;
@@ -25,22 +25,23 @@ class CGameGUIManager :	virtual public CSystemObjectBase,virtual public IGameGUI
 	IGameWindow *GetWindowFromPos(SGamePos *pPosition,bool bOnlyActive);
 	IGameWindow *GetWindowFromPos(IGameWindow *piWindow,SGamePos *pPosition,bool bOnlyActive);
 
-	void OnCharacter(WORD wCharacter);
-	void OnKeyDown(WORD wKeyState);
-	void OnKeyUp(WORD wKeyState);
-
 	// IGenericViewportCallBack
 
-	void		OnRender();
-	LRESULT OnProcessMessage(LRESULT dwPreviousResult,HWND hWnd,UINT  uMsg, WPARAM  wParam,LPARAM  lParam);
+	void OnRender();
 
 	void OnLButtonDown(WORD wKeyState,unsigned x,unsigned y);
 	void OnLButtonUp(WORD wKeyState,unsigned x,unsigned y);
 	void OnRButtonDown(WORD wKeyState,unsigned x,unsigned y);
 	void OnRButtonUp(WORD wKeyState,unsigned x,unsigned y);
 	void OnMouseMove(unsigned x,unsigned y);
+	
+	void OnCharacter(WORD wCharacter);
+	void OnKeyDown(WORD wKeyState);
+	void OnKeyUp(WORD wKeyState);
+	
 	void OnSize(unsigned cx,unsigned cy);
-
+	void OnMove();
+	
 	void UpdateScreenPlacement();
 
 	bool Unserialize(ISystemPersistencyNode *piNode);
@@ -53,7 +54,7 @@ public:
 
 	// IGameGUIManager overloaded.
 
-  bool Init(std::string sClass,std::string sName,ISystem *piSystem);
+	bool Init(std::string sClass,std::string sName,ISystem *piSystem);
 	void Destroy();
 
 	void EnterGUILoop(); 
@@ -81,7 +82,7 @@ public:
 	IGameWindow *GetMainWindow();
 
 	void		GetScreenProperties(SGameScreenProperties *pProperties);
-	void    SetScreenProperties(SGameScreenProperties *pProperties);
+	void    	SetScreenProperties(SGameScreenProperties *pProperties);
 
 	// Popup management.
 
@@ -90,6 +91,8 @@ public:
 	void		 EnumeratePopups(IGameWindowEnumerationCallback *piCallback);
 	void		 GetPopups(std::vector<IGameWindow *> *pvPopups);
 
+	bool 		 DetectDrag(double dx,double dy);
+	
 	CGameGUIManager(void);
 	~CGameGUIManager(void);
 };

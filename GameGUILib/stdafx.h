@@ -3,8 +3,8 @@
 // are changed infrequently
 //
 
-#pragma once
-
+#ifndef __STDAFX__
+#define __STDAFX__
 
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 
@@ -14,3 +14,5 @@
 #include <crtdbg.h>
 #include <GameLib.h>
 #include <GameGUI.h>
+
+#endif

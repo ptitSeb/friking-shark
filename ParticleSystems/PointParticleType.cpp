@@ -1,6 +1,6 @@
-#include "StdAfx.h"
-#include ".\particlesystems.h"
-#include ".\Pointparticletype.h"
+#include "./stdafx.h"
+#include "ParticleSystems.h"
+#include "PointParticleType.h"
 
 CPointParticleType::CPointParticleType()
 {

@@ -12,15 +12,15 @@ struct SAlphaTransition
     double  value;
 };
 
-BEGIN_STRUCT_PROPS(SColorTransition);
-    PROP(dTime,"Tiempo");
-    PROP(value,"Valor");
-END_STRUCT_PROPS();
+BEGIN_STRUCT_PROPS(SColorTransition)
+    PROP(dTime,"Tiempo")
+    PROP(value,"Valor")
+END_STRUCT_PROPS()
 
-BEGIN_STRUCT_PROPS(SAlphaTransition);
-    PROP(dTime,"Tiempo");
-    PROP(value,"Valor");
-END_STRUCT_PROPS();
+BEGIN_STRUCT_PROPS(SAlphaTransition)
+    PROP(dTime,"Tiempo")
+    PROP(value,"Valor")
+END_STRUCT_PROPS()
 
 class CParticleColorModifierType:public CParticleModifierType
 {

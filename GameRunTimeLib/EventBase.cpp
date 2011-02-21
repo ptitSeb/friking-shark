@@ -1,10 +1,8 @@
 #include "stdafx.h"
 #include "GameRunTimeLib.h"
-#include ".\eventbase.h"
+#include "EventBase.h"
 
-#pragma once
-
-/////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
 //      CSubscriberBase
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,8 +14,12 @@ CSubscriberBase::SSubscriberSubscriptionInfo::SSubscriberSubscriptionInfo()
 
 bool CSubscriberBase::SSubscriberSubscriptionInfo::operator <(const SSubscriberSubscriptionInfo &other) const
 {
-    if(pPublisherBase<other.pPublisherBase){return true;}
-    if(pPublisherBase>other.pPublisherBase){return false;}
+    if (pPublisherBase<other.pPublisherBase) {
+        return true;
+    }
+    if (pPublisherBase>other.pPublisherBase) {
+        return false;
+    }
     return strcmp(sEventInterface.c_str(),other.sEventInterface.c_str())<0;
 }
 
@@ -33,7 +35,7 @@ CSubscriberBase::~CSubscriberBase()
 
 bool CSubscriberBase::SubscribeTo(std::string sEventInterface,IPublisher *pPublisher)
 {
-    if(pPublisher->Subscribe(sEventInterface,this))
+    if (pPublisher->Subscribe(sEventInterface,this))
     {
         SSubscriberSubscriptionInfo info;
         info.sEventInterface=sEventInterface;
@@ -50,9 +52,9 @@ void CSubscriberBase::UnsubscribeFrom(std::string sEventInterface,IPublisher *pP
     info.sEventInterface=sEventInterface;
     info.pPublisherBase=pPublisher;
     std::set<SSubscriberSubscriptionInfo>::iterator i=m_sClientSubscriptions.find(info);
-    if(i!=m_sClientSubscriptions.end())
+    if (i!=m_sClientSubscriptions.end())
     {
-        if(!bPublisherCommand)
+        if (!bPublisherCommand)
         {
             pPublisher->Unsubscribe(sEventInterface,this);
         }
@@ -63,37 +65,41 @@ void CSubscriberBase::UnsubscribeFrom(std::string sEventInterface,IPublisher *pP
 void CSubscriberBase::UnsubscribeFrom(IPublisher *pPublisher)
 {
     std::set<SSubscriberSubscriptionInfo>::iterator i;
-    for(i=m_sClientSubscriptions.begin();i!=m_sClientSubscriptions.end();)
+    for (i=m_sClientSubscriptions.begin();i!=m_sClientSubscriptions.end();)
     {
         SSubscriberSubscriptionInfo info=*i;
-        if(info.pPublisherBase==pPublisher)
+        if (info.pPublisherBase==pPublisher)
         {
             info.pPublisherBase->Unsubscribe(info.sEventInterface,this);
-            i=m_sClientSubscriptions.erase(i);
+            m_sClientSubscriptions.erase(i++);
         }
         else
-        {i++;}
+        {
+            i++;
+        }
     }
 }
 void CSubscriberBase::UnsubscribeInterface(std::string sEventInterface)
 {
     std::set<SSubscriberSubscriptionInfo>::iterator i;
-    for(i=m_sClientSubscriptions.begin();i!=m_sClientSubscriptions.end();)
+    for (i=m_sClientSubscriptions.begin();i!=m_sClientSubscriptions.end();)
     {
         SSubscriberSubscriptionInfo info=*i;
-        if(info.sEventInterface==sEventInterface)
+        if (info.sEventInterface==sEventInterface)
         {
             info.pPublisherBase->Unsubscribe(info.sEventInterface,this);
-            i=m_sClientSubscriptions.erase(i);
+            m_sClientSubscriptions.erase(i++);
         }
         else
-        {i++;}
+        {
+            i++;
+        }
     }
 }
 void CSubscriberBase::UnsubscribeAll()
 {
     std::set<SSubscriberSubscriptionInfo>::iterator i;
-    for(i=m_sClientSubscriptions.begin();i!=m_sClientSubscriptions.end();i++)
+    for (i=m_sClientSubscriptions.begin();i!=m_sClientSubscriptions.end();i++)
     {
         SSubscriberSubscriptionInfo info=*i;
         info.pPublisherBase->Unsubscribe(info.sEventInterface,this);
@@ -112,8 +118,12 @@ CPublisherBase::SPublisherSubscriptionInfo::SPublisherSubscriptionInfo()
 
 bool CPublisherBase::SPublisherSubscriptionInfo::operator <(const SPublisherSubscriptionInfo &other) const
 {
-    if(pSubscriberBase<other.pSubscriberBase){return true;}
-    if(pSubscriberBase>other.pSubscriberBase){return false;}
+    if (pSubscriberBase<other.pSubscriberBase) {
+        return true;
+    }
+    if (pSubscriberBase>other.pSubscriberBase) {
+        return false;
+    }
     return strcmp(sEventInterface.c_str(),other.sEventInterface.c_str())<0;
 }
 
@@ -125,7 +135,7 @@ CPublisherBase::CPublisherBase()
 CPublisherBase::~CPublisherBase()
 {
     std::set<SPublisherSubscriptionInfo>::iterator i;
-    for(i=m_sServerSubscriptions.begin();i!=m_sServerSubscriptions.end();i++)
+    for (i=m_sServerSubscriptions.begin();i!=m_sServerSubscriptions.end();i++)
     {
         SPublisherSubscriptionInfo info=*i;
         info.pSubscriberBase->UnsubscribeFrom(info.sEventInterface,this,true);
@@ -138,7 +148,7 @@ bool CPublisherBase::Subscribe(std::string sEventInterface,ISubscriber *pSubscri
     SPublisherSubscriptionInfo info;
     info.sEventInterface=sEventInterface;
     info.pSubscriberBase=pSubscriber;
-    if(m_bNotifyingFlag)
+    if (m_bNotifyingFlag)
     {
         m_sPendingUnsubscriptions.erase(info);
         m_sPendingSubscriptions.insert(info);
@@ -156,7 +166,7 @@ void CPublisherBase::Unsubscribe(std::string sEventInterface,ISubscriber *pSubsc
     info.sEventInterface=sEventInterface;
     info.pSubscriberBase=pSubscriber;
 
-    if(m_bNotifyingFlag)
+    if (m_bNotifyingFlag)
     {
         m_sPendingSubscriptions.erase(info);
         m_sPendingUnsubscriptions.insert(info);
@@ -171,15 +181,15 @@ void CPublisherBase::SetNotifyingFlag(bool bNotifying)
 {
     bool bWasNotifying=m_bNotifyingFlag;
     m_bNotifyingFlag=bNotifying;
-    if(bWasNotifying && !bNotifying)
+    if (bWasNotifying && !bNotifying)
     {
         std::set<SPublisherSubscriptionInfo>::iterator i;
-        for(i=m_sPendingSubscriptions.begin();i!=m_sPendingSubscriptions.end();i++)
+        for (i=m_sPendingSubscriptions.begin();i!=m_sPendingSubscriptions.end();i++)
         {
             SPublisherSubscriptionInfo info=*i;
             m_sServerSubscriptions.insert(info);
         }
-        for(i=m_sPendingUnsubscriptions.begin();i!=m_sPendingUnsubscriptions.end();i++)
+        for (i=m_sPendingUnsubscriptions.begin();i!=m_sPendingUnsubscriptions.end();i++)
         {
             SPublisherSubscriptionInfo info=*i;
             m_sServerSubscriptions.erase(info);

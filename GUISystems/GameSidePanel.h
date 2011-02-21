@@ -24,7 +24,7 @@ class CGameSidePanel: virtual public CGameWindowBase
 
 	CEntityManagerWrapper		 m_EntityManagerWrapper;
 
-	void UpdatePlayerData(CGameSidePanelPlayerData *pPlayerData,char *pPlayerName);
+	void UpdatePlayerData(CGameSidePanelPlayerData *pPlayerData,const char *pPlayerName);
 
 public:
 

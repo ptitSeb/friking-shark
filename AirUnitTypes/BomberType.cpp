@@ -1,5 +1,5 @@
-#include "StdAfx.h"
-#include ".\bombertype.h"
+#include "./stdafx.h"
+#include "BomberType.h"
 
 CBomberType::CBomberType()
 {
@@ -63,7 +63,7 @@ void CBomber::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
   {
     nAnimationToSet=(size_t)(((m_pType->m_dMaxHealth-m_dHealth)/m_pType->m_dMaxHealth)*((double)m_dAnimations.size()));
     if(nAnimationToSet>m_dAnimations.size()-1){nAnimationToSet=m_dAnimations.size()-1;}
-    if(GetCurrentAnimation()!=nAnimationToSet)
+    if(GetCurrentAnimation()!=(int)nAnimationToSet)
     {
       SetCurrentAnimation((int)nAnimationToSet);
     }

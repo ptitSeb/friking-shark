@@ -1,12 +1,12 @@
 //#include <cruntime.h>
+#include <new>
+#include <set>
+#include <map>
 #include <malloc.h>
-#include <new.h>
 #include <stdlib.h>
 #include <windows.h>
 #include "InterfaceLeakAPI.h"
-#include <set>
-#include <map>
-#include <io.h>
+#ifdef WIN32
 
 #define _CRT_ERROR          1
 
@@ -906,3 +906,14 @@ void GAMERUNTIME_API RegisterRelease(void *pPointer)
 
 	LeaveCriticalSection(&g_csMonitorizationHeap);
 }
+
+#else // WIN32
+
+void GAMERUNTIME_API InitMonitorization(){}
+void GAMERUNTIME_API EndMonitorization(){}
+
+void GAMERUNTIME_API RegisterAddRef(void *pInterface){}
+void GAMERUNTIME_API RegisterRelease(void *pInterface){}
+void GAMERUNTIME_API DumpMonitorizationLeaks(){}
+
+#endif

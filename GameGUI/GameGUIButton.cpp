@@ -1,7 +1,7 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "GameGUILib.h"
-#include ".\gameguilabel.h"
-#include ".\gameguibutton.h"
+#include "GameGUILabel.h"
+#include "GameGUIButton.h"
 
 CGameGUIButton::CGameGUIButton(void)
 {

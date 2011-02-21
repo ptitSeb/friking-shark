@@ -1,16 +1,17 @@
-#include "StdAfx.h"
-#include "glprocs.h"
+#include "stdafx.h"
 #include "resource.h"
-#include "GameRuntimeLib.h"
+#include "GameRunTimeLib.h"
 #include "GameLib.h"
 #include "GameGUILib.h"
 #include "ScenarioEditorMainWindow.h"
 
 #define SELECT_FORMATION_BASE_INDEX 0x800
 
+#ifdef WIN32
 #pragma warning ( disable : 4244 )
+#endif
 
-DECLARE_CUSTOM_WRAPPER1(CGameGUIManagerWrapper,IGameGUIManager,m_piInterface);
+DECLARE_CUSTOM_WRAPPER1(CGameGUIManagerWrapper,IGameGUIManager,m_piInterface)
 
 extern CSystemModuleHelper *g_pSystemModuleHelper;
 
@@ -441,10 +442,13 @@ bool CScenarioEditorMainWindow::Unserialize(ISystemPersistencyNode *piNode)
 	UpdateLayerPanel();
 
 	CSystemLoaderHelper     systemLoader;
-	m_piGameSystem=systemLoader.LoadSystem("Scripts\\GameSystem.cfg","GameSystem");
+	m_piGameSystem=systemLoader.LoadSystem("Scripts/GameSystem.cfg","GameSystem");
 	m_GameControllerWrapper.Attach("GameSystem","GameController");
-	m_GameControllerWrapper.m_piGameController->SetupGame();
-	m_GameControllerWrapper.m_piGameController->CreateScenario();
+	if(m_GameControllerWrapper.m_piGameController)
+	{
+	  m_GameControllerWrapper.m_piGameController->SetupGame();
+	  m_GameControllerWrapper.m_piGameController->CreateScenario();
+	}
 
 	m_GameRenderWrapper.Attach("GameSystem","GameRender");
 	m_PlayAreaManagerWrapper.Attach("GameSystem","PlayAreaManager");
@@ -452,6 +456,7 @@ bool CScenarioEditorMainWindow::Unserialize(ISystemPersistencyNode *piNode)
 	m_WorldManagerWrapper.Attach("GameSystem","WorldManager");
 	
 	//OpenScenario("C:\\Game\\Demo\\MinimalResources\\test1.ges");
+	//OpenScenario("/home/javi/workspace/Game/Demo/Resources/new2.ges");
 	return bOk;
 }
 
@@ -459,7 +464,7 @@ void CScenarioEditorMainWindow::DestroyWindow()
 {
 	StopGameSimulation();
 	Reset();
-	m_GameControllerWrapper.m_piGameController->EndGame();
+	if(m_GameControllerWrapper.m_piGameController){m_GameControllerWrapper.m_piGameController->EndGame();}
 	m_PlayAreaManagerWrapper.Detach();
 	m_GameControllerWrapper.Detach();
 	m_GameRenderWrapper.Detach();
@@ -521,12 +526,13 @@ void CScenarioEditorMainWindow::Reset()
 
 void CScenarioEditorMainWindow::ProcessInput(double dTimeFraction,double dRealTimeFraction)
 {
-	if(GetTickCount()>m_dwNexControlKey)
+  
+	if(m_FrameManager.m_piFrameManager->GetCurrentRealTime()>m_dwNexControlKey)
 	{
 		if(m_piGUIManager->IsKeyDown(VK_F1) && m_bSimulationStarted)
 		{
 			m_bInspectionMode=!m_bInspectionMode;
-			m_dwNexControlKey=GetTickCount()+500;
+			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
 		}
 		if(m_piGUIManager->IsKeyDown(VK_F5))
 		{
@@ -538,54 +544,53 @@ void CScenarioEditorMainWindow::ProcessInput(double dTimeFraction,double dRealTi
 			{
 				StartGameSimulation();
 			}
-			m_dwNexControlKey=GetTickCount()+500;
+			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
 		}
-		if(m_piGUIManager->IsKeyDown(VK_F3)){ProcessFileOpen();m_dwNexControlKey=GetTickCount()+500;}
-		if(m_piGUIManager->IsKeyDown(VK_F3)){ProcessFileOpen();m_dwNexControlKey=GetTickCount()+500;}
-		if(m_piGUIManager->IsKeyDown(VK_F2)){ProcessFileSave();m_dwNexControlKey=GetTickCount()+500;}
-		if(m_piGUIManager->IsKeyDown(VK_PAUSE)){m_FrameManager.m_piFrameManager->TogglePauseOnNextFrame();m_dwNexControlKey=GetTickCount()+100;}
+		if(m_piGUIManager->IsKeyDown(VK_F3)){ProcessFileOpen();m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;}
+		if(m_piGUIManager->IsKeyDown(VK_F2)){ProcessFileSave();m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;}
+		if(m_piGUIManager->IsKeyDown(VK_PAUSE)){m_FrameManager.m_piFrameManager->TogglePauseOnNextFrame();m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+100;}
 		if(m_piGUIManager->IsKeyDown('T'))
 		{
 			m_bTextures=!m_bTextures;
-			m_dwNexControlKey=GetTickCount()+500;
+			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
 		}
 		if(m_piGUIManager->IsKeyDown('P'))
 		{
 			m_bRenderPlayArea=!m_bRenderPlayArea;
-			m_dwNexControlKey=GetTickCount()+500;
+			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
 		}
 		if(m_piGUIManager->IsKeyDown('G'))
 		{
 			m_bFog=!m_bFog;
-			m_dwNexControlKey=GetTickCount()+500;
+			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
 		}
 		if(m_piGUIManager->IsKeyDown(VK_F10))
 		{
 			m_bShaders=!m_bShaders;
-			m_dwNexControlKey=GetTickCount()+500;
+			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
 		}
 		if(m_piGUIManager->IsKeyDown('C'))
 		{
 			m_bColors=!m_bColors;
-			m_dwNexControlKey=GetTickCount()+500;
+			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
 		}
 		if(m_piGUIManager->IsKeyDown('L'))
 		{
 			m_bSolid=!m_bSolid;
-			m_dwNexControlKey=GetTickCount()+500;
+			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
 		}
 		if(m_piGUIManager->IsKeyDown('I'))
 		{
 			m_bLighting=!m_bLighting;
-			m_dwNexControlKey=GetTickCount()+500;
+			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
 		}
 		if(m_piGUIManager->IsKeyDown('H'))
 		{
 			m_bShadows=!m_bShadows;
-			m_dwNexControlKey=GetTickCount()+500;
+			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
 		}
-		if(m_piGUIManager->IsKeyDown('B')){m_bBlend=!m_bBlend;m_dwNexControlKey=GetTickCount()+500;}
-		if(m_piGUIManager->IsKeyDown(VK_HOME)){CenterCamera();m_dwNexControlKey=GetTickCount()+500;}
+		if(m_piGUIManager->IsKeyDown('B')){m_bBlend=!m_bBlend;m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;}
+		if(m_piGUIManager->IsKeyDown(VK_HOME)){CenterCamera();m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;}
 	}
 	if(!m_bSimulationStarted || m_bInspectionMode)
 	{
@@ -598,30 +603,30 @@ void CScenarioEditorMainWindow::ProcessInput(double dTimeFraction,double dRealTi
 	}
 }
 
-void CScenarioEditorMainWindow::ProcessKey(SHORT nKey,double dTimeFraction,double dRealTimeFraction)
+void CScenarioEditorMainWindow::ProcessKey(WORD nKey,double dTimeFraction,double dRealTimeFraction)
 {
 	double dMovementInspectionSpeed=500.0;
 	double dForwardSpeed=dMovementInspectionSpeed*dTimeFraction;
 	double dCameraForwardSpeed=dMovementInspectionSpeed*dRealTimeFraction;
-	bool   bMoveEntity=false;
-	if(GetKeyState(VK_LSHIFT)&0x8000){dForwardSpeed*=3.0;}
-	if(GetKeyState(VK_LCONTROL)&0x8000)
+	if(m_piGUIManager->IsKeyDown(VK_LSHIFT)){dForwardSpeed*=3.0;}
+	if(m_piGUIManager->IsKeyDown(VK_LCONTROL))
 	{
 		CVector vChange;
 		if(nKey==KEY_FORWARD)	{vChange.c[PITCH]-=dCameraForwardSpeed*0.3;}
 		else if(nKey==KEY_BACK)	{vChange.c[PITCH]+=dCameraForwardSpeed*0.3;}
 		else if(nKey==KEY_LEFT)	{vChange.c[YAW]+=dCameraForwardSpeed*0.3;}
 		else if(nKey==KEY_RIGHT)	{vChange.c[YAW]-=dCameraForwardSpeed*0.3;}
-		m_Camera.m_piCamera->SetAngles(m_Camera.m_piCamera->GetAngles()+vChange);
+		CVector vAngles=m_Camera.m_piCamera->GetAngles()+vChange;
+		m_Camera.m_piCamera->SetAngles(vAngles);
 	}
 	else
 	{
-		if(nKey==KEY_UP)	{m_Camera.m_piCamera->SetPosition(m_Camera.m_piCamera->GetPosition()+m_Camera.m_piCamera->GetUpVector()*(dCameraForwardSpeed));}
-		else if(nKey==KEY_DOWN)	{m_Camera.m_piCamera->SetPosition(m_Camera.m_piCamera->GetPosition()-m_Camera.m_piCamera->GetUpVector()*(dCameraForwardSpeed));}
-		else if(nKey==KEY_LEFT)	{m_Camera.m_piCamera->SetPosition(m_Camera.m_piCamera->GetPosition()-m_Camera.m_piCamera->GetRightVector()*(dCameraForwardSpeed));}
-		else if(nKey==KEY_RIGHT){m_Camera.m_piCamera->SetPosition(m_Camera.m_piCamera->GetPosition()+m_Camera.m_piCamera->GetRightVector()*(dCameraForwardSpeed));}
-		else if(nKey==KEY_FORWARD)	{m_Camera.m_piCamera->SetPosition(m_Camera.m_piCamera->GetPosition()+m_Camera.m_piCamera->GetForwardVector()*(dCameraForwardSpeed));}
-		else if(nKey==KEY_BACK)	{m_Camera.m_piCamera->SetPosition(m_Camera.m_piCamera->GetPosition()-m_Camera.m_piCamera->GetForwardVector()*(dCameraForwardSpeed));}
+		if(nKey==KEY_UP)	{CVector vCameraPos=m_Camera.m_piCamera->GetPosition()+m_Camera.m_piCamera->GetUpVector()*(dCameraForwardSpeed);m_Camera.m_piCamera->SetPosition(vCameraPos);}
+		else if(nKey==KEY_DOWN)	{CVector vCameraPos=m_Camera.m_piCamera->GetPosition()-m_Camera.m_piCamera->GetUpVector()*(dCameraForwardSpeed);m_Camera.m_piCamera->SetPosition(vCameraPos);}
+		else if(nKey==KEY_LEFT)	{CVector vCameraPos=m_Camera.m_piCamera->GetPosition()-m_Camera.m_piCamera->GetRightVector()*(dCameraForwardSpeed);m_Camera.m_piCamera->SetPosition(vCameraPos);}
+		else if(nKey==KEY_RIGHT){CVector vCameraPos=m_Camera.m_piCamera->GetPosition()+m_Camera.m_piCamera->GetRightVector()*(dCameraForwardSpeed);m_Camera.m_piCamera->SetPosition(vCameraPos);}
+		else if(nKey==KEY_FORWARD)	{CVector vCameraPos=m_Camera.m_piCamera->GetPosition()+m_Camera.m_piCamera->GetForwardVector()*(dCameraForwardSpeed);m_Camera.m_piCamera->SetPosition(vCameraPos);}
+		else if(nKey==KEY_BACK)	{CVector vCameraPos=m_Camera.m_piCamera->GetPosition()-m_Camera.m_piCamera->GetForwardVector()*(dCameraForwardSpeed);m_Camera.m_piCamera->SetPosition(vCameraPos);}
 	}
 
 }
@@ -998,7 +1003,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			layer.sEntityType=piObject?piObject->GetName():"";
 			REL(piObject);
 
-			unsigned long nLayerIndex=m_PlayAreaManagerWrapper.m_piPlayAreaDesign->AddEntityLayer(&layer);
+			m_PlayAreaManagerWrapper.m_piPlayAreaDesign->AddEntityLayer(&layer);
 			UpdateEntityLayerControls();
 			UpdateTexturization();	
 			m_nSelectedEntityLayer=m_vEntityLayerControls.size()-1;
@@ -1050,7 +1055,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		layer.dVerticalResolution=1;
 		if(OpenFileDialog("Select layer texture...","All supported files\0*.jpg;*.jpeg;*.bmp\0JPEG files (*.jpg)\0*.jpg;*.jpeg\0BMP files (*.bmp)\0*.bmp\0\0",&layer.sTextureFile))
 		{
-			unsigned long nLayerIndex=m_WorldManagerWrapper.m_piTerrain->AddTerrainColorLayer(&layer);
+			m_WorldManagerWrapper.m_piTerrain->AddTerrainColorLayer(&layer);
 			UpdateColorLayerControls();
 			UpdateTexturization();	
 			m_nSelectedColorLayer=m_vColorLayerControls.size()-1;
@@ -1080,7 +1085,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		}
 		if(OpenFileDialog("Select layer texture...","All supported files\0*.jpg;*.jpeg;*.bmp\0JPEG files (*.jpg)\0*.jpg;*.jpeg\0BMP files (*.bmp)\0*.bmp\0\0",&layer.sTextureFile))
 		{
-			unsigned long nLayerIndex=m_WorldManagerWrapper.m_piTerrain->AddTerrainHeightLayer(&layer);
+			m_WorldManagerWrapper.m_piTerrain->AddTerrainHeightLayer(&layer);
 			UpdateHeightLayerControls();
 			UpdateTexturization();	
 			m_nSelectedColorLayer=-1;
@@ -1175,7 +1180,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		}
 		else if(piControl==m_piBTHeightLayerMoveUp)
 		{
-			if(m_nSelectedHeightLayer<(m_vHeightLayerControls.size()-1))
+			if(m_nSelectedHeightLayer<(int)(m_vHeightLayerControls.size()-1))
 			{
 				m_WorldManagerWrapper.m_piTerrain->MoveTerrainHeightLayer(m_nSelectedHeightLayer,true);
 				m_nSelectedHeightLayer++;
@@ -1282,7 +1287,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		}
 		else if(piControl==m_piBTColorLayerMoveUp)
 		{
-			if(m_nSelectedColorLayer<(m_vColorLayerControls.size()-1))
+			if(m_nSelectedColorLayer<(int)(m_vColorLayerControls.size()-1))
 			{
 				m_WorldManagerWrapper.m_piTerrain->MoveTerrainColorLayer(m_nSelectedColorLayer,true);
 				m_nSelectedColorLayer++;
@@ -1887,7 +1892,7 @@ void CScenarioEditorMainWindow::UpdateCaption()
 		if(m_sFile.length()){sCaption+=" - "+m_sFile;}
 		m_Viewport.m_piViewport->SetCaption(sCaption);
 	}
-};
+}
 
 void CScenarioEditorMainWindow::UpdateLayerPanel()
 {
@@ -1948,8 +1953,8 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 
 		m_piBTHeightLayerIncreaseMinHeight->Show(m_nSelectedHeightLayer!=0);
 		m_piBTHeightLayerDecreaseMinHeight->Show(m_nSelectedHeightLayer!=0);
-		m_piBTHeightLayerIncreaseMaxHeight->Show(m_nSelectedHeightLayer<(m_vHeightLayerControls.size()-1));
-		m_piBTHeightLayerDecreaseMaxHeight->Show(m_nSelectedHeightLayer<(m_vHeightLayerControls.size()-1));
+		m_piBTHeightLayerIncreaseMaxHeight->Show(m_nSelectedHeightLayer<(int)(m_vHeightLayerControls.size()-1));
+		m_piBTHeightLayerDecreaseMaxHeight->Show(m_nSelectedHeightLayer<(int)(m_vHeightLayerControls.size()-1));
 
 		REL(piTexture);
 	}
@@ -2139,8 +2144,6 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 
 
 	STerrainFog sFog;
-	IGenericTexture *piFogTexture1=NULL;
-	IGenericTexture *piFogTexture2=NULL;
 	if(m_WorldManagerWrapper.m_piTerrain)
 	{
 		m_WorldManagerWrapper.m_piTerrain->GetTerrainFog(&sFog);
@@ -2449,7 +2452,7 @@ void CScenarioEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 		if(m_nSelectedEntity!=-1 && m_nSelectedRoutePoint!=-1)
 		{
 			m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->RemoveRoutePoint(m_nSelectedRoutePoint);
-			if(m_nSelectedRoutePoint>=m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetRoutePoints())
+			if(m_nSelectedRoutePoint>=(int)m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetRoutePoints())
 			{
 				m_nSelectedRoutePoint=m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetRoutePoints()-1;
 			}
@@ -2520,7 +2523,7 @@ void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 				SRoutePoint point;
 				m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetRoutePoint(x,&point);
 				m_Render.m_piRender->SetSelectionId(x);
-				m_Render.m_piRender->RenderPoint(point.vPosition,x==m_nSelectedRoutePoint?10:5,CVector(0.8,0.8,0.8),1.0);
+				m_Render.m_piRender->RenderPoint(point.vPosition,(int)x==m_nSelectedRoutePoint?10:5,CVector(0.8,0.8,0.8),1.0);
 			}
 			int nNewSelection=m_Render.m_piRender->EndSelection();
 			if(m_nSelectedRoutePoint==nNewSelection)
@@ -2550,13 +2553,13 @@ void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 
 	m_Render.m_piRender->StartSelection(m_rRealRect,m_Camera.m_piCamera,dx,dy,5);
 
-	for(int x=0;x<m_vEntityControls.size();x++)
+	for(unsigned int x=0;x<m_vEntityControls.size();x++)
 	{
 		m_Render.m_piRender->SetSelectionId(x);
 		SEntityControls *pEntity=m_vEntityControls[x];
 		pEntity->m_piPlayAreaEntity->DesignRender(m_Render.m_piRender,false);
 	}
-	for(int x=0;x<m_vFormationControls.size();x++)
+	for(unsigned int x=0;x<m_vFormationControls.size();x++)
 	{
 		m_Render.m_piRender->SetSelectionId(SELECT_FORMATION_BASE_INDEX+x);
 		SFormationControls *pFormation=m_vFormationControls[x];
@@ -2703,9 +2706,9 @@ bool CScenarioEditorMainWindow::GetTerrainCoordinatesFromCursorPos(double x,doub
 	if(m_WorldManagerWrapper.m_piTerrain)
 	{
 		bool bHit=m_WorldManagerWrapper.m_piTerrain->GetTerrainTrace(vPoint1,vPoint2,pTerrainPos);
-		for(int x=0;x<m_vEntityControls.size();x++)
+		for(unsigned int x=0;x<m_vEntityControls.size();x++)
 		{
-			if(x==m_nSelectedEntity){continue;}
+			if((int)x==m_nSelectedEntity){continue;}
 			CVector vPos=m_vEntityControls[x]->m_piPlayAreaEntity->GetPosition();
 			CVector vAngles=m_vEntityControls[x]->m_piPlayAreaEntity->GetAngles();
 			CTraceInfo info=m_vEntityControls[x]->m_piDesignObject->DesignGetTrace(vPos,vAngles,vPoint1,vPoint2);
@@ -2752,7 +2755,8 @@ void CScenarioEditorMainWindow::OnMouseMove( double x,double y )
 		CVector vTemp;
 		if(GetAirPlaneCoordinatesFromCursorPos(x,y,&vTemp))
 		{
-			pObject->m_piPlayAreaFormation->SetPosition(m_vObjectOriginalPosition+(vTemp-m_vCursorOriginalPosition));
+		  CVector vPosition=m_vObjectOriginalPosition+(vTemp-m_vCursorOriginalPosition);
+		  pObject->m_piPlayAreaFormation->SetPosition(vPosition);
 		}
 	}
 }
@@ -2848,9 +2852,9 @@ void CScenarioEditorMainWindow::UpdateEntityLayerControls()
 			m_vEntityLayerControls.push_back(pControls);
 		}
 	}
-	if(m_nSelectedEntityLayer!=-1 && m_nSelectedEntityLayer>=m_vEntityLayerControls.size())
+	if(m_nSelectedEntityLayer!=-1 && m_nSelectedEntityLayer>=(int)m_vEntityLayerControls.size())
 	{
-		m_nSelectedEntityLayer=m_vEntityLayerControls.size()-1;
+		m_nSelectedEntityLayer=(int)(m_vEntityLayerControls.size()-1);
 	}
 }
 
@@ -2923,9 +2927,9 @@ void CScenarioEditorMainWindow::UpdateEntityControls()
 			m_vEntityControls.push_back(pControls);
 		}
 	}
-	if(m_nSelectedEntity!=-1 && m_nSelectedEntity>=m_vEntityControls.size())
+	if(m_nSelectedEntity!=-1 && m_nSelectedEntity>=(int)m_vEntityControls.size())
 	{
-		m_nSelectedEntity=m_vEntityControls.size()-1;
+		m_nSelectedEntity=(int)(m_vEntityControls.size()-1);
 	}
 }
 
@@ -3006,9 +3010,9 @@ void CScenarioEditorMainWindow::UpdateFormationControls()
 			m_vFormationControls.push_back(pControls);
 		}
 	}
-	if(m_nSelectedFormation!=-1 && m_nSelectedFormation>=m_vFormationControls.size())
+	if(m_nSelectedFormation!=-1 && m_nSelectedFormation>=(int)m_vFormationControls.size())
 	{
-		m_nSelectedFormation=m_vFormationControls.size()-1;
+		m_nSelectedFormation=(int)(m_vFormationControls.size()-1);
 		m_nSelectedEntity=-1;
 		m_nSelectedEntityLayer=-1;
 	}
@@ -3073,9 +3077,9 @@ void CScenarioEditorMainWindow::UpdateColorLayerControls()
 			m_vColorLayerControls.push_back(pControls);
 		}
 	}
-	if(m_nSelectedColorLayer!=-1 && m_nSelectedColorLayer>=m_vColorLayerControls.size())
+	if(m_nSelectedColorLayer!=-1 && m_nSelectedColorLayer>=(int)m_vColorLayerControls.size())
 	{
-		m_nSelectedColorLayer=m_vColorLayerControls.size()-1;
+		m_nSelectedColorLayer=(int)(m_vColorLayerControls.size()-1);
 	}
 }
 
@@ -3137,9 +3141,9 @@ void CScenarioEditorMainWindow::UpdateHeightLayerControls()
 			m_vHeightLayerControls.push_back(pData);
 		}
 	}
-	if(m_nSelectedHeightLayer!=-1 && m_nSelectedHeightLayer>=m_vHeightLayerControls.size())
+	if(m_nSelectedHeightLayer!=-1 && m_nSelectedHeightLayer>=(int)m_vHeightLayerControls.size())
 	{
-		m_nSelectedHeightLayer=m_vHeightLayerControls.size()-1;
+		m_nSelectedHeightLayer=(int)(m_vHeightLayerControls.size()-1);
 	}
 }
 
@@ -3204,7 +3208,7 @@ void CScenarioEditorMainWindow::RenderRoute( IGenericRender * piRender, int nSel
 		SRoutePoint point;
 		pEntity->m_piPlayAreaEntity->GetRoutePoint(x,&point);
 		piRender->RenderLine(vPreviousPoint,point.vPosition,CVector(0.8,0.8,0.8));
-		piRender->RenderPoint(point.vPosition,nSelectedRoutePoint==x?10:5,nSelectedRoutePoint==x?CVector(0,0,0.8):CVector(0.8,0.8,0.8),1.0);
+		piRender->RenderPoint(point.vPosition,nSelectedRoutePoint==(int)x?10:5,nSelectedRoutePoint==(int)x?CVector(0,0,0.8):CVector(0.8,0.8,0.8),1.0);
 		vPreviousPoint=point.vPosition;
 	}
 	piRender->PopState();

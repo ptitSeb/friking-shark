@@ -1,5 +1,5 @@
-#include "StdAfx.h"
-#include ".\playertype.h"
+#include "./stdafx.h"
+#include "PlayerType.h"
 
 CPlayerType::CPlayerType(){}
 CPlayerType::~CPlayerType(){}

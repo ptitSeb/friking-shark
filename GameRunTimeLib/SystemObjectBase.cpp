@@ -1,7 +1,7 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "GameRunTimeLib.h"
-#include ".\systemunknownbase.h"
-#include ".\systemobjectbase.h"
+#include "SystemUnknownBase.h"
+#include "SystemObjectBase.h"
 #include <crtdbg.h>
 
 
@@ -17,7 +17,6 @@ CSystemObjectBase::CSystemObjectBase(void)
 
 CSystemObjectBase::~CSystemObjectBase(void)
 {
-	_ASSERTE(m_piSystem==NULL);
 #ifdef _DEBUG
 	ISystemManager *piManager=GetSystemManager();
 	piManager->DebugUnregisterObject(this);

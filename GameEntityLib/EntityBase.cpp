@@ -1,7 +1,7 @@
-#include "StdAfx.h"
+#include "./stdafx.h"
 #include "GameEntityLib.h"
-#include ".\entitybase.h"
-#include ".\SingletonWrapper.h"
+#include "EntityBase.h"
+#include "SingletonWrapper.h"
 
 CSingletonWrapper<IEntityManager> g_EntityManagerSingleton("GameSystem","EntityManager");
 CSingletonWrapper<IPhysicManager> g_PhysicManagerSingleton("GameSystem","PhysicManager");
@@ -66,7 +66,7 @@ void         CEntityBase::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
 
 		if(m_dHealth<=0){OnKilled();}
 	}
-};
+}
 
 SPhysicInfo *CEntityBase::GetPhysicInfo(){return &m_PhysicInfo;}
 string      *CEntityBase::GetEntityClass(){return &m_sClassName;}

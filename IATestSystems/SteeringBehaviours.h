@@ -9,8 +9,6 @@ enum ESBArriveSpeed
 	eSBArriveSpeed_Slow
 };
 
-enum eSBArriveSpeed_Normal;
-
 class CSteeringBehaviours
 {
 	CVector m_vWanderTarget;

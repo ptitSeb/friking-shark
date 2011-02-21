@@ -26,7 +26,7 @@ protected:
     virtual void UnsubscribeInterface(std::string sEventInterface);
     virtual void UnsubscribeAll();
 
-    friend CPublisherBase;
+    friend class CPublisherBase;
 
     CSubscriberBase();
     virtual ~CSubscriberBase();

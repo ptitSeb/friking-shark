@@ -1,6 +1,6 @@
-#include "StdAfx.h"
-#include ".\systemmanager.h"
-#include ".\system.h"
+#include "stdafx.h"
+#include "SystemManager.h"
+#include "System.h"
 
 CSystemManager *CSystemManager::g_pSystemManager=NULL;
 

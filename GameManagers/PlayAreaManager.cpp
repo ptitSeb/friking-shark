@@ -1,7 +1,7 @@
-#include "StdAfx.h"
-#include "GameRuntimeLib.h"
+#include "./stdafx.h"
+#include "GameRunTimeLib.h"
 #include "GameGUI.h"
-#include ".\playareamanager.h"
+#include "PlayAreaManager.h"
 
 
 
@@ -70,14 +70,14 @@ void CPlayAreaManager::CreateScenario()
 
 void CPlayAreaManager::LoadScenario(ISystemPersistencyNode *piNode)
 {
-    HRESULT hr=PersistencyLoad(piNode->GetNode("AreaDeJuego"),"ScenarioProps");
+    PersistencyLoad(piNode->GetNode("AreaDeJuego"),"ScenarioProps");
 	UpdateEntityLayers();
 	UpdatePlayArea();
 }
 
 void CPlayAreaManager::SaveScenario(ISystemPersistencyNode *piNode)
 {
-	HRESULT hr=PersistencySave(piNode->AddNode("AreaDeJuego"),"ScenarioProps");
+	PersistencySave(piNode->AddNode("AreaDeJuego"),"ScenarioProps");
 }
 
 void CPlayAreaManager::CloseScenario()
@@ -510,7 +510,7 @@ void CPlayAreaManager::UpdateEntityLayer( unsigned int nIndex,SEntityLayer *pLay
 
 void CPlayAreaManager::RemoveEntityLayer( unsigned int nIndex )
 {
-	int x;
+	unsigned int x;
 	std::vector<SEntityLayerData>::iterator i;
 	for(x=0,i=m_vEntityLayers.begin();i!=m_vEntityLayers.end();i++,x++)
 	{
@@ -751,7 +751,7 @@ unsigned long CPlayAreaManager::AddElement( std::string sType )
 void CPlayAreaManager::RemoveElement( unsigned int nIndex )
 {
 	if(nIndex>=m_vElements.size()){return;}
-	int x;
+	unsigned int x;
 	std::vector<CPlayAreaElementWrapper>::iterator i;
 	for(x=0,i=m_vElements.begin();i!=m_vElements.end();i++,x++)
 	{

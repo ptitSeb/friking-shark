@@ -1,5 +1,5 @@
-#include "StdAfx.h"
-#include ".\PointBonusType.h"
+#include "./stdafx.h"
+#include "PointBonusType.h"
 
 CPointBonusType::CPointBonusType(){m_dwPoints=0;}
 CPointBonusType::~CPointBonusType(){}

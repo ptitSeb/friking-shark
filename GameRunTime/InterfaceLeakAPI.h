@@ -1,13 +1,22 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#ifndef GAMERUNTIME_API 
+
 #ifdef GAMERUNTIME_EXPORTS
-#define GAMERUNTIME_API __declspec(dllexport)
+	#ifdef WIN32 
+		#define GAMERUNTIME_API __declspec(dllexport)
+	#else
+		#define GAMERUNTIME_API 
+	#endif
+	
 #else
-#define GAMERUNTIME_API __declspec(dllimport)
+	#ifdef WIN32 
+		#define GAMERUNTIME_API __declspec(dllimport)
+	#else
+		#define GAMERUNTIME_API 
+	#endif
 #ifndef GAMERUNTIMELIB_COMPILATION
-#endif
+//#pragma comment (lib,"GameRunTime.lib")
 #endif
 #endif
 
@@ -19,5 +28,5 @@ void GAMERUNTIME_API RegisterAddRef(void *pInterface);
 void GAMERUNTIME_API RegisterRelease(void *pInterface);
 void GAMERUNTIME_API DumpMonitorizationLeaks();
 #ifdef __cplusplus
-};
+}
 #endif

@@ -1,5 +1,5 @@
-#include "StdAfx.h"
-#include ".\formationtype.h"
+#include "./stdafx.h"
+#include "FormationType.h"
 #include "GameGraphics.h"
 
 CFormationType::CFormationType()
@@ -85,7 +85,8 @@ void CFormationType::DesignRender( IGenericRender *piRender,CVector &vPosition,C
 			piRender->PopState();
 			
 			CVector vPos=m_dElements[x].m_Route.GetPlayAreaElementPoint(vPosition,0);
-			pElement->m_piEntityType->DesignRender(piRender,vPos,AnglesFromVector(m_dElements[x].m_Route.GetDirection(0)),bSelected);
+			CVector vAngles=AnglesFromVector(m_dElements[x].m_Route.GetDirection(0));
+			pElement->m_piEntityType->DesignRender(piRender,vPos,vAngles,bSelected);
 		}
 	}
 }

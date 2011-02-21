@@ -1,10 +1,10 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "resource.h"
-#include "GameRuntimeLib.h"
+#include "GameRunTimeLib.h"
 #include "GameGUILib.h"
 #include "IATestMainWindow.h"
 #include "IATestUtils.h"
-#include ".\testscenarios.h"
+#include "TestScenarios.h"
 extern float dBaseSize;
 
 void CTestScenarioSeek::Initialize(CIATestMainWindow *pWindow)
@@ -135,7 +135,7 @@ void CTestScenarioInterpose::Initialize(CIATestMainWindow *pWindow)
 	pWindow->AddEntity("Hunter",pHunter,true);
 	pWindow->AddEntity("Prey",pPrey,true);
 	pWindow->AddEntity("PreyDest",pPreyDestination,true);
-};
+}
 
 
 void CTestScenarioOffsetPursue::Initialize(CIATestMainWindow *pWindow)
@@ -171,4 +171,4 @@ void CTestScenarioOffsetPursue::Initialize(CIATestMainWindow *pWindow)
 		pWindow->AddEntity(sName,pFollower,true);
 		nFollowers++;
 	}
-};
+}

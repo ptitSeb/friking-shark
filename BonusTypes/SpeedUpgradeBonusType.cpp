@@ -1,5 +1,5 @@
-#include "StdAfx.h"
-#include ".\SpeedUpgradeBonusType.h"
+#include "./stdafx.h"
+#include "SpeedUpgradeBonusType.h"
 
 CSpeedUpgradeBonusType::CSpeedUpgradeBonusType(){m_dSpeed=0;}
 CSpeedUpgradeBonusType::~CSpeedUpgradeBonusType(){}

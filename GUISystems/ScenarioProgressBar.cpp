@@ -1,8 +1,8 @@
-#include "StdAfx.h"
+#include "./stdafx.h"
 #include "GUISystems.h"
-#include "GameRuntimeLib.h"
+#include "GameRunTimeLib.h"
 #include "GameGUILib.h"
-#include ".\scenarioprogressbar.h"
+#include "ScenarioProgressBar.h"
 
 CScenarioProgressBar::CScenarioProgressBar(void)
 {
