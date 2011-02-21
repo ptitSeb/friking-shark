@@ -48,6 +48,7 @@
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="./stdafx.h"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
@@ -128,6 +129,7 @@
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="./stdafx.h"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
@@ -196,6 +198,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GameGUIColorDialog.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GameGUIConfirmDialog.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\GameGUIEdit.cpp"
 				>
 			</File>
@@ -209,6 +219,10 @@
 			</File>
 			<File
 				RelativePath=".\GameGUIManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GameGUIMessageDialog.cpp"
 				>
 			</File>
 			<File
@@ -250,6 +264,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GameGUIColorDialog.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GameGUIConfirmDialog.h"
+				>
+			</File>
+			<File
 				RelativePath=".\GameGUIEdit.h"
 				>
 			</File>
@@ -263,6 +285,10 @@
 			</File>
 			<File
 				RelativePath=".\GameGUIManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GameGUIMessageDialog.h"
 				>
 			</File>
 			<File

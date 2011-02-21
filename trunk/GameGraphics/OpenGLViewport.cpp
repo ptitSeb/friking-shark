@@ -63,6 +63,7 @@ void COpenGLViewport::OnCreate(HWND hWnd)
 		if(SetPixelFormat(m_hDC, m_nPixelFormatIndex, &pixelFormat))
 		{
 			m_hRenderContext=wglCreateContext(m_hDC);
+			if(m_hRenderContext){wglMakeCurrent(m_hDC,m_hRenderContext);}
 		}
 	}
 }

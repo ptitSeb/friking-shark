@@ -1,4 +1,5 @@
 #include "./stdafx.h"
+#include <GL/gl.h>
 #include "IATestUtils.h"
 
 #ifdef WIN32
