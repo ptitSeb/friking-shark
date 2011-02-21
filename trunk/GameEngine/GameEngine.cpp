@@ -13,6 +13,7 @@ DECLARE_CUSTOM_WRAPPER1(CGameGUIManagerWrapper,IGameGUIManager,m_piInterface)
 DECLARE_CUSTOM_WRAPPER1(CGameWindowWrapper,IGameWindow,m_piWindow)
 
 string g_sRootFolder;
+string g_sExecutableFolder;
 string g_sInitialConfigFile="Scripts" PATH_SEPARATOR "GameGUI.cfg";
 
 CGameEngineApp::CGameEngineApp()
@@ -28,6 +29,10 @@ void CGameEngineApp::Run()
 	ISystemManagerPathControl *piPathControl=QI(ISystemManagerPathControl,piSystemManager);
 	if(piPathControl)
 	{
+		// Add executable folder as library path
+		piPathControl->AddLibraryPath(g_sExecutableFolder);
+		
+		// Add working folder as library path
 		char sCurrentPath[MAX_PATH]={0};
 #ifdef WIN32
 		GetCurrentDirectory(MAX_PATH,sCurrentPath);
@@ -106,6 +111,7 @@ void CGameEngineApp::Run()
 void CGameEngineApp::InterpretCommandLine(std::string sExecutableFolder,std::vector<std::string> &vParams)
 {
 	g_sRootFolder=sExecutableFolder;
+	g_sExecutableFolder=sExecutableFolder;
 
 	for(unsigned int x=0;x<vParams.size();x++)
 	{
