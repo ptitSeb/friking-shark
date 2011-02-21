@@ -81,8 +81,8 @@ void CGameMainWindow::SetFont(IGenericFont *piFont,double dSize)
 
 void CGameMainWindow::GetFont(IGenericFont **ppiFont,double *pdSize)
 {
-	(*ppiFont)=NULL;
-	(*pdSize)=0;
+	if(ppiFont){(*ppiFont)=NULL;}
+	if(pdSize){(*pdSize)=0;}
 }
 
 IGameWindow *CGameMainWindow::GetParent(){return NULL;}
