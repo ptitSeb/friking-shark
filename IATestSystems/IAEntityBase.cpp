@@ -1,4 +1,5 @@
 #include "./stdafx.h"
+#include <GL/gl.h>
 #include "IAEntityBase.h"
 #include "IATestUtils.h"
 

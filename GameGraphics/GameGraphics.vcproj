@@ -41,13 +41,14 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameLib;..\GameGraphicsLib"
+				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameLib;..\GameGraphicsLib;..\JPEGLibrary\inc"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;GameGraphics_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="./stdafx.h"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
@@ -65,7 +66,7 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/GameGraphics.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\GameRunTime\Debug;..\GameRunTimeLib\Debug;..\GameEntityLib\Debug;..\GameLib\Debug;..\VectorLib\Debug;..\GameGraphicsLib\Debug"
+				AdditionalLibraryDirectories="..\GameRunTime\Debug;..\GameRunTimeLib\Debug;..\GameEntityLib\Debug;..\GameLib\Debug;..\VectorLib\Debug;..\GameGraphicsLib\Debug;..\JPEGLibrary\lib"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/GameGraphics.pdb"
 				SubSystem="2"
@@ -123,11 +124,12 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="..\GameRunTimeLib;..\GameRunTime;..\VectorLib;..\GameLib"
+				AdditionalIncludeDirectories="..\GameRunTimeLib;..\GameRunTime;..\VectorLib;..\GameLib;..\JPEGLibrary\inc"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;_USRDLL;GameGraphics_EXPORTS"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="./stdafx.h"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
@@ -145,7 +147,7 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/GameGraphics.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\GameRunTime\Release;..\GameRunTimeLib\Release;..\GameEntityLib\Release;..\GameLib\Release;..\VectorLib\Release"
+				AdditionalLibraryDirectories="..\GameRunTime\Release;..\GameRunTimeLib\Release;..\GameEntityLib\Release;..\GameLib\Release;..\VectorLib\Release;..\JPEGLibrary\lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -190,6 +192,26 @@
 			<File
 				RelativePath=".\GameGraphics.cpp"
 				>
+			</File>
+			<File
+				RelativePath=".\GLee.c"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\OpenGLCamera.cpp"
@@ -251,6 +273,10 @@
 			>
 			<File
 				RelativePath=".\GameGraphics.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GLee.h"
 				>
 			</File>
 			<File
