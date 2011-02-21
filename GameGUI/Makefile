@@ -21,8 +21,8 @@ GameGUI.cpp
 CFLAGS +=  -pedantic -pedantic-errors -fPIC -Wall -Werror  -D_REENTRANT -O3 -g
 CFLAGS_DEBUG +=   -pedantic -pedantic-errors -fPIC -Wall -Werror  -D_REENTRANT -g
 
-LIBS = ../GameLib/bin/GameLib.a ../GameGUILib/bin/GameGUILib.a ../GameRunTimeLib/bin/GameRuntimeLib.a   ../VectorLib/bin/VectorLib.a -ldl -lGLU -lGL
-LIBS_DEBUG =  ../GameLib/bin/GameLibd.a ../GameGUILib/bin/GameGUILibd.a ../GameRunTimeLib/bin/GameRuntimeLibd.a  ../VectorLib/bin/VectorLibd.a -ldl -lGLU -lGL
+LIBS = ../GameLib/lib/GameLib.a ../GameGUILib/lib/GameGUILib.a ../GameRunTimeLib/lib/GameRuntimeLib.a   ../VectorLib/lib/VectorLib.a -ldl -lGLU -lGL
+LIBS_DEBUG =  ../GameLib/lib/GameLibd.a ../GameGUILib/lib/GameGUILibd.a ../GameRunTimeLib/lib/GameRuntimeLibd.a  ../VectorLib/lib/VectorLibd.a -ldl -lGLU -lGL
 
 INTERMEDIATE_DIR = ./.intermediate
 OUT_SOURCES=$(addprefix $(INTERMEDIATE_DIR)/,$(SOURCES))
@@ -30,12 +30,12 @@ OUT_SOURCES=$(addprefix $(INTERMEDIATE_DIR)/,$(SOURCES))
 all: release debug
 
 release: $(OUT_SOURCES:.cpp=.o)
-	rm -f bin/GameGUI.so
-	$(CC) -shared -o bin/GameGUI.so .intermediate/*.o $(CFLAGS) $(LIBS)
+	rm -f ../Demo/Bin/GameGUI.so
+	$(CC) -shared -o ../Demo/Bin/GameGUI.so .intermediate/*.o $(CFLAGS) $(LIBS)
 
 debug: $(OUT_SOURCES:.cpp=.od)
-	rm -f bin/GameGUId.so
-	$(CC) -shared -o bin/GameGUId.so .intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG)
+	rm -f ../Demo/Bin/GameGUId.so
+	$(CC) -shared -o ../Demo/Bin/GameGUId.so .intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG)
 
 $(INTERMEDIATE_DIR)/%.o: ./%.cpp
 	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS) $(INCLUDES) $<
@@ -44,6 +44,6 @@ $(INTERMEDIATE_DIR)/%.od: ./%.cpp
 	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS_DEBUG) $(INCLUDES) $<
 
 clean:
-	rm -f ./bin/*
+	rm -f ../Demo/Bin/GameGUI*.so
 	rm -f ./.intermediate/*
 

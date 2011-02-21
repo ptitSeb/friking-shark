@@ -23,11 +23,11 @@ OUT_SOURCES=$(addprefix $(INTERMEDIATE_DIR)/,$(SOURCES))
 
 all: release debug
 release: $(OUT_SOURCES:.cpp=.o)
-	rm -f VectorLib.a
-	ar q bin/VectorLib.a .intermediate/*.o
+	rm -f ./lib/VectorLib.a
+	ar q ./lib/VectorLib.a .intermediate/*.o
 debug: $(OUT_SOURCES:.cpp=.od)
-	rm -f VectorLibd.a
-	ar q bin/VectorLibd.a .intermediate/*.od
+	rm -f ./lib/VectorLibd.a
+	ar q ./lib/VectorLibd.a .intermediate/*.od
 
 $(INTERMEDIATE_DIR)/%.o: ./%.cpp
 	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS) $(INCLUDES) $<
@@ -36,6 +36,6 @@ $(INTERMEDIATE_DIR)/%.od: ./%.cpp
 	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS_DEBUG) $(INCLUDES) $<
 
 clean:
-	rm -f ./bin/*
+	rm -f ./lib/*
 	rm -f ./.intermediate/*
 
