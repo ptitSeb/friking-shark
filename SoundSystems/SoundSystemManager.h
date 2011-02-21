@@ -36,6 +36,9 @@ class CSoundSystemManager:virtual public CSystemObjectBase, virtual public ISoun
   CGameControllerWrapper  m_GameControllerWrapper;
   CEntityManagerWrapper   m_EntityManagerWrapper;
   IDirectSound3DListener *m_piListener;
+  HWND					  m_hMainWindow;
+
+  static BOOL CALLBACK FindTopLevelWindow(HWND hwnd, LPARAM lParam);
 
   CSoundManager m_dxSoundManager;
 
