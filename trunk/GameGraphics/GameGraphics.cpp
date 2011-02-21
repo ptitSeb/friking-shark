@@ -2,7 +2,6 @@
 //
 
 #include "./stdafx.h"
-#include <GL/gl.h>
 #include "GameGraphics.h"
 #include "OpenGLGraphics.h"
 #include "OpenGLCamera.h"

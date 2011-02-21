@@ -12,7 +12,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#ifndef WIN32
 #include <libgen.h>
+#endif
 
 
 using namespace std;
@@ -530,13 +532,13 @@ bool CASEFileType::Open(const char *sFileName)
 					string fileName=ReadString();
 					if(dwCurrentBitmap==ASE_MAP_DIFFUSE)
 					{
-					    strcpy(sFileName,fileName.c_str());
-						strcpy(pMaterial->sFile,basename(sFileName));
+						GetFileName(fileName.c_str(),sFileName);
+						strcpy(pMaterial->sFile,sFileName);
 					}
 					if(dwCurrentBitmap==ASE_MAP_OPACITY)
 					{
-						strcpy(sFileName,fileName.c_str());
-						strcpy(pMaterial->sAlphaFile,basename(sFileName));
+						GetFileName(fileName.c_str(),sFileName);
+						strcpy(pMaterial->sAlphaFile,sFileName);
 					}
 				}
 			break;

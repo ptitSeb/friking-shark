@@ -1,7 +1,212 @@
 
 #include "./stdafx.h"
+#include <stdint.h>
 #include "OpenGLGraphics.h"
 #include "OpenGLTexture.h"
+#include "jpegdecoder.h"
+
+#pragma pack(push,1)
+struct BMPFILEHEADER
+{
+	uint16_t bfType; 
+	uint32_t bfSize; 
+	uint16_t bfReserved1; 
+	uint16_t bfReserved2; 
+	uint32_t bfOffBits; 
+};
+struct BMPINFOHEADER 
+{ 
+	uint32_t biSize; 
+	uint32_t biWidth; 
+	uint32_t biHeight; 
+	uint16_t biPlanes; 
+	uint16_t biBitCount;
+	uint32_t biCompression; 
+	uint32_t biSizeImage; 
+	uint32_t biXPelsPerMeter; 
+	uint32_t biYPelsPerMeter; 
+	uint32_t biClrUsed; 
+	uint32_t biClrImportant; 
+}; 
+#pragma pack(pop)
+
+bool LoadBMPFile(const char *pFileName,unsigned int nBits,unsigned int *pnWidth,unsigned int *pnHeight,unsigned char **ppPixels)
+{
+	BMPFILEHEADER fileHeader={0};
+	BMPINFOHEADER fileInfo={0};
+
+	FILE *pFile=fopen(pFileName,"rb");
+	if(!pFile){return false;}
+	// Make room for the header
+	bool bOk=(fread(&fileHeader,sizeof(fileHeader),1,pFile)==1);
+	if(bOk){bOk=(fileHeader.bfType == 0x4d42);}
+	if(bOk){bOk=(fread(&fileInfo,sizeof(fileInfo),1,pFile)==1);}
+	if(bOk){bOk=(fileInfo.biSize==sizeof(fileInfo));}
+	if(bOk){bOk=(fileInfo.biPlanes==1);}
+	if(bOk){bOk=(fileInfo.biBitCount==24 || fileInfo.biBitCount==32);}
+	if(bOk){bOk=(fileInfo.biCompression==0);} // BI_RGB
+	if(bOk){fseek(pFile,fileHeader.bfOffBits,SEEK_SET);}
+	if(bOk)
+	{
+		unsigned char *pFileBits=(unsigned char*)malloc(fileInfo.biSizeImage);
+		if(bOk){bOk=(fread(pFileBits,fileInfo.biSizeImage,1,pFile)==1);}
+		if(bOk)
+		{
+			*pnHeight=fileInfo.biHeight;
+			*pnWidth=fileInfo.biWidth;
+			*ppPixels = new unsigned char[fileInfo.biHeight * fileInfo.biWidth * nBits/8];
+			// Set alpha to 1
+			if(nBits==32){memset(*ppPixels,0xFF,fileInfo.biHeight * fileInfo.biWidth * nBits/8);}
+
+			int sourceLineSize = fileInfo.biWidth *  fileInfo.biBitCount/8;
+			int paddedLineSize = ((sourceLineSize/4)*4);
+			int pad=0;
+			if(paddedLineSize < sourceLineSize){pad=4;}
+
+			unsigned char *bufferPointer = (*ppPixels);// + (lineSize * (fileInfo.biHeight-1));
+			unsigned char *imagePointer = pFileBits;
+
+			int x, y;
+			int nSourceExcess=fileInfo.biBitCount>nBits?1:0;
+			int nDestExcess=nBits>fileInfo.biBitCount?1:0;
+			int nCommon=fileInfo.biBitCount==nBits?fileInfo.biBitCount/8:3;
+
+			for(x = fileInfo.biHeight-1; x >= 0; x--)
+			{
+				for(y = 0; y < (int)fileInfo.biWidth; y++)
+				{
+					bufferPointer[0] = imagePointer[2];
+					bufferPointer[1] = imagePointer[1];
+					bufferPointer[2] = imagePointer[0];
+					bufferPointer+=nCommon+nDestExcess;
+					imagePointer+=nCommon+nSourceExcess;
+				}
+				imagePointer  += pad;
+			}
+		}
+		free(pFileBits);
+		pFileBits=NULL;
+	}
+
+	fclose(pFile);
+	pFile=NULL;
+	return bOk;
+}
+
+
+bool LoadJPEGImageHelper(string sFile,DWORD dwColorType,unsigned *pOpenGLSkinWidth,unsigned *pOpenGLSkinHeight,BYTE **ppBuffer)
+{
+	Pjpeg_decoder_file_stream Pinput_stream = new jpeg_decoder_file_stream();
+
+	if (Pinput_stream->open(sFile.c_str()))
+	{
+		delete Pinput_stream;
+		return false;
+	}
+
+	Pjpeg_decoder Pd = new jpeg_decoder(Pinput_stream, false);
+	if (Pd->get_error_code() != 0)
+	{
+		delete Pd;
+		delete Pinput_stream;
+		return false;
+	}
+
+	if (Pd->begin())
+	{
+		delete Pd;
+		delete Pinput_stream;
+		return false;
+	}
+
+	uchar *Pbuf = NULL;
+	if (Pd->get_num_components() == 3)
+	{
+		Pbuf = (uchar *)malloc(Pd->get_width() * 3);
+		if (!Pbuf)
+		{
+			printf("Error: Out of memory!\n");
+
+			delete Pd;
+			delete Pinput_stream;
+			return false;
+		}
+	}
+
+	DWORD destBytesPerPixel=dwColorType==GL_RGB?3:4;
+	DWORD dwSize = Pd->get_width() * Pd->get_height() * destBytesPerPixel;
+	*pOpenGLSkinWidth = Pd->get_width();
+	*pOpenGLSkinHeight = Pd->get_height();
+	*ppBuffer = new BYTE[dwSize];
+
+	memset(*ppBuffer,255,dwSize); // esto se hace para inicializar la imagen y el canal RGBA
+
+	int lines_decoded = 0;
+	for ( ; ; )
+	{
+		void *Pscan_line_ofs;
+		uint scan_line_len;
+
+		if (Pd->decode(&Pscan_line_ofs, &scan_line_len))
+			break;
+
+		if (Pd->get_num_components() == 3)
+		{
+			uchar *Psb = (uchar *)Pscan_line_ofs;
+			uchar *Pdb = (*ppBuffer)+(Pd->get_height()-(lines_decoded+1))*Pd->get_width()*destBytesPerPixel;
+			int src_bpp = Pd->get_bytes_per_pixel();
+
+			for (int x = Pd->get_width(); x > 0; x--, Psb += src_bpp, Pdb += destBytesPerPixel)
+			{
+				Pdb[0] = Psb[0];
+				Pdb[1] = Psb[1];
+				Pdb[2] = Psb[2];
+			}
+		}
+		lines_decoded++;
+	}
+
+	free(Pbuf);
+	delete Pd;
+	delete Pinput_stream;
+	return true;
+}
+
+bool LoadImageHelper(string sFile,DWORD dwColorType,unsigned *pOpenGLSkinWidth,unsigned *pOpenGLSkinHeight,BYTE **ppBuffer)
+{
+	*pOpenGLSkinWidth=0;
+	*pOpenGLSkinHeight=0;
+	*ppBuffer=NULL;
+
+	char sFileName[MAX_PATH]={0};
+	strcpy(sFileName,sFile.c_str());
+
+	char sExt[MAX_PATH]={0};
+	GetExtension(sFile.c_str(),sExt);
+
+	std::string path=sFile;
+	char pFileFolder[MAX_PATH];
+	GetFileFolder(sFileName,pFileFolder);
+	if(pFileFolder[0]==0 || strcmp(pFileFolder,".")==0)
+	{
+		string sTemp="Textures/";
+		sTemp+=path;
+		path=sTemp;
+	}
+	if(sExt[0]==0)
+	{
+		path+=".bmp";
+	}
+	else
+	{
+		if(strcasecmp(sExt,".JPG")==0)
+		{
+			return LoadJPEGImageHelper(path,dwColorType,pOpenGLSkinWidth,pOpenGLSkinHeight,ppBuffer);
+		}
+	}
+	return LoadBMPFile(path.c_str(),(dwColorType==GL_RGBA)?32:24,pOpenGLSkinWidth,pOpenGLSkinHeight,ppBuffer);
+}
+
 
 COpenGLTexture::COpenGLTexture(void)
 {
@@ -81,14 +286,14 @@ bool COpenGLTexture::LoadFromFile()
 	bool bResult=true;
 	DWORD	 dwColorType=HasAlphaChannel()?GL_RGBA:GL_RGB;
 
-	if(LoadTextureImageHelper(m_sFileName,dwColorType,&m_dwWidth,&m_dwHeight,&m_pBuffer))
+	if(LoadImageHelper(m_sFileName,dwColorType,&m_dwWidth,&m_dwHeight,&m_pBuffer))
 	{
 		if(m_sAlphaFileName!="")
 		{
 			BYTE	*pAlphaBuffer=NULL;
 			unsigned nAlphaOpenGLSkinWidth=0,nAlphaOpenGLSkinHeight=0;
 
-			if(LoadTextureImageHelper(m_sAlphaFileName,GL_RGB,&nAlphaOpenGLSkinWidth,&nAlphaOpenGLSkinHeight,&pAlphaBuffer))
+			if(LoadImageHelper(m_sAlphaFileName,GL_RGB,&nAlphaOpenGLSkinWidth,&nAlphaOpenGLSkinHeight,&pAlphaBuffer))
 			{
 				if(nAlphaOpenGLSkinWidth==m_dwWidth && m_dwHeight==nAlphaOpenGLSkinHeight)
 				{

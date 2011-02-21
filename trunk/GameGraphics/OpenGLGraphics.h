@@ -1,9 +1,5 @@
 #pragma once
 
-#include <GL/gl.h>
-
-class CPreprocessedRenderBuffer;
-
 class IOpenGLTexture: virtual public ISystemUnknown
 {
 public:

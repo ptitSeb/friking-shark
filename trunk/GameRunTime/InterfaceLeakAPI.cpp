@@ -7,6 +7,8 @@
 #include <windows.h>
 #include "InterfaceLeakAPI.h"
 #ifdef WIN32
+#include  <io.h> // _access
+
 
 #define _CRT_ERROR          1
 

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "./stdafx.h"
 #include "WorldSector.h"
 #include "WorldManager.h"
 

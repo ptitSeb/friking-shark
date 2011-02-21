@@ -219,7 +219,7 @@ CPolyhedron *CMdlFileType::GetPolyhedron(int frame,int skin)
 		t1=vTriangleVertexes[1]-vTriangleVertexes[0];
 		t2=vTriangleVertexes[2]-vTriangleVertexes[0];
 		t3=t1^t2;
-		if(!isnan(t3.c[0]) && !isnan(t3.c[1]) && !isnan(t3.c[2]) && 
+		if(t3.c[0]==t3.c[0] && t3.c[1]==t3.c[1] && t3.c[2]==t3.c[2] && 
 			(t3.c[0]!=0 || t3.c[1]!=0 || t3.c[2]!=0))
 		{
 			CPolygon *pPolygon=new CPolygon(3,vTriangleVertexes);

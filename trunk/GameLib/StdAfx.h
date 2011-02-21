@@ -11,9 +11,14 @@
 #define GAME_LIB_PROYECT
 
 #define GL_GLEXT_PROTOTYPES
+#include <windows.h>
 #include <crtdbg.h>
 #include <GL/gl.h>
 #include <GL/glext.h>
+#ifdef WIN32
+#include <GL/glu.h>
+#else
 #include <GL/glut.h>
+#endif
 
 #endif 

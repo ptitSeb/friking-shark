@@ -1,7 +1,6 @@
 #include "./stdafx.h"
 #include "ParticleSystems.h"
 #include "PointParticleType.h"
-
 CPointParticleType::CPointParticleType()
 {
   m_bCastShadow=false;

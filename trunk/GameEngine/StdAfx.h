@@ -20,9 +20,7 @@
 
 #pragma warning ( disable : 4244 4018 )
 
-#include "..\VectorLib\VectorLib.h"
-#include "..\GameLib\GameLib.h"
-#include "Globals.h"
+#include "VectorLib.h"
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.

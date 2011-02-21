@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "./stdafx.h"
 #include "PlayerType.h"
 #include "FighterType.h"
 #include "BomberType.h"

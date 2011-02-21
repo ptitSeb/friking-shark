@@ -1,7 +1,7 @@
 // GameGUI.cpp : Defines the entry point for the DLL application.
 //
 
-#include "stdafx.h"
+#include "./stdafx.h"
 #include "GameGUI.h"
 #include "GameGUILib.h"
 #include "GameGUILabel.h"

@@ -2,7 +2,7 @@
 //	GameEngine.pch will be the pre-compiled header
 //	stdafx.obj will contain the pre-compiled type information
 
-#include "stdafx.h"
+#include "./stdafx.h"
 
 #ifdef WIN32
   #ifdef _DEBUG
@@ -17,6 +17,6 @@
 	  #pragma comment (lib, "..\\GameLib\\Release\\GameLib.lib")
   #endif
 
-  #pragma comment (lib, "opengl32.lib")
-  #pragma comment (lib, "glu32.lib")
+  #pragma comment (lib, "GameRuntime.lib")
+  #pragma comment (lib, "GameRuntimeLib.lib")
 #endif

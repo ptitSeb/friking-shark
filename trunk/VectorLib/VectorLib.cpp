@@ -4,11 +4,12 @@
 
 #include "./StdAfx.h"
 #include "VectorLib.h"
-#include "float.h"
 #include "Utilities.h"
 #include <crtdbg.h>
-#include <GL/gl.h>
 #include <algorithm>
+#ifndef WIN32
+#include <libgen.h>
+#endif
 
 //#define _DISABLE_OPTIMIZATIONS
 
@@ -2203,19 +2204,6 @@ CTexture::~CTexture()
 	if(m_pPixels!=NULL){delete [] (char*)m_pPixels;m_pPixels=NULL;}
 }
 
-CVector CTexture::GetPixelColor( unsigned long x, unsigned long y )
-{
-	CVector vResult;
-	if(x<m_nWidth && y<m_nHeight)
-	{
-		unsigned long nPixel=x+(y*m_nWidth);
-		unsigned long nPixelSize=(m_dwColorType==GL_RGBA?4:3);
-		unsigned char *pPixel=(unsigned char *)m_pPixels+(nPixel*nPixelSize);
-		for(int p=0;p<3;p++){vResult.c[p]=((double)pPixel[p])/255.0;}		 
-	}
-	return vResult;
-}
-
 CVector	CalcMins(CVector &v1,CVector &v2)
 {
 	CVector v;
@@ -2380,9 +2368,6 @@ CMaterial::CMaterial()
 	cAmbientColor=RGB(128,128,128);
 	cDiffuseColor=RGB(128,128,128);
 	cSpecularColor=RGB(128,128,128);
-	nTextureIndex=-1;
-	pTexture=NULL;
-	nList=-1;
 	fShininess=0;
 	fOpacity=1.0;
 	bTwoSided=false;
@@ -2390,7 +2375,6 @@ CMaterial::CMaterial()
 
 CMaterial::~CMaterial()
 {
-	DeleteList();
 }
 
 bool CMaterial::operator == (const CMaterial &material)
@@ -2399,45 +2383,8 @@ bool CMaterial::operator == (const CMaterial &material)
 	if(cAmbientColor!=material.cAmbientColor){return false;}
 	if(cDiffuseColor!=material.cDiffuseColor){return false;}
 	if(cSpecularColor!=material.cSpecularColor){return false;}
-	if(nTextureIndex!=material.nTextureIndex){return false;}
+	if(sTexture!=material.sTexture){return false;}
 	return true;
-}
-
-void CMaterial::DeleteList()
-{
-	if(nList){glDeleteLists(nList,1);}
-	nList=-1;
-}
-
-void CMaterial::CreateList()
-{
-	nList=glGenLists(1);
-	float ambient[4]={0,0,0,fOpacity};
-	float diffuse[4]={0,0,0,1};
-	float specular[4]={0,0,0,1};
-	RGBToFloat(cAmbientColor,ambient);
-	RGBToFloat(cDiffuseColor,diffuse);
-	RGBToFloat(cSpecularColor,specular);
-	glNewList(nList,GL_COMPILE);
-	if(nTextureIndex!=-1)
-	{
-		glActiveTexture(GL_TEXTURE0_ARB);
-		glMaterialfv(GL_FRONT,GL_AMBIENT,ambient);
-		glBindTexture(GL_TEXTURE_2D,nTextureIndex);
-		ambient[0]=1;
-		ambient[1]=1;
-		ambient[2]=1;
-	}
-	else
-	{
-		glBindTexture(GL_TEXTURE_2D,0);
-	}
-	glColor4fv(ambient);
-	glMaterialfv(GL_FRONT,GL_AMBIENT,ambient);
-	glMaterialfv(GL_FRONT,GL_DIFFUSE,diffuse);
-	glMaterialfv(GL_FRONT,GL_SPECULAR,specular);
-	glMaterialf(GL_FRONT,GL_SHININESS,fShininess*128.0);
-	glEndList();
 }
 
 

@@ -1,9 +1,6 @@
 #include "./stdafx.h"
 #include "OpenGLGraphics.h"
 #include "OpenGLRender.h"
-#include "GameGUI.h"
-
-DECLARE_CUSTOM_WRAPPER1(CGameGUIManagerWrapper,IGameGUIManager,m_piInterface)
 
 COpenGLRender::COpenGLRender(void)
 {
@@ -1360,9 +1357,6 @@ void COpenGLRender::EndStagedRendering()
 	if(!m_bStagedRendering){return;}
 
 	m_bStagedRendering=false;
-
-	CGameGUIManagerWrapper guiManager;
-	guiManager.Attach("GameGUI","GUIManager");
 
 	if(m_sRenderOptions.bEnableShadows)
 	{

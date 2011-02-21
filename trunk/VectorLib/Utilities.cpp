@@ -66,4 +66,36 @@ void GetExtension(const char *pFileName,char *pExt)
   if(pExtStart){strcpy(pExt,pExtStart);}
   else{*pExt=0;}
 }
+#ifdef WIN32
+void GetFileFolder(const char *pFilePath,char *pFolder)
+{
+	char sDrive[MAX_PATH]={0};
+	char sFolder[MAX_PATH]={0};
+	_splitpath(pFilePath,sDrive,sFolder,NULL,NULL);
+	strcpy(pFolder,sDrive);
+	strcat(pFolder,sFolder);
+}
 
+void GetFileName(const char *pFilePath,char *pFileName)
+{
+	char sName[MAX_PATH]={0};
+	char sExt[MAX_PATH]={0};
+	_splitpath(pFilePath,NULL,NULL,sName,sExt);
+	strcpy(pFileName,sName);
+	strcat(pFileName,sExt);
+}
+#else
+void GetFileFolder(const char *pFileName,char *pFolder)
+{
+	char *pTemp=strdup(pFileName);
+	strcpy(pFolder,dirname(pTemp));
+	free(pTemp);
+}
+
+void GetFileName(const char *pFileName,char *pFileName)
+{
+	char *pTemp=strdup(pFileName);
+	strcpy(pFolder,basename(pTemp));
+	free(pTemp);
+}
+#endif

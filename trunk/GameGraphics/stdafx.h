@@ -14,9 +14,12 @@
 #include <stack>
 #include <crtdbg.h>
 #define GL_GLEXT_PROTOTYPES
-#include <GL/gl.h>
-#include <GL/glext.h>
+#include "GLee.h"
+#ifdef WIN32
+#include <GL/glu.h>
+#else 
 #include <GL/glut.h>
+#endif
 #include "VectorLib.h"
 #include "GameLib.h"
 #include "GameGraphics.h"

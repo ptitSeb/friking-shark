@@ -102,14 +102,14 @@ bool COpenGLModel::LoadFromFile()
 				pBuffer->vSpecularColor=RGBToVector(pMaterial->cSpecularColor);
 
 				SModelTextureLevel *pTextureLevel=NULL;
-				if(pMaterial->nTextureIndex!=-1)
+				if(pMaterial->sTexture!="")
 				{
 					pTextureLevel=new SModelTextureLevel;
 					pTextureLevel->pTexVertexArray=new GLfloat[pBuffer->nVertexes*2];
 					pTextureLevel->texture.Create(m_piSystem,"Texture","");
 					if(pTextureLevel->texture.m_piTexture)
 					{
-						pTextureLevel->texture.m_piTexture->Load(pMaterial->pTexture->m_sName,NULL,NULL,pBuffer->fOpacity);
+						pTextureLevel->texture.m_piTexture->Load(pMaterial->sTexture.c_str(),NULL,NULL,pBuffer->fOpacity);
 					}
 					pBuffer->vTextureLevels.push_back(pTextureLevel);
 				}
