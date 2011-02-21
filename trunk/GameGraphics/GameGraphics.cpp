@@ -1,9 +1,8 @@
 // GameGraphics.cpp : Defines the entry point for the DLL application.
 //
 
-#include "stdafx.h"
-#include <gl\gl.h>
-#include <gl\glu.h>
+#include "./stdafx.h"
+#include <GL/gl.h>
 #include "GameGraphics.h"
 #include "OpenGLGraphics.h"
 #include "OpenGLCamera.h"
@@ -24,5 +23,5 @@ BEGIN_SYSTEM_MODULE()
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(COpenGLCamera,"Camera");
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(COpenGLLight,"Light");
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(COpenGLShader,"Shader");
-END_SYSTEM_MODULE();
+END_SYSTEM_MODULE()
 

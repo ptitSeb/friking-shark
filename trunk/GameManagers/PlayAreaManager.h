@@ -1,7 +1,7 @@
 #pragma once
 
-DECLARE_CUSTOM_WRAPPER1(CPlayAreaElementWrapper,IPlayAreaElement,m_piElement);
-DECLARE_CUSTOM_WRAPPER1(CPlayAreaEntityWrapper,IPlayAreaEntity,m_piElement);
+DECLARE_CUSTOM_WRAPPER1(CPlayAreaElementWrapper,IPlayAreaElement,m_piElement)
+DECLARE_CUSTOM_WRAPPER1(CPlayAreaEntityWrapper,IPlayAreaEntity,m_piElement)
 
 struct SEntityLayerData
 {

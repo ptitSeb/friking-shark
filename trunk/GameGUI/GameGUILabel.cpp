@@ -1,6 +1,6 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "GameGUILib.h"
-#include ".\gameguilabel.h"
+#include "GameGUILabel.h"
 
 CGameGUILabel::CGameGUILabel(void)
 {
@@ -40,6 +40,9 @@ void CGameGUILabel::DrawText(IGenericRender *piRender,CVector &vColor,double dAl
 	{
 		std::string sFontName;
 		double			dFontSize=0;
+		
+		
+		//RTTRACE("CGameGUILabel::DrawText -> %s: %p %d",m_sText.c_str(),m_Font.m_piFont,(int)m_dFontSize);
 
 		IGenericFont *piFont=NULL;
 		GetFont(&piFont,&dFontSize);

@@ -1,8 +1,8 @@
-#include "StdAfx.h"
-#include ".\AnimationSystems.h"
-#include ".\AnimationObjectBase.h"
-#include ".\SoundSystems.h"
-#include ".\SoundAnimationObjecttype.h"
+#include "./stdafx.h"
+#include "AnimationSystems.h"
+#include "AnimationObjectBase.h"
+#include "SoundSystems.h"
+#include "SoundAnimationObjectType.h"
 
 CSoundAnimationObjectType::CSoundAnimationObjectType()
 {

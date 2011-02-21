@@ -1,7 +1,7 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "GameRunTimeLib.h"
-#include ".\systemunknownbase.h"
-#include ".\systemmodulehelpers.h"
+#include "./SystemUnknownBase.h"
+#include "./SystemModuleHelpers.h"
 
 CSystemModuleHelper::CSystemModuleHelper(HINSTANCE hInstance,tBuildClassMap pBuildClassMap)
 {

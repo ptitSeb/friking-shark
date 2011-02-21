@@ -1,6 +1,5 @@
 #pragma once
 
-
 #define KEY_FORWARD		1
 #define KEY_BACK		2
 #define KEY_RIGHT		3

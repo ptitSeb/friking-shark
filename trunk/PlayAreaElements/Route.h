@@ -37,4 +37,4 @@ public:
 	CVector GetPlayAreaElementPoint(CVector vPlayAreaElementPos,unsigned nIndex);
 };
 
-DECLARE_SERIALIZABLE(CRoute);
+DECLARE_SERIALIZABLE(CRoute)

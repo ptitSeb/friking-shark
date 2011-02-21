@@ -1,10 +1,10 @@
 // OpenGLExtensions.cpp: implementation of the COpenGLExtensions class.
 //
 //////////////////////////////////////////////////////////////////////
-#include "stdafx.h"
+#include "./StdAfx.h"
 #include "OpenGLExtensions.h"
 #include "Utilities.h"
-#include "gl\gl.h"
+#include <GL/gl.h>
 
 // OpenGL Extensions
 typedef BOOL (APIENTRY *PFNWGLSWAPINTERVALFARPROC)( int );
@@ -36,7 +36,7 @@ bool COpenGLExtensions::Init()
 	char *pTempBuffer=new char [nLen+1];
 	char *pExt=NULL;
 	memcpy(pTempBuffer,pExtensions,nLen+1);
-	while(pExt=strtok(pExt?NULL:pTempBuffer," "))
+	while((pExt=strtok(pExt?NULL:pTempBuffer," ")))
 	{
 		std::string sExtensionName=pExt;
 		g_sExtensions.insert(sExtensionName);
@@ -46,7 +46,7 @@ bool COpenGLExtensions::Init()
 
 	delete [] pTempBuffer;
 
-	if(HasExtension(GLEXT_VSYNC_NAME)){wglExtension_SwapInterval = (PFNWGLSWAPINTERVALFARPROC)wglGetProcAddress(GLEXT_VSYNC_FUNC);}
+//	if(HasExtension(GLEXT_VSYNC_NAME)){wglExtension_SwapInterval = (PFNWGLSWAPINTERVALFARPROC)wglGetProcAddress(GLEXT_VSYNC_FUNC);}
 	return true;
 }
 

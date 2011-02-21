@@ -1,11 +1,11 @@
-#include "StdAfx.h"
+#include "./stdafx.h"
 #include "resource.h"
-#include "GameRuntimeLib.h"
+#include "GameRunTimeLib.h"
 #include "GameGUILib.h"
 #include "GUISystems.h"
-#include ".\mainwindow.h"
+#include "MainWindow.h"
 
-DECLARE_CUSTOM_WRAPPER1(CGameGUIManagerWrapper,IGameGUIManager,m_piInterface);
+DECLARE_CUSTOM_WRAPPER1(CGameGUIManagerWrapper,IGameGUIManager,m_piInterface)
 
 extern CSystemModuleHelper *g_pSystemModuleHelper;
 
@@ -39,10 +39,11 @@ bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 	bool bResult=CGameWindowBase::InitWindow(piParent,bPopup);
 	if(bResult)
 	{
-		HICON hIcon=LoadIcon(g_pSystemModuleHelper->GetInstance(),MAKEINTRESOURCE(IDR_MAINFRAME));
+		#pragma message("CMainWindow::InitWindow -> se ha quitado el icono")
+		//HICON hIcon=LoadIcon(g_pSystemModuleHelper->GetInstance(),MAKEINTRESOURCE(IDR_MAINFRAME));
 		m_Viewport.Attach("GameGUI","Viewport");
 		m_Viewport.m_piViewport->SetCaption("Friking Shark");
-		m_Viewport.m_piViewport->SetIcon(hIcon);
+		//m_Viewport.m_piViewport->SetIcon(hIcon);
 
 		SGameRect sRect;
 		sRect.x=0;
@@ -52,7 +53,7 @@ bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 		m_eReferenceSystem=eGameGUIReferenceSystem_Relative;
 		SetRect(&sRect);
 
-		bResult=m_GUIConfigFile.Open("Resources\\Scripts\\GameGUI.cfg");
+		bResult=m_GUIConfigFile.Open("Scripts/GameGUI.cfg");
 
 		if(bResult)
 		{

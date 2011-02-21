@@ -5,6 +5,7 @@
 #include "GameRunTime.h"
 #include "GameRunTimeLib.h"
 
+#ifdef WIN32
 BOOL APIENTRY DllMain( HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
 	switch (ul_reason_for_call)
@@ -17,34 +18,5 @@ BOOL APIENTRY DllMain( HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
 	}
     return TRUE;
 }
+#endif
 
-
-void Test()
-{/*
-    CConfigFile         configFile;
-    CSystemModuleList   rootModules;
-    CSystemObjectList   rootObjects;
-
-    SSystemModuleInfo info;
-    ISystemManager *piSystemManager=ISystemManager::GetInstance();
-    ISystem *piSystem=piSystemManager->CreateSystem("Engine");
-
-    configFile.Load("GameEngine.cfg");
-    if(rootModules.Load(&configFile,"MainModules"))
-    {
-        rootModules.LoadModules(piSystem);
-    }
-    if(rootObjects.Load(&configFile,"MainObjects"))
-    {
-        rootObjects.LoadObjects(piSystem);
-    }
-
-    ISystemObject *piObject=NULL;
-    if(piSystem->GetObject("GameManager",&piObject))
-    {
-        IGameManager *piManager=dynamic_cast<IGameManager*>(piObject);
-        piManager->Run();
-    }
-
-    ISystemManager::DestroySystem(piSystem);*/
-}

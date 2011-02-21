@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "IATestUtils.h"
 
+#ifdef WIN32
 #pragma warning ( disable : 4244 )
+#endif
 
 void RenderBBox(CVector vMins,CVector vMaxs,CVector vColor)
 {
@@ -9,7 +11,6 @@ void RenderBBox(CVector vMins,CVector vMaxs,CVector vColor)
 	glColor3d(vColor.c[0],vColor.c[1],vColor.c[2]);
 	glDisable(GL_TEXTURE_2D);
 
-	DWORD stipple=0x8888;
 	glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 	glEnable(GL_LINE_STIPPLE);
 	glLineStipple(1,0x8888);
@@ -152,21 +153,20 @@ void RenderAxises()
 	RenderAxis(AxisPosZ,100,RGB(255,0  ,0));
 	glEnable(GL_DEPTH_TEST);
 	glPopAttrib();
-};
+}
 
 void RenderObjectAxises(double dSize)
 {
 	RenderAxis(AxisPosX,dSize,RGB(0  ,0  ,255));
 	RenderAxis(AxisPosY,dSize,RGB(255,255,0));
 	RenderAxis(AxisPosZ,dSize,RGB(255,0  ,0));
-};
+}
 
 void RenderAxis(CVector vAxis,double dLength,COLORREF cColor)
 {
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 	glDisable(GL_DEPTH_TEST);
 	CVector vEndPoint=vAxis*dLength;
-	double dLineSize=0.0;
 	double dPointSize=0.0;
 
 	glGetDoublev(GL_POINT_SIZE,&dPointSize);

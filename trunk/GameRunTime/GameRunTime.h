@@ -1,13 +1,23 @@
 #pragma once
 
 #ifdef GAMERUNTIME_EXPORTS
-#define GAMERUNTIME_API __declspec(dllexport)
+	#ifdef WIN32 
+		#define GAMERUNTIME_API __declspec(dllexport)
+	#else
+		#define GAMERUNTIME_API 
+	#endif
+	
 #else
-#define GAMERUNTIME_API __declspec(dllimport)
+	#ifdef WIN32 
+		#define GAMERUNTIME_API __declspec(dllimport)
+	#else
+		#define GAMERUNTIME_API 
+	#endif
 #ifndef GAMERUNTIMELIB_COMPILATION
-#pragma comment (lib,"GameRunTime.lib")
+//#pragma comment (lib,"GameRunTime.lib")
 #endif
 #endif
+
 #include <string>
 #include <set>
 #include <map>
@@ -15,7 +25,17 @@
 
 
  // warning C4250: 'xxx' : inherits 'CSystemObjectBase::CSystemObjectBase::AddReference' via dominance
+#ifdef WIN32 
 #pragma warning ( disable : 4250 )
+#endif
+
+#ifdef WIN32
+#define PATH_SEPARATOR "\\"
+#define PATH_SEPARATOR_CHAR '\\'
+#else
+#define PATH_SEPARATOR "/"
+#define PATH_SEPARATOR_CHAR '/'
+#endif
 
 class ISystemModule;
 class ISystemClass;

@@ -52,8 +52,8 @@ class CGBSFileType
 {
 	SGBSHeader	 m_Header;
 
-	CBSPNode	*ReadNode(HANDLE hFile,CBSPNode *pParent);
-	bool		 WriteNode(HANDLE hFile,CBSPNode *pNode,SGBSFileNodeStats *pStats,int nCurrentDepth,double *pBalanceFactor);
+	CBSPNode	*ReadNode(FILE *pFile,CBSPNode *pParent);
+	bool		 WriteNode(FILE *pFile,CBSPNode *pNode,SGBSFileNodeStats *pStats,int nCurrentDepth,double *pBalanceFactor);
 public:
 	DWORD		GetVersion();
 	FILETIME	GetTimeStamp();

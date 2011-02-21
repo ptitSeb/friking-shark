@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GameRuntimeLib.h"
+#include "GameRunTimeLib.h"
 #include "AnimationSystems.h"
 #include "EntityTypeBase.h"
 #include "SteeringBehaviours.h"

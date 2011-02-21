@@ -1,6 +1,6 @@
 #pragma once
 
-DECLARE_CUSTOM_WRAPPER1(CSoundTypeWrapper,ISoundType,m_piSoundType);
+DECLARE_CUSTOM_WRAPPER1(CSoundTypeWrapper,ISoundType,m_piSoundType)
 
 class CSoundAnimationObjectType: public CAnimationObjectTypeBase
 {

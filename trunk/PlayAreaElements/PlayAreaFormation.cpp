@@ -1,7 +1,7 @@
-#include "StdAfx.h"
-#include ".\PlayAreaElementBase.h"
-#include ".\PlayAreaFormation.h"
-#include ".\GameGraphics.h"
+#include "./stdafx.h"
+#include "PlayAreaElementBase.h"
+#include "PlayAreaFormation.h"
+#include "GameGraphics.h"
 
 CPlayAreaFormation::CPlayAreaFormation()
 {

@@ -1,6 +1,6 @@
-#include "StdAfx.h"
-#include ".\particlesystems.h"
-#include ".\textureparticletype.h"
+#include "./stdafx.h"
+#include "ParticleSystems.h"
+#include "TextureParticleType.h"
 
 CTextureParticleType::CTextureParticleType()
 {

@@ -1,5 +1,10 @@
-#include "StdAfx.h"
-#include ".\framemanager.h"
+#include "./stdafx.h"
+#include "FrameManager.h"
+
+#ifndef WIN32
+#include <sys/time.h>
+#endif
+
 
 CFrameManager::CFrameManager()
 {
@@ -21,7 +26,9 @@ CFrameManager::CFrameManager()
 	m_nFPSFrames=0;
 	memset(&m_dwFPSFrameTimes,0,sizeof(m_dwFPSFrameTimes));
 
+#ifdef WIN32
 	QueryPerformanceFrequency(&m_ldPerformanceFrequency);
+#endif 
 }
 
 DWORD  CFrameManager::GetCurrentRealTime(){return m_dwCurrentRealTime;}
@@ -31,9 +38,15 @@ double CFrameManager::GetRealTimeFraction(){return m_dRealTimeFraction;}
 
 void CFrameManager::Reset()
 {
+#ifdef WIN32
 	LARGE_INTEGER ldNow={0};
 	QueryPerformanceCounter(&ldNow);
 	m_dwTimeBase=(DWORD)(ldNow.QuadPart*1000/m_ldPerformanceFrequency.QuadPart);
+#else
+	timeval tNow;
+    gettimeofday(&tNow, NULL);
+	m_dwTimeBase=((double)tNow.tv_sec)*1000.0+((double)tNow.tv_usec)/1000.0;
+#endif
 	m_dwLastTime=0;
 	m_dwCurrentTime=0;
 }
@@ -84,9 +97,15 @@ void CFrameManager::ProcessFrame()
 	}
 	m_bTogglePauseOnNextFrame=m_bSetPauseOnNextFrame=m_bContinueOnNextFrame=false;
 
+#ifdef WIN32
 	LARGE_INTEGER ldNow={0};
 	QueryPerformanceCounter(&ldNow);
 	m_dwCurrentRealTime=(DWORD)(ldNow.QuadPart*1000/m_ldPerformanceFrequency.QuadPart);
+#else
+	timeval tNow;
+    gettimeofday(&tNow, NULL);
+	m_dwCurrentRealTime=((double)tNow.tv_sec)*1000.0+((double)tNow.tv_usec)/1000.0;
+#endif
 	if(!m_bPaused)
 	{
 		m_dwCurrentTime=m_dwCurrentRealTime-m_dwTimeBase;
@@ -122,7 +141,7 @@ void CFrameManager::ComputeFps()
 	}
 	if(nFramesToRemove)
 	{
-		memcpy(m_dwFPSFrameTimes,m_dwFPSFrameTimes+nFramesToRemove,sizeof(float)*(m_nFPSFrames-nFramesToRemove));
+		memmove(m_dwFPSFrameTimes,m_dwFPSFrameTimes+nFramesToRemove,sizeof(float)*(m_nFPSFrames-nFramesToRemove));
 		m_nFPSFrames-=nFramesToRemove;
 	}
 	m_dwFPSFrameTimes[m_nFPSFrames]=m_dwCurrentRealTime;

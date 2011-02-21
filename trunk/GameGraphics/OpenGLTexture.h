@@ -1,5 +1,5 @@
 #pragma once
-#include "gamegraphics.h"
+#include "GameGraphics.h"
 
 class COpenGLTexture : virtual public CSystemObjectBase,virtual public IGenericTexture,virtual public IOpenGLTexture
 {
@@ -21,6 +21,8 @@ class COpenGLTexture : virtual public CSystemObjectBase,virtual public IGenericT
 	unsigned int m_nFrameBuffer;
 	unsigned int m_nFrameBufferDepth;
 	
+#ifdef WIN32
+// PBuffers are currently supporter only in windows
 	HDC			m_hPBufferDC;
 	HGLRC		m_hPBufferRC;
 	int			m_nPBufferPixelFormatIndex;
@@ -28,6 +30,8 @@ class COpenGLTexture : virtual public CSystemObjectBase,virtual public IGenericT
 
 	HDC			m_hPBufferOldDC;
 	HGLRC		m_hPBufferOldRC;
+#endif
+
 	bool		m_bDepth;
 
 	void Clear();

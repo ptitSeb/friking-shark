@@ -1,7 +1,7 @@
-#include "StdAfx.h"
+#include "./stdafx.h"
 #include "GameEntityLib.h"
-#include ".\entitybase.h"
-#include ".\entitytypebase.h"
+#include "EntityBase.h"
+#include "EntityTypeBase.h"
 
 
 CEntityTypeBase::CEntityTypeBase(void)

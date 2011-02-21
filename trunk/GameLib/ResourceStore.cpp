@@ -2,21 +2,28 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "./StdAfx.h"
 #include <float.h>
 #include <crtdbg.h>
 #include <windows.h>
-#include "..\VectorLib\VectorLib.h"
+#include <string.h>
+#include <libgen.h>
+#include "VectorLib.h"
 #include "GameRunTimeLib.h"
 #include "ResourceStore.h"
-#include "GLProcs.h"
-#include "..\JPEGLibrary\inc\jpegdecoder.h"
-#ifdef _DEBUG
-#pragma comment(lib,"..\\JPEGLibrary\\lib\\jpgdlib_d.lib")
+#ifdef WIN32
+  #include "..\JPEGLibrary\inc\jpegdecoder.h"
+  #ifdef _DEBUG
+  #pragma comment(lib,"..\\JPEGLibrary\\lib\\jpgdlib_d.lib")
+  #else
+  #pragma comment(lib,"..\\JPEGLibrary\\lib\\jpgdlib.lib")
+  #endif
+  #pragma warning ( disable : 4244 4018 )
 #else
-#pragma comment(lib,"..\\JPEGLibrary\\lib\\jpgdlib.lib")
+	#include "jpegdecoder.h"
 #endif
-#pragma warning ( disable : 4244 4018 )
+  
+
 
 #define FILE_TYPE_3DS 1
 #define FILE_TYPE_ASE 2
@@ -93,11 +100,10 @@ void CFrame::CalcBBox()
 	m_vMins=Origin;
 	m_vMaxs=Origin;
 
-	unsigned x,v,c;
-	for(x=0;x<m_nPolygons;x++)
+	for(int x=0;x<m_nPolygons;x++)
 	{
 		CPolygon *pPolygon=&m_pPolygons[x];
-		for(v=0;v<pPolygon->m_nVertexes;v++)
+		for(unsigned int v=0;v<pPolygon->m_nVertexes;v++)
 		{
 			if(x==0 && v==0)
 			{
@@ -106,7 +112,7 @@ void CFrame::CalcBBox()
 			}
 			else
 			{
-				for(c=0;c<3;c++)
+				for(unsigned int c=0;c<3;c++)
 				{
 					if(pPolygon->m_pVertexes[v].c[c]<m_vMins.c[c]){m_vMins.c[c]=pPolygon->m_pVertexes[v].c[c];}
 					if(pPolygon->m_pVertexes[v].c[c]>m_vMaxs.c[c]){m_vMaxs.c[c]=pPolygon->m_pVertexes[v].c[c];}
@@ -162,8 +168,7 @@ void CFrame::GeneratePreprocessedRenderBuffer()
 {
 	set<CMaterial *> mMaterials;
 	set<CMaterial *>::iterator i;
-	int x,m,v;
-	for(x=0;x<m_nPolygons;x++)
+	for(int x=0;x<m_nPolygons;x++)
 	{
 		if(m_pPolygons[x].m_pMaterial){mMaterials.insert(m_pPolygons[x].m_pMaterial);}
 	}
@@ -174,6 +179,7 @@ void CFrame::GeneratePreprocessedRenderBuffer()
 		m_pPreprocessedRenderBuffers=new CPreprocessedRenderBuffer[m_nPreprocessedRenderBuffers];
 	}
 
+	int m;
 	for(i=mMaterials.begin(),m=0;i!=mMaterials.end();i++,m++)
 	{
 		map<CVertexKey,DWORD> mVertexes;
@@ -182,19 +188,20 @@ void CFrame::GeneratePreprocessedRenderBuffer()
 		CMaterial					*pMaterial=*i;
 		CPreprocessedRenderBuffer	*pBuffer=&m_pPreprocessedRenderBuffers[m];
 
-		for(x=0;x<m_nPolygons;x++)
+		for(int x=0;x<m_nPolygons;x++)
 		{
 			if(m_pPolygons[x].m_pMaterial==pMaterial)
 			{
 				pBuffer->nTriangles++;
 
 				CMaterialPolygon *pPolygon=&m_pPolygons[x];
-				for(v=0;v<pPolygon->m_nVertexes;v++)
+				for(unsigned int v=0;v<pPolygon->m_nVertexes;v++)
 				{
 					CVertexKey key(pPolygon->m_pVertexes[v],pPolygon->m_pTextureCoords[v],pPolygon->m_pVertexNormals[v],pPolygon->m_pVertexColors?pPolygon->m_pVertexColors[v]:RGBToVector(pMaterial->cAmbientColor),mVertexes.size());
 					if(mVertexes.find(key)==mVertexes.end())
 					{
-						mVertexes[key]=mVertexes.size();
+						int nIndex=mVertexes.size();
+						mVertexes[key]=nIndex;
 					}
 				}
 			}
@@ -240,12 +247,12 @@ void CFrame::GeneratePreprocessedRenderBuffer()
 		}
 
 		int nIndex=0;
-		for(x=0;x<m_nPolygons;x++)
+		for(int x=0;x<m_nPolygons;x++)
 		{
 			if(m_pPolygons[x].m_pMaterial==pMaterial)
 			{
 				CMaterialPolygon *pPolygon=&m_pPolygons[x];
-				for(v=0;v<pPolygon->m_nVertexes;v++)
+				for(unsigned int v=0;v<pPolygon->m_nVertexes;v++)
 				{
 					CVertexKey key(pPolygon->m_pVertexes[v],pPolygon->m_pTextureCoords[v],pPolygon->m_pVertexNormals[v],Origin,0);
 					pBuffer->pTriangleVertexIndexes[nIndex+v]=mVertexes[key];
@@ -262,7 +269,7 @@ void CFrame::GeneratePreprocessedRenderBuffer()
 void CFrame::GenerateBufferObjects()
 {
 
-	for(unsigned long x=0;x<m_nPreprocessedRenderBuffers;x++)
+	for(int x=0;x<m_nPreprocessedRenderBuffers;x++)
 	{
 		CPreprocessedRenderBuffer *pBuffer=&m_pPreprocessedRenderBuffers[x];
 
@@ -277,7 +284,7 @@ void CFrame::GenerateBufferObjects()
 		if(pBuffer->pTex2VertexArray){nDataPerVertex+=2;}
 
 		// Generacion del buffer object
-		glGenBuffers(1,&pBuffer->nBufferObject);
+		//glGenBuffers(1,&pBuffer->nBufferObject);
 		int nError=glGetError();
 		if(pBuffer->nBufferObject)
 		{
@@ -315,7 +322,7 @@ void CFrame::GenerateBufferObjects()
 			glUnmapBuffer(GL_ARRAY_BUFFER);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		}
-		glGenBuffers(1,&pBuffer->nIndexesBufferObject);
+		//glGenBuffers(1,&pBuffer->nIndexesBufferObject);
 		nError=glGetError();
 		if(pBuffer->nIndexesBufferObject)
 		{
@@ -331,7 +338,7 @@ void CFrame::GenerateBufferObjects()
 
 void CFrame::GetGeometry( vector<CPolygon *> *pvGeometry )
 {
-	for(unsigned long x=0;x<m_nPolygons;x++)
+	for(int x=0;x<m_nPolygons;x++)
 	{
 		CPolygon *pPolygon=new CPolygon;
 		*pPolygon=m_pPolygons[x];
@@ -359,7 +366,7 @@ CModel::CModel()
 	m_nAnimations=0;
 	m_pAnimations=NULL;
 	m_nLights=0;
-	memset(m_pLights,sizeof(m_pLights),0);
+	memset(m_pLights,0,sizeof(m_pLights));
 }
 
 CModel::~CModel()
@@ -398,8 +405,6 @@ CFrame	*CModel::GetFrame(int nAnimation,int nFrame)
 
 CResourceStore::CResourceStore()
 {
-	m_hDC=NULL;
-	m_hRenderContext=NULL;
     m_sName="ResourceStore";
 }
 
@@ -487,21 +492,111 @@ bool LoadJPEGImageHelper(string sFile,DWORD dwColorType,unsigned *pOpenGLSkinWid
 }
 
 
+#pragma pack(push,1)
+struct BMPFILEHEADER
+{
+  uint16_t bfType; 
+  uint32_t bfSize; 
+  uint16_t bfReserved1; 
+  uint16_t bfReserved2; 
+  uint32_t bfOffBits; 
+};
+struct BMPINFOHEADER 
+{ 
+  uint32_t biSize; 
+  uint32_t biWidth; 
+  uint32_t biHeight; 
+  uint16_t biPlanes; 
+  uint16_t biBitCount;
+  uint32_t biCompression; 
+  uint32_t biSizeImage; 
+  uint32_t biXPelsPerMeter; 
+  uint32_t biYPelsPerMeter; 
+  uint32_t biClrUsed; 
+  uint32_t biClrImportant; 
+}; 
+#pragma pack(pop)
+
+int LoadBMPFile(const char *pFileName,unsigned int nBits,unsigned int *pnWidth,unsigned int *pnHeight,unsigned char **ppPixels)
+{
+	BMPFILEHEADER fileHeader={0};
+	BMPINFOHEADER fileInfo={0};
+	
+	FILE *pFile=fopen(pFileName,"rb");
+	if(!pFile){return false;}
+	// Make room for the header
+	bool bOk=(fread(&fileHeader,sizeof(fileHeader),1,pFile)==1);
+	if(bOk){bOk=(fileHeader.bfType == 0x4d42);}
+	if(bOk){bOk=(fread(&fileInfo,sizeof(fileInfo),1,pFile)==1);}
+	if(bOk){bOk=(fileInfo.biSize==sizeof(fileInfo));}
+	if(bOk){bOk=(fileInfo.biPlanes==1);}
+	if(bOk){bOk=(fileInfo.biBitCount==24 || fileInfo.biBitCount==32);}
+	if(bOk){bOk=(fileInfo.biCompression==0);} // BI_RGB
+	if(bOk){fseek(pFile,fileHeader.bfOffBits,SEEK_SET);}
+	if(bOk)
+	{
+		unsigned char *pFileBits=(unsigned char*)malloc(fileInfo.biSizeImage);
+		if(bOk){bOk=(fread(pFileBits,fileInfo.biSizeImage,1,pFile)==1);}
+		if(bOk)
+		{
+			*pnHeight=fileInfo.biHeight;
+			*pnWidth=fileInfo.biWidth;
+			*ppPixels = new unsigned char[fileInfo.biHeight * fileInfo.biWidth * nBits/8];
+			// Set alpha to 1
+			if(nBits==32){memset(*ppPixels,0xFF,fileInfo.biHeight * fileInfo.biWidth * nBits/8);}
+			
+			int sourceLineSize = fileInfo.biWidth *  fileInfo.biBitCount/8;
+			int paddedLineSize = ((sourceLineSize/4)*4);
+			int pad=0;
+			if(paddedLineSize < sourceLineSize){pad=4;}
+
+			unsigned char *bufferPointer = (*ppPixels);// + (lineSize * (fileInfo.biHeight-1));
+			unsigned char *imagePointer = pFileBits;
+
+			int x, y;
+			int nSourceExcess=fileInfo.biBitCount>nBits?1:0;
+			int nDestExcess=nBits>fileInfo.biBitCount?1:0;
+			int nCommon=fileInfo.biBitCount==nBits?fileInfo.biBitCount/8:3;
+			
+			for(x = fileInfo.biHeight-1; x >= 0; x--)
+			{
+				for(y = 0; y < (int)fileInfo.biWidth; y++)
+				{
+					bufferPointer[0] = imagePointer[2];
+					bufferPointer[1] = imagePointer[1];
+					bufferPointer[2] = imagePointer[0];
+					bufferPointer+=nCommon+nDestExcess;
+					imagePointer+=nCommon+nSourceExcess;
+				}
+				imagePointer  += pad;
+			}
+		}
+		free(pFileBits);
+		pFileBits=NULL;
+	}
+
+	fclose(pFile);
+	pFile=NULL;
+	return bOk;
+}
+
 bool LoadTextureImageHelper(string sFile,DWORD dwColorType,unsigned *pOpenGLSkinWidth,unsigned *pOpenGLSkinHeight,BYTE **ppBuffer)
 {
 	*pOpenGLSkinWidth=0;
 	*pOpenGLSkinHeight=0;
 	*ppBuffer=NULL;
 
-	std::string path;
-	char sDrive[MAX_PATH]={0};
-	char sPath[MAX_PATH]={0};
+	char sFileName[MAX_PATH]={0};
+	strcpy(sFileName,sFile.c_str());
+	
 	char sExt[MAX_PATH]={0};
-	path=sFile;
-	_splitpath(sFile.c_str(),sDrive,sPath,NULL,sExt);
-	if(sDrive[0]==0 && sPath[0]==0)
+	GetExtension(sFile.c_str(),sExt);
+	
+	std::string path=sFile;
+	char *pFileFolder=dirname(sFileName);
+	if(pFileFolder[0]==0 || strcmp(pFileFolder,".")==0)
 	{
-		string sTemp="Textures\\";
+		string sTemp="Textures/";
 		sTemp+=path;
 		path=sTemp;
 	}
@@ -511,49 +606,16 @@ bool LoadTextureImageHelper(string sFile,DWORD dwColorType,unsigned *pOpenGLSkin
 	}
 	else
 	{
-		_strupr(sExt);
-		if(strcmp(sExt,".JPG")==0)
+		if(strcasecmp(sExt,".JPG")==0)
 		{
-		/*	char drive[_MAX_DRIVE]={0},tpath[MAX_PATH]={0},name[_MAX_FNAME]={0};
-			_splitpath(path.c_str(),drive,tpath,name,NULL);
-			path=drive;
-			path+=tpath;
-			path+=name;
-			path+=".BMP";*/
-      return LoadJPEGImageHelper(path,dwColorType,pOpenGLSkinWidth,pOpenGLSkinHeight,ppBuffer);
+			return LoadJPEGImageHelper(path,dwColorType,pOpenGLSkinWidth,pOpenGLSkinHeight,ppBuffer);
 		}
 	}
-	CMRImage image;
-	if(image.LoadFromFile(path.c_str()))
-	{
-		unsigned nOpenGLSkinWidth=0,nOpenGLSkinHeight=0,i=0,j=0;
-		while(nOpenGLSkinWidth<image.Width()){nOpenGLSkinWidth=pow(2.0,(double)i);i++;}
-		while(nOpenGLSkinHeight<image.Height()){nOpenGLSkinHeight=pow(2.0,(double)j);j++;}
-
-		image.Resize(nOpenGLSkinWidth,nOpenGLSkinHeight);
-		image.Flip_Vertical();
-		DWORD	dwSize=0;
-		BYTE	*pBuffer=NULL;
-		if(dwColorType==GL_RGB)
-		{
-			image.GetRawRGB(&dwSize,&pBuffer);
-		}
-		else
-		{
-			image.GetRawRGBA(&dwSize,&pBuffer);
-		}
-		*pOpenGLSkinWidth=nOpenGLSkinWidth;
-		*pOpenGLSkinHeight=nOpenGLSkinHeight;
-		*ppBuffer=pBuffer;
-		return true;
-	}
-	return false;
+	return LoadBMPFile(path.c_str(),dwColorType==GL_RGBA?32:24,pOpenGLSkinWidth,pOpenGLSkinHeight,ppBuffer);
 }
 
 CTexture *CResourceStore::LoadTexture(string sName,COLORREF *pColorKey,string *pAlphaFile,float fOpacity,CTexture *pExistingTexture)
 {
-	if(m_hRenderContext){wglMakeCurrent(m_hDC,m_hRenderContext);	}
-
 	CTexture *pTexture=NULL;
 	if(pExistingTexture!=NULL)
 	{
@@ -583,9 +645,9 @@ CTexture *CResourceStore::LoadTexture(string sName,COLORREF *pColorKey,string *p
 					BYTE *pTempBuffer=pBuffer;
 					BYTE *pTempAlpha=pAlphaBuffer;
 
-					for(int y=0; y < nOpenGLSkinHeight; y++)
+					for(unsigned int y=0; y < nOpenGLSkinHeight; y++)
 					{
-						for(int x = 0; x < nOpenGLSkinWidth; x++,pTempBuffer+=4,pTempAlpha+=3)
+						for(unsigned int x = 0; x < nOpenGLSkinWidth; x++,pTempBuffer+=4,pTempAlpha+=3)
 						{
 							pTempBuffer[3] = (((DWORD)pTempAlpha[0])+((DWORD)pTempAlpha[1])+((DWORD)pTempAlpha[2]))/3;
 						}
@@ -611,9 +673,9 @@ CTexture *CResourceStore::LoadTexture(string sName,COLORREF *pColorKey,string *p
 
 			BYTE *pTempBuffer=pBuffer;
 
-			for(int y=0; y < nOpenGLSkinHeight; y++)
+			for(unsigned int y=0; y < nOpenGLSkinHeight; y++)
 			{
-				for(int x = 0; x < nOpenGLSkinWidth; x++,pTempBuffer+=4)
+				for(unsigned int x = 0; x < nOpenGLSkinWidth; x++,pTempBuffer+=4)
 				{
 					pTempBuffer[3] = (pTempBuffer[0]==red && pTempBuffer[1]==green && pTempBuffer[2]==blue)?0:255;
 				}
@@ -623,9 +685,9 @@ CTexture *CResourceStore::LoadTexture(string sName,COLORREF *pColorKey,string *p
 		{
 			BYTE *pTempBuffer=pBuffer;
 
-			for(int y=0; y < nOpenGLSkinHeight; y++)
+			for(unsigned int y=0; y < nOpenGLSkinHeight; y++)
 			{
-				for(int x = 0; x < nOpenGLSkinWidth; x++,pTempBuffer+=4)
+				for(unsigned int x = 0; x < nOpenGLSkinWidth; x++,pTempBuffer+=4)
 				{
 					pTempBuffer[3] = (BYTE)(255.0*fOpacity);
 				}
@@ -646,7 +708,8 @@ CTexture *CResourceStore::LoadTexture(string sName,COLORREF *pColorKey,string *p
 			pTexture->m_nHeight=nOpenGLSkinHeight;
 			pTexture->m_dwColorType=dwColorType;
 			UpdateTextureBuffers(pTexture);
-			if(pOldPixels){delete [] pOldPixels;pOldPixels=NULL;}
+			#pragma message("Cuidado con este cast a char*")
+			if(pOldPixels){delete [] (char*)pOldPixels;pOldPixels=NULL;}
 		}
 		else
 		{
@@ -693,16 +756,13 @@ CTexture *CResourceStore::FindTexture(string sName)
 
 void CResourceStore::AddTexture(CTexture *pTexture)
 {
-	_ASSERTE(GetTextureIndex(pTexture->m_sName)==-1);
+	//_ASSERTE(GetTextureIndex(pTexture->m_sName)==-1);
 	m_mTextures[pTexture->m_sName]=pTexture;
 	UpdateTextureBuffers(pTexture);
 }
 
 void CResourceStore::UpdateTextureBuffers(CTexture *pTexture)
 {
-	if(m_hRenderContext){wglMakeCurrent(m_hDC,m_hRenderContext);}
-	HGLRC hRenderContext=wglGetCurrentContext();
-	_ASSERTE(hRenderContext!=NULL);
 	if(pTexture->m_nOpenGlIndex==0)
 	{
 		glGenTextures(1,&pTexture->m_nOpenGlIndex);
@@ -735,24 +795,20 @@ int CResourceStore::GetMaterialCount()
 
 CMaterial *CResourceStore::GetMaterialAt(int index)
 {
-    if(index<m_lMaterials.size()){return m_lMaterials[index];}
+    if(index<(int)m_lMaterials.size()){return m_lMaterials[index];}
     return NULL;
 }
 
 CModel *CResourceStore::LoadModel(string sFileName,CModel *pExistingModel)
 {
-	if(m_hRenderContext)
-	{
-		wglMakeCurrent(m_hDC,m_hRenderContext);
-	}
-
-	char sDrive[MAX_PATH]={0};
-	char sPath[MAX_PATH]={0};
+	char sTempFileName[MAX_PATH]={0};
 	char sExt[MAX_PATH]={0};
-	_splitpath(sFileName.c_str(),sDrive,sPath,NULL,sExt);
-	if(sDrive[0]==0 && sPath[0]==0)
+	strcpy(sTempFileName,sFileName.c_str());
+	char *pPath=dirname(sTempFileName);
+	GetExtension(sFileName.c_str(),sExt);
+	if(pPath[0]==0 || strcmp(pPath,".")==0)
 	{
-		string sTemp="Models\\";
+		string sTemp="Models/";
 		sTemp+=sFileName;
 		sFileName=sTemp;
 	}
@@ -770,12 +826,14 @@ CModel *CResourceStore::LoadModel(string sFileName,CModel *pExistingModel)
 	}
 
 	bool bLoaded=false;
-	_strupr(sExt);
-	if(strcmp(sExt,".MAP")==0)		{bLoaded=LoadMap(pModel,sFileName);}
-	else if(strcmp(sExt,".MDL")==0)	{bLoaded=LoadMdl(pModel,sFileName);}
-	else if(strcmp(sExt,".3DS")==0)	{bLoaded=Load3DS(pModel,sFileName,FILE_TYPE_3DS);}
-	else if(strcmp(sExt,".ASE")==0)	{bLoaded=Load3DS(pModel,sFileName,FILE_TYPE_ASE);}
-	else{MessageBox(NULL,"Tipo de extension de modelo desconocida",sFileName.c_str(),MB_ICONSTOP|MB_OK);}
+	if(strcasecmp(sExt,".MAP")==0)		{bLoaded=LoadMap(pModel,sFileName);}
+	else if(strcasecmp(sExt,".MDL")==0)	{bLoaded=LoadMdl(pModel,sFileName);}
+	else if(strcasecmp(sExt,".3DS")==0)	{bLoaded=Load3DS(pModel,sFileName,FILE_TYPE_3DS);}
+	else if(strcasecmp(sExt,".ASE")==0)	{bLoaded=Load3DS(pModel,sFileName,FILE_TYPE_ASE);}
+	else
+	{
+	  RTTRACE("Tipo de extension de modelo desconocida: %s",sFileName.c_str());
+	}
 	if(bLoaded)
 	{
 		if(!pExistingModel)
@@ -877,8 +935,7 @@ bool CResourceStore::LoadMap(CModel *pModel,string sFileName)
 					pFrame->m_pPolygons[x]=*pPolygon;
 					pFrame->m_pPolygons[x].m_pMaterial=pMaterial;
 
-					int z;
-					for(z=0;z<pFrame->m_pPolygons[x].m_nVertexes;z++)
+					for(unsigned z=0;z<pFrame->m_pPolygons[x].m_nVertexes;z++)
 					{
 						pFrame->m_pPolygons[x].m_pTextureCoords[z].c[0]/=(double)pTexture->m_nWidth;
 						pFrame->m_pPolygons[x].m_pTextureCoords[z].c[1]/=(double)pTexture->m_nHeight;
@@ -918,7 +975,7 @@ bool CResourceStore::Load3DS(CModel *pModel,string sFileName,DWORD dwFileType)
 
 		map<string,CMaterial *> mTranslatedMaterials;
 		map<string,S3DSMaterial *> m3DSMaterials;
-		for(int m=0;m<pFile->m_vMaterials.size();m++)
+		for(unsigned int m=0;m<pFile->m_vMaterials.size();m++)
 		{
 			S3DSMaterial *p3DSMaterial=pFile->m_vMaterials[m];
 			string sName=p3DSMaterial->sName;
@@ -934,6 +991,10 @@ bool CResourceStore::Load3DS(CModel *pModel,string sFileName,DWORD dwFileType)
 			{
 				string sTemp=p3DSMaterial->sAlphaFile;
 				CTexture *pTexture=LoadTexture(p3DSMaterial->sFile,NULL,sTemp==""?NULL:&sTemp,pMaterial->fOpacity);
+				if(pTexture==NULL)
+				{
+					RTTRACE("CResourceStore::Load3DS -> Failed to load model texture %s (model %s)",p3DSMaterial->sFile,sFileName.c_str());
+				}
 				pMaterial->nTextureIndex=pTexture?pTexture->m_nOpenGlIndex:-1;
 				pMaterial->pTexture=pTexture;
 			}
@@ -966,7 +1027,7 @@ bool CResourceStore::Load3DS(CModel *pModel,string sFileName,DWORD dwFileType)
 				int nPol=0;
 				pFrame->m_pPolygons=new CMaterialPolygon[pFrame->m_nPolygons];
 
-				for(int x=0;x<pFile->m_vObjects.size();x++)
+				for(unsigned int x=0;x<pFile->m_vObjects.size();x++)
 				{
 					int nBasePol=nPol;
 					S3DSObject *pObject=pFile->m_vObjects[x];
@@ -975,7 +1036,6 @@ bool CResourceStore::Load3DS(CModel *pModel,string sFileName,DWORD dwFileType)
 					//_MRT("Loaded Object %s, %d polygons",pObject->sName,p3DSFrame->nFaces);
 					if(pObject->bVisible && p3DSFrame->nVertexes && p3DSFrame->nFaces)
 					{
-						double step=(0.7/(double)p3DSFrame->nFaces);
 						for(int y=0;y<p3DSFrame->nFaces;y++)
 						{
 							pFrame->m_pPolygons[nPol].m_nVertexes=3;
@@ -1034,9 +1094,9 @@ bool CResourceStore::Load3DS(CModel *pModel,string sFileName,DWORD dwFileType)
 							nPol++;
 						}
 					}
-					if(pObject->dwMaterialId!=-1)
+					if(pObject->dwMaterialId!=(unsigned int)-1)
 					{
-						for(int y=0;y<p3DSFrame->sObjectMaterials.size();y++)
+						for(unsigned int y=0;y<p3DSFrame->sObjectMaterials.size();y++)
 						{
 							S3DSObjectMaterial	*pObjectMaterial=p3DSFrame->sObjectMaterials[y];
 							S3DSMaterial		*p3DSMaterial=m3DSMaterials[pObjectMaterial->sName];
@@ -1046,7 +1106,7 @@ bool CResourceStore::Load3DS(CModel *pModel,string sFileName,DWORD dwFileType)
 								int nPolygonIndex=nBasePol+pObjectMaterial->pFaces[z];
 								CMaterialPolygon *pPolygon=&pFrame->m_pPolygons[nPolygonIndex];
 								pPolygon->m_pMaterial=pMaterial;
-								for(int a=0;a<pFrame->m_pPolygons[nPolygonIndex].m_nVertexes;a++)
+								for(unsigned int a=0;a<pFrame->m_pPolygons[nPolygonIndex].m_nVertexes;a++)
 								{
 									CVector vTextureCenter(0.5,0.5,0);
 									CMatrix m;
@@ -1079,7 +1139,6 @@ bool CResourceStore::Load3DS(CModel *pModel,string sFileName,DWORD dwFileType)
 
 						for(int a=0;a<p3DSFrame->nFaces;a++)
 						{
-							int nPolygonIndex=nBasePol+a;
 							pFrame->m_pPolygons[nBasePol+a].m_pMaterial=pMaterial;
 						}
 					}
@@ -1089,8 +1148,7 @@ bool CResourceStore::Load3DS(CModel *pModel,string sFileName,DWORD dwFileType)
 			pFrame->GeneratePreprocessedRenderBuffer();
 		}
 
-		int x;
-		for(x=0;x<pFile->m_vLights.size();x++)
+		for(unsigned int x=0;x<pFile->m_vLights.size();x++)
 		{
 			S3DSLight *p3DSLight=pFile->m_vLights[x];
 			DWORD dwLightType=0;
@@ -1274,7 +1332,7 @@ bool CResourceStore::LoadMdl(CModel *pModel,string sFileName)
 				t1=vTriangleVertexes[1]-vTriangleVertexes[0];
 				t2=vTriangleVertexes[2]-vTriangleVertexes[0];
 				t3=t1^t2;
-				if(!_isnan(t3.c[0]) && !_isnan(t3.c[1]) && !_isnan(t3.c[2]) && 
+				if(!isnan(t3.c[0]) && !isnan(t3.c[1]) && !isnan(t3.c[2]) && 
 					(t3.c[0]!=0 || t3.c[1]!=0 || t3.c[2]!=0))
 				{
 
@@ -1373,15 +1431,8 @@ void CResourceStore::AddMaterial(CMaterial *pMaterial)
 	m_lMaterials.push_back(pMaterial);
 }
 
-void CResourceStore::Init(HDC hDC,HGLRC hRenderContext)
+void CResourceStore::Init()
 {
-	m_hDC=hDC;
-	m_hRenderContext=hRenderContext;
-}
-
-HGLRC CResourceStore::GetRenderContext()
-{
-	return m_hRenderContext;
 }
 
 void CResourceStore::ReplaceFilePath(string sOldFileName,string sNewFileName)

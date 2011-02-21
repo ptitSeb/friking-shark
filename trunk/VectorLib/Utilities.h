@@ -8,7 +8,7 @@ T* BufferFromVector(std::vector< T > *pContainer)
 {
 	T* pBuffer=new T[pContainer->size()];
 	T* pBufferCursor=pBuffer;
-	vector<T>::iterator i;
+	typename std::vector<T>::iterator i;
 	for(i=pContainer->begin();i!=pContainer->end();i++,pBufferCursor++)
 	{
 		*pBufferCursor=*i;
@@ -16,8 +16,7 @@ T* BufferFromVector(std::vector< T > *pContainer)
 	return pBuffer;
 }
 
-void _MRT(const char *format, ...);
 void SkipCommentsStringsAndSpaces(char *pBuffer,DWORD *pOffset,DWORD bufLen);
-bool GetFileModificationTime(char *pfile,FILETIME *pModificationTime);
-
+void ReplaceExtension(char *pFileName,const char *pExt);
+void GetExtension(const char *pFileName,char *pExt);
 #endif

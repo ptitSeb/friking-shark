@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "./StdAfx.h"
 #include "IniFiles.h"
 #include "VectorLib.h"
 #include <io.h>

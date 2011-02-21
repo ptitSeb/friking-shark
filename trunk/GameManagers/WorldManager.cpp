@@ -1,6 +1,6 @@
-#include "StdAfx.h"
-#include "GameRuntimeLib.h"
-#include ".\Worldmanager.h"
+#include "stdafx.h"
+#include "GameRunTimeLib.h"
+#include "WorldManager.h"
 
 CWorldManager::CWorldManager()
 {
@@ -173,7 +173,8 @@ void CWorldManager::RenderWater(IGenericRender *piRender)
 
 	glPopAttrib();*/
 
-};
+}
+
 void CWorldManager::DesignRender(IGenericRender *piRender)
 {
 	if(m_TerrainModel.m_piModel)
@@ -281,8 +282,8 @@ unsigned int CWorldManager::MoveTerrainColorLayer( unsigned int nIndex,bool bUp 
 
 void CWorldManager::RemoveTerrainColorLayer( unsigned int nIndex )
 {
-	int x;
 	std::vector<STerrainColorLayerData>::iterator i;
+	unsigned int x;
 	for(x=0,i=m_vTerrainColorLayers.begin();i!=m_vTerrainColorLayers.end();i++,x++)
 	{
 		if(x==nIndex)
@@ -384,8 +385,8 @@ unsigned int CWorldManager::MoveTerrainHeightLayer( unsigned int nIndex,bool bUp
 
 void CWorldManager::RemoveTerrainHeightLayer( unsigned int nIndex )
 {
-	int x;
 	std::vector<STerrainHeightLayerData>::iterator i;
+	unsigned int x;
 	for(x=0,i=m_vTerrainHeightLayers.begin();i!=m_vTerrainHeightLayers.end();i++,x++)
 	{
 		if(x==nIndex)
@@ -548,10 +549,6 @@ bool CWorldManager::UpdateTerrain()
 	CVector			vMaxs=vBaseModelMaxs;
 	CVector			vMins=vBaseModelMins;
 	CVector			vSize=vMaxs-vMins;
-
-	double dTotalHeight=vMaxs.c[1]-vMins.c[1];
-	double dTotalLength=vMaxs.c[0]-vMins.c[0];
-	double dTotalWidth=vMaxs.c[2]-vMins.c[2];
 
 	int nDestBufs=0;
 	int pnDestBuf[1024]={0,0,0,0};

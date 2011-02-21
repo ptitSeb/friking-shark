@@ -1,7 +1,7 @@
 // ParticleSystems.cpp : Defines the entry point for the DLL application.
 //
 
-#include "stdafx.h"
+#include "./stdafx.h"
 #include "ParticleSystems.h"
 #include "ParticleModifierType.h"
 #include "ParticleColorModifierType.h"
@@ -13,14 +13,14 @@
 #include "PointParticleType.h"
 
 BEGIN_SYSTEM_MODULE()
-    SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CParticleSystemType,"ParticleSystemType");
-    SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CParticleEmitterType,"ParticleEmitterType");
-    SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CParticleSizeModifierType,"ParticleSizeModifierType");
-    SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CParticleColorModifierType,"ParticleColorModifierType");
-    SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CTextureParticleType,"TextureParticleType");
-    SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CLightParticleType,"LightParticleType");
-    SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CPointParticleType,"PointParticleType");
-END_SYSTEM_MODULE();
+    SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CParticleSystemType,"ParticleSystemType")
+    SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CParticleEmitterType,"ParticleEmitterType")
+    SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CParticleSizeModifierType,"ParticleSizeModifierType")
+    SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CParticleColorModifierType,"ParticleColorModifierType")
+    SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CTextureParticleType,"TextureParticleType")
+    SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CLightParticleType,"LightParticleType")
+    SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CPointParticleType,"PointParticleType")
+END_SYSTEM_MODULE()
 
 IParticle::IParticle()
 {

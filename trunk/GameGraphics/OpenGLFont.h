@@ -1,5 +1,5 @@
 #pragma once
-#include "gamegraphics.h"
+#include "GameGraphics.h"
 
 struct SOpenGLFontCharacterData
 {

@@ -21,6 +21,7 @@
 #define MODEL_TYPE_MDL	2
 #define MODEL_TYPE_3DS	3
 
+#include <GL/gl.h>
 #include <string>
 using namespace std;
 
@@ -117,7 +118,7 @@ struct IResourceStore:virtual public ISystemUnknown
 {
 public:
 
-    virtual void	Init(HDC hDC,HGLRC hRenderContext)=0;
+    virtual void	Init()=0;
     virtual void	Destroy()=0;
 
     virtual void AddModel(CModel *pModel)=0;
@@ -135,16 +136,11 @@ public:
     virtual CTexture	*FindTexture(string sFileName)=0;
     virtual int			 GetTextureIndex(string sFileName)=0;
 
-    virtual HGLRC	     GetRenderContext()=0;
-
     virtual ~IResourceStore(){}
 };
 
 class CResourceStore: virtual public CSystemObjectBase, virtual public IResourceStore
 {
-	HDC		m_hDC;
-	HGLRC	m_hRenderContext;
-
 	DWORD	m_dwFlags;
 
 	void	FreeTexture(string sFileName);
@@ -185,10 +181,9 @@ public:
 	CTexture	*FindTexture(string sFileName);
 	int			 GetTextureIndex(string sFileName);
 
-    void	Init(HDC hDC,HGLRC hRenderContext);
+    void	Init();
 	void	Destroy();
 	void	FreeAllResources();
-	HGLRC	GetRenderContext();
 
 	CResourceStore();
 	~CResourceStore();

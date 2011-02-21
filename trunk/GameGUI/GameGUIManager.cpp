@@ -1,9 +1,6 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "GameGUIManager.h"
 #include "GameMainWindow.h"
-
-#define WM_GUI_MANAGER_END_LOOP WM_USER+0x001
-
 #include "GameGUILib.h"
 
 CGameGUIManager::CGameGUIManager()
@@ -12,15 +9,11 @@ CGameGUIManager::CGameGUIManager()
 	m_piMainWindow=NULL;
 	m_piFocusedWindow=NULL;
 	m_piMouseCaptureWindow=NULL;
-	memset(&m_OldScreenDeviceSettings,0,sizeof(m_OldScreenDeviceSettings));
-	m_OldScreenDeviceSettings.dmSize=sizeof(m_OldScreenDeviceSettings);
 	m_bScreenSettingsChanged=false;
-	ShowCursor(false);
 }
 
 CGameGUIManager::~CGameGUIManager()
 {
-	ShowCursor(true);
 }
 
 bool CGameGUIManager::Init(std::string sClass,std::string sName,ISystem *piSystem)
@@ -30,40 +23,36 @@ bool CGameGUIManager::Init(std::string sClass,std::string sName,ISystem *piSyste
 
 	m_Render.Attach("GameGUI","Render");
 	m_Viewport.Attach("GameGUI","Viewport");
-/*
-	SGameScreenProperties properties;
-	SIZE sz={GetSystemMetrics(SM_CXSCREEN),GetSystemMetrics(SM_CYSCREEN)};
 
-	properties.bFullScreen=FALSE;
-	properties.rWindowPos.x=sz.cx/8;
-	properties.rWindowPos.y=sz.cy/8;
-	properties.rWindowPos.w=sz.cx*6/8;
-	properties.rWindowPos.h=sz.cy*6/8;
-*/
 	m_piMainWindow=new CGameMainWindow(this);
 	m_piMainWindow->InitWindow(NULL,true);
 	m_piFocusedWindow=m_piMainWindow;
 
-	RECT rect={0};
-/*	rect.left=(int)pProperties->rWindowPos.x;
-	rect.top=(int)pProperties->rWindowPos.y;
-	rect.right=rect.left+(int)pProperties->rWindowPos.w;
-	rect.bottom=rect.top+(int)pProperties->rWindowPos.h;*/
-	m_Viewport.m_piViewport->SetCallBack(this);
-	m_Viewport.m_piViewport->Create(NULL,&rect,false);
-	return true;
+	if(m_Viewport.m_piViewport)
+	{
+	  m_Viewport.m_piViewport->SetCallBack(this);
+	}
+	RECT rect;
+	rect.top=0;
+	rect.left=0;
+	rect.bottom=600;
+	rect.right=800;
+	bool bOk=m_Viewport.m_piViewport->Create(&rect,false);
+	m_Viewport.m_piViewport->ShowMouseCursor(false);
+	return bOk;
 }
 
 void CGameGUIManager::Destroy()
 {
-	if(m_bScreenSettingsChanged)
-	{
-		ChangeDisplaySettings(&m_OldScreenDeviceSettings,CDS_FULLSCREEN);
-		m_bScreenSettingsChanged=false;
-	}
-
 	if(m_Viewport.m_piViewport)
 	{
+	  if(m_bScreenSettingsChanged)
+	  {
+		//  m_Viewport.m_piViewport->SetCurrentVideoMode(&m_sOldVideoMode);
+		  m_bScreenSettingsChanged=false;
+	  }
+	  
+	    m_Viewport.m_piViewport->ShowMouseCursor(true);
 		m_Viewport.m_piViewport->SetCallBack(NULL);
 	}
 	if(m_piMainWindow)
@@ -136,28 +125,18 @@ void CGameGUIManager::EnumeratePopups(IGameWindowEnumerationCallback *piCallback
 
 void CGameGUIManager::EnterGUILoop()
 {
-	while(1)
+    if(m_Viewport.m_piViewport)
 	{
-		MSG msg;
-		while(PeekMessage(&msg,NULL,0,0,FALSE))
-		{
-			if(msg.hwnd==m_Viewport.m_piViewport->GetWindowHandle() && msg.message==WM_GUI_MANAGER_END_LOOP)
-			{
-				PeekMessage(&msg,NULL,0,0,TRUE);
-				InvalidateRect(msg.hwnd,NULL,FALSE);
-				return;
-			}
-			GetMessage(&msg,NULL,0,0);
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-		InvalidateRect(m_Viewport.m_piViewport->GetWindowHandle(),NULL,FALSE);
+	  m_Viewport.m_piViewport->EnterLoop();
 	}
 }
 
 void CGameGUIManager::ExitGUILoop()
 {
-	PostMessage(m_Viewport.m_piViewport->GetWindowHandle(),WM_GUI_MANAGER_END_LOOP,0,0);
+    if(m_Viewport.m_piViewport)
+	{
+	  m_Viewport.m_piViewport->ExitLoop();
+	}
 }
 
 IGameWindow *CGameGUIManager::GetWindowFromPos(IGameWindow *piWindow,SGamePos *pPosition,bool bOnlyActive)
@@ -210,7 +189,6 @@ IGameWindow *CGameGUIManager::GetWindowFromPos(IGameWindow *piWindow,SGamePos *p
 
 IGameWindow *CGameGUIManager::GetWindowFromPos(SGamePos *pPosition,bool bOnlyActive)
 {
-	IGameWindow *piWindow=NULL;
 	if(m_vPopups.size())
 	{
 		// El popup mas alto siempre bloquea la interaccion con los demas.
@@ -286,15 +264,14 @@ void CGameGUIManager::OnRender()
 		m_Render.m_piRender->SetViewport(0,0,size.w,size.h);
 		m_Render.m_piRender->SetCamera(CVector(size.w*0.5,size.h*0.5,200),90,0,0);
 
-		POINT cursorPos={0};
-		GetCursorPos(&cursorPos);
-		ScreenToClient(m_Viewport.m_piViewport->GetWindowHandle(),&cursorPos);
+		int px=0,py=0;
+		if(m_Viewport.m_piViewport){m_Viewport.m_piViewport->GetCursorPos(&px,&py);}
 
 		bool bDrawed=false;
 		SGamePos pos;
-		pos.x=cursorPos.x;
-		pos.y=size.h-cursorPos.y;
-		IGameWindow *piWindow=m_piMouseCaptureWindow?ADD(m_piMouseCaptureWindow):GetWindowFromPos(&pos,true);
+		pos.x=px;
+		pos.y=size.h-py;
+		IGameWindow *piWindow=m_piMouseCaptureWindow?ADD(m_piMouseCaptureWindow):GetWindowFromPos(m_piMainWindow,&pos,true);
 		while(!bDrawed && piWindow)
 		{
 			piWindow->OnDrawMouseCursor(pos,m_Render.m_piRender,&bDrawed);
@@ -318,10 +295,9 @@ void CGameGUIManager::GetMousePosition(IGameWindow *piWindow,SGamePos *pPos)
 {
 	SGameSize size;
 	SGamePos  pos;
-	POINT P={0};
 
-	GetCursorPos(&P);
-	ScreenToClient(m_Viewport.m_piViewport->GetWindowHandle(),&P);
+	int px=0,py=0;
+	if(m_Viewport.m_piViewport){m_Viewport.m_piViewport->GetCursorPos(&px,&py);}
 	GetWindowSize(&size);
 
 	pPos->x=0;
@@ -331,11 +307,11 @@ void CGameGUIManager::GetMousePosition(IGameWindow *piWindow,SGamePos *pPos)
 	if(piWindow){piWindow->GetRealRect(&rWindowRect);}
 	if(size.w)
 	{
-		pPos->x=P.x-rWindowRect.x;
+		pPos->x=px-rWindowRect.x;
 	}
 	if(size.h)
 	{
-		pPos->y=size.h-P.y-rWindowRect.y;
+		pPos->y=size.h-py-rWindowRect.y;
 	}
 }
 
@@ -356,28 +332,25 @@ void CGameGUIManager::SetMousePosition(IGameWindow *piWindow,SGamePos &pos)
 		P.y=(LONG)(size.h-pos.y);
 	}
 
-	ClientToScreen(m_Viewport.m_piViewport->GetWindowHandle(),&P);
-	SetCursorPos(P.x,P.y);
+	if(m_Viewport.m_piViewport){m_Viewport.m_piViewport->SetCursorPos(P.x,P.y);}
 }
 
 bool CGameGUIManager::IsKeyDown(int nKey)
 {
-	if(m_Viewport.m_piViewport==NULL || m_Viewport.m_piViewport->GetWindowHandle()!=GetActiveWindow())
+	if(m_Viewport.m_piViewport==NULL || !m_Viewport.m_piViewport->IsActiveWindow())
 	{
 		return false;
 	}
-	USHORT nKeyState=GetKeyState(nKey);
-	return (nKeyState&0x8000)!=0;
+	return m_Viewport.m_piViewport->IsKeyDown(nKey);
 }
 
 bool CGameGUIManager::IsMouseDown(int nMouseButton)
 {
-	if(m_Viewport.m_piViewport==NULL || m_Viewport.m_piViewport->GetWindowHandle()!=GetActiveWindow())
+	if(m_Viewport.m_piViewport==NULL || !m_Viewport.m_piViewport->IsActiveWindow())
 	{
 		return false;
 	}
-	USHORT nKeyState=GetKeyState(nMouseButton);
-	return (nKeyState&0x8000)!=0;
+	return m_Viewport.m_piViewport->IsKeyDown(nMouseButton);
 }
 
 void CGameGUIManager::SetFocus(IGameWindow *piWindow)
@@ -409,7 +382,7 @@ void CGameGUIManager::SetMouseCapture(IGameWindow *piWindow)
 		m_piMouseCaptureWindow=piWindow;
 		if(m_piMouseCaptureWindow)
 		{
-			SetCapture(m_Viewport.m_piViewport->GetWindowHandle());
+			m_Viewport.m_piViewport->SetMouseCapture();
 		}
 	}
 }
@@ -421,7 +394,7 @@ void CGameGUIManager::ReleaseMouseCapture()
 		m_piMouseCaptureWindow->OnReleaseMouseCapture();
 		REL(m_piMouseCaptureWindow);
 	}
-	ReleaseCapture();
+	m_Viewport.m_piViewport->ReleaseMouseCapture();
 }
 
 IGameWindow *CGameGUIManager::GetMouseCapture()
@@ -447,24 +420,6 @@ IGameWindow *CGameGUIManager::GetMainWindow()
 {
 	ADD(m_piMainWindow);
 	return m_piMainWindow;
-}
-
-LRESULT CGameGUIManager::OnProcessMessage(LRESULT dwPreviousResult,HWND hWnd,UINT  uMsg, WPARAM  wParam,LPARAM  lParam)
-{
-	if(uMsg==WM_CHAR){OnCharacter((WORD)wParam);return 0L;}
-	if(uMsg==WM_KEYDOWN){OnKeyDown((WORD)wParam);return 0L;}
-	if(uMsg==WM_KEYUP){OnKeyUp((WORD)wParam);return 0L;}
-	if(uMsg==WM_SIZE || uMsg==WM_MOVE)
-	{
-		m_piMainWindow->UpdateRealRect();
-		for(unsigned int x=0;x<m_vPopups.size();x++)
-		{
-			IGameWindow *piWindow=m_vPopups[x];
-			piWindow->UpdateRealRect();
-		}
-		return 0L;
-	}
-	return dwPreviousResult;
 }
 
 void CGameGUIManager::ProcessMouseActivation(IGameWindow *piWindow)
@@ -664,6 +619,36 @@ void CGameGUIManager::OnKeyUp(WORD wKeyState)
 
 void CGameGUIManager::OnSize(unsigned w,unsigned h)
 {
+  	if(!m_sScreenProperties.bFullScreen)
+	{
+	  if(m_sScreenProperties.eWindowReferenceSystem==eGameGUIReferenceSystem_Absolute)
+	  {
+		m_sScreenProperties.rWindowRect.w=w;
+		m_sScreenProperties.rWindowRect.h=h;
+		RTTRACE("CGameGUIManager::OnSize -> abs : %dx%d",w,h);
+	  }
+	  else
+	  {
+		SVideoMode sVideoMode;
+		m_Viewport.m_piViewport->GetCurrentVideoMode(&sVideoMode);
+		m_sScreenProperties.rWindowRect.w=(double)w/(double)sVideoMode.w;
+		m_sScreenProperties.rWindowRect.h=(double)h/(double)sVideoMode.h;
+		RTTRACE("CGameGUIManager::OnSize -> rel : %dx%d -> %fx%f",w,h,m_sScreenProperties.rWindowRect.w,m_sScreenProperties.rWindowRect.h);
+	  }
+	}
+	  
+	OnMove();
+}
+
+void CGameGUIManager::OnMove()
+{
+	if(m_piMainWindow){m_piMainWindow->UpdateRealRect();}
+	
+	for(unsigned int x=0;x<m_vPopups.size();x++)
+	{
+		IGameWindow *piWindow=m_vPopups[x];
+		piWindow->UpdateRealRect();
+	}
 }
 
 void CGameGUIManager::GetScreenProperties(SGameScreenProperties *pProperties)
@@ -679,34 +664,13 @@ void CGameGUIManager::SetScreenProperties(SGameScreenProperties *pProperties)
 
 void CGameGUIManager::UpdateScreenPlacement()
 {
-	SGameSize sCurrentResolution(GetSystemMetrics(SM_CXSCREEN),GetSystemMetrics(SM_CYSCREEN));
 
 	if(m_sScreenProperties.bFullScreen)
 	{
-		if(!m_bScreenSettingsChanged)
-		{
-			EnumDisplaySettings(NULL,ENUM_CURRENT_SETTINGS,&m_OldScreenDeviceSettings);
-		}
-
-		DEVMODE mode={0};
-		mode.dmSize=sizeof(DEVMODE);
-		mode.dmBitsPerPel=(DWORD)m_sScreenProperties.dFullScreenRefreshBitsPerPixel;
-		mode.dmPelsWidth=(DWORD)m_sScreenProperties.sFullScreenResolution.w;
-		mode.dmPelsHeight=(DWORD)m_sScreenProperties.sFullScreenResolution.h;
-		mode.dmDisplayFrequency=(DWORD)m_sScreenProperties.dFullScreenRefreshRate;
-		mode.dmFields=DM_BITSPERPEL|DM_PELSWIDTH|DM_PELSHEIGHT|DM_DISPLAYFREQUENCY;
-		ChangeDisplaySettings(&mode,CDS_FULLSCREEN);
-		m_bScreenSettingsChanged=true;
-		m_Viewport.m_piViewport->SetMaximized(true);
+		m_Viewport.m_piViewport->SetFullScreen(m_sScreenProperties.sFullScreenResolution.w,m_sScreenProperties.sFullScreenResolution.h,m_sScreenProperties.dFullScreenRefreshBitsPerPixel,m_sScreenProperties.dFullScreenRefreshRate);
 	}
 	else
 	{
-		if(m_bScreenSettingsChanged)
-		{
-			ChangeDisplaySettings(&m_OldScreenDeviceSettings,CDS_FULLSCREEN);
-			m_bScreenSettingsChanged=false;
-		}
-
 		SGameRect rFinalRect;
 		if(m_sScreenProperties.eWindowReferenceSystem==eGameGUIReferenceSystem_Absolute)
 		{
@@ -714,39 +678,35 @@ void CGameGUIManager::UpdateScreenPlacement()
 		}
 		else
 		{
-			rFinalRect.x=m_sScreenProperties.rWindowRect.x*sCurrentResolution.w;
-			rFinalRect.y=m_sScreenProperties.rWindowRect.y*sCurrentResolution.h;
-			rFinalRect.w=m_sScreenProperties.rWindowRect.w*sCurrentResolution.w;
-			rFinalRect.h=m_sScreenProperties.rWindowRect.h*sCurrentResolution.h;
+			rFinalRect.x=m_sScreenProperties.rWindowRect.x*m_sOldVideoMode.w;
+			rFinalRect.y=m_sScreenProperties.rWindowRect.y*m_sOldVideoMode.h;
+			rFinalRect.w=m_sScreenProperties.rWindowRect.w*m_sOldVideoMode.w;
+			rFinalRect.h=m_sScreenProperties.rWindowRect.h*m_sOldVideoMode.h;
 		}
 		if(m_sScreenProperties.bWindowCentered)
 		{
 			SGameRect rScreenRect;
-			rScreenRect.w=sCurrentResolution.w;
-			rScreenRect.h=sCurrentResolution.h;
+			rScreenRect.w=m_sOldVideoMode.w;
+			rScreenRect.h=m_sOldVideoMode.h;
 
 			rFinalRect.CenterOnRect(&rScreenRect);
 		}
-
-		m_Viewport.m_piViewport->SetMaximized(false);
-		m_Viewport.m_piViewport->SetRect((unsigned)rFinalRect.x,(unsigned)rFinalRect.y,(unsigned)rFinalRect.w,(unsigned)rFinalRect.h);
+		m_Viewport.m_piViewport->SetWindowed((unsigned)rFinalRect.x,(unsigned)rFinalRect.y,(unsigned)rFinalRect.w,(unsigned)rFinalRect.h);
 	}
-	m_Viewport.m_piViewport->SetVSync(m_sScreenProperties.bVerticalSync);
+// 	m_Viewport.m_piViewport->SetVSync(m_sScreenProperties.bVerticalSync);
 }
 
 bool CGameGUIManager::Unserialize(ISystemPersistencyNode *piNode)
 {
 	bool bOk=CSystemObjectBase::Unserialize(piNode);
 
-	if(bOk)
+	if(bOk && m_Viewport.m_piViewport)
 	{
 		// Esto es un apaño de un problema en la persistencia por el que no se pueden especificar valores por defecto
 		// para SGameRect ni SGameSize, ademas no hacerlo supondria un problema para obtener los valores por defecto para
 		// los bpp y el refreshrate.
 
-		DEVMODE mode={0};
-		mode.dmSize=sizeof(DEVMODE);
-		EnumDisplaySettings(NULL,ENUM_CURRENT_SETTINGS,&mode);
+		m_Viewport.m_piViewport->GetCurrentVideoMode(&m_sOldVideoMode);
 
 		if(m_sScreenProperties.rWindowRect.x==0 && m_sScreenProperties.rWindowRect.y==0 && m_sScreenProperties.rWindowRect.w==0 && m_sScreenProperties.rWindowRect.h==0)
 		{
@@ -758,19 +718,26 @@ bool CGameGUIManager::Unserialize(ISystemPersistencyNode *piNode)
 		}
 		if(m_sScreenProperties.sFullScreenResolution.w==0 || m_sScreenProperties.sFullScreenResolution.h==0)
 		{
-			m_sScreenProperties.sFullScreenResolution.w=mode.dmPelsWidth;
-			m_sScreenProperties.sFullScreenResolution.h=mode.dmPelsHeight;
+			m_sScreenProperties.sFullScreenResolution.w=m_sOldVideoMode.w;
+			m_sScreenProperties.sFullScreenResolution.h=m_sOldVideoMode.h;
 		}
 		if(m_sScreenProperties.dFullScreenRefreshRate==0)
 		{
-			m_sScreenProperties.dFullScreenRefreshRate=mode.dmDisplayFrequency;
+			m_sScreenProperties.dFullScreenRefreshRate=m_sOldVideoMode.rate;
 		}
 		if(m_sScreenProperties.dFullScreenRefreshBitsPerPixel==0)
 		{
-			m_sScreenProperties.dFullScreenRefreshBitsPerPixel=mode.dmBitsPerPel;
+			m_sScreenProperties.dFullScreenRefreshBitsPerPixel=m_sOldVideoMode.bpp;
 		}
 
 		UpdateScreenPlacement();
 	}
 	return bOk;
 }
+
+bool CGameGUIManager::DetectDrag(double dx,double dy)
+{
+	if(!m_Viewport.m_piViewport){return false;}
+	return m_Viewport.m_piViewport->DetectDrag(dx,dy);
+}
+	

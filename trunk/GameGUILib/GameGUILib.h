@@ -1,5 +1,7 @@
 
+#ifdef WIN32
 #pragma comment (lib , "GameGUILib.lib")
+#endif
 
 #include <set>
 #include <list>

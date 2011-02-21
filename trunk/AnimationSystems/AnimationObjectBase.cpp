@@ -1,6 +1,6 @@
-#include "StdAfx.h"
-#include ".\AnimationSystems.h"
-#include ".\AnimationObjectBase.h"
+#include "./stdafx.h"
+#include "AnimationSystems.h"
+#include "AnimationObjectBase.h"
 
 CAnimationObjectTypeBase::CAnimationObjectTypeBase(){}
 

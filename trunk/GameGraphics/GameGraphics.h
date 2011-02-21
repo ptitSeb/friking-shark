@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GameRuntimeLib.h"
+#include "GameRunTimeLib.h"
 
 struct SGameRect;
 
@@ -43,6 +43,16 @@ struct SGameRect
 	SGameRect();
 };
 
+struct SVideoMode
+{
+  	unsigned int w;
+	unsigned int h;
+	unsigned int bpp;
+	unsigned int rate;
+	
+	SVideoMode();
+};
+
 BEGIN_STRUCT_PROPS(SGameRect)
 	PROP_VALUE(x,"x",0)
 	PROP_VALUE(y,"y",0)
@@ -60,7 +70,7 @@ BEGIN_STRUCT_PROPS(SGamePos)
 	PROP_VALUE(y,"y",0)
 END_STRUCT_PROPS()
 
-typedef enum eTextAlignment
+enum eTextAlignment
 {
 	eTextAlignment_None		=0x0000,
 	eTextAlignment_Left		=0x0001,
@@ -70,7 +80,7 @@ typedef enum eTextAlignment
 	eTextAlignment_Bottom	=0x0003
 };
 
-DECLARE_SERIALIZABLE_ENUMERATION(eTextAlignment);
+DECLARE_SERIALIZABLE_ENUMERATION(eTextAlignment)
 
 class IGenericCamera: virtual public ISystemUnknown
 {
@@ -101,24 +111,28 @@ public:
 
 	virtual void OnRender()=0;
 
-	virtual LRESULT OnProcessMessage(LRESULT dwPreviousResult,HWND hwnd,UINT  uMsg, WPARAM  wParam,LPARAM  lParam)=0;
-
 	virtual void OnLButtonDown(WORD wKeyState,unsigned x,unsigned y)=0;
 	virtual void OnLButtonUp(WORD wKeyState,unsigned x,unsigned y)=0;
 	virtual void OnRButtonDown(WORD wKeyState,unsigned x,unsigned y)=0;
 	virtual void OnRButtonUp(WORD wKeyState,unsigned x,unsigned y)=0;
 	virtual void OnMouseMove(unsigned x,unsigned y)=0;
+	
+	virtual void OnCharacter(WORD wCharacter)=0;
+	virtual void OnKeyDown(WORD wKeyState)=0;
+	virtual void OnKeyUp(WORD wKeyState)=0;
+
 	virtual void OnSize(unsigned cx,unsigned cy)=0;
+	virtual void OnMove()=0;
 };
 
 class IGenericViewport:virtual public ISystemUnknown
 {
 public:
 
-	virtual HWND Create(HWND hParent,RECT *pRect,bool bMaximized)=0;
+	virtual bool Create(RECT *pRect,bool bMaximized)=0;
 
-	virtual HWND GetWindowHandle()=0;
-	virtual HWND GetParentWindowHandle()=0;
+	//virtual HWND GetWindowHandle()=0;
+	//virtual HWND GetParentWindowHandle()=0;
 
 	virtual bool IsMaximized()=0;
 	virtual void SetMaximized(bool bMaximized)=0;
@@ -137,14 +151,41 @@ public:
 	virtual void SetVSync(bool bVSync)=0;
 	virtual bool GetVSync()=0;
 
-	virtual void				SetCaption(std::string sCaption)=0;
+	virtual void EnterLoop()=0;
+	virtual void ExitLoop()=0;
+
+	virtual void		SetCaption(std::string sCaption)=0;
 	virtual std::string GetCaption()=0;
 
-	virtual void				SetIcon(HICON hIcon)=0;
-	virtual HICON				GetIcon()=0;
+	virtual void		SetIcon(HICON hIcon)=0;
+	virtual HICON		GetIcon()=0;
 
+	virtual void GetCursorPos(int *pX,int *pY)=0;
+	virtual void SetCursorPos(int x,int y)=0;
+
+	virtual bool HasMouseCapture()=0;
+	virtual void SetMouseCapture()=0;
+	virtual void ReleaseMouseCapture()=0;
+
+	virtual bool IsKeyDown(unsigned int nKey)=0;
+
+	virtual bool IsActiveWindow()=0;
+
+	virtual bool IsMouseVisible()=0;
+	virtual void ShowMouseCursor(bool bShow)=0;
+	
 	virtual void SetCallBack(IGenericViewportCallBack *pCallBack)=0;
+	
+	virtual bool DetectDrag(double dx,double dy)=0;
+
+	virtual void GetCurrentVideoMode(SVideoMode *pMode)=0;
+
+	virtual bool SetWindowed(unsigned int x,unsigned int y,unsigned int w,unsigned int h)=0;
+	virtual bool SetFullScreen(unsigned int w,unsigned int h,unsigned int bpp,unsigned int rate)=0;
+
 };
+
+class IGenericRender;
 
 class IGenericTexture:virtual public ISystemUnknown
 {	
@@ -240,7 +281,7 @@ enum eGenericLightType
 	eGenericLightType_Directional
 };
 
-DECLARE_SERIALIZABLE_ENUMERATION(eGenericLightType);
+DECLARE_SERIALIZABLE_ENUMERATION(eGenericLightType)
 
 class IGenericLight:virtual public ISystemUnknown
 {
@@ -278,7 +319,7 @@ enum eGenericFontType
 	eGenericFontType_Texture
 };
 
-DECLARE_SERIALIZABLE_ENUMERATION(eGenericFontType);
+DECLARE_SERIALIZABLE_ENUMERATION(eGenericFontType)
 
 class IGenericFont:virtual public ISystemUnknown
 {	
@@ -347,6 +388,7 @@ public:
 	virtual void RenderBBox(const CVector &vOrigin,const CVector &vOrientation,const CVector &vMins,const CVector &vMaxs,const CVector &vColor,unsigned long nStipple=0x8888)=0;
 	virtual void RenderLine(const CVector &v1,const CVector &v2,const CVector &vColor,unsigned long nStipple=0x8888)=0;
 	virtual void RenderRect(const CVector &vCenter,const CVector &vAxisW,const CVector &vAxisH,double w,double h)=0;
+	virtual void RenderPolygon(unsigned int nVertexes,const CVector *pVertexes,const CVector *pColors)=0;
 	virtual void RenderPyramid(const CVector &vTopVertex,const CVector &vSizes,bool bSolid)=0;
 	virtual void RenderPyramid(const CVector &vTopVertex,double dUpperSizeX,double dUpperSizeZ,double dLowerSizeX,double dLowerSizeZ,double dHeight,bool bSolid)=0;
 

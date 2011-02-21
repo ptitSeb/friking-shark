@@ -1,7 +1,7 @@
-#include "StdAfx.h"
-#include ".\AnimationSystems.h"
-#include ".\AnimationObjectBase.h"
-#include ".\ModelAnimationObjecttype.h"
+#include "./stdafx.h"
+#include "AnimationSystems.h"
+#include "AnimationObjectBase.h"
+#include "ModelAnimationObjectType.h"
 
 CModelAnimationObjectType::CModelAnimationObjectType()
 {

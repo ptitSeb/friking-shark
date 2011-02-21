@@ -16,95 +16,11 @@ AreaDeJuego
 		Name=PlayCamera
 		System=GameSystem
 	}
-	Destino=1987.525024,-4.682201,87.965199
+	Destino=1883.208282,-4.682201,87.965199
 	DistanciaCamara=120.000000
 	Elementos
 	{
 		Item0
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Live
-				Posicion=50.000000,-2.547510,81.671682
-				Tipo=Formacion3
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item1
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=-65.102379,-2.547510,81.671682
-				Tipo=Formacion5
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item10
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot1
-				Posicion=-35.102379,-2.547510,81.671682
-				Tipo=Formacion5
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item11
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot1
-				Posicion=-45.102379,-2.547510,81.671682
-				Tipo=CuñaPorDelante
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item12
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=50.102379,-2.547510,81.671682
-				Tipo=P51TrianguloIzquierdaRecto
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item13
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=150.102379,-2.547510,81.671682
-				Tipo=CuñaPorDelante
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item14
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=170.102379,-2.547510,81.671682
-				Tipo=CuñaPorDelante
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item15
 		{
 			Class=CPlayAreaCheckPoint
 			Data
@@ -114,7 +30,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item16
+		Item1
 		{
 			Class=CPlayAreaCheckPoint
 			Data
@@ -124,7 +40,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item17
+		Item2
 		{
 			Class=CPlayAreaCheckPoint
 			Data
@@ -134,110 +50,18 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item18
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=55.102379,-2.547510,81.671682
-				Tipo=P51TrianguloIzquierdaInclinado
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item19
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=60.102379,-2.547510,81.671682
-				Tipo=P51TrianguloDerechaInclinado
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item2
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=130.102379,-2.547510,81.671682
-				Tipo=P51TrianguloIzquierdaInclinado
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item20
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot1
-				Posicion=-5.102379,-2.547510,81.671682
-				Tipo=CuñaPorDetras
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item21
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=-65.102379,-2.547510,81.671682
-				Tipo=P51TrianguloIzquierdaRecto
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item22
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=10.102379,-2.547510,81.671682
-				Tipo=P51TrianguloIzquierdaRecto
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item23
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=30.102379,-2.547510,81.671682
-				Tipo=P51TrianguloDerechaInclinado
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item24
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=40.102379,-2.547510,81.671682
-				Tipo=CuñaPorDelante
-			}
-			Name=""
-			System=GameSystem
-		}
 		Item3
 		{
 			Class=CPlayAreaFormation
 			Data
 			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=130.102379,-2.547510,81.671682
-				Tipo=P51TrianguloDerechaInclinado
+				Bonus
+				Posicion=983.794796,-4.682201,87.965199
+				Tipo
+				{
+					Name=CuñaPorDelante
+					System=FormationTypes
+				}
 			}
 			Name=""
 			System=GameSystem
@@ -247,9 +71,13 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=-35.102379,-2.547510,81.671682
-				Tipo=BombarderoPorDetrasDerecha
+				Bonus
+				Posicion=685.294796,-4.682201,87.965199
+				Tipo
+				{
+					Name=BombarderoPorDetrasDerecha
+					System=FormationTypes
+				}
 			}
 			Name=""
 			System=GameSystem
@@ -259,57 +87,13 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=65.102379,-2.547510,81.671682
-				Tipo=CuñaPorDelante
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item6
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=80.102379,-2.547510,81.671682
-				Tipo=CuñaPorDelante
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item7
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=90.102379,-2.547510,81.671682
-				Tipo=P51TrianguloIzquierdaInclinado
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item8
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=90.102379,-2.547510,81.671682
-				Tipo=P51TrianguloDerechaInclinado
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item9
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=110.102379,-2.547510,81.671682
-				Tipo=CuñaPorDelante
+				Bonus
+				Posicion=352.294796,-4.682201,87.965199
+				Tipo
+				{
+					Name=CuñaPorDetras
+					System=FormationTypes
+				}
 			}
 			Name=""
 			System=GameSystem
@@ -321,14 +105,12 @@ AreaDeJuego
 		{
 			Config
 			{
-				CastShadows=1
 				Color=0.000000,1.000000,0.000000
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.000000
 				EntityType=Palmera
 				PositionJitter=0.400000
 				Separation=0.700000
-				ShadowLevel=1
 				YawJitter=225.000000
 			}
 			EntityType
@@ -340,17 +122,18 @@ AreaDeJuego
 	}
 	InclinacionVista=0.000000
 	MaximoScrollHorz=20.000000
-	Origen=-158.499496,-4.682201,87.965199
+	Origen=-54.182754,-4.682201,87.965199
 	VelocidadCamara=15.000000
 }
 Terrain
 {
+	AmbientColor=0.000000,0.000000,0.000000
 	BaseModel
 	{
 		Class=Model
 		Data
 		{
-			Archivo="C:\\TerrainGenerator\\Resources\\Models\\TextureTester.ase"
+			Archivo=Models/TextureTester.ase
 			AutoGenerateBSP=1
 			AutoUpdateBSP=1
 			LoadBSP=1
@@ -358,7 +141,7 @@ Terrain
 		Name=""
 		System=GameResources
 	}
-	BaseModelFile="C:\\TerrainGenerator\\Resources\\Models\\TextureTester.ase"
+	BaseModelFile=Models/TextureTester.ase
 	ColorLayers
 	{
 		Item0
@@ -370,7 +153,7 @@ Terrain
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.000000
 				HorzResolution=4.000000
-				Texture="C:\\TerrainGenerator\\Resources\\Textures\\hiervsPeq.jpg"
+				Texture=Textures/hiervsPeq.jpg
 				VertResolution=4.000000
 			}
 			Texture
@@ -378,7 +161,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo="C:\\TerrainGenerator\\Resources\\Textures\\hiervsPeq.jpg"
+					Archivo=Textures/hiervsPeq.jpg
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -396,7 +179,7 @@ Terrain
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.000000
 				HorzResolution=4.000000
-				Texture="C:\\TerrainGenerator\\Resources\\Textures\\Azulejos.jpg"
+				Texture=Textures/Azulejos.jpg
 				VertResolution=4.000000
 			}
 			Texture
@@ -404,7 +187,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo="C:\\TerrainGenerator\\Resources\\Textures\\Azulejos.jpg"
+					Archivo=Textures/Azulejos.jpg
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -422,7 +205,7 @@ Terrain
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.000000
 				HorzResolution=3.000000
-				Texture="C:\\TerrainGenerator\\Resources\\Textures\\sandPeq.jpg"
+				Texture=Textures/sandPeq.jpg
 				VertResolution=3.000000
 			}
 			Texture
@@ -430,7 +213,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo="C:\\TerrainGenerator\\Resources\\Textures\\sandPeq.jpg"
+					Archivo=Textures/sandPeq.jpg
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -445,7 +228,7 @@ Terrain
 		Class=Texture
 		Data
 		{
-			Archivo="C:\\TerrainGenerator\\Resources\\Textures\\ColorMap.bmp"
+			Archivo=Textures/ColorMap.bmp
 			ArchivoAlpha=""
 			ColorKey=0.000000,0.000000,0.000000
 			UsarColorKey=0
@@ -453,7 +236,14 @@ Terrain
 		Name=""
 		System=GameResources
 	}
-	ColorMapFile="C:\\TerrainGenerator\\Resources\\Textures\\ColorMap.bmp"
+	ColorMapFile=Textures/ColorMap.bmp
+	Fog
+	{
+		Color=1.000000,1.000000,1.000000
+		Enabled=0
+		End=1000.000000
+		Start=100.000000
+	}
 	HeightLayers
 	{
 		Item0
@@ -464,7 +254,7 @@ Terrain
 				HorzResolution=4.000000
 				MaxHeight=0.380000
 				MinHeight=0.000000
-				Texture="C:\\TerrainGenerator\\Resources\\Textures\\LechoInferior.jpg"
+				Texture=Textures/LechoInferior.jpg
 				VertResolution=4.000000
 			}
 			Texture
@@ -472,7 +262,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo="C:\\TerrainGenerator\\Resources\\Textures\\LechoInferior.jpg"
+					Archivo=Textures/LechoInferior.jpg
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -489,7 +279,7 @@ Terrain
 				HorzResolution=4.500000
 				MaxHeight=0.880000
 				MinHeight=0.280000
-				Texture="C:\\TerrainGenerator\\Resources\\Textures\\LechoSuperior.jpg"
+				Texture=Textures/LechoSuperior.jpg
 				VertResolution=4.500000
 			}
 			Texture
@@ -497,7 +287,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo="C:\\TerrainGenerator\\Resources\\Textures\\LechoSuperior.jpg"
+					Archivo=Textures/LechoSuperior.jpg
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -514,7 +304,7 @@ Terrain
 				HorzResolution=4.500000
 				MaxHeight=1.000000
 				MinHeight=0.900000
-				Texture="C:\\TerrainGenerator\\Resources\\Textures\\ArenaOscura.jpg"
+				Texture=Textures/ArenaOscura.jpg
 				VertResolution=4.500000
 			}
 			Texture
@@ -522,7 +312,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo="C:\\TerrainGenerator\\Resources\\Textures\\ArenaOscura.jpg"
+					Archivo=Textures/ArenaOscura.jpg
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -531,5 +321,41 @@ Terrain
 				System=GameResources
 			}
 		}
+	}
+	Sky
+	{
+		Config
+		{
+			Enabled=0
+			HorzResolution=1.000000
+			Opacity=1.000000
+			Speed=0.000000
+			Texture=""
+			VertResolution=1.000000
+		}
+		Texture
+	}
+	Sun
+	{
+		Azimuth=0.000000
+		Color=0.200000,0.200000,0.200000
+		Distance=1.000000
+		Elevation=90.000000
+	}
+	Water
+	{
+		Config
+		{
+			Enabled=0
+			Height=0.000000
+			HorzResolution=1.000000
+			Opacity=1.000000
+			Speed=0.000000
+			Texture1=""
+			Texture2=""
+			VertResolution=1.000000
+		}
+		Texture1
+		Texture2
 	}
 }

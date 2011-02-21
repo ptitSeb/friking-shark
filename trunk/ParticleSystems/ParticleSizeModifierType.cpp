@@ -1,7 +1,7 @@
-#include "StdAfx.h"
-#include ".\particlesystems.h"
-#include ".\ParticleModifierType.h"
-#include ".\particlesizemodifiertype.h"
+#include "./stdafx.h"
+#include "ParticleSystems.h"
+#include "ParticleModifierType.h"
+#include "ParticleSizeModifierType.h"
 
 CParticleSizeModifierType::CParticleSizeModifierType(void)
 {
@@ -17,7 +17,7 @@ IParticleModifier *CParticleSizeModifierType::CreateInstance(DWORD dwCurrentTime
 CParticleSizeModifier::CParticleSizeModifier(CParticleSizeModifierType *pType)
 {
     m_pType=pType;
-};
+}
 
 void CParticleSizeModifier::ProcessParticle(IParticle *pParticle,IParticleSystem *pSystem,DWORD dwCurrentTime,double dInterval)
 {

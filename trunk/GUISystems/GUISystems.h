@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GameRuntimeLib.h"
+#include "GameRunTimeLib.h"
 #include "GameGUILib.h"
 
 class IGameInterfaceWindow: virtual public IGameWindow

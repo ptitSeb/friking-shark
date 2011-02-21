@@ -3,43 +3,46 @@
 // are changed infrequently
 //
 
-#pragma once
+#ifndef __STDAFX__
+#define __STDAFX__
 
-#ifdef GAMEMANAGERS_EXPORTS
-#define GAMEMANAGERS_API __declspec(dllexport)
-#else
-#define GAMEMANAGERS_API __declspec(dllimport)
+#ifdef WIN32
+  #ifdef GAMEMANAGERS_EXPORTS
+  #define GAMEMANAGERS_API __declspec(dllexport)
+  #else
+  #define GAMEMANAGERS_API __declspec(dllimport)
+  #endif
+
+  #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 #endif
 
-#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
-// Windows Header Files:
 #include <windows.h>
 #include <list>
 #include <crtdbg.h>
 #include "VectorLib.h"
 #include "GameLib.h"
-#include "GameRuntimeLib.h"
+#include "GameRunTimeLib.h"
 #include "GameEntityLib.h"
 #include "GameGraphics.h"
 #include "OpenGLGraphics.h"
 
 struct IEntityManager;
 
-DECLARE_CUSTOM_WRAPPER1(CGameControllerWrapper,IGameController,m_piGameController);
-DECLARE_CUSTOM_WRAPPER1(CEntityManagerWrapper,IEntityManager,m_piEntityManager);
-DECLARE_CUSTOM_WRAPPER1(CGameRenderWrapper,IGameRender,m_piRender);
-DECLARE_CUSTOM_WRAPPER1(CPlayAreaManagerWrapper,IPlayAreaManager,m_piPlayAreaManager);
-DECLARE_CUSTOM_WRAPPER1(CEntityTypeWrapper,IEntityType,m_piEntityType);
+DECLARE_CUSTOM_WRAPPER1(CGameControllerWrapper,IGameController,m_piGameController)
+DECLARE_CUSTOM_WRAPPER1(CEntityManagerWrapper,IEntityManager,m_piEntityManager)
+DECLARE_CUSTOM_WRAPPER1(CGameRenderWrapper,IGameRender,m_piRender)
+DECLARE_CUSTOM_WRAPPER1(CPlayAreaManagerWrapper,IPlayAreaManager,m_piPlayAreaManager)
+DECLARE_CUSTOM_WRAPPER1(CEntityTypeWrapper,IEntityType,m_piEntityType)
 DECLARE_CUSTOM_WRAPPER1(CFrameManagerWrapper,IFrameManager,m_piFrameManager)
-DECLARE_CUSTOM_WRAPPER1(CWorldManagerWrapper,ITerrainDesign,m_piTerrain);
+DECLARE_CUSTOM_WRAPPER1(CWorldManagerWrapper,ITerrainDesign,m_piTerrain)
 
 DECLARE_CUSTOM_WRAPPER2(CGenericTextureWrapper,IGenericTexture,m_piTexture,IOpenGLTexture,m_piGLTexture)
 DECLARE_CUSTOM_WRAPPER1(CGenericFontWrapper,IGenericFont,m_piFont)
 DECLARE_CUSTOM_WRAPPER2(CGenericModelWrapper,IGenericModel,m_piModel,IOpenGLModel,m_piGLModel)
 DECLARE_CUSTOM_WRAPPER1(CGenericCameraWrapper,IGenericCamera,m_piCamera)
-DECLARE_CUSTOM_WRAPPER1(CGenericRenderWrapper,IGenericRender,m_piRender);
-DECLARE_CUSTOM_WRAPPER1(CGenericLightWrapper,IGenericLight,m_piLight);
+DECLARE_CUSTOM_WRAPPER1(CGenericRenderWrapper,IGenericRender,m_piRender)
+DECLARE_CUSTOM_WRAPPER1(CGenericLightWrapper,IGenericLight,m_piLight)
 
-
-// TODO: reference additional headers your program requires here
 using namespace std;
+
+#endif

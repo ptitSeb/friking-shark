@@ -3,18 +3,17 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#include "stdafx.h"
+#include "./StdAfx.h"
 #include "VectorLib.h"
 #include "3DSTypes.h"
 #include "3DSFiles.h"
 #include "ASEFiles.h"
 #include "crtdbg.h"
-#include <io.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <conio.h>   // IF you are on a dos system
-#include <dos.h>     // IF you are on a dos system
+#include <libgen.h>
+
 
 using namespace std;
 
@@ -147,23 +146,22 @@ bool CASEFileType::Open(const char *sFileName)
 	DWORD dwFileLength=0;
 
 	if ((m_pFile=fopen (sFileName, "rb"))== NULL) return false; //Open the file
-	dwFileLength=_filelength(_fileno (m_pFile));
+
+	fseek(m_pFile,0,SEEK_END);
+    dwFileLength=ftell(m_pFile);
+	fseek(m_pFile,0,SEEK_SET);
+	
 	if(!dwFileLength){return false;}
 
-	WORD	wChunckId=0; //Chunk identifier
-	DWORD	dwChunckLength=0; //Chunk lenght
 
 	bool				bBuildAnimation=false;
 	S3DSObject			*pObject=NULL;
-	S3DSObject			*pKeyFrameObject=NULL;
 	S3DSFrame			*pFrame=NULL;
 	S3DSLight			*pLight=NULL;
 	S3DSCamera			*pCamera=NULL;
 	S3DSMaterial		*pMaterial=NULL;
-	COLORREF			*pCurrentColor=NULL;
-	float				*pCurrentPercent=NULL;
 	char				*pToken=NULL;					
-	DWORD				dwCurrentMaterialId;
+	DWORD				dwCurrentMaterialId=0;
 	DWORD				dwFaceIndex=0;
 	CVector				*pCurrentOrigin=NULL;
 	CMatrix				*pTransformMatrix=NULL;
@@ -173,10 +171,11 @@ bool CASEFileType::Open(const char *sFileName)
 	float				*pRotationAngle=NULL;
 	DWORD				dwCurrentBitmap=0;
 	bool				bReadingAnimation=false;
-	int x,y;
+	unsigned int x;
+	int y;
 
 	m_pBuffer=new char [dwFileLength+1];
-	fread(m_pBuffer,dwFileLength,1,m_pFile);
+	if(fread(m_pBuffer,dwFileLength,1,m_pFile)!=1){Close();return false;}
 	m_pBuffer[dwFileLength]=0;
 
 	map<string,DWORD> mKeyNames;
@@ -257,7 +256,7 @@ bool CASEFileType::Open(const char *sFileName)
 
 	// usando pSearchBuffer podemos poner pToken a cero para seguir la busqueda en otro punto
 	char *pSearchBuffer=m_pBuffer; 
-	while(pToken=strtok(pToken?NULL:pSearchBuffer,ASE_FILE_DELIMITER))
+	while((pToken=strtok(pToken?NULL:pSearchBuffer,ASE_FILE_DELIMITER)))
 	{
 		map<string,DWORD>::iterator i=mKeyNames.find(pToken);
 		if(i==mKeyNames.end())
@@ -527,18 +526,17 @@ bool CASEFileType::Open(const char *sFileName)
 			break;
 			case ASE_BITMAP: 
 				{
-					char sFileName[MAX_PATH]={0},sExt[_MAX_EXT]={0};
+					char sFileName[MAX_PATH]={0};
 					string fileName=ReadString();
-					_splitpath(fileName.c_str(),NULL,NULL,sFileName,sExt);
 					if(dwCurrentBitmap==ASE_MAP_DIFFUSE)
 					{
-						strcpy(pMaterial->sFile,sFileName);
-						strcat(pMaterial->sFile,sExt);
+					    strcpy(sFileName,fileName.c_str());
+						strcpy(pMaterial->sFile,basename(sFileName));
 					}
 					if(dwCurrentBitmap==ASE_MAP_OPACITY)
 					{
-						strcpy(pMaterial->sAlphaFile,sFileName);
-						strcat(pMaterial->sAlphaFile,sExt);
+						strcpy(sFileName,fileName.c_str());
+						strcpy(pMaterial->sAlphaFile,basename(sFileName));
 					}
 				}
 			break;
@@ -639,7 +637,7 @@ bool CASEFileType::Open(const char *sFileName)
 		if(pObject->baseFrame.pVertexNormals){for (y=0;y<pObject->baseFrame.nVertexes;y++){From3DSToOpenGL(&pObject->baseFrame.pVertexNormals[y]);}}
 
 		// Conversion sistema de coordenadas
-		for(int f=0;f<pObject->vFrameInstances.size();f++)
+		for(unsigned int f=0;f<pObject->vFrameInstances.size();f++)
 		{
 			S3DSFrame *pFrame=pObject->vFrameInstances[f];
 			for (y=0;y<pFrame->nVertexes;y++){From3DSToOpenGL(&pFrame->pVertexes[y]);}				
@@ -656,7 +654,7 @@ bool CASEFileType::Open(const char *sFileName)
 
 		for(int f=0;f<m_Scene.nFrameCount;f++)
 		{
-			for(int of=0;of<pObject->vFrameInstances.size();of++)
+			for(unsigned int of=0;of<pObject->vFrameInstances.size();of++)
 			{
 				S3DSFrame *pTempFrame=pObject->vFrameInstances[of];
 				if(pTempFrame->dTimeStamp==((double)f*m_Scene.dTicksPerFrame))
@@ -695,7 +693,7 @@ bool CASEFileType::Open(const char *sFileName)
 	{
 		pObject=m_vObjects[x];
 		ProcessObjectFrameSubMaterials(pObject,&pObject->baseFrame);
-		for(int f=0;f<pObject->vFrameInstances.size();f++)
+		for(unsigned int f=0;f<pObject->vFrameInstances.size();f++)
 		{
 			S3DSFrame *pFrame=pObject->vFrameInstances[f];
 			ProcessObjectFrameSubMaterials(pObject,pFrame);
@@ -714,7 +712,7 @@ void CASEFileType::ProcessObjectFrameSubMaterials(S3DSObject *pObject,S3DSFrame 
 {
 	// Mapeo de los materiales de los poligonos de cada objetos en una lista de ObjectMaterials
 	// que contienen las caras que tienen cada material en el objeto
-	for(int y=0;y<m_vMaterials.size();y++)
+	for(unsigned int y=0;y<m_vMaterials.size();y++)
 	{
 		// Se buscan los materiales cuyo indice de material coincide con el del objeto.
 		// si tiene varios submateriales se encontrara mas de uno

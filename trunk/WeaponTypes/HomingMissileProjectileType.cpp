@@ -1,5 +1,5 @@
-#include "StdAfx.h"
-#include ".\HomingMissileProjectiletype.h"
+#include "./stdafx.h"
+#include "HomingMissileProjectileType.h"
 
 CHomingMissileProjectileType::CHomingMissileProjectileType()
 {
@@ -73,7 +73,7 @@ double CustomApproachAngle(double actual,double ideal, double ammount)
   if(result<0.0){result=result+360.0;}
   if(result>360.0){result=result+(-360.0);}
   return result;
-};	
+}
 
 void CustomApproachAngles(CVector *pvActual,CVector vIdeal,double dAmmount)
 {

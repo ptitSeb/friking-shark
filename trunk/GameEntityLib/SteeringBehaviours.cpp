@@ -1,5 +1,5 @@
-#include "StdAfx.h"
-#include ".\Steeringbehaviours.h"
+#include "stdafx.h"
+#include "SteeringBehaviours.h"
 
 CSteeringBehaviours::CSteeringBehaviours(void)
 {
@@ -161,7 +161,8 @@ CVector CSteeringBehaviours::OffsetPursue(IEntity *pEntity,IEntity *pTarget,CVec
 	CVector vWorldOffset=vWorldTarget-pEntity->GetPhysicInfo()->vPosition;
 	double dTime=vWorldOffset/(pEntity->GetPhysicInfo()->dMaxVelocity+(double)pTarget->GetPhysicInfo()->vVelocity);
 
-	return Arrive(pEntity,vWorldTarget+pTarget->GetPhysicInfo()->vVelocity*dTime,eSBArriveSpeed_Fast);
+	CVector vTarget=vWorldTarget+pTarget->GetPhysicInfo()->vVelocity*dTime;
+	return Arrive(pEntity,vTarget,eSBArriveSpeed_Fast);
 }
 
 

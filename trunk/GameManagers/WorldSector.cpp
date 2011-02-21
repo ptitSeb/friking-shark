@@ -1,6 +1,6 @@
-#include "StdAfx.h"
-#include ".\worldsector.h"
-#include ".\worldmanager.h"
+#include "stdafx.h"
+#include "WorldSector.h"
+#include "WorldManager.h"
 
 
 CWorldSector::CWorldSector()

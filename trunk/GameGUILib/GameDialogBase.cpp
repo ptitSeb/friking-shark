@@ -1,5 +1,6 @@
-#include "StdAfx.h"
-#include ".\gamedialogbase.h"
+#include "./stdafx.h"
+#include "GameWindowBase.h"
+#include "GameDialogBase.h"
 
 CGameDialogBase::CGameDialogBase(void)
 {

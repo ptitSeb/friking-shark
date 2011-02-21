@@ -1,6 +1,6 @@
-#include "StdAfx.h"
-#include ".\PlayAreaElementBase.h"
-#include ".\PlayAreaCheckPoint.h"
+#include "./stdafx.h"
+#include "PlayAreaElementBase.h"
+#include "PlayAreaCheckPoint.h"
 
 CPlayAreaCheckPoint::CPlayAreaCheckPoint()
 {

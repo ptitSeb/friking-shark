@@ -30,7 +30,7 @@ public:
     ~CWorldSector();
 };
 
-DECLARE_SERIALIZABLE(CWorldSector);
+DECLARE_SERIALIZABLE(CWorldSector)
 
 class CWorldSectorSplitOffsetedBSPNode:public CBSPNode
 {

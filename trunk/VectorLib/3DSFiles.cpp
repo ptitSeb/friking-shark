@@ -2,17 +2,14 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "./StdAfx.h"
 #include "VectorLib.h"
 #include "3DSTypes.h"
 #include "3DSFiles.h"
 #include "crtdbg.h"
-#include <io.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <conio.h>   // IF you are on a dos system
-#include <dos.h>     // IF you are on a dos system
 
 using namespace std;
 
@@ -127,10 +124,10 @@ C3DSFileType::C3DSFileType()
 	m_bBinaryFile=false;
 }
 
-WORD			C3DSFileType::ReadWord()  {WORD value=0;fread (&value, sizeof(value), 1, m_pFile);return value;}
-DWORD			C3DSFileType::ReadDWord() {DWORD value=0;fread (&value, sizeof(value), 1, m_pFile);return value;}
-float			C3DSFileType::ReadFloat() {float value=0;fread (&value, sizeof(value), 1, m_pFile);return value;}
-unsigned char	C3DSFileType::ReadByte()  {unsigned char value=0;fread (&value, sizeof(value), 1, m_pFile);return value;}
+WORD			C3DSFileType::ReadWord()  {WORD value=0;if(fread (&value, sizeof(value), 1, m_pFile)!=1){return 0;}return value;}
+DWORD			C3DSFileType::ReadDWord() {DWORD value=0;if(fread (&value, sizeof(value), 1, m_pFile)!=1){return 0;}return value;}
+float			C3DSFileType::ReadFloat() {float value=0;if(fread (&value, sizeof(value), 1, m_pFile)!=1){return 0;}return value;}
+unsigned char	C3DSFileType::ReadByte()  {unsigned char value=0;if(fread (&value, sizeof(value), 1, m_pFile)!=1){return 0;}return value;}
 CVector			C3DSFileType::ReadVector(){CVector v;v.c[0]=ReadFloat();v.c[1]=ReadFloat();v.c[2]=ReadFloat();return v;}
 COLORREF		C3DSFileType::ReadColor() {CVector c=ReadVector();return VectorToRGB(&c);}
 
@@ -142,7 +139,7 @@ string C3DSFileType::ReadString()
 	do
 	{
 		sName[nNameLength]=0;
-		fread (&sName[nNameLength], 1, 1, m_pFile);
+		if(fread (&sName[nNameLength], 1, 1, m_pFile)!=1){break;}
 		nNameLength++;
 	}
 	while(sName[nNameLength-1]!=0 && nNameLength<20);
@@ -170,13 +167,16 @@ bool C3DSFileType::Open(const char *sFileName)
 	float				*pCurrentPercent=NULL;
 	string				sCurrentObjectName;
 
-	while (ftell (m_pFile) < _filelength (_fileno (m_pFile))) //Loop to scan the whole file 
+	fseek(m_pFile,0,SEEK_END);
+    int nLength=ftell(m_pFile);
+	fseek(m_pFile,0,SEEK_SET);
+	
+	while (ftell (m_pFile) < nLength) //Loop to scan the whole file 
 	{
-		int pos=ftell (m_pFile);
 		//getche(); //Insert this command for debug (to wait for keypress for each chuck reading)
 
-		fread (&wChunckId, 2, 1, m_pFile); //Read the chunk header
-		fread (&dwChunckLength, 4, 1, m_pFile); //Read the lenght of the chunk
+		if(fread (&wChunckId, 2, 1, m_pFile)!=1){break;} //Read the chunk header
+		if(fread (&dwChunckLength, 4, 1, m_pFile)!=1){break;} //Read the lenght of the chunk
 
 		switch (wChunckId)
         {
@@ -318,7 +318,7 @@ bool C3DSFileType::Open(const char *sFileName)
 						pFrame->pFaces[i*3]=ReadWord();
 						pFrame->pFaces[i*3+1]=ReadWord();
 						pFrame->pFaces[i*3+2]=ReadWord();
-						WORD wFlags=ReadWord();
+						ReadWord();// flags
 					}
 				}
                 break;
@@ -397,7 +397,7 @@ bool C3DSFileType::Open(const char *sFileName)
 					{
 						pObjectMaterial->nFaces=nFaces;
 						pObjectMaterial->pFaces=new int[nFaces];
-						fread (pObjectMaterial->pFaces, sizeof (int)*nFaces, 1, m_pFile);
+						if(fread (pObjectMaterial->pFaces, sizeof (int)*nFaces, 1, m_pFile)!=1){break;}
 					}
 					pFrame->sObjectMaterials.push_back(pObjectMaterial);
 				}
@@ -408,8 +408,8 @@ bool C3DSFileType::Open(const char *sFileName)
 				break;
 			case  KEYF_FRAMES :
 				{
-					DWORD dwStart=ReadDWord();
-					DWORD dwEnd=ReadDWord();
+					ReadDWord();// Start
+					ReadDWord();// End
 				}
 				break;
 			case  KEYF_BLOCK_OBJECT:
@@ -446,14 +446,14 @@ bool C3DSFileType::Open(const char *sFileName)
 			case  KEYF_OBJECT_FALLOFF:
 			case  KEYF_OBJECT_HIDE:
 				{
-					WORD wFlags=ReadWord();
-					DWORD dwUnknown1=ReadDWord();
-					DWORD dwUnknown2=ReadDWord();
+					ReadWord();//Flags
+					ReadDWord();//dwUnknown1
+					ReadDWord();//dwUnknown2
 					DWORD dwKeys=ReadDWord();
-					for(int x=0;x<dwKeys;x++)
+					for(unsigned int x=0;x<dwKeys;x++)
 					{
 						DWORD dwKeyIndex=ReadDWord();
-						WORD  wAccelData=ReadWord();
+						ReadWord();//wAccelData
 						if(wChunckId==KEYF_OBJECT_POSITION)
 						{
 							CVector vPos=ReadVector();
@@ -485,26 +485,26 @@ bool C3DSFileType::Open(const char *sFileName)
 						}
 						else if(wChunckId==KEYF_OBJECT_FOV)
 						{
-							float	fAngle=ReadFloat();
+							ReadFloat();
 						}
 						else if(wChunckId==KEYF_OBJECT_ROLL)
 						{
-							float	fAngle=ReadFloat();
+							ReadFloat();
 						}
 						else if(wChunckId==KEYF_OBJECT_COLOR)
 						{
 						}
 						else if(wChunckId==KEYF_OBJECT_MORPH)
 						{
-							string sName=ReadString();
+							ReadString();
 						}
 						else if(wChunckId==KEYF_OBJECT_HOTSPOT)
 						{
-							float	fAngle=ReadFloat();
+							ReadFloat();
 						}
 						else if(wChunckId==KEYF_OBJECT_FALLOFF)
 						{
-							float	fAngle=ReadFloat();
+							ReadFloat();
 						}
 						else if(wChunckId==KEYF_OBJECT_HIDE)
 						{
@@ -515,13 +515,13 @@ bool C3DSFileType::Open(const char *sFileName)
 				break;
 			default:
 				{
-					_MRT("Unknown Chunk id 0x%04x",wChunckId);
 					fseek(m_pFile, dwChunckLength-6, SEEK_CUR);
 				}
         } 
 	}
 
-	int x,y;
+	unsigned int x;
+	int y;
 
 	for(x=0;x<m_vObjects.size();x++)
 	{

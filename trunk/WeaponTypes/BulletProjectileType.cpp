@@ -1,5 +1,5 @@
-#include "StdAfx.h"
-#include ".\BulletProjectiletype.h"
+#include "./stdafx.h"
+#include "BulletProjectileType.h"
 
 CBulletProjectileType::CBulletProjectileType()
 {

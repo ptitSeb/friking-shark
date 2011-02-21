@@ -1,6 +1,6 @@
 #pragma once
 
-DECLARE_CUSTOM_WRAPPER1(CAnimationObjectTypeWrapper,IAnimationObjectType,m_piObjectType);
+DECLARE_CUSTOM_WRAPPER1(CAnimationObjectTypeWrapper,IAnimationObjectType,m_piObjectType)
 
 class CAnimationType: virtual public CSystemObjectBase,virtual public IAnimationType
 {

@@ -1,7 +1,7 @@
-#include "StdAfx.h"
-#include "GameRuntimeLib.h"
+#include "./stdafx.h"
+#include "GameRunTimeLib.h"
 #include "GameGUILib.h"
-#include ".\backgroundwindow.h"
+#include "BackgroundWindow.h"
 
 CBackgroundWindow::CBackgroundWindow(void)
 {

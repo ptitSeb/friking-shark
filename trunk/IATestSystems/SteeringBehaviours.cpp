@@ -1,7 +1,7 @@
-#include "StdAfx.h"
-#include ".\IAEntityBase.h"
-#include ".\steeringbehaviours.h"
-#include ".\IATestUtils.h"
+#include "stdafx.h"
+#include "IAEntityBase.h"
+#include "SteeringBehaviours.h"
+#include "IATestUtils.h"
 
 CSteeringBehaviours::CSteeringBehaviours(void)
 {
@@ -58,7 +58,7 @@ CVector CSteeringBehaviours::Pursue(CIAEntityBase *pEntity,CIAEntityBase *pTarge
 	if(vEntityDistance*pEntity->GetVelocity()>0 && dRelativeHeading<-0.95)
 	{
 		*pOutEstimatedPosition=pTarget->GetPosition();
-		return Seek(pEntity,pTarget->GetPosition());
+		return Seek(pEntity,*pOutEstimatedPosition);
 	}
 
 	double dLookAheadTime=((double)vEntityDistance)/((double)pEntity->GetMaxVelocity()+(double)pTarget->GetVelocity());
@@ -74,7 +74,7 @@ CVector CSteeringBehaviours::Evade(CIAEntityBase *pEntity,CIAEntityBase *pTarget
 	if(vEntityDistance*pEntity->GetHeading()>0 && dRelativeHeading<-0.95)
 	{
 		*pOutEstimatedPosition=pTarget->GetPosition();
-		return Flee(pEntity,pTarget->GetPosition());
+		return Flee(pEntity,*pOutEstimatedPosition);
 	}
 
 	double dLookAheadTime=((double)vEntityDistance)/((double)pEntity->GetMaxVelocity()+(double)pTarget->GetVelocity());
@@ -158,5 +158,6 @@ CVector CSteeringBehaviours::OffsetPursue(CIAEntityBase *pEntity,CIAEntityBase *
 	CVector vWorldOffset=vWorldTarget-pEntity->GetPosition();
 	double dTime=vWorldOffset/(pEntity->GetMaxVelocity()+(double)pTarget->GetVelocity());
 
-	return Arrive(pEntity,vWorldTarget+pTarget->GetVelocity()*dTime,eSBArriveSpeed_Fast);
+	CVector vTargetPos=vWorldTarget+pTarget->GetVelocity()*dTime;
+	return Arrive(pEntity,vTargetPos,eSBArriveSpeed_Fast);
 }

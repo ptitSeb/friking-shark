@@ -1,6 +1,7 @@
-#include "StdAfx.h"
+#include "stdafx.h"
+#include <GL/glu.h>
 #include "resource.h"
-#include "GameRuntimeLib.h"
+#include "GameRunTimeLib.h"
 #include "GameGUILib.h"
 #include "IATestMainWindow.h"
 #include "IATestUtils.h"
@@ -8,7 +9,7 @@
 float dBaseSize=1000.0;
 float dBaseThickness=2.0;
 
-DECLARE_CUSTOM_WRAPPER1(CGameGUIManagerWrapper,IGameGUIManager,m_piInterface);
+DECLARE_CUSTOM_WRAPPER1(CGameGUIManagerWrapper,IGameGUIManager,m_piInterface)
 
 extern CSystemModuleHelper *g_pSystemModuleHelper;
 
@@ -51,13 +52,13 @@ bool CIATestMainWindow::Unserialize(ISystemPersistencyNode *piNode)
 	}
 	if(bOk)
 	{
-		HICON hIcon=LoadIcon(g_pSystemModuleHelper->GetInstance(),MAKEINTRESOURCE(IDR_MAINFRAME));
+		CVector vPos=CVector(dBaseSize/2.0,dBaseSize/2.0,dBaseSize*1.5);
+		CVector vAngles=CVector(90,0,0);
 		m_Viewport.Attach("GameGUI","Viewport");
 		m_Viewport.m_piViewport->SetCaption("IA Test");
-		m_Viewport.m_piViewport->SetIcon(hIcon);
 		m_Camera.Create("GameGUI","Camera","");
- 		m_Camera.m_piCamera->SetPosition(CVector(dBaseSize/2.0,dBaseSize/2.0,dBaseSize*1.5));
-		m_Camera.m_piCamera->SetAngles(CVector(90,0,0));
+ 		m_Camera.m_piCamera->SetPosition(vPos);
+		m_Camera.m_piCamera->SetAngles(vAngles);
 
 		SGameRect sRect;
 		sRect.x=0;
@@ -105,29 +106,28 @@ void CIATestMainWindow::ProcessInput(double dTimeFraction,double dRealTimeFracti
 	if(m_piGUIManager->IsKeyDown(VK_NUMPAD3) || m_piGUIManager->IsKeyDown('F')){ProcessKey(KEY_DOWN,dTimeFraction,dRealTimeFraction);}
 }
 
-void CIATestMainWindow::ProcessKey(SHORT nKey,double dTimeFraction,double dRealTimeFraction)
+void CIATestMainWindow::ProcessKey(WORD nKey,double dTimeFraction,double dRealTimeFraction)
 {
 	double dMovementInspectionSpeed=500.0;
 	double dForwardSpeed=dMovementInspectionSpeed*dTimeFraction;
 	double dCameraForwardSpeed=dMovementInspectionSpeed*dRealTimeFraction;
-	bool   bMoveEntity=false;
-	if(GetKeyState(VK_LSHIFT)&0x8000){dForwardSpeed*=3.0;}
+	if(m_piGUIManager->IsKeyDown(VK_LSHIFT)){dForwardSpeed*=3.0;}
 	if(m_pSelectedEntity)
 	{
-		if(nKey==KEY_FORWARD)	{m_pSelectedEntity->SetPosition(m_pSelectedEntity->GetPosition()+m_Camera.m_piCamera->GetUpVector()*(dForwardSpeed));}
-		else if(nKey==KEY_BACK)	{m_pSelectedEntity->SetPosition(m_pSelectedEntity->GetPosition()-m_Camera.m_piCamera->GetUpVector()*(dForwardSpeed));}
-		else if(nKey==KEY_LEFT)	{m_pSelectedEntity->SetPosition(m_pSelectedEntity->GetPosition()-m_Camera.m_piCamera->GetRightVector()*(dForwardSpeed));}
-		else if(nKey==KEY_RIGHT){m_pSelectedEntity->SetPosition(m_pSelectedEntity->GetPosition()+m_Camera.m_piCamera->GetRightVector()*(dForwardSpeed));}
+		if(nKey==KEY_FORWARD)	{CVector vPos=m_pSelectedEntity->GetPosition()+m_Camera.m_piCamera->GetUpVector()*(dForwardSpeed);m_pSelectedEntity->SetPosition(vPos);}
+		else if(nKey==KEY_BACK)	{CVector vPos=m_pSelectedEntity->GetPosition()-m_Camera.m_piCamera->GetUpVector()*(dForwardSpeed);m_pSelectedEntity->SetPosition(vPos);}
+		else if(nKey==KEY_LEFT)	{CVector vPos=m_pSelectedEntity->GetPosition()-m_Camera.m_piCamera->GetRightVector()*(dForwardSpeed);m_pSelectedEntity->SetPosition(vPos);}
+		else if(nKey==KEY_RIGHT){CVector vPos=m_pSelectedEntity->GetPosition()+m_Camera.m_piCamera->GetRightVector()*(dForwardSpeed);m_pSelectedEntity->SetPosition(vPos);}
 	}
 	else
 	{
-		if(nKey==KEY_FORWARD)	{m_Camera.m_piCamera->SetPosition(m_Camera.m_piCamera->GetPosition()+m_Camera.m_piCamera->GetUpVector()*(dCameraForwardSpeed));}
-		else if(nKey==KEY_BACK)	{m_Camera.m_piCamera->SetPosition(m_Camera.m_piCamera->GetPosition()-m_Camera.m_piCamera->GetUpVector()*(dCameraForwardSpeed));}
-		else if(nKey==KEY_LEFT)	{m_Camera.m_piCamera->SetPosition(m_Camera.m_piCamera->GetPosition()-m_Camera.m_piCamera->GetRightVector()*(dCameraForwardSpeed));}
-		else if(nKey==KEY_RIGHT){m_Camera.m_piCamera->SetPosition(m_Camera.m_piCamera->GetPosition()+m_Camera.m_piCamera->GetRightVector()*(dCameraForwardSpeed));}
-		else if(nKey==KEY_UP)	{m_Camera.m_piCamera->SetPosition(m_Camera.m_piCamera->GetPosition()+m_Camera.m_piCamera->GetForwardVector()*(dCameraForwardSpeed));}
-		else if(nKey==KEY_DOWN)	{m_Camera.m_piCamera->SetPosition(m_Camera.m_piCamera->GetPosition()-m_Camera.m_piCamera->GetForwardVector()*(dCameraForwardSpeed));}
-	}
+		if(nKey==KEY_FORWARD)	{CVector vPos=m_Camera.m_piCamera->GetPosition()+m_Camera.m_piCamera->GetUpVector()*(dCameraForwardSpeed);m_Camera.m_piCamera->SetPosition(vPos);}
+		else if(nKey==KEY_BACK)	{CVector vPos=m_Camera.m_piCamera->GetPosition()-m_Camera.m_piCamera->GetUpVector()*(dCameraForwardSpeed);m_Camera.m_piCamera->SetPosition(vPos);}
+		else if(nKey==KEY_LEFT)	{CVector vPos=m_Camera.m_piCamera->GetPosition()-m_Camera.m_piCamera->GetRightVector()*(dCameraForwardSpeed);m_Camera.m_piCamera->SetPosition(vPos);}
+		else if(nKey==KEY_RIGHT){CVector vPos=m_Camera.m_piCamera->GetPosition()+m_Camera.m_piCamera->GetRightVector()*(dCameraForwardSpeed);m_Camera.m_piCamera->SetPosition(vPos);}
+		else if(nKey==KEY_UP)	{CVector vPos=m_Camera.m_piCamera->GetPosition()+m_Camera.m_piCamera->GetForwardVector()*(dCameraForwardSpeed);m_Camera.m_piCamera->SetPosition(vPos);}
+		else if(nKey==KEY_DOWN)	{CVector vPos=m_Camera.m_piCamera->GetPosition()-m_Camera.m_piCamera->GetForwardVector()*(dCameraForwardSpeed);m_Camera.m_piCamera->SetPosition(vPos);}
+	}                                     
 
 	if(nKey==KEY_PAUSE)
 	{
@@ -338,7 +338,8 @@ void CIATestMainWindow::OnMouseDown(int nButton,double x,double y)
 {
 	if(m_pSelectedEntity)
 	{
-		m_pSelectedEntity->SetPosition(UnProject(x,y));
+		CVector vPos=UnProject(x,y);
+		m_pSelectedEntity->SetPosition(vPos);
 	}
 }
 

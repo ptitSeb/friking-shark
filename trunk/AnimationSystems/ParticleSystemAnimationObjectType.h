@@ -1,6 +1,6 @@
 #pragma once
 
-DECLARE_CUSTOM_WRAPPER1(CParticleSystemTypeWrapper,IParticleSystemType,m_piParticleSystemType);
+DECLARE_CUSTOM_WRAPPER1(CParticleSystemTypeWrapper,IParticleSystemType,m_piParticleSystemType)
 
 class CParticleSystemAnimationObjectType: public CAnimationObjectTypeBase
 {

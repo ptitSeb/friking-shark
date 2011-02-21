@@ -1,5 +1,5 @@
-#include "StdAfx.h"
-#include ".\truckType.h"
+#include "./stdafx.h"
+#include "TruckType.h"
 #include "GameGraphics.h"
 
 CTruckType::CTruckType()

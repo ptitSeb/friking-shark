@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "./StdAfx.h"
 #include "VectorLib.h"
 #include "3DSTypes.h"
 #include <string>
@@ -31,7 +31,7 @@ S3DSFrame::S3DSFrame()
 	pColorVertexes=NULL;
 	pColorFaces=NULL;
 	pEdges=NULL;
-};
+}
 
 S3DSFrame::~S3DSFrame()
 {
@@ -44,7 +44,7 @@ S3DSFrame::~S3DSFrame()
 	if(pColorVertexes){delete [] pColorVertexes;pColorVertexes=NULL;}
 	if(pColorFaces){delete [] pColorFaces;pColorFaces=NULL;}
 	if(pEdges){delete [] pEdges;pEdges=NULL;}
-	int y;
+	unsigned int y;
 	for(y=0;y<sObjectMaterials.size();y++)
 	{
 		S3DSObjectMaterial *pObjectMaterial=sObjectMaterials[y];
@@ -114,7 +114,7 @@ S3DSObject::S3DSObject()
 
 S3DSObject::~S3DSObject()
 {
-	int y;
+	unsigned int y;
 	for(y=0;y<vFrameInstances.size();y++)
 	{
 		S3DSFrame *pFrame=vFrameInstances[y];
@@ -189,7 +189,7 @@ S3DSObject *C3DSFileTypeBase::FindObject(const char *sFileName)
 {
 	string tempName=sFileName;
 	S3DSObject *pObject=NULL;
-	for(int x=0;x<m_vObjects.size();x++)
+	for(unsigned int x=0;x<m_vObjects.size();x++)
 	{
 		if(m_vObjects[x]->sName==tempName){return m_vObjects[x];}
 	}
@@ -198,7 +198,7 @@ S3DSObject *C3DSFileTypeBase::FindObject(const char *sFileName)
 
 void C3DSFileTypeBase::Close()
 {
-	int x;
+	unsigned int x;
 	for(x=0;x<m_vObjects.size();x++)
 	{
 		S3DSObject *pObject=m_vObjects[x];

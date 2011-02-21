@@ -1,5 +1,5 @@
-#include "StdAfx.h"
-#include ".\playareaelementbase.h"
+#include "./stdafx.h"
+#include "PlayAreaElementBase.h"
 
 CPlayAreaElementBase::CPlayAreaElementBase()
 {

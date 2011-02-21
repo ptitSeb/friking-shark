@@ -1,7 +1,7 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "GameRunTimeLib.h"
 #include "InterfaceLeakAPI.h"
-#include ".\systemunknownbase.h"
+#include "SystemUnknownBase.h"
 
 CSystemUnknownBase::CSystemUnknownBase(void)
 {

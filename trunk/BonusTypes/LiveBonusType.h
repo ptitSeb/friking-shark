@@ -6,10 +6,6 @@ public:
 
   IEntity *CreateInstance(IEntity *piParent,DWORD dwCurrentTime);
 
-  BEGIN_PROP_MAP(CLiveBonusType)
-    PROP_CLASS_CHAIN(CEntityTypeBase)
-  END_PROP_MAP();
-
   CLiveBonusType();
   ~CLiveBonusType();
 };

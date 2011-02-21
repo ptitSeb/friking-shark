@@ -1,6 +1,6 @@
-#include "StdAfx.h"
-#include ".\particlesystems.h"
-#include ".\Lightparticletype.h"
+#include "./stdafx.h"
+#include "ParticleSystems.h"
+#include "LightParticleType.h"
 
 CLightParticleType::CLightParticleType()
 {

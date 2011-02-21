@@ -1,6 +1,6 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "GameRunTimeLib.h"
-#include ".\systemobjectwrapper.h"
+#include "SystemObjectWrapper.h"
 #include "crtdbg.h"
 
 CSystemObjectWrapper::CSystemObjectWrapper()
@@ -170,9 +170,12 @@ bool CSystemObjectWrapper::Save(ISystemPersistencyNode *piNode,std::string sName
 	ISystemPersistencyNode *piClassNode=m_bAttached?NULL:piNode->AddNode("Class");
 	ISystemPersistencyNode *piNameNode=piNode->AddNode("Name");
 
-	if(piSystemNode){piSystemNode->SetValue(m_piObject->GetSystemName());}
-	if(piClassNode){piClassNode->SetValue(m_piObject->GetClass());}
-	if(piNameNode){piNameNode->SetValue(m_piObject->GetName());}
+	std::string sObjectSystem=m_piObject->GetSystemName();
+	std::string sObjectClass=m_piObject->GetClass();
+	std::string sObjectName=m_piObject->GetName();
+	if(piSystemNode){piSystemNode->SetValue(sObjectSystem);}
+	if(piClassNode){piClassNode->SetValue(sObjectClass);}
+	if(piNameNode){piNameNode->SetValue(sObjectName);}
 
 	if( m_bAttached && piSystemNode &&  piNameNode)
 	{
@@ -211,7 +214,6 @@ bool CSystemObjectWrapper::Create(std::string sSystem,std::string sClass,std::st
     ISystemManager  *piManager=GetSystemManager();
 
     if(piManager){piSystem=piManager->GetSystem(sSystem);}
-    _ASSERTE(piSystem);
     if(piSystem){bOk=Create(piSystem,sClass,sName);}
     if(piObject){bOk=GetInterfaces(piObject);}
 	if(!bOk)

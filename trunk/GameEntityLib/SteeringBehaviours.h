@@ -7,8 +7,6 @@ enum ESBArriveSpeed
 	eSBArriveSpeed_Slow
 };
 
-enum eSBArriveSpeed_Normal;
-
 class CSteeringBehaviours
 {
 	CVector m_vWanderTarget;
@@ -49,7 +47,7 @@ public:
 
 	void    SeekTarget(IEntity *pTarget){m_pSeekTarget=pTarget;}
 	void    FleeTarget(IEntity *pTarget){m_pFleeTarget=pTarget;}
-	void    ArriveTarget(IEntity *pTarget,ESBArriveSpeed eArriveSpeed){m_pArriveTarget=pTarget;m_eArriveSpeed;}
+	void    ArriveTarget(IEntity *pTarget,ESBArriveSpeed eArriveSpeed){m_pArriveTarget=pTarget;m_eArriveSpeed=eArriveSpeed;}
 	void    PursueTarget(IEntity *pTarget){m_pPursueTarget=pTarget;}
 	void    EvadeTarget(IEntity *pTarget){m_pEvadeTarget=pTarget;}
 	void    Wander(bool bEnabled,double dDistance,double dRadius,double dJitter){m_bWanderEnabled=bEnabled;m_dWanderDistance=dDistance;m_dWanderRadius=dRadius;m_dWanderJitter=dJitter;}

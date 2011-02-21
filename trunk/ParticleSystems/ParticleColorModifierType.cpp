@@ -1,7 +1,7 @@
-#include "StdAfx.h"
-#include ".\particlesystems.h"
-#include ".\ParticleModifierType.h"
-#include ".\particlecolormodifiertype.h"
+#include "./stdafx.h"
+#include "ParticleSystems.h"
+#include "ParticleModifierType.h"
+#include "ParticleColorModifierType.h"
 
 
 CParticleColorModifierType::CParticleColorModifierType(void)
@@ -22,7 +22,8 @@ IParticleModifier *CParticleColorModifierType::CreateInstance(DWORD dwCurrentTim
 CParticleColorModifier::CParticleColorModifier(CParticleColorModifierType *pType)
 {
     m_pType=pType;
-};
+}
+
 void CParticleColorModifier::ProcessParticle(IParticle *pParticle,IParticleSystem *pSystem,DWORD dwCurrentTime,double dInterval)
 {
     if(m_sEmitters.size()!=0 && m_sEmitters.find(pParticle->m_piEmiter)==m_sEmitters.end()){return;}

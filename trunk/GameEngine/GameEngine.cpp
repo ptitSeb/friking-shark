@@ -2,17 +2,18 @@
 //
 
 #include "stdafx.h"
+#include "VectorLib.h"
 #include "GameEngine.h"
 #include "GameGUI.h"
 #include "InterfaceLeakAPI.h"
 
 CGameEngineApp theApp;
 
-DECLARE_CUSTOM_WRAPPER1(CGameGUIManagerWrapper,IGameGUIManager,m_piInterface);
-DECLARE_CUSTOM_WRAPPER1(CGameWindowWrapper,IGameWindow,m_piWindow);
+DECLARE_CUSTOM_WRAPPER1(CGameGUIManagerWrapper,IGameGUIManager,m_piInterface)
+DECLARE_CUSTOM_WRAPPER1(CGameWindowWrapper,IGameWindow,m_piWindow)
 
 string g_sRootFolder;
-string g_sInitialConfigFile="Scripts\\GameGUI.cfg";
+string g_sInitialConfigFile="Scripts" PATH_SEPARATOR "GameGUI.cfg";
 
 CGameEngineApp::CGameEngineApp()
 {
@@ -23,18 +24,23 @@ void CGameEngineApp::Run()
 	CConfigFile             configFile;
 	CSystemLoaderHelper     systemLoader;
 
-	InterpretCommandLine();
-
 	ISystemManager *piSystemManager=GetSystemManager();
 	ISystemManagerPathControl *piPathControl=QI(ISystemManagerPathControl,piSystemManager);
 	if(piPathControl)
 	{
 		char sCurrentPath[MAX_PATH]={0};
+#ifdef WIN32
 		GetCurrentDirectory(MAX_PATH,sCurrentPath);
-		int len=strlen(sCurrentPath);
-		if(len && sCurrentPath[len-1]!='\\')
+#else
+		if(!getcwd(sCurrentPath,MAX_PATH))
 		{
-			sCurrentPath[len]='\\';
+		  sCurrentPath[0]=0;
+		}
+#endif
+		int len=strlen(sCurrentPath);
+		if(len && sCurrentPath[len-1]!=PATH_SEPARATOR_CHAR)
+		{
+			sCurrentPath[len]=PATH_SEPARATOR_CHAR;
 			sCurrentPath[len+1]=0;
 		}
 		piPathControl->AddLibraryPath(sCurrentPath);
@@ -42,8 +48,15 @@ void CGameEngineApp::Run()
 
 	if(g_sRootFolder!="")
 	{
-		SetCurrentDirectory(g_sRootFolder.c_str());
 		RTTRACE("CGameEngineApp::Run -> Setting root folder to %s",g_sRootFolder.c_str());
+#ifdef WIN32
+		SetCurrentDirectory(g_sRootFolder.c_str());
+#else
+		if(chdir(g_sRootFolder.c_str())!=0)
+		{
+		  RTTRACE("CGameEngineApp::Run -> Error setting root folder to %s",g_sRootFolder.c_str());
+		}
+#endif
 	}
 	if(configFile.Open(g_sInitialConfigFile))
 	{
@@ -90,31 +103,11 @@ void CGameEngineApp::Run()
 	REL(piSystemManager);
 }
 
-void CGameEngineApp::InterpretCommandLine()
+void CGameEngineApp::InterpretCommandLine(std::string sExecutableFolder,std::vector<std::string> &vParams)
 {
-	char szExecutableFullPath[MAX_PATH]={0};
-	char szExecutableFolder[MAX_PATH]={0};
-	char szExecutableDrive[MAX_PATH]={0};
-	GetModuleFileName(NULL,szExecutableFullPath,sizeof(szExecutableFullPath));
-	_splitpath(szExecutableFullPath,szExecutableDrive,szExecutableFolder,NULL,NULL);
-	g_sRootFolder=szExecutableDrive;
-	g_sRootFolder+=szExecutableFolder;
-	g_sRootFolder+="..\\..\\Resources";
+	g_sRootFolder=sExecutableFolder;
 
-	wchar_t *pWCommand=GetCommandLineW();
-
-	int nArgs=0;
-	wchar_t **ppArgs=NULL;
-	ppArgs=CommandLineToArgvW(pWCommand,&nArgs);
-	std::vector<std::string> vParams;
-	for(int x=0;x<nArgs;x++)
-	{
-		char pTemp[1024]={0};
-		WideCharToMultiByte(CP_ACP,0,ppArgs[x],wcslen(ppArgs[x]),pTemp,1024,NULL,NULL);
-		vParams.push_back(pTemp);
-	}
-
-	for(int x=0;x<vParams.size();x++)
+	for(unsigned int x=0;x<vParams.size();x++)
 	{
 		const char *pParam=vParams[x].c_str();
 		if(pParam[0]=='-')
@@ -135,13 +128,57 @@ void CGameEngineApp::InterpretCommandLine()
 	}
 }
 
-
+#ifdef WIN32
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nCmdShow)
 {
  // InitMonitorization();
-  _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF|_CRTDBG_LEAK_CHECK_DF);
-  theApp.Run();
+   _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF|_CRTDBG_LEAK_CHECK_DF);
+  
+	char szExecutableFullPath[MAX_PATH]={0};
+	char szExecutableFolder[MAX_PATH]={0};
+	char szExecutableDrive[MAX_PATH]={0};
+	GetModuleFileName(NULL,szExecutableFullPath,sizeof(szExecutableFullPath));
+	_splitpath(szExecutableFullPath,szExecutableDrive,szExecutableFolder,NULL,NULL);
+	
+	std::string sExecutableFolder;
+	sExecutableFolder=szExecutableDrive;
+	sExecutableFolder+=szExecutableFolder;
+
+	wchar_t *pWCommand=GetCommandLineW();
+
+	int nArgs=0;
+	wchar_t **ppArgs=NULL;
+	ppArgs=CommandLineToArgvW(pWCommand,&nArgs);
+	std::vector<std::string> vParams;
+	for(int x=0;x<nArgs;x++)
+	{
+		char pTemp[1024]={0};
+		WideCharToMultiByte(CP_ACP,0,ppArgs[x],wcslen(ppArgs[x]),pTemp,1024,NULL,NULL);
+		vParams.push_back(pTemp);
+	}
+	theApp.InterpretCommandLine(sFolder,vParams);
+	theApp.Run();
  // DumpMonitorizationLeaks();
  // EndMonitorization();
   return 0;
 }
+#else
+int main(int argc, char *argv[])
+{
+	char *pTempExecutable=strdup(argv[0]);
+	char *pTempFolder=strtok(pTempExecutable,"/");
+	std::string sFolder=pTempFolder?pTempFolder:pTempExecutable;
+	free(pTempExecutable);
+
+	std::vector<std::string> vParams;
+	for(int x=1;x<argc;x++)
+	{
+		vParams.push_back(argv[x]);
+	}
+	theApp.InterpretCommandLine(sFolder,vParams);
+	theApp.Run();
+ // DumpMonitorizationLeaks();
+ // EndMonitorization();
+  return 0;
+}
+#endif

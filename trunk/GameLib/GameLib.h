@@ -9,7 +9,10 @@
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
-#pragma warning ( disable : 4786 )
+
+#ifdef WIN32
+  #pragma warning ( disable : 4786 )
+#endif
 
 #include <windows.h>
 #include <math.h>
@@ -23,7 +26,7 @@
 #define PITCH	1
 #define ROLL	2
 
-#include "..\VectorLib\VectorLib.h"
+#include "VectorLib.h"
 #include "GameRunTimeLib.h"
 
 HRESULT MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CVector> *pItem);
@@ -46,9 +49,7 @@ void    MRPersistencyFree(CMRPersistentReferenceT<C3DSVector> *pItem);
 
 using namespace std;
 #ifndef GAME_LIB_PROYECT
-	#include "GESFiles.h"
 	#include "OpenGLFonts.h"
-	#include "GLProcs.h"
     #include "ResourceStore.h"
     #include "GameSpecs.h"
 #endif

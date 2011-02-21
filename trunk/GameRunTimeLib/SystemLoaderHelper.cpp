@@ -1,6 +1,6 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "GameRunTimeLib.h"
-#include ".\systemloaderhelper.h"
+#include "SystemLoaderHelper.h"
 
 CSystemLoaderHelper::CSystemLoaderHelper(void)
 {
@@ -8,7 +8,6 @@ CSystemLoaderHelper::CSystemLoaderHelper(void)
 
 CSystemLoaderHelper::~CSystemLoaderHelper(void)
 {
-  unsigned x=0;
 }
 
 ISystem *CSystemLoaderHelper::LoadSystem(std::string sFile,std::string sSystemName)
@@ -16,7 +15,13 @@ ISystem *CSystemLoaderHelper::LoadSystem(std::string sFile,std::string sSystemNa
 	CConfigFile configFile;
 	if(configFile.Open(sFile))
 	{
-		return LoadSystem(configFile.GetRoot(),sSystemName);
+		ISystem *piSystem=LoadSystem(configFile.GetRoot(),sSystemName);
+		if(piSystem==NULL){RTTRACE("CSystemLoaderHelper::LoadSystem -> Failed to load system %s from file %s",sSystemName.c_str(),sFile.c_str());}
+		return piSystem;
+	}
+	else
+	{
+		RTTRACE("CSystemLoaderHelper::LoadSystem -> Failed to open config file %s to load system %s",sFile.c_str(),sSystemName.c_str());
 	}
 	return NULL;
 }

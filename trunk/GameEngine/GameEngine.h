@@ -24,7 +24,7 @@ public:
 	CGameEngineApp();
 
 	void Run();
-	void InterpretCommandLine();
+	void InterpretCommandLine(std::string sExecutableFolder,std::vector<std::string> &vParams);
 };
 
 extern CGameEngineApp theApp;

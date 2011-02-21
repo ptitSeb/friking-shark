@@ -1,5 +1,5 @@
-#include "StdAfx.h"
-#include "Gamemainwindow.h"
+#include "stdafx.h"
+#include "GameMainWindow.h"
 
 CGameMainWindow::CGameMainWindow(IGameGUIManager *piGUIManager)
 {

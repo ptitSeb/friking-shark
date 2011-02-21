@@ -11,7 +11,7 @@
 		*MAP_CLASS "Bitmap"
 		*MAP_SUBNO 0
 		*MAP_AMOUNT 1.00000000
-		*BITMAP "E:\JUEGO\PHOTOSHOP\cielo.jpg"
+		*BITMAP "cielo.jpg"
 		*MAP_TYPE Screen
 		*UVW_U_OFFSET 0.00000000
 		*UVW_V_OFFSET 0.00000000
@@ -50,7 +50,7 @@
 			*MAP_CLASS "Bitmap"
 			*MAP_SUBNO 1
 			*MAP_AMOUNT 1.00000000
-			*BITMAP "D:\Desarrollo\3DTest\GameEngine\Resources\Textures\agua_alpha.bmp"
+			*BITMAP "agua_alpha.bmp"
 			*MAP_TYPE Screen
 			*UVW_U_OFFSET 0.00000000
 			*UVW_V_OFFSET 0.00000000
@@ -86,7 +86,7 @@
 			*MAP_CLASS "Bitmap"
 			*MAP_SUBNO 1
 			*MAP_AMOUNT 1.00000000
-			*BITMAP "D:\Desarrollo\3DTest\GameEngine\Resources\Textures\p51player.jpg"
+			*BITMAP "p51player.jpg"
 			*MAP_TYPE Screen
 			*UVW_U_OFFSET 0.00000000
 			*UVW_V_OFFSET 0.00000000

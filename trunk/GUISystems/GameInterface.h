@@ -61,9 +61,9 @@ class CGameInterface: virtual public CGameDialogBase, virtual public IGameInterf
 
 	void UpdatePlayCameraPosition();
 	void ProcessInput();
-	void ProcessKey(SHORT nKey);
+	void ProcessKey(WORD nKey);
 
-	void MoveInspection(SHORT nKey);
+	void MoveInspection(WORD nKey);
 
 	// IPlayAreaElementEnumerationCallback
 

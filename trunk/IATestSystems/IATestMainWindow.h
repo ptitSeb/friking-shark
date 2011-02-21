@@ -4,8 +4,8 @@
 #include "IAEntityBase.h"
 #include "TestScenarios.h"
 
-DECLARE_CUSTOM_WRAPPER1(CViewportWrapper,IGenericViewport,m_piViewport);
-DECLARE_CUSTOM_WRAPPER1(CButtonWrapper,IGameGUIButton,m_piButton);
+DECLARE_CUSTOM_WRAPPER1(CViewportWrapper,IGenericViewport,m_piViewport)
+DECLARE_CUSTOM_WRAPPER1(CButtonWrapper,IGameGUIButton,m_piButton)
 
 class CIATestMainWindow: virtual public CGameWindowBase, virtual public IGameGUIButtonEvents
 {
@@ -14,7 +14,7 @@ class CIATestMainWindow: virtual public CGameWindowBase, virtual public IGameGUI
 	CGenericCameraWrapper m_Camera;
 
 	void ProcessInput(double dTimeFraction,double dRealTimeFraction);
-	void ProcessKey(SHORT nKey,double dTimeFraction,double dRealTimeFraction);
+	void ProcessKey(WORD nKey,double dTimeFraction,double dRealTimeFraction);
 
 	map<string,CIAEntityBase *> m_mEntities;
 	map<string,CButtonWrapper *> m_mEntityButtons;
@@ -33,10 +33,10 @@ class CIATestMainWindow: virtual public CGameWindowBase, virtual public IGameGUI
 	CFrameManagerWrapper m_FrameManager;
 
 	BEGIN_CHILD_MAP()
-		CHILD_MAP_ENTRY("FPS",m_piSTFps);
-		CHILD_MAP_ENTRY("Time",m_piSTTime);
-		CHILD_MAP_ENTRY("EntityPos",m_piSTEntityPos);
-		CHILD_MAP_ENTRY("EntityVel",m_piSTEntityVel);
+		CHILD_MAP_ENTRY("FPS",m_piSTFps)
+		CHILD_MAP_ENTRY("Time",m_piSTTime)
+		CHILD_MAP_ENTRY("EntityPos",m_piSTEntityPos)
+		CHILD_MAP_ENTRY("EntityVel",m_piSTEntityVel)
 	END_CHILD_MAP()
 
 	void ProcessPhysics(double dTimeFraction);

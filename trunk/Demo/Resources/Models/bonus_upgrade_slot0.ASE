@@ -31,7 +31,7 @@
 			*MAP_CLASS "Bitmap"
 			*MAP_SUBNO 1
 			*MAP_AMOUNT 1.00000000
-			*BITMAP "D:\Desarrollo\3DTest\GameEngine\Resources\Textures\bala_normal.jpg"
+			*BITMAP "bala_normal.jpg"
 			*MAP_TYPE Screen
 			*UVW_U_OFFSET 0.00000000
 			*UVW_V_OFFSET 0.00000000
@@ -67,7 +67,7 @@
 			*MAP_CLASS "Bitmap"
 			*MAP_SUBNO 1
 			*MAP_AMOUNT 1.00000000
-			*BITMAP "D:\Desarrollo\3DTest\GameEngine\Resources\Textures\upgrade_box.jpg"
+			*BITMAP "upgrade_box.jpg"
 			*MAP_TYPE Screen
 			*UVW_U_OFFSET 0.00000000
 			*UVW_V_OFFSET 0.00000000

@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "./StdAfx.h"
 #include "GBSFiles.h"
 
 SGBSHeader::SGBSHeader()
@@ -32,14 +32,13 @@ struct SGBSFileNodeInfo
 CGBSFileType::CGBSFileType(){}
 CGBSFileType::~CGBSFileType(){}
 
-bool CGBSFileType::Load(const char *pFile,CBSPNode **ppBSPNode,std::vector<CPolygon *> *pGeometricData)
+bool CGBSFileType::Load(const char *pFileName,CBSPNode **ppBSPNode,std::vector<CPolygon *> *pGeometricData)
 {
-	HANDLE hFile=CreateFile(pFile,GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
-	if(hFile==INVALID_HANDLE_VALUE){return false;}
+	FILE *pFile=fopen(pFileName,"rb");
+	if(pFile==NULL){return false;}
 
-	bool bHeaderOk=FALSE;
-	DWORD dwRead=0;
-	if(ReadFile(hFile,&m_Header,sizeof(m_Header),&dwRead,NULL))
+	bool bHeaderOk=false;
+	if(fread(&m_Header,sizeof(m_Header),1,pFile)==1)
 	{
 		if(memcmp(&m_Header.sMagic,GBS_FILE_MAGIC,GBS_FILE_MAGIC_LENGTH)==0 && m_Header.dwVersion<=GBS_FILE_VERSION)
 		{
@@ -57,93 +56,93 @@ bool CGBSFileType::Load(const char *pFile,CBSPNode **ppBSPNode,std::vector<CPoly
 		if(pGeometricData && m_Header.dwFlags&GBS_FILE_FLAG_CONTAINS_GEOMETRIC_DATA)
 		{
 			DWORD x=0,dwPolygonCount=0;
-			ReadFile(hFile,&dwPolygonCount,sizeof(dwPolygonCount),&dwRead,NULL);
-			for(x=0;x<dwPolygonCount;x++)
+			if(fread(&dwPolygonCount,sizeof(dwPolygonCount),1,pFile)==1)
 			{
-				DWORD v=0,dwVertexCount=0;
-				ReadFile(hFile,&dwVertexCount,sizeof(dwVertexCount),&dwRead,NULL);
-				CPolygon *pPolygon=new CPolygon;
-				pPolygon->m_nVertexes=dwVertexCount;
-				if(pPolygon->m_nVertexes)
-				{
-					pPolygon->m_pVertexes=new CVector[pPolygon->m_nVertexes];
-					for(v=0;v<dwVertexCount;v++)
-					{
-						ReadFile(hFile,pPolygon->m_pVertexes[v].c,sizeof(pPolygon->m_pVertexes[v].c),&dwRead,NULL);
-					}
-					pPolygon->CalcPlane();
+			  for(x=0;x<dwPolygonCount;x++)
+			  {
+				  DWORD v=0,dwVertexCount=0;
+				  if(fread(&dwVertexCount,sizeof(dwVertexCount),1,pFile)!=1){break;}
+				  
+				  CPolygon *pPolygon=new CPolygon;
+				  pPolygon->m_nVertexes=dwVertexCount;
+				  if(pPolygon->m_nVertexes)
+				  {
+					  pPolygon->m_pVertexes=new CVector[pPolygon->m_nVertexes];
+					  for(v=0;v<dwVertexCount;v++)
+					  {
+						  if(fread(pPolygon->m_pVertexes[v].c,sizeof(pPolygon->m_pVertexes[v].c),1,pFile)!=1)
+						  {
+							break;
+						  }
+					  }
+					  pPolygon->CalcPlane();
+				  }
+				  pGeometricData->push_back(pPolygon);
 				}
-				pGeometricData->push_back(pPolygon);
 			}
 		}
 	}
-	SetFilePointer(hFile,m_Header.dwDataOffset,NULL,FILE_BEGIN);
+	fseek(pFile,m_Header.dwDataOffset,SEEK_SET);
 
-	if(ppBSPNode){(*ppBSPNode)=ReadNode(hFile,NULL);}
-	CloseHandle(hFile);
+	if(ppBSPNode){(*ppBSPNode)=ReadNode(pFile,NULL);}
+	fclose(pFile);
+	pFile=NULL;
 	return true;
 }
 
-CBSPNode *CGBSFileType::ReadNode(HANDLE hFile,CBSPNode *pParent)
+CBSPNode *CGBSFileType::ReadNode(FILE *pFile,CBSPNode *pParent)
 {
-	DWORD read=0;
-
 	CBSPNode *pNode=NULL;
 	SGBSFileNodeInfo info;
-	if(!ReadFile(hFile,&info,sizeof(info),&read,NULL)){return pNode;}
+	if(fread(&info,sizeof(info),1,pFile)!=1){return pNode;}
 	CPlane plane(CVector(info.vNormal[0],info.vNormal[1],info.vNormal[2]),info.vDist);
 	pNode=new CBSPNode(pParent,plane,info.nContent);
 	if(pNode->content==CONTENT_NODE)
 	{
-		pNode->pChild[0]=ReadNode(hFile,pNode);
-		pNode->pChild[1]=ReadNode(hFile,pNode);
+		pNode->pChild[0]=ReadNode(pFile,pNode);
+		pNode->pChild[1]=ReadNode(pFile,pNode);
 	}
 	return pNode;
 }
 
-bool CGBSFileType::Save(const char *pFile,CBSPNode *pBSPNode,std::vector<CPolygon *> *pGeometricData,SGBSFileNodeStats *pStats)
+bool CGBSFileType::Save(const char *pFileName,CBSPNode *pBSPNode,std::vector<CPolygon *> *pGeometricData,SGBSFileNodeStats *pStats)
 {
-	DWORD written;
-	int size=sizeof(SGBSFileNodeInfo);
-	int sizeb=sizeof(float);
-	CBSPNode *pNode=NULL;
-	HANDLE hFile=CreateFile(pFile,GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_NORMAL,NULL);
-	if(hFile==INVALID_HANDLE_VALUE){return false;}
-	if(!WriteFile(hFile,&m_Header,sizeof(m_Header),&written,NULL)){return false;}
+	FILE *pFile=fopen(pFileName,"wb");
+	if(pFile==NULL){return false;}
+	if(fwrite(&m_Header,sizeof(m_Header),1,pFile)!=1){fclose(pFile);pFile=NULL;return false;}
 	if(pGeometricData)
 	{
 		m_Header.dwFlags|=GBS_FILE_FLAG_CONTAINS_GEOMETRIC_DATA;
 		DWORD x=0,dwPolygonCount=pGeometricData->size();
-		WriteFile(hFile,&dwPolygonCount,sizeof(dwPolygonCount),&written,NULL);
+		if(fwrite(&dwPolygonCount,sizeof(dwPolygonCount),1,pFile)!=1){fclose(pFile);pFile=NULL;return false;}
+		
 		for(x=0;x<dwPolygonCount;x++)
 		{
 			CPolygon *pPolygon=(*pGeometricData)[x];
 			DWORD v=0,dwVertexCount=pPolygon->m_nVertexes;
-			WriteFile(hFile,&dwVertexCount,sizeof(dwVertexCount),&written,NULL);
+			if(fwrite(&dwVertexCount,sizeof(dwVertexCount),1,pFile)!=1){fclose(pFile);pFile=NULL;return false;}
 			for(v=0;v<dwVertexCount;v++)
 			{
-				WriteFile(hFile,pPolygon->m_pVertexes[v].c,sizeof(pPolygon->m_pVertexes[v].c),&written,NULL);
+				if(fwrite(pPolygon->m_pVertexes[v].c,sizeof(pPolygon->m_pVertexes[v].c),1,pFile)!=1){fclose(pFile);pFile=NULL;return false;}
 			}
 		}
 	}	
 
 	SGBSFileNodeStats stats;
 	if(pStats==NULL){pStats=&stats;}
-	m_Header.dwDataOffset=SetFilePointer(hFile,0,NULL,FILE_CURRENT);
+	m_Header.dwDataOffset=ftell(pFile);
 
-	WriteNode(hFile,pBSPNode,pStats,0,&pStats->dBalanceFactor);
+	WriteNode(pFile,pBSPNode,pStats,0,&pStats->dBalanceFactor);
 
 	//Update header dwDataOffset
-	SetFilePointer(hFile,0,NULL,FILE_BEGIN);
-	WriteFile(hFile,&m_Header,sizeof(m_Header),&written,NULL);
-	CloseHandle(hFile);
-	return false;
+	fseek(pFile,0,SEEK_SET);
+	if(fwrite(&m_Header,sizeof(m_Header),1,pFile)!=1){fclose(pFile);pFile=NULL;return false;}
+	fclose(pFile);pFile=NULL;	
+	return true;
 }
 
-bool CGBSFileType::WriteNode(HANDLE hFile,CBSPNode *pNode,SGBSFileNodeStats *pStats,int nCurrentDepth,double *pBalanceFactor)
+bool CGBSFileType::WriteNode(FILE *pFile,CBSPNode *pNode,SGBSFileNodeStats *pStats,int nCurrentDepth,double *pBalanceFactor)
 {
-	DWORD written=0;
-
 	pStats->nNodes++;
 	if(nCurrentDepth>pStats->nDepth){pStats->nDepth=nCurrentDepth;}
 	if(pNode->content!=CONTENT_NODE){pStats->nLeafs++;*pBalanceFactor=0.0;}
@@ -156,12 +155,12 @@ bool CGBSFileType::WriteNode(HANDLE hFile,CBSPNode *pNode,SGBSFileNodeStats *pSt
 	info.vNormal[2]=pNode->plane.c[2];
 	info.vDist=pNode->plane.d;
 	info.nContent=pNode->content;
-	if(!WriteFile(hFile,&info,sizeof(info),&written,NULL)){return false;}
+	if(fwrite(&info,sizeof(info),1,pFile)!=1){return false;}
 	if(pNode->content==CONTENT_NODE)
 	{
 		double dChildFactor[2]={0};
-		WriteNode(hFile,pNode->pChild[0],pStats,nCurrentDepth+1,&dChildFactor[0]);
-		WriteNode(hFile,pNode->pChild[1],pStats,nCurrentDepth+1,&dChildFactor[1]);
+		WriteNode(pFile,pNode->pChild[0],pStats,nCurrentDepth+1,&dChildFactor[0]);
+		WriteNode(pFile,pNode->pChild[1],pStats,nCurrentDepth+1,&dChildFactor[1]);
 		if(pNode->pChild[0]->content!=CONTENT_NODE && pNode->pChild[1]->content!=CONTENT_NODE)
 		{
 			(*pBalanceFactor)=1.0;
@@ -194,12 +193,12 @@ bool CGBSFileType::CompareGeometricData(std::vector<CPolygon *> *pGeometricData1
 	if(pGeometricData1->size()!=pGeometricData2->size())
 	{return false;}
 
-	for(int x=0;x<pGeometricData1->size();x++)
+	for(unsigned int x=0;x<pGeometricData1->size();x++)
 	{
 		CPolygon *pPoly1=(*pGeometricData1)[x],*pPoly2=(*pGeometricData2)[x];
 		if(pPoly1->m_nVertexes!=pPoly2->m_nVertexes)
 		{return false;}
-		for(int v=0;v<pPoly1->m_nVertexes;v++)
+		for(unsigned int v=0;v<pPoly1->m_nVertexes;v++)
 		{
 			if(pPoly1->m_pVertexes[v]!=pPoly2->m_pVertexes[v])
 			{

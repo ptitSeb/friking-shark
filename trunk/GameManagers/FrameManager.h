@@ -19,7 +19,10 @@ class CFrameManager : virtual public CSystemObjectBase, virtual public IFrameMan
 
 	void ExecuteTogglePause();
 	
+#pragma message("Encapsular los timers de alta resolucion")
+#ifdef WIN32
 	LARGE_INTEGER m_ldPerformanceFrequency;
+#endif
 
 	double m_dCurrentFps;
 	DWORD  m_dwFPSFrameTimes[10000];

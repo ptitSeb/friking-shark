@@ -1,5 +1,5 @@
-#include "StdAfx.h"
-#include ".\BombProjectiletype.h"
+#include "./stdafx.h"
+#include "BombProjectileType.h"
 
 CBombProjectileType::CBombProjectileType()
 {

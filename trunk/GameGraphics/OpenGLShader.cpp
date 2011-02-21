@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "./stdafx.h"
 #include "OpenGLGraphics.h"
 #include "OpenGLShader.h"
 
@@ -17,26 +17,28 @@ bool COpenGLShader::LoadCodeFile(string sSourceFile,string *psSourceCode)
 {
 	char *pSource=NULL;
 	DWORD dwSize=0;
-	DWORD dwRead=0;
 	bool bOk=false;
 
-	HANDLE hFile=CreateFile(sSourceFile.c_str(),GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
-	if(hFile!=INVALID_HANDLE_VALUE)
+	FILE *pFile=fopen(sSourceFile.c_str(),"rb");
+	if(pFile!=NULL)
 	{
-		dwSize=GetFileSize(hFile,NULL);
+		fseek(pFile,0,SEEK_END);
+		dwSize=ftell(pFile);
+		fseek(pFile,0,SEEK_SET);
 		if(dwSize)
 		{
 			pSource=new char [dwSize+1];
 			if(pSource)
 			{
-				if(ReadFile(hFile,pSource,dwSize,&dwRead,NULL))
+				if(fread(pSource,dwSize,1,pFile)==1)
 				{
 					pSource[dwSize]=0;
-					bOk=(dwSize==dwRead);
+					bOk=true;
 				}
 			}
 		}
 	}
+	if(pFile){fclose(pFile);pFile=NULL;}
 	if(bOk)
 	{
 		*psSourceCode=pSource;
@@ -52,7 +54,7 @@ bool COpenGLShader::CreateShaderInstance()
   FreeShader();
 
   m_hShaderProgram=glCreateProgramObjectARB();
-  bOk=(m_hShaderProgram!=NULL);
+  bOk=(m_hShaderProgram!=0);
 
   if(bOk && m_sVertexShaderCode.length())
   {
@@ -142,7 +144,7 @@ void COpenGLShader::FreeShader()
 
 bool COpenGLShader::Activate()
 {  
-  if(m_hShaderProgram==NULL){return false;}
+  if(m_hShaderProgram==0){return false;}
   glUseProgramObjectARB(m_hShaderProgram);
 
   return true;

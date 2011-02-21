@@ -1,7 +1,7 @@
-#include "StdAfx.h"
-#include ".\AnimationSystems.h"
-#include ".\AnimationObjectBase.h"
-#include ".\ParticleSystemAnimationObjecttype.h"
+#include "./stdafx.h"
+#include "AnimationSystems.h"
+#include "AnimationObjectBase.h"
+#include "ParticleSystemAnimationObjectType.h"
 
 CParticleSystemAnimationObjectType::CParticleSystemAnimationObjectType()
 {

@@ -1,5 +1,5 @@
-#include "StdAfx.h"
-#include ".\entityutilities.h"
+#include "./stdafx.h"
+#include "EntityUtilities.h"
 
 double ApproachAngle(double actual,double ideal, double ammount)
 {
@@ -34,7 +34,7 @@ double ApproachAngle(double actual,double ideal, double ammount)
     if(result<0){result=result+360;}
     if(result>360){result=result+(-360);}
     return result;
-};	
+}
 
 void ApproachAngles(CVector *pvCurrent,CVector &vIdeal, double ammount)
 {

@@ -1,5 +1,5 @@
-#include "StdAfx.h"
-#include ".\LiveBonusType.h"
+#include "./stdafx.h"
+#include "LiveBonusType.h"
 
 CLiveBonusType::CLiveBonusType(){}
 CLiveBonusType::~CLiveBonusType(){}

@@ -1,5 +1,5 @@
-#include "StdAfx.h"
-#include ".\WeaponUpgradeBonusType.h"
+#include "./stdafx.h"
+#include "WeaponUpgradeBonusType.h"
 
 CWeaponUpgradeBonusType::CWeaponUpgradeBonusType(){m_dwLevels=0;m_dwSlot=0;}
 CWeaponUpgradeBonusType::~CWeaponUpgradeBonusType(){}

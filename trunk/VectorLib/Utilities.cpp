@@ -2,25 +2,11 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "./StdAfx.h"
 #include <windows.h>
 #include <string>
-#include "utilities.h"
-
-
-void _MRT(const char *format, ...)
-{
-	va_list vargs;
-	va_start (vargs,format);
-	char pTempBuffer[2400];
-	int res=_vsnprintf(pTempBuffer,1023,format,vargs);
-	if(res==-1){pTempBuffer[1022]=0;res=1022;}
-	va_end (vargs);
-
-	pTempBuffer[res]='\n';
-	pTempBuffer[res+1]=0;
-	OutputDebugString(pTempBuffer);
-}
+#include <stdarg.h>
+#include "Utilities.h"
 
 void SkipCommentsStringsAndSpaces(char *pBuffer,DWORD *pOffset,DWORD bufLen)
 {
@@ -67,16 +53,17 @@ void SkipCommentsStringsAndSpaces(char *pBuffer,DWORD *pOffset,DWORD bufLen)
 	(*pOffset)=x;
 }
 
-bool GetFileModificationTime(char *pfile,FILETIME *pModificationTime)
+void ReplaceExtension(char *pFileName,const char *pExt)
 {
-	bool bOk=FALSE;
-	memset(pModificationTime,0,sizeof(FILETIME));
-	HANDLE hFile=CreateFile(pfile,GENERIC_READ,FILE_SHARE_READ|FILE_SHARE_WRITE|FILE_SHARE_DELETE,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
-	if(hFile!=INVALID_HANDLE_VALUE)
-	{
-		bOk=GetFileTime(hFile,NULL,NULL,pModificationTime);
-		CloseHandle(hFile);
-		hFile=INVALID_HANDLE_VALUE;
-	}
-	return bOk;
+  char *pExtStart=strrchr(pFileName,'.');
+  if(pExtStart){strcpy(pExtStart,pExt);}
+  else{strcat(pFileName,pExt);}
 }
+
+void GetExtension(const char *pFileName,char *pExt)
+{
+  const char *pExtStart=strrchr(pFileName,'.');
+  if(pExtStart){strcpy(pExt,pExtStart);}
+  else{*pExt=0;}
+}
+

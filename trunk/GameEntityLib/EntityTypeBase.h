@@ -1,7 +1,7 @@
 #pragma once
 
-DECLARE_CUSTOM_WRAPPER1(CAnimationTypeWrapper,IAnimationType,m_piAnimationType);
-DECLARE_CUSTOM_WRAPPER1(CWeaponTypeWrapper,IWeaponType,m_piWeaponType);
+DECLARE_CUSTOM_WRAPPER1(CAnimationTypeWrapper,IAnimationType,m_piAnimationType)
+DECLARE_CUSTOM_WRAPPER1(CWeaponTypeWrapper,IWeaponType,m_piWeaponType)
 
 class CEntityBase;
 class CEntityTypeBase: virtual public CSystemObjectBase,virtual public IEntityType 

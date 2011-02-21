@@ -2,14 +2,12 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#if !defined(AFX_VECTORLIB_H__B628EDC0_7542_4E57_9003_82D1A3DFD6FC__INCLUDED_)
-#define AFX_VECTORLIB_H__B628EDC0_7542_4E57_9003_82D1A3DFD6FC__INCLUDED_
+#ifndef __VECTOR_LIB__
+#define __VECTOR_LIB__
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-
+#ifdef WIN32
 #pragma warning ( disable : 4786 )
+#endif
 
 #include <windows.h>
 #include <math.h>
@@ -360,7 +358,8 @@ void		RGBToFloat(COLORREF cColor,float *pColor);
 CVector		RGBToVector(COLORREF cColor);
 COLORREF	FloatToRGB(float *pColor);
 COLORREF	VectorToRGB(CVector *pColor);
-CVector		RGBToHSV(CVector &v1);
+CVector		RGBToHSV(const CVector &v1);
+CVector 	HSVToRGB(const CVector &hsv);
 CVector		HSVDifference(CVector &v1,CVector &v2);
 double		drand();
 double		DegreesToRadians(double dAngle);
@@ -377,12 +376,10 @@ extern CVector AxisNegY;
 extern CVector AxisNegZ;
 extern CVector Origin;
 
-#include "OpenGLViewPortBase.h"
-#include "OpenGLExtensions.h"
 #include "Utilities.h"
+#include "GBSFiles.h"
 #ifndef VECTOR_LIB_PROYECT
 	#include "QuakeFiles.h"
-	#include "BmpFiles.h"
 	#include "IniFiles.h"
 	#include "3DSTypes.h"
 	#include "3DSFiles.h"
@@ -390,4 +387,4 @@ extern CVector Origin;
 	#include "GBSFiles.h"
 #endif
 
-#endif // !defined(AFX_VECTORLIB_H__B628EDC0_7542_4E57_9003_82D1A3DFD6FC__INCLUDED_)
+#endif

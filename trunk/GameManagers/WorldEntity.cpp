@@ -1,6 +1,6 @@
-#include "StdAfx.h"
-#include ".\worldentity.h"
-#include ".\worldManager.h"
+#include "./stdafx.h"
+#include "WorldEntity.h"
+#include "WorldManager.h"
 
 CWorldEntity::CWorldEntity(CWorldManager *pManager)
 {
@@ -8,8 +8,8 @@ CWorldEntity::CWorldEntity(CWorldManager *pManager)
     m_sClassName="CWorldEntity";
     m_pManager=pManager;
 
-		m_dHealth=1000000000000;
-		m_dwDamageType=DAMAGE_TYPE_NORMAL;
+	m_dHealth=100000000;
+	m_dwDamageType=DAMAGE_TYPE_NORMAL;
     m_PhysicInfo.dwMoveType=PHYSIC_MOVE_TYPE_NONE;
     m_PhysicInfo.dwBoundsType=PHYSIC_BOUNDS_TYPE_BSP;
 }

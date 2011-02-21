@@ -25,7 +25,7 @@ public:
 			REL(piObj);
 			REL(piSystem);
 			REL(piSystemManager);
-			_ASSERT(m_piInterface!=NULL);
+//			_ASSERT(m_piInterface!=NULL);
 		}
 		else
 		{

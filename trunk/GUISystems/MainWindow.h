@@ -1,8 +1,8 @@
 #pragma once
 
-DECLARE_CUSTOM_WRAPPER1(CViewportWrapper,IGenericViewport,m_piViewport);
-DECLARE_CUSTOM_WRAPPER1(CGameDialogWrapper,IGameDialog,m_piDialog);
-DECLARE_CUSTOM_WRAPPER1(CGameInterfaceWrapper,IGameInterfaceWindow,m_piInterfaceWindow);
+DECLARE_CUSTOM_WRAPPER1(CViewportWrapper,IGenericViewport,m_piViewport)
+DECLARE_CUSTOM_WRAPPER1(CGameDialogWrapper,IGameDialog,m_piDialog)
+DECLARE_CUSTOM_WRAPPER1(CGameInterfaceWrapper,IGameInterfaceWindow,m_piInterfaceWindow)
 
 enum eInterfaceStage
 {
