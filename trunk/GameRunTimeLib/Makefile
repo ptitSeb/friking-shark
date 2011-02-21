@@ -24,11 +24,11 @@ OUT_SOURCES=$(addprefix $(INTERMEDIATE_DIR)/,$(SOURCES))
 
 all: release debug
 release: $(OUT_SOURCES:.cpp=.o)
-	rm -f bin/GameRuntimeLib.a
-	ar q bin/GameRuntimeLib.a .intermediate/*.o
+	rm -f ./lib/GameRuntimeLib.a
+	ar q ./lib/GameRuntimeLib.a .intermediate/*.o
 debug: $(OUT_SOURCES:.cpp=.od)
-	rm -f bin/GameRuntimeLibd.a
-	ar q bin/GameRuntimeLibd.a .intermediate/*.od
+	rm -f ./lib/GameRuntimeLibd.a
+	ar q ./lib/GameRuntimeLibd.a .intermediate/*.od
 
 $(INTERMEDIATE_DIR)/%.o: ./%.cpp
 	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS) $(INCLUDES) $<
@@ -37,6 +37,6 @@ $(INTERMEDIATE_DIR)/%.od: ./%.cpp
 	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS_DEBUG) $(INCLUDES) $<
 
 clean:
-	rm -f ./bin/*
+	rm -f ./lib/*
 	rm -f ./.intermediate/*
 

@@ -27,8 +27,8 @@ stdafx.cpp
 CFLAGS +=  -pedantic -pedantic-errors -fPIC -Wall -Werror  -D_REENTRANT -O3 -g
 CFLAGS_DEBUG +=   -pedantic -pedantic-errors -fPIC -Wall -Werror  -D_REENTRANT -g
 
-LIBS = ../GameEntityLib/bin/GameEntityLib.a ../GameGUILib/bin/GameGUILib.a  ../GameLib/bin/GameLib.a ../GameRunTimeLib/bin/GameRuntimeLib.a   ../VectorLib/bin/VectorLib.a -lGL
-LIBS_DEBUG =  ../GameEntityLib/bin/GameEntityLibd.a ../GameGUILib/bin/GameGUILibd.a ../GameLib/bin/GameLibd.a ../GameRunTimeLib/bin/GameRuntimeLibd.a  ../VectorLib/bin/VectorLibd.a -lGL
+LIBS = ../GameEntityLib/lib/GameEntityLib.a ../GameGUILib/lib/GameGUILib.a  ../GameLib/lib/GameLib.a ../GameRunTimeLib/lib/GameRuntimeLib.a   ../VectorLib/lib/VectorLib.a -lGL
+LIBS_DEBUG =  ../GameEntityLib/lib/GameEntityLibd.a ../GameGUILib/lib/GameGUILibd.a ../GameLib/lib/GameLibd.a ../GameRunTimeLib/lib/GameRuntimeLibd.a  ../VectorLib/lib/VectorLibd.a -lGL
 
 INTERMEDIATE_DIR = ./.intermediate
 OUT_SOURCES=$(addprefix $(INTERMEDIATE_DIR)/,$(SOURCES))
@@ -36,12 +36,12 @@ OUT_SOURCES=$(addprefix $(INTERMEDIATE_DIR)/,$(SOURCES))
 all: release debug
 
 release: $(OUT_SOURCES:.cpp=.o)
-	rm -f bin/BonusTypes.so
-	$(CC) -shared -o bin/BonusTypes.so .intermediate/*.o $(CFLAGS) $(LIBS)
+	rm -f ../Demo/Bin/BonusTypes.so
+	$(CC) -shared -o ../Demo/Bin/BonusTypes.so .intermediate/*.o $(CFLAGS) $(LIBS)
 
 debug: $(OUT_SOURCES:.cpp=.od)
-	rm -f bin/BonusTypesd.so
-	$(CC) -shared -o bin/BonusTypesd.so .intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG)
+	rm -f ../Demo/Bin/BonusTypesd.so
+	$(CC) -shared -o ../Demo/Bin/BonusTypesd.so .intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG)
 
 $(INTERMEDIATE_DIR)/%.o: ./%.cpp
 	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS) $(INCLUDES) $<
@@ -50,6 +50,6 @@ $(INTERMEDIATE_DIR)/%.od: ./%.cpp
 	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS_DEBUG) $(INCLUDES) $<
 
 clean:
-	rm -f ./bin/*
+	rm -f ../Demo/Bin/BonusTypes*.so
 	rm -f ./.intermediate/*
 
