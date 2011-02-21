@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "./stdafx.h"
 #include "GameRuntimeLib.h"
 #include ".\SoundSystems.h"
 #include ".\SoundSystemManager.h"
@@ -10,11 +10,23 @@ CSoundSystemManager::CSoundSystemManager()
   m_bEnable3DSound=false;
   m_piPlayerEntity=NULL;
   m_piListener=NULL;
+  m_hMainWindow=NULL;
 }
 
 CSoundSystemManager::~CSoundSystemManager()
 {
 
+}
+
+BOOL CALLBACK CSoundSystemManager::FindTopLevelWindow(HWND hwnd, LPARAM lParam)
+{
+	if(GetParent(hwnd)==NULL && GetWindowThreadProcessId(hwnd,NULL)==GetCurrentThreadId())
+	{
+		CSoundSystemManager *pManager =(CSoundSystemManager *)lParam;
+		pManager->m_hMainWindow=hwnd;
+		return FALSE;
+	}
+	return TRUE;
 }
 
 bool CSoundSystemManager::Init(std::string sClass,std::string sName,ISystem *piSystem)
@@ -25,7 +37,8 @@ bool CSoundSystemManager::Init(std::string sClass,std::string sName,ISystem *piS
   if(bOk){m_GameControllerWrapper.m_piGameController->RegisterManager(500,this);}
   if(bOk)
   {
-    m_dxSoundManager.Initialize(m_ViewportWrapper.m_piGenericViewport->GetWindowHandle(),DSSCL_NORMAL);
+	EnumWindows(FindTopLevelWindow, (LPARAM)this); 
+    m_dxSoundManager.Initialize(m_hMainWindow,DSSCL_NORMAL);
     HRESULT hr=m_dxSoundManager.Get3DListenerInterface(&m_piListener);
   }
   return bOk;
