@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GL/GL.h>
+
 DECLARE_CUSTOM_WRAPPER1(CTextureWrapper,IGenericTexture,m_piTexture)
 
 class CTextureParticleType: virtual public CSystemObjectBase,virtual public IParticleType

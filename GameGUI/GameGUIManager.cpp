@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "./stdafx.h"
 #include "GameGUIManager.h"
 #include "GameMainWindow.h"
 #include "GameGUILib.h"
@@ -667,7 +667,7 @@ void CGameGUIManager::UpdateScreenPlacement()
 
 	if(m_sScreenProperties.bFullScreen)
 	{
-		m_Viewport.m_piViewport->SetFullScreen(m_sScreenProperties.sFullScreenResolution.w,m_sScreenProperties.sFullScreenResolution.h,m_sScreenProperties.dFullScreenRefreshBitsPerPixel,m_sScreenProperties.dFullScreenRefreshRate);
+		m_Viewport.m_piViewport->SetFullScreen((unsigned int)m_sScreenProperties.sFullScreenResolution.w,(unsigned int)m_sScreenProperties.sFullScreenResolution.h,(unsigned int)m_sScreenProperties.dFullScreenRefreshBitsPerPixel,(unsigned int)m_sScreenProperties.dFullScreenRefreshRate);
 	}
 	else
 	{

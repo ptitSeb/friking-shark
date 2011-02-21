@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "./stdafx.h"
 #include "GameRunTimeLib.h"
 #include "SystemObjectWrapper.h"
 #include "crtdbg.h"

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "./stdafx.h"
 
 template <typename T>
 void CopyDeque(deque<T> *pDest,deque<T> *pSource)

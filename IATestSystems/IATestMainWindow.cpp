@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "./stdafx.h"
 #include <GL/glu.h>
 #include "resource.h"
 #include "GameRunTimeLib.h"

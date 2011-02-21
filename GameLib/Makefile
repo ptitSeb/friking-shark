@@ -20,10 +20,10 @@ OUT_SOURCES=$(addprefix $(INTERMEDIATE_DIR)/,$(SOURCES))
 all: release debug
 release: $(OUT_SOURCES:.cpp=.o)
 	rm -f ./lib/GameLib.a
-	ar q ./lib/GameLib.a .intermediate/*.o ../JPEGLibrary/.intermediate/*.o
+	ar q ./lib/GameLib.a .intermediate/*.o
 debug: $(OUT_SOURCES:.cpp=.od)
 	rm -f ./lib/GameLibd.a
-	ar q ./lib/GameLibd.a .intermediate/*.od ../JPEGLibrary/.intermediate/*.od
+	ar q ./lib/GameLibd.a .intermediate/*.od
 
 $(INTERMEDIATE_DIR)/%.o: ./%.cpp
 	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS) $(INCLUDES) $<

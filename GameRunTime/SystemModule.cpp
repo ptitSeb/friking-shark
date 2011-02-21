@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "./stdafx.h"
 #include "GameRunTimeLib.h"
 #include "SystemModule.h"
 
@@ -30,7 +30,7 @@ bool CSystemModule::Init(std::string sPath,ISystem *piSystem)
 #ifdef WIN32	
 	char fileName[MAX_PATH]={0},fileExt[MAX_PATH]={0};
 	_splitpath(sPath.c_str(),NULL,NULL,fileName,fileExt);
-	sFileName+=fileName;
+	sFileName=fileName;
 	sFileName+=fileExt;
 	
 	m_hModule=LoadLibrary(sPath.c_str());

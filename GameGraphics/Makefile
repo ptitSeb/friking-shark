@@ -3,9 +3,10 @@
 
 CC=g++
 
-INCLUDES = -I. -I../PortFiles -I../GameRunTime -I../GameRunTimeLib -I../VectorLib -I../GameLib -I../GameGUI
+INCLUDES = -I. -I../PortFiles -I../GameRunTime -I../GameRunTimeLib -I../VectorLib -I../GameLib -I../GameGUI -I ..\JPEGLibrary\inc\
 
-SOURCES = GameGraphics.cpp\
+SOURCES = GLee.c\
+GameGraphics.cpp\
 OpenGLCamera.cpp\
 OpenGLFont.cpp\
 OpenGLLight.cpp\
@@ -29,12 +30,12 @@ OUT_SOURCES=$(addprefix $(INTERMEDIATE_DIR)/,$(SOURCES))
 all: release debug
 
 release: $(OUT_SOURCES:.cpp=.o)
-	rm -f ../Demo/Bin/GameGraphics.so 
-	$(CC) -shared -o ../Demo/Bin/GameGraphics.so .intermediate/*.o $(CFLAGS) $(LIBS)
+	rm -f ../Demo/Bin/GameGraphics.so
+	$(CC) -shared -o ../Demo/Bin/GameGraphics.so ../JPEGLibrary/.intermediate/*.o .intermediate/*.o $(CFLAGS) $(LIBS)
 
 debug: $(OUT_SOURCES:.cpp=.od)
 	rm -f ../Demo/Bin/GameGraphicsd.so 
-	$(CC) -shared -o ../Demo/Bin/GameGraphicsd.so .intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG)
+	$(CC) -shared -o ../Demo/Bin/GameGraphicsd.so  ../JPEGLibrary/.intermediate/*.od .intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG)
 
 $(INTERMEDIATE_DIR)/%.o: ./%.cpp
 	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS) $(INCLUDES) $<

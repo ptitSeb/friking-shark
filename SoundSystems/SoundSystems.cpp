@@ -1,7 +1,7 @@
 // SoundSystems.cpp : Defines the entry point for the DLL application.
 //
 
-#include "stdafx.h"
+#include "./stdafx.h"
 #include "SoundSystems.h"
 #include "SoundSystemManager.h"
 #include "SoundType.h"

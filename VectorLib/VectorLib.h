@@ -209,8 +209,6 @@ public:
 	void	*m_pPixels;
 	DWORD	 m_dwColorType;
 
-	CVector GetPixelColor( unsigned long x, unsigned long y );
-
 	unsigned m_nOpenGlIndex;
 	CTexture(std::string sName,int nWidth,int nHeight,void *pPixels,DWORD dwColorType);
 	~CTexture();
@@ -222,19 +220,14 @@ struct CMaterial
 	COLORREF	cAmbientColor;
 	COLORREF	cDiffuseColor;
 	COLORREF	cSpecularColor;
-	int			nTextureIndex;
-	int			nList;
 	float		fShininess;
 	float		fOpacity;
 	bool		bTwoSided;
-	CTexture    *pTexture;
+	std::string sTexture;
 
 
 	CMaterial();
 	~CMaterial();
-
-	void CreateList();
-	void DeleteList();
 
 	bool operator == (const CMaterial &material);
 };
@@ -380,7 +373,6 @@ extern CVector Origin;
 #include "GBSFiles.h"
 #ifndef VECTOR_LIB_PROYECT
 	#include "QuakeFiles.h"
-	#include "IniFiles.h"
 	#include "3DSTypes.h"
 	#include "3DSFiles.h"
 	#include "ASEFiles.h"

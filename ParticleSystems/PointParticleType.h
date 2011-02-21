@@ -1,6 +1,8 @@
 #pragma once
 #pragma once
 
+#include <GL/GL.h>
+
 class CPointParticleType: virtual public CSystemObjectBase,virtual public IParticleType
 {
 public:

@@ -160,7 +160,6 @@ public:
     bool Init(std::string sClass,std::string sName,ISystem *piSystem);
     void Destroy();
 	void Render(IGenericRender *piRender,IGenericCamera *piCamera);
-	void RenderWater(IGenericRender *piRender);
 
    // IGameManager
 

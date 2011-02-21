@@ -69,7 +69,7 @@ bool COpenGLFonts::LoadFont(char *sName,int nHeight)
 		test.nTexturesBaseIndex=glGenLists(255);
 		test.hFont=hFont;
 		GetTextMetrics(hdc,&metrics);
-		test.nMetricDescent=metrics.tm_descent;
+		test.nMetricDescent=metrics.tmDescent;
 		if(wglUseFontBitmaps(hdc,0,255,test.nTexturesBaseIndex))
 		{
 			bResult=true;

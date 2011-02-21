@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "./stdafx.h"
 
 map<HWND, VaSplitterWindowData>	CMRSplitterManager::m_mWindows;
 

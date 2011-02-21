@@ -1,7 +1,7 @@
 // ScenarioEditor.cpp : Defines the exported functions for the DLL application.
 //
 
-#include "stdafx.h"
+#include "./stdafx.h"
 #include "ScenarioEditor.h"
 #include "ScenarioEditorMainWindow.h"
 #include "ScenarioEditorColorSelector.h"

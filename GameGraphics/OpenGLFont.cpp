@@ -2,6 +2,8 @@
 #include "OpenGLGraphics.h"
 #include "OpenGLFont.h"
 
+bool LoadImageHelper(string sFile,DWORD dwColorType,unsigned *pOpenGLSkinWidth,unsigned *pOpenGLSkinHeight,BYTE **ppBuffer);
+
 COpenGLFont::COpenGLFont(void)
 {
 	m_dwTextureWidth=0;
@@ -31,7 +33,7 @@ bool COpenGLFont::LoadTextureFont()
 	unsigned dwWidth=0,dwHeight=0;
 	bool bResult=true;
 
-	if(LoadTextureImageHelper(m_sTextureFontFileName,GL_RGB,&dwWidth,&dwHeight,&pBuffer))
+	if(LoadImageHelper(m_sTextureFontFileName,GL_RGB,&dwWidth,&dwHeight,&pBuffer))
 	{
 		m_dwTextureWidth=dwWidth;
 		m_dwTextureHeight=dwHeight/2;

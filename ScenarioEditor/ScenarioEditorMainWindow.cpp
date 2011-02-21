@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "./stdafx.h"
 #include "resource.h"
 #include "GameRunTimeLib.h"
 #include "GameLib.h"
@@ -822,16 +822,6 @@ void CScenarioEditorMainWindow::ProcessFileExit()
 	if(ConfirmDialog("Do you really want to exit?","Scenario Editor",eMessageDialogType_Question))
 	{
 		m_piGUIManager->ExitGUILoop();
-	}
-}
-void GetFrameGeometry(CFrame *pFrame,vector<CPolygon *> *pvGeometry)
-{
-	for(long x=0;x<pFrame->m_nPolygons;x++)
-	{
-		CPolygon *pPolygon=new CPolygon;
-		*pPolygon=pFrame->m_pPolygons[x];
-		pPolygon->CalcPlane();
-		pvGeometry->push_back(&pFrame->m_pPolygons[x]);
 	}
 }
 

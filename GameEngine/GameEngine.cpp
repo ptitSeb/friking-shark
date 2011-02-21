@@ -1,7 +1,7 @@
 // GameEngine.cpp : Defines the class behaviors for the application.
 //
 
-#include "stdafx.h"
+#include "./stdafx.h"
 #include "VectorLib.h"
 #include "GameEngine.h"
 #include "GameGUI.h"
@@ -140,9 +140,9 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
 	GetModuleFileName(NULL,szExecutableFullPath,sizeof(szExecutableFullPath));
 	_splitpath(szExecutableFullPath,szExecutableDrive,szExecutableFolder,NULL,NULL);
 	
-	std::string sExecutableFolder;
-	sExecutableFolder=szExecutableDrive;
-	sExecutableFolder+=szExecutableFolder;
+	std::string sFolder;
+	sFolder=szExecutableDrive;
+	sFolder+=szExecutableFolder;
 
 	wchar_t *pWCommand=GetCommandLineW();
 

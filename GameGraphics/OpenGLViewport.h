@@ -1,23 +1,38 @@
 #pragma once
 #include "GameGraphics.h"
+#ifdef WIN32
+#else
 #include <SDL/SDL.h>
+#endif
 
 class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericViewport,virtual public IOpenGLViewport
 {
-	bool         m_bSDLInitialized;
-	int          m_nSDLWindowFlags;
-	SDL_Surface* m_pSDLWindow;
-	int          m_nLoopDepth;
+	#ifdef WIN32
+		HDC			m_hDC;
+		HGLRC		m_hRenderContext;
+		HWND		m_hWnd;
+		int			m_nPixelFormatIndex;
+
+		void OnCreate(HWND hWnd);
+		void OnDestroy();
+		LRESULT ProcessMessage(HWND hWnd,UINT  uMsg, WPARAM  wParam,LPARAM  lParam);
+		static LRESULT WindowProc(HWND  hWnd,UINT  uMsg, WPARAM  wParam,LPARAM  lParam);
+
+	#else
+		bool         m_bSDLInitialized;
+		int          m_nSDLWindowFlags;
+		SDL_Surface* m_pSDLWindow;
+		int          m_nLoopDepth;
+		int 		 m_nDetectDragX;
+		int 		 m_nDetectDragY;
+		int 		 m_nDetectDragButton;
+		bool 		 m_bDetectedDrag;
+	#endif
 	
 	bool m_bVerticalSync;
 	std::string m_sCaption;
 	IGenericViewportCallBack *m_piCallBack;
 	
-	int m_nDetectDragX;
-	int m_nDetectDragY;
-	int m_nDetectDragButton;
-	bool m_bDetectedDrag;
-
 
 	// Virtuales de COpenGLViewPortBase
 
@@ -35,8 +50,6 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 	void OnRButtonDown(WORD wKeyState,POINT pos);
 	void OnRButtonUp(WORD wKeyState,POINT pos);
 	void OnMouseMove(WORD wKeyState,POINT pos);
-
-	LRESULT ProcessMessage(HWND hWnd,UINT  uMsg, WPARAM  wParam,LPARAM  lParam);
 public:
 
 	//IGenericViewport

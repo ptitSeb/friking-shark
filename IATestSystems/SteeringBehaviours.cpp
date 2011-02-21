@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "./stdafx.h"
 #include "IAEntityBase.h"
 #include "SteeringBehaviours.h"
 #include "IATestUtils.h"

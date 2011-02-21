@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "./stdafx.h"
 #include "ScenarioEditorColorSelector.h"
 
 CScenarioEditorColorSelector::CScenarioEditorColorSelector(void)
@@ -58,7 +58,7 @@ void CScenarioEditorColorSelector::OnMouseDown( int nButton,double x,double y )
 		// 0-1 to texture size
 		x*=(double)nTextureWidth;
 		y*=(double)nTextureHeight;
-		m_vColor=m_piColorMapTexture->GetPixelColor(x,y);
+		m_vColor=m_piColorMapTexture->GetPixelColor((unsigned long)x,(unsigned long)y);
 		EndDialog(1);
 	}
 }

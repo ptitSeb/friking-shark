@@ -1,6 +1,7 @@
-#include "stdafx.h"
+#include "./stdafx.h"
 #include "GameRunTimeLib.h"
 #include "WorldManager.h"
+#include <GL/GL.h>
 
 CWorldManager::CWorldManager()
 {
@@ -113,66 +114,6 @@ void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCam
 		piRender->RenderModel(Origin,Origin,bUseBaseFrame?m_TerrainBaseModel.m_piModel:m_TerrainModel.m_piModel);
 		piRender->PopState();
 	}
-}
-
-void CWorldManager::RenderWater(IGenericRender *piRender)
-{
-/*	glPushAttrib(GL_ALL_ATTRIB_BITS);
-
-	if(m_TerrainWater.m_Texture1.m_piTexture)
-	{
-		piRender->SelectTexture(m_TerrainWater.m_Texture2.m_piTexture,1);
-		glActiveTextureARB(GL_TEXTURE1_ARB); 
-		glMatrixMode(GL_TEXTURE);
-		glLoadIdentity();
-		glTranslated(m_TerrainWater.m_Config.dSpeed*0.5*((double)m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime()/1000.0),0,0);
-		glMatrixMode(GL_MODELVIEW);
-	}
-
-	SetupRenderOptions(piRender);
-	glActiveTextureARB(GL_TEXTURE0_ARB); 
-	glMatrixMode(GL_TEXTURE);
-	glLoadIdentity();
-	glTranslated(m_TerrainWater.m_Config.dSpeed*((double)m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime()/1000.0),0,0);
-	glMatrixMode(GL_MODELVIEW);
-
-	glDepthFunc(GL_LESS);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	if(m_pWaterFrame)
-	{
-		for(int x=0;x<m_pWaterFrame->m_nPreprocessedRenderBuffers;x++)
-		{
-			if(m_pWaterFrame->m_pPreprocessedRenderBuffers[x].pMaterial->nTextureIndex==-1)
-			{
-				glPushAttrib(GL_ALL_ATTRIB_BITS);
-				glDisable(GL_TEXTURE_2D);	
-			}
-			glCallList(m_pWaterFrame->m_pPreprocessedRenderBuffers[x].pMaterial->nList);
-			RenderBuffer(&m_pWaterFrame->m_pPreprocessedRenderBuffers[x]);
-			if(m_pWaterFrame->m_pPreprocessedRenderBuffers[x].pMaterial->nTextureIndex==-1)
-			{
-				glPopAttrib();
-			}
-		}
-	}
-
-	if(m_TerrainWater.m_Texture2.m_piTexture)
-	{
-		piRender->UnselectTexture(m_TerrainWater.m_Texture2.m_piTexture,1);
-		glActiveTextureARB(GL_TEXTURE1_ARB); 
-		glMatrixMode(GL_TEXTURE);
-		glLoadIdentity();
-		glMatrixMode(GL_MODELVIEW);
-	}
-
-	glActiveTextureARB(GL_TEXTURE0_ARB); 
-	glMatrixMode(GL_TEXTURE);
-	glLoadIdentity();
-	glMatrixMode(GL_MODELVIEW);
-
-	glPopAttrib();*/
-
 }
 
 void CWorldManager::DesignRender(IGenericRender *piRender)

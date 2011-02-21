@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "./stdafx.h"
 #include "GameGUILib.h"
 #include "GameGUILabel.h"
 

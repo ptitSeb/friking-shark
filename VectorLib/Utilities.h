@@ -19,4 +19,11 @@ T* BufferFromVector(std::vector< T > *pContainer)
 void SkipCommentsStringsAndSpaces(char *pBuffer,DWORD *pOffset,DWORD bufLen);
 void ReplaceExtension(char *pFileName,const char *pExt);
 void GetExtension(const char *pFileName,char *pExt);
+void GetFileFolder(const char *pFilePath,char *pFolder);
+void GetFileName(const char *pFilePath,char *pFileName);
+
+#ifdef WIN32
+#define strcasecmp _stricmp
+#endif
+
 #endif

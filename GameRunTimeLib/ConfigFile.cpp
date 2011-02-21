@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "./stdafx.h"
 #include <stack>
 #include "./GameRunTimeLib.h"
 #include "./ConfigFile.h"
