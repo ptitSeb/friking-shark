@@ -32,13 +32,14 @@ bool CSystemModule::Init(std::string sPath,ISystem *piSystem)
 	_splitpath(sPath.c_str(),NULL,NULL,fileName,fileExt);
 	sFileName=fileName;
 	sFileName+=fileExt;
+	sFileName+=".dll";
 	
 	m_hModule=LoadLibrary(sPath.c_str());
 	bOk=(m_hModule!=NULL);
 #else
 	const char *pFileStart=strrchr(sPath.c_str(),'/');
 	sFileName=pFileStart?pFileStart:sPath.c_str();
-
+	sFileName+=".so";
 
 	m_pLibrary=dlopen(sPath.c_str(),RTLD_LOCAL|RTLD_LAZY);
 	bOk=(m_pLibrary!=NULL);
