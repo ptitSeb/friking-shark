@@ -374,7 +374,7 @@ SOpenGLSystemFont *COpenGLFont::GetSystemFontForHeight(unsigned int nHeight)
 			#pragma message ("ver como solucionar el problema del parametro extra de la fuentes en linux")
 			
 			char sFontName[1024];
-			sprintf(sFontName,"-*-%s-semilight-r-normal--%d-*-*-*-*-*-*-*",sName,nHeight);
+			sprintf(sFontName,"-*-%s-semilight-r-normal--%d-*-*-*-*-*-*-*",m_sSystemFontName.c_str(),nHeight);
 			pFont->pDisplay=m_pXDisplay;
 			pFont->pFontStruct=XLoadQueryFont(m_pXDisplay,sFontName);
 			if(pFont->pFontStruct)

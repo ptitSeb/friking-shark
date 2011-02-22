@@ -5,6 +5,9 @@
 #define VIEWPORT_CLASSNAME "OpenGLViewport"
 #define WM_GL_VIEWPORT_END_LOOP WM_USER+0x001
 #else
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/Xos.h>
 #include <SDL/SDL.h>
 #endif
 
@@ -22,6 +25,8 @@ COpenGLViewport::COpenGLViewport(void)
 	m_nPixelFormatIndex=0;
 	m_bShowSystemMouseCursor=true;
 #else
+	m_pXDisplay=NULL;
+	m_nXScreen=0;
 
 	m_pSDLWindow=NULL;
 	m_bSDLInitialized=false;
@@ -193,6 +198,23 @@ bool COpenGLViewport::Create(RECT *pRect,bool bMaximized)
 	bOk=(m_hRenderContext!=NULL);
 
 #else
+/*	m_pXDisplay=XOpenDisplay(NULL);
+	if(m_pXDisplay)
+	{ 
+	  m_nXScreen = DefaultScreen( m_pXDisplay );
+	  unsigned long black=BlackPixel(m_pXDisplay,m_nXScreen);
+	  unsigned long white=WhitePixel(m_pXDisplay,m_nXScreen);
+	  m_XWindow=XCreateSimpleWindow(m_pXDisplay,DefaultRootWindow(m_pXDisplay),pRect->left,pRect->top,pRect->right-pRect->left,pRect->bottom-pRect->top, 1, white, black);
+	  XSetStandardProperties(m_pXDisplay,m_XWindow,"ViewPort","ViewPort",None,NULL,0,NULL);
+	  m_XGC=XCreateGC(m_pXDisplay, m_XWindow, 0,0);
+	  XSetBackground(m_pXDisplay,m_XGC,white);
+	  XSetForeground(m_pXDisplay,m_XGC,black);	  
+	  XClearWindow(m_pXDisplay, m_XWindow);
+	  XMapWindow(m_pXDisplay,m_XWindow);
+	  XMapRaised(m_pXDisplay, m_XWindow);
+	}*/
+   	
+	
 	bOk=(SDL_Init(SDL_INIT_VIDEO)==0);
 	if(!bOk)
 	{

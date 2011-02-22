@@ -20,6 +20,12 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 		static LRESULT WindowProc(HWND  hWnd,UINT  uMsg, WPARAM  wParam,LPARAM  lParam);
 
 	#else
+		
+		Display *m_pXDisplay;
+		int      m_nXScreen;
+		Window   m_XWindow;
+		GC 		 m_XGC;
+		
 		bool         m_bSDLInitialized;
 		int          m_nSDLWindowFlags;
 		SDL_Surface* m_pSDLWindow;
