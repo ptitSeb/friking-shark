@@ -45,6 +45,8 @@ void COpenGLViewport::OnCreate(HWND hWnd)
 	m_hDC=GetDC(hWnd);
 	if(m_hDC)
 	{
+		SetMapMode(m_hDC,MM_TEXT);
+
 		PIXELFORMATDESCRIPTOR pixelFormat={0};
 		pixelFormat.nSize		= sizeof(PIXELFORMATDESCRIPTOR);
 		pixelFormat.nVersion	= 1;

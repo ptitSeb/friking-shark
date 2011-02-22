@@ -59,7 +59,7 @@ bool COpenGLFonts::LoadFont(char *sName,int nHeight)
 #ifdef WIN32
 	HDC hdc=wglGetCurrentDC();
 	LOGFONT logFont={0};
-	logFont.lfHeight=nHeight;
+	logFont.lfHeight=MulDiv(nHeight , GetDeviceCaps(hdc, LOGPIXELSY), 72);
 	strcpy(logFont.lfFaceName,sName);
 	HFONT hFont=CreateFontIndirect(&logFont);
 	if(hFont)
