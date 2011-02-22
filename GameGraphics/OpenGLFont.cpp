@@ -4,6 +4,30 @@
 
 bool LoadImageHelper(string sFile,DWORD dwColorType,unsigned *pOpenGLSkinWidth,unsigned *pOpenGLSkinHeight,BYTE **ppBuffer);
 
+SOpenGLSystemFont::SOpenGLSystemFont()
+{
+	nMetricDescent=0;
+	nHeight=0;
+	nTexturesBaseIndex=0;
+#ifdef WIN32
+	hFont=NULL;
+	memset(&sFontMetrics,0,sizeof(sFontMetrics));
+#else
+	pDisplay=NULL;
+	pFontStruct=NULL;
+#endif 
+}
+
+SOpenGLSystemFont::~SOpenGLSystemFont()
+{
+#ifdef WIN32
+	if(nTexturesBaseIndex){glDeleteLists(nTexturesBaseIndex,255);nTexturesBaseIndex=0;}
+	if(hFont){DeleteObject(hFont);hFont=NULL;}
+#else
+	if(pFontStruct){XFreeFont(pDisplay,pFontStruct);pFontStruct=NULL;}
+#endif
+}
+
 COpenGLFont::COpenGLFont(void)
 {
 	m_dwTextureWidth=0;
@@ -15,6 +39,10 @@ COpenGLFont::COpenGLFont(void)
 	m_dTextureFontCharacterSeparation=0;
 	m_dTextureFontSpaceSize=0;
 	m_dTextureFontAlphaTolerance=0;
+
+#ifndef WIN32
+	m_pXDisplay=NULL;
+#endif
 }
 
 COpenGLFont::~COpenGLFont(void)
@@ -26,6 +54,33 @@ COpenGLFont::~COpenGLFont(void)
 	}
 }
 eGenericFontType COpenGLFont::GetType(){return m_eFontType;}
+
+bool COpenGLFont::Init(std::string sClass,std::string sName,ISystem *piSystem)
+{
+	bool bOk=CSystemObjectBase::Init(sClass,sName,piSystem);
+#ifndef WIN32
+	if(bOk)
+	{
+		m_pXDisplay=XOpenDisplay(getenv("DISPLAY"));
+		bOk=(m_pXDisplay!=NULL);
+	}
+#endif
+	return bOk;
+}
+
+void COpenGLFont::Destroy()
+{
+	for(std::map<unsigned int,SOpenGLSystemFont*>::iterator i=m_mSystemFontHeights.begin();i!=m_mSystemFontHeights.end();i++)
+	{
+		SOpenGLSystemFont *pFont=i->second;
+		delete  pFont;
+	}
+	m_mSystemFontHeights.clear();
+#ifndef WIN32
+	if(m_pXDisplay){XCloseDisplay(m_pXDisplay);m_pXDisplay=NULL;}
+#endif
+	CSystemObjectBase::Destroy();
+}
 
 bool COpenGLFont::LoadTextureFont()
 {
@@ -86,7 +141,7 @@ bool COpenGLFont::LoadTextureFont()
 			{
 				bLookingForCharacterStart=true;
 				unsigned char cChar=m_sTextureFontCharacterSet.c_str()[nCharacterIndex];
-				SOpenGLFontCharacterData *pData=&m_vTextureFontCharacters[cChar];
+				SOpenGLTextureFontCharacterData *pData=&m_vTextureFontCharacters[cChar];
 				pData->bPresent=true;
 				pData->cCharacter=cChar;
 				pData->dPixelW=x-nCharacterStartX;
@@ -160,8 +215,29 @@ void COpenGLFont::CalcTextSize(double dFontHeight,const char *pText,double *pdWi
 	}
 	else
 	{
-		COpenGLFonts::SetCurrentFont(const_cast<char*>(m_sSystemFontName.c_str()),(int)dFontHeight);
-		COpenGLFonts::CalcTextSize(pText,pdWidth,pdHeight);
+		SOpenGLSystemFont *pFont=GetSystemFontForHeight((unsigned int)dFontHeight);
+		if(pFont)
+		{
+#ifdef WIN32
+			HDC hDC=wglGetCurrentDC();
+			HGDIOBJ hOlfFont=SelectObject(hDC,pFont->hFont);
+			RECT rect={0,0,1,1};
+			::DrawText(hDC,pText,-1,&rect,DT_CALCRECT|DT_NOCLIP|DT_SINGLELINE);
+			*pdWidth=rect.right;
+			*pdHeight=rect.bottom;
+			SelectObject(hDC,hOlfFont);
+#else
+			if(pFont->pFontStruct)
+			{
+				int nDirection=0,nAscent=0,nDescent=0;
+				XCharStruct overall={0};
+				XTextExtents(pFont->pFontStruct, pText, strlen(pText), &nDirection, &nAscent, &nDescent, &overall);
+				*pdWidth=overall.width;
+				*pdHeight=overall.ascent+overall.descent;
+				//RTTRACE("COpenGLFonts::CalcTextSize -> Font %s:%d, '%s':%.f x %.f",g_CurrentFont.sName,g_CurrentFont.nHeight,sText,*pdWidth,*pdHeight);
+			}
+#endif
+		}
 	}
 }
 
@@ -185,7 +261,7 @@ void COpenGLFont::RenderText(double dFontHeight,double x,double y,const char *pT
 		while(pText[x]!=0)
 		{
 			CVector vAxis2=vOrientation^AxisPosZ;
-			SOpenGLFontCharacterData *pCharacterData=&m_vTextureFontCharacters[(int)pText[x]];
+			SOpenGLTextureFontCharacterData *pCharacterData=&m_vTextureFontCharacters[(int)pText[x]];
 
 			if(pText[x]!=' ')
 			{
@@ -212,8 +288,16 @@ void COpenGLFont::RenderText(double dFontHeight,double x,double y,const char *pT
 	}
 	else
 	{
-		COpenGLFonts::SetCurrentFont(const_cast<char*>(m_sSystemFontName.c_str()),(int)dFontHeight);
-		COpenGLFonts::DrawText(x,y,pText);
+		SOpenGLSystemFont *pFont=GetSystemFontForHeight((unsigned int)dFontHeight);
+		if(pFont)
+		{
+			glRasterPos2d(x,y+pFont->nMetricDescent);
+			while(*pText)
+			{
+				glCallList(pFont->nTexturesBaseIndex+*pText);
+				pText++;
+			}
+		}
 	}
 }
 
@@ -256,4 +340,61 @@ void COpenGLFont::RenderTextEx(double dFontHeight,double x,double y,double w,dou
 	//RTTRACE("COpenGLFonts::RenderTextEx -> P: %d x %d",(int)dPosX,(int)dPosY);
 }
 
+SOpenGLSystemFont *COpenGLFont::GetSystemFontForHeight(unsigned int nHeight)
+{
+	std::map<unsigned int,SOpenGLSystemFont*>::iterator i=m_mSystemFontHeights.find(nHeight);
+	SOpenGLSystemFont *pFont=(i!=m_mSystemFontHeights.end())?i->second:NULL;
+	if(pFont==NULL)
+	{
+		pFont=new SOpenGLSystemFont;
+		pFont->nHeight=nHeight;
+		pFont->nTexturesBaseIndex=glGenLists(255);
 
+		bool bOk=false;
+#ifdef WIN32
+		HDC hdc=wglGetCurrentDC();
+		LOGFONT logFont={0};
+		logFont.lfHeight=MulDiv(nHeight , GetDeviceCaps(hdc, LOGPIXELSY), 72);
+		pFont->hFont=CreateFontIndirect(&logFont);
+		if(pFont->hFont)
+		{
+			TEXTMETRIC metrics;
+			HGDIOBJ hOlfFont=SelectObject(hdc,pFont->hFont);
+			GetTextMetrics(hdc,&metrics);
+			pFont->nMetricDescent=metrics.tmDescent;
+			if(wglUseFontBitmaps(hdc,0,255,pFont->nTexturesBaseIndex))
+			{
+				bOk=true;
+			}
+			SelectObject(hdc,hOlfFont);
+		}
+#else
+		if(m_pXDisplay!=NULL)
+		{
+			#pragma message ("ver como solucionar el problema del parametro extra de la fuentes en linux")
+			
+			char sFontName[1024];
+			sprintf(sFontName,"-*-%s-semilight-r-normal--%d-*-*-*-*-*-*-*",sName,nHeight);
+			pFont->pDisplay=m_pXDisplay;
+			pFont->pFontStruct=XLoadQueryFont(m_pXDisplay,sFontName);
+			if(pFont->pFontStruct)
+			{
+				//RTTRACE("Font %s:%d ascent %d, descent %d",sName,nHeight,test.pFontStruct->ascent,test.pFontStruct->descent);
+				pFont->nMetricDescent=pFont->pFontStruct->descent;
+				glXUseXFont(pFont->pFontStruct->fid,0,255,pFont->nTexturesBaseIndex);
+				bOk=true;
+			}
+		}
+#endif
+		if(bOk)
+		{
+			m_mSystemFontHeights[nHeight]=pFont;
+		}
+		else
+		{
+			delete pFont;
+			pFont=NULL;
+		}
+	}
+	return pFont;
+}

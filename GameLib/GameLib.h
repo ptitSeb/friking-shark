@@ -49,7 +49,6 @@ void    MRPersistencyFree(CMRPersistentReferenceT<C3DSVector> *pItem);
 
 using namespace std;
 #ifndef GAME_LIB_PROYECT
-	#include "OpenGLFonts.h"
     #include "ResourceStore.h"
     #include "GameSpecs.h"
 #endif
