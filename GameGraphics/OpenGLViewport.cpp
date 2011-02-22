@@ -20,6 +20,7 @@ COpenGLViewport::COpenGLViewport(void)
 	m_hWnd=NULL;
 	m_hRenderContext=NULL;
 	m_nPixelFormatIndex=0;
+	m_bShowSystemMouseCursor=true;
 #else
 
 	m_pSDLWindow=NULL;
@@ -42,7 +43,6 @@ void COpenGLViewport::OnCreate(HWND hWnd)
 {
 	SetWindowLong(hWnd,GWL_USERDATA,(DWORD)this);
 	m_hDC=GetDC(hWnd);
-
 	if(m_hDC)
 	{
 		PIXELFORMATDESCRIPTOR pixelFormat={0};
@@ -98,8 +98,11 @@ LRESULT COpenGLViewport::ProcessMessage(HWND hWnd,UINT  uMsg, WPARAM  wParam,LPA
 		OnCreate(hWnd);
 		break;
 	case WM_SETCURSOR:
-		//OnSetCursor();
-		return 0L;
+		if(LOWORD(lParam)==HTCLIENT)
+		{
+			SetCursor(m_bShowSystemMouseCursor?LoadCursor(NULL,IDC_ARROW):NULL);
+			return 0L;
+		}
 		break;
 	case WM_DESTROY:
 		OnDestroy();
@@ -174,16 +177,19 @@ bool COpenGLViewport::Create(RECT *pRect,bool bMaximized)
 		RegisterClass(&wc);
 	}
 
-	DWORD dwStyle=bMaximized?WS_POPUP:WS_CAPTION|WS_THICKFRAME|WS_OVERLAPPED;
+	DWORD dwStyle=WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX|WS_MAXIMIZEBOX|WS_THICKFRAME|WS_OVERLAPPED;
 	if(dwStyle==0xFFFFFFFF){dwStyle=WS_OVERLAPPED;}
 	m_hWnd = CreateWindowEx(WS_EX_DLGMODALFRAME,VIEWPORT_CLASSNAME,"ViewPort",dwStyle,pRect->left,pRect->top,pRect->right-pRect->left,pRect->bottom-pRect->top,NULL,NULL,NULL,(void *)this);
 	if(m_hWnd)
 	{
-		ShowWindow(m_hWnd,bMaximized?SW_MAXIMIZE:SW_HIDE);
+		DWORD dwStyle=GetWindowLong(m_hWnd,GWL_STYLE);
+		SetWindowLong(m_hWnd,GWL_STYLE,dwStyle);
+		ShowWindow(m_hWnd,bMaximized?SW_MAXIMIZE:SW_SHOW);
 		EnableWindow(m_hWnd,TRUE);
 		UpdateWindow(m_hWnd);
-		bOk=true;
 	}
+	bOk=(m_hRenderContext!=NULL);
+
 #else
 	bOk=(SDL_Init(SDL_INIT_VIDEO)==0);
 	if(!bOk)
@@ -250,12 +256,12 @@ void COpenGLViewport::SetMaximized(bool bMaximized)
 	DWORD dwStyle=GetWindowLong(m_hWnd,GWL_STYLE);
 	if(bMaximized)
 	{
-		dwStyle&=~(WS_CAPTION|WS_THICKFRAME|WS_VISIBLE|WS_OVERLAPPED);
+		dwStyle&=~(WS_CAPTION|WS_MINIMIZEBOX|WS_MAXIMIZEBOX|WS_THICKFRAME|WS_VISIBLE|WS_OVERLAPPED);
 		dwStyle|=WS_POPUP;
 	}
 	else
 	{
-		dwStyle|=WS_CAPTION|WS_THICKFRAME|WS_VISIBLE|WS_OVERLAPPED;
+		dwStyle|=WS_CAPTION|WS_MINIMIZEBOX|WS_MAXIMIZEBOX|WS_THICKFRAME|WS_VISIBLE|WS_OVERLAPPED;
 		dwStyle&=~WS_POPUP;
 	}
 	SetWindowLong(m_hWnd,GWL_STYLE,dwStyle);
@@ -558,7 +564,7 @@ int TranslateKeyToSDL(int nGameKey)
 void COpenGLViewport::EnterLoop()
 {
 #ifdef WIN32
-	while(1)
+	while(m_hWnd)
 	{
 		MSG msg;
 		while(PeekMessage(&msg,NULL,0,0,FALSE))
@@ -573,7 +579,10 @@ void COpenGLViewport::EnterLoop()
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-		InvalidateRect(m_hWnd,NULL,FALSE);
+		if(m_hWnd)
+		{
+			InvalidateRect(m_hWnd,NULL,FALSE);
+		}
 	}
 #else
 	POINT point;
@@ -705,7 +714,7 @@ bool  COpenGLViewport::IsActiveWindow(){return true;}
 bool  COpenGLViewport::IsMouseVisible()
 {
 #ifdef WIN32
-	return false;
+	return m_bShowSystemMouseCursor;
 #else
 	return SDL_ShowCursor(-1)!=0;
 #endif
@@ -713,6 +722,7 @@ bool  COpenGLViewport::IsMouseVisible()
 void  COpenGLViewport::ShowMouseCursor(bool bShow)
 {
 #ifdef WIN32
+	m_bShowSystemMouseCursor=bShow;
 #else
 	SDL_ShowCursor(bShow);
 #endif
