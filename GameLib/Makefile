@@ -6,7 +6,6 @@ CC=g++
 INCLUDES = -I. -I../PortFiles -I../GameRunTime -I../GameRunTimeLib -I../VectorLib -I../JPEGLibrary/inc
 
 SOURCES = GameLib.cpp\
-OpenGLFonts.cpp\
 ResourceStore.cpp\
 StdAfx.cpp
 
