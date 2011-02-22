@@ -199,29 +199,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="OpenGLFonts.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="ResourceStore.cpp"
 				>
 				<FileConfiguration
@@ -280,10 +257,6 @@
 			</File>
 			<File
 				RelativePath=".\GameSpecs.h"
-				>
-			</File>
-			<File
-				RelativePath="OpenGLFonts.h"
 				>
 			</File>
 			<File
