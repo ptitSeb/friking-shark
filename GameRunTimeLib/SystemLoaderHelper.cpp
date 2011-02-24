@@ -32,32 +32,32 @@ ISystem *CSystemLoaderHelper::LoadSystem(ISystemPersistencyNode *piParent,std::s
     ISystemPersistencyNode  *piNode=piParent->GetNode(sSystemName);
     ISystem                 *piSystem=NULL;
 
-		if(piNode==NULL){return NULL;}
+	if(piNode==NULL){return NULL;}
 
     ISystemManager *piSystemManager=GetSystemManager();
     piSystem=piSystemManager->CreateSystem(sSystemName);
     if(piSystem!=NULL)
 		{
-			if(SUCCEEDED(m_Modules.PersistencyLoad(piNode)))
+			if(m_Modules.PersistencyLoad(piNode))
 			{
-					unsigned x=0;
-					for(x=0;x<m_Modules.m_dModules.size();x++)
+				unsigned x=0;
+				for(x=0;x<m_Modules.m_dModules.size();x++)
+				{
+					ISystemModule *piModule=NULL;
+					if(!piSystem->LoadModule(m_Modules.m_dModules[x].sPath,&piModule))
 					{
-						ISystemModule *piModule=NULL;
-						if(!piSystem->LoadModule(m_Modules.m_dModules[x].sPath,&piModule))
-						{
-							bResult=false;
-							RTTRACE("CSystemLoaderHelper::LoadSystem -> Failed to load Module %s in System %s",m_Modules.m_dModules[x].sPath.c_str(),sSystemName.c_str());
-						}
-						REL(piModule);
+						bResult=false;
+						RTTRACE("CSystemLoaderHelper::LoadSystem -> Failed to load Module %s in System %s",m_Modules.m_dModules[x].sPath.c_str(),sSystemName.c_str());
 					}
-						// Carga de objetos.
-					PersistencyLoad(piNode);
-					for(x=0;x<m_dObjects.size();x++)
-					{
-						m_dObjects[x].Detach();
-					}
-					m_dObjects.clear();
+					REL(piModule);
+				}
+					// Carga de objetos.
+				PersistencyLoad(piNode);
+				for(x=0;x<m_dObjects.size();x++)
+				{
+					m_dObjects[x].Detach();
+				}
+				m_dObjects.clear();
 			}
 			else
 			{

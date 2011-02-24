@@ -149,21 +149,21 @@ void RenderAxises()
 {
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 	glDisable(GL_DEPTH_TEST);
-	RenderAxis(AxisPosX,100,RGB(0  ,0  ,255));
-	RenderAxis(AxisPosY,100,RGB(255,255,0));
-	RenderAxis(AxisPosZ,100,RGB(255,0  ,0));
+	RenderAxis(AxisPosX,100,CVector(0,0,1));
+	RenderAxis(AxisPosY,100,CVector(1,1,0));
+	RenderAxis(AxisPosZ,100,CVector(1,0,0));
 	glEnable(GL_DEPTH_TEST);
 	glPopAttrib();
 }
 
 void RenderObjectAxises(double dSize)
 {
-	RenderAxis(AxisPosX,dSize,RGB(0  ,0  ,255));
-	RenderAxis(AxisPosY,dSize,RGB(255,255,0));
-	RenderAxis(AxisPosZ,dSize,RGB(255,0  ,0));
+	RenderAxis(AxisPosX,dSize,CVector(0,0,1));
+	RenderAxis(AxisPosY,dSize,CVector(1,1,0));
+	RenderAxis(AxisPosZ,dSize,CVector(1,0,0));
 }
 
-void RenderAxis(CVector vAxis,double dLength,COLORREF cColor)
+void RenderAxis(CVector vAxis,double dLength,CVector vColor)
 {
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 	glDisable(GL_DEPTH_TEST);
@@ -173,7 +173,7 @@ void RenderAxis(CVector vAxis,double dLength,COLORREF cColor)
 	glGetDoublev(GL_POINT_SIZE,&dPointSize);
 	glPointSize(6.0);
 
-	glColor3ub(GetRValue(cColor),GetGValue(cColor),GetBValue(cColor));
+	glColor3f(vColor.c[0],vColor.c[1],vColor.c[2]);
 
 	glLineWidth(1);
 

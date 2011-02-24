@@ -21,7 +21,6 @@ class C3DSFileType:public C3DSFileTypeBase
 	DWORD			ReadDWord();
 	WORD			ReadWord();
 	CVector			ReadVector();
-	COLORREF		ReadColor();
 	std::string		ReadString();
 
 	bool Open3DS(const char *sFileName);

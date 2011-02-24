@@ -62,9 +62,9 @@ S3DSMaterial::S3DSMaterial()
 	sName[0]=0;
 	sFile[0]=0;
 	sAlphaFile[0]=0;
-	cAmbientColor=RGB(128,128,128);
-	cDiffuseColor=RGB(128,128,128);
-	cSpecularColor=RGB(128,128,128);
+	vAmbientColor=CVector(0.5,0.5,0.5);
+	vDiffuseColor=CVector(0.5,0.5,0.5);
+	vSpecularColor=CVector(0.5,0.5,0.5);
 	bTwoSided=false;
 
 	bSubMaterial=false; // Solo para ASE
@@ -109,7 +109,7 @@ S3DSObject::S3DSObject()
 	dwMaterialId=-1;
 	bHasFirstFrameInfo=false;
 	fFirstFrameRotationAngle=0;
-	cWireframeColor=RGB(200,200,200);
+	vWireframeColor=CVector(0.5,0.5,0.5);
 }
 
 S3DSObject::~S3DSObject()
@@ -125,7 +125,7 @@ S3DSObject::~S3DSObject()
 
 S3DSLight::S3DSLight()
 {
-	cColor=RGB(255,255,255);
+	vColor=CVector(1,1,1);
 	sName[0]=0;
 	dwType=S3DS_LIGHT_TYPE_OMNI;
 	bIsOff=false;

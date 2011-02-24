@@ -36,12 +36,12 @@ OUT_SOURCES=$(addprefix $(INTERMEDIATE_DIR)/,$(SOURCES))
 all: release debug
 
 release: $(OUT_SOURCES:.cpp=.o)
-	rm -f ../Demo/Bin/ScenarioEditor.so
-	$(CC) -shared -o ../Demo/Bin/ScenarioEditor.so .intermediate/*.o $(CFLAGS) $(LIBS)
+	rm -f ../Demo/Bin/Release/ScenarioEditor.so
+	$(CC) -shared -o ../Demo/Bin/Release/ScenarioEditor.so .intermediate/*.o $(CFLAGS) $(LIBS)
 
 debug: $(OUT_SOURCES:.cpp=.od)
-	rm -f ../Demo/Bin/ScenarioEditord.so
-	$(CC) -shared -o ../Demo/Bin/ScenarioEditord.so .intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG)
+	rm -f ../Demo/Bin/Debug/ScenarioEditor.so
+	$(CC) -shared -o ../Demo/Bin/Debug/ScenarioEditor.so .intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG)
 
 $(INTERMEDIATE_DIR)/%.o: ./%.cpp
 	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS) $(INCLUDES) $<
@@ -50,6 +50,6 @@ $(INTERMEDIATE_DIR)/%.od: ./%.cpp
 	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS_DEBUG) $(INCLUDES) $<
 
 clean:
-	rm -f ../Demo/Bin/ScenarioEditor*.so
+	rm -f ../Demo/Bin/*/ScenarioEditor.so
 	rm -f ./.intermediate/*
 

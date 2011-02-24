@@ -235,9 +235,9 @@ bool CResourceStore::LoadASE(CModel *pModel,string sFileName)
 			S3DSMaterial *p3DSMaterial=pFile->m_vMaterials[m];
 			string sName=p3DSMaterial->sName;
 			CMaterial *pMaterial=new CMaterial;
-			pMaterial->cAmbientColor=p3DSMaterial->cAmbientColor;
-			pMaterial->cDiffuseColor=p3DSMaterial->cDiffuseColor;
-			pMaterial->cSpecularColor=p3DSMaterial->cSpecularColor;
+			pMaterial->vAmbientColor=p3DSMaterial->vAmbientColor;
+			pMaterial->vDiffuseColor=p3DSMaterial->vDiffuseColor;
+			pMaterial->vSpecularColor=p3DSMaterial->vSpecularColor;
 			pMaterial->fShininess=p3DSMaterial->fShininess;
 			pMaterial->dwMaterialType=p3DSMaterial->dwMaterialType;
 			pMaterial->fOpacity=1.0-p3DSMaterial->fTranparency;
@@ -368,9 +368,9 @@ bool CResourceStore::LoadASE(CModel *pModel,string sFileName)
 					else
 					{
 						CMaterial *pMaterial=new CMaterial;
-						pMaterial->cAmbientColor=pObject->cWireframeColor;
-						pMaterial->cDiffuseColor=pObject->cWireframeColor;
-						pMaterial->cSpecularColor=pObject->cWireframeColor;
+						pMaterial->vAmbientColor=pObject->vWireframeColor;
+						pMaterial->vDiffuseColor=pObject->vWireframeColor;
+						pMaterial->vSpecularColor=pObject->vWireframeColor;
 						pMaterial->dwMaterialType=MATERIAL_SOLID;
 						pMaterial->fOpacity=1.0;
 

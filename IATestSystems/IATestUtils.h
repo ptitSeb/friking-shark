@@ -11,7 +11,7 @@
 
 void RenderAxises();
 void RenderObjectAxises(double dSize);
-void RenderAxis(CVector vAxis,double dLength,COLORREF cColor);
+void RenderAxis(CVector vAxis,double dLength,CVector vColor);
 void RenderBBox(CVector vMins,CVector vMaxs,CVector vColor);
 void RenderBox(CVector vMins,CVector vMaxs,CVector vColor);
 void RenderTriangle(CVector vAxis1,CVector vAxis2,double dLength1,double dLenght2,CVector vColor);

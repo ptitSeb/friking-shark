@@ -129,10 +129,7 @@ class IGenericViewport:virtual public ISystemUnknown
 {
 public:
 
-	virtual bool Create(RECT *pRect,bool bMaximized)=0;
-
-	//virtual HWND GetWindowHandle()=0;
-	//virtual HWND GetParentWindowHandle()=0;
+	virtual bool Create(unsigned x,unsigned y, unsigned w, unsigned h,bool bMaximized)=0;
 
 	virtual bool IsMaximized()=0;
 	virtual void SetMaximized(bool bMaximized)=0;
@@ -204,11 +201,11 @@ public:
 	virtual void		  *GetByteBuffer()=0;
 
 	virtual bool		HasColorKey()=0;
-	virtual COLORREF	GetColorKey()=0;
+	virtual CVector		GetColorKey()=0;
 
 	virtual CVector		GetPixelColor(unsigned long x, unsigned long y)=0;
 
-	virtual bool		Load(string sFileName,COLORREF *pColorKey=NULL,string *pAlphaFile=NULL,float fOpacity=1.0)=0;
+	virtual bool		Load(string sFileName,CVector *pColorKey=NULL,string *pAlphaFile=NULL,float fOpacity=1.0)=0;
 	virtual bool		Create( unsigned nWidth,unsigned nHeight )=0;
 	virtual bool		CreateDepth( unsigned nWidth,unsigned nHeight )=0;
 

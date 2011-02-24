@@ -93,11 +93,11 @@ public:
     bool SaveTo(CConfigFile *pFile,std::string sNode)\
     {\
         ISystemPersistencyNode *piNode=pFile->AddNode(sNode);\
-        if(piNode){return SUCCEEDED(PersistencySave(piNode));}else{return false;}\
+        if(piNode){return PersistencySave(piNode);}else{return false;}\
     }\
     bool LoadFrom(CConfigFile *pFile,std::string sNode)\
     {\
         ISystemPersistencyNode *piNode=pFile->GetNode(sNode);\
-        if(piNode){return SUCCEEDED(PersistencyLoad(piNode));}else{return false;}\
+        if(piNode){return PersistencyLoad(piNode);}else{return false;}\
     }
 

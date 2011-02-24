@@ -16,10 +16,11 @@ COpenGLRender::COpenGLRender(void)
 	m_dProyectionHeight=1;
 	m_piCurrentViewport=NULL;
 	m_piCurrentGLViewport=NULL;
-	m_rViewportRect.left=0;
-	m_rViewportRect.right=1;
-	m_rViewportRect.top=0;
-	m_rViewportRect.bottom=0;
+	m_nViewportX=0;
+	m_nViewportY=0;
+	m_nViewportW=1;
+	m_nViewportH=1;
+
 	m_bPerspectiveProjection=false;
 	m_dPerspectiveNearPlane=1.0;
 	m_dPerspectiveFarPlane=10000.0;
@@ -121,22 +122,22 @@ void COpenGLRender::SetPerspectiveProjection(double dViewAngle,double dNearPlane
 
 void COpenGLRender::SetViewport(double x,double y,double cx, double cy)
 {
-	m_rViewportRect.left=(int)x;
-	m_rViewportRect.top=(int)y;
-	m_rViewportRect.right=(int)(x+cx);
-	m_rViewportRect.bottom=(int)(y+cy);
+	m_nViewportX=(int)x;
+	m_nViewportY=(int)y;
+	m_nViewportW=(int)cx;
+	m_nViewportH=(int)cy;
 
 	UpdateProjectionMatrix();
 }
 
 void COpenGLRender::UpdateProjectionMatrix()
 {
-	double dViewportW=m_rViewportRect.right-m_rViewportRect.left;
-	double dViewportH=m_rViewportRect.bottom-m_rViewportRect.top;
+	double dViewportW=m_nViewportW;
+	double dViewportH=m_nViewportH;
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glViewport(m_rViewportRect.left,m_rViewportRect.top,(int)dViewportW,(int)dViewportH);
+	glViewport(m_nViewportX,m_nViewportY,m_nViewportW,m_nViewportH);
 	if(m_bPerspectiveProjection)
 	{
 		double dAspectRatio=dViewportW/dViewportH;
@@ -1340,7 +1341,7 @@ void COpenGLRender::StartStagedRendering()
 	m_dStagedRenderingMinZ=m_dPerspectiveFarPlane;
 	m_dStagedRenderingMaxZ=m_dPerspectiveNearPlane;
 
-	double dCameraAspect=((m_rViewportRect.bottom-m_rViewportRect.top)==0)?1:(double)(m_rViewportRect.right-m_rViewportRect.left)/(double)(m_rViewportRect.bottom-m_rViewportRect.top);
+	double dCameraAspect=((m_nViewportH)==0)?1:(double)(m_nViewportW)/(double)(m_nViewportH);
 	CalcCameraPlanes(m_vCameraPos,m_vCameraAngles,m_dPerspectiveViewAngle,dCameraAspect,m_dPerspectiveNearPlane,m_dPerspectiveFarPlane,m_CameraFustrumPlanes);
 
 	m_CameraForwardPlane=CPlane(m_vCameraForward,m_vCameraPos);
@@ -1414,9 +1415,12 @@ void COpenGLRender::EndStagedRendering()
 
 	if(m_sRenderOptions.bEnableShadows && m_ShadowTexture.m_piTexture && m_sHardwareSupport.nMaxTextureUnits>1)
 	{
-		RECT   rPreviousViewport=m_rViewportRect;
+		int nPreviousViewportX=m_nViewportX;
+		int nPreviousViewportY=m_nViewportY;
+		int nPreviousViewportW=m_nViewportW;
+		int nPreviousViewportH=m_nViewportH;
 		double dPreviousViewAngle=m_dPerspectiveViewAngle;
-		double dPreviousViewAspect=((m_rViewportRect.bottom-m_rViewportRect.top)==0)?1:(double)(m_rViewportRect.right-m_rViewportRect.left)/(double)(m_rViewportRect.bottom-m_rViewportRect.top);
+		double dPreviousViewAspect=((m_nViewportH)==0)?1:(double)(m_nViewportW)/(double)(m_nViewportH);
 		CVector vPreviousCameraPosition=m_vCameraPos;
 		CVector vPreviousCameraAngles=m_vCameraAngles;
 
@@ -1519,7 +1523,7 @@ void COpenGLRender::EndStagedRendering()
 		// ya que pueden estar en otro contexto de render dependiendo de la tecnica usada.
 		SetRenderState(m_sStagedRenderingState,true);
 
-		SetViewport(rPreviousViewport.left, rPreviousViewport.top, rPreviousViewport.right-rPreviousViewport.left, rPreviousViewport.bottom-rPreviousViewport.top);
+		SetViewport(nPreviousViewportX, nPreviousViewportY,nPreviousViewportW, nPreviousViewportH);
 		SetPerspectiveProjection(dPreviousViewAngle,m_dStagedRenderingMinZ>1.0?m_dStagedRenderingMinZ-1.0:m_dStagedRenderingMinZ,m_dStagedRenderingMaxZ+1.0);
 		SetCamera(vPreviousCameraPosition,vPreviousCameraAngles.c[YAW],vPreviousCameraAngles.c[PITCH],vPreviousCameraAngles.c[ROLL]);
 

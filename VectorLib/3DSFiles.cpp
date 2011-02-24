@@ -129,7 +129,6 @@ DWORD			C3DSFileType::ReadDWord() {DWORD value=0;if(fread (&value, sizeof(value)
 float			C3DSFileType::ReadFloat() {float value=0;if(fread (&value, sizeof(value), 1, m_pFile)!=1){return 0;}return value;}
 unsigned char	C3DSFileType::ReadByte()  {unsigned char value=0;if(fread (&value, sizeof(value), 1, m_pFile)!=1){return 0;}return value;}
 CVector			C3DSFileType::ReadVector(){CVector v;v.c[0]=ReadFloat();v.c[1]=ReadFloat();v.c[2]=ReadFloat();return v;}
-COLORREF		C3DSFileType::ReadColor() {CVector c=ReadVector();return VectorToRGB(&c);}
 
 string C3DSFileType::ReadString()
 {
@@ -163,7 +162,7 @@ bool C3DSFileType::Open(const char *sFileName)
 	S3DSLight			*pLight=NULL;
 	S3DSCamera			*pCamera=NULL;
 	S3DSMaterial		*pMaterial=NULL;
-	COLORREF			*pCurrentColor=NULL;
+	CVector				*pCurrentColor=NULL;
 	float				*pCurrentPercent=NULL;
 	string				sCurrentObjectName;
 
@@ -186,23 +185,13 @@ bool C3DSFileType::Open(const char *sFileName)
 			case COLOR3DS_FLOAT:
 			case COLOR3DS_FLOAT_GAMMA_CORRECTED:
 				{
-					float c[3];
-					c[0]=ReadFloat();
-					c[1]=ReadFloat();
-					c[2]=ReadFloat();
-					COLORREF color=RGB(c[0]*255.0,c[1]*255.0,c[2]*255.0);
-					*pCurrentColor=color;
+					*pCurrentColor=ReadVector();
 				}
 			break;    
 			case COLOR3DS_BYTE:
 			case COLOR3DS_BYTE_GAMMA_CORRECTED:
 				{
-					unsigned char c[3];
-					c[0]=ReadByte();
-					c[1]=ReadByte();
-					c[2]=ReadByte();
-					COLORREF color=RGB(c[0],c[1],c[2]);
-					*pCurrentColor=color;
+					*pCurrentColor=ReadVector();
 				}
 			break;    
 			case PERCENTAGE_INT:
@@ -236,7 +225,7 @@ bool C3DSFileType::Open(const char *sFileName)
 					m_vLights.push_back(pLight);
 					strcpy(pLight->sName,sCurrentObjectName.c_str());
 					pLight->vPosition=ReadVector();
-					pCurrentColor=&pLight->cColor;
+					pCurrentColor=&pLight->vColor;
 				}
 			break;
 			case OBJECT_LIGHT_SPOT:
@@ -360,17 +349,17 @@ bool C3DSFileType::Open(const char *sFileName)
 				break;
 			case MATERIAL_AMBIENT_COLOR:
 				{
-					pCurrentColor=&pMaterial->cAmbientColor;
+					pCurrentColor=&pMaterial->vAmbientColor;
 				}
 				break;
 			case MATERIAL_DIFUSSE_COLOR:
 				{
-					pCurrentColor=&pMaterial->cDiffuseColor;
+					pCurrentColor=&pMaterial->vDiffuseColor;
 				}
 				break;
 			case MATERIAL_SPECULAR_COLOR:
 				{
-					pCurrentColor=&pMaterial->cSpecularColor;
+					pCurrentColor=&pMaterial->vSpecularColor;
 				}
 				break;
 			case MATERIAL_SHININESS:

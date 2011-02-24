@@ -63,8 +63,8 @@ void CIAEntityBase::Render()
 
 	glPushMatrix();
 	glTranslated(m_vPosition.c[0],m_vPosition.c[1],m_vPosition.c[2]);
-	if(m_dwRenderFlags&RENDER_FLAGS_FORCE){RenderAxis(vForce,m_dMaxVelocity,RGB(0,255,0));}
-	if(m_dwRenderFlags&RENDER_FLAGS_VELOCITY){RenderAxis(vVelocity,dVelocity,RGB(255,0,255));}
+	if(m_dwRenderFlags&RENDER_FLAGS_FORCE){RenderAxis(vForce,m_dMaxVelocity,CVector(0,1,0));}
+	if(m_dwRenderFlags&RENDER_FLAGS_VELOCITY){RenderAxis(vVelocity,dVelocity,CVector(1,0,1));}
 	glPopMatrix();
 
 	if(m_pPursueTarget)

@@ -11,8 +11,8 @@
 
 #include "VectorLib.h"
 
-#define GBS_FILE_VERSION		MAKELONG(0,1)
-#define GBS_FILE_MAGIC			"[GBS]"
+#define GBS_FILE_VERSION		0x101 // 1.01
+#define GBS_FILE_MAGIC			"<GBS>"
 #define GBS_FILE_MAGIC_LENGTH	5
 
 #define GBS_FILE_FLAG_CONTAINS_GEOMETRIC_DATA	0x0001
@@ -21,7 +21,6 @@ struct SGBSHeader
 {
 	DWORD		dwVersion;
 	BYTE		sMagic[GBS_FILE_MAGIC_LENGTH];
-	FILETIME	tTimeStamp;
 	DWORD		dwFlags;
 	DWORD		dwDataOffset;
 
@@ -56,8 +55,6 @@ class CGBSFileType
 	bool		 WriteNode(FILE *pFile,CBSPNode *pNode,SGBSFileNodeStats *pStats,int nCurrentDepth,double *pBalanceFactor);
 public:
 	DWORD		GetVersion();
-	FILETIME	GetTimeStamp();
-	void		SetTimeStamp(FILETIME tTimeStamp);
 	
 	bool		Load(const char *pFile,CBSPNode **ppBSPNode,std::vector<CPolygon *> *pGeometricData);
 	bool		Save(const char *pFile,CBSPNode *pBSPNode,std::vector<CPolygon *> *pGeometricData,SGBSFileNodeStats *pStats=NULL);

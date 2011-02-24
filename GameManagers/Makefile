@@ -38,12 +38,12 @@ OUT_SOURCES=$(addprefix $(INTERMEDIATE_DIR)/,$(SOURCES))
 all: release debug
 
 release: $(OUT_SOURCES:.cpp=.o)
-	rm -f ../Demo/Bin/GameManagers.so
-	$(CC) -shared -o ../Demo/Bin/GameManagers.so .intermediate/*.o $(CFLAGS) $(LIBS)
+	rm -f ../Demo/Bin/Release/GameManagers.so
+	$(CC) -shared -o ../Demo/Bin/Release/GameManagers.so .intermediate/*.o $(CFLAGS) $(LIBS)
 
 debug: $(OUT_SOURCES:.cpp=.od)
-	rm -f ../Demo/Bin/GameManagersd.so
-	$(CC) -shared -o ../Demo/Bin/GameManagersd.so .intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG)
+	rm -f ../Demo/Bin/Debug/GameManagers.so
+	$(CC) -shared -o ../Demo/Bin/Debug/GameManagers.so .intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG)
 
 $(INTERMEDIATE_DIR)/%.o: ./%.cpp
 	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS) $(INCLUDES) $<
@@ -52,6 +52,6 @@ $(INTERMEDIATE_DIR)/%.od: ./%.cpp
 	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS_DEBUG) $(INCLUDES) $<
 
 clean:
-	rm -f ../Demo/Bin/GameManagers*.so
+	rm -f ../Demo/Bin/*/GameManagers.so
 	rm -f ./.intermediate/*
 

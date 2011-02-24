@@ -8,7 +8,7 @@ CSystemObjectWrapper::CSystemObjectWrapper()
     m_piSerializable=NULL;
     m_piObject=NULL;
     m_bObjectMustBeDestroyed=false;
-	m_bAttached=false;
+    m_bAttached=false;
 }
 
 
@@ -18,7 +18,7 @@ CSystemObjectWrapper::CSystemObjectWrapper(const CSystemObjectWrapper &otherWrap
     m_piObject=NULL;
     m_bObjectMustBeDestroyed=false;
     if(otherWrapper.m_piObject){Attach(otherWrapper.m_piObject);}
-	m_bAttached=otherWrapper.m_bAttached;
+    m_bAttached=otherWrapper.m_bAttached;
 }
 
 CSystemObjectWrapper &CSystemObjectWrapper::operator=(const CSystemObjectWrapper &otherWrapper)
@@ -162,7 +162,7 @@ bool CSystemObjectWrapper::Load(ISystemPersistencyNode *piNode,std::string sName
 
 bool CSystemObjectWrapper::Save(ISystemPersistencyNode *piNode,std::string sName)
 {
-    if(!m_piObject){return S_OK;}
+    if(!m_piObject){return true;}
 
     if(!piNode){return false;}
 
@@ -243,8 +243,8 @@ bool CSystemObjectWrapper::Create(ISystem *piSystem,std::string sClass,std::stri
     return bOk;
 }
 
-HRESULT MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CSystemObjectWrapper> *pItem){return pItem->GetValueAddress()->Save(piNode,pItem->GetName())?S_OK:E_FAIL;}
-HRESULT MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CSystemObjectWrapper> *pItem){return pItem->GetValueAddress()->Load(piNode,pItem->GetName())?S_OK:E_FAIL;}
-HRESULT MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CSystemObjectWrapper> *pItem){piNode->DeleteNode(pItem->GetName());return S_OK;}
+bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CSystemObjectWrapper> *pItem){return pItem->GetValueAddress()->Save(piNode,pItem->GetName())?true:false;}
+bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CSystemObjectWrapper> *pItem){return pItem->GetValueAddress()->Load(piNode,pItem->GetName())?true:false;}
+bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CSystemObjectWrapper> *pItem){piNode->DeleteNode(pItem->GetName());return true;}
 void    MRPersistencyInitialize(CMRPersistentReferenceT<CSystemObjectWrapper> *pItem){}
 void    MRPersistencyFree(CMRPersistentReferenceT<CSystemObjectWrapper> *pItem){}

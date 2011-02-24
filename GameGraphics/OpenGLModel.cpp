@@ -80,7 +80,7 @@ bool COpenGLModel::LoadFromFile()
 						CMaterialPolygon *pPolygon=&pModelFrame->m_pPolygons[x];
 						for(v=0;v<pPolygon->m_nVertexes;v++)
 						{
-							COpenGLModelVertexKey key(pPolygon->m_pVertexes[v],pPolygon->m_pTextureCoords[v],pPolygon->m_pVertexNormals[v],pPolygon->m_pVertexColors?pPolygon->m_pVertexColors[v]:RGBToVector(pMaterial->cAmbientColor),mVertexes.size());
+							COpenGLModelVertexKey key(pPolygon->m_pVertexes[v],pPolygon->m_pTextureCoords[v],pPolygon->m_pVertexNormals[v],pPolygon->m_pVertexColors?pPolygon->m_pVertexColors[v]:pMaterial->vAmbientColor,mVertexes.size());
 							if(mVertexes.find(key)==mVertexes.end())
 							{
 								int nIndex=mVertexes.size();
@@ -97,9 +97,9 @@ bool COpenGLModel::LoadFromFile()
 				pBuffer->pFaceVertexIndexes=new unsigned int[pBuffer->nFaces*3];
 				pBuffer->fOpacity=pMaterial->fOpacity;
 				pBuffer->fShininess=pMaterial->fShininess;
-				pBuffer->vAmbientColor=RGBToVector(pMaterial->cAmbientColor);
-				pBuffer->vDiffuseColor=RGBToVector(pMaterial->cDiffuseColor);
-				pBuffer->vSpecularColor=RGBToVector(pMaterial->cSpecularColor);
+				pBuffer->vAmbientColor=pMaterial->vAmbientColor;
+				pBuffer->vDiffuseColor=pMaterial->vDiffuseColor;
+				pBuffer->vSpecularColor=pMaterial->vSpecularColor;
 
 				SModelTextureLevel *pTextureLevel=NULL;
 				if(pMaterial->sTexture!="")

@@ -8,8 +8,6 @@
 SGBSHeader::SGBSHeader()
 {
 	dwVersion=GBS_FILE_VERSION;
-	tTimeStamp.dwHighDateTime=0;
-	tTimeStamp.dwLowDateTime=0;
 	dwDataOffset=0;
 	dwFlags=0;
 	memcpy(sMagic,GBS_FILE_MAGIC,GBS_FILE_MAGIC_LENGTH);
@@ -47,8 +45,6 @@ bool CGBSFileType::Load(const char *pFileName,CBSPNode **ppBSPNode,std::vector<C
 		else
 		{
 			m_Header.dwVersion=GBS_FILE_VERSION;
-			m_Header.tTimeStamp.dwHighDateTime=0;
-			m_Header.tTimeStamp.dwLowDateTime=0;
 			m_Header.dwDataOffset=0;
 			m_Header.dwFlags=0;
 			memcpy(m_Header.sMagic,GBS_FILE_MAGIC,GBS_FILE_MAGIC_LENGTH);
@@ -176,16 +172,6 @@ bool CGBSFileType::WriteNode(FILE *pFile,CBSPNode *pNode,SGBSFileNodeStats *pSta
 DWORD		CGBSFileType::GetVersion()
 {
 	return m_Header.dwVersion;
-}
-
-FILETIME	CGBSFileType::GetTimeStamp()
-{
-	return m_Header.tTimeStamp;
-}
-
-void		CGBSFileType::SetTimeStamp(FILETIME tTimeStamp)
-{
-	m_Header.tTimeStamp=tTimeStamp;
 }
 
 bool CGBSFileType::CompareGeometricData(std::vector<CPolygon *> *pGeometricData1,std::vector<CPolygon *> *pGeometricData2)

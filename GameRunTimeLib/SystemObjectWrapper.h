@@ -4,7 +4,7 @@ class CSystemObjectWrapper
 {
 protected:
     bool        m_bObjectMustBeDestroyed;
-	bool		m_bAttached;
+    bool        m_bAttached;
 
     virtual bool GetInterfaces(ISystemUnknown *piUnknown);
     virtual void ReleaseInterfaces();
@@ -32,9 +32,9 @@ public:
             CSystemObjectWrapper();
     virtual ~CSystemObjectWrapper();
 };
-HRESULT MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CSystemObjectWrapper> *pItem);
-HRESULT MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CSystemObjectWrapper> *pItem);
-HRESULT MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CSystemObjectWrapper> *pItem);
+bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CSystemObjectWrapper> *pItem);
+bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CSystemObjectWrapper> *pItem);
+bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CSystemObjectWrapper> *pItem);
 void    MRPersistencyInitialize(CMRPersistentReferenceT<CSystemObjectWrapper> *pItem);
 void    MRPersistencyFree(CMRPersistentReferenceT<CSystemObjectWrapper> *pItem);
 
@@ -60,9 +60,9 @@ public:\
     ~WRAPPER_NAME(){REL(VARNAME);}\
     INTERFACE *VARNAME;\
 };\
-__UNUSED_ATTRIB__ static HRESULT MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){return pItem->GetValueAddress()->Save(piNode,pItem->GetName())?S_OK:E_FAIL;}\
-__UNUSED_ATTRIB__ static HRESULT MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){return pItem->GetValueAddress()->Load(piNode,pItem->GetName())?S_OK:E_FAIL;}\
-__UNUSED_ATTRIB__ static HRESULT MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){if(piNode){piNode->DeleteNode(pItem->GetName());}return S_OK;}\
+__UNUSED_ATTRIB__ static bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){return pItem->GetValueAddress()->Save(piNode,pItem->GetName())?true:false;}\
+__UNUSED_ATTRIB__ static bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){return pItem->GetValueAddress()->Load(piNode,pItem->GetName())?true:false;}\
+__UNUSED_ATTRIB__ static bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){if(piNode){piNode->DeleteNode(pItem->GetName());}return true;}\
 __UNUSED_ATTRIB__ static void    MRPersistencyInitialize(CMRPersistentReferenceT<WRAPPER_NAME> *pItem){}\
 __UNUSED_ATTRIB__ static void    MRPersistencyFree(CMRPersistentReferenceT<WRAPPER_NAME> *pItem){pItem->GetValueAddress()->Detach();}
 
@@ -92,9 +92,9 @@ public:\
 	INTERFACE1 *VARNAME1;\
 	INTERFACE2 *VARNAME2;\
 };\
-	__UNUSED_ATTRIB__ static HRESULT MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){return pItem->GetValueAddress()->Save(piNode,pItem->GetName())?S_OK:E_FAIL;}\
-	__UNUSED_ATTRIB__ static HRESULT MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){return pItem->GetValueAddress()->Load(piNode,pItem->GetName())?S_OK:E_FAIL;}\
-	__UNUSED_ATTRIB__ static HRESULT MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){if(piNode){piNode->DeleteNode(pItem->GetName());}return S_OK;}\
+	__UNUSED_ATTRIB__ static bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){return pItem->GetValueAddress()->Save(piNode,pItem->GetName())?true:false;}\
+	__UNUSED_ATTRIB__ static bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){return pItem->GetValueAddress()->Load(piNode,pItem->GetName())?true:false;}\
+	__UNUSED_ATTRIB__ static bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<WRAPPER_NAME> *pItem){if(piNode){piNode->DeleteNode(pItem->GetName());}return true;}\
 	__UNUSED_ATTRIB__ static void    MRPersistencyInitialize(CMRPersistentReferenceT<WRAPPER_NAME> *pItem){}\
 	__UNUSED_ATTRIB__ static void    MRPersistencyFree(CMRPersistentReferenceT<WRAPPER_NAME> *pItem){pItem->GetValueAddress()->Detach();}
 

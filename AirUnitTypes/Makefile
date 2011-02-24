@@ -35,12 +35,12 @@ OUT_SOURCES=$(addprefix $(INTERMEDIATE_DIR)/,$(SOURCES))
 all: release debug
 
 release: $(OUT_SOURCES:.cpp=.o)
-	rm -f ../Demo/Bin/AirUnitTypes.so
-	$(CC) -shared -o ../Demo/Bin/AirUnitTypes.so .intermediate/*.o $(CFLAGS) $(LIBS)
+	rm -f ../Demo/Bin/Release/AirUnitTypes.so
+	$(CC) -shared -o ../Demo/Bin/Release/AirUnitTypes.so .intermediate/*.o $(CFLAGS) $(LIBS)
 
 debug: $(OUT_SOURCES:.cpp=.od)
-	rm -f ../Demo/Bin/AirUnitTypesd.so
-	$(CC) -shared -o ../Demo/Bin/AirUnitTypesd.so .intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG)
+	rm -f ../Demo/Bin/Debug/AirUnitTypes.so
+	$(CC) -shared -o ../Demo/Bin/Debug/AirUnitTypes.so .intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG)
 
 $(INTERMEDIATE_DIR)/%.o: ./%.cpp
 	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS) $(INCLUDES) $<
@@ -49,6 +49,6 @@ $(INTERMEDIATE_DIR)/%.od: ./%.cpp
 	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS_DEBUG) $(INCLUDES) $<
 
 clean:
-	rm -f ../Demo/Bin/AirUnitTypes*.so
+	rm -f ../Demo/Bin/*/AirUnitTypes.so
 	rm -f ./.intermediate/*
 

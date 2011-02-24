@@ -37,12 +37,12 @@ OUT_SOURCES=$(addprefix $(INTERMEDIATE_DIR)/,$(SOURCES))
 all: release debug
 
 release: $(OUT_SOURCES:.cpp=.o)
-	rm -f ../Demo/Bin/PlayAreaElements.so
-	$(CC) -shared -o ../Demo/Bin/PlayAreaElements.so .intermediate/*.o $(CFLAGS) $(LIBS)
+	rm -f ../Demo/Bin/Release/PlayAreaElements.so
+	$(CC) -shared -o ../Demo/Bin/Release/PlayAreaElements.so .intermediate/*.o $(CFLAGS) $(LIBS)
 
 debug: $(OUT_SOURCES:.cpp=.od)
-	rm -f ../Demo/Bin/PlayAreaElementsd.so
-	$(CC) -shared -o ../Demo/Bin/PlayAreaElementsd.so .intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG)
+	rm -f ../Demo/Bin/Debug/PlayAreaElements.so
+	$(CC) -shared -o ../Demo/Bin/Debug/PlayAreaElements.so .intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG)
 
 $(INTERMEDIATE_DIR)/%.o: ./%.cpp
 	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS) $(INCLUDES) $<
@@ -51,6 +51,6 @@ $(INTERMEDIATE_DIR)/%.od: ./%.cpp
 	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS_DEBUG) $(INCLUDES) $<
 
 clean:
-	rm -f ../Demo/lib/PlayAreaElements*.so
+	rm -f ../Demo/Bin/*/PlayAreaElements.so
 	rm -f ./.intermediate/*
 

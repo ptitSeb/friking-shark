@@ -5,7 +5,7 @@ class CSystemClassHelperT: public CSystemUnknownBase,public ISystemClass
 {
 public:
     std::string           m_sName;
-    virtual bool CreateInstance(ISystemObject **ppiObject){*ppiObject=new CLASS;return S_OK;}
+    virtual bool CreateInstance(ISystemObject **ppiObject){*ppiObject=new CLASS;return true;}
     virtual std::string GetName(){return m_sName;}
     CSystemClassHelperT(std::string sName)
 	{
@@ -20,16 +20,13 @@ class CSystemModuleHelper
     ISystemClass *m_pSystemClasses[256];
     int           m_nSystemClasses;
 
-	HINSTANCE	m_hInstance;
-
 public:
-    HINSTANCE GetInstance();
 	
 	void AddClass(ISystemClass *piClass);
     void RegisterClasses(ISystem *piSystem);
     void UnregisterClasses(ISystem *piSystem);
 
-    CSystemModuleHelper(HINSTANCE hInstance,tBuildClassMap pBuildClassMap);
+    CSystemModuleHelper(tBuildClassMap pBuildClassMap);
     ~CSystemModuleHelper();
 };
 
@@ -51,7 +48,7 @@ public:
     {\
     switch (ul_reason_for_call)\
         {\
-        case DLL_PROCESS_ATTACH:g_pSystemModuleHelper=new CSystemModuleHelper((HINSTANCE)hModule,CSystemModuleHelper_BuildClassMap);break;\
+        case DLL_PROCESS_ATTACH:g_pSystemModuleHelper=new CSystemModuleHelper(CSystemModuleHelper_BuildClassMap);break;\
         case DLL_PROCESS_DETACH:if(g_pSystemModuleHelper){delete g_pSystemModuleHelper;g_pSystemModuleHelper=NULL;}break;\
         }\
         return TRUE;\
@@ -64,7 +61,7 @@ public:
 #define SYSTEM_MODULE_CUSTOM_CLASS_FACTORY_ENTRY(INSTANCE) pModuleHelper->AddClass(INSTANCE);REL(INSTANCE);
 #define END_SYSTEM_MODULE()\
     }\
-    CSystemModuleHelper g_SystemModuleHelper(NULL,CSystemModuleHelper_BuildClassMap);\
+    CSystemModuleHelper g_SystemModuleHelper(CSystemModuleHelper_BuildClassMap);\
     extern "C" \
     {\
         bool SystemModuleRegister(ISystem *piSystem){g_SystemModuleHelper.RegisterClasses(piSystem);return true;}\
