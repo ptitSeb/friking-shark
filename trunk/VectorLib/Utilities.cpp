@@ -7,6 +7,9 @@
 #include <string>
 #include <stdarg.h>
 #include "Utilities.h"
+#ifndef WIN32
+#include "libgen.h"
+#endif
 
 void SkipCommentsStringsAndSpaces(char *pBuffer,DWORD *pOffset,DWORD bufLen)
 {
@@ -85,17 +88,17 @@ void GetFileName(const char *pFilePath,char *pFileName)
 	strcat(pFileName,sExt);
 }
 #else
-void GetFileFolder(const char *pFileName,char *pFolder)
+void GetFileFolder(const char *pFilePath,char *pFolder)
 {
-	char *pTemp=strdup(pFileName);
+	char *pTemp=strdup(pFilePath);
 	strcpy(pFolder,dirname(pTemp));
 	free(pTemp);
 }
 
-void GetFileName(const char *pFileName,char *pFileName)
+void GetFileName(const char *pFilePath,char *pFileName)
 {
-	char *pTemp=strdup(pFileName);
-	strcpy(pFolder,basename(pTemp));
+	char *pTemp=strdup(pFilePath);
+	strcpy(pFileName,basename(pTemp));
 	free(pTemp);
 }
 #endif

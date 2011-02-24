@@ -1,7 +1,7 @@
 #include "./stdafx.h"
 #include "GameRunTimeLib.h"
 #include "WorldManager.h"
-#include <GL/GL.h>
+#include <GL/gl.h>
 
 CWorldManager::CWorldManager()
 {

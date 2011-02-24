@@ -11,7 +11,6 @@ struct SOpenGLSystemFont
 	XFontStruct *pFontStruct;
 	Display     *pDisplay;
 #endif
-	int  nHeight;
 	int  nTexturesBaseIndex;
 	int  nMetricDescent;
 
@@ -72,6 +71,7 @@ class COpenGLFont : virtual public CSystemObjectBase,virtual public IGenericFont
 	Display 		*m_pXDisplay;
 #endif
 	std::string		m_sSystemFontName;
+	std::string 	m_sSystemFontWeight;
 
 	bool LoadTextureFont();
 	bool Unserialize(ISystemPersistencyNode *piNode);
@@ -82,7 +82,6 @@ public:
 
 	BEGIN_PROP_MAP(COpenGLFont)
 		PROP_FLAGS(m_eFontType,"Tipo",MRPF_NORMAL)
-		
 		PROP_FLAGS(m_sTextureFontFileName,"Archivo",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_sTextureFontCharacterSet,"JuegoDeCaracteres",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_dTextureFontCharacterSeparation,"SeparacionCaracteres",MRPF_NORMAL|MRPF_OPTIONAL)
@@ -90,6 +89,7 @@ public:
 		PROP_VALUE_FLAGS(m_dTextureFontAlphaTolerance,"ToleranciaAlpha",0,MRPF_NORMAL|MRPF_OPTIONAL);
 
 		PROP_FLAGS(m_sSystemFontName,"Familia",MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_sSystemFontWeight,"Grosor","*",MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP();
 
 	eGenericFontType GetType();

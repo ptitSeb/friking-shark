@@ -109,28 +109,6 @@ struct SPhysicInfo
     }
 };
 
-
-struct SModelDetailsInfo
-{
-    double  dMinDistance;
-    CModel *pModel;
-
-    SModelDetailsInfo()
-    {
-        dMinDistance=0;
-        pModel=NULL;
-    }
-};
-
-class CDetailLevelModel
-{
-public:
-    int					 m_nDetailLevels;
-    SModelDetailsInfo	 m_DetailLevels[MAX_DETAIL_LEVELS];
-
-    CDetailLevelModel(){m_nDetailLevels=0;memset(&m_DetailLevels,0,sizeof(m_DetailLevels));}
-};
-
 struct IPhysicManager:virtual public ISystemUnknown
 {
 public:
@@ -138,20 +116,6 @@ public:
     virtual CVector ProcessPhysicInfo(SPhysicInfo *pInfo,double dInterval)=0;
 };
 
-struct IDynamicLight
-{
-    virtual CVector GetColor()=0;
-    virtual CVector GetPosition()=0;
-    virtual double  GetRadius()=0;
-
-    virtual void SetColor(CVector cColor)=0;
-    virtual void SetPosition(CVector vPosition)=0;
-    virtual void SetRadius(double dRadius)=0;
-
-    virtual void SetSphericalLight(CVector cColor,CVector vPosition,double dRadius)=0;
-
-    ~IDynamicLight(){}
-};
 struct IGameRender:virtual public ISystemUnknown
 {
     virtual DWORD	EnableFlags(DWORD dwFlag)=0;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GL/GL.h>
+#include <GL/gl.h>
 
 DECLARE_CUSTOM_WRAPPER1(CTextureWrapper,IGenericTexture,m_piTexture)
 

@@ -7,7 +7,6 @@ bool LoadImageHelper(string sFile,DWORD dwColorType,unsigned *pOpenGLSkinWidth,u
 SOpenGLSystemFont::SOpenGLSystemFont()
 {
 	nMetricDescent=0;
-	nHeight=0;
 	nTexturesBaseIndex=0;
 #ifdef WIN32
 	hFont=NULL;
@@ -229,12 +228,8 @@ void COpenGLFont::CalcTextSize(double dFontHeight,const char *pText,double *pdWi
 #else
 			if(pFont->pFontStruct)
 			{
-				int nDirection=0,nAscent=0,nDescent=0;
-				XCharStruct overall={0};
-				XTextExtents(pFont->pFontStruct, pText, strlen(pText), &nDirection, &nAscent, &nDescent, &overall);
-				*pdWidth=overall.width;
-				*pdHeight=overall.ascent+overall.descent;
-				//RTTRACE("COpenGLFonts::CalcTextSize -> Font %s:%d, '%s':%.f x %.f",g_CurrentFont.sName,g_CurrentFont.nHeight,sText,*pdWidth,*pdHeight);
+				*pdWidth=XTextWidth(pFont->pFontStruct, pText, strlen(pText));
+				*pdHeight=pFont->pFontStruct->ascent+pFont->pFontStruct->descent;
 			}
 #endif
 		}
@@ -291,7 +286,10 @@ void COpenGLFont::RenderText(double dFontHeight,double x,double y,const char *pT
 		SOpenGLSystemFont *pFont=GetSystemFontForHeight((unsigned int)dFontHeight);
 		if(pFont)
 		{
-			glRasterPos2d(x,y+pFont->nMetricDescent);
+			int nFinalY=y+pFont->nMetricDescent;
+			glRasterPos2d(x,nFinalY);
+			//RTTRACE("COpenGLFonts::RenderText -> %s: %d,%d",pText,(int)x,nFinalY);
+			
 			while(*pText)
 			{
 				glCallList(pFont->nTexturesBaseIndex+*pText);
@@ -335,7 +333,7 @@ void COpenGLFont::RenderTextEx(double dFontHeight,double x,double y,double w,dou
 		break;
 	}
 	RenderText(dFontHeight,dPosX,dPosY,pText);
-	//RTTRACE("COpenGLFonts::RenderTextEx -> W: %d,%d - %d,%d: '%s', H%d,V%d",(int)x,(int)y,(int)w,(int)h,pText,dwHorzAlign,dwVertAlign);
+	//RTTRACE("COpenGLFonts::RenderTextEx -> '%s': Box(%d,%d - %d,%d): H%d,V%d, pos %d,%d",pText,(int)x,(int)y,(int)w,(int)h,dwHorzAlign,dwVertAlign,(int)dPosX,(int)dPosY);
 	//RTTRACE("COpenGLFonts::RenderTextEx -> T: %d x %d",(int)dTextW,(int)dTextH);
 	//RTTRACE("COpenGLFonts::RenderTextEx -> P: %d x %d",(int)dPosX,(int)dPosY);
 }
@@ -347,7 +345,6 @@ SOpenGLSystemFont *COpenGLFont::GetSystemFontForHeight(unsigned int nHeight)
 	if(pFont==NULL)
 	{
 		pFont=new SOpenGLSystemFont;
-		pFont->nHeight=nHeight;
 		pFont->nTexturesBaseIndex=glGenLists(255);
 
 		bool bOk=false;
@@ -371,15 +368,12 @@ SOpenGLSystemFont *COpenGLFont::GetSystemFontForHeight(unsigned int nHeight)
 #else
 		if(m_pXDisplay!=NULL)
 		{
-			#pragma message ("ver como solucionar el problema del parametro extra de la fuentes en linux")
-			
 			char sFontName[1024];
-			sprintf(sFontName,"-*-%s-semilight-r-normal--%d-*-*-*-*-*-*-*",m_sSystemFontName.c_str(),nHeight);
+			sprintf(sFontName,"-*-%s-%s-r-normal--%d-*-*-*-*-*-*-*",m_sSystemFontName.c_str(),m_sSystemFontWeight.c_str(),nHeight);
 			pFont->pDisplay=m_pXDisplay;
 			pFont->pFontStruct=XLoadQueryFont(m_pXDisplay,sFontName);
 			if(pFont->pFontStruct)
 			{
-				//RTTRACE("Font %s:%d ascent %d, descent %d",sName,nHeight,test.pFontStruct->ascent,test.pFontStruct->descent);
 				pFont->nMetricDescent=pFont->pFontStruct->descent;
 				glXUseXFont(pFont->pFontStruct->fid,0,255,pFont->nTexturesBaseIndex);
 				bOk=true;
