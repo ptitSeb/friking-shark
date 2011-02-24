@@ -6,7 +6,6 @@
 #include <float.h>
 #include "GameRender.h"
 
-
 void EntityOperation_RenderBBox(IEntity *piEntity,void *pParam1,void *pParam2)
 {
     IGenericRender *pRender=(IGenericRender *)pParam1;
@@ -89,14 +88,6 @@ void CGameRender::Render(IGenericRender *piRender,IGenericCamera *piCamera)
 		piRender->PopOptions();
 	}
 	REL(piModel);
-/*
-	piRender->StartStagedRendering();
-	if(m_dwFlags&RENDER_SHOW_BBOXES)
-	{
-		m_EntityManager.m_piEntityManager->PerformUnaryOperation(EntityOperation_RenderBBox,piRender,piCamera);
-	}
-	m_EntityManager.m_piEntityManager->PerformUnaryOperation(EntityOperation_CustomRender,piRender,piCamera);
-	piRender->EndStagedRendering();*/
 }
 
 bool CGameRender::Init(std::string sClass,std::string sName,ISystem *piSystem)

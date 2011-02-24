@@ -1,8 +1,9 @@
 #pragma once
 #include "GameGraphics.h"
-#ifdef WIN32
-#else
-#include <SDL/SDL.h>
+#ifndef WIN32
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/Xos.h>
 #endif
 
 class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericViewport,virtual public IOpenGLViewport
@@ -12,7 +13,6 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 		HGLRC		m_hRenderContext;
 		HWND		m_hWnd;
 		int			m_nPixelFormatIndex;
-		bool		m_bShowSystemMouseCursor;
 
 		void OnCreate(HWND hWnd);
 		void OnDestroy();
@@ -21,22 +21,27 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 
 	#else
 		
-		Display *m_pXDisplay;
-		int      m_nXScreen;
-		Window   m_XWindow;
-		GC 		 m_XGC;
-		
-		bool         m_bSDLInitialized;
-		int          m_nSDLWindowFlags;
-		SDL_Surface* m_pSDLWindow;
+		Display 	*m_pXDisplay;
+		Colormap 	 m_pXColorMap;
+		GLXContext   m_pGLXContext;
+		Cursor 		 m_pXHollowCursor;
+		Window   	 m_XWindow;
+		int 		 m_XLastX;
+		int 		 m_XLastY;
+		int 		 m_XLastWidth;
+		int 		 m_XLastHeight;
+		bool		 m_bXExit;
+
 		int          m_nLoopDepth;
 		int 		 m_nDetectDragX;
 		int 		 m_nDetectDragY;
-		int 		 m_nDetectDragButton;
+		unsigned int m_nDetectDragButton;
 		bool 		 m_bDetectedDrag;
 	#endif
 	
-	bool m_bVerticalSync;
+	bool  	m_bShowSystemMouseCursor;
+	bool  	m_bVerticalSync;
+	
 	std::string m_sCaption;
 	IGenericViewportCallBack *m_piCallBack;
 	

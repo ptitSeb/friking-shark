@@ -16,32 +16,6 @@
 #include "GameGUILib.h"
 
 using namespace std;
-class CGameRender;/*
-class CDynamicLight:public IDynamicLight
-{
-	CVector		m_cColor;
-	CVector		m_vPosition;
-	CVector		m_vMins;
-	CVector		m_vMaxs;
-	double		m_dRadius;
-	int			m_nIndex;
-
-	friend CGameRender;
-
-public:
-
-	CVector GetColor(){return m_cColor;}
-	CVector GetPosition(){return m_vPosition;}
-	double  GetRadius(){return m_dRadius;}
-
-	void SetColor(CVector cColor){SetSphericalLight(cColor,m_vPosition,m_dRadius);}
-	void SetPosition(CVector vPosition){SetSphericalLight(m_cColor,vPosition,m_dRadius);}
-	void SetRadius(double dRadius){SetSphericalLight(m_cColor,m_vPosition,dRadius);}
-
-	void SetSphericalLight(CVector cColor,CVector vPosition,double dRadius);
-
-	CDynamicLight();
-};*/
 
 #define RENDER_ENABLE_AUTO_NORMALS			0x0001
 #define RENDER_ENABLE_LIGHTING				0x0002
