@@ -18,9 +18,9 @@ public:
     virtual void Free()=0;
     virtual void SetDefaultValue()=0;
 
-    virtual HRESULT Load(ISystemPersistencyNode *)=0;
-    virtual HRESULT Save(ISystemPersistencyNode *)=0;
-    virtual HRESULT Remove(ISystemPersistencyNode *)=0;
+    virtual bool Load(ISystemPersistencyNode *)=0;
+    virtual bool Save(ISystemPersistencyNode *)=0;
+    virtual bool Remove(ISystemPersistencyNode *)=0;
 
     virtual char *GetName()=0;
 };
@@ -60,9 +60,9 @@ public:
     void	Initialize(){MRPersistencyInitialize(this);}
     void	Free(){MRPersistencyFree(this);}
     void	SetDefaultValue(){}
-    HRESULT Load(ISystemPersistencyNode *piNode){HRESULT hr=S_OK;if(this->m_dwFlags&MRPF_READ){hr=MRPersistencyLoad(piNode,this);}if(this->m_dwFlags&MRPF_OPTIONAL){return S_OK;}return hr;}
-    HRESULT Save(ISystemPersistencyNode *piNode){HRESULT hr=S_OK;if(this->m_dwFlags&MRPF_WRITE){hr=MRPersistencySave(piNode,this);}if(this->m_dwFlags&MRPF_OPTIONAL){return S_OK;}return hr;}
-    HRESULT Remove(ISystemPersistencyNode *piNode){HRESULT hr=S_OK;if(this->m_dwFlags&MRPF_WRITE){hr=MRPersistencyRemove(piNode,this);}if(this->m_dwFlags&MRPF_OPTIONAL){return S_OK;}return hr;}
+    bool Load(ISystemPersistencyNode *piNode){bool bOk=true;if(this->m_dwFlags&MRPF_READ){bOk=MRPersistencyLoad(piNode,this);}if(this->m_dwFlags&MRPF_OPTIONAL){return true;}return bOk;}
+    bool Save(ISystemPersistencyNode *piNode){bool bOk=true;if(this->m_dwFlags&MRPF_WRITE){bOk=MRPersistencySave(piNode,this);}if(this->m_dwFlags&MRPF_OPTIONAL){return true;}return bOk;}
+    bool Remove(ISystemPersistencyNode *piNode){bool bOk=true;if(this->m_dwFlags&MRPF_WRITE){bOk=MRPersistencyRemove(piNode,this);}if(this->m_dwFlags&MRPF_OPTIONAL){return true;}return bOk;}
 
     CMRPersistentSimpleReferenceT(T1 *pValue,const char *pName,DWORD flags):CMRPersistentReferenceT<T1>(pValue,pName,flags){}
     virtual ~CMRPersistentSimpleReferenceT(){}
@@ -86,13 +86,13 @@ public:
         :CMRPersistentReferenceT<T1>(pValue,pName,flags)
     {
     }
-    void	Initialize(){MRPersistencyInitialize(this);}
-    void	Free(){MRPersistencyFree(this);}
-    void	SetDefaultValue(){MRPersistencyAsign(this->m_pValue,&m_DefValue);}
+    void Initialize(){MRPersistencyInitialize(this);}
+    void Free(){MRPersistencyFree(this);}
+    void SetDefaultValue(){MRPersistencyAsign(this->m_pValue,&m_DefValue);}
 
-    HRESULT Load(ISystemPersistencyNode *piNode){HRESULT hr=S_OK;if(this->m_dwFlags&MRPF_READ){hr=MRPersistencyLoad(piNode,this);}if(this->m_dwFlags&MRPF_OPTIONAL){return S_OK;}return hr;}
-    HRESULT Save(ISystemPersistencyNode *piNode){HRESULT hr=S_OK;if(this->m_dwFlags&MRPF_WRITE){hr=MRPersistencySave(piNode,this);}if(this->m_dwFlags&MRPF_OPTIONAL){return S_OK;}return hr;}
-    HRESULT Remove(ISystemPersistencyNode *piNode){HRESULT hr=S_OK;if(this->m_dwFlags&MRPF_WRITE){hr=MRPersistencyRemove(piNode,this);}if(this->m_dwFlags&MRPF_OPTIONAL){return S_OK;}return hr;}
+    bool Load(ISystemPersistencyNode *piNode){bool bOk=true;if(this->m_dwFlags&MRPF_READ){bOk=MRPersistencyLoad(piNode,this);}if(this->m_dwFlags&MRPF_OPTIONAL){return true;}return bOk;}
+    bool Save(ISystemPersistencyNode *piNode){bool bOk=true;if(this->m_dwFlags&MRPF_WRITE){bOk=MRPersistencySave(piNode,this);}if(this->m_dwFlags&MRPF_OPTIONAL){return true;}return bOk;}
+    bool Remove(ISystemPersistencyNode *piNode){bool bOk=true;if(this->m_dwFlags&MRPF_WRITE){bOk=MRPersistencyRemove(piNode,this);}if(this->m_dwFlags&MRPF_OPTIONAL){return true;}return bOk;}
 
     ~CMRPersistentValueReferenceT(){}
 };
@@ -101,22 +101,22 @@ template<typename T1> CMRPersistentValueReferenceT<T1> *MRCreateReferenceWithDef
 template<typename T1> CMRPersistentSimpleReferenceT<T1> *MRCreateReference(T1 *pVar,const char *name,DWORD flags=MRPF_NORMAL){return new CMRPersistentSimpleReferenceT<T1>(pVar,name,flags);}
 
 #define DECLARE_SERIALIZABLE(className)\
-    __UNUSED_ATTRIB__ static HRESULT MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<className>*pItem)\
+    __UNUSED_ATTRIB__ static bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<className>*pItem)\
     {\
-        if(piNode==NULL){return E_FAIL;}else {return pItem->GetValueAddress()->PersistencyLoad(piNode);}\
+        if(piNode==NULL){return false;}else {return pItem->GetValueAddress()->PersistencyLoad(piNode);}\
     }\
-    __UNUSED_ATTRIB__ static HRESULT MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<className>*pItem)\
+    __UNUSED_ATTRIB__ static bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<className>*pItem)\
     {\
-         if(piNode==NULL){return E_FAIL;}else {return pItem->GetValueAddress()->PersistencySave(piNode);}\
+         if(piNode==NULL){return false;}else {return pItem->GetValueAddress()->PersistencySave(piNode);}\
     }\
-    __UNUSED_ATTRIB__ static HRESULT MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<className>*pItem){return S_OK;}\
+    __UNUSED_ATTRIB__ static bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<className>*pItem){return true;}\
     __UNUSED_ATTRIB__ static void MRPersistencyInitialize(CMRPersistentReferenceT<className>*pItem){pItem->GetValueAddress()->PersistencyInitialize();}\
     __UNUSED_ATTRIB__ static void MRPersistencyFree(CMRPersistentReferenceT<className>*pItem){pItem->GetValueAddress()->PersistencyFree();}
 
 #define DECLARE_SERIALIZABLE_ENUMERATION(enumeration)\
-	__UNUSED_ATTRIB__ static HRESULT MRPersistencyLoad(ISystemPersistencyNode *piParent,CMRPersistentReferenceT<enumeration>*pItem){return MRPersistencyLoad(piParent,(CMRPersistentReferenceT<int>*)pItem);}\
-	__UNUSED_ATTRIB__ static HRESULT MRPersistencySave(ISystemPersistencyNode *piParent,CMRPersistentReferenceT<enumeration>*pItem){return MRPersistencySave(piParent,(CMRPersistentReferenceT<int>*)pItem);}\
-	__UNUSED_ATTRIB__ static HRESULT MRPersistencyRemove(ISystemPersistencyNode *piParent,CMRPersistentReferenceT<enumeration>*pItem){piParent->DeleteNode(pItem->GetName());return S_OK;}\
+	__UNUSED_ATTRIB__ static bool MRPersistencyLoad(ISystemPersistencyNode *piParent,CMRPersistentReferenceT<enumeration>*pItem){return MRPersistencyLoad(piParent,(CMRPersistentReferenceT<int>*)pItem);}\
+	__UNUSED_ATTRIB__ static bool MRPersistencySave(ISystemPersistencyNode *piParent,CMRPersistentReferenceT<enumeration>*pItem){return MRPersistencySave(piParent,(CMRPersistentReferenceT<int>*)pItem);}\
+	__UNUSED_ATTRIB__ static bool MRPersistencyRemove(ISystemPersistencyNode *piParent,CMRPersistentReferenceT<enumeration>*pItem){piParent->DeleteNode(pItem->GetName());return true;}\
 	__UNUSED_ATTRIB__ static void MRPersistencyInitialize(CMRPersistentReferenceT<enumeration>*pItem){return MRPersistencyInitialize((CMRPersistentReferenceT<int>*)pItem);}\
 	__UNUSED_ATTRIB__ static void MRPersistencyFree(CMRPersistentReferenceT<enumeration>*pItem){}
 
@@ -169,9 +169,9 @@ if(bInSpecifiedSubMap){\
 }
 
 void	PersistencyItemListDefaultValue(IMRPersistencyItem **ppiList,const char *pPrefixName=NULL);
-HRESULT PersistencyItemListSave(IMRPersistencyItem **ppiList,ISystemPersistencyNode *piNode,const char *pPrefixName=NULL);
-HRESULT PersistencyItemListLoad(IMRPersistencyItem **ppiList,ISystemPersistencyNode *piNode,const char *pPrefixName=NULL);
-HRESULT PersistencyItemListRemove(IMRPersistencyItem **ppiList,ISystemPersistencyNode *piNode,const char *pPrefixName=NULL);
+bool PersistencyItemListSave(IMRPersistencyItem **ppiList,ISystemPersistencyNode *piNode,const char *pPrefixName=NULL);
+bool PersistencyItemListLoad(IMRPersistencyItem **ppiList,ISystemPersistencyNode *piNode,const char *pPrefixName=NULL);
+bool PersistencyItemListRemove(IMRPersistencyItem **ppiList,ISystemPersistencyNode *piNode,const char *pPrefixName=NULL);
 void	PersistencyItemListInitialize(IMRPersistencyItem **ppiList,const char *pPrefixName=NULL);
 void	PersistencyItemListFree(IMRPersistencyItem **ppiList,const char *pPrefixName=NULL);
 void	FreePersistencyItemList(IMRPersistencyItem ***ppiList);
@@ -190,29 +190,29 @@ void	FreePersistencyItemList(IMRPersistencyItem ***ppiList);
     PersistencyItemListDefaultValue(ppiList, pPrefixName);\
     FreePersistencyItemList(&ppiList);\
 }\
-    virtual HRESULT PersistencySave(ISystemPersistencyNode *piNode,const char *pMapName=NULL,const char *pPrefixName=NULL)\
+    virtual bool PersistencySave(ISystemPersistencyNode *piNode,const char *pMapName=NULL,const char *pPrefixName=NULL)\
 {\
-    if(piNode==NULL){return E_FAIL;}\
+    if(piNode==NULL){return false;}\
     IMRPersistencyItem **ppiList=MRGetPropertyMap(pMapName,pPrefixName);\
-    HRESULT finalhr=PersistencyItemListSave(ppiList,piNode,pPrefixName);\
+    bool bFinalOk=PersistencyItemListSave(ppiList,piNode,pPrefixName);\
     FreePersistencyItemList(&ppiList);\
-    return finalhr;\
+    return bFinalOk;\
 } \
-    virtual HRESULT PersistencyLoad(ISystemPersistencyNode *piNode,const char *pMapName=NULL,const char *pPrefixName=NULL)\
+    virtual bool PersistencyLoad(ISystemPersistencyNode *piNode,const char *pMapName=NULL,const char *pPrefixName=NULL)\
 {\
-    if(piNode==NULL){return E_FAIL;}\
+    if(piNode==NULL){return false;}\
     IMRPersistencyItem **ppiList=MRGetPropertyMap(pMapName,pPrefixName);\
-    HRESULT finalhr=PersistencyItemListLoad(ppiList,piNode,pPrefixName);\
+    bool bFinalOk=PersistencyItemListLoad(ppiList,piNode,pPrefixName);\
     FreePersistencyItemList(&ppiList);\
-    return finalhr;\
+    return bFinalOk;\
 }\
-    virtual HRESULT PersistencyRemove(ISystemPersistencyNode *piNode,const char *pMapName=NULL,const char *pPrefixName=NULL)\
+    virtual bool PersistencyRemove(ISystemPersistencyNode *piNode,const char *pMapName=NULL,const char *pPrefixName=NULL)\
 {\
-    if(piNode==NULL){return E_FAIL;}\
+    if(piNode==NULL){return false;}\
     IMRPersistencyItem **ppiList=MRGetPropertyMap(pMapName,pPrefixName);\
-    HRESULT finalhr=PersistencyItemListRemove(ppiList,piNode,pPrefixName);\
+    bool bFinalOk=PersistencyItemListRemove(ppiList,piNode,pPrefixName);\
     FreePersistencyItemList(&ppiList);\
-    return finalhr;\
+    return bFinalOk;\
 }\
     virtual void PersistencyInitialize(const char *pMapName=NULL,const char *pPrefixName=NULL)\
 {\
@@ -229,29 +229,29 @@ void	FreePersistencyItemList(IMRPersistencyItem ***ppiList);
 
 #define BEGIN_STRUCT_PROPS(className)			\
     static IMRPersistencyItem **MRGetPropertyMap(className *pInstance);\
-    __UNUSED_ATTRIB__ static HRESULT MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentSimpleReferenceT<className> *prop)\
+    __UNUSED_ATTRIB__ static bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentSimpleReferenceT<className> *prop)\
     {\
-        if(piNode==NULL){return E_FAIL;}\
+        if(piNode==NULL){return false;}\
         IMRPersistencyItem **ppiList=MRGetPropertyMap(prop->GetValueAddress());\
-		HRESULT finalhr=PersistencyItemListSave(ppiList,piNode,NULL);\
+		bool bFinalOk=PersistencyItemListSave(ppiList,piNode,NULL);\
 		FreePersistencyItemList(&ppiList);\
-        return finalhr;\
+        return bFinalOk;\
     }\
-    __UNUSED_ATTRIB__ static HRESULT MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentSimpleReferenceT<className> *prop)\
+    __UNUSED_ATTRIB__ static bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentSimpleReferenceT<className> *prop)\
     {\
-        if(piNode==NULL){return E_FAIL;}\
+        if(piNode==NULL){return false;}\
 		IMRPersistencyItem **ppiList=MRGetPropertyMap(prop->GetValueAddress());\
-		HRESULT finalhr=PersistencyItemListLoad(ppiList,piNode,NULL);\
+		bool bFinalOk=PersistencyItemListLoad(ppiList,piNode,NULL);\
 		FreePersistencyItemList(&ppiList);\
-        return finalhr;\
+        return bFinalOk;\
     }\
-    __UNUSED_ATTRIB__ static HRESULT MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentSimpleReferenceT<className> *prop)\
+    __UNUSED_ATTRIB__ static bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentSimpleReferenceT<className> *prop)\
     {\
-        if(piNode==NULL){return E_FAIL;}\
+        if(piNode==NULL){return false;}\
 		IMRPersistencyItem **ppiList=MRGetPropertyMap(prop->GetValueAddress());\
 		PersistencyItemListRemove(ppiList,piNode,NULL);\
 		FreePersistencyItemList(&ppiList);\
-		return S_OK;\
+		return true;\
     }\
     __UNUSED_ATTRIB__ static void MRPersistencyInitialize(CMRPersistentSimpleReferenceT<className> *prop)\
     {\
@@ -290,14 +290,14 @@ public:
     // Virtual functions to be used from ISystemSerializable implementation, this functions are overloaded
     // using BEGIN_PROP_MAP/END_PROP_MAP blocks
 
-    virtual void    PersistencyDefaultValue(const char *pMapName=NULL,const char *pPrefixName=NULL);
-    virtual HRESULT PersistencySave(ISystemPersistencyNode *piNode,const char *pMapName=NULL,const char *pPrefixName=NULL);
-    virtual HRESULT PersistencyLoad(ISystemPersistencyNode *piNode,const char *pMapName=NULL,const char *pPrefixName=NULL);
-    virtual HRESULT PersistencyRemove(ISystemPersistencyNode *piNode,const char *pMapName=NULL,const char *pPrefixName=NULL);
-    virtual void    PersistencyInitialize(const char *pMapName=NULL,const char *pPrefixName=NULL);
-    virtual void    PersistencyFree(const char *pMapName=NULL,const char *pPrefixName=NULL);
+    virtual void PersistencyDefaultValue(const char *pMapName=NULL,const char *pPrefixName=NULL);
+    virtual bool PersistencySave(ISystemPersistencyNode *piNode,const char *pMapName=NULL,const char *pPrefixName=NULL);
+    virtual bool PersistencyLoad(ISystemPersistencyNode *piNode,const char *pMapName=NULL,const char *pPrefixName=NULL);
+    virtual bool PersistencyRemove(ISystemPersistencyNode *piNode,const char *pMapName=NULL,const char *pPrefixName=NULL);
+    virtual void PersistencyInitialize(const char *pMapName=NULL,const char *pPrefixName=NULL);
+    virtual void PersistencyFree(const char *pMapName=NULL,const char *pPrefixName=NULL);
 
     // ISystemSerializable
-    virtual bool    Serialize(ISystemPersistencyNode *piNode);
-    virtual bool    Unserialize(ISystemPersistencyNode *piNode);
+    virtual bool Serialize(ISystemPersistencyNode *piNode);
+    virtual bool Unserialize(ISystemPersistencyNode *piNode);
 };

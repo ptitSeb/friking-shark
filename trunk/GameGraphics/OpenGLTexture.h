@@ -61,7 +61,7 @@ public:
 	void GetSize(unsigned *pdwWidth,unsigned *pdwHeight);
 
 	bool		 HasColorKey();
-	COLORREF GetColorKey();
+	CVector		 GetColorKey();
 
 	bool		HasAlphaChannel();
 
@@ -75,7 +75,7 @@ public:
 
 	virtual unsigned GetOpenGLIndex();
 
-	virtual bool Load(string sFileName,COLORREF *pColorKey,string *pAlphaFile,float fOpacity);
+	virtual bool Load(string sFileName,CVector *pColorKey,string *pAlphaFile,float fOpacity);
 	virtual bool Create( unsigned nWidth,unsigned nHeight );
 	virtual bool CreateDepth( unsigned nWidth,unsigned nHeight );
 	virtual bool StartRenderingToTexture();

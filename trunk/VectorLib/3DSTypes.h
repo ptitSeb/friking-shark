@@ -12,9 +12,9 @@
 struct S3DSMaterial
 {
 	DWORD		dwMaterialType;
-	COLORREF	cAmbientColor;
-	COLORREF	cDiffuseColor;
-	COLORREF	cSpecularColor;
+	CVector		vAmbientColor;
+	CVector		vDiffuseColor;
+	CVector 	vSpecularColor;
 	char		sName[MAX_PATH];
 	char		sFile[MAX_PATH];
 	char		sAlphaFile[MAX_PATH];
@@ -108,7 +108,7 @@ struct S3DSObject
 	float								 fFirstFrameRotationAngle;
 	CVector								 vFirstFrameRotationAxis;
 	DWORD								 dwMaterialId; //solo para archivos ASE
-	COLORREF							 cWireframeColor;//solo para archivos ASE
+	CVector								 vWireframeColor;//solo para archivos ASE
 
 	S3DSFrame							 baseFrame;
 	std::vector<S3DSFrame*>				 vAnimationFrames;	// frames de la animacion, pueden haber punteros repetidos.
@@ -130,7 +130,7 @@ struct S3DSLight
 	CVector		vScale;
 
 	CVector		vPosition;
-	COLORREF	cColor;
+	CVector		vColor;
 	float		fMultiplier;
 	bool		bAttenuationOn;
 	float		fAttenuationStart;

@@ -34,12 +34,12 @@ OUT_SOURCES=$(addprefix $(INTERMEDIATE_DIR)/,$(SOURCES))
 all: release debug
 
 release: $(OUT_SOURCES:.cpp=.o)
-	rm -f ../Demo/Bin/IATestSystems.so
-	$(CC) -shared -o ../Demo/Bin/IATestSystems.so .intermediate/*.o $(CFLAGS) $(LIBS)
+	rm -f ../Demo/Bin/Release/IATestSystems.so
+	$(CC) -shared -o ../Demo/Bin/Release/IATestSystems.so .intermediate/*.o $(CFLAGS) $(LIBS)
 
 debug: $(OUT_SOURCES:.cpp=.od)
-	rm -f ../Demo/Bin/IATestSystemsd.so
-	$(CC) -shared -o ../Demo/Bin/IATestSystemsd.so .intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG)
+	rm -f ../Demo/Bin/Debug/IATestSystems.so
+	$(CC) -shared -o ../Demo/Bin/Debug/IATestSystems.so .intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG)
 
 $(INTERMEDIATE_DIR)/%.o: ./%.cpp
 	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS) $(INCLUDES) $<
@@ -48,6 +48,6 @@ $(INTERMEDIATE_DIR)/%.od: ./%.cpp
 	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS_DEBUG) $(INCLUDES) $<
 
 clean:
-	rm -f ../Demo/Bin/IATestSystems*.so
+	rm -f ../Demo/Bin/*/IATestSystems.so
 	rm -f ./.intermediate/*
 

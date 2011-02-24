@@ -3,9 +3,8 @@
 #include "./SystemUnknownBase.h"
 #include "./SystemModuleHelpers.h"
 
-CSystemModuleHelper::CSystemModuleHelper(HINSTANCE hInstance,tBuildClassMap pBuildClassMap)
+CSystemModuleHelper::CSystemModuleHelper(tBuildClassMap pBuildClassMap)
 {
-	  m_hInstance=hInstance;
     memset(m_pSystemClasses,0,sizeof(m_pSystemClasses));
     m_nSystemClasses=0;
     pBuildClassMap(this);
@@ -29,8 +28,4 @@ void CSystemModuleHelper::RegisterClasses(ISystem *piSystem)
 void CSystemModuleHelper::UnregisterClasses(ISystem *piSystem)
 {
     for(int x=0;x<CSystemModuleHelper::m_nSystemClasses;x++){piSystem->UnregisterClassFactory(CSystemModuleHelper::m_pSystemClasses[x]);}
-}
-HINSTANCE CSystemModuleHelper::GetInstance()
-{
-	return m_hInstance;
 }

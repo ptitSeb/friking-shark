@@ -32,12 +32,7 @@ bool CGameGUIManager::Init(std::string sClass,std::string sName,ISystem *piSyste
 	{
 	  m_Viewport.m_piViewport->SetCallBack(this);
 	}
-	RECT rect;
-	rect.top=0;
-	rect.left=0;
-	rect.bottom=600;
-	rect.right=800;
-	bool bOk=m_Viewport.m_piViewport->Create(&rect,false);
+	bool bOk=m_Viewport.m_piViewport->Create(0,0,800,600,false);
 	m_Viewport.m_piViewport->ShowMouseCursor(false);
 	return bOk;
 }
@@ -319,20 +314,14 @@ void CGameGUIManager::SetMousePosition(IGameWindow *piWindow,SGamePos &pos)
 {
 	SGameSize size;
 	SGameRect rWindowRect;
-	POINT P={0};
 	if(piWindow){piWindow->GetRealRect(&rWindowRect);}
 	GetWindowSize(&size);
 
-	if(size.w)
-	{
-		P.x=(LONG)pos.x;
-	}
-	if(size.h)
-	{
-		P.y=(LONG)(size.h-pos.y);
-	}
+	int pointX=0,pointY=0;
+	if(size.w){pointX=(int)pos.x;}
+	if(size.h){pointY=(int)(size.h-pos.y);}
 
-	if(m_Viewport.m_piViewport){m_Viewport.m_piViewport->SetCursorPos(P.x,P.y);}
+	if(m_Viewport.m_piViewport){m_Viewport.m_piViewport->SetCursorPos(pointX,pointY);}
 }
 
 bool CGameGUIManager::IsKeyDown(int nKey)
@@ -625,7 +614,6 @@ void CGameGUIManager::OnSize(unsigned w,unsigned h)
 	  {
 		m_sScreenProperties.rWindowRect.w=w;
 		m_sScreenProperties.rWindowRect.h=h;
-		RTTRACE("CGameGUIManager::OnSize -> abs : %dx%d",w,h);
 	  }
 	  else
 	  {
@@ -633,10 +621,8 @@ void CGameGUIManager::OnSize(unsigned w,unsigned h)
 		m_Viewport.m_piViewport->GetCurrentVideoMode(&sVideoMode);
 		m_sScreenProperties.rWindowRect.w=(double)w/(double)sVideoMode.w;
 		m_sScreenProperties.rWindowRect.h=(double)h/(double)sVideoMode.h;
-		RTTRACE("CGameGUIManager::OnSize -> rel : %dx%d -> %fx%f",w,h,m_sScreenProperties.rWindowRect.w,m_sScreenProperties.rWindowRect.h);
 	  }
 	}
-	  
 	OnMove();
 }
 

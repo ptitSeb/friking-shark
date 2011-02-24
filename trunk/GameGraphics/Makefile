@@ -35,12 +35,12 @@ cfiles_debug:$(OUT_SOURCES_C:.c=.od)
 cppfiles_debug: $(OUT_SOURCES:.cpp=.od)  
 
 release: cfiles_release cppfiles_release
-	rm -f ../Demo/Bin/GameGraphics.so
-	$(CC) -shared -o ../Demo/Bin/GameGraphics.so ../JPEGLibrary/.intermediate/*.o .intermediate/*.o $(CFLAGS) $(LIBS)
+	rm -f ../Demo/Bin/Release/GameGraphics.so
+	$(CC) -shared -o ../Demo/Bin/Release/GameGraphics.so ../JPEGLibrary/.intermediate/*.o .intermediate/*.o $(CFLAGS) $(LIBS)
 
 debug: cfiles_debug cppfiles_debug
-	rm -f ../Demo/Bin/GameGraphicsd.so 
-	$(CC) -shared -o ../Demo/Bin/GameGraphicsd.so  ../JPEGLibrary/.intermediate/*.od .intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG)
+	rm -f ../Demo/Bin/Debug/GameGraphics.so 
+	$(CC) -shared -o ../Demo/Bin/Debug/GameGraphics.so  ../JPEGLibrary/.intermediate/*.od .intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG)
 
 $(INTERMEDIATE_DIR)/%.o: ./%.cpp
 	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS) $(INCLUDES) $<
@@ -55,7 +55,7 @@ $(INTERMEDIATE_DIR)/%.od: ./%.c
 	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS_DEBUG) $(INCLUDES) $<
 
 clean:
-	rm -f ../Demo/Bin/GameGraphics*.so 
+	rm -f ../Demo/Bin/*/GameGraphics.so 
 	rm -f ./.intermediate/*
 
 

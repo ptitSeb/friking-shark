@@ -43,10 +43,6 @@ bool CSystemModule::Init(std::string sPath,ISystem *piSystem)
 
 	m_pLibrary=dlopen(sPath.c_str(),RTLD_LOCAL|RTLD_LAZY);
 	bOk=(m_pLibrary!=NULL);
-	if(!bOk)
-	{
-	  RTTRACE("Failed to load library : %s : %s",sPath.c_str(),dlerror());
-	}
 #endif
     if(!bOk)
     {
@@ -65,10 +61,10 @@ bool CSystemModule::Init(std::string sPath,ISystem *piSystem)
           sAlternatePath+=sFileName;
 #ifdef WIN32
           m_hModule=LoadLibrary(sAlternatePath.c_str());
-          if(m_hModule!=NULL){break;}
+          if(m_hModule!=NULL){bOk=true;break;}
 #else
 		  m_pLibrary=dlopen(sAlternatePath.c_str(),RTLD_LOCAL|RTLD_LAZY);
-		  if(m_pLibrary!=NULL){break;}
+		  if(m_pLibrary!=NULL){bOk=true;break;}
 #endif
         }
       }
@@ -76,18 +72,36 @@ bool CSystemModule::Init(std::string sPath,ISystem *piSystem)
 	  REL(piPathControl);
     }
 #ifdef WIN32    
+	if(!bOk)
+	{
+	  RTTRACE("Failed to load library : %s : %d",sPath.c_str(),GetLastError());
+	}
+
     if(m_hModule)
     {
         m_pSystemModuleRegister=(tSystemModuleRegister)GetProcAddress(m_hModule,"SystemModuleRegister");
         m_pSystemModuleUnregister=(tSystemModuleUnregister)GetProcAddress(m_hModule,"SystemModuleUnregister");
         if(m_pSystemModuleRegister!=NULL && m_pSystemModuleRegister!=NULL){bOk=true;}
+		if(!bOk)
+		{
+		  RTTRACE("Failed to get library procedures: %s : %d",sPath.c_str(),GetLastError());
+		}
     }
 #else
+	if(!bOk)
+	{
+	  RTTRACE("Failed to load library : %s : %s",sPath.c_str(),dlerror());
+	}
+
     if(m_pLibrary)
     {
         m_pSystemModuleRegister=reinterpret_cast<tSystemModuleRegister>(reinterpret_cast<size_t>(dlsym(m_pLibrary,"SystemModuleRegister")));
         m_pSystemModuleUnregister=reinterpret_cast<tSystemModuleUnregister>(reinterpret_cast<size_t>(dlsym(m_pLibrary,"SystemModuleUnregister")));
         if(m_pSystemModuleRegister!=NULL && m_pSystemModuleRegister!=NULL){bOk=true;}
+		if(!bOk)
+		{
+		  RTTRACE("Failed to get library procedures: %s : %s",sPath.c_str(),dlerror());
+		}
     }
 #endif
 

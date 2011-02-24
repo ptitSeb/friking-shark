@@ -270,13 +270,13 @@ COpenGLTexture::~COpenGLTexture(void)
 	Clear();
 }
 
-std::string	 COpenGLTexture::GetFileName(){return m_sFileName;}
-bool				 COpenGLTexture::HasAlphaFile(){return m_sAlphaFileName!="";}
-std::string  COpenGLTexture::GetAlphaFileName(){return m_sAlphaFileName;}
-void		 COpenGLTexture::GetSize(unsigned *pdwWidth,unsigned *pdwHeight){*pdwWidth=m_dwWidth;*pdwHeight=m_dwHeight;}
-bool		 COpenGLTexture::HasColorKey(){return m_bColorKey;}
-COLORREF COpenGLTexture::GetColorKey(){return VectorToRGB(&m_vColorKey);}
-unsigned COpenGLTexture::GetOpenGLIndex()
+std::string	COpenGLTexture::GetFileName(){return m_sFileName;}
+bool		COpenGLTexture::HasAlphaFile(){return m_sAlphaFileName!="";}
+std::string COpenGLTexture::GetAlphaFileName(){return m_sAlphaFileName;}
+void		COpenGLTexture::GetSize(unsigned *pdwWidth,unsigned *pdwHeight){*pdwWidth=m_dwWidth;*pdwHeight=m_dwHeight;}
+bool		COpenGLTexture::HasColorKey(){return m_bColorKey;}
+CVector		COpenGLTexture::GetColorKey(){return m_vColorKey;}
+unsigned 	COpenGLTexture::GetOpenGLIndex()
 {
 	return m_nTextureIndex;
 }
@@ -323,13 +323,11 @@ bool COpenGLTexture::LoadFromFile()
 		}	
 		else if(m_bColorKey)
 		{
-			BYTE blue,green,red;
-			COLORREF colorKey=VectorToRGB(&m_vColorKey);
-			blue=GetBValue(colorKey);
-			green=GetGValue(colorKey);
-			red=GetRValue(colorKey);
+			unsigned char red=(m_vColorKey.c[0]*255.0);
+			unsigned char green=(m_vColorKey.c[1]*255.0);
+			unsigned char blue=(m_vColorKey.c[2]*255.0);
 
-			BYTE *pTempBuffer=m_pBuffer;
+			unsigned char *pTempBuffer=m_pBuffer;
 
 			for(unsigned y=0; y < m_dwHeight; y++)
 			{
@@ -341,13 +339,13 @@ bool COpenGLTexture::LoadFromFile()
 		}
 		else if(m_fOpacity<1.0)
 		{
-			BYTE *pTempBuffer=m_pBuffer;
+			unsigned char *pTempBuffer=m_pBuffer;
 
 			for(unsigned int y=0; y < m_dwWidth; y++)
 			{
 				for(unsigned int x = 0; x < m_dwHeight; x++,pTempBuffer+=4)
 				{
-					pTempBuffer[3] = (BYTE)(255.0*m_fOpacity);
+					pTempBuffer[3] = (unsigned char)(255.0*m_fOpacity);
 				}
 			}
 		}
@@ -394,7 +392,7 @@ bool COpenGLTexture::HasAlphaChannel(){return (m_bColorKey || m_sAlphaFileName!=
 unsigned long COpenGLTexture::GetByteBufferLength(){return HasAlphaChannel()?m_dwHeight*m_dwWidth*4:m_dwHeight*m_dwWidth*3;}
 void		  *COpenGLTexture::GetByteBuffer(){return m_pBuffer;}
 
-bool COpenGLTexture::Load(string sFileName,COLORREF *pColorKey,string *pAlphaFile,float fOpacity)
+bool COpenGLTexture::Load(string sFileName,CVector *pColorKey,string *pAlphaFile,float fOpacity)
 {
 	Clear();
 
@@ -404,7 +402,7 @@ bool COpenGLTexture::Load(string sFileName,COLORREF *pColorKey,string *pAlphaFil
 	m_fOpacity=fOpacity;
 	if(pColorKey)
 	{
-		m_vColorKey=RGBToVector(*pColorKey);
+		m_vColorKey=*pColorKey;
 		m_bColorKey=true;
 	}
 	if(m_pBuffer)

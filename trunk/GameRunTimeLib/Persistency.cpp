@@ -14,9 +14,9 @@ void PersistencyItemListDefaultValue(IMRPersistencyItem **ppiList,const char *pP
         }
     }
 }
-HRESULT PersistencyItemListSave(IMRPersistencyItem **ppiList,ISystemPersistencyNode *piNode,const char *pPrefixName)
+bool PersistencyItemListSave(IMRPersistencyItem **ppiList,ISystemPersistencyNode *piNode,const char *pPrefixName)
 {
-    HRESULT hr=S_OK,finalhr=S_OK;
+    bool bOk=true,bFinalOk=true;
     if(pPrefixName==NULL){piNode->Clear();}
     int x=0;
     if(ppiList)
@@ -24,56 +24,56 @@ HRESULT PersistencyItemListSave(IMRPersistencyItem **ppiList,ISystemPersistencyN
         while(ppiList[x]!=NULL)
         {
 			ISystemPersistencyNode *piChildNode=piNode->AddNode(ppiList[x]->GetName());
-            hr=ppiList[x]->Remove(piChildNode);
-            hr=ppiList[x]->Save(piChildNode);
-            if(FAILED(hr))
+            bOk=ppiList[x]->Remove(piChildNode);
+            bOk=ppiList[x]->Save(piChildNode);
+            if(!bOk)
             {
-				RTTRACE("GameRunTimeLib::PersistencyLoad-> Failed To Save item %s\\%s, result 0x%08x",piNode->GetDebugInfoPath().c_str(),ppiList[x]->GetName(),hr);
-                finalhr=hr;
+				RTTRACE("GameRunTimeLib::PersistencyLoad-> Failed To Save item %s\\%s, result 0x%08x",piNode->GetDebugInfoPath().c_str(),ppiList[x]->GetName(),bOk);
+                bFinalOk=bOk;
             }
             x++;
         }
     }
-    return finalhr;
+    return bFinalOk;
 } 
-HRESULT PersistencyItemListLoad(IMRPersistencyItem **ppiList,ISystemPersistencyNode *piNode,const char *pPrefixName)
+bool PersistencyItemListLoad(IMRPersistencyItem **ppiList,ISystemPersistencyNode *piNode,const char *pPrefixName)
 {
-    HRESULT hr=S_OK,finalhr=S_OK;
+    bool bOk=true,bFinalOk=true;
     int x=0;
     if(ppiList)
     {
         while(ppiList[x]!=NULL)
         {
 			ISystemPersistencyNode *piChildNode=piNode->GetNode(ppiList[x]->GetName());
-            hr=ppiList[x]->Load(piChildNode);
-            if(FAILED(hr))
+            bOk=ppiList[x]->Load(piChildNode);
+            if(!bOk)
             {
-                RTTRACE("GameRunTimeLib::PersistencyLoad-> Failed To Load item %s\\%s, result 0x%08x",piNode->GetDebugInfoPath().c_str(),ppiList[x]->GetName(),hr);
-                finalhr=hr;
+                RTTRACE("GameRunTimeLib::PersistencyLoad-> Failed To Load item %s\\%s, result 0x%08x",piNode->GetDebugInfoPath().c_str(),ppiList[x]->GetName(),bOk);
+                bFinalOk=bOk;
             }
             x++;
         }
     }
-    return finalhr;
+    return bFinalOk;
 }
-HRESULT PersistencyItemListRemove(IMRPersistencyItem **ppiList,ISystemPersistencyNode *piNode,const char *pPrefixName)
+bool PersistencyItemListRemove(IMRPersistencyItem **ppiList,ISystemPersistencyNode *piNode,const char *pPrefixName)
 {
-    HRESULT hr=S_OK,finalhr=S_OK;
+    bool bOk=true,bFinalOk=true;
     int x=0;
     if(ppiList)
     {
         while(ppiList[x]!=NULL)
         {
 			ISystemPersistencyNode *piChildNode=piNode->GetNode(ppiList[x]->GetName());
-            hr=ppiList[x]->Remove(piChildNode);
-            if(FAILED(hr))
+            bOk=ppiList[x]->Remove(piChildNode);
+            if(!bOk)
             {
-                finalhr=hr;
+                bFinalOk=bOk;
             }
             x++;
         }
     }
-    return finalhr;
+    return bFinalOk;
 }
 void PersistencyItemListInitialize(IMRPersistencyItem **ppiList,const char *pPrefixName)
 {
@@ -113,14 +113,14 @@ void FreePersistencyItemList(IMRPersistencyItem ***ppiList)
 // Virtual functions to be used from ISystemSerializable implementation, this functions are overloaded
 // using BEGIN_PROP_MAP/END_PROP_MAP blocks
 
-void    CSystemSerializableBase::PersistencyDefaultValue(const char *pMapName,const char *pPrefixName){}
-HRESULT CSystemSerializableBase::PersistencySave(ISystemPersistencyNode *piNode,const char *pMapName,const char *pPrefixName){return S_OK;}
-HRESULT CSystemSerializableBase::PersistencyLoad(ISystemPersistencyNode *piNode,const char *pMapName,const char *pPrefixName){return S_OK;}
-HRESULT CSystemSerializableBase::PersistencyRemove(ISystemPersistencyNode *piNode,const char *pMapName,const char *pPrefixName){return S_OK;}
-void    CSystemSerializableBase::PersistencyInitialize(const char *pMapName,const char *pPrefixName){}
-void    CSystemSerializableBase::PersistencyFree(const char *pMapName,const char *pPrefixName){}
+void CSystemSerializableBase::PersistencyDefaultValue(const char *pMapName,const char *pPrefixName){}
+bool CSystemSerializableBase::PersistencySave(ISystemPersistencyNode *piNode,const char *pMapName,const char *pPrefixName){return true;}
+bool CSystemSerializableBase::PersistencyLoad(ISystemPersistencyNode *piNode,const char *pMapName,const char *pPrefixName){return true;}
+bool CSystemSerializableBase::PersistencyRemove(ISystemPersistencyNode *piNode,const char *pMapName,const char *pPrefixName){return true;}
+void CSystemSerializableBase::PersistencyInitialize(const char *pMapName,const char *pPrefixName){}
+void CSystemSerializableBase::PersistencyFree(const char *pMapName,const char *pPrefixName){}
 
 // ISystemSerializable
 
-bool    CSystemSerializableBase::Serialize(ISystemPersistencyNode *piNode){return SUCCEEDED(PersistencySave(piNode,NULL));}
-bool    CSystemSerializableBase::Unserialize(ISystemPersistencyNode *piNode){return SUCCEEDED(PersistencyLoad(piNode,NULL));}
+bool CSystemSerializableBase::Serialize(ISystemPersistencyNode *piNode){return PersistencySave(piNode,NULL);}
+bool CSystemSerializableBase::Unserialize(ISystemPersistencyNode *piNode){return PersistencyLoad(piNode,NULL);}

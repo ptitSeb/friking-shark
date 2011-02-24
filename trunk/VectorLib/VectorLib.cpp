@@ -2142,29 +2142,6 @@ void RemoveInternalFaces(std::list<CPolyhedron*> *plOriginalPolyhedron,std::list
 	mPolyhedrons.clear();
 }
 
-COLORREF FloatToRGB(float *pColor)
-{
-	return RGB(pColor[0]*255.0,pColor[1]*255.0,pColor[2]*255.0);
-}
-
-COLORREF VectorToRGB(CVector *pColor)
-{
-	return RGB(pColor->c[0]*255.0,pColor->c[1]*255.0,pColor->c[2]*255.0);
-}
-
-CVector RGBToVector(COLORREF cColor)
-{
-	CVector v(((double)GetRValue(cColor))/255.0,((double)GetGValue(cColor))/255.0,((double)GetBValue(cColor))/255.0);
-	return v;
-}
-
-void RGBToFloat(COLORREF cColor,float *pColor)
-{
-	pColor[0]=(float)(((double)GetRValue(cColor))/255.0);
-	pColor[1]=(float)(((double)GetGValue(cColor))/255.0);
-	pColor[2]=(float)(((double)GetBValue(cColor))/255.0);
-}
-
 double drand()
 {
 	return (double)rand()/(double)RAND_MAX;
@@ -2192,7 +2169,6 @@ CTexture::CTexture(std::string sName,int nWidth,int nHeight,void *pPixels,DWORD 
 	m_pPixels=pPixels;
 	m_dwColorType=dwColorType;
 	m_bColorKey=false;
-    m_cColorKey=RGB(0,0,0);
 	m_bAlphaFile=false;
 }
 
@@ -2365,9 +2341,9 @@ CVector HSVDifference(CVector &v1,CVector &v2)
 CMaterial::CMaterial()
 {
 	dwMaterialType=MATERIAL_SOLID;
-	cAmbientColor=RGB(128,128,128);
-	cDiffuseColor=RGB(128,128,128);
-	cSpecularColor=RGB(128,128,128);
+	vAmbientColor=CVector(0.5,0.5,0.5);
+	vDiffuseColor=CVector(0.5,0.5,0.5);
+	vSpecularColor=CVector(0.5,0.5,0.5);
 	fShininess=0;
 	fOpacity=1.0;
 	bTwoSided=false;
@@ -2380,9 +2356,9 @@ CMaterial::~CMaterial()
 bool CMaterial::operator == (const CMaterial &material)
 {
 	if(dwMaterialType!=material.dwMaterialType){return false;}
-	if(cAmbientColor!=material.cAmbientColor){return false;}
-	if(cDiffuseColor!=material.cDiffuseColor){return false;}
-	if(cSpecularColor!=material.cSpecularColor){return false;}
+	if(vAmbientColor!=material.vAmbientColor){return false;}
+	if(vDiffuseColor!=material.vDiffuseColor){return false;}
+	if(vSpecularColor!=material.vSpecularColor){return false;}
 	if(sTexture!=material.sTexture){return false;}
 	return true;
 }

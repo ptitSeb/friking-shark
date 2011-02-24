@@ -201,7 +201,7 @@ public:
 	std::string  m_sAlphaFileName;
 	bool		 m_bAlphaFile;
 	bool		 m_bColorKey;
-	COLORREF	 m_cColorKey;
+	CVector	 	 m_vColorKey;
 	float		 m_fOpacity;
 
 	unsigned m_nWidth;
@@ -217,9 +217,9 @@ public:
 struct CMaterial
 {
 	DWORD		dwMaterialType;
-	COLORREF	cAmbientColor;
-	COLORREF	cDiffuseColor;
-	COLORREF	cSpecularColor;
+	CVector		vAmbientColor;
+	CVector		vDiffuseColor;
+	CVector		vSpecularColor;
 	float		fShininess;
 	float		fOpacity;
 	bool		bTwoSided;
@@ -347,10 +347,6 @@ void		ToCameraRef( CPlane *pForwardPlane,CPlane *pRightPlane,CPlane *pUpPlane,in
 CVector		CalcMins(CVector &v1,CVector &v2);
 CVector		CalcMaxs(CVector &v1,CVector &v2);
 
-void		RGBToFloat(COLORREF cColor,float *pColor);
-CVector		RGBToVector(COLORREF cColor);
-COLORREF	FloatToRGB(float *pColor);
-COLORREF	VectorToRGB(CVector *pColor);
 CVector		RGBToHSV(const CVector &v1);
 CVector 	HSVToRGB(const CVector &hsv);
 CVector		HSVDifference(CVector &v1,CVector &v2);

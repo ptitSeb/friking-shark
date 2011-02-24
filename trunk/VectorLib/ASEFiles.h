@@ -19,7 +19,6 @@ class CASEFileType :public C3DSFileTypeBase
 	DWORD			ReadDWord();
 	WORD			ReadWord();
 	CVector			ReadVector();
-	COLORREF		ReadColor();
 	std::string		ReadString();
 	void			ProcessObjectFrameSubMaterials(S3DSObject *pObject,S3DSFrame *pFrame);
 public:

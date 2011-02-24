@@ -303,7 +303,10 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	CVector m_vCameraPos;
 	CVector m_vCameraAngles;
 
-	RECT	m_rViewportRect;
+	int			m_nViewportX;
+	int			m_nViewportY;
+	int			m_nViewportW;
+	int			m_nViewportH;
 
 	bool		 m_bStagedRendering;
 	GLuint		 m_pSelectionBuffer[SELECTION_BUFFER_SIZE];

@@ -57,16 +57,16 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 	void OnSize(WORD cx,WORD cy);
 	void OnMove();
 	
-	void OnLButtonDown(WORD wKeyState,POINT pos);
-	void OnLButtonUp(WORD wKeyState,POINT pos);
-	void OnRButtonDown(WORD wKeyState,POINT pos);
-	void OnRButtonUp(WORD wKeyState,POINT pos);
-	void OnMouseMove(WORD wKeyState,POINT pos);
+	void OnLButtonDown(int pointX,int pointY);
+	void OnLButtonUp(int pointX,int pointY);
+	void OnRButtonDown(int pointX,int pointY);
+	void OnRButtonUp(int pointX,int pointY);
+	void OnMouseMove(int pointX,int pointY);
 public:
 
 	//IGenericViewport
 
-	bool Create(RECT *pRect,bool bMaximized);
+	bool Create(unsigned x, unsigned y, unsigned w,unsigned h,bool bMaximized);
 	void Destroy();
 
 	bool IsMaximized();

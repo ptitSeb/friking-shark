@@ -140,7 +140,6 @@ DWORD			CASEFileType::ReadDWord() {DWORD value=0;char *pBuf=strtok(NULL,ASE_FILE
 float			CASEFileType::ReadFloat() {float value=0;char *pBuf=strtok(NULL,ASE_FILE_DELIMITER);value=atof(pBuf);return value;}
 unsigned char	CASEFileType::ReadByte()  {unsigned char value=0;char *pBuf=strtok(NULL,ASE_FILE_DELIMITER);value=atoi(pBuf);return value;}
 CVector			CASEFileType::ReadVector(){CVector v;v.c[0]=ReadFloat();v.c[1]=ReadFloat();v.c[2]=ReadFloat();return v;}
-COLORREF		CASEFileType::ReadColor() {CVector c=ReadVector();return VectorToRGB(&c);}
 string			CASEFileType::ReadString(){string temp;char *pBuf=strtok(NULL,"\"\t\r\n");temp=pBuf;return temp;}
 
 bool CASEFileType::Open(const char *sFileName)
@@ -499,7 +498,7 @@ bool CASEFileType::Open(const char *sFileName)
 
 			case ASE_MESH_MTLID:{pFrame->pFaceSubMaterials[dwFaceIndex]=ReadDWord();}break;
 			case ASE_WIREFRAME_COLOR:
-				{pObject->cWireframeColor=ReadColor();}break;
+				{pObject->vWireframeColor=ReadVector();}break;
 
 			// Materiales
 			case ASE_MATERIAL_LIST:
@@ -559,9 +558,9 @@ bool CASEFileType::Open(const char *sFileName)
 				}
 			break;
 			case ASE_MATERIAL_NAME:			{strcpy(pMaterial->sName,ReadString().c_str());}break;
-			case ASE_MATERIAL_AMBIENT:		{pMaterial->cAmbientColor=ReadColor();}break;
-			case ASE_MATERIAL_DIFFUSE:		{pMaterial->cDiffuseColor=ReadColor();}break;
-			case ASE_MATERIAL_SPECULAR:		{pMaterial->cSpecularColor=ReadColor();}break;
+			case ASE_MATERIAL_AMBIENT:		{pMaterial->vAmbientColor=ReadVector();}break;
+			case ASE_MATERIAL_DIFFUSE:		{pMaterial->vDiffuseColor=ReadVector();}break;
+			case ASE_MATERIAL_SPECULAR:		{pMaterial->vSpecularColor=ReadVector();}break;
 			case ASE_MATERIAL_SHINE:		{pMaterial->fShininess=ReadFloat();}break;
 			case ASE_MATERIAL_SHINESTRENGTH:{pMaterial->fShininessStrength=ReadFloat();}break;
 			case ASE_MATERIAL_TRANSPARENCY:	{pMaterial->fTranparency=ReadFloat();}break;
@@ -607,7 +606,7 @@ bool CASEFileType::Open(const char *sFileName)
 				SKIP_ASE_TOKEN(); // Skip '{'
 			break;
 			case ASE_LIGHT_COLOR:
-				pLight->cColor=ReadColor();
+				pLight->vColor=ReadVector();
 			break;
 			case ASE_LIGHT_INTENS:
 				pLight->fMultiplier=ReadFloat();

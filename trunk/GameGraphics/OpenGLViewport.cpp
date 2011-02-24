@@ -91,9 +91,8 @@ void COpenGLViewport::OnDestroy()
 
 LRESULT COpenGLViewport::ProcessMessage(HWND hWnd,UINT  uMsg, WPARAM  wParam,LPARAM  lParam)
 {
-	POINT point;
-	point.x=(short)LOWORD(lParam);
-	point.y=(short)HIWORD(lParam);
+	int pointX=(short)LOWORD(lParam);
+	int pointY=(short)HIWORD(lParam);
 
 	switch(uMsg)
 	{
@@ -133,19 +132,19 @@ LRESULT COpenGLViewport::ProcessMessage(HWND hWnd,UINT  uMsg, WPARAM  wParam,LPA
 		OnKeyUp((WORD)wParam);
 		break;
 	case WM_LBUTTONDOWN:
-		OnLButtonDown(wParam,point);
+		OnLButtonDown(wParam,pointX,pointY);
 		break;
 	case WM_RBUTTONDOWN:
-		OnRButtonDown(wParam,point);
+		OnRButtonDown(wParam,pointX,pointY);
 		break;
 	case WM_LBUTTONUP:
-		OnLButtonUp(wParam,point);
+		OnLButtonUp(wParam,pointX,pointY);
 		break;
 	case WM_RBUTTONUP:
-		OnRButtonUp(wParam,point);
+		OnRButtonUp(wParam,pointX,pointY);
 		break;
 	case WM_MOUSEMOVE:
-		OnMouseMove(wParam,point);
+		OnMouseMove(wParam,pointX,pointY);
 		break;
 	case WM_SIZE:
 		OnSize(LOWORD(lParam),HIWORD(lParam));
@@ -169,7 +168,7 @@ LRESULT COpenGLViewport::WindowProc(HWND  hWnd,UINT  uMsg, WPARAM  wParam,LPARAM
 }
 #endif
 
-bool COpenGLViewport::Create(RECT *pRect,bool bMaximized)
+bool COpenGLViewport::Create(unsigned x, unsigned y, unsigned w, unsigned h, bool bMaximized)
 {
 	bool bOk=false;
 #ifdef WIN32
@@ -197,7 +196,7 @@ bool COpenGLViewport::Create(RECT *pRect,bool bMaximized)
 		UpdateWindow(m_hWnd);
 	}
 	bOk=(m_hRenderContext!=NULL);
-
+	if(!bOk){RTTRACE("COpenGLViewport::Create -> Failed to get OpenGL render context");}
 #else
 	XVisualInfo *pVisualInfo=NULL;
 	
@@ -218,7 +217,7 @@ bool COpenGLViewport::Create(RECT *pRect,bool bMaximized)
 		windowAttribs.event_mask = X_WINDOWS_EVENT_MASK;
   
 		m_XWindow = XCreateWindow(m_pXDisplay,RootWindow(m_pXDisplay,pVisualInfo->screen),
-								pRect->left,pRect->top,pRect->right-pRect->left,pRect->bottom-pRect->top, 0, 
+								x,y,w,h, 0, 
 								pVisualInfo->depth,InputOutput,pVisualInfo->visual,
 								CWBorderPixel|CWColormap|CWEventMask,&windowAttribs);
 	}
@@ -243,6 +242,9 @@ bool COpenGLViewport::Create(RECT *pRect,bool bMaximized)
 	  m_pXHollowCursor= XCreatePixmapCursor(m_pXDisplay, emptyBitmap,emptyBitmap,&black, &black, 0, 0);
 	  XFreePixmap(m_pXDisplay,emptyBitmap );
 	}
+
+	if(!bOk){RTTRACE("COpenGLViewport::Create -> Failed to get OpenGL render context");}
+	
 	if(pVisualInfo){XFree(pVisualInfo);pVisualInfo=NULL;}
 	
 #endif
@@ -325,7 +327,7 @@ void COpenGLViewport::SetPos(unsigned dwX,unsigned dwY)
 #ifdef WIN32
 	SetWindowPos(m_hWnd,NULL,dwX,dwY,0,0,SWP_NOSIZE|SWP_NOZORDER);
 #else
-	XMoveWindow(m_pXDisplay,m_XWindow,dwX,dwY);
+	if(m_XWindow!=None){XMoveWindow(m_pXDisplay,m_XWindow,dwX,dwY);}
 #endif
 }
 
@@ -337,10 +339,18 @@ void COpenGLViewport::GetPos(unsigned *pdwX,unsigned *pdwY)
 	*pdwX=R.left;
 	*pdwY=R.top;
 #else
-	XWindowAttributes attribs;
-	XGetWindowAttributes(m_pXDisplay, m_XWindow, &attribs);
-	*pdwX=attribs.x;
-	*pdwY=attribs.y;
+	if(m_XWindow!=None)
+	{
+		XWindowAttributes attribs;
+		XGetWindowAttributes(m_pXDisplay, m_XWindow, &attribs);
+		*pdwX=attribs.x;
+		*pdwY=attribs.y;
+	}
+	else
+	{
+		*pdwX=0;
+		*pdwY=0;
+	}
 #endif
 }
 
@@ -352,10 +362,18 @@ void COpenGLViewport::GetSize(unsigned *pdwWidth,unsigned *pdwHeight)
 	*pdwWidth=R.right-R.left;
 	*pdwHeight=R.bottom-R.top;
 #else
-	XWindowAttributes attribs;
-	XGetWindowAttributes(m_pXDisplay, m_XWindow, &attribs);
-	*pdwWidth=attribs.width;
-	*pdwHeight=attribs.height;
+	if(m_XWindow!=None)
+	{
+		XWindowAttributes attribs;
+		XGetWindowAttributes(m_pXDisplay, m_XWindow, &attribs);
+		*pdwWidth=attribs.width;
+		*pdwHeight=attribs.height;
+	}
+	else
+	{
+		*pdwWidth=0;
+		*pdwHeight=0;
+	}
 #endif
 }
 
@@ -376,7 +394,7 @@ void COpenGLViewport::SetSize(unsigned dwWidth,unsigned dwHeight)
 #ifdef WIN32
 	SetWindowPos(m_hWnd,NULL,0,0,dwWidth,dwHeight,SWP_NOMOVE|SWP_NOZORDER);
 #else
-	XResizeWindow(m_pXDisplay,m_XWindow,dwWidth,dwHeight);
+	if(m_XWindow!=None){XResizeWindow(m_pXDisplay,m_XWindow,dwWidth,dwHeight);}
 #endif
 }
 
@@ -390,13 +408,15 @@ void COpenGLViewport::GetRect(unsigned *pdwX,unsigned *pdwY,unsigned *pdwWidth,u
 	*pdwWidth=R.right-R.left;
 	*pdwHeight=R.bottom-R.top;
 #else
-	XWindowAttributes attribs;
-	XGetWindowAttributes(m_pXDisplay, m_XWindow, &attribs);
-	*pdwX=attribs.x;
-	*pdwY=attribs.y;
-	*pdwWidth=attribs.width;
-	*pdwHeight=attribs.height;
-	
+	if(m_XWindow!=None)
+	{
+		XWindowAttributes attribs;
+		XGetWindowAttributes(m_pXDisplay, m_XWindow, &attribs);
+		*pdwX=attribs.x;
+		*pdwY=attribs.y;
+		*pdwWidth=attribs.width;
+		*pdwHeight=attribs.height;
+	}
 #endif
 }
 
@@ -405,8 +425,11 @@ void COpenGLViewport::SetRect(unsigned dwX,unsigned dwY,unsigned dwWidth,unsigne
 #ifdef WIN32
 	SetWindowPos(m_hWnd,NULL,dwX,dwY,dwWidth,dwHeight,SWP_NOZORDER);
 #else
-	XMoveWindow(m_pXDisplay,m_XWindow,dwX,dwY);
-	XResizeWindow(m_pXDisplay,m_XWindow,dwWidth,dwHeight);
+	if(m_XWindow!=None)
+	{
+		XMoveWindow(m_pXDisplay,m_XWindow,dwX,dwY);
+		XResizeWindow(m_pXDisplay,m_XWindow,dwWidth,dwHeight);
+	}
 #endif
 }
 
@@ -446,11 +469,11 @@ void COpenGLViewport::Render()
 #endif
 }
 
-void COpenGLViewport::OnLButtonDown(WORD wKeyState,POINT mousepos){if(m_piCallBack){m_piCallBack->OnLButtonDown(wKeyState,mousepos.x,mousepos.y);}}
-void COpenGLViewport::OnLButtonUp(WORD wKeyState,POINT mousepos){if(m_piCallBack){m_piCallBack->OnLButtonUp(wKeyState,mousepos.x,mousepos.y);}}
-void COpenGLViewport::OnRButtonDown(WORD wKeyState,POINT mousepos){if(m_piCallBack){m_piCallBack->OnRButtonDown(wKeyState,mousepos.x,mousepos.y);}}
-void COpenGLViewport::OnRButtonUp(WORD wKeyState,POINT mousepos){if(m_piCallBack){m_piCallBack->OnRButtonUp(wKeyState,mousepos.x,mousepos.y);}}
-void COpenGLViewport::OnMouseMove(WORD wKeyState,POINT mousepos){if(m_piCallBack){m_piCallBack->OnMouseMove(mousepos.x,mousepos.y);}}
+void COpenGLViewport::OnLButtonDown(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnLButtonDown(0,pointX,pointY);}}
+void COpenGLViewport::OnLButtonUp(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnLButtonUp(0,pointX,pointY);}}
+void COpenGLViewport::OnRButtonDown(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnRButtonDown(0,pointX,pointY);}}
+void COpenGLViewport::OnRButtonUp(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnRButtonUp(0,pointX,pointY);}}
+void COpenGLViewport::OnMouseMove(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnMouseMove(pointX,pointY);}}
 void COpenGLViewport::OnCharacter(WORD wChar){if(m_piCallBack){m_piCallBack->OnCharacter(wChar);}}
 void COpenGLViewport::OnKeyDown(WORD wKey){if(m_piCallBack){m_piCallBack->OnKeyDown(wKey);}}
 void COpenGLViewport::OnKeyUp(WORD wKey){if(m_piCallBack){m_piCallBack->OnKeyUp(wKey);}}
@@ -475,9 +498,10 @@ void COpenGLViewport::SetCaption(std::string sCaption)
 #ifdef WIN32
 	if(m_hWnd){SetWindowText(m_hWnd,m_sCaption.c_str());}
 #else
+	if(m_XWindow!=None)
+	{
 	  XSetStandardProperties(m_pXDisplay,m_XWindow,m_sCaption.c_str(),m_sCaption.c_str(),None,NULL,0,NULL);
-
-//	SDL_WM_SetCaption(m_sCaption.c_str(), NULL);
+	}
 #endif
 }
 
@@ -627,9 +651,10 @@ void COpenGLViewport::EnterLoop()
 #else
 	XEvent event;
 	int nLoopId=++m_nLoopDepth;
-	while(m_nLoopDepth>=nLoopId && !m_bXExit)
+	
+	while(m_XWindow!=None && m_nLoopDepth>=nLoopId && !m_bXExit)
 	{		
-		while(XCheckWindowEvent(m_pXDisplay,m_XWindow,X_WINDOWS_EVENT_MASK,&event))
+		while(m_XWindow!=None && XCheckWindowEvent(m_pXDisplay,m_XWindow,X_WINDOWS_EVENT_MASK,&event))
 		{
 		  if (event.type==KeyPress) 
 		  {
@@ -649,19 +674,13 @@ void COpenGLViewport::EnterLoop()
 		  }
 		  else if (event.type==ButtonPress) 
 		  {
-			  POINT pos;
-			  pos.x=event.xbutton.x;
-			  pos.y=event.xbutton.y;
-			  if(event.xbutton.button==Button1){OnLButtonDown(0,pos);}
-			  else if(event.xbutton.button==Button2){OnRButtonDown(0,pos);}
+			  if(event.xbutton.button==Button1){OnLButtonDown(event.xbutton.x,event.xbutton.y);}
+			  else if(event.xbutton.button==Button2){OnRButtonDown(event.xbutton.x,event.xbutton.y);}
 		  }
 		  else if (event.type==ButtonRelease) 
 		  {
-			  POINT pos;
-			  pos.x=event.xbutton.x;
-			  pos.y=event.xbutton.y;
-			  if(event.xbutton.button==Button1){OnLButtonUp(0,pos);}
-			  else if(event.xbutton.button==Button2){OnRButtonUp(0,pos);}
+			  if(event.xbutton.button==Button1){OnLButtonUp(event.xbutton.x,event.xbutton.y);}
+			  else if(event.xbutton.button==Button2){OnRButtonUp(event.xbutton.x,event.xbutton.y);}
 			  
 			  if(m_nDetectDragButton==event.xbutton.button)
 			  {
@@ -671,15 +690,12 @@ void COpenGLViewport::EnterLoop()
 		  }
 		  else if (event.type==MotionNotify) 
 		  {
-			  POINT pos;
-			  pos.x=event.xmotion.x;
-			  pos.y=event.xmotion.y;
-			  OnMouseMove(0,pos);
+			  OnMouseMove(event.xmotion.x,event.xmotion.y);
 			  
 			  if(m_nDetectDragButton!=0)
 			  {
-				int nXDist=pos.x-m_nDetectDragX;
-				int nYDist=pos.y-m_nDetectDragY;
+				int nXDist=event.xmotion.x-m_nDetectDragX;
+				int nYDist=event.xmotion.y-m_nDetectDragY;
 				
 				if(nXDist>DETECT_DRAG_SIZE || nXDist<(0-DETECT_DRAG_SIZE) ||
 					nYDist>DETECT_DRAG_SIZE || nYDist<(0-DETECT_DRAG_SIZE))
@@ -710,7 +726,7 @@ void COpenGLViewport::EnterLoop()
 		  }
 		}
 		glXMakeCurrent(m_pXDisplay,m_XWindow,m_pGLXContext);
-		Render();		
+		Render();
 	}
 
 #endif
@@ -733,10 +749,18 @@ void  COpenGLViewport::GetCursorPos(int *pX,int *pY)
 	*pX=P.x;
 	*pY=P.y;
 #else
-	Window root,child;
-    int rootx, rooty;
-    unsigned int keys;
-	XQueryPointer(m_pXDisplay,m_XWindow,&root, &child,&rootx,&rooty,pX,pY,&keys);
+	if(m_XWindow!=None)
+	{
+		Window root,child;
+		int rootx, rooty;
+		unsigned int keys;
+		XQueryPointer(m_pXDisplay,m_XWindow,&root, &child,&rootx,&rooty,pX,pY,&keys);
+	}
+	else
+	{
+		*pX=0;
+		*pY=0;
+	}
 #endif
 }
 void  COpenGLViewport::SetCursorPos(int x,int y)
@@ -748,7 +772,7 @@ void  COpenGLViewport::SetCursorPos(int x,int y)
 	ClientToScreen(m_hWnd,&P);
 	SetCursorPos(P.x,P.y);
 #else
-	XWarpPointer(m_pXDisplay,None,m_XWindow,0,0,0,0,x,y);
+	if(m_XWindow!=None){XWarpPointer(m_pXDisplay,None,m_XWindow,0,0,0,0,x,y);}
 #endif
 }
 
@@ -766,15 +790,18 @@ bool  COpenGLViewport::IsKeyDown(unsigned int nKey)
 	USHORT nKeyState=GetKeyState(nKey);
 	return (nKeyState&0x8000)!=0;
 #else
-	char keys[32];
-	XQueryKeymap(m_pXDisplay,keys);
-	KeyCode nKeyCode=XKeysymToKeycode(m_pXDisplay,TranslateKeyToXWindows(nKey));
-	if(nKeyCode<sizeof(keys)*8)
-	{  
-	  if(keys[nKeyCode>>3]&(1<<(nKeyCode&0x7)))
-	  {
-		return true;
-	  }
+	if(m_pXDisplay!=None)
+	{
+		char keys[32];
+		XQueryKeymap(m_pXDisplay,keys);
+		KeyCode nKeyCode=XKeysymToKeycode(m_pXDisplay,TranslateKeyToXWindows(nKey));
+		if(nKeyCode<sizeof(keys)*8)
+		{  
+		  if(keys[nKeyCode>>3]&(1<<(nKeyCode&0x7)))
+		  {
+			return true;
+		  }
+		}
 	}
 	return false;
 #endif
@@ -790,7 +817,7 @@ void  COpenGLViewport::ShowMouseCursor(bool bShow)
 {
     // en windows el cursor se pone WM_SETCURSOR
 #ifndef WIN32
-	if(m_bShowSystemMouseCursor!=bShow)
+	if(m_XWindow!=None && m_bShowSystemMouseCursor!=bShow)
 	{
 	  if(bShow)
 	  {

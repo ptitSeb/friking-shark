@@ -62,6 +62,7 @@ bool COpenGLFont::Init(std::string sClass,std::string sName,ISystem *piSystem)
 	{
 		m_pXDisplay=XOpenDisplay(getenv("DISPLAY"));
 		bOk=(m_pXDisplay!=NULL);
+		if(!bOk){RTTRACE("COpenGLFont::Init -> Failed to open XWindows Display");}
 	}
 #endif
 	return bOk;
@@ -180,6 +181,7 @@ bool COpenGLFont::LoadTextureFont()
 			gluBuild2DMipmaps(GL_TEXTURE_2D,4,m_dwTextureWidth,m_dwTextureHeight,GL_RGBA,GL_UNSIGNED_BYTE,m_pTextureBuffer);
 		}
 	}
+	if(!bResult){RTTRACE("COpenGLFont::Unserialize -> Failed to create texture font from file '%s'",m_sTextureFontFileName.c_str());}
 	return bResult;
 }
 bool COpenGLFont::Unserialize(ISystemPersistencyNode *piNode)
@@ -386,6 +388,7 @@ SOpenGLSystemFont *COpenGLFont::GetSystemFontForHeight(unsigned int nHeight)
 		}
 		else
 		{
+			RTTRACE("COpenGLFont::GetSystemFontForHeight -> Failed to create system font '%s' height %d",m_sSystemFontName.c_str(),nHeight);
 			delete pFont;
 			pFont=NULL;
 		}
