@@ -6,8 +6,10 @@
 #include <string>
 #include <stdarg.h>
 #include "PlatformDependent.h"
+
 #ifndef WIN32
-#include "libgen.h"
+#include <sys/time.h>
+#include <libgen.h>
 #endif
 
 void ReplaceExtension(char *pFileName,const char *pExt)
@@ -58,6 +60,15 @@ void RTTRACE(const char *format, ...)
 	OutputDebugString(pTempBuffer);
 }
 
+unsigned int GetTimeStamp()
+{
+	LARGE_INTEGER ldNow={0};
+	LARGE_INTEGER ldPerformanceFrequency={0};
+	QueryPerformanceFrequency(&ldPerformanceFrequency);
+	QueryPerformanceCounter(&ldNow);
+	return (unsigned int)(ldNow.QuadPart*1000/ldPerformanceFrequency.QuadPart);
+}
+
 #else
 
 void GetFileFolder(const char *pFilePath,char *pFolder)
@@ -88,4 +99,11 @@ void RTTRACE(const char *format, ...)
 	printf("%s",pTempBuffer);
 }
 
+unsigned int GetCurrentTime()
+{
+	timeval tNow;
+	gettimeofday(&tNow, NULL);
+	return ((double)tNow.tv_sec)*1000.0+((double)tNow.tv_usec)/1000.0;
+}
 #endif
+

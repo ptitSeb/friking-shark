@@ -5,11 +5,6 @@
 #define MRPF_OPTIONAL				0x0004
 #define MRPF_NORMAL					MRPF_READ|MRPF_WRITE
 
-#ifdef WIN32 
-#define __UNUSED_ATTRIB__
-#else
-#define __UNUSED_ATTRIB__ __attribute__((unused))
-#endif
 class IMRPersistencyItem
 {
 public:
