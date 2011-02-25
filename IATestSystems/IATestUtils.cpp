@@ -2,10 +2,6 @@
 #include <GL/gl.h>
 #include "IATestUtils.h"
 
-#ifdef WIN32
-#pragma warning ( disable : 4244 )
-#endif
-
 void RenderBBox(CVector vMins,CVector vMaxs,CVector vColor)
 {
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
@@ -18,50 +14,50 @@ void RenderBBox(CVector vMins,CVector vMaxs,CVector vColor)
 
 	glPointSize(4);
 	glBegin(GL_POINTS);
-	glVertex3f(vMins.c[0],vMins.c[1],vMins.c[2]);
+	glVertex3d(vMins.c[0],vMins.c[1],vMins.c[2]);
 	glEnd();
 	glPointSize(8);
 	glBegin(GL_POINTS);
-	glVertex3f(vMaxs.c[0],vMaxs.c[1],vMaxs.c[2]);
+	glVertex3d(vMaxs.c[0],vMaxs.c[1],vMaxs.c[2]);
 	glEnd();
 	glBegin(GL_QUADS);
 	// Front
 
 	// Front
-	glVertex3f(vMaxs.c[0],vMins.c[1],vMins.c[2]);
-	glVertex3f(vMaxs.c[0],vMins.c[1],vMaxs.c[2]);
-	glVertex3f(vMins.c[0],vMins.c[1],vMaxs.c[2]);
-	glVertex3f(vMins.c[0],vMins.c[1],vMins.c[2]);
+	glVertex3d(vMaxs.c[0],vMins.c[1],vMins.c[2]);
+	glVertex3d(vMaxs.c[0],vMins.c[1],vMaxs.c[2]);
+	glVertex3d(vMins.c[0],vMins.c[1],vMaxs.c[2]);
+	glVertex3d(vMins.c[0],vMins.c[1],vMins.c[2]);
 
 	// Top
-	glVertex3f(vMaxs.c[0],vMins.c[1],vMaxs.c[2]);
-	glVertex3f(vMaxs.c[0],vMaxs.c[1],vMaxs.c[2]);
-	glVertex3f(vMins.c[0],vMaxs.c[1],vMaxs.c[2]);
-	glVertex3f(vMins.c[0],vMins.c[1],vMaxs.c[2]);
+	glVertex3d(vMaxs.c[0],vMins.c[1],vMaxs.c[2]);
+	glVertex3d(vMaxs.c[0],vMaxs.c[1],vMaxs.c[2]);
+	glVertex3d(vMins.c[0],vMaxs.c[1],vMaxs.c[2]);
+	glVertex3d(vMins.c[0],vMins.c[1],vMaxs.c[2]);
 
 	// Bottom
-	glVertex3f(vMins.c[0],vMins.c[1],vMins.c[2]);
-	glVertex3f(vMins.c[0],vMaxs.c[1],vMins.c[2]);
-	glVertex3f(vMaxs.c[0],vMaxs.c[1],vMins.c[2]);
-	glVertex3f(vMaxs.c[0],vMins.c[1],vMins.c[2]);
+	glVertex3d(vMins.c[0],vMins.c[1],vMins.c[2]);
+	glVertex3d(vMins.c[0],vMaxs.c[1],vMins.c[2]);
+	glVertex3d(vMaxs.c[0],vMaxs.c[1],vMins.c[2]);
+	glVertex3d(vMaxs.c[0],vMins.c[1],vMins.c[2]);
 
 	// Left
-	glVertex3f(vMins.c[0],vMins.c[1],vMins.c[2]);
-	glVertex3f(vMins.c[0],vMins.c[1],vMaxs.c[2]);
-	glVertex3f(vMins.c[0],vMaxs.c[1],vMaxs.c[2]);
-	glVertex3f(vMins.c[0],vMaxs.c[1],vMins.c[2]);
+	glVertex3d(vMins.c[0],vMins.c[1],vMins.c[2]);
+	glVertex3d(vMins.c[0],vMins.c[1],vMaxs.c[2]);
+	glVertex3d(vMins.c[0],vMaxs.c[1],vMaxs.c[2]);
+	glVertex3d(vMins.c[0],vMaxs.c[1],vMins.c[2]);
 
 	// Right
-	glVertex3f(vMaxs.c[0],vMaxs.c[1],vMins.c[2]);
-	glVertex3f(vMaxs.c[0],vMaxs.c[1],vMaxs.c[2]);
-	glVertex3f(vMaxs.c[0],vMins.c[1],vMaxs.c[2]);
-	glVertex3f(vMaxs.c[0],vMins.c[1],vMins.c[2]);
+	glVertex3d(vMaxs.c[0],vMaxs.c[1],vMins.c[2]);
+	glVertex3d(vMaxs.c[0],vMaxs.c[1],vMaxs.c[2]);
+	glVertex3d(vMaxs.c[0],vMins.c[1],vMaxs.c[2]);
+	glVertex3d(vMaxs.c[0],vMins.c[1],vMins.c[2]);
 
 	// Back
-	glVertex3f(vMins.c[0],vMaxs.c[1],vMins.c[2]);
-	glVertex3f(vMins.c[0],vMaxs.c[1],vMaxs.c[2]);
-	glVertex3f(vMaxs.c[0],vMaxs.c[1],vMaxs.c[2]);
-	glVertex3f(vMaxs.c[0],vMaxs.c[1],vMins.c[2]);
+	glVertex3d(vMins.c[0],vMaxs.c[1],vMins.c[2]);
+	glVertex3d(vMins.c[0],vMaxs.c[1],vMaxs.c[2]);
+	glVertex3d(vMaxs.c[0],vMaxs.c[1],vMaxs.c[2]);
+	glVertex3d(vMaxs.c[0],vMaxs.c[1],vMins.c[2]);
 
 
 	glEnd();
@@ -84,9 +80,9 @@ void RenderTriangle(CVector vAxis1,CVector vAxis2,double dLength1,double dLenght
 	vPoints[0]=CVector(0,0,0)-vAxis1*(dLength1*0.5)+vAxis2*(dLenght2*0.5);
 
 	// Top
-	glVertex3f(vPoints[0].c[0],vPoints[0].c[1],vPoints[0].c[2]);
-	glVertex3f(vPoints[1].c[0],vPoints[1].c[1],vPoints[1].c[2]);
-	glVertex3f(vPoints[2].c[0],vPoints[2].c[1],vPoints[2].c[2]);
+	glVertex3d(vPoints[0].c[0],vPoints[0].c[1],vPoints[0].c[2]);
+	glVertex3d(vPoints[1].c[0],vPoints[1].c[1],vPoints[1].c[2]);
+	glVertex3d(vPoints[2].c[0],vPoints[2].c[1],vPoints[2].c[2]);
 
 
 	glEnd();
@@ -104,40 +100,40 @@ void RenderBox(CVector vMins,CVector vMaxs,CVector vColor)
 	// Front
 
 	// Front
-	glVertex3f(vMaxs.c[0],vMins.c[1],vMins.c[2]);
-	glVertex3f(vMaxs.c[0],vMins.c[1],vMaxs.c[2]);
-	glVertex3f(vMins.c[0],vMins.c[1],vMaxs.c[2]);
-	glVertex3f(vMins.c[0],vMins.c[1],vMins.c[2]);
+	glVertex3d(vMaxs.c[0],vMins.c[1],vMins.c[2]);
+	glVertex3d(vMaxs.c[0],vMins.c[1],vMaxs.c[2]);
+	glVertex3d(vMins.c[0],vMins.c[1],vMaxs.c[2]);
+	glVertex3d(vMins.c[0],vMins.c[1],vMins.c[2]);
 
 	// Top
-	glVertex3f(vMaxs.c[0],vMins.c[1],vMaxs.c[2]);
-	glVertex3f(vMaxs.c[0],vMaxs.c[1],vMaxs.c[2]);
-	glVertex3f(vMins.c[0],vMaxs.c[1],vMaxs.c[2]);
-	glVertex3f(vMins.c[0],vMins.c[1],vMaxs.c[2]);
+	glVertex3d(vMaxs.c[0],vMins.c[1],vMaxs.c[2]);
+	glVertex3d(vMaxs.c[0],vMaxs.c[1],vMaxs.c[2]);
+	glVertex3d(vMins.c[0],vMaxs.c[1],vMaxs.c[2]);
+	glVertex3d(vMins.c[0],vMins.c[1],vMaxs.c[2]);
 
 	// Bottom
-	glVertex3f(vMins.c[0],vMins.c[1],vMins.c[2]);
-	glVertex3f(vMins.c[0],vMaxs.c[1],vMins.c[2]);
-	glVertex3f(vMaxs.c[0],vMaxs.c[1],vMins.c[2]);
-	glVertex3f(vMaxs.c[0],vMins.c[1],vMins.c[2]);
+	glVertex3d(vMins.c[0],vMins.c[1],vMins.c[2]);
+	glVertex3d(vMins.c[0],vMaxs.c[1],vMins.c[2]);
+	glVertex3d(vMaxs.c[0],vMaxs.c[1],vMins.c[2]);
+	glVertex3d(vMaxs.c[0],vMins.c[1],vMins.c[2]);
 
 	// Left
-	glVertex3f(vMins.c[0],vMins.c[1],vMins.c[2]);
-	glVertex3f(vMins.c[0],vMins.c[1],vMaxs.c[2]);
-	glVertex3f(vMins.c[0],vMaxs.c[1],vMaxs.c[2]);
-	glVertex3f(vMins.c[0],vMaxs.c[1],vMins.c[2]);
+	glVertex3d(vMins.c[0],vMins.c[1],vMins.c[2]);
+	glVertex3d(vMins.c[0],vMins.c[1],vMaxs.c[2]);
+	glVertex3d(vMins.c[0],vMaxs.c[1],vMaxs.c[2]);
+	glVertex3d(vMins.c[0],vMaxs.c[1],vMins.c[2]);
 
 	// Right
-	glVertex3f(vMaxs.c[0],vMaxs.c[1],vMins.c[2]);
-	glVertex3f(vMaxs.c[0],vMaxs.c[1],vMaxs.c[2]);
-	glVertex3f(vMaxs.c[0],vMins.c[1],vMaxs.c[2]);
-	glVertex3f(vMaxs.c[0],vMins.c[1],vMins.c[2]);
+	glVertex3d(vMaxs.c[0],vMaxs.c[1],vMins.c[2]);
+	glVertex3d(vMaxs.c[0],vMaxs.c[1],vMaxs.c[2]);
+	glVertex3d(vMaxs.c[0],vMins.c[1],vMaxs.c[2]);
+	glVertex3d(vMaxs.c[0],vMins.c[1],vMins.c[2]);
 
 	// Back
-	glVertex3f(vMins.c[0],vMaxs.c[1],vMins.c[2]);
-	glVertex3f(vMins.c[0],vMaxs.c[1],vMaxs.c[2]);
-	glVertex3f(vMaxs.c[0],vMaxs.c[1],vMaxs.c[2]);
-	glVertex3f(vMaxs.c[0],vMaxs.c[1],vMins.c[2]);
+	glVertex3d(vMins.c[0],vMaxs.c[1],vMins.c[2]);
+	glVertex3d(vMins.c[0],vMaxs.c[1],vMaxs.c[2]);
+	glVertex3d(vMaxs.c[0],vMaxs.c[1],vMaxs.c[2]);
+	glVertex3d(vMaxs.c[0],vMaxs.c[1],vMins.c[2]);
 
 
 	glEnd();
@@ -173,7 +169,7 @@ void RenderAxis(CVector vAxis,double dLength,CVector vColor)
 	glGetDoublev(GL_POINT_SIZE,&dPointSize);
 	glPointSize(6.0);
 
-	glColor3f(vColor.c[0],vColor.c[1],vColor.c[2]);
+	glColor3d(vColor.c[0],vColor.c[1],vColor.c[2]);
 
 	glLineWidth(1);
 
@@ -189,7 +185,7 @@ void RenderAxis(CVector vAxis,double dLength,CVector vColor)
 	glVertex3d(vEndPoint.c[0],vEndPoint.c[1],vEndPoint.c[2]);
 	glEnd();
 
-	glPointSize(dPointSize);
+	glPointSize((GLfloat)dPointSize);
 	glEnable(GL_DEPTH_TEST);
 	glPopAttrib();
 }

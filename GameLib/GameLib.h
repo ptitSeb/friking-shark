@@ -1,18 +1,5 @@
-// GAME.h
-//
-//////////////////////////////////////////////////////////////////////
-
-
-#if !defined(AFX_GAMELIB_H__B628EDC0_7542_4E57_9003_82D1A3DFD6FC__INCLUDED_)
-#define AFX_GAMELIB_H__B628EDC0_7542_4E57_9003_82D1A3DFD6FC__INCLUDED_
-
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-
-#ifdef WIN32
-  #pragma warning ( disable : 4786 )
-#endif
+#ifndef __GAME_LIB__
+#define __GAME_LIB__
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -31,10 +18,7 @@
 
 #include "GameRunTimeLib.h"
 #include "VectorLib.h"
+#include "ResourceStore.h"
+#include "GameSpecs.h"
 
-using namespace std;
-#ifndef GAME_LIB_PROYECT
-    #include "ResourceStore.h"
-    #include "GameSpecs.h"
-#endif
-#endif // !defined(AFX_VECTORLIB_H__B628EDC0_7542_4E57_9003_82D1A3DFD6FC__INCLUDED_)
+#endif 

@@ -8,6 +8,8 @@
 	#define WIN32_LEAN_AND_MEAN
 
 	#include <windows.h>
+	// warning C4250: 'xxx' : inherits 'CSystemObjectBase::AddReference' via dominance
+	#pragma warning ( disable : 4250 )
 
 	#define PATH_SEPARATOR "\\"
 	#define PATH_SEPARATOR_CHAR '\\'

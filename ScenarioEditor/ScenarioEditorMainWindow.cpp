@@ -7,10 +7,6 @@
 
 #define SELECT_FORMATION_BASE_INDEX 0x800
 
-#ifdef WIN32
-#pragma warning ( disable : 4244 )
-#endif
-
 DECLARE_CUSTOM_WRAPPER1(CGameGUIManagerWrapper,IGameGUIManager,m_piInterface)
 
 extern CSystemModuleHelper *g_pSystemModuleHelper;
