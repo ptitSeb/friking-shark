@@ -8,9 +8,9 @@
 #define PHYSIC_FORCE_CONSTANT_ACCELERATION	2 // es un fuerza que es proporcional a la masa del objeto (la gravedad), genera una aceleracion constante.
 
 #define PHYSIC_MOVE_TYPE_NONE				0 // Para entidades que no se mueven
-#define PHYSIC_MOVE_TYPE_NORMAL			1
+#define PHYSIC_MOVE_TYPE_NORMAL				1
 #define PHYSIC_MOVE_TYPE_FLY				2
-#define PHYSIC_MOVE_TYPE_CUSTOM			3
+#define PHYSIC_MOVE_TYPE_CUSTOM				3
 
 #define PHYSIC_BOUNDS_TYPE_NONE				0
 #define PHYSIC_BOUNDS_TYPE_BBOX				1
@@ -42,6 +42,10 @@
 #define DAMAGE_TYPE_NORMAL  1
 
 #define	MAX_DETAIL_LEVELS		            10
+
+#define YAW		0
+#define PITCH	1
+#define ROLL	2
 
 class IGenericModel;
 class IGenericCamera;

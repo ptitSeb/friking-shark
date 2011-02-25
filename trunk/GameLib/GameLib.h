@@ -12,10 +12,6 @@
 #include <deque>
 #include <string>
 
-#define YAW		0
-#define PITCH	1
-#define ROLL	2
-
 #include "GameRunTimeLib.h"
 #include "VectorLib.h"
 #include "ResourceStore.h"

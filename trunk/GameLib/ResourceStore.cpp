@@ -283,6 +283,27 @@ bool CResourceStore::LoadASE(CModel *pModel,string sFileName)
 					//_MRT("Loaded Object %s, %d polygons",pObject->sName,p3DSFrame->nFaces);
 					if(pObject->bVisible && p3DSFrame->nVertexes && p3DSFrame->nFaces)
 					{
+						S3DSColorFace **ppColorFaces=new S3DSColorFace *[p3DSFrame->nFaces];
+						S3DSTextureFace **ppTextureFaces=new S3DSTextureFace *[p3DSFrame->nFaces];
+						memset(ppColorFaces,0,sizeof(S3DSColorFace *)*p3DSFrame->nFaces);
+						memset(ppTextureFaces,0,sizeof(S3DSTextureFace *)*p3DSFrame->nFaces);
+						for(int z=0;z<p3DSFrame->nColorFaces;z++)
+						{
+							if(p3DSFrame->pColorFaces[z].nFaceIndex>=0 && 
+								p3DSFrame->pColorFaces[z].nFaceIndex<p3DSFrame->nFaces)
+							{
+								ppColorFaces[p3DSFrame->pColorFaces[z].nFaceIndex]=&p3DSFrame->pColorFaces[z];
+							}
+						}
+						for(int z=0;z<p3DSFrame->nTextFaces;z++)
+						{
+							if(p3DSFrame->pTextFaces[z].nFaceIndex>=0 && 
+								p3DSFrame->pTextFaces[z].nFaceIndex<p3DSFrame->nFaces)
+							{
+								ppTextureFaces[p3DSFrame->pTextFaces[z].nFaceIndex]=&p3DSFrame->pTextFaces[z];
+							}
+						}
+
 						for(int y=0;y<p3DSFrame->nFaces;y++)
 						{
 							pFrame->m_pPolygons[nPol].m_nVertexes=3;
@@ -292,29 +313,19 @@ bool CResourceStore::LoadASE(CModel *pModel,string sFileName)
 							pFrame->m_pPolygons[nPol].m_pVertexes[0]=p3DSFrame->pVertexes[p3DSFrame->pFaces[y*3]];
 							pFrame->m_pPolygons[nPol].m_pVertexes[1]=p3DSFrame->pVertexes[p3DSFrame->pFaces[y*3+1]];
 							pFrame->m_pPolygons[nPol].m_pVertexes[2]=p3DSFrame->pVertexes[p3DSFrame->pFaces[y*3+2]];
-							if(p3DSFrame->pColorVertexes)
+
+							if(p3DSFrame->pColorVertexes && ppColorFaces[y])
 							{
 								pFrame->m_pPolygons[nPol].m_pVertexColors=new CVector[3];
-								for(int z=0;z<p3DSFrame->nColorFaces;z++)
-								{
-									if(p3DSFrame->pColorFaces[z].nFaceIndex==y)
-									{
-										pFrame->m_pPolygons[nPol].m_pVertexColors[0]=p3DSFrame->pColorVertexes[p3DSFrame->pColorFaces[z].pColorVertexes[0]];
-										pFrame->m_pPolygons[nPol].m_pVertexColors[1]=p3DSFrame->pColorVertexes[p3DSFrame->pColorFaces[z].pColorVertexes[1]];
-										pFrame->m_pPolygons[nPol].m_pVertexColors[2]=p3DSFrame->pColorVertexes[p3DSFrame->pColorFaces[z].pColorVertexes[2]];
-										break;
-									}
-								}
+								pFrame->m_pPolygons[nPol].m_pVertexColors[0]=p3DSFrame->pColorVertexes[ppColorFaces[y]->pColorVertexes[0]];
+								pFrame->m_pPolygons[nPol].m_pVertexColors[1]=p3DSFrame->pColorVertexes[ppColorFaces[y]->pColorVertexes[1]];
+								pFrame->m_pPolygons[nPol].m_pVertexColors[2]=p3DSFrame->pColorVertexes[ppColorFaces[y]->pColorVertexes[2]];
 							}
-							for(int z=0;z<p3DSFrame->nTextFaces;z++)
+							if(p3DSFrame->pTextVertexes && ppTextureFaces[y])
 							{
-								if(p3DSFrame->pTextFaces[z].nFaceIndex==y)
-								{
-									pFrame->m_pPolygons[nPol].m_pTextureCoords[0]=p3DSFrame->pTextVertexes[p3DSFrame->pTextFaces[z].pTextVertexes[0]];
-									pFrame->m_pPolygons[nPol].m_pTextureCoords[1]=p3DSFrame->pTextVertexes[p3DSFrame->pTextFaces[z].pTextVertexes[1]];
-									pFrame->m_pPolygons[nPol].m_pTextureCoords[2]=p3DSFrame->pTextVertexes[p3DSFrame->pTextFaces[z].pTextVertexes[2]];
-									break;
-								}
+								pFrame->m_pPolygons[nPol].m_pTextureCoords[0]=p3DSFrame->pTextVertexes[ppTextureFaces[y]->pTextVertexes[0]];
+								pFrame->m_pPolygons[nPol].m_pTextureCoords[1]=p3DSFrame->pTextVertexes[ppTextureFaces[y]->pTextVertexes[1]];
+								pFrame->m_pPolygons[nPol].m_pTextureCoords[2]=p3DSFrame->pTextVertexes[ppTextureFaces[y]->pTextVertexes[2]];
 							}
 
 							for(int a=0;a<3;a++)
@@ -340,7 +351,12 @@ bool CResourceStore::LoadASE(CModel *pModel,string sFileName)
 							}
 							nPol++;
 						}
+						delete [] ppColorFaces;
+						delete [] ppTextureFaces;
+						ppColorFaces=NULL;
+						ppTextureFaces=NULL;
 					}
+
 					if(pObject->dwMaterialId!=(unsigned int)-1)
 					{
 						for(unsigned int y=0;y<p3DSFrame->sObjectMaterials.size();y++)
