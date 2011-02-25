@@ -11,6 +11,186 @@
 #endif
 
 
+#ifdef WIN32
+
+int TranslateKeyFromWindows(int nWindowsKey)
+{
+	if(nWindowsKey>=32 && nWindowsKey<128){return nWindowsKey;}
+	switch(nWindowsKey)
+	{
+	case VK_UP:return GK_UP;
+	case VK_DOWN:return GK_DOWN;
+	case VK_LEFT:return GK_LEFT;
+	case VK_RIGHT:return GK_RIGHT;
+	case VK_NUMPAD0:return GK_NUMPAD0;
+	case VK_NUMPAD1:return GK_NUMPAD1;
+	case VK_NUMPAD2:return GK_NUMPAD2;
+	case VK_NUMPAD3:return GK_NUMPAD3;
+	case VK_NUMPAD4:return GK_NUMPAD4;
+	case VK_NUMPAD5:return GK_NUMPAD5;
+	case VK_NUMPAD6:return GK_NUMPAD6;
+	case VK_NUMPAD7:return GK_NUMPAD7;
+	case VK_NUMPAD8:return GK_NUMPAD8;
+	case VK_NUMPAD9:return GK_NUMPAD9;
+	case VK_LCONTROL:return GK_LCONTROL;
+	case VK_HOME:return GK_HOME;
+	case VK_END:return GK_END;
+	case VK_BACK:return GK_BACK;
+	case VK_DELETE:return GK_DELETE;
+	case VK_ESCAPE:return GK_ESCAPE;
+	case VK_RETURN:return GK_RETURN;
+	case GK_LMENU:return GK_LMENU;
+	case VK_LSHIFT:return GK_LSHIFT;
+	case VK_INSERT:return GK_INSERT;
+	case VK_F1:return GK_F1;
+	case VK_F2:return GK_F2;
+	case VK_F3:return GK_F3;
+	case VK_F4:return GK_F4;
+	case VK_F5:return GK_F5;
+	case VK_F6:return GK_F6;
+	case VK_F7:return GK_F7;
+	case VK_F8:return GK_F8;
+	case VK_F9:return GK_F9;
+	case VK_F10:return GK_F10;
+	case VK_F11:return GK_F11;
+	case VK_F12:return GK_F12;
+	case VK_PAUSE:return GK_PAUSE;
+	};
+	return 0;
+}
+
+int TranslateKeyToWindows(int nGameKey)
+{
+	if(nGameKey>='a' && nGameKey<='z'){return nGameKey-('a'-'A');}
+	if(nGameKey>=32 && nGameKey<128){return nGameKey;}
+	switch(nGameKey)
+	{
+	case GK_UP:return VK_UP;
+	case GK_DOWN:return VK_DOWN;
+	case GK_LEFT:return VK_LEFT;
+	case GK_RIGHT:return VK_RIGHT;
+	case GK_NUMPAD0:return VK_NUMPAD0;
+	case GK_NUMPAD1:return VK_NUMPAD1;
+	case GK_NUMPAD2:return VK_NUMPAD2;
+	case GK_NUMPAD3:return VK_NUMPAD3;
+	case GK_NUMPAD4:return VK_NUMPAD4;
+	case GK_NUMPAD5:return VK_NUMPAD5;
+	case GK_NUMPAD6:return VK_NUMPAD6;
+	case GK_NUMPAD7:return VK_NUMPAD7;
+	case GK_NUMPAD8:return VK_NUMPAD8;
+	case GK_NUMPAD9:return VK_NUMPAD9;
+	case GK_LCONTROL:return VK_LCONTROL;
+	case GK_MENU:return VK_MENU;
+	case GK_HOME:return VK_HOME;
+	case GK_END:return VK_END;
+	case GK_BACK:return VK_BACK;
+	case GK_DELETE:return VK_DELETE;
+	case GK_ESCAPE:return VK_ESCAPE;
+	case GK_RETURN:return VK_RETURN;
+	case GK_LMENU:return VK_LMENU;
+	case GK_LSHIFT:return VK_LSHIFT;
+	case GK_INSERT:return VK_INSERT;
+	case GK_F1:return VK_F1;
+	case GK_F2:return VK_F2;
+	case GK_F3:return VK_F3;
+	case GK_F4:return VK_F4;
+	case GK_F5:return VK_F5;
+	case GK_PAUSE:return VK_PAUSE;
+	case GK_F10:return VK_F10;
+	};
+	return 0;
+}
+#else
+
+int TranslateKeyFromX11(int nX11Key)
+{
+	if(nX11Key>=32 && nX11Key<128){return nX11Key;}
+	switch(nX11Key)
+	{
+	case XK_Up:return GK_UP;
+	case XK_Down:return GK_DOWN;
+	case XK_Left:return GK_LEFT;
+	case XK_Right:return GK_RIGHT;
+	case XK_KP_0:return GK_NUMPAD0;
+	case XK_KP_1:return GK_NUMPAD1;
+	case XK_KP_2:return GK_NUMPAD2;
+	case XK_KP_3:return GK_NUMPAD3;
+	case XK_KP_4:return GK_NUMPAD4;
+	case XK_KP_5:return GK_NUMPAD5;
+	case XK_KP_6:return GK_NUMPAD6;
+	case XK_KP_7:return GK_NUMPAD7;
+	case XK_KP_8:return GK_NUMPAD8;
+	case XK_KP_9:return GK_NUMPAD9;
+	case XK_Control_L:return GK_LCONTROL;
+	case XK_Home:return GK_HOME;
+	case XK_End:return GK_END;
+	case XK_BackSpace:return GK_BACK;
+	case XK_Delete:return GK_DELETE;
+	case XK_Escape:return GK_ESCAPE;
+	case XK_Return:return GK_RETURN;
+	case XK_Alt_L:return GK_LMENU;
+	case XK_Shift_L:return GK_LSHIFT;
+	case XK_Insert:return GK_INSERT;
+	case XK_F1:return GK_F1;
+	case XK_F2:return GK_F2;
+	case XK_F3:return GK_F3;
+	case XK_F4:return GK_F4;
+	case XK_F5:return GK_F5;
+	case XK_F6:return GK_F6;
+	case XK_F7:return GK_F7;
+	case XK_F8:return GK_F8;
+	case XK_F9:return GK_F9;
+	case XK_F10:return GK_F10;
+	case XK_F11:return GK_F11;
+	case XK_F12:return GK_F12;
+	case XK_Pause:return GK_PAUSE;
+	};
+	return 0;
+}
+
+int TranslateKeyToX11(int nGameKey)
+{
+	if(nGameKey>='A' && nGameKey<='Z'){return nGameKey+('a'-'A');}
+	if(nGameKey>=32 && nGameKey<128){return nGameKey;}
+	switch(nGameKey)
+	{
+	case GK_UP:return XK_Up;
+	case GK_DOWN:return XK_Down;
+	case GK_LEFT:return XK_Left;
+	case GK_RIGHT:return XK_Right;
+	case GK_NUMPAD0:return XK_KP_0;
+	case GK_NUMPAD1:return XK_KP_1;
+	case GK_NUMPAD2:return XK_KP_2;
+	case GK_NUMPAD3:return XK_KP_3;
+	case GK_NUMPAD4:return XK_KP_4;
+	case GK_NUMPAD5:return XK_KP_5;
+	case GK_NUMPAD6:return XK_KP_6;
+	case GK_NUMPAD7:return XK_KP_7;
+	case GK_NUMPAD8:return XK_KP_8;
+	case GK_NUMPAD9:return XK_KP_9;
+	case GK_LCONTROL:return XK_Control_L;
+	case GK_MENU:return XK_Menu;
+	case GK_HOME:return XK_Home;
+	case GK_END:return XK_End;
+	case GK_BACK:return XK_BackSpace;
+	case GK_DELETE:return XK_Delete;
+	case GK_ESCAPE:return XK_Escape;
+	case GK_RETURN:return XK_Return;
+	case GK_LMENU:return XK_Alt_L;
+	case GK_LSHIFT:return XK_Shift_L;
+	case GK_INSERT:return XK_Insert;
+	case GK_F1:return XK_F1;
+	case GK_F2:return XK_F2;
+	case GK_F3:return XK_F3;
+	case GK_F4:return XK_F4;
+	case GK_F5:return XK_F5;
+	case GK_PAUSE:return XK_Pause;
+	case GK_F10:return XK_F10;
+	};
+	return 0;
+}
+#endif
+
 COpenGLViewport::COpenGLViewport(void)
 {
 	m_piCallBack=NULL;
@@ -126,11 +306,11 @@ LRESULT COpenGLViewport::ProcessMessage(HWND hWnd,UINT  uMsg, WPARAM  wParam,LPA
 		break;
 	case WM_KEYDOWN:
 	case WM_SYSKEYDOWN:
-		OnKeyDown((unsigned short)wParam);
+		OnKeyDown(TranslateKeyFromWindows((unsigned short)wParam));
 		break;
 	case WM_KEYUP:
 	case WM_SYSKEYUP:
-		OnKeyUp((unsigned short)wParam);
+		OnKeyUp(TranslateKeyFromWindows((unsigned short)wParam));
 		break;
 	case WM_LBUTTONDOWN:
 		OnLButtonDown(pointX,pointY);
@@ -511,185 +691,6 @@ std::string COpenGLViewport::GetCaption()
 	return m_sCaption;
 }
 
-#ifdef WIN32
-
-int TranslateKeyFromWindows(int nWindowsKey)
-{
-	if(nWindowsKey>=32 && nWindowsKey<128){return nWindowsKey;}
-	switch(nWindowsKey)
-	{
-	  case VK_UP:return GK_UP;
-	  case VK_DOWN:return GK_DOWN;
-	  case VK_LEFT:return GK_LEFT;
-	  case VK_RIGHT:return GK_RIGHT;
-	  case VK_NUMPAD0:return GK_NUMPAD0;
-	  case VK_NUMPAD1:return GK_NUMPAD1;
-	  case VK_NUMPAD2:return GK_NUMPAD2;
-	  case VK_NUMPAD3:return GK_NUMPAD3;
-	  case VK_NUMPAD4:return GK_NUMPAD4;
-	  case VK_NUMPAD5:return GK_NUMPAD5;
-	  case VK_NUMPAD6:return GK_NUMPAD6;
-	  case VK_NUMPAD7:return GK_NUMPAD7;
-	  case VK_NUMPAD8:return GK_NUMPAD8;
-	  case VK_NUMPAD9:return GK_NUMPAD9;
-	  case VK_LCONTROL:return GK_LCONTROL;
-	  case VK_HOME:return GK_HOME;
-	  case VK_END:return GK_END;
-	  case VK_BACK:return GK_BACK;
-	  case VK_DELETE:return GK_DELETE;
-	  case VK_ESCAPE:return GK_ESCAPE;
-	  case VK_RETURN:return GK_RETURN;
-	  case GK_LMENU:return GK_LMENU;
-	  case VK_LSHIFT:return GK_LSHIFT;
-	  case VK_INSERT:return GK_INSERT;
-	  case VK_F1:return GK_F1;
-	  case VK_F2:return GK_F2;
-	  case VK_F3:return GK_F3;
-	  case VK_F4:return GK_F4;
-	  case VK_F5:return GK_F5;
-	  case VK_F6:return GK_F6;
-	  case VK_F7:return GK_F7;
-	  case VK_F8:return GK_F8;
-	  case VK_F9:return GK_F9;
-	  case VK_F10:return GK_F10;
-	  case VK_F11:return GK_F11;
-	  case VK_F12:return GK_F12;
-	  case VK_PAUSE:return GK_PAUSE;
-	};
-	return 0;
-}
-
-int TranslateKeyToWindows(int nGameKey)
-{
-	if(nGameKey>='A' && nGameKey<='Z'){return nGameKey+('a'-'A');}
-	if(nGameKey>=32 && nGameKey<128){return nGameKey;}
-	switch(nGameKey)
-	{
-	  case GK_UP:return VK_UP;
-	  case GK_DOWN:return VK_DOWN;
-	  case GK_LEFT:return VK_LEFT;
-	  case GK_RIGHT:return VK_RIGHT;
-	  case GK_NUMPAD0:return VK_NUMPAD0;
-	  case GK_NUMPAD1:return VK_NUMPAD1;
-	  case GK_NUMPAD2:return VK_NUMPAD2;
-	  case GK_NUMPAD3:return VK_NUMPAD3;
-	  case GK_NUMPAD4:return VK_NUMPAD4;
-	  case GK_NUMPAD5:return VK_NUMPAD5;
-	  case GK_NUMPAD6:return VK_NUMPAD6;
-	  case GK_NUMPAD7:return VK_NUMPAD7;
-	  case GK_NUMPAD8:return VK_NUMPAD8;
-	  case GK_NUMPAD9:return VK_NUMPAD9;
-	  case GK_LCONTROL:return VK_LCONTROL;
-	  case GK_MENU:return VK_MENU;
-	  case GK_HOME:return VK_HOME;
-	  case GK_END:return VK_END;
-	  case GK_BACK:return VK_BACK;
-	  case GK_DELETE:return VK_DELETE;
-	  case GK_ESCAPE:return VK_ESCAPE;
-	  case GK_RETURN:return VK_RETURN;
-	  case GK_LMENU:return VK_LMENU;
-	  case GK_LSHIFT:return VK_LSHIFT;
-	  case GK_INSERT:return VK_INSERT;
-	  case GK_F1:return VK_F1;
-	  case GK_F2:return VK_F2;
-	  case GK_F3:return VK_F3;
-	  case GK_F4:return VK_F4;
-	  case GK_F5:return VK_F5;
-	  case GK_PAUSE:return VK_PAUSE;
-	  case GK_F10:return VK_F10;
-	};
-	return 0;
-}
-#else
-
-int TranslateKeyFromX11(int nX11Key)
-{
-	if(nX11Key>=32 && nX11Key<128){return nX11Key;}
-	switch(nX11Key)
-	{
-	  case XK_Up:return GK_UP;
-	  case XK_Down:return GK_DOWN;
-	  case XK_Left:return GK_LEFT;
-	  case XK_Right:return GK_RIGHT;
-	  case XK_KP_0:return GK_NUMPAD0;
-	  case XK_KP_1:return GK_NUMPAD1;
-	  case XK_KP_2:return GK_NUMPAD2;
-	  case XK_KP_3:return GK_NUMPAD3;
-	  case XK_KP_4:return GK_NUMPAD4;
-	  case XK_KP_5:return GK_NUMPAD5;
-	  case XK_KP_6:return GK_NUMPAD6;
-	  case XK_KP_7:return GK_NUMPAD7;
-	  case XK_KP_8:return GK_NUMPAD8;
-	  case XK_KP_9:return GK_NUMPAD9;
-	  case XK_Control_L:return GK_LCONTROL;
-	  case XK_Home:return GK_HOME;
-	  case XK_End:return GK_END;
-	  case XK_BackSpace:return GK_BACK;
-	  case XK_Delete:return GK_DELETE;
-	  case XK_Escape:return GK_ESCAPE;
-	  case XK_Return:return GK_RETURN;
-	  case XK_Alt_L:return GK_LMENU;
-	  case XK_Shift_L:return GK_LSHIFT;
-	  case XK_Insert:return GK_INSERT;
-	  case XK_F1:return GK_F1;
-	  case XK_F2:return GK_F2;
-	  case XK_F3:return GK_F3;
-	  case XK_F4:return GK_F4;
-	  case XK_F5:return GK_F5;
-	  case XK_F6:return GK_F6;
-	  case XK_F7:return GK_F7;
-	  case XK_F8:return GK_F8;
-	  case XK_F9:return GK_F9;
-	  case XK_F10:return GK_F10;
-	  case XK_F11:return GK_F11;
-	  case XK_F12:return GK_F12;
-	  case XK_Pause:return GK_PAUSE;
-	};
-	return 0;
-}
-
-int TranslateKeyToX11(int nGameKey)
-{
-	if(nGameKey>='A' && nGameKey<='Z'){return nGameKey+('a'-'A');}
-	if(nGameKey>=32 && nGameKey<128){return nGameKey;}
-	switch(nGameKey)
-	{
-	  case GK_UP:return XK_Up;
-	  case GK_DOWN:return XK_Down;
-	  case GK_LEFT:return XK_Left;
-	  case GK_RIGHT:return XK_Right;
-	  case GK_NUMPAD0:return XK_KP_0;
-	  case GK_NUMPAD1:return XK_KP_1;
-	  case GK_NUMPAD2:return XK_KP_2;
-	  case GK_NUMPAD3:return XK_KP_3;
-	  case GK_NUMPAD4:return XK_KP_4;
-	  case GK_NUMPAD5:return XK_KP_5;
-	  case GK_NUMPAD6:return XK_KP_6;
-	  case GK_NUMPAD7:return XK_KP_7;
-	  case GK_NUMPAD8:return XK_KP_8;
-	  case GK_NUMPAD9:return XK_KP_9;
-	  case GK_LCONTROL:return XK_Control_L;
-	  case GK_MENU:return XK_Menu;
-	  case GK_HOME:return XK_Home;
-	  case GK_END:return XK_End;
-	  case GK_BACK:return XK_BackSpace;
-	  case GK_DELETE:return XK_Delete;
-	  case GK_ESCAPE:return XK_Escape;
-	  case GK_RETURN:return XK_Return;
-	  case GK_LMENU:return XK_Alt_L;
-	  case GK_LSHIFT:return XK_Shift_L;
-	  case GK_INSERT:return XK_Insert;
-	  case GK_F1:return XK_F1;
-	  case GK_F2:return XK_F2;
-	  case GK_F3:return XK_F3;
-	  case GK_F4:return XK_F4;
-	  case GK_F5:return XK_F5;
-	  case GK_PAUSE:return XK_Pause;
-	  case GK_F10:return XK_F10;
-	};
-	return 0;
-}
-#endif
 void COpenGLViewport::EnterLoop()
 {
 #ifdef WIN32
@@ -852,7 +853,7 @@ bool  COpenGLViewport::IsKeyDown(unsigned int nKey)
 	{
 		return false;
 	}
-	USHORT nKeyState=GetKeyState(nKey);
+	USHORT nKeyState=GetKeyState(TranslateKeyToWindows(nKey));
 	return (nKeyState&0x8000)!=0;
 #else
 	if(m_pXDisplay!=None)
