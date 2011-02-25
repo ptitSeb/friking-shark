@@ -242,7 +242,7 @@ bool CResourceStore::LoadASE(CModel *pModel,string sFileName)
 			pMaterial->vSpecularColor=p3DSMaterial->vSpecularColor;
 			pMaterial->fShininess=p3DSMaterial->fShininess;
 			pMaterial->dwMaterialType=p3DSMaterial->dwMaterialType;
-			pMaterial->fOpacity=1.0-p3DSMaterial->fTranparency;
+			pMaterial->fOpacity=(float)(1.0-p3DSMaterial->fTranparency);
 			pMaterial->bTwoSided=p3DSMaterial->bTwoSided;
 			pMaterial->sTexture=p3DSMaterial->sFile;
 

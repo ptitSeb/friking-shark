@@ -108,8 +108,8 @@ bool CMdlFileType::Open(const char *pFileName)
 	  m_pSkinVertexes	=new SMdlSkinVertex[m_Header.nVertexes];
 	  m_pTriangles	=new SMdlTriangle[m_Header.nTriangles];
 
-	  while(m_nOpenGLSkinWidth<m_Header.nSkinWidth){m_nOpenGLSkinWidth=pow(2.0,i);i++;}
-	  while(m_nOpenGLSkinHeigth<m_Header.nSkinHeight){m_nOpenGLSkinHeigth=pow(2.0,j);j++;}
+	  while(m_nOpenGLSkinWidth<m_Header.nSkinWidth){m_nOpenGLSkinWidth=(long)pow(2.0,i);i++;}
+	  while(m_nOpenGLSkinHeigth<m_Header.nSkinHeight){m_nOpenGLSkinHeigth=(long)pow(2.0,j);j++;}
 	}
 	  
 	// Se leen los skins...
@@ -392,6 +392,51 @@ CMapFileBrush *CMapFileType::ReadBrush(char *pBuffer,unsigned int *pOffset,unsig
 
 	if(pPlanes){delete [] pPlanes;}
 	return pBrush;
+}
+
+void CMapFileType::SkipCommentsStringsAndSpaces(char *pBuffer,unsigned int *pOffset,unsigned int bufLen)
+{
+	bool inLineComment=false;
+	bool inParagraphComment=false;
+	bool inString=false;
+	unsigned int x;
+
+	for(x=(*pOffset);x<bufLen;x++)
+	{
+		if(inLineComment)
+		{
+			if(x!=0 && pBuffer[x]=='\n')
+			{inLineComment=false;}
+		}
+		else
+			if(inParagraphComment)
+			{
+				if(x!=0 && pBuffer[x-1]=='*' && pBuffer[x]=='/')
+				{inParagraphComment=false;}
+			}
+			else
+				if(inString)
+				{
+					// this -> \" is a colon character inside a string.
+					if(x==0 || pBuffer[x-1]!='\\' || pBuffer[x]!='"')
+					{if(pBuffer[x]=='"'){inString=false;}}
+				}
+				else
+				{
+					if(x+1<bufLen)
+					{
+						if(pBuffer[x]=='/' && pBuffer[x+1]=='*'){inParagraphComment =true;}
+						if(pBuffer[x]=='/' && pBuffer[x+1]=='/'){inLineComment =true;}
+					}	
+					if(pBuffer[x]=='"'){inString=true;}
+
+					if(!inParagraphComment && !inLineComment && !inString)
+					{
+						if(pBuffer[x]!=' ' && pBuffer[x]!='\n' && pBuffer[x]!='\r'  && pBuffer[x]!='\t'){break;}
+					}
+				}
+	}
+	(*pOffset)=x;
 }
 
 bool CMapFileType::Open(const char *pMap)

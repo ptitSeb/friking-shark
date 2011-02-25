@@ -135,6 +135,8 @@ void CGameEngineApp::InterpretCommandLine(std::string sExecutableFolder,std::vec
 }
 
 #ifdef WIN32
+#include <shellapi.h>
+
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nCmdShow)
 {
  // InitMonitorization();

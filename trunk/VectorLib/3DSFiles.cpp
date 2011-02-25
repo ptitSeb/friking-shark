@@ -196,7 +196,7 @@ bool C3DSFileType::Open(const char *sFileName)
 			case PERCENTAGE_INT:
 				{
 					unsigned short percentage=ReadWord();
-					*pCurrentPercent=((double)percentage)/100.0;
+					*pCurrentPercent=(float)(((double)percentage)/100.0);
 				}
 			break;    
 			case PERCENTAGE_FLOAT:

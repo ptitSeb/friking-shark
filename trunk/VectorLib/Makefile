@@ -11,7 +11,6 @@ ASEFiles.cpp\
 GBSFiles.cpp\
 QuakeFiles.cpp\
 StdAfx.cpp\
-Utilities.cpp\
 VectorLib.cpp
 
 
