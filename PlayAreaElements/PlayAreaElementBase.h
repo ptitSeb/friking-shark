@@ -5,17 +5,17 @@ class CPlayAreaElementBase:virtual public CSystemObjectBase,virtual public IPlay
 protected:
 
 	bool	m_bActive;
-    DWORD   m_dwActivationTime;
+    unsigned int   m_dwActivationTime;
 
 public:
 
 
-    virtual void Activate(DWORD dwCurrentTime);
+    virtual void Activate(unsigned int dwCurrentTime);
     virtual void Deactivate();
     virtual bool IsActive();
 	virtual void Reset();
 
-		virtual bool ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pPlayAreaInfo,DWORD dwCurrentTime,double dInterval);
+		virtual bool ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pPlayAreaInfo,unsigned int dwCurrentTime,double dInterval);
 
     CPlayAreaElementBase();
     virtual ~CPlayAreaElementBase();

@@ -5,7 +5,7 @@ template<typename T1,typename T2> static void MRPersistencyAsign(T1 *pVar1,T2 *p
 /////////////////////////////////////////////////////
 // Funciones para guardar tipos fundamentales
 
-bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<DWORD> *prop);
+bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<unsigned int> *prop);
 bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<int> *prop);
 bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<float> *prop);
 bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<double> *prop);
@@ -14,26 +14,26 @@ bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<st
 
 bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<bool> *pItem);
 bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<int> *pItem);
-bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<DWORD> *prop);
+bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<unsigned int> *prop);
 bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<float> *prop);
 bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<double> *prop);
 bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<std::string> *pItem);
 
-bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<DWORD> *prop);
+bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<unsigned int> *prop);
 bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<int> *prop);
 bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<float> *prop);
 bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<double> *prop);
 bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<bool> *pItem);
 bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<std::string> *pItem);
 
-void MRPersistencyInitialize(CMRPersistentReferenceT<DWORD> *prop);
+void MRPersistencyInitialize(CMRPersistentReferenceT<unsigned int> *prop);
 void MRPersistencyInitialize(CMRPersistentReferenceT<int> *prop);
 void MRPersistencyInitialize(CMRPersistentReferenceT<float> *prop);
 void MRPersistencyInitialize(CMRPersistentReferenceT<double> *prop);
 void MRPersistencyInitialize(CMRPersistentReferenceT<bool> *pItem);
 void MRPersistencyInitialize(CMRPersistentReferenceT<std::string> *pItem);
 
-void MRPersistencyFree(CMRPersistentReferenceT<DWORD> *prop);
+void MRPersistencyFree(CMRPersistentReferenceT<unsigned int> *prop);
 void MRPersistencyFree(CMRPersistentReferenceT<int> *prop);
 void MRPersistencyFree(CMRPersistentReferenceT<float> *prop);
 void MRPersistencyFree(CMRPersistentReferenceT<double> *prop);
@@ -50,8 +50,8 @@ bool MRLoadFromContainer(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<
     pItem->GetValueAddress()->clear();
 
     bool bOk=true,bFinalOk=true;
-	DWORD itemCount=piNode->GetNodeCount();
-    for(DWORD x=0;x<itemCount;x++)
+	unsigned int itemCount=piNode->GetNodeCount();
+    for(unsigned int x=0;x<itemCount;x++)
     {
         CONTAINED_TYPE var;
 		ISystemPersistencyNode *piChildNode=piNode->GetNode(x);
@@ -111,10 +111,10 @@ bool MRLoadFromContainer(ISystemPersistencyNode *piParent,CMRPersistentReference
     if(piNode==NULL){return false;}
     pItem->GetValueAddress()->clear();
 
-    DWORD itemCount=piNode->GetItemCount();
+    unsigned int itemCount=piNode->GetItemCount();
 
     bool bOk=true,bFinalOk=true;
-    for(DWORD x=0;x<itemCount;x++)
+    for(unsigned int x=0;x<itemCount;x++)
     {
         char keyName[512];
         char valueName[512];
@@ -156,7 +156,7 @@ bool MRSaveToContainer(ISystemPersistencyNode *piParent,CMRPersistentReferenceT<
     countProp.value=countValue;
     piNode->AddProperty(countProp);
 
-    DWORD itemCount=0;
+    unsigned int itemCount=0;
     bool bOk=true,bFinalOk=true;
     if(bFinalOk)
     {

@@ -4,7 +4,7 @@
 CPlayerType::CPlayerType(){}
 CPlayerType::~CPlayerType(){}
 
-IEntity *CPlayerType::CreateInstance(IEntity *piParent,DWORD dwCurrentTime)
+IEntity *CPlayerType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
 {
     CPlayer *piEntity=new CPlayer(this);
     InitializeEntity(piEntity,dwCurrentTime);
@@ -26,18 +26,18 @@ CPlayer::CPlayer(CPlayerType *pType)
 	m_dwDamageType=DAMAGE_TYPE_NORMAL;
 }
 
-DWORD CPlayer::GetPoints(){return m_dwPoints;}
-void  CPlayer::SetPoints(DWORD dwPoints){m_dwPoints=dwPoints;}
-void  CPlayer::AddPoints(DWORD dwPoints){m_dwPoints+=dwPoints;}
+unsigned int CPlayer::GetPoints(){return m_dwPoints;}
+void  CPlayer::SetPoints(unsigned int dwPoints){m_dwPoints=dwPoints;}
+void  CPlayer::AddPoints(unsigned int dwPoints){m_dwPoints+=dwPoints;}
 
-DWORD CPlayer::GetLivesLeft(){return m_dwLivesLeft;}
-void  CPlayer::SetLivesLeft(DWORD dwLivesLeft){m_dwLivesLeft=dwLivesLeft;}
-void  CPlayer::AddLivesLeft(DWORD dwLivesLeft){m_dwLivesLeft+=dwLivesLeft;}
+unsigned int CPlayer::GetLivesLeft(){return m_dwLivesLeft;}
+void  CPlayer::SetLivesLeft(unsigned int dwLivesLeft){m_dwLivesLeft=dwLivesLeft;}
+void  CPlayer::AddLivesLeft(unsigned int dwLivesLeft){m_dwLivesLeft+=dwLivesLeft;}
 
 double CPlayer::GetSpeed(){return m_dSpeed;}
 void   CPlayer::SetSpeed(double dSpeed){m_dSpeed=dSpeed;}
 
-void  CPlayer::GetWeaponsOnSlot(DWORD dwWeaponSlot,vector<IWeapon*> *pWeapons)
+void  CPlayer::GetWeaponsOnSlot(unsigned int dwWeaponSlot,vector<IWeapon*> *pWeapons)
 {
   size_t x;
   for(x=0;x<m_dWeapons.size();x++)
@@ -55,7 +55,7 @@ void  CPlayer::GetWeapons(vector<IWeapon*> *pWeapons)
   *pWeapons=m_dWeapons;
 }
 
-void  CPlayer::FireWeaponsOnSlot(DWORD dwWeaponSlot,DWORD dwCurrentTime)
+void  CPlayer::FireWeaponsOnSlot(unsigned int dwWeaponSlot,unsigned int dwCurrentTime)
 {
   CEntityBase::FireWeapon(dwWeaponSlot,dwCurrentTime);
 }

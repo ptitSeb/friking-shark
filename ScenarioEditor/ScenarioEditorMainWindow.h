@@ -360,7 +360,7 @@ public:
 	CWorldManagerWrapper	 m_WorldManagerWrapper;
 
 	void ProcessInput(double dTimeFraction,double dRealTimeFraction);
-	void ProcessKey(WORD nKey,double dTimeFraction,double dRealTimeFraction);
+	void ProcessKey(unsigned short nKey,double dTimeFraction,double dRealTimeFraction);
 
 	void ProcessFileNew();
 	void ProcessFileOpen();

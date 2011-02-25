@@ -29,15 +29,15 @@ class CGameGUIManager :	virtual public CSystemObjectBase,virtual public IGameGUI
 
 	void OnRender();
 
-	void OnLButtonDown(WORD wKeyState,unsigned x,unsigned y);
-	void OnLButtonUp(WORD wKeyState,unsigned x,unsigned y);
-	void OnRButtonDown(WORD wKeyState,unsigned x,unsigned y);
-	void OnRButtonUp(WORD wKeyState,unsigned x,unsigned y);
+	void OnLButtonDown(unsigned short wKeyState,unsigned x,unsigned y);
+	void OnLButtonUp(unsigned short wKeyState,unsigned x,unsigned y);
+	void OnRButtonDown(unsigned short wKeyState,unsigned x,unsigned y);
+	void OnRButtonUp(unsigned short wKeyState,unsigned x,unsigned y);
 	void OnMouseMove(unsigned x,unsigned y);
 	
-	void OnCharacter(WORD wCharacter);
-	void OnKeyDown(WORD wKeyState);
-	void OnKeyUp(WORD wKeyState);
+	void OnCharacter(unsigned short wCharacter);
+	void OnKeyDown(unsigned short wKeyState);
+	void OnKeyUp(unsigned short wKeyState);
 	
 	void OnSize(unsigned cx,unsigned cy);
 	void OnMove();

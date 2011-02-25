@@ -21,7 +21,7 @@ public:
     void Destroy();
 
     //IPlayAreaElement
-    void Activate(DWORD dwCurrentTime);
+    void Activate(unsigned int dwCurrentTime);
     void Deactivate();
 	void Reset();
 
@@ -29,7 +29,7 @@ public:
 	void DesignGetBBox(CVector *pvMins,CVector *pvMaxs);
 	CTraceInfo DesignGetTrace(const CVector &p1,const CVector &p2);
 
-    bool ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInfo,DWORD dwCurrentTime,double dInterval);
+    bool ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInfo,unsigned int dwCurrentTime,double dInterval);
 
     //IFormationEvents
     void OnFormationRemoved(ISystemObject *piFormation);

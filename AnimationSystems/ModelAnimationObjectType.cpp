@@ -16,7 +16,7 @@ CModelAnimationObjectType::~CModelAnimationObjectType()
 {
 }
 
-IAnimationObject *CModelAnimationObjectType::CreateInstance(IAnimation *piAnimation,DWORD dwCurrentTime)
+IAnimationObject *CModelAnimationObjectType::CreateInstance(IAnimation *piAnimation,unsigned int dwCurrentTime)
 {
     CModelAnimationObject *pParticle=new CModelAnimationObject(this,piAnimation);
     return pParticle;
@@ -83,7 +83,7 @@ CModelAnimationObject::CModelAnimationObject(CModelAnimationObjectType *pType,IA
     m_bVisible=false;
 }
 
-void CModelAnimationObject::Activate(DWORD dwCurrentTime)
+void CModelAnimationObject::Activate(unsigned int dwCurrentTime)
 {
     CAnimationObjectBase::Activate(dwCurrentTime);
     UpdateVisibility(dwCurrentTime);
@@ -109,15 +109,15 @@ void CModelAnimationObject::CustomRender(IGenericRender *piRender,IGenericCamera
 	Render(piRender,piCamera);
 }
 
-void CModelAnimationObject::UpdateVisibility(DWORD dwCurrentTime)
+void CModelAnimationObject::UpdateVisibility(unsigned int dwCurrentTime)
 {
-    DWORD dwRelativeTime=dwCurrentTime-m_piAnimation->GetCurrentTimeBase();
+    unsigned int dwRelativeTime=dwCurrentTime-m_piAnimation->GetCurrentTimeBase();
     m_bVisible=true;
     if(dwRelativeTime<m_pType->m_dwStartTime){m_bVisible=false;}
     if(dwRelativeTime>m_pType->m_dwEndTime && m_pType->m_dwEndTime){m_bVisible=false;}
 }
 
-bool CModelAnimationObject::ProcessFrame(IPhysicManager *pPhysicManager,DWORD dwCurrentTime,double dInterval)
+bool CModelAnimationObject::ProcessFrame(IPhysicManager *pPhysicManager,unsigned int dwCurrentTime,double dInterval)
 {
     if(!m_bActive){return false;}
     UpdateVisibility(dwCurrentTime);
@@ -126,7 +126,7 @@ bool CModelAnimationObject::ProcessFrame(IPhysicManager *pPhysicManager,DWORD dw
 
     if(nFrames) 
     {
-        DWORD dwRelativeTime=dwCurrentTime-m_piAnimation->GetCurrentTimeBase()-m_pType->m_dwStartTime;
+        unsigned int dwRelativeTime=dwCurrentTime-m_piAnimation->GetCurrentTimeBase()-m_pType->m_dwStartTime;
         m_nCurrentFrame=(int)((((double)dwRelativeTime)*m_pType->m_dFps)/1000.0);
         if(m_nCurrentFrame>(nFrames-1))
         {

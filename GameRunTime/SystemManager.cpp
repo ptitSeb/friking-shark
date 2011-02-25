@@ -10,7 +10,7 @@ CSystemManager::CSystemManager(void)
 
 CSystemManager::~CSystemManager(void)
 {
-    _ASSERTE(m_mSystems.size()==0);
+    RTASSERT(m_mSystems.size()==0);
 }
 
 ISystem *CSystemManager::CreateSystem(std::string sName)

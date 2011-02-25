@@ -11,11 +11,11 @@ CPlayAreaElementBase::~CPlayAreaElementBase()
 {
 }
 
-void CPlayAreaElementBase::Activate(DWORD dwCurrentTime){m_bActive=true;m_dwActivationTime=dwCurrentTime;}
+void CPlayAreaElementBase::Activate(unsigned int dwCurrentTime){m_bActive=true;m_dwActivationTime=dwCurrentTime;}
 void CPlayAreaElementBase::Deactivate(){m_bActive=false;m_dwActivationTime=0;}
 bool CPlayAreaElementBase::IsActive(){return m_bActive;}
 void CPlayAreaElementBase::Reset(){Deactivate();}
-bool CPlayAreaElementBase::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pPlayAreaInfo,DWORD dwCurrentTime,double dInterval){return true;}
+bool CPlayAreaElementBase::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pPlayAreaInfo,unsigned int dwCurrentTime,double dInterval){return true;}
 bool Util_IsInPlayArea(CVector vPosition,SPlayAreaInfo *pInfo)
 {
     for(int x=0;x<pInfo->nPlaneCount;x++)

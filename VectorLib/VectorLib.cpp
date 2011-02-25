@@ -5,7 +5,7 @@
 #include "./StdAfx.h"
 #include "VectorLib.h"
 #include "Utilities.h"
-#include <crtdbg.h>
+#include "GameRunTimeLib.h"
 #include <algorithm>
 #ifndef WIN32
 #include <libgen.h>
@@ -90,16 +90,16 @@ int CBSPNode::GetContent(const CVector &position)
 			return content;
 		}
 	}
-	_ASSERTE(plane.c[0]!=0 || plane.c[1]!=0 || plane.c[2]!=0);
+	RTASSERT(plane.c[0]!=0 || plane.c[1]!=0 || plane.c[2]!=0);
 	double side=plane.GetSide(position);
 	if(side>=0)//FP_PRECISION)
 	{
-		_ASSERTE(pChild[0]);
+		RTASSERT(pChild[0]);
 		return pChild[0]->GetContent(position);
 	}
 	else
 	{
-		_ASSERTE(pChild[1]);
+		RTASSERT(pChild[1]);
 		return pChild[1]->GetContent(position);
 	}
 	/*double content=pChild[0]->GetContent(position);
@@ -109,12 +109,12 @@ int CBSPNode::GetContent(const CVector &position)
 /*
 	if(side>=FP_PRECISION)
 	{
-		_ASSERTE(pChild[0]);
+		RTASSERT(pChild[0]);
 		return pChild[0]->GetContent(position);
 	}
 	else
 	{
-		_ASSERTE(pChild[1]);
+		RTASSERT(pChild[1]);
 		return pChild[1]->GetContent(position);
 	}
 	*/
@@ -139,14 +139,14 @@ CTraceInfo CBSPNode::GetTrace(const CVector &p1,const CVector &p2,const CVector 
 	// nodo y se devuelve directamente lo que hay en el lado exterior
 	if(side1>=0 && side2>=0)
 	{
-		_ASSERTE(pChild[0]);
+		RTASSERT(pChild[0]);
 		return pChild[0]->GetTrace(p1,p2,realp1,realp2);
 	}
 	// Si los dos lados de la recta caen en el lado interior del plano no hay corte en el plano de este
 	// nodo y se devuelve directamente lo que hay en el lado interior
 	if(side1<=0 && side2<=0)
 	{
-		_ASSERTE(pChild[1]);
+		RTASSERT(pChild[1]);
 		return pChild[1]->GetTrace(p1,p2,realp1,realp2);
 	}
 
@@ -991,7 +991,7 @@ bool CPolyhedron::IsInternalPolygon(CPolygon *pPolygon)
 
 CPlane CPolygon::CalcPlane()
 {
-	_ASSERTE(m_nVertexes==0 || m_nVertexes>2);
+	RTASSERT(m_nVertexes==0 || m_nVertexes>2);
 	if(m_nVertexes>2)
 	{
 		CVector t1=m_pVertexes[1]-m_pVertexes[0];
@@ -1138,11 +1138,11 @@ int BSPFindCandidate(std::vector<CPolygon*> *pPolys)
 	return nCandidate;
 }
 
-CBSPNode *BSPFromPolygonVector(CBSPNode *pParent,int nDepth,std::vector<CPolygon*> *pPolys,DWORD dwLeafContentType,std::vector<CBSPDrawNode *> *pvDrawNodes,bool bFastGenerationSlowCheck)
+CBSPNode *BSPFromPolygonVector(CBSPNode *pParent,int nDepth,std::vector<CPolygon*> *pPolys,unsigned int dwLeafContentType,std::vector<CBSPDrawNode *> *pvDrawNodes,bool bFastGenerationSlowCheck)
 {
 	if(pPolys->size()==0)
 	{
-		if(dwLeafContentType==(DWORD)CONTENT_NODE)
+		if(dwLeafContentType==(unsigned int)CONTENT_NODE)
 		{
 			return NULL;
 		}
@@ -1189,13 +1189,13 @@ CBSPNode *BSPFromPolygonVector(CBSPNode *pParent,int nDepth,std::vector<CPolygon
 			int		 nPolyFragments=pPoly->Divide(pNode->plane,pPoly,pPolyFragments[0],pPolyFragments[1],&nPolyFirstFragmentSide);
 
 			pPolyFragments[0]->CalcPlane();
-			_ASSERTE(pPolyFragments[0]->m_Plane.c[0]!=0 || pPolyFragments[0]->m_Plane.c[1]!=0 || pPolyFragments[0]->m_Plane.c[2]!=0);
+			RTASSERT(pPolyFragments[0]->m_Plane.c[0]!=0 || pPolyFragments[0]->m_Plane.c[1]!=0 || pPolyFragments[0]->m_Plane.c[2]!=0);
 
 			vSidePolys[nPolyFirstFragmentSide].push_back(pPolyFragments[0]);
 			if(nPolyFragments>1)
 			{
 				pPolyFragments[1]->CalcPlane();
-				_ASSERTE(pPolyFragments[1]->m_Plane.c[0]!=0 || pPolyFragments[1]->m_Plane.c[1]!=0 || pPolyFragments[1]->m_Plane.c[2]!=0);
+				RTASSERT(pPolyFragments[1]->m_Plane.c[0]!=0 || pPolyFragments[1]->m_Plane.c[1]!=0 || pPolyFragments[1]->m_Plane.c[2]!=0);
 				vSidePolys[nPolyFirstFragmentSide^1].push_back(pPolyFragments[1]);
 			}
 			else
@@ -1585,10 +1585,7 @@ CPlane::CPlane(CVector vNormal,CVector vPoint)
 	(*this)=vNormal;
 	d=vNormal*vPoint;
 }
-void CPlane::assert()
-{
-//	_ASSERTE(!_isnan(c[0]) && !_isnan(c[1]) && !_isnan(c[2]) && !_isnan(d));
-}
+
 bool CPlane::InSamePlaneAs(const CPlane p)
 {
 	if(	fabs(p.c[0]-c[0])<FP_PRECISION &&
@@ -2159,7 +2156,7 @@ double drand()
 }*/
 
 
-CTexture::CTexture(std::string sName,int nWidth,int nHeight,void *pPixels,DWORD dwColorType)
+CTexture::CTexture(std::string sName,int nWidth,int nHeight,void *pPixels,unsigned int dwColorType)
 {
 	m_nOpenGlIndex=0;
 	m_fOpacity=1.0;

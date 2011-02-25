@@ -14,7 +14,10 @@
   #pragma warning ( disable : 4786 )
 #endif
 
-#include <windows.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include <math.h>
 #include <list>
 #include <vector>

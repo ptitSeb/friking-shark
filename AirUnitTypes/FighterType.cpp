@@ -15,7 +15,7 @@ CFighterType::CFighterType()
 
 CFighterType::~CFighterType(){}
 
-IEntity *CFighterType::CreateInstance(IEntity *piParent,DWORD dwCurrentTime)
+IEntity *CFighterType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
 {
   CFighter *piEntity=new CFighter(this,dwCurrentTime);
   InitializeEntity(piEntity,dwCurrentTime);
@@ -23,7 +23,7 @@ IEntity *CFighterType::CreateInstance(IEntity *piParent,DWORD dwCurrentTime)
   return piEntity;
 }
 
-CFighter::CFighter(CFighterType *pType,DWORD dwCurrentTime)
+CFighter::CFighter(CFighterType *pType,unsigned int dwCurrentTime)
 {
   m_sClassName="CFighter";
   m_pType=pType;
@@ -71,7 +71,7 @@ bool CFighter::OnCollision(IEntity *piOther,CVector &vCollisionPos)
   return false;
 }
 
-void CFighter::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
+void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
 

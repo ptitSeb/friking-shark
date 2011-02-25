@@ -3,7 +3,7 @@
 
 CC=g++
 
-INCLUDES = -I. -I../PortFiles -I../AnimationSystems  -I../GameLib -I../GameRunTime -I../GameRunTimeLib -I../VectorLib
+INCLUDES = -I. -I../AnimationSystems  -I../GameLib -I../GameRunTime -I../GameRunTimeLib -I../VectorLib
 
 SOURCES = GameEntityLib.cpp\
 EntityBase.cpp\
@@ -13,8 +13,8 @@ SteeringBehaviours.cpp\
 stdafx.cpp
 
 
-CFLAGS +=  -pedantic -pedantic-errors -Wno-unused-function -Wall -Werror  -D_REENTRANT -O3 -g
-CFLAGS_DEBUG +=   -pedantic -pedantic-errors -Wno-unused-function -Wall -Werror  -D_REENTRANT -g
+CFLAGS += -DNDEBUG -pedantic -pedantic-errors -Wno-unused-function -Wall -Werror  -D_REENTRANT -O3 -g
+CFLAGS_DEBUG += -DDEBUG  -pedantic -pedantic-errors -Wno-unused-function -Wall -Werror  -D_REENTRANT -g
 
 INTERMEDIATE_DIR = ./.intermediate
 OUT_SOURCES=$(addprefix $(INTERMEDIATE_DIR)/,$(SOURCES))

@@ -53,7 +53,7 @@ class COpenGLFont : virtual public CSystemObjectBase,virtual public IGenericFont
 {
 	unsigned 	 m_dwTextureWidth;
 	unsigned 	 m_dwTextureHeight;
-	BYTE		*m_pTextureBuffer;
+	unsigned char		*m_pTextureBuffer;
 	unsigned 	 m_nTextureIndex;
 
 	SOpenGLTextureFontCharacterData m_vTextureFontCharacters[256];

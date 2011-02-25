@@ -7,10 +7,10 @@ class CSoundAnimationObjectType: public CAnimationObjectTypeBase
 public:
 
     CSoundTypeWrapper    m_SoundType;
-    DWORD                m_dwStartTime;
-    DWORD                m_dwEndTime;
+    unsigned int                m_dwStartTime;
+    unsigned int                m_dwEndTime;
 
-    IAnimationObject *CreateInstance(IAnimation *piAnimation,DWORD dwCurrentTime);
+    IAnimationObject *CreateInstance(IAnimation *piAnimation,unsigned int dwCurrentTime);
 
     BEGIN_PROP_MAP(CSoundAnimationObjectType)
         PROP(m_SoundType,"TipoDeSonido")
@@ -31,10 +31,10 @@ class CSoundAnimationObject: public CAnimationObjectBase
 
 public:
 
-    void Activate(DWORD dwCurrentTime);
+    void Activate(unsigned int dwCurrentTime);
     void Deactivate();
 
-    bool ProcessFrame(IPhysicManager *pPhysicManager,DWORD dwCurrentTime,double dInterval);
+    bool ProcessFrame(IPhysicManager *pPhysicManager,unsigned int dwCurrentTime,double dInterval);
     void CustomRender(IGenericRender *piRender,IGenericCamera *piCamera);
 
     CSoundAnimationObject(CSoundAnimationObjectType *pType,IAnimation *piAnimation);

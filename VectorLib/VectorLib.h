@@ -9,7 +9,10 @@
 #pragma warning ( disable : 4786 )
 #endif
 
-#include <windows.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include <math.h>
 #include <list>
 #include <vector>
@@ -17,6 +20,8 @@
 #include <set>
 #include <deque>
 #include <string>
+
+#define MAX_PATH 260
 
 #define FP_PRECISION	0.0002
 #define PI				3.1415926535
@@ -97,21 +102,20 @@ public:
 	{
 		return ((c[0]*v.c[0] + c[1]*v.c[1] + c[2]*v.c[2])-d);
 	}
-	void assert();
 
 	bool InSamePlaneAs(const CPlane p);
 	bool operator==(const CPlane p);
 	bool operator!=(const CPlane p){return !(*this==p);}
 
-	inline	CPlane operator=(const CVector v){c[0]=v.c[0];c[1]=v.c[1];c[2]=v.c[2];N();assert();return *this;}
-	inline	CPlane operator=(const CPlane &p){c[0]=p.c[0];c[1]=p.c[1];c[2]=p.c[2];d=p.d;assert();return *this;}
-	inline	CPlane operator=(double _d){d=_d;assert();return *this;}
+	inline	CPlane operator=(const CVector v){c[0]=v.c[0];c[1]=v.c[1];c[2]=v.c[2];N();return *this;}
+	inline	CPlane operator=(const CPlane &p){c[0]=p.c[0];c[1]=p.c[1];c[2]=p.c[2];d=p.d;return *this;}
+	inline	CPlane operator=(double _d){d=_d;return *this;}
 
 			CPlane(CVector p1,CVector p2,CVector p3);
 			CPlane(CVector vNormal,CVector vPoint);
-	inline	CPlane(double c1,double c2,double c3,double _d):CVector(c1,c2,c3),d(_d){_debugtag_='P';N();assert();}
-	inline	CPlane(CVector v,double _d):CVector(v),d(_d){_debugtag_='P';N();assert();}
-	inline	CPlane(){_debugtag_='P';d=0;assert();}
+	inline	CPlane(double c1,double c2,double c3,double _d):CVector(c1,c2,c3),d(_d){_debugtag_='P';N();}
+	inline	CPlane(CVector v,double _d):CVector(v),d(_d){_debugtag_='P';N();}
+	inline	CPlane(){_debugtag_='P';d=0;}
 };
 
 #define CONTENT_SOLID		1
@@ -207,16 +211,16 @@ public:
 	unsigned m_nWidth;
 	unsigned m_nHeight;
 	void	*m_pPixels;
-	DWORD	 m_dwColorType;
+	unsigned int	 m_dwColorType;
 
 	unsigned m_nOpenGlIndex;
-	CTexture(std::string sName,int nWidth,int nHeight,void *pPixels,DWORD dwColorType);
+	CTexture(std::string sName,int nWidth,int nHeight,void *pPixels,unsigned int dwColorType);
 	~CTexture();
 };
 
 struct CMaterial
 {
-	DWORD		dwMaterialType;
+	unsigned int		dwMaterialType;
 	CVector		vAmbientColor;
 	CVector		vDiffuseColor;
 	CVector		vSpecularColor;
@@ -324,7 +328,7 @@ bool		 IsPointInRegion(int nPlanes,CPlane *pPlanes,CVector point,double dPrecisi
 bool		 PointFromPlanes(CPlane plane0,CPlane plane1,CPlane plane2,CVector *pPoint);
 CPlane		 PlaneFromSegment(CVector v1,CVector v2,CPlane segmentPlane);
 CBSPNode	*BSPFromPolyhedronList(int nDepth,std::list<CPolyhedron*> *pPolys,std::vector<CBSPDrawNode *> *pBSPDrawNodes);
-CBSPNode	*BSPFromPolygonVector(CBSPNode *pParent,int nDepth,std::vector<CPolygon*> *pPolys,DWORD dwLeafContentType,std::vector<CBSPDrawNode *> *pBSPDrawNodes,bool bFastGenerationSlowCheck=false);
+CBSPNode	*BSPFromPolygonVector(CBSPNode *pParent,int nDepth,std::vector<CPolygon*> *pPolys,unsigned int dwLeafContentType,std::vector<CBSPDrawNode *> *pBSPDrawNodes,bool bFastGenerationSlowCheck=false);
 CBSPNode	*BSPFromConvexPolygon(int nPoints,CVector *pPoints);
 CBSPNode	*BSPFromConvexPolygon(std::list<CVector> *pvVectors);
 CPolyhedron *PolyhedronFromConvexRegion(int nPlanes,CPlane *pPlanes);

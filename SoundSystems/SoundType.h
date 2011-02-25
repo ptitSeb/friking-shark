@@ -14,7 +14,7 @@ public:
 
     // Propiedades Persistentes
 
-    DWORD   m_dwMaxSimultaneousSounds;
+    unsigned int   m_dwMaxSimultaneousSounds;
     bool    m_bCyclic;
     string  m_sFileName;
     int     m_dPan;
@@ -26,7 +26,7 @@ public:
     IDirectSoundBuffer8 *AcquireSoundBuffer();
     void                 ReleaseSoundBuffer(IDirectSoundBuffer8 *);
 
-    ISound *CreateInstance(IEntity *piEntity,DWORD dwCurrentTime);
+    ISound *CreateInstance(IEntity *piEntity,unsigned int dwCurrentTime);
 
     bool Init(std::string sClass,std::string sName,ISystem *piSystem);
     void Destroy();
@@ -63,19 +63,19 @@ public:
 
     // ISound
 
-    void Activate(DWORD dwCurrentTime);
+    void Activate(unsigned int dwCurrentTime);
     void Deactivate();
     bool IsActive();
 
     bool HasFinished();
 
-    bool ProcessFrame(IPhysicManager *pPhysicManager,DWORD dwCurrentTime,double dInterval);
+    bool ProcessFrame(IPhysicManager *pPhysicManager,unsigned int dwCurrentTime,double dInterval);
 
     // ISoundManagerEvents
 
     void OnMasterPanChanged(int dMasterPan);
     void OnMasterVolumeChanged(int dMasterVolume);
 
-    CSoundObject(CSoundType *pTyp,IEntity *piEntitye,DWORD dwCurrentTimeBase);
+    CSoundObject(CSoundType *pTyp,IEntity *piEntitye,unsigned int dwCurrentTimeBase);
     virtual ~CSoundObject();
 };

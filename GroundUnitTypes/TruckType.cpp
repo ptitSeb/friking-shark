@@ -13,7 +13,7 @@ CTruckType::~CTruckType()
 {
 }
 
-IEntity *CTruckType::CreateInstance(IEntity *piParent,DWORD dwCurrentTime)
+IEntity *CTruckType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
 {
     CTruck *piEntity=new CTruck(this);
     InitializeEntity(piEntity,dwCurrentTime);
@@ -55,7 +55,7 @@ void CTruck::OnKilled()
   CEntityBase::OnKilledInternal(bRemove);
 }
 
-void CTruck::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
+void CTruck::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
 

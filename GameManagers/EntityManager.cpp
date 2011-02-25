@@ -72,7 +72,7 @@ unsigned long CEntityManager::GetEntityCount()
 	return (unsigned long)m_lEntities.size();
 }
 
-void CEntityManager::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
+void CEntityManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
     // Run 
     list<IEntity *>::iterator i;
@@ -83,7 +83,7 @@ void CEntityManager::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
       bool bDeleted=false;
       bool bRemoved=piEntity->IsRemoved();
 
-      DWORD   dwNextProcessFrame=piEntity->GetNextProcessFrame();
+      unsigned int   dwNextProcessFrame=piEntity->GetNextProcessFrame();
       if(!bRemoved)
       {
         if(dwNextProcessFrame && dwCurrentTime>=dwNextProcessFrame)

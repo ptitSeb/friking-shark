@@ -4,10 +4,10 @@ class CWeaponUpgradeBonusType: public CEntityTypeBase
 {
 public:
 
-  DWORD m_dwLevels;
-  DWORD m_dwSlot;
+  unsigned int m_dwLevels;
+  unsigned int m_dwSlot;
 
-  IEntity *CreateInstance(IEntity *piParent,DWORD dwCurrentTime);
+  IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
 
   BEGIN_PROP_MAP(CWeaponUpgradeBonusType)
     PROP_CLASS_CHAIN(CEntityTypeBase)

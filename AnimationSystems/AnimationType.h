@@ -11,7 +11,7 @@ public:
     deque<CAnimationObjectTypeWrapper>  m_dObjects;
     bool                                m_bCyclic;
 
-    IAnimation *CreateInstance(IEntity *piEntity,DWORD dwCurrentTime);
+    IAnimation *CreateInstance(IEntity *piEntity,unsigned int dwCurrentTime);
 
 	void DesignRender( IGenericRender *piRender,CVector &vPosition,CVector &vAngles,bool bSelected);
 	void DesignGetBBox(CVector *pvMins,CVector *pvMaxs);
@@ -36,19 +36,19 @@ protected:
     bool                        m_bActive;
     bool                        m_bFinished;
     IEntity                    *m_piEntity;
-    DWORD                       m_dwCurrentTimeBase;
+    unsigned int                       m_dwCurrentTimeBase;
 
 public:
 
-    void Activate(DWORD dwCurrentTime);
+    void Activate(unsigned int dwCurrentTime);
     void Deactivate();
     bool IsActive();
 
     bool HasFinished();
 
-    DWORD GetCurrentTimeBase();
+    unsigned int GetCurrentTimeBase();
 
-    bool ProcessFrame(IPhysicManager *pPhysicManager,DWORD dwCurrentTime,double dInterval);
+    bool ProcessFrame(IPhysicManager *pPhysicManager,unsigned int dwCurrentTime,double dInterval);
     void CustomRender(IGenericRender *piRender,IGenericCamera *piCamera);
 	CTraceInfo GetTrace(const CVector &vOrigin,const CVector &vAngles,const CVector &p1,const CVector &p2 );
 
@@ -56,6 +56,6 @@ public:
     IAnimationObject    *GetObject(string sName);
     IEntity             *GetEntity();
 
-    CAnimation(CAnimationType *pType,IEntity *piEntity,DWORD dwCurrentTimeBase);
+    CAnimation(CAnimationType *pType,IEntity *piEntity,unsigned int dwCurrentTimeBase);
     virtual ~CAnimation();
 };

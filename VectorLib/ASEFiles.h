@@ -16,8 +16,8 @@ class CASEFileType :public C3DSFileTypeBase
 
 	unsigned char	ReadByte();
 	float			ReadFloat();
-	DWORD			ReadDWord();
-	WORD			ReadWord();
+	unsigned int			ReadDWord();
+	unsigned short			ReadWord();
 	CVector			ReadVector();
 	std::string		ReadString();
 	void			ProcessObjectFrameSubMaterials(S3DSObject *pObject,S3DSFrame *pFrame);

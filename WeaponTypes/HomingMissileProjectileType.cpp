@@ -15,7 +15,7 @@ CHomingMissileProjectileType::CHomingMissileProjectileType()
 
 CHomingMissileProjectileType::~CHomingMissileProjectileType(){}
 
-IEntity *CHomingMissileProjectileType::CreateInstance(IEntity *piParent,DWORD dwCurrentTime)
+IEntity *CHomingMissileProjectileType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
 {
   CHomingMissileProjectile *piEntity=new CHomingMissileProjectile(this,piParent);
   InitializeEntity(piEntity,dwCurrentTime);
@@ -83,7 +83,7 @@ void CustomApproachAngles(CVector *pvActual,CVector vIdeal,double dAmmount)
   }
 }
 
-void CHomingMissileProjectile::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
+void CHomingMissileProjectile::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
 
@@ -117,7 +117,7 @@ void CHomingMissileProjectile::ProcessFrame(DWORD dwCurrentTime,double dTimeFrac
 
     if(m_dwNextTimeToAcquireTarget<dwCurrentTime)
     {
-      m_dwNextTimeToAcquireTarget=dwCurrentTime+(DWORD)(m_pType->m_dwTimeBettwenAcquireTargetAttemps);
+      m_dwNextTimeToAcquireTarget=dwCurrentTime+(unsigned int)(m_pType->m_dwTimeBettwenAcquireTargetAttemps);
       m_dAcquireTarget_TempDistance=0;
       GetEntityManager()->PerformUnaryOperation(AcquireTargetOperation,this,NULL);
       if(m_piTarget)

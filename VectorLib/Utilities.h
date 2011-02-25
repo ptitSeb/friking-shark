@@ -16,7 +16,7 @@ T* BufferFromVector(std::vector< T > *pContainer)
 	return pBuffer;
 }
 
-void SkipCommentsStringsAndSpaces(char *pBuffer,DWORD *pOffset,DWORD bufLen);
+void SkipCommentsStringsAndSpaces(char *pBuffer,unsigned int *pOffset,unsigned int bufLen);
 void ReplaceExtension(char *pFileName,const char *pExt);
 void GetExtension(const char *pFileName,char *pExt);
 void GetFileFolder(const char *pFilePath,char *pFolder);

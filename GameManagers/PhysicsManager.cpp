@@ -293,7 +293,7 @@ void EntityOperation_ProcessPhysicFrame(IEntity *piEntity,void *pParam1,void *pP
 //	RTTRACE("%s ------ Finished : %f",piEntity->GetEntityClass()->c_str(),pPhysicInfo->vPosition.c[1]);
 }
 
-void CPhysicManager::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
+void CPhysicManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	m_EntityManagerWrapper.m_piEntityManager->PerformUnaryOperation(EntityOperation_ProcessPhysicFrame,this,&dTimeFraction);
 }

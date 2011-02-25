@@ -12,7 +12,7 @@ CEventAnimationObjectType::~CEventAnimationObjectType()
 {
 }
 
-IAnimationObject *CEventAnimationObjectType::CreateInstance(IAnimation *piAnimation,DWORD dwCurrentTime)
+IAnimationObject *CEventAnimationObjectType::CreateInstance(IAnimation *piAnimation,unsigned int dwCurrentTime)
 {
     CEventAnimationObject *pParticle=new CEventAnimationObject(this,piAnimation);
     return pParticle;
@@ -25,7 +25,7 @@ CEventAnimationObject::CEventAnimationObject(CEventAnimationObjectType *pType,IA
     m_pType=pType;
 }
 
-bool CEventAnimationObject::ProcessFrame(IPhysicManager *pPhysicManager,DWORD dwCurrentTime,double dInterval)
+bool CEventAnimationObject::ProcessFrame(IPhysicManager *pPhysicManager,unsigned int dwCurrentTime,double dInterval)
 {
     if(!m_bActive){return false;}
     if(m_bFired){return false;}

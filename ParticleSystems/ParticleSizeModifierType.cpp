@@ -12,14 +12,14 @@ CParticleSizeModifierType::CParticleSizeModifierType(void)
 }
 
 CParticleSizeModifierType::~CParticleSizeModifierType(void){}
-IParticleModifier *CParticleSizeModifierType::CreateInstance(DWORD dwCurrentTime){return new CParticleSizeModifier(this);}
+IParticleModifier *CParticleSizeModifierType::CreateInstance(unsigned int dwCurrentTime){return new CParticleSizeModifier(this);}
 
 CParticleSizeModifier::CParticleSizeModifier(CParticleSizeModifierType *pType)
 {
     m_pType=pType;
 }
 
-void CParticleSizeModifier::ProcessParticle(IParticle *pParticle,IParticleSystem *pSystem,DWORD dwCurrentTime,double dInterval)
+void CParticleSizeModifier::ProcessParticle(IParticle *pParticle,IParticleSystem *pSystem,unsigned int dwCurrentTime,double dInterval)
 {
     if(m_sEmitters.size()!=0 && m_sEmitters.find(pParticle->m_piEmiter)==m_sEmitters.end()){return;}
     pParticle->m_dSize=GetTransitionValue(m_pType->m_dSizeTransitionStart,m_pType->m_dStartSize,m_pType->m_dSizeTransitionEnd,m_pType->m_dEndSize,&m_pType->m_dIntermediateSizeTransitions,pParticle->m_dLifeSpent);

@@ -49,7 +49,7 @@ class CModel
 {
 public:
 	string		 m_sName;
-	DWORD		 m_dwType;
+	unsigned int		 m_dwType;
 	CModelAnimation	*m_pAnimations;
 	int			 m_nAnimations;
 
@@ -63,7 +63,7 @@ public:
 
 class CResourceStore: virtual public CSystemObjectBase
 {
-	DWORD	m_dwFlags;
+	unsigned int	m_dwFlags;
 
 	void	FreeModels();
 	void	FreeMaterials();

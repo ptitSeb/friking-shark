@@ -30,14 +30,14 @@ public:
 
     string      GetName();
 
-    void        Activate(DWORD dwCurrentTime);
+    void        Activate(unsigned int dwCurrentTime);
     void        Deactivate();
     bool        IsActive();
     IAnimation *GetAnimation();
 
 	CTraceInfo GetTrace(const CVector &vOrigin,const CVector &vAngles,const CVector &p1,const CVector &p2 );
 
-    bool ProcessFrame(IPhysicManager *pPhysicManager,DWORD dwCurrentTime,double dInterval);
+    bool ProcessFrame(IPhysicManager *pPhysicManager,unsigned int dwCurrentTime,double dInterval);
     void CustomRender(IGenericRender *piRender,IGenericCamera *piCamera);
 
     CAnimationObjectBase(CAnimationObjectTypeBase *pType,IAnimation *piAnimation);

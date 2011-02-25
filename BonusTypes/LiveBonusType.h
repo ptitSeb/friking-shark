@@ -4,7 +4,7 @@ class CLiveBonusType: public CEntityTypeBase
 {
 public:
 
-  IEntity *CreateInstance(IEntity *piParent,DWORD dwCurrentTime);
+  IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
 
   CLiveBonusType();
   ~CLiveBonusType();

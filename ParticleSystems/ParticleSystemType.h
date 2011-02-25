@@ -12,7 +12,7 @@ public:
     deque<CParticleEmiterTypeWrapper>  m_dEmitters;
     deque<CParticleModifierTypeWrapper> m_dModifiers;
 
-    IParticleSystem *CreateInstance(DWORD dwCurrentTime);
+    IParticleSystem *CreateInstance(unsigned int dwCurrentTime);
 
     BEGIN_PROP_MAP(CParticleSystemType);
         PROP(m_dEmitters,"Emisores");
@@ -56,7 +56,7 @@ public:
     void    GetVectors(CVector &vForward,CVector &vRight,CVector &vUp);
 
     void CustomRender(IGenericRender *piRender,IGenericCamera *piCamera);
-    bool ProcessFrame(IPhysicManager *pPhysicManager,DWORD dwCurrentTime,double dInterval);
+    bool ProcessFrame(IPhysicManager *pPhysicManager,unsigned int dwCurrentTime,double dInterval);
 
     CParticleSystem(CParticleSystemType *pType);
     virtual ~CParticleSystem();

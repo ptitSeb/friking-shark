@@ -2,7 +2,7 @@
 
 class CGameController:virtual public CSystemObjectBase, virtual public IGameController
 {
-    map<DWORD,IGameManager *> m_mManagers;
+    map<unsigned int,IGameManager *> m_mManagers;
 
 	ISystem *m_piResourcesSystem;
 	ISystem *m_piParticleSystemTypesSystem;
@@ -28,9 +28,9 @@ public:
 
     void Start();
     void Stop();
-    void ProcessFrame(DWORD dwCurrentTime,double dTimeFraction);
+    void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
 
-    virtual bool RegisterManager(DWORD dwHeight,IGameManager *piManager);
+    virtual bool RegisterManager(unsigned int dwHeight,IGameManager *piManager);
     virtual void UnregisterManager(IGameManager *piManager);
 
     CGameController();

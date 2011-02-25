@@ -6,7 +6,7 @@ public:
 
   double m_dSpeed;
 
-  IEntity *CreateInstance(IEntity *piParent,DWORD dwCurrentTime);
+  IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
 
   BEGIN_PROP_MAP(CSpeedUpgradeBonusType)
     PROP_CLASS_CHAIN(CEntityTypeBase)

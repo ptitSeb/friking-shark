@@ -21,7 +21,7 @@ public:
 	unsigned    GetPointCount();
     CVector     GetDirection(unsigned nSection);
     unsigned    GetNextPointIndex(unsigned nIndex);
-    void        ProcessPoint(IEntity *piEntity,DWORD dwCurrentFrame,double dTimeFraction);
+    void        ProcessPoint(IEntity *piEntity,unsigned int dwCurrentFrame,double dTimeFraction);
 
 	bool 		 GetPoint(unsigned int nIndex,SRoutePoint *psPoint);
 	bool 		 AddPoint(unsigned int nIndex,const SRoutePoint &sPoint);

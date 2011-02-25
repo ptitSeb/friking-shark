@@ -3,7 +3,7 @@
 
 CC=g++
 
-INCLUDES = -I. -I../PortFiles -I../GameRunTime
+INCLUDES = -I. -I../GameRunTime
 
 SOURCES = ConfigFile.cpp\
 Persistency.cpp\
@@ -16,8 +16,8 @@ SystemLoaderHelper.cpp\
 SystemObjectBase.cpp\
 SystemUnknownBase.cpp
 
-CFLAGS +=  -pedantic -pedantic-errors -Wno-unused-function -Wall -Werror  -D_REENTRANT -O3 -g
-CFLAGS_DEBUG +=   -pedantic -pedantic-errors -Wno-unused-function -Wall -Werror  -D_REENTRANT -g
+CFLAGS += -DNDEBUG -pedantic -pedantic-errors -Wno-unused-function -Wall -Werror  -D_REENTRANT -O3 -g
+CFLAGS_DEBUG += -DDEBUG  -pedantic -pedantic-errors -Wno-unused-function -Wall -Werror  -D_REENTRANT -g
 
 INTERMEDIATE_DIR = ./.intermediate
 OUT_SOURCES=$(addprefix $(INTERMEDIATE_DIR)/,$(SOURCES))

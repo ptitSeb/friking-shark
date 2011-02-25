@@ -8,7 +8,6 @@
 #include "3DSTypes.h"
 #include "3DSFiles.h"
 #include "ASEFiles.h"
-#include "crtdbg.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -135,8 +134,8 @@ CASEFileType::CASEFileType()
 	m_pBuffer=NULL;
 }
 
-WORD			CASEFileType::ReadWord()  {WORD value=0;char *pBuf=strtok(NULL,ASE_FILE_DELIMITER);value=atoi(pBuf);return value;}
-DWORD			CASEFileType::ReadDWord() {DWORD value=0;char *pBuf=strtok(NULL,ASE_FILE_DELIMITER);value=atol(pBuf);return value;}
+unsigned short			CASEFileType::ReadWord()  {unsigned short value=0;char *pBuf=strtok(NULL,ASE_FILE_DELIMITER);value=atoi(pBuf);return value;}
+unsigned int			CASEFileType::ReadDWord() {unsigned int value=0;char *pBuf=strtok(NULL,ASE_FILE_DELIMITER);value=atol(pBuf);return value;}
 float			CASEFileType::ReadFloat() {float value=0;char *pBuf=strtok(NULL,ASE_FILE_DELIMITER);value=atof(pBuf);return value;}
 unsigned char	CASEFileType::ReadByte()  {unsigned char value=0;char *pBuf=strtok(NULL,ASE_FILE_DELIMITER);value=atoi(pBuf);return value;}
 CVector			CASEFileType::ReadVector(){CVector v;v.c[0]=ReadFloat();v.c[1]=ReadFloat();v.c[2]=ReadFloat();return v;}
@@ -144,7 +143,7 @@ string			CASEFileType::ReadString(){string temp;char *pBuf=strtok(NULL,"\"\t\r\n
 
 bool CASEFileType::Open(const char *sFileName)
 {
-	DWORD dwFileLength=0;
+	unsigned int dwFileLength=0;
 
 	if ((m_pFile=fopen (sFileName, "rb"))== NULL) return false; //Open the file
 
@@ -162,15 +161,15 @@ bool CASEFileType::Open(const char *sFileName)
 	S3DSCamera			*pCamera=NULL;
 	S3DSMaterial		*pMaterial=NULL;
 	char				*pToken=NULL;					
-	DWORD				dwCurrentMaterialId=0;
-	DWORD				dwFaceIndex=0;
+	unsigned int				dwCurrentMaterialId=0;
+	unsigned int				dwFaceIndex=0;
 	CVector				*pCurrentOrigin=NULL;
 	CMatrix				*pTransformMatrix=NULL;
 	CVector				*pAxises=NULL;
 	CVector				*pRotationAxis=NULL;
 	CVector				*pScale=NULL;
 	float				*pRotationAngle=NULL;
-	DWORD				dwCurrentBitmap=0;
+	unsigned int				dwCurrentBitmap=0;
 	bool				bReadingAnimation=false;
 	unsigned int x;
 	int y;
@@ -179,7 +178,7 @@ bool CASEFileType::Open(const char *sFileName)
 	if(fread(m_pBuffer,dwFileLength,1,m_pFile)!=1){Close();return false;}
 	m_pBuffer[dwFileLength]=0;
 
-	map<string,DWORD> mKeyNames;
+	map<string,unsigned int> mKeyNames;
 	mKeyNames["*GEOMOBJECT"]			=ASE_OBJECT;
 	mKeyNames["*MESH"]					=ASE_OBJECT_MESH;
 	mKeyNames["*NODE_TM"]				=ASE_TRANSFORM_INFO;
@@ -259,7 +258,7 @@ bool CASEFileType::Open(const char *sFileName)
 	char *pSearchBuffer=m_pBuffer; 
 	while((pToken=strtok(pToken?NULL:pSearchBuffer,ASE_FILE_DELIMITER)))
 	{
-		map<string,DWORD>::iterator i=mKeyNames.find(pToken);
+		map<string,unsigned int>::iterator i=mKeyNames.find(pToken);
 		if(i==mKeyNames.end())
 		{
 			//_MRT("Unknown key name %s",pToken);
@@ -272,7 +271,7 @@ bool CASEFileType::Open(const char *sFileName)
 			}
 			continue;
 		}
-		DWORD dwKeyId=i->second;
+		unsigned int dwKeyId=i->second;
 		switch(dwKeyId)
 		{
 			// Escena
@@ -381,7 +380,7 @@ bool CASEFileType::Open(const char *sFileName)
 			case ASE_MESH_VERTEX_LIST:	{SKIP_ASE_TOKEN(); /* Skip '{'*/}break;
 			case ASE_MESH_VERTEX: 
 				{
-					DWORD iVertexIndex=ReadDWord();
+					unsigned int iVertexIndex=ReadDWord();
 					pFrame->pVertexes[iVertexIndex]=ReadVector();
 				}
 			break;	
@@ -390,7 +389,7 @@ bool CASEFileType::Open(const char *sFileName)
 					pFrame->nFaces = ReadDWord();
 					pFrame->pFaces=new int[pFrame->nFaces*3];
 					pFrame->pEdges=new bool [pFrame->nFaces*3];
-					pFrame->pFaceSubMaterials=new DWORD[pFrame->nFaces];
+					pFrame->pFaceSubMaterials=new unsigned int[pFrame->nFaces];
 					pFrame->pEdges[0]=1;
 					pFrame->pEdges[1]=1;
 					pFrame->pEdges[2]=1;
@@ -405,7 +404,7 @@ bool CASEFileType::Open(const char *sFileName)
 			break;
 			case ASE_MESH_VERTEXNORMAL:
 				{
-					DWORD dwVertexIndex=ReadDWord();
+					unsigned int dwVertexIndex=ReadDWord();
 					pFrame->pVertexNormals[dwVertexIndex]=ReadVector();
 				}
 			break;
@@ -436,7 +435,7 @@ bool CASEFileType::Open(const char *sFileName)
 			case ASE_MESH_TVERTLIST:	{SKIP_ASE_TOKEN(); /* Skip '{'*/}break;
 			case ASE_MESH_TVERT: 
 				{
-					DWORD iTextVertexIndex=ReadDWord();
+					unsigned int iTextVertexIndex=ReadDWord();
 					pFrame->pTextVertexes[iTextVertexIndex]=ReadVector();
 				}
 			break;	
@@ -449,7 +448,7 @@ bool CASEFileType::Open(const char *sFileName)
 			case ASE_MESH_TFACELIST:	{SKIP_ASE_TOKEN(); /* Skip '{'*/}break;
 			case ASE_MESH_TFACE:
 				{
-					DWORD dwTextFaceIndex=ReadDWord();
+					unsigned int dwTextFaceIndex=ReadDWord();
 					pFrame->pTextFaces[dwTextFaceIndex].nFaceIndex=dwTextFaceIndex;
 					pFrame->pTextFaces[dwTextFaceIndex].pTextVertexes[0]=ReadDWord();
 					pFrame->pTextFaces[dwTextFaceIndex].pTextVertexes[1]=ReadDWord();
@@ -471,7 +470,7 @@ bool CASEFileType::Open(const char *sFileName)
 			case ASE_MESH_CVERTLIST:	{SKIP_ASE_TOKEN(); /* Skip '{'*/}break;
 			case ASE_MESH_VERTCOL: 
 				{
-					DWORD iColorVertexIndex=ReadDWord();
+					unsigned int iColorVertexIndex=ReadDWord();
 					pFrame->pColorVertexes[iColorVertexIndex]=ReadVector();
 				}
 			break;	
@@ -487,7 +486,7 @@ bool CASEFileType::Open(const char *sFileName)
 			case ASE_MESH_CFACELIST:	{SKIP_ASE_TOKEN(); /* Skip '{'*/}break;
 			case ASE_MESH_CFACE:
 				{
-					DWORD dwColorFaceIndex=ReadDWord();
+					unsigned int dwColorFaceIndex=ReadDWord();
 					pFrame->pColorFaces[dwColorFaceIndex].nFaceIndex=dwColorFaceIndex;
 					pFrame->pColorFaces[dwColorFaceIndex].pColorVertexes[0]=ReadDWord();
 					pFrame->pColorFaces[dwColorFaceIndex].pColorVertexes[1]=ReadDWord();

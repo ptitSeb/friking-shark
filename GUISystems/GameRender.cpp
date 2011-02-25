@@ -10,7 +10,7 @@ void EntityOperation_RenderBBox(IEntity *piEntity,void *pParam1,void *pParam2)
 {
     IGenericRender *pRender=(IGenericRender *)pParam1;
     SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();
-    DWORD dwAlignment=piEntity->GetAlignment();
+    unsigned int dwAlignment=piEntity->GetAlignment();
 	CVector vColor(1,1,0);
     switch(dwAlignment)
     {
@@ -45,10 +45,10 @@ CGameRender::~CGameRender()
 
 }
 
-DWORD	CGameRender::EnableFlags(DWORD dwFlags){m_dwFlags|=dwFlags;return m_dwFlags;}
-DWORD	CGameRender::DisableFlags(DWORD dwFlags){m_dwFlags&=~dwFlags;return m_dwFlags;}
-DWORD	CGameRender::GetFlag(DWORD dwFlag){return m_dwFlags&dwFlag;}
-DWORD	CGameRender::ToggleFlag(DWORD dwFlag){if(GetFlag(dwFlag)){DisableFlags(dwFlag);}else{EnableFlags(dwFlag);}return dwFlag;}
+unsigned int	CGameRender::EnableFlags(unsigned int dwFlags){m_dwFlags|=dwFlags;return m_dwFlags;}
+unsigned int	CGameRender::DisableFlags(unsigned int dwFlags){m_dwFlags&=~dwFlags;return m_dwFlags;}
+unsigned int	CGameRender::GetFlag(unsigned int dwFlag){return m_dwFlags&dwFlag;}
+unsigned int	CGameRender::ToggleFlag(unsigned int dwFlag){if(GetFlag(dwFlag)){DisableFlags(dwFlag);}else{EnableFlags(dwFlag);}return dwFlag;}
 
 
 void CGameRender::Render(IGenericRender *piRender,IGenericCamera *piCamera)

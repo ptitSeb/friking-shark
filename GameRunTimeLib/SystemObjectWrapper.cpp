@@ -1,7 +1,6 @@
 #include "./stdafx.h"
 #include "GameRunTimeLib.h"
 #include "SystemObjectWrapper.h"
-#include "crtdbg.h"
 
 CSystemObjectWrapper::CSystemObjectWrapper()
 {

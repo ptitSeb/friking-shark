@@ -14,7 +14,7 @@ CPlayAreaEntity::~CPlayAreaEntity()
     m_EntityType.Detach();
 }
 
-bool CPlayAreaEntity::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInfo,DWORD dwCurrentTime,double dInterval)
+bool CPlayAreaEntity::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInfo,unsigned int dwCurrentTime,double dInterval)
 {
 	if(m_EntityType.m_piEntityType && m_dRadius==0){m_dRadius=m_EntityType.m_piEntityType->DesignGetRadius();}
 
@@ -66,7 +66,7 @@ void CPlayAreaEntity::Destroy()
 	CPlayAreaElementBase::Destroy();
 }
 
-void CPlayAreaEntity::Activate(DWORD dwCurrentTime)
+void CPlayAreaEntity::Activate(unsigned int dwCurrentTime)
 {
     CPlayAreaElementBase::Activate(dwCurrentTime);
 

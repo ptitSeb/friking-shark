@@ -10,5 +10,7 @@
 
 // TODO: reference additional headers your program requires here
 #define GAMERUNTIMELIB_COMPILATION
-#include <windows.h>
-#include <crtdbg.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>

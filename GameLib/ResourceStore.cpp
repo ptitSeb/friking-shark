@@ -4,8 +4,10 @@
 
 #include "./StdAfx.h"
 #include <float.h>
-#include <crtdbg.h>
-#include <windows.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include <string.h>
 #include "VectorLib.h"
 #include "GameRunTimeLib.h"

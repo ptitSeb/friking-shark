@@ -6,7 +6,7 @@ public:
 	CGenericRenderWrapper m_Render;
 
 
-    IParticle *CreateInstance(IParticleEmitter *piEmiter,DWORD dwCurrentTime);
+    IParticle *CreateInstance(IParticleEmitter *piEmiter,unsigned int dwCurrentTime);
 
 	bool Init(std::string sClass,std::string sName,ISystem *piSystem);
 	void Destroy();

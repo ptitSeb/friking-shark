@@ -48,7 +48,7 @@ void CSystem::Destroy()
     for(i2=mTempModules.begin();i2!=mTempModules.end();i2++){ISystemModule *piModule=i2->second;piModule->Destroy();REL(piModule);}
     mTempModules.clear();
 
-    _ASSERT(m_mClasses.size()==0);
+    RTASSERT(m_mClasses.size()==0);
 
     CSystemObjectBase::Destroy();
     if(m_piSystemManager){m_piSystemManager->UnregisterSystem(this);}

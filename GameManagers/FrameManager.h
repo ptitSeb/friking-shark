@@ -3,13 +3,13 @@
 class CFrameManager : virtual public CSystemObjectBase, virtual public IFrameManager
 {
 	bool	m_bPaused;
-	DWORD m_dwPauseStartTime;
+	unsigned int m_dwPauseStartTime;
 
-	DWORD m_dwCurrentRealTime;
-	DWORD m_dwCurrentTime;
-	DWORD m_dwTimeBase;
-	DWORD m_dwLastTime;
-	DWORD m_dwLastRealTime;
+	unsigned int m_dwCurrentRealTime;
+	unsigned int m_dwCurrentTime;
+	unsigned int m_dwTimeBase;
+	unsigned int m_dwLastTime;
+	unsigned int m_dwLastRealTime;
 	double m_dTimeFraction;
 	double m_dRealTimeFraction;
 
@@ -25,8 +25,8 @@ class CFrameManager : virtual public CSystemObjectBase, virtual public IFrameMan
 #endif
 
 	double m_dCurrentFps;
-	DWORD  m_dwFPSFrameTimes[10000];
-	DWORD  m_nFPSFrames;
+	unsigned int  m_dwFPSFrameTimes[10000];
+	unsigned int  m_nFPSFrames;
 
 	void ComputeFps();
 
@@ -39,8 +39,8 @@ public:
 
 	void ProcessFrame();
 
-	DWORD  GetCurrentRealTime();
-	DWORD  GetCurrentTime();
+	unsigned int  GetCurrentRealTime();
+	unsigned int  GetCurrentTime();
 	double GetTimeFraction();
 	double GetRealTimeFraction();
 	double GetCurrentFps();

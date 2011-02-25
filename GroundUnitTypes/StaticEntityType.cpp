@@ -10,14 +10,14 @@ CStaticEntityType::~CStaticEntityType()
 {
 }
 
-IEntity *CStaticEntityType::CreateInstance(IEntity *piParent,DWORD dwCurrentTime)
+IEntity *CStaticEntityType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
 {
 	CStaticEntity *piEntity=new CStaticEntity(this);
 	InitializeEntity(piEntity,dwCurrentTime);
 	return piEntity;
 }
 
-void CStaticEntityType::InitializeEntity( CEntityBase *piEntity,DWORD dwCurrentTime )
+void CStaticEntityType::InitializeEntity( CEntityBase *piEntity,unsigned int dwCurrentTime )
 {
 	CEntityTypeBase::InitializeEntity(piEntity,dwCurrentTime);
 	piEntity->GetPhysicInfo()->dwMoveType=PHYSIC_MOVE_TYPE_NONE;

@@ -13,36 +13,36 @@ CProjectileLauncherType::~CProjectileLauncherType(void)
 {
 }
 
-IWeapon *CProjectileLauncherType::CreateInstance(IEntity *piEntity,DWORD dwCurrentTime)
+IWeapon *CProjectileLauncherType::CreateInstance(IEntity *piEntity,unsigned int dwCurrentTime)
 {
  CProjectileLauncher *pProyectileLauncher=new CProjectileLauncher(this,piEntity,dwCurrentTime);
   return pProyectileLauncher;
 }
 
-DWORD CProjectileLauncherType::GetSlot()
+unsigned int CProjectileLauncherType::GetSlot()
 {
   return m_dwWeaponSlot;
 }
 
-DWORD CProjectileLauncherType::GetMaxLevel()
+unsigned int CProjectileLauncherType::GetMaxLevel()
 {
   if(m_dLevels.size()==0){return 0;}
-  DWORD dwMaxLevel=(DWORD)m_dLevels.size();
+  unsigned int dwMaxLevel=(unsigned int)m_dLevels.size();
   return dwMaxLevel-1;
 }
 
-SProjectileLauncherLevel *CProjectileLauncherType::GetLevel(DWORD dwLevel)
+SProjectileLauncherLevel *CProjectileLauncherType::GetLevel(unsigned int dwLevel)
 {
   if(m_dLevels.size()==0){return NULL;}
 
   if(dwLevel>(m_dLevels.size()-1))
   {
-    dwLevel=(DWORD)m_dLevels.size()-1;
+    dwLevel=(unsigned int)m_dLevels.size()-1;
   }
   return &m_dLevels[dwLevel];
 }
 
-CProjectileLauncher::CProjectileLauncher(CProjectileLauncherType *pType,IEntity *piEntity,DWORD dwCurrentTimeBase)
+CProjectileLauncher::CProjectileLauncher(CProjectileLauncherType *pType,IEntity *piEntity,unsigned int dwCurrentTimeBase)
 {
   m_pType=pType;
   m_piEntity=piEntity;
@@ -55,7 +55,7 @@ CProjectileLauncher::~CProjectileLauncher()
 {
 }
 
-void CProjectileLauncher::Fire(DWORD dwCurrentTime)
+void CProjectileLauncher::Fire(unsigned int dwCurrentTime)
 {
   if(IsReady(dwCurrentTime))
   {
@@ -127,7 +127,7 @@ void CProjectileLauncher::Fire(DWORD dwCurrentTime)
   }
 }
 
-bool CProjectileLauncher::IsReady(DWORD dwCurrentTime)
+bool CProjectileLauncher::IsReady(unsigned int dwCurrentTime)
 {
   if(m_pCurrentLevel)
   {
@@ -139,17 +139,17 @@ bool CProjectileLauncher::IsReady(DWORD dwCurrentTime)
   }
 }
 
-DWORD CProjectileLauncher::GetSlot()
+unsigned int CProjectileLauncher::GetSlot()
 {
   return m_pType->GetSlot();
 }
 
-DWORD CProjectileLauncher::GetCurrentLevel()
+unsigned int CProjectileLauncher::GetCurrentLevel()
 {
   return m_dwCurrentLevel;
 }
 
-void CProjectileLauncher::SetCurrentLevel(DWORD dwLevel)
+void CProjectileLauncher::SetCurrentLevel(unsigned int dwLevel)
 {
   m_dwCurrentLevel=dwLevel;
   if(m_dwCurrentLevel>m_pType->GetMaxLevel())

@@ -55,7 +55,7 @@ void CSoundType::Destroy()
   CSystemObjectBase::Destroy();
 }
 
-ISound *CSoundType::CreateInstance(IEntity *piEntity,DWORD dwCurrentTime)
+ISound *CSoundType::CreateInstance(IEntity *piEntity,unsigned int dwCurrentTime)
 {
   if(m_piSoundManager==NULL)
   {
@@ -67,12 +67,12 @@ ISound *CSoundType::CreateInstance(IEntity *piEntity,DWORD dwCurrentTime)
 
     CHAR wcName[MAX_PATH]={0};
     sprintf(wcName,"%s",m_sFileName.c_str());
-    DWORD dwFlags=DSBCAPS_CTRLPAN|DSBCAPS_CTRLFREQUENCY|DSBCAPS_CTRLVOLUME;
+    unsigned int dwFlags=DSBCAPS_CTRLPAN|DSBCAPS_CTRLFREQUENCY|DSBCAPS_CTRLVOLUME;
     if(m_piSoundManager->Is3DSoundEnabled()){dwFlags|=DSBCAPS_CTRL3D;dwFlags&=~DSBCAPS_CTRLPAN;}
     HRESULT hr=m_piSoundManager->GetSoundManager()->Create(&m_pSound,wcName,dwFlags,GUID_NULL,m_dwMaxSimultaneousSounds);
     if(SUCCEEDED(hr))
     {
-      DWORD x;
+      unsigned int x;
       for(x=0;x<m_dwMaxSimultaneousSounds;x++)
        {
           IDirectSoundBuffer *piSoundBuffer=m_pSound->GetBuffer(x);
@@ -116,7 +116,7 @@ void CSoundType::ReleaseSoundBuffer(IDirectSoundBuffer8 *piSound)
 }
 
 
-CSoundObject::CSoundObject(CSoundType *pType,IEntity *piEntity,DWORD dwCurrentTimeBase)
+CSoundObject::CSoundObject(CSoundType *pType,IEntity *piEntity,unsigned int dwCurrentTimeBase)
 {
   m_bActive=false;
   m_piSound=NULL;
@@ -138,7 +138,7 @@ CSoundObject::~CSoundObject()
     UNSUBSCRIBE_FROM_CAST(m_pType->m_piSoundManager,ISoundManagerEvents);
 }
 
-void CSoundObject::Activate(DWORD dwCurrentTime)
+void CSoundObject::Activate(unsigned int dwCurrentTime)
 {
   m_bActive=true;
   if(!m_piSound)
@@ -176,7 +176,7 @@ void CSoundObject::Deactivate()
 bool CSoundObject::HasFinished()
 {
   if(!m_piSound){return true;}
-  DWORD dwStatus=0;
+  unsigned int dwStatus=0;
   m_piSound->GetStatus( &dwStatus );
   if(dwStatus&DSBSTATUS_PLAYING)
   {
@@ -201,7 +201,7 @@ void CSoundObject::UpdateSound()
   }
 }
 
-bool CSoundObject::ProcessFrame(IPhysicManager *pPhysicManager,DWORD dwCurrentTime,double dInterval)
+bool CSoundObject::ProcessFrame(IPhysicManager *pPhysicManager,unsigned int dwCurrentTime,double dInterval)
 {
   HRESULT hr=S_OK;
   if(m_pType->m_piSoundManager->Is3DSoundEnabled())

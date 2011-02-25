@@ -14,7 +14,7 @@ class CIATestMainWindow: virtual public CGameWindowBase, virtual public IGameGUI
 	CGenericCameraWrapper m_Camera;
 
 	void ProcessInput(double dTimeFraction,double dRealTimeFraction);
-	void ProcessKey(WORD nKey,double dTimeFraction,double dRealTimeFraction);
+	void ProcessKey(unsigned short nKey,double dTimeFraction,double dRealTimeFraction);
 
 	map<string,CIAEntityBase *> m_mEntities;
 	map<string,CButtonWrapper *> m_mEntityButtons;
@@ -29,7 +29,7 @@ class CIATestMainWindow: virtual public CGameWindowBase, virtual public IGameGUI
 	ITestScenario *m_piCurrentScenario;
 
 	bool				 m_bPauseOnNextFrame;
-	DWORD				 m_dwNextAcceptedPauseKeyTime;
+	unsigned int				 m_dwNextAcceptedPauseKeyTime;
 	CFrameManagerWrapper m_FrameManager;
 
 	BEGIN_CHILD_MAP()

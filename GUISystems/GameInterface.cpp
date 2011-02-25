@@ -229,8 +229,8 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 
 		if(m_piSTGameTime)
 		{
-			DWORD dwCurrentTime=m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime();
-			DWORD dwMinutes=0,dwSeconds=0,dwMilliseconds=0;
+			unsigned int dwCurrentTime=m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime();
+			unsigned int dwMinutes=0,dwSeconds=0,dwMilliseconds=0;
 			dwCurrentTime=m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime();
 			dwMinutes=dwCurrentTime/(1000*60);
 			dwSeconds=dwCurrentTime/1000-dwMinutes*60;
@@ -330,7 +330,7 @@ void CGameInterface::ProcessInput()
 	}
 }
 
-void CGameInterface::MoveInspection(WORD nKey)
+void CGameInterface::MoveInspection(unsigned short nKey)
 {
 	double dForwardSpeed=m_dMovementInspectionSpeed*m_FrameManagerWrapper.m_piFrameManager->GetRealTimeFraction();
 	if(m_piGUIManager->IsKeyDown(GK_LSHIFT)){dForwardSpeed*=3.0;}
@@ -342,7 +342,7 @@ void CGameInterface::MoveInspection(WORD nKey)
 	else if(nKey==KEY_DOWN)	{CVector vCameraPos=m_InspectionCamera.m_piCamera->GetPosition()-m_InspectionCamera.m_piCamera->GetUpVector()*(dForwardSpeed);m_InspectionCamera.m_piCamera->SetPosition(vCameraPos);}
 }
 
-void CGameInterface::ProcessKey(WORD nKey)
+void CGameInterface::ProcessKey(unsigned short nKey)
 {
 	// en modo de inspeccion todos los movimientos se calculan en tiempo realm no en el tiempo
 	// del sistema de entidades.

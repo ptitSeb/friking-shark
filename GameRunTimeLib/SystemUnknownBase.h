@@ -2,7 +2,7 @@
 
 class CSystemUnknownBase:virtual public ISystemUnknown
 {
-    DWORD       m_dwReferences;
+    unsigned int       m_dwReferences;
 
 protected:
 		virtual void FinalRelease();

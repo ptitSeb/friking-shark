@@ -112,15 +112,15 @@ public:
 
 	virtual void OnRender()=0;
 
-	virtual void OnLButtonDown(WORD wKeyState,unsigned x,unsigned y)=0;
-	virtual void OnLButtonUp(WORD wKeyState,unsigned x,unsigned y)=0;
-	virtual void OnRButtonDown(WORD wKeyState,unsigned x,unsigned y)=0;
-	virtual void OnRButtonUp(WORD wKeyState,unsigned x,unsigned y)=0;
+	virtual void OnLButtonDown(unsigned short wKeyState,unsigned x,unsigned y)=0;
+	virtual void OnLButtonUp(unsigned short wKeyState,unsigned x,unsigned y)=0;
+	virtual void OnRButtonDown(unsigned short wKeyState,unsigned x,unsigned y)=0;
+	virtual void OnRButtonUp(unsigned short wKeyState,unsigned x,unsigned y)=0;
 	virtual void OnMouseMove(unsigned x,unsigned y)=0;
 	
-	virtual void OnCharacter(WORD wCharacter)=0;
-	virtual void OnKeyDown(WORD wKeyState)=0;
-	virtual void OnKeyUp(WORD wKeyState)=0;
+	virtual void OnCharacter(unsigned short wCharacter)=0;
+	virtual void OnKeyDown(unsigned short wKeyState)=0;
+	virtual void OnKeyUp(unsigned short wKeyState)=0;
 
 	virtual void OnSize(unsigned cx,unsigned cy)=0;
 	virtual void OnMove()=0;
@@ -154,9 +154,6 @@ public:
 
 	virtual void		SetCaption(std::string sCaption)=0;
 	virtual std::string GetCaption()=0;
-
-	virtual void		SetIcon(HICON hIcon)=0;
-	virtual HICON		GetIcon()=0;
 
 	virtual void GetCursorPos(int *pX,int *pY)=0;
 	virtual void SetCursorPos(int x,int y)=0;

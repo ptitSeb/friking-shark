@@ -6,9 +6,9 @@ public:
 
     string      m_sEvent;
     string      m_sParams;
-    DWORD       m_dwTime;
+    unsigned int       m_dwTime;
     
-    IAnimationObject *CreateInstance(IAnimation *piAnimation,DWORD dwCurrentTime);
+    IAnimationObject *CreateInstance(IAnimation *piAnimation,unsigned int dwCurrentTime);
 
     BEGIN_PROP_MAP(CEventAnimationObjectType)
         PROP_CLASS_CHAIN(CAnimationObjectTypeBase)
@@ -28,7 +28,7 @@ class CEventAnimationObject: public CAnimationObjectBase
     CEventAnimationObjectType  *m_pType;
 public:
 
-    bool ProcessFrame(IPhysicManager *pPhysicManager,DWORD dwCurrentTime,double dInterval);
+    bool ProcessFrame(IPhysicManager *pPhysicManager,unsigned int dwCurrentTime,double dInterval);
 
     CEventAnimationObject(CEventAnimationObjectType *pType,IAnimation *piAnimation);
 };

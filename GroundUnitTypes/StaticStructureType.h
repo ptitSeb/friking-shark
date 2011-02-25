@@ -3,8 +3,8 @@
 class CStaticStructureType: public CEntityTypeBase
 {
 public:
-	IEntity *CreateInstance(IEntity *piParent,DWORD dwCurrentTime);
-	void InitializeEntity(CEntityBase *piEntity,DWORD dwCurrentTime);
+	IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
+	void InitializeEntity(CEntityBase *piEntity,unsigned int dwCurrentTime);
 
 	double  m_dMaxHealth;
 

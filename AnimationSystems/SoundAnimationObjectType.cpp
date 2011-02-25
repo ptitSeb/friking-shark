@@ -14,7 +14,7 @@ CSoundAnimationObjectType::~CSoundAnimationObjectType()
 {
 }
 
-IAnimationObject *CSoundAnimationObjectType::CreateInstance(IAnimation *piAnimation,DWORD dwCurrentTime)
+IAnimationObject *CSoundAnimationObjectType::CreateInstance(IAnimation *piAnimation,unsigned int dwCurrentTime)
 {
     CSoundAnimationObject *pSound=new CSoundAnimationObject(this,piAnimation);
     return pSound;
@@ -31,7 +31,7 @@ CSoundAnimationObject::~CSoundAnimationObject()
     if(m_piSound){delete m_piSound;m_piSound=NULL;}
 }
 
-void CSoundAnimationObject::Activate(DWORD dwCurrentTime)
+void CSoundAnimationObject::Activate(unsigned int dwCurrentTime)
 {
     if(m_piSound){delete m_piSound;m_piSound=NULL;}
     CAnimationObjectBase::Activate(dwCurrentTime);
@@ -52,7 +52,7 @@ void CSoundAnimationObject::CustomRender(IGenericRender *piRender,IGenericCamera
 {
 }
 
-bool CSoundAnimationObject::ProcessFrame(IPhysicManager *pPhysicManager,DWORD dwCurrentTime,double dInterval)
+bool CSoundAnimationObject::ProcessFrame(IPhysicManager *pPhysicManager,unsigned int dwCurrentTime,double dInterval)
 {
     if(m_piSound)
     {

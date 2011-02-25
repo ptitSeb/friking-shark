@@ -30,9 +30,9 @@ class CGameInterface: virtual public CGameDialogBase, virtual public IGameInterf
 	bool		m_bFrozen;
 	bool		m_bResumeAfterFreeze;
 
-	DWORD		m_dwNextAcceptedControlKeyTime;
-	DWORD		m_dwNextAcceptedPauseKeyTime;
-	DWORD		m_dwMovementType;
+	unsigned int		m_dwNextAcceptedControlKeyTime;
+	unsigned int		m_dwNextAcceptedPauseKeyTime;
+	unsigned int		m_dwMovementType;
 
 	double  m_dMovementInspectionSpeed;
 
@@ -61,9 +61,9 @@ class CGameInterface: virtual public CGameDialogBase, virtual public IGameInterf
 
 	void UpdatePlayCameraPosition();
 	void ProcessInput();
-	void ProcessKey(WORD nKey);
+	void ProcessKey(unsigned short nKey);
 
-	void MoveInspection(WORD nKey);
+	void MoveInspection(unsigned short nKey);
 
 	// IPlayAreaElementEnumerationCallback
 

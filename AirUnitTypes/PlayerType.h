@@ -4,7 +4,7 @@ class CPlayerType: public CEntityTypeBase
 {
     double m_dMaxSpeed;
 public:
-    IEntity *CreateInstance(IEntity *piParent,DWORD dwCurrentTime);
+    IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
 
     BEGIN_PROP_MAP(CPlayerType)
       PROP_VALUE_FLAGS(m_dMaxSpeed,"Velocidad",80,MRPF_NORMAL|MRPF_OPTIONAL);
@@ -18,8 +18,8 @@ public:
 
 class CPlayer: public CEntityBase,public IPlayer
 {
-    DWORD m_dwPoints;
-    DWORD m_dwLivesLeft;
+    unsigned int m_dwPoints;
+    unsigned int m_dwLivesLeft;
     double m_dSpeed;
 
     CPlayerType  *m_pType;
@@ -29,20 +29,20 @@ class CPlayer: public CEntityBase,public IPlayer
 
 public:
 	//void Render(IGenericRender *piRender,IGenericCamera *piCamera){}
-    DWORD GetPoints();
-    void  SetPoints(DWORD dwPoints);
-    void  AddPoints(DWORD dwPoints);
+    unsigned int GetPoints();
+    void  SetPoints(unsigned int dwPoints);
+    void  AddPoints(unsigned int dwPoints);
 
-    DWORD GetLivesLeft();
-    void  SetLivesLeft(DWORD dwLivesLeft);
-    void  AddLivesLeft(DWORD dwLivesLeft);
+    unsigned int GetLivesLeft();
+    void  SetLivesLeft(unsigned int dwLivesLeft);
+    void  AddLivesLeft(unsigned int dwLivesLeft);
 
     double GetSpeed();
     void   SetSpeed(double dSpeed);
 
     void  GetWeapons(vector<IWeapon*> *pWeapons);
-    void  GetWeaponsOnSlot(DWORD dwWeaponSlot,vector<IWeapon*> *pWeapons);
-    void  FireWeaponsOnSlot(DWORD dwWeaponSlot,DWORD dwCurrentTime);
+    void  GetWeaponsOnSlot(unsigned int dwWeaponSlot,vector<IWeapon*> *pWeapons);
+    void  FireWeaponsOnSlot(unsigned int dwWeaponSlot,unsigned int dwCurrentTime);
 
     CPlayer(CPlayerType *pType);
 };

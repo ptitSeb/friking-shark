@@ -44,7 +44,7 @@ public:
         bool  __declspec(dllexport) SystemModuleRegister(ISystem *piSystem){g_pSystemModuleHelper->RegisterClasses(piSystem);return true;}\
         void  __declspec(dllexport) SystemModuleUnregister(ISystem *piSystem){g_pSystemModuleHelper->UnregisterClasses(piSystem);}\
     }\
-    BOOL APIENTRY DllMain( HANDLE hModule, DWORD  ul_reason_for_call, LPVOID lpReserved)\
+    BOOL APIENTRY DllMain( HANDLE hModule, unsigned int  ul_reason_for_call, LPVOID lpReserved)\
     {\
     switch (ul_reason_for_call)\
         {\

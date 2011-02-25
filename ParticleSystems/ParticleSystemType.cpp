@@ -5,7 +5,7 @@
 CParticleSystemType::CParticleSystemType(void){}
 CParticleSystemType::~CParticleSystemType(void){}
 
-IParticleSystem *CParticleSystemType::CreateInstance(DWORD dwCurrentTime)
+IParticleSystem *CParticleSystemType::CreateInstance(unsigned int dwCurrentTime)
 {
     unsigned x=0;
 
@@ -91,7 +91,7 @@ void CParticleSystem::DeactivateAllEmitters()
   }
 }
 
-bool CParticleSystem::ProcessFrame(IPhysicManager *piPhysicManager,DWORD dwCurrentTime,double dInterval)
+bool CParticleSystem::ProcessFrame(IPhysicManager *piPhysicManager,unsigned int dwCurrentTime,double dInterval)
 {
     bool bAllEmittersInactive=true;
     for(unsigned x=0;x<m_dEmitters.size();x++)

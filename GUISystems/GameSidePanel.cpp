@@ -32,8 +32,8 @@ void CGameSidePanel::DestroyWindow()
 
 void CGameSidePanel::UpdatePlayerData(CGameSidePanelPlayerData *pPlayerData,const char *pPlayerName)
 {
-	DWORD nPoints=0;
-	DWORD nLivesLeft=0;
+	unsigned int nPoints=0;
+	unsigned int nLivesLeft=0;
 
 	IEntity	*piPlayerEntity=NULL;
 	IPlayer *piPlayer=NULL;
@@ -58,7 +58,7 @@ void CGameSidePanel::UpdatePlayerData(CGameSidePanelPlayerData *pPlayerData,cons
 		sprintf(sTemp,"%d",nPoints);
 		pPlayerData->m_piSTPoints->SetText(sTemp);
 	}
-	for(DWORD x=0;x<GAMESIDEPANEL_MAX_PLAYER_LIVES_TO_DISPLAY;x++)
+	for(unsigned int x=0;x<GAMESIDEPANEL_MAX_PLAYER_LIVES_TO_DISPLAY;x++)
 	{
 		if(pPlayerData->m_piSTLives[x])
 		{

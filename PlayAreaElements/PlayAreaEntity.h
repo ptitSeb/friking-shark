@@ -24,10 +24,10 @@ public:
     bool Init(std::string sClass,std::string sName,ISystem *piSystem);
     void Destroy();
 
-    void Activate(DWORD dwCurrentTime);
+    void Activate(unsigned int dwCurrentTime);
     void Deactivate();
 
-    bool ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInfo,DWORD dwCurrentTime,double dInterval);
+    bool ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInfo,unsigned int dwCurrentTime,double dInterval);
 
 	void DesignRender(IGenericRender *piRender,bool bSelected);
 	CTraceInfo DesignGetTrace(const CVector &p1,const CVector &p2);

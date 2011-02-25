@@ -176,7 +176,7 @@
 
 	class CMapFileType  
 	{
-		CMapFileBrush *ReadBrush(char *pBuffer,DWORD *pOffset,DWORD fileLen,double size);
+		CMapFileBrush *ReadBrush(char *pBuffer,unsigned int *pOffset,unsigned int fileLen,double size);
 
 	public:
 		

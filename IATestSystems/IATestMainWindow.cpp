@@ -106,7 +106,7 @@ void CIATestMainWindow::ProcessInput(double dTimeFraction,double dRealTimeFracti
 	if(m_piGUIManager->IsKeyDown(GK_NUMPAD3) || m_piGUIManager->IsKeyDown('F')){ProcessKey(KEY_DOWN,dTimeFraction,dRealTimeFraction);}
 }
 
-void CIATestMainWindow::ProcessKey(WORD nKey,double dTimeFraction,double dRealTimeFraction)
+void CIATestMainWindow::ProcessKey(unsigned short nKey,double dTimeFraction,double dRealTimeFraction)
 {
 	double dMovementInspectionSpeed=500.0;
 	double dForwardSpeed=dMovementInspectionSpeed*dTimeFraction;

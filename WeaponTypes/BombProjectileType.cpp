@@ -8,7 +8,7 @@ CBombProjectileType::CBombProjectileType()
 
 CBombProjectileType::~CBombProjectileType(){}
 
-IEntity *CBombProjectileType::CreateInstance(IEntity *piParent,DWORD dwCurrentTime)
+IEntity *CBombProjectileType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
 {
   CBombProjectile *piEntity=new CBombProjectile(this,piParent);
   InitializeEntity(piEntity,dwCurrentTime);

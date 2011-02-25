@@ -68,7 +68,7 @@ void CSoundSystemManager::Stop()
   m_EntityManagerWrapper.Detach();
   m_piPlayerEntity=NULL;
 }
-void CSoundSystemManager::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
+void CSoundSystemManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
   if(!Is3DSoundEnabled()){return;}
 
