@@ -336,6 +336,7 @@ bool CResourceStore::LoadASE(CModel *pModel,string sFileName)
 								}
 								else
 								{
+									// Se suman las normales de los planos que contienen ese vertice.
 									CVector vNormal;
 									for(int b=0;b<p3DSFrame->nFaces;b++)
 									{

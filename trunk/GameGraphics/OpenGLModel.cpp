@@ -30,6 +30,56 @@ bool COpenGLModel::LoadFromFile()
 {
 	RemoveAnimations();
 
+	// Se prealocan render buffers para todos los materiales pero 
+	// solo se usaran los que tengan geometria visible asociada.
+
+	// La carga de texturas sobre el render buffer se hace al final 
+	// para no cargar texturas que no se usan.
+
+	// Se recorren las caras de todos los objetos visibles para saber el numero de caras 
+	// y vertices de cada render buffer (uno por material).
+	// Para esto se crea un array de booleanos de vertices para no contalos por duplicado.
+
+	// Se aloca espacio en el render buffer para todos los vertices y caras con ese material
+	// de todos los objetos visibles
+	// por cada objeto se crea:
+	//    una tabla de traduccion de [caraase] -> [renderbuffer,cararenderbuffer]
+	//    una tabla de traduccion de [verticease] -> [renderbuffer,verticerenderbuffer]
+	
+	// despues de esto se van aplicando los colores y vertices de textura para los objetos
+	// usando las tablas de traduccion (con el indice se sabe a que cara aplicarlo)
+	/*
+	bool bResult=false;
+	CASEFileType	file;
+	
+	if(!file.Open(m_sFileName.c_str())){return false;}
+
+	SModelAnimation *pAnimation=new SModelAnimation;
+	m_vAnimations.push_back(pAnimation);
+
+	for(int f=0;f<file.m_Scene.nFrameCount;f++)
+	{
+		SModelFrame *pFrame=new SModelFrame;
+		pAnimation->vFrames.push_back(pFrame);
+
+		vector<S3DSObject *>::iterator i;
+		for(i=pFile->m_vObjects.begin();i!=pFile->m_vObjects.end();i++)
+		{
+			S3DSObject *pObject=*i;
+			if(pObject->bVisible)
+			{
+				pFrame->+=pObject->vAnimationFrames[f]->nFaces;
+			}
+		}
+		if(pFrame->m_nPolygons)
+		{
+			int nPol=0;
+			pFrame->m_pPolygons=new CMaterialPolygon[pFrame->m_nPolygons];
+		}
+	}*/
+	
+	RTTRACE("COpenGLModel::LoadFromFile -> Loading Model %s",m_sFileName.c_str());
+
 	CResourceStore *pStore=new CResourceStore;
 	CModel *pModel=pStore->LoadModel(m_sFileName);
 	if(pModel)
@@ -211,6 +261,8 @@ bool COpenGLModel::LoadFromFile()
 	}
 
 	delete pStore;
+	
+
 	UpdateFrameBuffers();
 
 	return pModel!=NULL;
