@@ -16,6 +16,7 @@
 	#define strcasecmp _stricmp
 
 	#define RTASSERT(x) _ASSERTE((x))
+	#define __UNUSED_ATTRIB__
 #else
 	#include <libgen.h>
 
@@ -29,12 +30,16 @@
 		#include <assert.h>
 		#define RTASSERT(x) assert(x)
 	#endif
+
+	#define __UNUSED_ATTRIB__ __attribute__((unused))
 #endif
 
 void ReplaceExtension(char *pFileName,const char *pExt);
 void GetExtension(const char *pFileName,char *pExt);
 void GetFileFolder(const char *pFilePath,char *pFolder);
 void GetFileName(const char *pFilePath,char *pFileName);
+
+unsigned int GetTimeStamp();
 
 void RTTRACE(const char *format, ...);
 

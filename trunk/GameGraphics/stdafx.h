@@ -8,6 +8,10 @@
 #include <list>
 #include <stack>
 #include "GameRunTimeLib.h"
+#include "VectorLib.h"
+#include "GameLib.h"
+#include "GameGraphics.h"
+#include "OpenGLGraphics.h"
 
 #define GL_GLEXT_PROTOTYPES
 #include "GLee.h"
@@ -16,12 +20,6 @@
 #else 
 #include <GL/glut.h>
 #endif
-
-#include "VectorLib.h"
-#include "GameLib.h"
-#include "GameGraphics.h"
-#include "OpenGLGraphics.h"
-
 
 DECLARE_CUSTOM_WRAPPER1(COpenGLViewportWrapper,IOpenGLViewport,m_piViewport)
 DECLARE_CUSTOM_WRAPPER1(CGenericTextureWrapper,IGenericTexture,m_piTexture)

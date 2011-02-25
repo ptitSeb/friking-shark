@@ -55,3 +55,4 @@ T* BufferFromVector(std::vector< T > *pContainer)
 	}
 	return pBuffer;
 }
+

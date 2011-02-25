@@ -1,11 +1,6 @@
 #include "./stdafx.h"
 #include "FrameManager.h"
 
-#ifndef WIN32
-#include <sys/time.h>
-#endif
-
-
 CFrameManager::CFrameManager()
 {
 	m_dwCurrentRealTime=0;
@@ -25,10 +20,6 @@ CFrameManager::CFrameManager()
 	m_dCurrentFps=0;
 	m_nFPSFrames=0;
 	memset(&m_dwFPSFrameTimes,0,sizeof(m_dwFPSFrameTimes));
-
-#ifdef WIN32
-	QueryPerformanceFrequency(&m_ldPerformanceFrequency);
-#endif 
 }
 
 unsigned int  CFrameManager::GetCurrentRealTime(){return m_dwCurrentRealTime;}
@@ -38,15 +29,7 @@ double CFrameManager::GetRealTimeFraction(){return m_dRealTimeFraction;}
 
 void CFrameManager::Reset()
 {
-#ifdef WIN32
-	LARGE_INTEGER ldNow={0};
-	QueryPerformanceCounter(&ldNow);
-	m_dwTimeBase=(unsigned int)(ldNow.QuadPart*1000/m_ldPerformanceFrequency.QuadPart);
-#else
-	timeval tNow;
-    gettimeofday(&tNow, NULL);
-	m_dwTimeBase=((double)tNow.tv_sec)*1000.0+((double)tNow.tv_usec)/1000.0;
-#endif
+	m_dwTimeBase=GetTimeStamp();
 	m_dwLastTime=0;
 	m_dwCurrentTime=0;
 }
@@ -97,15 +80,7 @@ void CFrameManager::ProcessFrame()
 	}
 	m_bTogglePauseOnNextFrame=m_bSetPauseOnNextFrame=m_bContinueOnNextFrame=false;
 
-#ifdef WIN32
-	LARGE_INTEGER ldNow={0};
-	QueryPerformanceCounter(&ldNow);
-	m_dwCurrentRealTime=(unsigned int)(ldNow.QuadPart*1000/m_ldPerformanceFrequency.QuadPart);
-#else
-	timeval tNow;
-    gettimeofday(&tNow, NULL);
-	m_dwCurrentRealTime=((double)tNow.tv_sec)*1000.0+((double)tNow.tv_usec)/1000.0;
-#endif
+	m_dwCurrentRealTime=GetTimeStamp();
 	if(!m_bPaused)
 	{
 		m_dwCurrentTime=m_dwCurrentRealTime-m_dwTimeBase;
