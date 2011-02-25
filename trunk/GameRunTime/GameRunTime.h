@@ -24,11 +24,6 @@
 #include <vector>
 
 
- // warning C4250: 'xxx' : inherits 'CSystemObjectBase::CSystemObjectBase::AddReference' via dominance
-#ifdef WIN32 
-#pragma warning ( disable : 4250 )
-#endif
-
 class ISystemModule;
 class ISystemClass;
 class ISystemObject;

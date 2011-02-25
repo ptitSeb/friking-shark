@@ -5,8 +5,7 @@ CC=g++
 
 INCLUDES = -I. -I../GameRunTime -I../GameRunTimeLib -I../VectorLib
 
-SOURCES = GameLib.cpp\
-ResourceStore.cpp\
+SOURCES = ResourceStore.cpp\
 StdAfx.cpp
 
 

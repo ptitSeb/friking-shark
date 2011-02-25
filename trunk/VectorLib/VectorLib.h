@@ -5,10 +5,6 @@
 #ifndef __VECTOR_LIB__
 #define __VECTOR_LIB__
 
-#ifdef WIN32
-#pragma warning ( disable : 4786 )
-#endif
-
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
