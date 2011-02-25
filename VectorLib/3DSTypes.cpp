@@ -224,3 +224,37 @@ void C3DSFileTypeBase::Close()
 	m_vLights.clear();
 	m_vCameras.clear();
 }
+
+
+bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<C3DSVector> *pItem)
+{
+	char sTemp[1024]={0};
+	CVector tempVector=FromOpenGLTo3DS(*pItem->GetValueAddress());
+	sprintf(sTemp,"%f,%f,%f",tempVector.c[0],tempVector.c[1],tempVector.c[2]);
+	if(piNode){piNode->SetValue(sTemp);}
+	return piNode?true:false;
+}
+
+bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<C3DSVector> *pItem)
+{
+	pItem->SetDefaultValue();
+	if(!piNode || !piNode->GetValue()){return false;}
+
+	char sTemp[1024]={0};
+	strcpy(sTemp,piNode->GetValue());
+	CVector vPos;
+	char *pToken=strtok(sTemp,", ");
+	if(pToken){vPos.c[0]=atof(pToken);pToken=strtok(NULL,", ");}
+	if(pToken){vPos.c[1]=atof(pToken);pToken=strtok(NULL,", ");}
+	if(pToken){vPos.c[2]=atof(pToken);}
+	(*pItem->GetValueAddress())=From3DSToOpenGL(vPos);
+	return true;
+}
+
+bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<C3DSVector> *pItem)
+{
+	return true;
+}
+
+void MRPersistencyInitialize(CMRPersistentReferenceT<C3DSVector> *pItem){(*pItem->GetValueAddress())=Origin;}
+void MRPersistencyFree(CMRPersistentReferenceT<C3DSVector> *pItem){}

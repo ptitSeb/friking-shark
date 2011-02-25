@@ -11,9 +11,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#ifndef WIN32
-#include <libgen.h>
-#endif
 
 
 using namespace std;
@@ -136,7 +133,7 @@ CASEFileType::CASEFileType()
 
 unsigned short			CASEFileType::ReadWord()  {unsigned short value=0;char *pBuf=strtok(NULL,ASE_FILE_DELIMITER);value=atoi(pBuf);return value;}
 unsigned int			CASEFileType::ReadDWord() {unsigned int value=0;char *pBuf=strtok(NULL,ASE_FILE_DELIMITER);value=atol(pBuf);return value;}
-float			CASEFileType::ReadFloat() {float value=0;char *pBuf=strtok(NULL,ASE_FILE_DELIMITER);value=atof(pBuf);return value;}
+float			CASEFileType::ReadFloat() {float value=0;char *pBuf=strtok(NULL,ASE_FILE_DELIMITER);value=(float)atof(pBuf);return value;}
 unsigned char	CASEFileType::ReadByte()  {unsigned char value=0;char *pBuf=strtok(NULL,ASE_FILE_DELIMITER);value=atoi(pBuf);return value;}
 CVector			CASEFileType::ReadVector(){CVector v;v.c[0]=ReadFloat();v.c[1]=ReadFloat();v.c[2]=ReadFloat();return v;}
 string			CASEFileType::ReadString(){string temp;char *pBuf=strtok(NULL,"\"\t\r\n");temp=pBuf;return temp;}
@@ -644,7 +641,7 @@ bool CASEFileType::Open(const char *sFileName)
 			if(pFrame->pVertexNormals){for (y=0;y<pFrame->nVertexes;y++){From3DSToOpenGL(&pFrame->pVertexNormals[y]);}}
 		}
 	}
-	m_Scene.nFrameCount=bBuildAnimation?m_Scene.dLastFrame-m_Scene.dFirstFrame:1;
+	m_Scene.nFrameCount=(int)(bBuildAnimation?m_Scene.dLastFrame-m_Scene.dFirstFrame:1);
 	// Construccion del buffer de frames, si un objeto no aparece en un frame se pone un puntero a un frame anterior
 	for(x=0;x<m_vObjects.size();x++)
 	{

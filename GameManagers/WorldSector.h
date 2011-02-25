@@ -2,7 +2,7 @@
 
 #define MAX_BSP_JOINT_NODES 200
 
-DECLARE_CUSTOM_WRAPPER2(CModelWrapper,IGenericModel,m_piModel,IOpenGLModel,m_piGLModel)
+DECLARE_CUSTOM_WRAPPER1(CModelWrapper,IGenericModel,m_piModel)
 
 class CWorldManager;
 

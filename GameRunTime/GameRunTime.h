@@ -29,14 +29,6 @@
 #pragma warning ( disable : 4250 )
 #endif
 
-#ifdef WIN32
-#define PATH_SEPARATOR "\\"
-#define PATH_SEPARATOR_CHAR '\\'
-#else
-#define PATH_SEPARATOR "/"
-#define PATH_SEPARATOR_CHAR '/'
-#endif
-
 class ISystemModule;
 class ISystemClass;
 class ISystemObject;

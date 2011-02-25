@@ -5,7 +5,8 @@ CC=g++
 
 INCLUDES = -I. -I../GameRunTime
 
-SOURCES = ConfigFile.cpp\
+SOURCES = PlatformDependent.cpp\
+ConfigFile.cpp\
 Persistency.cpp\
 stdafx.cpp\
 SystemModuleHelpers.cpp\

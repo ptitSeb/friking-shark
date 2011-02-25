@@ -178,6 +178,7 @@
 	{
 		CMapFileBrush *ReadBrush(char *pBuffer,unsigned int *pOffset,unsigned int fileLen,double size);
 
+		void SkipCommentsStringsAndSpaces(char *pBuffer,unsigned int *pOffset,unsigned int bufLen);
 	public:
 		
 		std::list<CMapFileBrush *>	m_lBrushes;

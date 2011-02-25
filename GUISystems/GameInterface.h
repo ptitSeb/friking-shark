@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GameRender.h"
-#include "OpenGLGraphics.h"
 
 class CGameInterface: virtual public CGameDialogBase, virtual public IGameInterfaceWindow,virtual public IPlayAreaElementEnumerationCallback,virtual public IEntityEvents
 {

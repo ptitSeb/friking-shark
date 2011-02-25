@@ -179,10 +179,25 @@ public:
 	virtual ~C3DSFileTypeBase();
 };
 
+// Esta clase solo es un tag para poder persistir valores en el sistema de referencia de 3DS de forma transparente
+class C3DSVector:public CVector
+{
+public:
+	inline C3DSVector(double c0, double c1, double c2){_debugtag_='C';c[0]=c0;c[1]=c1;c[2]=c2;}
+	inline C3DSVector(const CVector &v){_debugtag_='C';c[0]=v.c[0];c[1]=v.c[1];c[2]=v.c[2];}
+	inline C3DSVector(){}
+};
+
 CVector From3DSToOpenGL(CVector *pV);
 CVector From3DSToOpenGL(CVector pV);
 
 CVector FromOpenGLTo3DS(CVector *pV);
 CVector FromOpenGLTo3DS(CVector pV);
+
+bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<C3DSVector> *pItem);
+bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<C3DSVector> *pItem);
+bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<C3DSVector> *pItem);
+void MRPersistencyInitialize(CMRPersistentReferenceT<C3DSVector> *pItem);
+void MRPersistencyFree(CMRPersistentReferenceT<C3DSVector> *pItem);
 
 #endif

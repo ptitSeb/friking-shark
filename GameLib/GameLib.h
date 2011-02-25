@@ -32,24 +32,6 @@
 #include "GameRunTimeLib.h"
 #include "VectorLib.h"
 
-bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CVector> *pItem);
-bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CVector> *pItem);
-bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CVector> *pItem);
-void MRPersistencyInitialize(CMRPersistentReferenceT<CVector> *pItem);
-void MRPersistencyFree(CMRPersistentReferenceT<CVector> *pItem);
-
-bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CRGBColor> *pItem);
-bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CRGBColor> *pItem);
-bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CRGBColor> *pItem);
-void MRPersistencyInitialize(CMRPersistentReferenceT<CRGBColor> *pItem);
-void MRPersistencyFree(CMRPersistentReferenceT<CRGBColor> *pItem);
-
-bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<C3DSVector> *pItem);
-bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<C3DSVector> *pItem);
-bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<C3DSVector> *pItem);
-void MRPersistencyInitialize(CMRPersistentReferenceT<C3DSVector> *pItem);
-void MRPersistencyFree(CMRPersistentReferenceT<C3DSVector> *pItem);
-
 using namespace std;
 #ifndef GAME_LIB_PROYECT
     #include "ResourceStore.h"

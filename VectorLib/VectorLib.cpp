@@ -4,11 +4,7 @@
 
 #include "./StdAfx.h"
 #include "VectorLib.h"
-#include "Utilities.h"
 #include <algorithm>
-#ifndef WIN32
-#include <libgen.h>
-#endif
 
 //#define _DISABLE_OPTIMIZATIONS
 
@@ -1126,7 +1122,7 @@ int BSPFindCandidate(std::vector<CPolygon*> *pPolys)
 				}
 			}
 		}
-		unsigned nCurrentDifference=fabs((double)(nSidePolys[0]-nSidePolys[1]));
+		unsigned nCurrentDifference=(unsigned)fabs((double)(nSidePolys[0]-nSidePolys[1]));
 		if(nCurrentDifference<nCurrentMinimunDifference)
 		{
 			nCurrentMinimunDifference=nCurrentDifference;
@@ -1856,8 +1852,6 @@ CVector FromQuakeToOpenGL(CVector v)
 
 void VectorsFromAngles(const CVector &vAngles,CVector *pvForward,CVector *pvRight,CVector *pvUp)
 {
-    #pragma message("CUIDADO!!!!!!! En VectorsFromAngles he cambiado la chapu de negar el ROLL para que VectorsFromAngles y AnglesFromVector cuadraran, asi que es posible que no cuadren y que haya que revisar AnglesFromVector !!!!")
-
 	if(pvUp){*pvUp=AxisPosY;}
 	if(pvRight){*pvRight=AxisPosZ;}
 	if(pvForward){*pvForward=AxisPosX;}
@@ -1873,8 +1867,6 @@ void VectorsFromAngles(const CVector &vAngles,CVector *pvForward,CVector *pvRigh
 
 void VectorsFromAngles(double dYaw,double dPitch, double dRoll,CVector &vForward,CVector &vRight,CVector &vUp)
 {
-    #pragma message("CUIDADO!!!!!!! En VectorsFromAngles he cambiado la chapu de negar el ROLL para que VectorsFromAngles y AnglesFromVector cuadraran, asi que es posible que no cuadren y que haya que revisar AnglesFromVector !!!!")
-
     vUp=AxisPosY;
 	vRight=AxisPosZ;
 	vForward=AxisPosX;
@@ -2522,3 +2514,71 @@ double GetBBoxRadius( const CVector &vMins,const CVector &vMaxs )
 	}
 	return dRadius;
 }
+
+
+bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CVector> *pItem)
+{
+	char sTemp[1024]={0};
+	CVector *pVector=pItem->GetValueAddress();
+	sprintf(sTemp,"%f,%f,%f",pVector->c[0],pVector->c[1],pVector->c[2]);
+	if(piNode){piNode->SetValue(sTemp);}
+	return piNode?true:false;
+}
+
+bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CVector> *pItem)
+{
+	pItem->SetDefaultValue();
+	if(!piNode || !piNode->GetValue()){return false;}
+
+	char sTemp[1024]={0};
+	strcpy(sTemp,piNode->GetValue());
+	CVector vPos;
+	char *pToken=strtok(sTemp,", ");
+	if(pToken){vPos.c[0]=atof(pToken);pToken=strtok(NULL,", ");}
+	if(pToken){vPos.c[1]=atof(pToken);pToken=strtok(NULL,", ");}
+	if(pToken){vPos.c[2]=atof(pToken);}
+	(*pItem->GetValueAddress())=vPos;
+	return true;
+}
+
+bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CVector> *pItem)
+{
+	return true;
+}
+
+void MRPersistencyInitialize(CMRPersistentReferenceT<CVector> *pItem){(*pItem->GetValueAddress())=Origin;}
+void MRPersistencyFree(CMRPersistentReferenceT<CVector> *pItem){}
+
+bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CRGBColor> *pItem)
+{
+	char sTemp[1024]={0};
+	CRGBColor *pVector=pItem->GetValueAddress();
+	sprintf(sTemp,"%f,%f,%f",pVector->c[0]*255.0,pVector->c[1]*255.0,pVector->c[2]*255.0);
+	if(piNode){piNode->SetValue(sTemp);}
+	return piNode?true:false;
+}
+
+bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CRGBColor> *pItem)
+{
+	pItem->SetDefaultValue();
+	if(!piNode || !piNode->GetValue()){return false;}
+
+	char sTemp[1024]={0};
+	strcpy(sTemp,piNode->GetValue());
+	CRGBColor vPos;
+	char *pToken=strtok(sTemp,", ");
+	if(pToken){vPos.c[0]=atof(pToken)/255.0;pToken=strtok(NULL,", ");}
+	if(pToken){vPos.c[1]=atof(pToken)/255.0;pToken=strtok(NULL,", ");}
+	if(pToken){vPos.c[2]=atof(pToken)/255.0;}
+	(*pItem->GetValueAddress())=vPos;
+	return true;
+}
+
+bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CRGBColor> *pItem)
+{
+	return true;
+}
+
+
+void    MRPersistencyInitialize(CMRPersistentReferenceT<CRGBColor> *pItem){(*pItem->GetValueAddress())=Origin;}
+void    MRPersistencyFree(CMRPersistentReferenceT<CRGBColor> *pItem){}

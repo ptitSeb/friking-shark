@@ -21,8 +21,6 @@
 #include <deque>
 #include <string>
 
-#define MAX_PATH 260
-
 #define FP_PRECISION	0.0002
 #define PI				3.1415926535
 
@@ -77,14 +75,6 @@ public:
     inline CRGBColor(double c0, double c1, double c2){_debugtag_='C';c[0]=c0;c[1]=c1;c[2]=c2;}
     inline CRGBColor(const CVector &v){_debugtag_='C';c[0]=v.c[0];c[1]=v.c[1];c[2]=v.c[2];}
     inline CRGBColor(){}
-};
-// Esta clase solo es un tag para poder persistir valores en el sistema de referencia de 3DS de forma transparente
-class C3DSVector:public CVector
-{
-public:
-    inline C3DSVector(double c0, double c1, double c2){_debugtag_='C';c[0]=c0;c[1]=c1;c[2]=c2;}
-    inline C3DSVector(const CVector &v){_debugtag_='C';c[0]=v.c[0];c[1]=v.c[1];c[2]=v.c[2];}
-    inline C3DSVector(){}
 };
 
 class CLine
@@ -369,14 +359,23 @@ extern CVector AxisNegY;
 extern CVector AxisNegZ;
 extern CVector Origin;
 
-#include "Utilities.h"
+bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CVector> *pItem);
+bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CVector> *pItem);
+bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CVector> *pItem);
+void MRPersistencyInitialize(CMRPersistentReferenceT<CVector> *pItem);
+void MRPersistencyFree(CMRPersistentReferenceT<CVector> *pItem);
+
+bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CRGBColor> *pItem);
+bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CRGBColor> *pItem);
+bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CRGBColor> *pItem);
+void MRPersistencyInitialize(CMRPersistentReferenceT<CRGBColor> *pItem);
+void MRPersistencyFree(CMRPersistentReferenceT<CRGBColor> *pItem);
+
 #include "GBSFiles.h"
-#ifndef VECTOR_LIB_PROYECT
-	#include "QuakeFiles.h"
-	#include "3DSTypes.h"
-	#include "3DSFiles.h"
-	#include "ASEFiles.h"
-	#include "GBSFiles.h"
-#endif
+#include "QuakeFiles.h"
+#include "3DSTypes.h"
+#include "3DSFiles.h"
+#include "ASEFiles.h"
+#include "GBSFiles.h"
 
 #endif

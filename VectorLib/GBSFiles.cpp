@@ -146,10 +146,10 @@ bool CGBSFileType::WriteNode(FILE *pFile,CBSPNode *pNode,SGBSFileNodeStats *pSta
 	if(pNode->content==CONTENT_SOLID){pStats->nSolidLeafs++;}
 
 	SGBSFileNodeInfo info;
-	info.vNormal[0]=pNode->plane.c[0];
-	info.vNormal[1]=pNode->plane.c[1];
-	info.vNormal[2]=pNode->plane.c[2];
-	info.vDist=pNode->plane.d;
+	info.vNormal[0]=(float)pNode->plane.c[0];
+	info.vNormal[1]=(float)pNode->plane.c[1];
+	info.vNormal[2]=(float)pNode->plane.c[2];
+	info.vDist=(float)pNode->plane.d;
 	info.nContent=pNode->content;
 	if(fwrite(&info,sizeof(info),1,pFile)!=1){return false;}
 	if(pNode->content==CONTENT_NODE)

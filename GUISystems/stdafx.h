@@ -1,23 +1,16 @@
 #ifndef __STDAFX__
 #define __STDAFX__
 
-#define WIN32_LEAN_AND_MEAN
-
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <list>
-#include <stack>
+#include "GameRunTimeLib.h"
 #include "VectorLib.h"
 #include "GameLib.h"
 #include "GameGUI.h"
 #include "GUIDefs.h"
 #include "GameGraphics.h"
-
-using namespace std;
-
-struct IGameRender;
 
 DECLARE_CUSTOM_WRAPPER1(CGameControllerWrapper,IGameController,m_piGameController)
 DECLARE_CUSTOM_WRAPPER1(CGenericViewportWrapper,IGenericViewport,m_piViewport)

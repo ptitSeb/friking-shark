@@ -323,9 +323,9 @@ bool COpenGLTexture::LoadFromFile()
 		}	
 		else if(m_bColorKey)
 		{
-			unsigned char red=(m_vColorKey.c[0]*255.0);
-			unsigned char green=(m_vColorKey.c[1]*255.0);
-			unsigned char blue=(m_vColorKey.c[2]*255.0);
+			unsigned char red=(unsigned char)(m_vColorKey.c[0]*255.0);
+			unsigned char green=(unsigned char)(m_vColorKey.c[1]*255.0);
+			unsigned char blue=(unsigned char)(m_vColorKey.c[2]*255.0);
 
 			unsigned char *pTempBuffer=m_pBuffer;
 
