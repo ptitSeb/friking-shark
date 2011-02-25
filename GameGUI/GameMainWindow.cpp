@@ -181,7 +181,7 @@ void CGameMainWindow::OnCharacter( int nKey,bool *pbProcessed )
 
 void CGameMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(nKey==VK_ESCAPE)
+	if(nKey==GK_ESCAPE)
 	{
 		m_piGUIManager->ExitGUILoop();
 	}

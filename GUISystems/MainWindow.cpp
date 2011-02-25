@@ -88,7 +88,7 @@ bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 
 void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(nKey==VK_ESCAPE)
+	if(nKey==GK_ESCAPE)
 	{
 		*pbProcessed=true;
 

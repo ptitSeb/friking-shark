@@ -96,14 +96,14 @@ void CIATestMainWindow::DestroyWindow()
 
 void CIATestMainWindow::ProcessInput(double dTimeFraction,double dRealTimeFraction)
 {
-	if(m_piGUIManager->IsKeyDown(VK_PAUSE)){ProcessKey(KEY_PAUSE,dTimeFraction,dRealTimeFraction);}
+	if(m_piGUIManager->IsKeyDown(GK_PAUSE)){ProcessKey(KEY_PAUSE,dTimeFraction,dRealTimeFraction);}
 	if(m_piGUIManager->IsKeyDown('P')){ProcessKey(KEY_PROCESS_ONE_FRAME,dTimeFraction,dRealTimeFraction);}
-	if(m_piGUIManager->IsKeyDown(VK_UP) || m_piGUIManager->IsKeyDown(VK_NUMPAD8) || m_piGUIManager->IsKeyDown('W')){ProcessKey(KEY_FORWARD,dTimeFraction,dRealTimeFraction);}
-	if(m_piGUIManager->IsKeyDown(VK_DOWN) || m_piGUIManager->IsKeyDown(VK_NUMPAD2) || m_piGUIManager->IsKeyDown('S')){ProcessKey(KEY_BACK,dTimeFraction,dRealTimeFraction);}
-	if(m_piGUIManager->IsKeyDown(VK_LEFT) || m_piGUIManager->IsKeyDown(VK_NUMPAD4) || m_piGUIManager->IsKeyDown('A')){ProcessKey(KEY_LEFT,dTimeFraction,dRealTimeFraction);}
-	if(m_piGUIManager->IsKeyDown(VK_RIGHT) || m_piGUIManager->IsKeyDown(VK_NUMPAD6) || m_piGUIManager->IsKeyDown('D')){ProcessKey(KEY_RIGHT,dTimeFraction,dRealTimeFraction);}
-	if(m_piGUIManager->IsKeyDown(VK_NUMPAD9) || m_piGUIManager->IsKeyDown('R')){ProcessKey(KEY_UP,dTimeFraction,dRealTimeFraction);}
-	if(m_piGUIManager->IsKeyDown(VK_NUMPAD3) || m_piGUIManager->IsKeyDown('F')){ProcessKey(KEY_DOWN,dTimeFraction,dRealTimeFraction);}
+	if(m_piGUIManager->IsKeyDown(GK_UP) || m_piGUIManager->IsKeyDown(GK_NUMPAD8) || m_piGUIManager->IsKeyDown('W')){ProcessKey(KEY_FORWARD,dTimeFraction,dRealTimeFraction);}
+	if(m_piGUIManager->IsKeyDown(GK_DOWN) || m_piGUIManager->IsKeyDown(GK_NUMPAD2) || m_piGUIManager->IsKeyDown('S')){ProcessKey(KEY_BACK,dTimeFraction,dRealTimeFraction);}
+	if(m_piGUIManager->IsKeyDown(GK_LEFT) || m_piGUIManager->IsKeyDown(GK_NUMPAD4) || m_piGUIManager->IsKeyDown('A')){ProcessKey(KEY_LEFT,dTimeFraction,dRealTimeFraction);}
+	if(m_piGUIManager->IsKeyDown(GK_RIGHT) || m_piGUIManager->IsKeyDown(GK_NUMPAD6) || m_piGUIManager->IsKeyDown('D')){ProcessKey(KEY_RIGHT,dTimeFraction,dRealTimeFraction);}
+	if(m_piGUIManager->IsKeyDown(GK_NUMPAD9) || m_piGUIManager->IsKeyDown('R')){ProcessKey(KEY_UP,dTimeFraction,dRealTimeFraction);}
+	if(m_piGUIManager->IsKeyDown(GK_NUMPAD3) || m_piGUIManager->IsKeyDown('F')){ProcessKey(KEY_DOWN,dTimeFraction,dRealTimeFraction);}
 }
 
 void CIATestMainWindow::ProcessKey(WORD nKey,double dTimeFraction,double dRealTimeFraction)
@@ -111,7 +111,7 @@ void CIATestMainWindow::ProcessKey(WORD nKey,double dTimeFraction,double dRealTi
 	double dMovementInspectionSpeed=500.0;
 	double dForwardSpeed=dMovementInspectionSpeed*dTimeFraction;
 	double dCameraForwardSpeed=dMovementInspectionSpeed*dRealTimeFraction;
-	if(m_piGUIManager->IsKeyDown(VK_LSHIFT)){dForwardSpeed*=3.0;}
+	if(m_piGUIManager->IsKeyDown(GK_LSHIFT)){dForwardSpeed*=3.0;}
 	if(m_pSelectedEntity)
 	{
 		if(nKey==KEY_FORWARD)	{CVector vPos=m_pSelectedEntity->GetPosition()+m_Camera.m_piCamera->GetUpVector()*(dForwardSpeed);m_pSelectedEntity->SetPosition(vPos);}

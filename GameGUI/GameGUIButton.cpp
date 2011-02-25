@@ -79,14 +79,14 @@ void CGameGUIButton::OnMouseMove(double x,double y)
 
 void CGameGUIButton::OnMouseDown(int nButton,double x,double y)
 {
-	if(nButton!=MK_LBUTTON){return;}
+	if(nButton!=GK_LBUTTON){return;}
 	m_piGUIManager->SetMouseCapture(this);
 	m_bClickInProgress=true;
 }
 
 void CGameGUIButton::OnMouseUp(int nButton,double x,double y)
 {
-	if(nButton!=MK_LBUTTON){return;}
+	if(nButton!=GK_LBUTTON){return;}
 
 	m_bClickInProgress=false;
 

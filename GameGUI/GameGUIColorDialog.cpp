@@ -34,21 +34,21 @@ void CGameGUIColorDialog::OnEndDialog()
 
 void CGameGUIColorDialog::OnButtonClicked(IGameGUIButton *piControl)
 {
-	if(piControl==m_piBTSelect){EndDialog(IDOK);}
-	if(piControl==m_piBTCancel){EndDialog(IDCANCEL);}
+	if(piControl==m_piBTSelect){EndDialog(DIALOG_OK);}
+	if(piControl==m_piBTCancel){EndDialog(DIALOG_CANCEL);}
 }
 
 void CGameGUIColorDialog::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(nKey==VK_ESCAPE){EndDialog(IDCANCEL);*pbProcessed=true;}
-	if(nKey==VK_RETURN){EndDialog(IDOK);*pbProcessed=true;}
+	if(nKey==GK_ESCAPE){EndDialog(DIALOG_CANCEL);*pbProcessed=true;}
+	if(nKey==GK_RETURN){EndDialog(DIALOG_OK);*pbProcessed=true;}
 }
 
 bool CGameGUIColorDialog::SelectColor(IGameWindow *piParent,std::string sTitle,CVector *pvColor)
 {	
 	m_vColor=RGBToHSV(*pvColor);
 	m_sTitle=sTitle;
-	if(Execute(piParent)!=IDOK){return false;}
+	if(Execute(piParent)!=DIALOG_OK){return false;}
 	*pvColor=HSVToRGB(m_vColor);
 	return true;
 }

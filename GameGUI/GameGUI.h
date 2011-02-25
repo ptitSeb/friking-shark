@@ -5,6 +5,12 @@
 
 class IGameWindow;
 
+#define DIALOG_OK 		1
+#define DIALOG_CANCEL 	0
+
+#define DIALOG_YES 		1
+#define DIALOG_NO 		0
+
 enum eGameGUIReferenceSystem
 {
 	eGameGUIReferenceSystem_None,

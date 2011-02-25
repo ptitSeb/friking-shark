@@ -448,7 +448,7 @@ void CGameGUIManager::OnLButtonDown(WORD wKeyState,unsigned x,unsigned y)
 		SGameRect rRect;
 		piWindow->GetRealRect(&rRect);
 		ProcessMouseActivation(piWindow);
-		piWindow->OnMouseDown(MK_LBUTTON,pos.x-rRect.x,pos.y-rRect.y);
+		piWindow->OnMouseDown(GK_LBUTTON,pos.x-rRect.x,pos.y-rRect.y);
 	}
 	REL(piWindow);
 }
@@ -466,7 +466,7 @@ void CGameGUIManager::OnRButtonDown(WORD wKeyState,unsigned x,unsigned y)
 		SGameRect rRect;
 		piWindow->GetRealRect(&rRect);
 		ProcessMouseActivation(piWindow);
-		piWindow->OnMouseDown(MK_RBUTTON,pos.x-rRect.x,pos.y-rRect.y);
+		piWindow->OnMouseDown(GK_RBUTTON,pos.x-rRect.x,pos.y-rRect.y);
 	}
 	REL(piWindow);
 }
@@ -483,7 +483,7 @@ void CGameGUIManager::OnLButtonUp(WORD wKeyState,unsigned x,unsigned y)
 	{
 		SGameRect rRect;
 		piWindow->GetRealRect(&rRect);
-		piWindow->OnMouseUp(MK_LBUTTON,pos.x-rRect.x,pos.y-rRect.y);
+		piWindow->OnMouseUp(GK_LBUTTON,pos.x-rRect.x,pos.y-rRect.y);
 	}
 	REL(piWindow);
 }
@@ -500,7 +500,7 @@ void CGameGUIManager::OnRButtonUp(WORD wKeyState,unsigned x,unsigned y)
 	{
 		SGameRect rRect;
 		piWindow->GetRealRect(&rRect);
-		piWindow->OnMouseUp(MK_RBUTTON,pos.x-rRect.x,pos.y-rRect.y);
+		piWindow->OnMouseUp(GK_RBUTTON,pos.x-rRect.x,pos.y-rRect.y);
 	}
 	REL(piWindow);
 }
@@ -550,7 +550,7 @@ void CGameGUIManager::OnCharacter(WORD wCharacter)
 
 void CGameGUIManager::OnKeyDown(WORD wKeyState)
 {
-	if(wKeyState==VK_RETURN && IsKeyDown(VK_LMENU) && IsKeyDown(VK_LCONTROL))
+	if(wKeyState==GK_RETURN && IsKeyDown(GK_LMENU) && IsKeyDown(GK_LCONTROL))
 	{
 		m_sScreenProperties.bFullScreen=!m_sScreenProperties.bFullScreen;
 		UpdateScreenPlacement();
