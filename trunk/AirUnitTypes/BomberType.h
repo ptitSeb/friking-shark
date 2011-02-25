@@ -10,7 +10,7 @@ public:
   double  m_dTimeBetweenShotsMin;
   double  m_dTimeBetweenShotsMax;
 
-  IEntity *CreateInstance(IEntity *piParent,DWORD dwCurrentTime);
+  IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
 
   BEGIN_PROP_MAP(CBomberType)
     PROP_VALUE_FLAGS(m_dMaxHealth,"Vida",20,MRPF_NORMAL|MRPF_OPTIONAL);
@@ -38,8 +38,8 @@ public:
 
   bool OnCollision(IEntity *pOther,CVector &vCollisionPos);
   void OnKilled();
-  void ProcessFrame(DWORD dwCurrentTime,double dTimeFraction);
+  void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
   IEntity *GetTarget();
 
-  CBomber(CBomberType *pType,DWORD dwCurrentTime);
+  CBomber(CBomberType *pType,unsigned int dwCurrentTime);
 };

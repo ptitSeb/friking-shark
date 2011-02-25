@@ -1,5 +1,17 @@
 #pragma once
 
+#ifdef WIN32
+  #include <windows.h>
+  #define RTASSERT(x) _ASSERTE((x))
+#else
+  #ifdef NDEBUG
+	#define RTASSERT(x)
+  #else
+	#include <assert.h>
+	#define RTASSERT(x) assert(x)
+  #endif
+#endif
+
 #include <set>
 #include <list>
 #include <deque>

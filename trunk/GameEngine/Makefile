@@ -3,14 +3,14 @@
 
 CC=g++
 
-INCLUDES = -I. -I../PortFiles -I../GameRunTime  -I../VectorLib -I../GameRunTimeLib -I../GameGUI -I../GameGraphics
+INCLUDES = -I. -I../GameRunTime  -I../VectorLib -I../GameRunTimeLib -I../GameGUI -I../GameGraphics
 
 SOURCES = GameEngine.cpp\
 StdAfx.cpp
 
 
-CFLAGS +=  -pedantic -pedantic-errors -Wall -Werror  -D_REENTRANT -O3 -g
-CFLAGS_DEBUG +=   -pedantic -pedantic-errors -Wall -Werror  -D_REENTRANT -g
+CFLAGS += -DNDEBUG -pedantic -pedantic-errors -Wall -Werror  -D_REENTRANT -O3 -g
+CFLAGS_DEBUG += -DDEBUG  -pedantic -pedantic-errors -Wall -Werror  -D_REENTRANT -g
 
 LIBS = ../GameRunTimeLib/lib/GameRuntimeLib.a  ./GameRuntime.so -lpthread
 LIBS_DEBUG = ../GameRunTimeLib/lib/GameRuntimeLibd.a  ./GameRuntime.so -lpthread

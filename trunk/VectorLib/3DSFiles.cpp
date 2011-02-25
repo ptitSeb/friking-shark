@@ -6,7 +6,6 @@
 #include "VectorLib.h"
 #include "3DSTypes.h"
 #include "3DSFiles.h"
-#include "crtdbg.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -124,8 +123,8 @@ C3DSFileType::C3DSFileType()
 	m_bBinaryFile=false;
 }
 
-WORD			C3DSFileType::ReadWord()  {WORD value=0;if(fread (&value, sizeof(value), 1, m_pFile)!=1){return 0;}return value;}
-DWORD			C3DSFileType::ReadDWord() {DWORD value=0;if(fread (&value, sizeof(value), 1, m_pFile)!=1){return 0;}return value;}
+unsigned short			C3DSFileType::ReadWord()  {unsigned short value=0;if(fread (&value, sizeof(value), 1, m_pFile)!=1){return 0;}return value;}
+unsigned int			C3DSFileType::ReadDWord() {unsigned int value=0;if(fread (&value, sizeof(value), 1, m_pFile)!=1){return 0;}return value;}
 float			C3DSFileType::ReadFloat() {float value=0;if(fread (&value, sizeof(value), 1, m_pFile)!=1){return 0;}return value;}
 unsigned char	C3DSFileType::ReadByte()  {unsigned char value=0;if(fread (&value, sizeof(value), 1, m_pFile)!=1){return 0;}return value;}
 CVector			C3DSFileType::ReadVector(){CVector v;v.c[0]=ReadFloat();v.c[1]=ReadFloat();v.c[2]=ReadFloat();return v;}
@@ -153,8 +152,8 @@ bool C3DSFileType::Open(const char *sFileName)
 
 	if ((m_pFile=fopen (sFileName, "rb"))== NULL) return false; //Open the file
 	
-	WORD	wChunckId=0; //Chunk identifier
-	DWORD	dwChunckLength=0; //Chunk lenght
+	unsigned short	wChunckId=0; //Chunk identifier
+	unsigned int	dwChunckLength=0; //Chunk lenght
 
 	S3DSObject			*pObject=NULL;
 	S3DSObject			*pKeyFrameObject=NULL;
@@ -196,7 +195,7 @@ bool C3DSFileType::Open(const char *sFileName)
 			break;    
 			case PERCENTAGE_INT:
 				{
-					WORD percentage=ReadWord();
+					unsigned short percentage=ReadWord();
 					*pCurrentPercent=((double)percentage)/100.0;
 				}
 			break;    
@@ -377,7 +376,7 @@ bool C3DSFileType::Open(const char *sFileName)
 			case OBJECT_MATERIAL_FACES:
 				{
 					string sName=ReadString();
-					WORD   nFaces=ReadWord();
+					unsigned short   nFaces=ReadWord();
 
 					S3DSObjectMaterial *pObjectMaterial=new S3DSObjectMaterial;
 					strcpy(pObjectMaterial->sName,sName.c_str());
@@ -408,7 +407,7 @@ bool C3DSFileType::Open(const char *sFileName)
 			case  KEYF_OBJECT_INFO:
 				{
 					string sName=ReadString();
-					WORD wFlags[2]={0},wFather=0;
+					unsigned short wFlags[2]={0},wFather=0;
 					wFlags[0]=ReadWord();
 					wFlags[1]=ReadWord();
 					wFather=ReadWord();
@@ -438,10 +437,10 @@ bool C3DSFileType::Open(const char *sFileName)
 					ReadWord();//Flags
 					ReadDWord();//dwUnknown1
 					ReadDWord();//dwUnknown2
-					DWORD dwKeys=ReadDWord();
+					unsigned int dwKeys=ReadDWord();
 					for(unsigned int x=0;x<dwKeys;x++)
 					{
-						DWORD dwKeyIndex=ReadDWord();
+						unsigned int dwKeyIndex=ReadDWord();
 						ReadWord();//wAccelData
 						if(wChunckId==KEYF_OBJECT_POSITION)
 						{

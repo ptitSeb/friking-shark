@@ -4,7 +4,7 @@
 CSpeedUpgradeBonusType::CSpeedUpgradeBonusType(){m_dSpeed=0;}
 CSpeedUpgradeBonusType::~CSpeedUpgradeBonusType(){}
 
-IEntity *CSpeedUpgradeBonusType::CreateInstance(IEntity *piParent,DWORD dwCurrentTime)
+IEntity *CSpeedUpgradeBonusType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
 {
   CSpeedUpgradeBonus *piEntity=new CSpeedUpgradeBonus(this);
   SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();

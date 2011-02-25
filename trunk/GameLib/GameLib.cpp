@@ -8,7 +8,6 @@
 #include "./StdAfx.h"
 #include "GameLib.h"
 #include "float.h"
-#include <crtdbg.h>
 #include "VectorLib.h"
 
 bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CVector> *pItem)

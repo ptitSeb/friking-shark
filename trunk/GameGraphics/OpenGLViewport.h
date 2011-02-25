@@ -50,11 +50,11 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 
 	void Render();
 
-	void OnCharacter(WORD wCharacter);
-	void OnKeyDown(WORD wKeyState);
-	void OnKeyUp(WORD wKeyState);
+	void OnCharacter(unsigned short wCharacter);
+	void OnKeyDown(unsigned short wKeyState);
+	void OnKeyUp(unsigned short wKeyState);
 	
-	void OnSize(WORD cx,WORD cy);
+	void OnSize(unsigned short cx,unsigned short cy);
 	void OnMove();
 	
 	void OnLButtonDown(int pointX,int pointY);
@@ -110,9 +110,6 @@ public:
 
 	void				SetCaption(std::string sCaption);
 	std::string 		GetCaption();
-
-	void				SetIcon(HICON hIcon);
-	HICON				GetIcon();
 
 	void GetCurrentVideoMode(SVideoMode *pMode);
 

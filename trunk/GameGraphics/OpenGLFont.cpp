@@ -2,7 +2,7 @@
 #include "OpenGLGraphics.h"
 #include "OpenGLFont.h"
 
-bool LoadImageHelper(string sFile,DWORD dwColorType,unsigned *pOpenGLSkinWidth,unsigned *pOpenGLSkinHeight,BYTE **ppBuffer);
+bool LoadImageHelper(string sFile,unsigned int dwColorType,unsigned *pOpenGLSkinWidth,unsigned *pOpenGLSkinHeight,unsigned char **ppBuffer);
 
 SOpenGLSystemFont::SOpenGLSystemFont()
 {
@@ -84,7 +84,7 @@ void COpenGLFont::Destroy()
 
 bool COpenGLFont::LoadTextureFont()
 {
-	BYTE *pBuffer=NULL;
+	unsigned char *pBuffer=NULL;
 	unsigned dwWidth=0,dwHeight=0;
 	bool bResult=true;
 
@@ -92,13 +92,13 @@ bool COpenGLFont::LoadTextureFont()
 	{
 		m_dwTextureWidth=dwWidth;
 		m_dwTextureHeight=dwHeight/2;
-		m_pTextureBuffer=new BYTE[m_dwTextureWidth*m_dwTextureHeight*4];
+		m_pTextureBuffer=new unsigned char[m_dwTextureWidth*m_dwTextureHeight*4];
 
 		// Se monta la textura final con la mascara alpha de la mitad inferior aplicado a la mitad superior.
 
-		BYTE *pTempFinal=m_pTextureBuffer;
-		BYTE *pTempBuffer=pBuffer+(dwWidth*(dwHeight/2))*3; // mitad superior de la textura
-		BYTE *pTempAlpha=pBuffer; // mitad inferior de la textura
+		unsigned char *pTempFinal=m_pTextureBuffer;
+		unsigned char *pTempBuffer=pBuffer+(dwWidth*(dwHeight/2))*3; // mitad superior de la textura
+		unsigned char *pTempAlpha=pBuffer; // mitad inferior de la textura
 
 		unsigned x,y;
 		for(y=0;y<m_dwTextureHeight;y++)
@@ -108,7 +108,7 @@ bool COpenGLFont::LoadTextureFont()
 				pTempFinal[0]=pTempBuffer[0];
 				pTempFinal[1]=pTempBuffer[1];
 				pTempFinal[2]=pTempBuffer[2];
-				pTempFinal[3] = (BYTE)((((DWORD)pTempAlpha[0])+((DWORD)pTempAlpha[1])+((DWORD)pTempAlpha[2]))/3);
+				pTempFinal[3] = (unsigned char)((((unsigned int)pTempAlpha[0])+((unsigned int)pTempAlpha[1])+((unsigned int)pTempAlpha[2]))/3);
 			}
 		}
 

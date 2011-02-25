@@ -31,8 +31,8 @@ CFrameManager::CFrameManager()
 #endif 
 }
 
-DWORD  CFrameManager::GetCurrentRealTime(){return m_dwCurrentRealTime;}
-DWORD  CFrameManager::GetCurrentTime(){return m_dwCurrentTime;}
+unsigned int  CFrameManager::GetCurrentRealTime(){return m_dwCurrentRealTime;}
+unsigned int  CFrameManager::GetCurrentTime(){return m_dwCurrentTime;}
 double CFrameManager::GetTimeFraction(){return m_dTimeFraction;}
 double CFrameManager::GetRealTimeFraction(){return m_dRealTimeFraction;}
 
@@ -41,7 +41,7 @@ void CFrameManager::Reset()
 #ifdef WIN32
 	LARGE_INTEGER ldNow={0};
 	QueryPerformanceCounter(&ldNow);
-	m_dwTimeBase=(DWORD)(ldNow.QuadPart*1000/m_ldPerformanceFrequency.QuadPart);
+	m_dwTimeBase=(unsigned int)(ldNow.QuadPart*1000/m_ldPerformanceFrequency.QuadPart);
 #else
 	timeval tNow;
     gettimeofday(&tNow, NULL);
@@ -100,7 +100,7 @@ void CFrameManager::ProcessFrame()
 #ifdef WIN32
 	LARGE_INTEGER ldNow={0};
 	QueryPerformanceCounter(&ldNow);
-	m_dwCurrentRealTime=(DWORD)(ldNow.QuadPart*1000/m_ldPerformanceFrequency.QuadPart);
+	m_dwCurrentRealTime=(unsigned int)(ldNow.QuadPart*1000/m_ldPerformanceFrequency.QuadPart);
 #else
 	timeval tNow;
     gettimeofday(&tNow, NULL);

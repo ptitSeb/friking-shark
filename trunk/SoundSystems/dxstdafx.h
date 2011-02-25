@@ -41,7 +41,10 @@
 #pragma warning( disable : 4100 ) // disable unreference formal parameter warnings for /W4 builds
 #pragma warning( disable : 4995 )
 
-#include <windows.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include <assert.h>
 #include <wchar.h>
 #include <mmsystem.h>
@@ -55,7 +58,6 @@
 
 // CRT's memory leak detection
 #if defined(DEBUG) || defined(_DEBUG)
-#include <crtdbg.h>
 #endif
 
 // Enable extra D3D debugging in debug builds if using the debug DirectX runtime.  
@@ -106,10 +108,10 @@ using namespace std;
 #pragma warning( default : 4995 ) 
 #if defined(DEBUG) || defined(_DEBUG)
 #ifndef V
-#define V(x)           { hr = x; if( FAILED(hr) ) { DXUTTrace( __FILE__, (DWORD)__LINE__, hr, L#x, true ); } }
+#define V(x)           { hr = x; if( FAILED(hr) ) { DXUTTrace( __FILE__, (unsigned int)__LINE__, hr, L#x, true ); } }
 #endif
 #ifndef V_RETURN
-#define V_RETURN(x)    { hr = x; if( FAILED(hr) ) { return DXUTTrace( __FILE__, (DWORD)__LINE__, hr, L#x, true ); } }
+#define V_RETURN(x)    { hr = x; if( FAILED(hr) ) { return DXUTTrace( __FILE__, (unsigned int)__LINE__, hr, L#x, true ); } }
 #endif
 #else
 #ifndef V

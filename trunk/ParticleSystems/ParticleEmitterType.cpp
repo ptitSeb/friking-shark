@@ -26,13 +26,13 @@ CParticleEmitterType::~CParticleEmitterType(void)
 {
 }
 
-IParticleEmitter *CParticleEmitterType::CreateInstance(DWORD dwCurrentTime)
+IParticleEmitter *CParticleEmitterType::CreateInstance(unsigned int dwCurrentTime)
 {
     CParticleEmitter *pEmitter=new CParticleEmitter(this,dwCurrentTime);
     return pEmitter;
 }
 
-CParticleEmitter::CParticleEmitter(CParticleEmitterType *pType,DWORD dwCurrentTime)
+CParticleEmitter::CParticleEmitter(CParticleEmitterType *pType,unsigned int dwCurrentTime)
 {
     m_pType=pType;
     m_bActive=1;
@@ -52,7 +52,7 @@ string CParticleEmitter::GetName()
     return m_pType->m_sName;
 }
 
-void CParticleEmitter::ProcessFrame(IParticleSystem *piSystem,DWORD dwCurrentTime,double dInterval)
+void CParticleEmitter::ProcessFrame(IParticleSystem *piSystem,unsigned int dwCurrentTime,double dInterval)
 {
     if(!m_bActive){return;}
     if(m_dwEmitStartTime && dwCurrentTime<m_dwEmitStartTime){return;}
@@ -64,7 +64,7 @@ void CParticleEmitter::ProcessFrame(IParticleSystem *piSystem,DWORD dwCurrentTim
     CVector vForward,vRight,vUp;
     piSystem->GetVectors(vForward,vRight,vUp);
 
-    DWORD dwParticlesToEmit=0;
+    unsigned int dwParticlesToEmit=0;
     if(m_pType->m_dwParticleCount!=0)
     {
         // emision de un numero determinado de particulas
@@ -76,7 +76,7 @@ void CParticleEmitter::ProcessFrame(IParticleSystem *piSystem,DWORD dwCurrentTim
         else
         {
             // en caso contrario se emiten las particulas que queden.
-            dwParticlesToEmit=(DWORD)(dLifeSpent*(double)m_pType->m_dwParticleCount-m_dwParticlesEmitted);
+            dwParticlesToEmit=(unsigned int)(dLifeSpent*(double)m_pType->m_dwParticleCount-m_dwParticlesEmitted);
         }
     }
     else if(m_pType->m_dStartRate>0 || m_pType->m_dEndRate>0)
@@ -87,14 +87,14 @@ void CParticleEmitter::ProcessFrame(IParticleSystem *piSystem,DWORD dwCurrentTim
         {
             dCurrentRate=m_pType->m_dStartRate+(m_pType->m_dEndRate-m_pType->m_dStartRate)*dLifeSpent;
         }
-        dwParticlesToEmit=(DWORD)(dCurrentRate*dInterval);
+        dwParticlesToEmit=(unsigned int)(dCurrentRate*dInterval);
         if(m_dwLastEmitTime==0){m_dwLastEmitTime=dwCurrentTime;}
         if(dwParticlesToEmit==0 && m_dwLastEmitTime!=0)
         {
-            dwParticlesToEmit=(DWORD)(((double)(dwCurrentTime-m_dwLastEmitTime)/1000.0)*dCurrentRate);
+            dwParticlesToEmit=(unsigned int)(((double)(dwCurrentTime-m_dwLastEmitTime)/1000.0)*dCurrentRate);
         }
     }
-    for(DWORD x=0;x<dwParticlesToEmit;x++)
+    for(unsigned int x=0;x<dwParticlesToEmit;x++)
     {
         m_dwLastEmitTime=dwCurrentTime;
 

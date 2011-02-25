@@ -63,8 +63,8 @@ bool COpenGLModel::LoadFromFile()
 
 			for(i=mMaterials.begin(),m=0;i!=mMaterials.end();i++,m++)
 			{
-				map<COpenGLModelVertexKey,DWORD> mVertexes;
-				map<COpenGLModelVertexKey,DWORD>::iterator iVertexes;
+				map<COpenGLModelVertexKey,unsigned int> mVertexes;
+				map<COpenGLModelVertexKey,unsigned int>::iterator iVertexes;
 
 				SModelRenderBuffer *pBuffer=new SModelRenderBuffer;
 				pFrame->vRenderBuffers.push_back(pBuffer);
@@ -304,20 +304,20 @@ void COpenGLModel::UpdateFrameBuffers()
 					glBufferData(GL_ARRAY_BUFFER,pBuffer->nVertexes*nDataPerVertex*sizeof(GLfloat),NULL,GL_STATIC_DRAW);
 					GLfloat *pBufferObject = (GLfloat *)glMapBuffer(GL_ARRAY_BUFFER,GL_WRITE_ONLY);
 
-					DWORD dwOffset=0;
+					unsigned int dwOffset=0;
 					if(pBuffer->pVertexArray)
 					{
-						memcpy(((BYTE*)pBufferObject)+dwOffset,pBuffer->pVertexArray,pBuffer->nVertexes*3*sizeof(GLfloat));
+						memcpy(((unsigned char*)pBufferObject)+dwOffset,pBuffer->pVertexArray,pBuffer->nVertexes*3*sizeof(GLfloat));
 						dwOffset+=pBuffer->nVertexes*3*sizeof(GLfloat);
 					}
 					if(pBuffer->pNormalArray)
 					{
-						memcpy(((BYTE*)pBufferObject)+dwOffset,pBuffer->pNormalArray,pBuffer->nVertexes*3*sizeof(GLfloat));
+						memcpy(((unsigned char*)pBufferObject)+dwOffset,pBuffer->pNormalArray,pBuffer->nVertexes*3*sizeof(GLfloat));
 						dwOffset+=pBuffer->nVertexes*3*sizeof(GLfloat);
 					}
 					if(pBuffer->pColorArray)
 					{
-						memcpy(((BYTE*)pBufferObject)+dwOffset,pBuffer->pColorArray,pBuffer->nVertexes*4*sizeof(GLfloat));
+						memcpy(((unsigned char*)pBufferObject)+dwOffset,pBuffer->pColorArray,pBuffer->nVertexes*4*sizeof(GLfloat));
 						dwOffset+=pBuffer->nVertexes*4*sizeof(GLfloat);
 					}
 					for(unsigned long nTexture=0;nTexture<pBuffer->vTextureLevels.size();nTexture++)
@@ -325,7 +325,7 @@ void COpenGLModel::UpdateFrameBuffers()
 						SModelTextureLevel *pTextureLevel=pBuffer->vTextureLevels[nTexture];
 						if(pTextureLevel/* && pTextureLevel->texture.m_piTexture*/ && pTextureLevel->pTexVertexArray)
 						{
-							memcpy(((BYTE*)pBufferObject)+dwOffset,pTextureLevel->pTexVertexArray,pBuffer->nVertexes*2*sizeof(GLfloat));
+							memcpy(((unsigned char*)pBufferObject)+dwOffset,pTextureLevel->pTexVertexArray,pBuffer->nVertexes*2*sizeof(GLfloat));
 							dwOffset+=pBuffer->nVertexes*2*sizeof(GLfloat);
 						}
 					}

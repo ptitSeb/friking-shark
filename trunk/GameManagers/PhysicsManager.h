@@ -22,7 +22,7 @@ public:
 
     void Start();
     void Stop();
-    void ProcessFrame(DWORD dwCurrentTime,double dTimeFraction);
+    void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
 
     // IPhysicManager
     CVector ProcessPhysicInfo(SPhysicInfo *pInfo,double dInterval);

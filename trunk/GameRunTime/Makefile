@@ -3,7 +3,7 @@
 
 CC=g++
 
-INCLUDES = -I. -I../PortFiles -I../GameRunTimeLib
+INCLUDES = -I. -I../GameRunTimeLib
 
 SOURCES = GameRunTime.cpp\
 InterfaceLeakAPI.cpp\
@@ -13,8 +13,8 @@ SystemManager.cpp\
 SystemModule.cpp
 
 
-CFLAGS +=  -pedantic -pedantic-errors -fPIC -Wall -Werror  -D_REENTRANT -O3 -g
-CFLAGS_DEBUG +=   -pedantic -pedantic-errors -fPIC -Wall -Werror  -D_REENTRANT -g
+CFLAGS += -DNDEBUG -pedantic -pedantic-errors -fPIC -Wall -Werror  -D_REENTRANT -O3 -g
+CFLAGS_DEBUG += -DDEBUG  -pedantic -pedantic-errors -fPIC -Wall -Werror  -D_REENTRANT -g
 
 LIBS = ../GameRunTimeLib/lib/GameRuntimeLib.a -ldl
 LIBS_DEBUG = ../GameRunTimeLib/lib/GameRuntimeLibd.a -ldl

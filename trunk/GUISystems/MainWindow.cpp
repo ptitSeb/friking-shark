@@ -39,11 +39,8 @@ bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 	bool bResult=CGameWindowBase::InitWindow(piParent,bPopup);
 	if(bResult)
 	{
-		#pragma message("CMainWindow::InitWindow -> se ha quitado el icono")
-		//HICON hIcon=LoadIcon(g_pSystemModuleHelper->GetInstance(),MAKEINTRESOURCE(IDR_MAINFRAME));
 		m_Viewport.Attach("GameGUI","Viewport");
 		m_Viewport.m_piViewport->SetCaption("Friking Shark");
-		//m_Viewport.m_piViewport->SetIcon(hIcon);
 
 		SGameRect sRect;
 		sRect.x=0;

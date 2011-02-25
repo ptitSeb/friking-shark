@@ -1,11 +1,10 @@
 #pragma once 
 #include "StdAfx.h"
-#include "crtdbg.h"
 
 template<class ITF>
 class CSingletonWrapper
 {
-	DWORD m_dwRefs;
+	unsigned int m_dwRefs;
 	string m_sSystem;
 	string m_sName;
 
@@ -25,7 +24,7 @@ public:
 			REL(piObj);
 			REL(piSystem);
 			REL(piSystemManager);
-//			_ASSERT(m_piInterface!=NULL);
+//			RTASSERT(m_piInterface!=NULL);
 		}
 		else
 		{

@@ -10,7 +10,7 @@ struct SProjectileLauncherProjectile
   CVector     vDirection;
   double      dVelocity;
   CEntityTypeWrapper projectileEntityType;
-  DWORD       dwReferenceSystem;
+  unsigned int       dwReferenceSystem;
 
   SProjectileLauncherProjectile(){}
 };
@@ -26,7 +26,7 @@ END_STRUCT_PROPS()
 struct SProjectileLauncherLevel
 {
   double                                dRange;
-  DWORD                                 dwReloadTime;
+  unsigned int                                 dwReloadTime;
   deque<SProjectileLauncherProjectile>  dProjectiles;
 
   SProjectileLauncherLevel(){dRange=0;dwReloadTime=1000;}
@@ -42,18 +42,18 @@ class CProjectileLauncherType: virtual public CSystemObjectBase,virtual public I
 {
   bool m_bProjectileEntityTypesResolved;
 
-  DWORD                           m_dwWeaponSlot;
+  unsigned int                           m_dwWeaponSlot;
   deque<SProjectileLauncherLevel> m_dLevels;
 
 public:
 
   bool m_bIgnoreRoll;
 
-  IWeapon *CreateInstance(IEntity *piEntity,DWORD dwCurrentTime);
+  IWeapon *CreateInstance(IEntity *piEntity,unsigned int dwCurrentTime);
 
-  DWORD                     GetSlot();
-  DWORD                     GetMaxLevel();
-  SProjectileLauncherLevel *GetLevel(DWORD dwLevel);
+  unsigned int                     GetSlot();
+  unsigned int                     GetMaxLevel();
+  SProjectileLauncherLevel *GetLevel(unsigned int dwLevel);
  
   BEGIN_PROP_MAP(CProjectileLauncherType)
     PROP_FLAGS(m_dLevels,"Niveles",MRPF_NORMAL|MRPF_OPTIONAL)
@@ -70,21 +70,21 @@ class CProjectileLauncher:public IWeapon
   CProjectileLauncherType  *m_pType;
   SProjectileLauncherLevel *m_pCurrentLevel;
   IEntity                  *m_piEntity;
-   DWORD                     m_dwLastFireTime;
-  DWORD                     m_dwCurrentLevel;
+   unsigned int                     m_dwLastFireTime;
+  unsigned int                     m_dwCurrentLevel;
 
 public:
   
   // IWeapon
 
-  DWORD GetSlot();
+  unsigned int GetSlot();
 
-  void Fire(DWORD dwCurrentTime);
-  bool IsReady(DWORD dwCurrentTime);
+  void Fire(unsigned int dwCurrentTime);
+  bool IsReady(unsigned int dwCurrentTime);
 
-  DWORD GetCurrentLevel();
-  void  SetCurrentLevel(DWORD dwLevel);
+  unsigned int GetCurrentLevel();
+  void  SetCurrentLevel(unsigned int dwLevel);
 
-  CProjectileLauncher(CProjectileLauncherType *pType,IEntity *piEntity,DWORD dwCurrentTimeBase);
+  CProjectileLauncher(CProjectileLauncherType *pType,IEntity *piEntity,unsigned int dwCurrentTimeBase);
   ~CProjectileLauncher();
 };

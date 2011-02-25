@@ -4,7 +4,7 @@
 CWeaponUpgradeBonusType::CWeaponUpgradeBonusType(){m_dwLevels=0;m_dwSlot=0;}
 CWeaponUpgradeBonusType::~CWeaponUpgradeBonusType(){}
 
-IEntity *CWeaponUpgradeBonusType::CreateInstance(IEntity *piParent,DWORD dwCurrentTime)
+IEntity *CWeaponUpgradeBonusType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
 {
   CWeaponUpgradeBonus *piEntity=new CWeaponUpgradeBonus(this);
   SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();

@@ -27,7 +27,7 @@ protected:
 public:
 
     void AddEmitter(IParticleEmitter *pEmitter);
-    void ProcessParticle(IParticle *pParticle,IParticleSystem *pSystem,DWORD dwCurrentTime,double dInterval)=0;
+    void ProcessParticle(IParticle *pParticle,IParticleSystem *pSystem,unsigned int dwCurrentTime,double dInterval)=0;
 
     CParticleModifier();
     virtual ~CParticleModifier(){}

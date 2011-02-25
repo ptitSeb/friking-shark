@@ -40,7 +40,7 @@ public:
     deque<SAlphaTransition> m_dIntermediateAlphaTransitions;
 
 
-    IParticleModifier *CreateInstance(DWORD dwCurrentTime);
+    IParticleModifier *CreateInstance(unsigned int dwCurrentTime);
 
     BEGIN_PROP_MAP(CParticleColorModifierType);
         PROP_CLASS_CHAIN(CParticleModifierType);
@@ -65,7 +65,7 @@ class CParticleColorModifier:public CParticleModifier
     CParticleColorModifierType *m_pType;
 public:
 
-    void ProcessParticle(IParticle *pParticle,IParticleSystem *pSystem,DWORD dwCurrentTime,double dInterval);
+    void ProcessParticle(IParticle *pParticle,IParticleSystem *pSystem,unsigned int dwCurrentTime,double dInterval);
 
     CParticleColorModifier(CParticleColorModifierType *pType);
 };

@@ -141,7 +141,7 @@ void CPlayAreaManager::Start()
 	//m_CameraLight.m_piLight->SetPosition(m_CameraWrapper.m_piCamera->GetPosition());
 	//m_CameraLight.m_piLight->SetOmni(m_dCameraDistanceFromPlayer*2.0);
 	/*
-	DWORD dLightStrength=255;
+	unsigned int dLightStrength=255;
 	m_pCameraLight=new CLight("CameraLight",LIGHT_TYPE_OMNI,m_CameraWrapper.m_piCamera->GetPosition(),RGB(dLightStrength,dLightStrength,dLightStrength));
 	m_pCameraLight->m_bIsActive=true;
 	m_pCameraLight->m_vSpotDir=CVector(0,-1,0);
@@ -185,7 +185,7 @@ void CPlayAreaManager::Stop()
 	m_bProcessingPlayerOutroPhase2=false;
 }
 CVector vSunAngles(0,90,0);
-void CPlayAreaManager::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
+void CPlayAreaManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	if(!m_bStarted)
 	{

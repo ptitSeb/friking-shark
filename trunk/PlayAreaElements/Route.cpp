@@ -85,7 +85,7 @@ unsigned CRoute::GetNextPointIndex(unsigned nIndex)
     return nIndex;// ultimo punto de una ruta no ciclica o esta fuera de rango
 }
 
-void CRoute::ProcessPoint(IEntity *piEntity,DWORD dwCurrentFrame,double dTimeFraction){}
+void CRoute::ProcessPoint(IEntity *piEntity,unsigned int dwCurrentFrame,double dTimeFraction){}
 
 CVector CRoute::GetRelativePoint(unsigned int nIndex)
 {

@@ -6,7 +6,6 @@
 #include "QuakeFiles.h"
 #include "float.h"
 #include <string>
-#include <crtdbg.h>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -24,7 +23,7 @@
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-WORD g_pPaletteLmpBuffer[]=
+unsigned short g_pPaletteLmpBuffer[]=
 {
     0x0000, 0x0f00, 0x0f0f, 0x1f1f, 0x2f1f, 0x2f2f, 0x3f3f, 0x4b3f, 0x4b4b, 
     0x5b5b, 0x6b5b, 0x6b6b, 0x7b7b, 0x8b7b, 0x8b8b, 0x9b9b, 0xab9b, 0xabab, 
@@ -281,7 +280,7 @@ struct SMapFileVertexTextureInfo
 	double t;
 };
 
-CMapFileBrush *CMapFileType::ReadBrush(char *pBuffer,DWORD *pOffset,DWORD fileLen,double size)
+CMapFileBrush *CMapFileType::ReadBrush(char *pBuffer,unsigned int *pOffset,unsigned int fileLen,double size)
 {
 	std::vector<CVector>					vVectors;
 	std::vector<SMapFileVertexTextureInfo>	vTextureInfo;
@@ -399,8 +398,8 @@ bool CMapFileType::Open(const char *pMap)
 {
 	std::list<CPolyhedron *>::iterator i;
 	char *pBuffer=new char [MAX_TEXT_FILE_LENGHT];
-	DWORD fileLen=0;
-	DWORD offset=0;
+	unsigned int fileLen=0;
+	unsigned int offset=0;
 	FILE *pFile=fopen(pMap,"rb");
 	if(pFile!=NULL)
 	{

@@ -13,7 +13,7 @@ CEntityTypeBase::CEntityTypeBase(void)
 }
 CEntityTypeBase::~CEntityTypeBase(void){}
 
-void CEntityTypeBase::InitializeEntity(CEntityBase *pEntity,DWORD dwCurrentTime)
+void CEntityTypeBase::InitializeEntity(CEntityBase *pEntity,unsigned int dwCurrentTime)
 {
 	unsigned long x;
     for(x=0;x<m_dAnimations.size();x++)

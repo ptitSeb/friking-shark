@@ -19,10 +19,10 @@
 
 struct SGBSHeader
 {
-	DWORD		dwVersion;
-	BYTE		sMagic[GBS_FILE_MAGIC_LENGTH];
-	DWORD		dwFlags;
-	DWORD		dwDataOffset;
+	unsigned int		dwVersion;
+	unsigned char		sMagic[GBS_FILE_MAGIC_LENGTH];
+	unsigned int		dwFlags;
+	unsigned int		dwDataOffset;
 
 	SGBSHeader();
 };
@@ -54,7 +54,7 @@ class CGBSFileType
 	CBSPNode	*ReadNode(FILE *pFile,CBSPNode *pParent);
 	bool		 WriteNode(FILE *pFile,CBSPNode *pNode,SGBSFileNodeStats *pStats,int nCurrentDepth,double *pBalanceFactor);
 public:
-	DWORD		GetVersion();
+	unsigned int		GetVersion();
 	
 	bool		Load(const char *pFile,CBSPNode **ppBSPNode,std::vector<CPolygon *> *pGeometricData);
 	bool		Save(const char *pFile,CBSPNode *pBSPNode,std::vector<CPolygon *> *pGeometricData,SGBSFileNodeStats *pStats=NULL);

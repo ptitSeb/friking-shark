@@ -95,7 +95,7 @@ void CWorldManager::Stop()
 	}
 }
 
-void CWorldManager::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
+void CWorldManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 }
 

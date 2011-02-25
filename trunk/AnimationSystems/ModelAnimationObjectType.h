@@ -10,12 +10,12 @@ public:
 	CGenericModelWrapper    m_ModelWrapper;
 
     float       m_dFps;
-    DWORD       m_dwStartTime;
-    DWORD       m_dwEndTime;
+    unsigned int       m_dwStartTime;
+    unsigned int       m_dwEndTime;
     bool        m_bCyclic;
     bool        m_bCastShadow;
 
-    IAnimationObject *CreateInstance(IAnimation *piAnimation,DWORD dwCurrentTime);
+    IAnimationObject *CreateInstance(IAnimation *piAnimation,unsigned int dwCurrentTime);
 
 	void DesignRender(IGenericRender *pRender,CVector &vPosition,CVector &vAngles,bool bSelected);
 	void DesignGetBBox(CVector *pvMins,CVector *pvMaxs);
@@ -44,13 +44,13 @@ class CModelAnimationObject: public CAnimationObjectBase
     unsigned int                m_nCurrentFrame;    
     bool                        m_bVisible;
 
-    void Activate(DWORD dwCurrentTime);
-    void UpdateVisibility(DWORD dwCurrentTime);
+    void Activate(unsigned int dwCurrentTime);
+    void UpdateVisibility(unsigned int dwCurrentTime);
     void Render(IGenericRender *piRender,IGenericCamera *piCamera);
 
 public:
 
-    bool ProcessFrame(IPhysicManager *pPhysicManager,DWORD dwCurrentTime,double dInterval);
+    bool ProcessFrame(IPhysicManager *pPhysicManager,unsigned int dwCurrentTime,double dInterval);
     void CustomRender(IGenericRender *piRender,IGenericCamera *piCamera);
 
 	CTraceInfo GetTrace(const CVector &vOrigin,const CVector &vAngles,const CVector &p1,const CVector &p2 );

@@ -23,7 +23,7 @@ public:
     double  m_dSizeTransitionEnd;  // de 0 a 1, en tiempo de vida de la particula
     deque<SSizeTransition> m_dIntermediateSizeTransitions;
 
-    IParticleModifier *CreateInstance(DWORD dwCurrentTime);
+    IParticleModifier *CreateInstance(unsigned int dwCurrentTime);
 
     BEGIN_PROP_MAP(CParticleSizeModifierType)
         PROP_CLASS_CHAIN(CParticleModifierType)
@@ -44,7 +44,7 @@ class CParticleSizeModifier:public CParticleModifier
     
 public:
 
-    void ProcessParticle(IParticle *pParticle,IParticleSystem *pSystem,DWORD dwCurrentTime,double dInterval);
+    void ProcessParticle(IParticle *pParticle,IParticleSystem *pSystem,unsigned int dwCurrentTime,double dInterval);
 
     CParticleSizeModifier(CParticleSizeModifierType *pType);
 };

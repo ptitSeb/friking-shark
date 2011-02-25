@@ -51,12 +51,12 @@ bool CGBSFileType::Load(const char *pFileName,CBSPNode **ppBSPNode,std::vector<C
 		}
 		if(pGeometricData && m_Header.dwFlags&GBS_FILE_FLAG_CONTAINS_GEOMETRIC_DATA)
 		{
-			DWORD x=0,dwPolygonCount=0;
+			unsigned int x=0,dwPolygonCount=0;
 			if(fread(&dwPolygonCount,sizeof(dwPolygonCount),1,pFile)==1)
 			{
 			  for(x=0;x<dwPolygonCount;x++)
 			  {
-				  DWORD v=0,dwVertexCount=0;
+				  unsigned int v=0,dwVertexCount=0;
 				  if(fread(&dwVertexCount,sizeof(dwVertexCount),1,pFile)!=1){break;}
 				  
 				  CPolygon *pPolygon=new CPolygon;
@@ -109,13 +109,13 @@ bool CGBSFileType::Save(const char *pFileName,CBSPNode *pBSPNode,std::vector<CPo
 	if(pGeometricData)
 	{
 		m_Header.dwFlags|=GBS_FILE_FLAG_CONTAINS_GEOMETRIC_DATA;
-		DWORD x=0,dwPolygonCount=pGeometricData->size();
+		unsigned int x=0,dwPolygonCount=pGeometricData->size();
 		if(fwrite(&dwPolygonCount,sizeof(dwPolygonCount),1,pFile)!=1){fclose(pFile);pFile=NULL;return false;}
 		
 		for(x=0;x<dwPolygonCount;x++)
 		{
 			CPolygon *pPolygon=(*pGeometricData)[x];
-			DWORD v=0,dwVertexCount=pPolygon->m_nVertexes;
+			unsigned int v=0,dwVertexCount=pPolygon->m_nVertexes;
 			if(fwrite(&dwVertexCount,sizeof(dwVertexCount),1,pFile)!=1){fclose(pFile);pFile=NULL;return false;}
 			for(v=0;v<dwVertexCount;v++)
 			{
@@ -169,7 +169,7 @@ bool CGBSFileType::WriteNode(FILE *pFile,CBSPNode *pNode,SGBSFileNodeStats *pSta
 	return true;
 }
 
-DWORD		CGBSFileType::GetVersion()
+unsigned int		CGBSFileType::GetVersion()
 {
 	return m_Header.dwVersion;
 }

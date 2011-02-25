@@ -28,7 +28,7 @@ void CGameController::Destroy()
 	Stop();
 	EndGame();
 
-    map<DWORD,IGameManager *>::iterator i;
+    map<unsigned int,IGameManager *>::iterator i;
     for(i=m_mManagers.begin();i!=m_mManagers.end();i++)
     {
         IGameManager *piManager=i->second;
@@ -81,7 +81,7 @@ void CGameController::CreateScenario()
 {
 	CloseScenario();
 
-	map<DWORD,IGameManager *>::iterator i;
+	map<unsigned int,IGameManager *>::iterator i;
 	for(i=m_mManagers.begin();i!=m_mManagers.end();i++)
 	{
 		IGameManager *piManager=i->second;
@@ -97,7 +97,7 @@ bool CGameController::LoadScenario(std::string sScenario)
 	bool bOk=configFile.Open(sScenario);
 	if(bOk)
 	{
-		map<DWORD,IGameManager *>::iterator i;
+		map<unsigned int,IGameManager *>::iterator i;
 		for(i=m_mManagers.begin();i!=m_mManagers.end();i++)
 		{
 			IGameManager *piManager=i->second;
@@ -109,7 +109,7 @@ bool CGameController::LoadScenario(std::string sScenario)
 bool CGameController::SaveScenario(std::string sScenario)
 {
 	CConfigFile configFile;
-	map<DWORD,IGameManager *>::iterator i;
+	map<unsigned int,IGameManager *>::iterator i;
 	for(i=m_mManagers.begin();i!=m_mManagers.end();i++)
 	{
 		IGameManager *piManager=i->second;
@@ -122,7 +122,7 @@ void CGameController::CloseScenario()
 {
 	Stop();
 
-    map<DWORD,IGameManager *>::iterator i;
+    map<unsigned int,IGameManager *>::iterator i;
     for(i=m_mManagers.begin();i!=m_mManagers.end();i++)
     {
         IGameManager *piManager=i->second;
@@ -134,7 +134,7 @@ void CGameController::Start()
 {
 	Stop();
 
-	map<DWORD,IGameManager *>::iterator i;
+	map<unsigned int,IGameManager *>::iterator i;
 	for(i=m_mManagers.begin();i!=m_mManagers.end();i++)
 	{
 		IGameManager *piManager=i->second;
@@ -144,7 +144,7 @@ void CGameController::Start()
 
 void CGameController::Stop()
 {
-	map<DWORD,IGameManager *>::reverse_iterator i;
+	map<unsigned int,IGameManager *>::reverse_iterator i;
 	for(i=m_mManagers.rbegin();i!=m_mManagers.rend();i++)
 	{
 		IGameManager *piManager=i->second;
@@ -152,11 +152,11 @@ void CGameController::Stop()
 	}
 }
 
-void CGameController::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
+void CGameController::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	if(dTimeFraction==0.0){return;}
 
-	map<DWORD,IGameManager *>::iterator i;
+	map<unsigned int,IGameManager *>::iterator i;
     for(i=m_mManagers.begin();i!=m_mManagers.end();i++)
     {
         IGameManager *piManager=i->second;
@@ -164,7 +164,7 @@ void CGameController::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
     }
 }
 
-bool CGameController::RegisterManager(DWORD dwHeight,IGameManager *piManager)
+bool CGameController::RegisterManager(unsigned int dwHeight,IGameManager *piManager)
 {
     if(m_mManagers.find(dwHeight)!=m_mManagers.end()){return false;}
     ADD(piManager);
@@ -174,7 +174,7 @@ bool CGameController::RegisterManager(DWORD dwHeight,IGameManager *piManager)
 
 void CGameController::UnregisterManager(IGameManager *piManager)
 {
-    map<DWORD,IGameManager *>::iterator i;
+    map<unsigned int,IGameManager *>::iterator i;
     for(i=m_mManagers.begin();i!=m_mManagers.end();i++)
     {
         IGameManager *piTempManager=i->second;

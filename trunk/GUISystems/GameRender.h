@@ -33,10 +33,10 @@ using namespace std;
 
 class CGameRender: virtual public CSystemObjectBase,virtual public IGameRender
 {
-   DWORD			 m_dwFlags;
+   unsigned int			 m_dwFlags;
  
-    DWORD			 m_dwMaxOpenGLSkinWidth;
-    DWORD			 m_dwMaxOpenGLSkinHeight;
+    unsigned int			 m_dwMaxOpenGLSkinWidth;
+    unsigned int			 m_dwMaxOpenGLSkinHeight;
 
 	CEntityManagerWrapper m_EntityManager;
 	CPlayAreaManagerWrapper m_PlayAreaManager;
@@ -47,10 +47,10 @@ public:
 	bool Init(std::string sClass,std::string sName,ISystem *piSystem);
 	void Destroy();
 
-	DWORD	EnableFlags(DWORD dwFlag);
-	DWORD	DisableFlags(DWORD dwFlag);
-	DWORD	GetFlag(DWORD dwFlag);
-	DWORD	ToggleFlag(DWORD dwFlag);
+	unsigned int	EnableFlags(unsigned int dwFlag);
+	unsigned int	DisableFlags(unsigned int dwFlag);
+	unsigned int	GetFlag(unsigned int dwFlag);
+	unsigned int	ToggleFlag(unsigned int dwFlag);
 
 	void	Render(IGenericRender *piRender,IGenericCamera *piCamera);
 

@@ -6,7 +6,7 @@ public:
 
   double m_dDamage;
 
-  IEntity *CreateInstance(IEntity *piParent,DWORD dwCurrentTime);
+  IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
 
   BEGIN_PROP_MAP(CBombProjectileType)
     PROP_VALUE_FLAGS(m_dDamage,"Daño",1.0,MRPF_NORMAL|MRPF_OPTIONAL)

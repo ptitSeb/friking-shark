@@ -3,6 +3,7 @@
 #include "./GameRunTimeLib.h"
 #include "./ConfigFile.h"
 
+#define NODE_PATH_MAX 512
 #define CONFIG_FILE_DELIMITER " \t\r\n="
 
 CConfigFileNode::CConfigFileNode(CConfigFileNode *pParent)
@@ -35,8 +36,8 @@ CConfigFileNode *CConfigFileNode::GetAddNode_Internal(const char *pNodePath,bool
     const char *pSubNodeEnd=strchr(pNodePath,'\\');
     if (pSubNodeEnd)
     {
-        char sSubNodeName[MAX_PATH]={0};
-        strncpy(sSubNodeName,pNodePath,(DWORD)(pSubNodeEnd-pNodePath));
+        char sSubNodeName[NODE_PATH_MAX]={0};
+        strncpy(sSubNodeName,pNodePath,(unsigned int)(pSubNodeEnd-pNodePath));
         std::multimap<std::string,CConfigFileNode*>::iterator i=m_mNodes.find((std::string)sSubNodeName);
         if (i!=m_mNodes.end())
         {
@@ -117,8 +118,8 @@ void CConfigFileNode::DeleteNode(const char *pNodePath)
     const char *pSubNodeEnd=strchr(pNodePath,'\\');
     if (pSubNodeEnd)
     {
-        char sSubNodeName[MAX_PATH]={0};
-        strncpy(sSubNodeName,pNodePath,(DWORD)(pSubNodeEnd-pNodePath));
+        char sSubNodeName[NODE_PATH_MAX]={0};
+        strncpy(sSubNodeName,pNodePath,(unsigned int)(pSubNodeEnd-pNodePath));
         std::multimap<std::string,CConfigFileNode*>::iterator i=m_mNodes.find((std::string)sSubNodeName);
         if (i!=m_mNodes.end())
         {
@@ -303,7 +304,7 @@ bool CConfigFile::Open(std::string &sFileName) {
 }
 bool CConfigFile::Open(const char *pFileName)
 {
-    DWORD dwFileLength=0;
+    unsigned int dwFileLength=0;
 
     m_RootNode.Clear();
 

@@ -4,7 +4,7 @@
 CLiveBonusType::CLiveBonusType(){}
 CLiveBonusType::~CLiveBonusType(){}
 
-IEntity *CLiveBonusType::CreateInstance(IEntity *piParent,DWORD dwCurrentTime)
+IEntity *CLiveBonusType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
 {
   CLiveBonus *piEntity=new CLiveBonus(this);
   SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();

@@ -75,7 +75,7 @@ class CPlayAreaManager: virtual public CSystemObjectBase,
 	double  m_dPlayMovementCurrentRight;
 	double	m_dPlayMovementCurrentRoll;
 	double	m_dPlayMovementRollVelocity;
-	DWORD	m_dwPlayMovementLastRollTime;
+	unsigned int	m_dwPlayMovementLastRollTime;
 
 	CVector m_PlayerKilledVelocity;
 	bool m_bProcessingPlayerOutroPhase1;
@@ -143,7 +143,7 @@ public:
 
     void Start();
     void Stop();
-    void ProcessFrame(DWORD dwCurrentTime,double dTimeFraction);
+    void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
 
 	void UpdatePlayCameraPosition();
 	void MovePlayer(unsigned long nKey);

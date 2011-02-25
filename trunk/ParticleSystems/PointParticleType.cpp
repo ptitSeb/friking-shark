@@ -12,7 +12,7 @@ CPointParticleType::~CPointParticleType()
 {
 }
 
-IParticle *CPointParticleType::CreateInstance(IParticleEmitter *piEmiter,DWORD dwCurrentTime)
+IParticle *CPointParticleType::CreateInstance(IParticleEmitter *piEmiter,unsigned int dwCurrentTime)
 {
     CPointParticle *pParticle=new CPointParticle(this,piEmiter);
     return pParticle;

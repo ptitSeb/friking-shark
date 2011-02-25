@@ -4,7 +4,10 @@
 #include <map>
 #include <malloc.h>
 #include <stdlib.h>
-#include <windows.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include "InterfaceLeakAPI.h"
 #ifdef WIN32
 #include  <io.h> // _access
@@ -18,17 +21,17 @@
 #define GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS (0x00000004)
 #define GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT (0x00000002)
 
-typedef struct _MODULEINFO {  LPVOID lpBaseOfDll;  DWORD SizeOfImage;  LPVOID EntryPoint;} MODULEINFO,  *LPMODULEINFO;
+typedef struct _MODULEINFO {  LPVOID lpBaseOfDll;  unsigned int SizeOfImage;  LPVOID EntryPoint;} MODULEINFO,  *LPMODULEINFO;
 
-typedef BOOL(WINAPI*PGET_MODULE_HANDLE_EXA)(IN DWORD dwFlags,LPCSTR lpModuleName,OUT HMODULE*phModule);
-typedef BOOL(WINAPI*PGET_MODULE_INFORMATION)(HANDLE hProcess,HMODULE hModule,LPMODULEINFO lpmodinfo,DWORD cb);
+typedef BOOL(WINAPI*PGET_MODULE_HANDLE_EXA)(IN unsigned int dwFlags,LPCSTR lpModuleName,OUT HMODULE*phModule);
+typedef BOOL(WINAPI*PGET_MODULE_INFORMATION)(HANDLE hProcess,HMODULE hModule,LPMODULEINFO lpmodinfo,unsigned int cb);
 
 typedef struct _MODLOAD_DATA {
-    DWORD   ssize;                  // size of this struct
-    DWORD   ssig;                   // signature identifying the passed data
+    unsigned int   ssize;                  // size of this struct
+    unsigned int   ssig;                   // signature identifying the passed data
     PVOID   data;                   // pointer to passed data
-    DWORD   size;                   // size of passed data
-    DWORD   flags;                  // options
+    unsigned int   size;                   // size of passed data
+    unsigned int   flags;                  // options
 } MODLOAD_DATA, *PMODLOAD_DATA;
 
 typedef struct _SYMBOL_INFO {  
@@ -50,17 +53,17 @@ typedef struct _SYMBOL_INFO {
 } SYMBOL_INFO,  *PSYMBOL_INFO;
 
 typedef struct _IMAGEHLP_LINE64 {  
-	DWORD SizeOfStruct;  
+	unsigned int SizeOfStruct;  
 	PVOID Key;  
-	DWORD LineNumber;  
+	unsigned int LineNumber;  
 	PTSTR FileName;  
-	DWORD64 Address;
+	unsigned int64 Address;
 } IMAGEHLP_LINE64, *PIMAGEHLP_LINE64;
 
-typedef DWORD64 (WINAPI *PSYM_LOAD_MODULE_EX)(HANDLE hProcess,HANDLE hFile,char * ImageName,char * ModuleName,DWORD64 BaseOfDll,DWORD DllSize,PMODLOAD_DATA Data,DWORD Flags);
+typedef unsigned int64 (WINAPI *PSYM_LOAD_MODULE_EX)(HANDLE hProcess,HANDLE hFile,char * ImageName,char * ModuleName,unsigned int64 BaseOfDll,unsigned int DllSize,PMODLOAD_DATA Data,unsigned int Flags);
 typedef BOOL (WINAPI *PSYM_INITIALIZE)(HANDLE hProcess,char *UserSearchPath,BOOL fInvadeProcess);
-typedef BOOL (WINAPI *PSYM_FROM_ADDRESS)(HANDLE hProcess,DWORD64 Address,PDWORD64 Displacement,PSYMBOL_INFO Symbol);
-typedef BOOL (WINAPI *PSYM_LINE_FROM_ADDRESS)(HANDLE hProcess,DWORD64 Address,PDWORD64 Displacement,PIMAGEHLP_LINE64 Line);
+typedef BOOL (WINAPI *PSYM_FROM_ADDRESS)(HANDLE hProcess,unsigned int64 Address,Punsigned int64 Displacement,PSYMBOL_INFO Symbol);
+typedef BOOL (WINAPI *PSYM_LINE_FROM_ADDRESS)(HANDLE hProcess,unsigned int64 Address,Punsigned int64 Displacement,PIMAGEHLP_LINE64 Line);
 
 
 PGET_MODULE_HANDLE_EXA pGetModuleHandleEx=NULL;
@@ -498,7 +501,7 @@ SModule *AddModule(void *pAddress)
 void GetStackFrameFromCodeAddress(void *pAddress,SStackFrame *pFrame)
 {
 	SModule		*pModule=NULL;
-	DWORD64		 displacement=0;
+	unsigned int64		 displacement=0;
 	char		 pFunctionSymbolBuffer[sizeof(SYMBOL_INFO)+1024];
 	SYMBOL_INFO *pFunctionSymbol=(SYMBOL_INFO *)pFunctionSymbolBuffer;
 	IMAGEHLP_LINE64 functionLine={0};
@@ -509,7 +512,7 @@ void GetStackFrameFromCodeAddress(void *pAddress,SStackFrame *pFrame)
 	memset(pFunctionSymbol,0,sizeof(SYMBOL_INFO)+1024);
 	pFunctionSymbol->SizeOfStruct=sizeof(SYMBOL_INFO);
 	pFunctionSymbol->MaxNameLen=1024;
-	if(!pSymFromAddress(GetCurrentProcess(),(DWORD64)pAddress,&displacement,pFunctionSymbol))
+	if(!pSymFromAddress(GetCurrentProcess(),(unsigned int64)pAddress,&displacement,pFunctionSymbol))
 	{
 		if(g_MonitorizationConfig.bSymbolLoadErrors)
 		{
@@ -520,7 +523,7 @@ void GetStackFrameFromCodeAddress(void *pAddress,SStackFrame *pFrame)
 	}
 
 	functionLine.SizeOfStruct=sizeof(IMAGEHLP_LINE64);
-	if(!pSymLineFromAddress(GetCurrentProcess(),(DWORD64)pAddress,&displacement,&functionLine))
+	if(!pSymLineFromAddress(GetCurrentProcess(),(unsigned int64)pAddress,&displacement,&functionLine))
 	{
 		if(g_MonitorizationConfig.bSymbolLoadErrors)
 		{

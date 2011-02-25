@@ -58,7 +58,7 @@ public:
 
 	void Start();
 	void Stop();
-	void ProcessFrame(DWORD dwCurrentTime,double dTimeFraction);
+	void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
 
 	CSoundManager *GetSoundManager();
 	bool           Is3DSoundEnabled();

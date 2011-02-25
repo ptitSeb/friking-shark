@@ -15,8 +15,10 @@
 
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 
-#include <crtdbg.h>
-#include <windows.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 #pragma warning ( disable : 4244 4018 )
 

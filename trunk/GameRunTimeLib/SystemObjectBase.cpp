@@ -2,7 +2,6 @@
 #include "GameRunTimeLib.h"
 #include "SystemUnknownBase.h"
 #include "SystemObjectBase.h"
-#include <crtdbg.h>
 
 
 CSystemObjectBase::CSystemObjectBase(void)

@@ -57,7 +57,7 @@ void         CEntityBase::OnKilled(){OnKilledInternal(true);}
 bool         CEntityBase::OnCollision(IEntity *pOther,CVector &vCollisionPos){return true;}
 void         CEntityBase::Remove(){m_bRemoved=true;SetCurrentAnimation(-1);NOTIFY_EVENT(IEntityEvents,OnRemoved(this));}
 bool         CEntityBase::IsRemoved(){return m_bRemoved;}
-void         CEntityBase::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
+void         CEntityBase::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	if(m_dwDamageType!=DAMAGE_TYPE_NONE)
 	{
@@ -71,9 +71,9 @@ void         CEntityBase::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
 SPhysicInfo *CEntityBase::GetPhysicInfo(){return &m_PhysicInfo;}
 string      *CEntityBase::GetEntityClass(){return &m_sClassName;}
 string      *CEntityBase::GetEntityName(){return &m_sName;}
-DWORD        CEntityBase::GetNextProcessFrame(){return m_dwNextProcessFrame;}
-DWORD        CEntityBase::GetAlignment(){return m_dwAlignment;}
-void         CEntityBase::SetAlignment(DWORD dwAlignment){m_dwAlignment=dwAlignment;}
+unsigned int        CEntityBase::GetNextProcessFrame(){return m_dwNextProcessFrame;}
+unsigned int        CEntityBase::GetAlignment(){return m_dwAlignment;}
+void         CEntityBase::SetAlignment(unsigned int dwAlignment){m_dwAlignment=dwAlignment;}
 double       CEntityBase::GetHealth(){return m_dHealth;}
 double       CEntityBase::GetMaxHealth(){return m_dMaxHealth;}
 
@@ -101,7 +101,7 @@ void CEntityBase::SetCurrentAnimation(int index)
     }
 }
 
-void CEntityBase::ProcessAnimations(DWORD dwCurrentTime,double dTimeFraction,bool *pbAnimationsFinished)
+void CEntityBase::ProcessAnimations(unsigned int dwCurrentTime,double dTimeFraction,bool *pbAnimationsFinished)
 {
     unsigned x;
     (*pbAnimationsFinished)=true;
@@ -144,7 +144,7 @@ void CEntityBase::AddWeapon(IWeapon *piWeapon)
   m_dWeapons.push_back(piWeapon);
 }
 
-void CEntityBase::FireWeapon(DWORD dwWeaponSlot,DWORD dwCurrentTime)
+void CEntityBase::FireWeapon(unsigned int dwWeaponSlot,unsigned int dwCurrentTime)
 {
   size_t x;
   for(x=0;x<m_dWeapons.size();x++)
@@ -165,7 +165,7 @@ IEntity *CEntityBase::GetTarget()
   return m_piTarget;
 }
 
-DWORD CEntityBase::GetDamageType()
+unsigned int CEntityBase::GetDamageType()
 {
   return m_dwDamageType;
 }

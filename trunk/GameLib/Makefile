@@ -3,15 +3,15 @@
 
 CC=g++
 
-INCLUDES = -I. -I../PortFiles -I../GameRunTime -I../GameRunTimeLib -I../VectorLib
+INCLUDES = -I. -I../GameRunTime -I../GameRunTimeLib -I../VectorLib
 
 SOURCES = GameLib.cpp\
 ResourceStore.cpp\
 StdAfx.cpp
 
 
-CFLAGS +=  -pedantic -pedantic-errors -Wno-unused-function -Wall -Werror  -D_REENTRANT -O3 -g
-CFLAGS_DEBUG +=  -pedantic -pedantic-errors -Wno-unused-function -Wall -Werror  -D_REENTRANT -g
+CFLAGS += -DNDEBUG -pedantic -pedantic-errors -Wno-unused-function -Wall -Werror  -D_REENTRANT -O3 -g
+CFLAGS_DEBUG += -DDEBUG -pedantic -pedantic-errors -Wno-unused-function -Wall -Werror  -D_REENTRANT -g
 
 INTERMEDIATE_DIR = ./.intermediate
 OUT_SOURCES=$(addprefix $(INTERMEDIATE_DIR)/,$(SOURCES))

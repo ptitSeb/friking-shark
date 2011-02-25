@@ -18,8 +18,8 @@ class C3DSFileType:public C3DSFileTypeBase
 
 	unsigned char	ReadByte();
 	float			ReadFloat();
-	DWORD			ReadDWord();
-	WORD			ReadWord();
+	unsigned int			ReadDWord();
+	unsigned short			ReadWord();
 	CVector			ReadVector();
 	std::string		ReadString();
 

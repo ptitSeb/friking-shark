@@ -13,7 +13,7 @@ CBomberType::CBomberType()
 
 CBomberType::~CBomberType(){}
 
-IEntity *CBomberType::CreateInstance(IEntity *piParent,DWORD dwCurrentTime)
+IEntity *CBomberType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
 {
   CBomber *piEntity=new CBomber(this,dwCurrentTime);
   InitializeEntity(piEntity,dwCurrentTime);
@@ -21,7 +21,7 @@ IEntity *CBomberType::CreateInstance(IEntity *piParent,DWORD dwCurrentTime)
   return piEntity;
 }
 
-CBomber::CBomber(CBomberType *pType,DWORD dwCurrentTime)
+CBomber::CBomber(CBomberType *pType,unsigned int dwCurrentTime)
 {
   m_sClassName="CBomber";
   m_pType=pType;
@@ -53,7 +53,7 @@ bool CBomber::OnCollision(IEntity *piOther,CVector &vCollisionPos)
 	return false;
 }
 
-void CBomber::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
+void CBomber::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
   size_t nAnimationToSet=0;
 

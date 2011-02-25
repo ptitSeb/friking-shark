@@ -15,11 +15,11 @@ class CEntityTypeBase: virtual public CSystemObjectBase,virtual public IEntityTy
     bool                          m_bSolid;
 	bool                          m_bUseBSP;
    bool                           m_bFlyMove;
-    DWORD                         m_dwAlignment;
+    unsigned int                         m_dwAlignment;
 
 protected:
 
-    virtual void	InitializeEntity(CEntityBase *piEntity,DWORD dwCurrentTime);
+    virtual void	InitializeEntity(CEntityBase *piEntity,unsigned int dwCurrentTime);
 
 	virtual void	GetBBox(CVector *pvMins,CVector *pvMaxs);
 	virtual CVector	GetSize();

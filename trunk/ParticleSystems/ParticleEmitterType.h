@@ -9,8 +9,8 @@ public:
     // Propiedades Persistentes.
 
     string      m_sName;
-    DWORD       m_dwEmitStartTime;  // si es cero se empieza inmediatamente a emitir, tiempo relativo
-    DWORD       m_dwEmitEndTime;    // si es cero, emite siempre si no es el momento en el que deja de emitir, tiempo relativo
+    unsigned int       m_dwEmitStartTime;  // si es cero se empieza inmediatamente a emitir, tiempo relativo
+    unsigned int       m_dwEmitEndTime;    // si es cero, emite siempre si no es el momento en el que deja de emitir, tiempo relativo
     double      m_dStartRate;            // numero de particulas por segundo en el inicio
     double      m_dEndRate;            // numero de particulas por segundo en el final
 
@@ -28,9 +28,9 @@ public:
     double      m_dMinAngle;
     double      m_dMaxAngle;
 
-    DWORD       m_dwParticleDuration;    // cuanto duran las particulas emitidas
-    DWORD       m_dwParticleCount;      // numero de particulas (si m_dwEmitEndTime es cero o igual a m_dwEmitStartTime se emiten instantaneamente, en caso contrario se distribuyen en el tiempo)
-    DWORD       m_dwMovementType;
+    unsigned int       m_dwParticleDuration;    // cuanto duran las particulas emitidas
+    unsigned int       m_dwParticleCount;      // numero de particulas (si m_dwEmitEndTime es cero o igual a m_dwEmitStartTime se emiten instantaneamente, en caso contrario se distribuyen en el tiempo)
+    unsigned int       m_dwMovementType;
     bool        m_bFixedPositionOnParent; // Mantiene la posicion inicial en el sistema de referencia del padre, pensado para fuentes de luz y efectos estaticos respecto a la entidad
 
     CParticleTypeWrapper m_ParticleType;
@@ -39,7 +39,7 @@ public:
 
     CTexture    *m_pTexture;
 
-    IParticleEmitter *CreateInstance(DWORD dwCurrentTime);
+    IParticleEmitter *CreateInstance(unsigned int dwCurrentTime);
 
     BEGIN_PROP_MAP(CParticleEmitterType);
         PROP_FLAGS(m_ParticleType,"TipoParticulas",MRPF_NORMAL|MRPF_OPTIONAL);
@@ -72,11 +72,11 @@ public:
 class CParticleEmitter:public IParticleEmitter
 {
     bool        m_bActive;  // a 1 hasta que llega EmitEndTime
-    DWORD       m_dwLastEmitTime;
-    DWORD       m_dwEmitStartTime;  // igual que el del tipo pero con tiempo absoluto en lugar de relativo
-    DWORD       m_dwEmitEndTime;    // igual que el del tipo pero con tiempo absoluto en lugar de relativo
+    unsigned int       m_dwLastEmitTime;
+    unsigned int       m_dwEmitStartTime;  // igual que el del tipo pero con tiempo absoluto en lugar de relativo
+    unsigned int       m_dwEmitEndTime;    // igual que el del tipo pero con tiempo absoluto en lugar de relativo
     CParticleEmitterType *m_pType;
-    DWORD       m_dwParticlesEmitted;
+    unsigned int       m_dwParticlesEmitted;
 
 public:
 
@@ -85,7 +85,7 @@ public:
     bool IsActive();
     void Deactivate();
 
-    void ProcessFrame(IParticleSystem *pSystem,DWORD dwCurrentTime,double dInterval);
+    void ProcessFrame(IParticleSystem *pSystem,unsigned int dwCurrentTime,double dInterval);
 
-    CParticleEmitter(CParticleEmitterType *pType,DWORD dwCurrentTime);
+    CParticleEmitter(CParticleEmitterType *pType,unsigned int dwCurrentTime);
 };

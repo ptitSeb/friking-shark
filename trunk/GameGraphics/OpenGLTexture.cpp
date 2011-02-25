@@ -94,7 +94,7 @@ bool LoadBMPFile(const char *pFileName,unsigned int nBits,unsigned int *pnWidth,
 }
 
 
-bool LoadJPEGImageHelper(string sFile,DWORD dwColorType,unsigned *pOpenGLSkinWidth,unsigned *pOpenGLSkinHeight,BYTE **ppBuffer)
+bool LoadJPEGImageHelper(string sFile,unsigned int dwColorType,unsigned *pOpenGLSkinWidth,unsigned *pOpenGLSkinHeight,unsigned char **ppBuffer)
 {
 	Pjpeg_decoder_file_stream Pinput_stream = new jpeg_decoder_file_stream();
 
@@ -133,11 +133,11 @@ bool LoadJPEGImageHelper(string sFile,DWORD dwColorType,unsigned *pOpenGLSkinWid
 		}
 	}
 
-	DWORD destBytesPerPixel=dwColorType==GL_RGB?3:4;
-	DWORD dwSize = Pd->get_width() * Pd->get_height() * destBytesPerPixel;
+	unsigned int destBytesPerPixel=dwColorType==GL_RGB?3:4;
+	unsigned int dwSize = Pd->get_width() * Pd->get_height() * destBytesPerPixel;
 	*pOpenGLSkinWidth = Pd->get_width();
 	*pOpenGLSkinHeight = Pd->get_height();
-	*ppBuffer = new BYTE[dwSize];
+	*ppBuffer = new unsigned char[dwSize];
 
 	memset(*ppBuffer,255,dwSize); // esto se hace para inicializar la imagen y el canal RGBA
 
@@ -172,7 +172,7 @@ bool LoadJPEGImageHelper(string sFile,DWORD dwColorType,unsigned *pOpenGLSkinWid
 	return true;
 }
 
-bool LoadImageHelper(string sFile,DWORD dwColorType,unsigned *pOpenGLSkinWidth,unsigned *pOpenGLSkinHeight,BYTE **ppBuffer)
+bool LoadImageHelper(string sFile,unsigned int dwColorType,unsigned *pOpenGLSkinWidth,unsigned *pOpenGLSkinHeight,unsigned char **ppBuffer)
 {
 	*pOpenGLSkinWidth=0;
 	*pOpenGLSkinHeight=0;
@@ -284,27 +284,27 @@ unsigned 	COpenGLTexture::GetOpenGLIndex()
 bool COpenGLTexture::LoadFromFile()
 {
 	bool bResult=true;
-	DWORD	 dwColorType=HasAlphaChannel()?GL_RGBA:GL_RGB;
+	unsigned int	 dwColorType=HasAlphaChannel()?GL_RGBA:GL_RGB;
 
 	if(LoadImageHelper(m_sFileName,dwColorType,&m_dwWidth,&m_dwHeight,&m_pBuffer))
 	{
 		if(m_sAlphaFileName!="")
 		{
-			BYTE	*pAlphaBuffer=NULL;
+			unsigned char	*pAlphaBuffer=NULL;
 			unsigned nAlphaOpenGLSkinWidth=0,nAlphaOpenGLSkinHeight=0;
 
 			if(LoadImageHelper(m_sAlphaFileName,GL_RGB,&nAlphaOpenGLSkinWidth,&nAlphaOpenGLSkinHeight,&pAlphaBuffer))
 			{
 				if(nAlphaOpenGLSkinWidth==m_dwWidth && m_dwHeight==nAlphaOpenGLSkinHeight)
 				{
-					BYTE *pTempBuffer=m_pBuffer;
-					BYTE *pTempAlpha=pAlphaBuffer;
+					unsigned char *pTempBuffer=m_pBuffer;
+					unsigned char *pTempAlpha=pAlphaBuffer;
 
 					for(unsigned y=0; y < m_dwHeight; y++)
 					{
 						for(unsigned x = 0; x < m_dwWidth; x++,pTempBuffer+=4,pTempAlpha+=3)
 						{
-							pTempBuffer[3] = (BYTE)((((DWORD)pTempAlpha[0])+((DWORD)pTempAlpha[1])+((DWORD)pTempAlpha[2]))/3);
+							pTempBuffer[3] = (unsigned char)((((unsigned int)pTempAlpha[0])+((unsigned int)pTempAlpha[1])+((unsigned int)pTempAlpha[2]))/3);
 						}
 					}
 				}

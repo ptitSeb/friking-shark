@@ -40,14 +40,14 @@ public:
     CSoundManager();
     ~CSoundManager();
 
-    HRESULT Initialize( HWND hWnd, DWORD dwCoopLevel );
+    HRESULT Initialize( HWND hWnd, unsigned int dwCoopLevel );
     inline  LPDIRECTSOUND8 GetDirectSound() { return m_pDS; }
-    HRESULT SetPrimaryBufferFormat( DWORD dwPrimaryChannels, DWORD dwPrimaryFreq, DWORD dwPrimaryBitRate );
+    HRESULT SetPrimaryBufferFormat( unsigned int dwPrimaryChannels, unsigned int dwPrimaryFreq, unsigned int dwPrimaryBitRate );
     HRESULT Get3DListenerInterface( LPDIRECTSOUND3DLISTENER* ppDSListener );
 
-    HRESULT Create( CSound** ppSound, LPSTR strWaveFileName, DWORD dwCreationFlags = 0, GUID guid3DAlgorithm = GUID_NULL, DWORD dwNumBuffers = 1 );
-    HRESULT CreateFromMemory( CSound** ppSound, BYTE* pbData, ULONG ulDataSize, LPWAVEFORMATEX pwfx, DWORD dwCreationFlags = 0, GUID guid3DAlgorithm = GUID_NULL, DWORD dwNumBuffers = 1 );
-    HRESULT CreateStreaming( CStreamingSound** ppStreamingSound, LPSTR strWaveFileName, DWORD dwCreationFlags, GUID guid3DAlgorithm, DWORD dwNotifyCount, DWORD dwNotifySize, HANDLE hNotifyEvent );
+    HRESULT Create( CSound** ppSound, LPSTR strWaveFileName, unsigned int dwCreationFlags = 0, GUID guid3DAlgorithm = GUID_NULL, unsigned int dwNumBuffers = 1 );
+    HRESULT CreateFromMemory( CSound** ppSound, unsigned char* pbData, ULONG ulDataSize, LPWAVEFORMATEX pwfx, unsigned int dwCreationFlags = 0, GUID guid3DAlgorithm = GUID_NULL, unsigned int dwNumBuffers = 1 );
+    HRESULT CreateStreaming( CStreamingSound** ppStreamingSound, LPSTR strWaveFileName, unsigned int dwCreationFlags, GUID guid3DAlgorithm, unsigned int dwNotifyCount, unsigned int dwNotifySize, HANDLE hNotifyEvent );
 };
 
 
@@ -59,24 +59,24 @@ class CSound
 {
 protected:
     LPDIRECTSOUNDBUFFER* m_apDSBuffer;
-    DWORD                m_dwDSBufferSize;
+    unsigned int                m_dwDSBufferSize;
     CWaveFile*           m_pWaveFile;
-    DWORD                m_dwNumBuffers;
-    DWORD                m_dwCreationFlags;
+    unsigned int                m_dwNumBuffers;
+    unsigned int                m_dwCreationFlags;
 
     HRESULT RestoreBuffer( LPDIRECTSOUNDBUFFER pDSB, BOOL* pbWasRestored );
 
 public:
-    CSound( LPDIRECTSOUNDBUFFER* apDSBuffer, DWORD dwDSBufferSize, DWORD dwNumBuffers, CWaveFile* pWaveFile, DWORD dwCreationFlags );
+    CSound( LPDIRECTSOUNDBUFFER* apDSBuffer, unsigned int dwDSBufferSize, unsigned int dwNumBuffers, CWaveFile* pWaveFile, unsigned int dwCreationFlags );
     virtual ~CSound();
 
-    HRESULT Get3DBufferInterface( DWORD dwIndex, LPDIRECTSOUND3DBUFFER* ppDS3DBuffer );
+    HRESULT Get3DBufferInterface( unsigned int dwIndex, LPDIRECTSOUND3DBUFFER* ppDS3DBuffer );
     HRESULT FillBufferWithSound( LPDIRECTSOUNDBUFFER pDSB, BOOL bRepeatWavIfBufferLarger );
     LPDIRECTSOUNDBUFFER GetFreeBuffer();
-    LPDIRECTSOUNDBUFFER GetBuffer( DWORD dwIndex );
+    LPDIRECTSOUNDBUFFER GetBuffer( unsigned int dwIndex );
 
-    HRESULT Play( DWORD dwPriority = 0, DWORD dwFlags = 0, LONG lVolume = 0, LONG lFrequency = -1, LONG lPan = 0 );
-    HRESULT Play3D( LPDS3DBUFFER p3DBuffer, DWORD dwPriority = 0, DWORD dwFlags = 0, LONG lFrequency = 0 );
+    HRESULT Play( unsigned int dwPriority = 0, unsigned int dwFlags = 0, LONG lVolume = 0, LONG lFrequency = -1, LONG lPan = 0 );
+    HRESULT Play3D( LPDS3DBUFFER p3DBuffer, unsigned int dwPriority = 0, unsigned int dwFlags = 0, LONG lFrequency = 0 );
     HRESULT Stop();
     HRESULT Reset();
     BOOL    IsSoundPlaying();
@@ -93,14 +93,14 @@ public:
 class CStreamingSound : public CSound
 {
 protected:
-    DWORD m_dwLastPlayPos;
-    DWORD m_dwPlayProgress;
-    DWORD m_dwNotifySize;
-    DWORD m_dwNextWriteOffset;
+    unsigned int m_dwLastPlayPos;
+    unsigned int m_dwPlayProgress;
+    unsigned int m_dwNotifySize;
+    unsigned int m_dwNextWriteOffset;
     BOOL  m_bFillNextNotificationWithSilence;
 
 public:
-    CStreamingSound( LPDIRECTSOUNDBUFFER pDSBuffer, DWORD dwDSBufferSize, CWaveFile* pWaveFile, DWORD dwNotifySize );
+    CStreamingSound( LPDIRECTSOUNDBUFFER pDSBuffer, unsigned int dwDSBufferSize, CWaveFile* pWaveFile, unsigned int dwNotifySize );
     ~CStreamingSound();
 
     HRESULT HandleWaveStreamNotification( BOOL bLoopedPlay );
@@ -119,12 +119,12 @@ public:
     HMMIO         m_hmmio;       // MM I/O handle for the WAVE
     MMCKINFO      m_ck;          // Multimedia RIFF chunk
     MMCKINFO      m_ckRiff;      // Use in opening a WAVE file
-    DWORD         m_dwSize;      // The size of the wave file
+    unsigned int         m_dwSize;      // The size of the wave file
     MMIOINFO      m_mmioinfoOut;
-    DWORD         m_dwFlags;
+    unsigned int         m_dwFlags;
     BOOL          m_bIsReadingFromMemory;
-    BYTE*         m_pbData;
-    BYTE*         m_pbDataCur;
+    unsigned char*         m_pbData;
+    unsigned char*         m_pbDataCur;
     ULONG         m_ulDataSize;
     CHAR*         m_pResourceBuffer;
 
@@ -136,14 +136,14 @@ public:
     CWaveFile();
     ~CWaveFile();
 
-    HRESULT Open( LPSTR strFileName, WAVEFORMATEX* pwfx, DWORD dwFlags );
-    HRESULT OpenFromMemory( BYTE* pbData, ULONG ulDataSize, WAVEFORMATEX* pwfx, DWORD dwFlags );
+    HRESULT Open( LPSTR strFileName, WAVEFORMATEX* pwfx, unsigned int dwFlags );
+    HRESULT OpenFromMemory( unsigned char* pbData, ULONG ulDataSize, WAVEFORMATEX* pwfx, unsigned int dwFlags );
     HRESULT Close();
 
-    HRESULT Read( BYTE* pBuffer, DWORD dwSizeToRead, DWORD* pdwSizeRead );
-    HRESULT Write( UINT nSizeToWrite, BYTE* pbData, UINT* pnSizeWrote );
+    HRESULT Read( unsigned char* pBuffer, unsigned int dwSizeToRead, unsigned int* pdwSizeRead );
+    HRESULT Write( UINT nSizeToWrite, unsigned char* pbData, UINT* pnSizeWrote );
 
-    DWORD   GetSize();
+    unsigned int   GetSize();
     HRESULT ResetFile();
     WAVEFORMATEX* GetFormat() { return m_pwfx; };
 };

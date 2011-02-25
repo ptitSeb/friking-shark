@@ -10,7 +10,7 @@ CLightParticleType::~CLightParticleType()
 {
 }
 
-IParticle *CLightParticleType::CreateInstance(IParticleEmitter *piEmiter,DWORD dwCurrentTime)
+IParticle *CLightParticleType::CreateInstance(IParticleEmitter *piEmiter,unsigned int dwCurrentTime)
 {
 	CLightParticle *pParticle=new CLightParticle(this,piEmiter);
     return pParticle;

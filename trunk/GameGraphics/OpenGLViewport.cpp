@@ -1,12 +1,13 @@
 #include "./stdafx.h"
 #include "OpenGLGraphics.h"
 #include "OpenGLViewport.h"
+
 #ifdef WIN32
-#define VIEWPORT_CLASSNAME "OpenGLViewport"
-#define WM_GL_VIEWPORT_END_LOOP WM_USER+0x001
+  #define VIEWPORT_CLASSNAME "OpenGLViewport"
+  #define WM_GL_VIEWPORT_END_LOOP WM_USER+0x001
 #else
-#define DETECT_DRAG_SIZE 3
-#define X_WINDOWS_EVENT_MASK ExposureMask|ButtonPressMask|ButtonReleaseMask|PointerMotionMask|KeyPressMask|KeyReleaseMask|StructureNotifyMask
+  #define DETECT_DRAG_SIZE 3
+  #define X_WINDOWS_EVENT_MASK ExposureMask|ButtonPressMask|ButtonReleaseMask|PointerMotionMask|KeyPressMask|KeyReleaseMask|StructureNotifyMask
 #endif
 
 
@@ -47,7 +48,7 @@ COpenGLViewport::~COpenGLViewport(void)
 #ifdef WIN32
 void COpenGLViewport::OnCreate(HWND hWnd)
 {
-	SetWindowLong(hWnd,GWL_USERDATA,(DWORD)this);
+	SetWindowLong(hWnd,GWL_USERDATA,(unsigned int)this);
 	m_hDC=GetDC(hWnd);
 	if(m_hDC)
 	{
@@ -86,13 +87,13 @@ void COpenGLViewport::OnDestroy()
 	}
 
 	if(m_hDC){ReleaseDC(m_hWnd,m_hDC);m_hDC=NULL;}
-	SetWindowLong(m_hWnd,GWL_USERDATA,(DWORD)NULL);
+	SetWindowLong(m_hWnd,GWL_USERDATA,(unsigned int)NULL);
 }
 
 LRESULT COpenGLViewport::ProcessMessage(HWND hWnd,UINT  uMsg, WPARAM  wParam,LPARAM  lParam)
 {
-	int pointX=(short)LOWORD(lParam);
-	int pointY=(short)HIWORD(lParam);
+	int pointX=(short)LOunsigned short(lParam);
+	int pointY=(short)HIunsigned short(lParam);
 
 	switch(uMsg)
 	{
@@ -105,7 +106,7 @@ LRESULT COpenGLViewport::ProcessMessage(HWND hWnd,UINT  uMsg, WPARAM  wParam,LPA
 		OnCreate(hWnd);
 		break;
 	case WM_SETCURSOR:
-		if(LOWORD(lParam)==HTCLIENT)
+		if(LOunsigned short(lParam)==HTCLIENT)
 		{
 			SetCursor(m_bShowSystemMouseCursor?LoadCursor(NULL,IDC_ARROW):NULL);
 			return 0L;
@@ -125,11 +126,11 @@ LRESULT COpenGLViewport::ProcessMessage(HWND hWnd,UINT  uMsg, WPARAM  wParam,LPA
 		break;
 	case WM_KEYDOWN:
 	case WM_SYSKEYDOWN:
-		OnKeyDown((WORD)wParam);
+		OnKeyDown((unsigned short)wParam);
 		break;
 	case WM_KEYUP:
 	case WM_SYSKEYUP:
-		OnKeyUp((WORD)wParam);
+		OnKeyUp((unsigned short)wParam);
 		break;
 	case WM_LBUTTONDOWN:
 		OnLButtonDown(wParam,pointX,pointY);
@@ -147,10 +148,10 @@ LRESULT COpenGLViewport::ProcessMessage(HWND hWnd,UINT  uMsg, WPARAM  wParam,LPA
 		OnMouseMove(wParam,pointX,pointY);
 		break;
 	case WM_SIZE:
-		OnSize(LOWORD(lParam),HIWORD(lParam));
+		OnSize(LOunsigned short(lParam),HIunsigned short(lParam));
 		break;
 	case WM_CHAR:
-		OnCharacter((WORD)wParam);
+		OnCharacter((unsigned short)wParam);
 		break;
 	case WM_MOVE:
 		OnMove();
@@ -184,12 +185,12 @@ bool COpenGLViewport::Create(unsigned x, unsigned y, unsigned w, unsigned h, boo
 		RegisterClass(&wc);
 	}
 
-	DWORD dwStyle=WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX|WS_MAXIMIZEBOX|WS_THICKFRAME|WS_OVERLAPPED;
+	unsigned int dwStyle=WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX|WS_MAXIMIZEBOX|WS_THICKFRAME|WS_OVERLAPPED;
 	if(dwStyle==0xFFFFFFFF){dwStyle=WS_OVERLAPPED;}
 	m_hWnd = CreateWindowEx(WS_EX_DLGMODALFRAME,VIEWPORT_CLASSNAME,"ViewPort",dwStyle,pRect->left,pRect->top,pRect->right-pRect->left,pRect->bottom-pRect->top,NULL,NULL,NULL,(void *)this);
 	if(m_hWnd)
 	{
-		DWORD dwStyle=GetWindowLong(m_hWnd,GWL_STYLE);
+		unsigned int dwStyle=GetWindowLong(m_hWnd,GWL_STYLE);
 		SetWindowLong(m_hWnd,GWL_STYLE,dwStyle);
 		ShowWindow(m_hWnd,bMaximized?SW_MAXIMIZE:SW_SHOW);
 		EnableWindow(m_hWnd,TRUE);
@@ -305,7 +306,7 @@ bool COpenGLViewport::IsMaximized()
 void COpenGLViewport::SetMaximized(bool bMaximized)
 {
 #ifdef WIN32
-	DWORD dwStyle=GetWindowLong(m_hWnd,GWL_STYLE);
+	unsigned int dwStyle=GetWindowLong(m_hWnd,GWL_STYLE);
 	if(bMaximized)
 	{
 		dwStyle&=~(WS_CAPTION|WS_MINIMIZEBOX|WS_MAXIMIZEBOX|WS_THICKFRAME|WS_VISIBLE|WS_OVERLAPPED);
@@ -474,10 +475,10 @@ void COpenGLViewport::OnLButtonUp(int pointX,int pointY){if(m_piCallBack){m_piCa
 void COpenGLViewport::OnRButtonDown(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnRButtonDown(0,pointX,pointY);}}
 void COpenGLViewport::OnRButtonUp(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnRButtonUp(0,pointX,pointY);}}
 void COpenGLViewport::OnMouseMove(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnMouseMove(pointX,pointY);}}
-void COpenGLViewport::OnCharacter(WORD wChar){if(m_piCallBack){m_piCallBack->OnCharacter(wChar);}}
-void COpenGLViewport::OnKeyDown(WORD wKey){if(m_piCallBack){m_piCallBack->OnKeyDown(wKey);}}
-void COpenGLViewport::OnKeyUp(WORD wKey){if(m_piCallBack){m_piCallBack->OnKeyUp(wKey);}}
-void COpenGLViewport::OnSize(WORD cx,WORD cy){if(m_piCallBack){m_piCallBack->OnSize(cx,cy);}}
+void COpenGLViewport::OnCharacter(unsigned short wChar){if(m_piCallBack){m_piCallBack->OnCharacter(wChar);}}
+void COpenGLViewport::OnKeyDown(unsigned short wKey){if(m_piCallBack){m_piCallBack->OnKeyDown(wKey);}}
+void COpenGLViewport::OnKeyUp(unsigned short wKey){if(m_piCallBack){m_piCallBack->OnKeyUp(wKey);}}
+void COpenGLViewport::OnSize(unsigned short cx,unsigned short cy){if(m_piCallBack){m_piCallBack->OnSize(cx,cy);}}
 void COpenGLViewport::OnMove(){if(m_piCallBack){m_piCallBack->OnMove();}}
 
 void COpenGLViewport::SetVSync(bool bVSync)
@@ -510,31 +511,6 @@ std::string COpenGLViewport::GetCaption()
 	return m_sCaption;
 }
 
-void	COpenGLViewport::SetIcon(HICON hIcon)
-{
-/*
-	if(COpenGLViewPortBase::m_hWnd)
-	{
-		::SendMessage(COpenGLViewPortBase::m_hWnd,WM_SETICON,ICON_BIG,(LPARAM)hIcon);
-		::SendMessage(COpenGLViewPortBase::m_hWnd,WM_SETICON,ICON_SMALL,(LPARAM)hIcon);
-	}
-*/
-}
-
-HICON	COpenGLViewport::GetIcon()
-{
-/*
-	if(COpenGLViewPortBase::m_hWnd)
-	{
-		return (HICON)::SendMessage(COpenGLViewPortBase::m_hWnd,WM_GETICON,ICON_BIG,0);
-	}
-	else
-	{
-		return NULL;
-	}
-*/
-	return NULL;
-}
 #ifdef WIN32
 
 int TranslateKeyFromWindows(int nWindowsKey)
@@ -930,7 +906,7 @@ bool COpenGLViewport::DetectDrag(double dx,double dy)
 	GUITHREADINFO threadInfo={0};
 	threadInfo.cbSize=sizeof(threadInfo);
 	GetGUIThreadInfo(GetCurrentThreadId(),&threadInfo);
-	DWORD dwFlags=MB_OK;
+	unsigned int dwFlags=MB_OK;
 	POINT pt;
 	pt.x=(LONG)dx;
 	pt.y=(LONG)((h-1)-dy);
@@ -1016,10 +992,10 @@ bool COpenGLViewport::SetWindowed(unsigned int x,unsigned int y,unsigned int w,u
 	return m_pSDLWindow!=NULL;*/
 /*		DEVMODE mode={0};
 		mode.dmSize=sizeof(DEVMODE);
-		mode.dmBitsPerPel=(DWORD)m_sScreenProperties.dFullScreenRefreshBitsPerPixel;
-		mode.dmPelsWidth=(DWORD)m_sScreenProperties.sFullScreenResolution.w;
-		mode.dmPelsHeight=(DWORD)m_sScreenProperties.sFullScreenResolution.h;
-		mode.dmDisplayFrequency=(DWORD)m_sScreenProperties.dFullScreenRefreshRate;
+		mode.dmBitsPerPel=(unsigned int)m_sScreenProperties.dFullScreenRefreshBitsPerPixel;
+		mode.dmPelsWidth=(unsigned int)m_sScreenProperties.sFullScreenResolution.w;
+		mode.dmPelsHeight=(unsigned int)m_sScreenProperties.sFullScreenResolution.h;
+		mode.dmDisplayFrequency=(unsigned int)m_sScreenProperties.dFullScreenRefreshRate;
 		mode.dmFields=DM_BITSPERPEL|DM_PELSWIDTH|DM_PELSHEIGHT|DM_DISPLAYFREQUENCY;
 		ChangeDisplaySettings(&mode,CDS_FULLSCREEN);*/
 }

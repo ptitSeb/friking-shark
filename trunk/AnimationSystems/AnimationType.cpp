@@ -8,7 +8,7 @@ CAnimationType::CAnimationType(void)
 }
 CAnimationType::~CAnimationType(void){}
 
-IAnimation *CAnimationType::CreateInstance(IEntity *piEntity,DWORD dwCurrentTime)
+IAnimation *CAnimationType::CreateInstance(IEntity *piEntity,unsigned int dwCurrentTime)
 {
     unsigned x=0;
 
@@ -74,7 +74,7 @@ CTraceInfo CAnimationType::DesignGetTrace( const CVector &vPosition,const CVecto
 	return info;
 }
 
-CAnimation::CAnimation(CAnimationType *pType,IEntity *piEntity,DWORD dwCurrentTimeBase)
+CAnimation::CAnimation(CAnimationType *pType,IEntity *piEntity,unsigned int dwCurrentTimeBase)
 {
     m_bActive=false;
     m_bFinished=true;
@@ -102,7 +102,7 @@ IAnimationObject *CAnimation::GetObject(string sName)
 
 IEntity *CAnimation::GetEntity(){return m_piEntity;}
 
-void CAnimation::Activate(DWORD dwCurrentTime)
+void CAnimation::Activate(unsigned int dwCurrentTime)
 {
     m_bActive=true;
     m_bFinished=false;
@@ -129,12 +129,12 @@ bool CAnimation::HasFinished()
     return m_bFinished;
 }
 
-DWORD CAnimation::GetCurrentTimeBase()
+unsigned int CAnimation::GetCurrentTimeBase()
 {
     return m_dwCurrentTimeBase;
 }
 
-bool CAnimation::ProcessFrame(IPhysicManager *piPhysicManager,DWORD dwCurrentTime,double dInterval)
+bool CAnimation::ProcessFrame(IPhysicManager *piPhysicManager,unsigned int dwCurrentTime,double dInterval)
 {
     bool bAllObjectsFinished=true;
     for(unsigned x=0;x<m_dObjects.size();x++)

@@ -5,15 +5,15 @@ class CHomingMissileProjectileType: public CEntityTypeBase
 public:
 
   double m_dDamage;
-  DWORD  m_dwDuration;
-  DWORD  m_dwFallDuration;
-  DWORD  m_dwTimeBettwenAcquireTargetAttemps;
-  DWORD  m_dwTimeToWaitToAcquireTargets;
-  DWORD  m_dwMaximunTargetsToAcquire;
+  unsigned int  m_dwDuration;
+  unsigned int  m_dwFallDuration;
+  unsigned int  m_dwTimeBettwenAcquireTargetAttemps;
+  unsigned int  m_dwTimeToWaitToAcquireTargets;
+  unsigned int  m_dwMaximunTargetsToAcquire;
   double m_dMaxAngularSpeed;
   double m_dMaxSpeed;
 
-  IEntity *CreateInstance(IEntity *piParent,DWORD dwCurrentTime);
+  IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
 
   BEGIN_PROP_MAP(CHomingMissileProjectileType)
     PROP_VALUE_FLAGS(m_dDamage,"Daño",1.0,MRPF_NORMAL|MRPF_OPTIONAL)
@@ -37,8 +37,8 @@ class CHomingMissileProjectile: public CEntityBase,public IEntityEvents
   CHomingMissileProjectileType  *m_pType;
   IEntity *m_piParent;
   IEntity *m_piTarget;
-  DWORD    m_dwNextTimeToAcquireTarget;
-  DWORD    m_dwTargetsAcquired;
+  unsigned int    m_dwNextTimeToAcquireTarget;
+  unsigned int    m_dwTargetsAcquired;
 
   double m_dAcquireTarget_TempDistance;
   static void AcquireTargetOperation(IEntity *piEntity,void *pParam1,void *pParam2);
@@ -53,7 +53,7 @@ class CHomingMissileProjectile: public CEntityBase,public IEntityEvents
 public:
 
   bool OnCollision(IEntity *pOther,CVector &vCollisionPos);
-  void ProcessFrame(DWORD dwCurrentTime,double dTimeFraction);
+  void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
 
   CHomingMissileProjectile(CHomingMissileProjectileType *pType,IEntity *piParent);
 };

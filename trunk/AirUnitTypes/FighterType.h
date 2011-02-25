@@ -3,7 +3,7 @@
 class CFighterType: public CEntityTypeBase
 {
 public:
-    IEntity *CreateInstance(IEntity *piParent,DWORD dwCurrentTime);
+    IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
 
     double  m_dMaxSpeed;
     double  m_dMaxHealth;
@@ -44,11 +44,11 @@ class CFighter: public CEntityBase
 public:
 
     void Render(IGenericRender *piRender,IGenericCamera *piCamera);
-    void ProcessFrame(DWORD dwCurrentTime,double dTimeFraction);
+    void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
 
     void OnKilled();
     bool OnCollision(IEntity *pOther,CVector &vCollisionPos);
     IEntity *GetTarget();
 
-    CFighter(CFighterType *pType,DWORD dwCurrentTime);
+    CFighter(CFighterType *pType,unsigned int dwCurrentTime);
 };

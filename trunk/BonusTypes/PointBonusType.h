@@ -4,9 +4,9 @@ class CPointBonusType: public CEntityTypeBase
 {
 public:
 
-  DWORD m_dwPoints;
+  unsigned int m_dwPoints;
 
-  IEntity *CreateInstance(IEntity *piParent,DWORD dwCurrentTime);
+  IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
 
   BEGIN_PROP_MAP(CPointBonusType)
     PROP_CLASS_CHAIN(CEntityTypeBase)

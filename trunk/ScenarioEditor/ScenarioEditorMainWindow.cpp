@@ -603,7 +603,7 @@ void CScenarioEditorMainWindow::ProcessInput(double dTimeFraction,double dRealTi
 	}
 }
 
-void CScenarioEditorMainWindow::ProcessKey(WORD nKey,double dTimeFraction,double dRealTimeFraction)
+void CScenarioEditorMainWindow::ProcessKey(unsigned short nKey,double dTimeFraction,double dRealTimeFraction)
 {
 	double dMovementInspectionSpeed=500.0;
 	double dForwardSpeed=dMovementInspectionSpeed*dTimeFraction;

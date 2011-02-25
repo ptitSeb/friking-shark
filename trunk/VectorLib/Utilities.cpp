@@ -3,7 +3,10 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "./StdAfx.h"
-#include <windows.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include <string>
 #include <stdarg.h>
 #include "Utilities.h"
@@ -11,12 +14,12 @@
 #include "libgen.h"
 #endif
 
-void SkipCommentsStringsAndSpaces(char *pBuffer,DWORD *pOffset,DWORD bufLen)
+void SkipCommentsStringsAndSpaces(char *pBuffer,unsigned int *pOffset,unsigned int bufLen)
 {
 	bool inLineComment=false;
 	bool inParagraphComment=false;
 	bool inString=false;
-	DWORD x;
+	unsigned int x;
 
 	for(x=(*pOffset);x<bufLen;x++)
 	{

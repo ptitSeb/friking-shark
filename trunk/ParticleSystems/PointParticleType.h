@@ -8,10 +8,10 @@ class CPointParticleType: virtual public CSystemObjectBase,virtual public IParti
 public:
 
     bool        m_bCastShadow;
-    DWORD       m_dwBlendOp1;
-    DWORD       m_dwBlendOp2;
+    unsigned int       m_dwBlendOp1;
+    unsigned int       m_dwBlendOp2;
 
-    IParticle *CreateInstance(IParticleEmitter *piEmiter,DWORD dwCurrentTime);
+    IParticle *CreateInstance(IParticleEmitter *piEmiter,unsigned int dwCurrentTime);
 
     BEGIN_PROP_MAP(CPointParticleType);
         PROP_VALUE_FLAGS(m_bCastShadow,"EmiteSombras",false,MRPF_NORMAL|MRPF_OPTIONAL)

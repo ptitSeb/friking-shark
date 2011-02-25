@@ -3,7 +3,7 @@
 
 CC=g++
 
-INCLUDES = -I. -I../PortFiles \
+INCLUDES = -I. \
 -I../GameRunTime \
 -I../GameRunTimeLib \
 -I../GameEntityLib \
@@ -22,8 +22,8 @@ SteeringBehaviours.cpp\
 TestScenarios.cpp\
 stdafx.cpp
 
-CFLAGS +=  -pedantic -pedantic-errors -fPIC -Wall -Werror  -D_REENTRANT -O3 -g
-CFLAGS_DEBUG +=   -pedantic -pedantic-errors -fPIC -Wall -Werror  -D_REENTRANT -g
+CFLAGS += -DNDEBUG -pedantic -pedantic-errors -fPIC -Wall -Werror  -D_REENTRANT -O3 -g
+CFLAGS_DEBUG += -DDEBUG  -pedantic -pedantic-errors -fPIC -Wall -Werror  -D_REENTRANT -g
 
 LIBS = ../GameGUILib/lib/GameGUILib.a  ../GameLib/lib/GameLib.a ../GameRunTimeLib/lib/GameRuntimeLib.a   ../VectorLib/lib/VectorLib.a  -lGLU -lGL
 LIBS_DEBUG =  ../GameGUILib/lib/GameGUILibd.a ../GameLib/lib/GameLibd.a ../GameRunTimeLib/lib/GameRuntimeLibd.a  ../VectorLib/lib/VectorLibd.a  -lGLU -lGL

@@ -2,7 +2,7 @@
 #include "./GameRunTimeLib.h"
 #include "./PersistentTypes.h"
 
-bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<DWORD> *pItem)
+bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<unsigned int> *pItem)
 {
     char sTemp[1024]={0};
     sprintf(sTemp,"%d",*pItem->GetValueAddress());
@@ -10,7 +10,7 @@ bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<DW
     return piNode?true:false;
 }
 
-bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<DWORD> *pItem)
+bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<unsigned int> *pItem)
 {
     pItem->SetDefaultValue();
 	if(!piNode || !piNode->GetValue()){return false;}
@@ -19,7 +19,7 @@ bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<DW
 }
 
 
-bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<DWORD> *pItem)
+bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<unsigned int> *pItem)
 {
 	return true;
 }
@@ -130,7 +130,7 @@ bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<
 {
 	return true;
 }
-void MRPersistencyInitialize(CMRPersistentReferenceT<DWORD> *pItem)			{(*pItem->GetValueAddress())=0;}
+void MRPersistencyInitialize(CMRPersistentReferenceT<unsigned int> *pItem)			{(*pItem->GetValueAddress())=0;}
 void MRPersistencyInitialize(CMRPersistentReferenceT<int> *pItem)			{(*pItem->GetValueAddress())=0;}
 void MRPersistencyInitialize(CMRPersistentReferenceT<float> *pItem)			{(*pItem->GetValueAddress())=0;}
 void MRPersistencyInitialize(CMRPersistentReferenceT<double> *pItem)		{(*pItem->GetValueAddress())=0;}
@@ -138,7 +138,7 @@ void MRPersistencyInitialize(CMRPersistentReferenceT<bool> *pItem)			{(*pItem->G
 void MRPersistencyInitialize(CMRPersistentReferenceT<std::string> *pItem)   {(*pItem->GetValueAddress())="";}
 
 
-void MRPersistencyFree(CMRPersistentReferenceT<DWORD> *prop){}
+void MRPersistencyFree(CMRPersistentReferenceT<unsigned int> *prop){}
 void MRPersistencyFree(CMRPersistentReferenceT<int> *prop){}
 void MRPersistencyFree(CMRPersistentReferenceT<float> *prop){}
 void MRPersistencyFree(CMRPersistentReferenceT<double> *prop){}

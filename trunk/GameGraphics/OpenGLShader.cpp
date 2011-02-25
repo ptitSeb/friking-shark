@@ -16,7 +16,7 @@ COpenGLShader::~COpenGLShader(void)
 bool COpenGLShader::LoadCodeFile(string sSourceFile,string *psSourceCode)
 {
 	char *pSource=NULL;
-	DWORD dwSize=0;
+	unsigned int dwSize=0;
 	bool bOk=false;
 
 	FILE *pFile=fopen(sSourceFile.c_str(),"rb");

@@ -435,7 +435,7 @@ void CGameGUIManager::ProcessMouseActivation(IGameWindow *piWindow)
 	}
 }
 
-void CGameGUIManager::OnLButtonDown(WORD wKeyState,unsigned x,unsigned y)
+void CGameGUIManager::OnLButtonDown(unsigned short wKeyState,unsigned x,unsigned y)
 {
 	SGameSize size;
 	SGamePos pos;
@@ -453,7 +453,7 @@ void CGameGUIManager::OnLButtonDown(WORD wKeyState,unsigned x,unsigned y)
 	REL(piWindow);
 }
 
-void CGameGUIManager::OnRButtonDown(WORD wKeyState,unsigned x,unsigned y)
+void CGameGUIManager::OnRButtonDown(unsigned short wKeyState,unsigned x,unsigned y)
 {
 	SGameSize size;
 	SGamePos pos;
@@ -471,7 +471,7 @@ void CGameGUIManager::OnRButtonDown(WORD wKeyState,unsigned x,unsigned y)
 	REL(piWindow);
 }
 
-void CGameGUIManager::OnLButtonUp(WORD wKeyState,unsigned x,unsigned y)
+void CGameGUIManager::OnLButtonUp(unsigned short wKeyState,unsigned x,unsigned y)
 {
 	SGameSize size;
 	SGamePos pos;
@@ -488,7 +488,7 @@ void CGameGUIManager::OnLButtonUp(WORD wKeyState,unsigned x,unsigned y)
 	REL(piWindow);
 }
 
-void CGameGUIManager::OnRButtonUp(WORD wKeyState,unsigned x,unsigned y)
+void CGameGUIManager::OnRButtonUp(unsigned short wKeyState,unsigned x,unsigned y)
 {
 	SGameSize size;
 	SGamePos pos;
@@ -522,7 +522,7 @@ void CGameGUIManager::OnMouseMove(unsigned x,unsigned y)
 	REL(piWindow);
 }
 
-void CGameGUIManager::OnCharacter(WORD wCharacter)
+void CGameGUIManager::OnCharacter(unsigned short wCharacter)
 {
 	if(m_piFocusedWindow)
 	{
@@ -548,7 +548,7 @@ void CGameGUIManager::OnCharacter(WORD wCharacter)
 	}
 }
 
-void CGameGUIManager::OnKeyDown(WORD wKeyState)
+void CGameGUIManager::OnKeyDown(unsigned short wKeyState)
 {
 	if(wKeyState==GK_RETURN && IsKeyDown(GK_LMENU) && IsKeyDown(GK_LCONTROL))
 	{
@@ -580,7 +580,7 @@ void CGameGUIManager::OnKeyDown(WORD wKeyState)
 	}
 }
 
-void CGameGUIManager::OnKeyUp(WORD wKeyState)
+void CGameGUIManager::OnKeyUp(unsigned short wKeyState)
 {
 	if(m_piFocusedWindow)
 	{

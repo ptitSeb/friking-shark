@@ -34,7 +34,7 @@ bool CFormationType::Unserialize(ISystemPersistencyNode *piNode)
 	return bOk;
 }
 
-IFormation *CFormationType::CreateInstance(CVector vPosition,DWORD dwCurrentTime)
+IFormation *CFormationType::CreateInstance(CVector vPosition,unsigned int dwCurrentTime)
 {
 
     CFormation *pFormation=new CFormation(this,vPosition);
@@ -188,7 +188,7 @@ void CFormation::OnKilled(IEntity *piEntity)
     if(m_sEntities.size()==0 && m_bAllUnitsCreated){AddReference();NOTIFY_EVENT(IFormationEvents,OnFormationKilled(this,piEntity));ReleaseReference();}
 }
 
-bool CFormation::ProcessFrame(DWORD dwCurrentTime,double dInterval)
+bool CFormation::ProcessFrame(unsigned int dwCurrentTime,double dInterval)
 {
     bool bFinished=false;
     m_bAllUnitsCreated=true;

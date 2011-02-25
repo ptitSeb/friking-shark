@@ -14,7 +14,7 @@ CParticleSystemAnimationObjectType::~CParticleSystemAnimationObjectType()
 {
 }
 
-IAnimationObject *CParticleSystemAnimationObjectType::CreateInstance(IAnimation *piAnimation,DWORD dwCurrentTime)
+IAnimationObject *CParticleSystemAnimationObjectType::CreateInstance(IAnimation *piAnimation,unsigned int dwCurrentTime)
 {
     CParticleSystemAnimationObject *pParticle=new CParticleSystemAnimationObject(this,piAnimation);
     return pParticle;
@@ -32,16 +32,16 @@ CParticleSystemAnimationObject::~CParticleSystemAnimationObject()
     if(m_piParticleSystem){delete m_piParticleSystem;m_piParticleSystem=NULL;}
 }
 
-void CParticleSystemAnimationObject::Activate(DWORD dwCurrentTime)
+void CParticleSystemAnimationObject::Activate(unsigned int dwCurrentTime)
 {
     if(m_piParticleSystem){delete m_piParticleSystem;m_piParticleSystem=NULL;}
     CAnimationObjectBase::Activate(dwCurrentTime);
     CheckActivation(dwCurrentTime);
 }
 
-void CParticleSystemAnimationObject::CheckActivation(DWORD dwCurrentTime)
+void CParticleSystemAnimationObject::CheckActivation(unsigned int dwCurrentTime)
 {
-    DWORD dwRelativeTime=dwCurrentTime-m_piAnimation->GetCurrentTimeBase();
+    unsigned int dwRelativeTime=dwCurrentTime-m_piAnimation->GetCurrentTimeBase();
     if(m_piParticleSystem==NULL)
     {
         if(m_pType->m_ParticleSystemType.m_piParticleSystemType && dwRelativeTime>=m_pType->m_dwStartTime)
@@ -96,7 +96,7 @@ void CParticleSystemAnimationObject::UpdatePositionAndAngles()
     }
 }
 
-bool CParticleSystemAnimationObject::ProcessFrame(IPhysicManager *pPhysicManager,DWORD dwCurrentTime,double dInterval)
+bool CParticleSystemAnimationObject::ProcessFrame(IPhysicManager *pPhysicManager,unsigned int dwCurrentTime,double dInterval)
 {
     CheckActivation(dwCurrentTime);
     if(!m_piParticleSystem){return false;}

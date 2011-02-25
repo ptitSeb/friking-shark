@@ -25,12 +25,12 @@ protected:
 
     // Miembros para el control de tiempos
 
-    DWORD	m_dwCreationTime;
-    DWORD	m_dwNextProcessFrame;
+    unsigned int	m_dwCreationTime;
+    unsigned int	m_dwNextProcessFrame;
 
     // Miembros para la aplicacion de daños
 
-    DWORD   m_dwDamageType;
+    unsigned int   m_dwDamageType;
     double	m_dDamage;
     double	m_dMaxHealth;
     double	m_dHealth;
@@ -49,14 +49,14 @@ protected:
 
     // Alineacion (Bando) de la entidad
 
-    DWORD m_dwAlignment;
+    unsigned int m_dwAlignment;
 
     // Miembors de Rutas
     IRoute  *m_piRoute;
 
     IEntity *m_piTarget;
 
-    void FireWeapon(DWORD dwWeaponSlot,DWORD dwCurrentTime);
+    void FireWeapon(unsigned int dwWeaponSlot,unsigned int dwCurrentTime);
     void OnKilledInternal(bool bRemove);
 
 public:
@@ -65,8 +65,8 @@ public:
     string      *GetEntityName();
     SPhysicInfo *GetPhysicInfo();
 
-    DWORD       GetAlignment();
-    void        SetAlignment(DWORD dwAlignment);
+    unsigned int       GetAlignment();
+    void        SetAlignment(unsigned int dwAlignment);
 
     bool        IsRemoved();
     void        Remove();
@@ -76,13 +76,13 @@ public:
     void Render(IGenericRender *piRender,IGenericCamera *piCamera);
 
     // Procesamiento
-    DWORD GetNextProcessFrame();
-    void  ProcessFrame(DWORD dwCurrentTime,double dTimeFraction);
+    unsigned int GetNextProcessFrame();
+    void  ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
 
     // Colisiones y Daños
     double GetHealth();
     double GetMaxHealth();
-	DWORD  GetDamageType();
+	unsigned int  GetDamageType();
 
 	CTraceInfo GetTrace(const CVector &p1,const CVector &p2);
 
@@ -96,7 +96,7 @@ public:
     void AddAnimation(unsigned index,IAnimation *piAnimation);
     void SetCurrentAnimation(int index);
     int  GetCurrentAnimation();
-    void ProcessAnimations(DWORD dwCurrentTime,double dTimeFraction,bool *pbAnimationsFinished);
+    void ProcessAnimations(unsigned int dwCurrentTime,double dTimeFraction,bool *pbAnimationsFinished);
 
     void OnAnimationEvent(string sEvent,string sParams);
 

@@ -6,7 +6,7 @@ class COpenGLTexture : virtual public CSystemObjectBase,virtual public IGenericT
 	unsigned m_dwWidth;
 	unsigned m_dwHeight;
 
-	BYTE *m_pBuffer;
+	unsigned char *m_pBuffer;
 
 	unsigned m_nTextureIndex;
 

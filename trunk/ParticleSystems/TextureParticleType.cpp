@@ -13,7 +13,7 @@ CTextureParticleType::~CTextureParticleType()
 {
 }
 
-IParticle *CTextureParticleType::CreateInstance(IParticleEmitter *piEmiter,DWORD dwCurrentTime)
+IParticle *CTextureParticleType::CreateInstance(IParticleEmitter *piEmiter,unsigned int dwCurrentTime)
 {
   CTextureParticle *pParticle=new CTextureParticle(this,piEmiter);
   return pParticle;

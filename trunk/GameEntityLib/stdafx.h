@@ -10,9 +10,11 @@
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 
 // TODO: reference additional headers your program requires here
-#include <windows.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include <list>
-#include <crtdbg.h>
 #include "VectorLib.h"
 #include "GameLib.h"
 using namespace std;

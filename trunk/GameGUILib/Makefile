@@ -3,7 +3,7 @@
 
 CC=g++
 
-INCLUDES = -I. -I../PortFiles -I../GameRunTime -I../GameRunTimeLib -I../VectorLib -I../GameGraphics  -I../GameGUI -I../GameLib
+INCLUDES = -I. -I../GameRunTime -I../GameRunTimeLib -I../VectorLib -I../GameGraphics  -I../GameGUI -I../GameLib
 
 SOURCES = GameGUIUtil.cpp\
 GameWindowBase.cpp\
@@ -11,8 +11,8 @@ GameDialogBase.cpp\
 stdafx.cpp
 
 
-CFLAGS +=  -pedantic -pedantic-errors -Wno-unused-function -Wall -Werror  -D_REENTRANT -O3 -g
-CFLAGS_DEBUG +=   -pedantic -pedantic-errors -Wno-unused-function -Wall -Werror  -D_REENTRANT -g
+CFLAGS += -DNDEBUG -pedantic -pedantic-errors -Wno-unused-function -Wall -Werror  -D_REENTRANT -O3 -g
+CFLAGS_DEBUG += -DDEBUG  -pedantic -pedantic-errors -Wno-unused-function -Wall -Werror  -D_REENTRANT -g
 
 INTERMEDIATE_DIR = ./.intermediate
 OUT_SOURCES=$(addprefix $(INTERMEDIATE_DIR)/,$(SOURCES))

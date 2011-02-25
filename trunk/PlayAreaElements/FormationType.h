@@ -8,8 +8,8 @@ public:
     string               m_sEntityType;
     CRoute               m_Route;
     IEntityType         *m_piEntityType;
-    DWORD                m_dwEntityCount;
-    DWORD                m_dwTimeBetweenEntities;
+    unsigned int                m_dwEntityCount;
+    unsigned int                m_dwTimeBetweenEntities;
 
     SFormationElement(){m_piEntityType=NULL;m_dwTimeBetweenEntities=0;m_dwEntityCount=0;}
     ~SFormationElement(){}
@@ -33,7 +33,7 @@ public:
         PROP(m_dElements,"Elementos")
     END_PROP_MAP()
 
-   IFormation *CreateInstance(CVector vPosition,DWORD dwCurrentTime);
+   IFormation *CreateInstance(CVector vPosition,unsigned int dwCurrentTime);
 	void DesignRender(IGenericRender *piRender,CVector &vPosition,CVector &vAngles,bool bSelected);
 	void DesignGetBBox(CVector *pvMins,CVector *pvMaxs);
 	double DesignGetRadius();
@@ -45,8 +45,8 @@ public:
 
 struct SFormationElementRunTimeInfo
 {
-    DWORD               m_dwLastEntityTime;
-    DWORD               m_dwCreatedEntities;
+    unsigned int               m_dwLastEntityTime;
+    unsigned int               m_dwCreatedEntities;
     SFormationElement   *m_pFormationTypeElement;
 
     SFormationElementRunTimeInfo(){m_dwLastEntityTime=0;m_dwCreatedEntities=0;m_pFormationTypeElement=NULL;}
@@ -64,7 +64,7 @@ public:
     void AddEntity(IEntity *piEntity);
 
     //IFormation
-    bool ProcessFrame(DWORD dwCurrentTime,double dInterval);
+    bool ProcessFrame(unsigned int dwCurrentTime,double dInterval);
 
     //IEntityEvents
     void OnRemoved(IEntity *pUnit);

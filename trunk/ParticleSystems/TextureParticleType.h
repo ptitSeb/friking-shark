@@ -10,10 +10,10 @@ public:
 
     CTextureWrapper m_Texture;
     bool        m_bCastShadow;
-    DWORD       m_dwBlendOp1;
-    DWORD       m_dwBlendOp2;
+    unsigned int       m_dwBlendOp1;
+    unsigned int       m_dwBlendOp2;
 
-    IParticle *CreateInstance(IParticleEmitter *piEmiter,DWORD dwCurrentTime);
+    IParticle *CreateInstance(IParticleEmitter *piEmiter,unsigned int dwCurrentTime);
 
     BEGIN_PROP_MAP(CTextureParticleType);
         PROP(m_Texture,"Textura")

@@ -57,7 +57,7 @@ struct IPlayAreaElement;
 
 struct SPhysicForce
 {
-    DWORD   dwForceType;
+    unsigned int   dwForceType;
     CVector vDir;
     double  dConstantAccel;
     double  dForce;
@@ -74,9 +74,9 @@ struct SPhysicForce
 
 struct SPhysicInfo
 {
-    DWORD					dwMoveType;
-    DWORD					dwBoundsType;
-    DWORD					dwCollisionType;
+    unsigned int					dwMoveType;
+    unsigned int					dwBoundsType;
+    unsigned int					dwCollisionType;
     double					dBounceFactor;
     double					dSlideFactor;
 
@@ -118,10 +118,10 @@ public:
 
 struct IGameRender:virtual public ISystemUnknown
 {
-    virtual DWORD	EnableFlags(DWORD dwFlag)=0;
-    virtual DWORD	DisableFlags(DWORD dwFlag)=0;
-    virtual DWORD	GetFlag(DWORD dwFlag)=0;
-    virtual DWORD	ToggleFlag(DWORD dwFlag)=0;
+    virtual unsigned int	EnableFlags(unsigned int dwFlag)=0;
+    virtual unsigned int	DisableFlags(unsigned int dwFlag)=0;
+    virtual unsigned int	GetFlag(unsigned int dwFlag)=0;
+    virtual unsigned int	ToggleFlag(unsigned int dwFlag)=0;
 
 	virtual void    Render(IGenericRender *piRender,IGenericCamera *piCamera)=0;
 };
@@ -133,7 +133,7 @@ struct IRoute
     virtual CVector     GetAbsolutePoint(unsigned nIndex)=0;
     virtual CVector     GetDirection(unsigned nSection)=0;
     virtual unsigned    GetNextPointIndex(unsigned nIndex)=0;
-    virtual void        ProcessPoint(IEntity *piEntity,DWORD dwCurrentFrame,double dTimeFraction)=0;
+    virtual void        ProcessPoint(IEntity *piEntity,unsigned int dwCurrentFrame,double dTimeFraction)=0;
 };
 
 struct IEntity:virtual public IPublisher
@@ -143,8 +143,8 @@ public:
     virtual string      *GetEntityName()=0;
     virtual SPhysicInfo *GetPhysicInfo()=0;
 
-    virtual DWORD GetAlignment()=0;
-    virtual void  SetAlignment(DWORD dwAlignment)=0;
+    virtual unsigned int GetAlignment()=0;
+    virtual void  SetAlignment(unsigned int dwAlignment)=0;
 
     virtual double GetHealth()=0;
     virtual double GetMaxHealth()=0;
@@ -152,13 +152,13 @@ public:
     virtual bool  IsRemoved()=0;
     virtual void  Remove()=0;
 
-    virtual void  ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)=0;
-	  virtual DWORD GetNextProcessFrame()=0;
+    virtual void  ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)=0;
+	  virtual unsigned int GetNextProcessFrame()=0;
 
     virtual bool OnCollision(IEntity *piOther,CVector &vCollisionPos)=0;
     virtual void OnDamage(double dDamage,IEntity *pAggresor)=0;
     virtual void OnAnimationEvent(string sEvent,string sParams)=0;
-    virtual void ProcessAnimations(DWORD dwCurrentTime,double dTimeFraction,bool *pbAnimationsFinished)=0;
+    virtual void ProcessAnimations(unsigned int dwCurrentTime,double dTimeFraction,bool *pbAnimationsFinished)=0;
 
     virtual void Render(CMaterial *pMaterial)=0;
     virtual void Render(IGenericRender *piRender,IGenericCamera *piCamera)=0;
@@ -167,7 +167,7 @@ public:
 
     virtual void SetRoute(IRoute *piRoute)=0;
     virtual IEntity *GetTarget()=0;
-		virtual DWORD GetDamageType()=0;
+		virtual unsigned int GetDamageType()=0;
 
     virtual ~IEntity(){}
 };
@@ -208,7 +208,7 @@ public:
 
     virtual void Start()=0;
     virtual void Stop()=0;
-    virtual void ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)=0;
+    virtual void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)=0;
 };
 
 struct STerrainWater
@@ -371,7 +371,7 @@ public:
 
 struct IEntityType:virtual public ISystemUnknown,virtual public IDesignObject
 {
-	virtual IEntity *CreateInstance(IEntity *piParent,DWORD dwCurrentTime)=0;
+	virtual IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)=0;
 
 	virtual void	GetBBox(CVector *pvMins,CVector *pvMaxs)=0;
 	virtual CVector	GetSize()=0;
@@ -386,12 +386,12 @@ struct IFormationEvents:virtual public ISystemUnknown
 
 struct IFormation:virtual public ISystemUnknown
 {
-	virtual bool ProcessFrame(DWORD dwCurrentTime,double dInterval)=0;
+	virtual bool ProcessFrame(unsigned int dwCurrentTime,double dInterval)=0;
 };
 
 struct IFormationType:virtual public ISystemUnknown,virtual public IDesignObject
 {
-	virtual IFormation *CreateInstance(CVector vPosition,DWORD dwCurrentTime)=0;
+	virtual IFormation *CreateInstance(CVector vPosition,unsigned int dwCurrentTime)=0;
 };
 
 
@@ -518,8 +518,8 @@ public:
 
 		virtual void ProcessFrame()=0;
 
-		virtual DWORD  GetCurrentRealTime()=0;
-		virtual DWORD  GetCurrentTime()=0;
+		virtual unsigned int  GetCurrentRealTime()=0;
+		virtual unsigned int  GetCurrentTime()=0;
 		virtual double GetTimeFraction()=0;
 		virtual double GetRealTimeFraction()=0;
 		virtual double GetCurrentFps()=0;
@@ -537,9 +537,9 @@ struct IGameController:virtual public ISystemUnknown
 
     virtual void Start()=0;
     virtual void Stop()=0;
-    virtual void ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)=0;
+    virtual void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)=0;
 
-    virtual bool RegisterManager(DWORD dwHeight,IGameManager *piManager)=0;
+    virtual bool RegisterManager(unsigned int dwHeight,IGameManager *piManager)=0;
     virtual void UnregisterManager(IGameManager *piManager)=0;
 };
 
@@ -591,12 +591,12 @@ public:
 
 struct IPlayAreaElement:virtual public ISystemUnknown
 {
-    virtual void Activate(DWORD dwCurrentTime)=0;
+    virtual void Activate(unsigned int dwCurrentTime)=0;
     virtual void Deactivate()=0;
     virtual bool IsActive()=0;
 	virtual void Reset()=0;
 
-    virtual bool ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pPlayAreaInfo,DWORD dwCurrentTime,double dInterval)=0;
+    virtual bool ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pPlayAreaInfo,unsigned int dwCurrentTime,double dInterval)=0;
 
 	virtual void DesignRender(IGenericRender *piRender,bool bSelected)=0;
 	virtual CTraceInfo DesignGetTrace(const CVector &p1,const CVector &p2)=0;
@@ -664,39 +664,39 @@ struct IPlayAreaManager:virtual public ISystemUnknown
 
 struct IWeapon
 {
-  virtual DWORD GetSlot()=0;
+  virtual unsigned int GetSlot()=0;
 
-  virtual void  Fire(DWORD dwCurrentTime)=0;
-  virtual bool  IsReady(DWORD dwCurrentTime)=0;
+  virtual void  Fire(unsigned int dwCurrentTime)=0;
+  virtual bool  IsReady(unsigned int dwCurrentTime)=0;
 
-  virtual DWORD GetCurrentLevel()=0;
-  virtual void  SetCurrentLevel(DWORD dwLevel)=0;
+  virtual unsigned int GetCurrentLevel()=0;
+  virtual void  SetCurrentLevel(unsigned int dwLevel)=0;
 
   virtual ~IWeapon(){}
 };
 
 struct IWeaponType:virtual public ISystemUnknown
 {
-  virtual IWeapon *CreateInstance(IEntity *piEntity,DWORD dwCurrentTime)=0;
+  virtual IWeapon *CreateInstance(IEntity *piEntity,unsigned int dwCurrentTime)=0;
 };
 
 
 struct IPlayer
 {
-  virtual DWORD GetPoints()=0;
-  virtual void  SetPoints(DWORD dwPoints)=0;
-  virtual void  AddPoints(DWORD dwPoints)=0;
+  virtual unsigned int GetPoints()=0;
+  virtual void  SetPoints(unsigned int dwPoints)=0;
+  virtual void  AddPoints(unsigned int dwPoints)=0;
 
-  virtual DWORD GetLivesLeft()=0;
-  virtual void  SetLivesLeft(DWORD dwLivesLeft)=0;
-  virtual void  AddLivesLeft(DWORD dwLivesLeft)=0;
+  virtual unsigned int GetLivesLeft()=0;
+  virtual void  SetLivesLeft(unsigned int dwLivesLeft)=0;
+  virtual void  AddLivesLeft(unsigned int dwLivesLeft)=0;
 
   virtual double GetSpeed()=0;
   virtual void   SetSpeed(double dSpeed)=0;
 
   virtual void  GetWeapons(vector<IWeapon*> *pWeapons)=0;
-  virtual void  GetWeaponsOnSlot(DWORD dwWeaponSlot,vector<IWeapon*> *pWeapons)=0;
-  virtual void  FireWeaponsOnSlot(DWORD dwWeaponSlot,DWORD dwCurrentTime)=0;
+  virtual void  GetWeaponsOnSlot(unsigned int dwWeaponSlot,vector<IWeapon*> *pWeapons)=0;
+  virtual void  FireWeaponsOnSlot(unsigned int dwWeaponSlot,unsigned int dwCurrentTime)=0;
 
   virtual ~IPlayer(){}
 };

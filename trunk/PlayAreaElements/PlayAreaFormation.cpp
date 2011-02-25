@@ -29,7 +29,7 @@ void CPlayAreaFormation::Destroy()
 	CPlayAreaElementBase::Destroy();
 }
 
-bool CPlayAreaFormation::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInfo,DWORD dwCurrentTime,double dInterval)
+bool CPlayAreaFormation::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInfo,unsigned int dwCurrentTime,double dInterval)
 {
 	bool bOverPoint=Util_IsInPlayArea(m_vPosition,pAreaInfo);
 	if(!m_bActive)
@@ -48,7 +48,7 @@ bool CPlayAreaFormation::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pArea
 	return m_bActive;
 }
 
-void CPlayAreaFormation::Activate(DWORD dwCurrentTime)
+void CPlayAreaFormation::Activate(unsigned int dwCurrentTime)
 {
 	CPlayAreaElementBase::Activate(dwCurrentTime);
 	if(m_FormationType.m_piFormationType)

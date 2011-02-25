@@ -9,7 +9,7 @@ CBulletProjectileType::CBulletProjectileType()
 
 CBulletProjectileType::~CBulletProjectileType(){}
 
-IEntity *CBulletProjectileType::CreateInstance(IEntity *piParent,DWORD dwCurrentTime)
+IEntity *CBulletProjectileType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
 {
   CBulletProjectile *piEntity=new CBulletProjectile(this,piParent);
   InitializeEntity(piEntity,dwCurrentTime);
@@ -29,7 +29,7 @@ CBulletProjectile::CBulletProjectile(CBulletProjectileType *pType,IEntity *piPar
   m_PhysicInfo.dwMoveType=PHYSIC_MOVE_TYPE_FLY;
 }
 
-void CBulletProjectile::ProcessFrame(DWORD dwCurrentTime,double dTimeFraction)
+void CBulletProjectile::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
 

@@ -4,7 +4,7 @@
 CPointBonusType::CPointBonusType(){m_dwPoints=0;}
 CPointBonusType::~CPointBonusType(){}
 
-IEntity *CPointBonusType::CreateInstance(IEntity *piParent,DWORD dwCurrentTime)
+IEntity *CPointBonusType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
 {
   CPointBonus *piEntity=new CPointBonus(this);
   SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();

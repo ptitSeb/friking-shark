@@ -56,7 +56,7 @@ class CConfigFile
         eNormalizationState_InBlockComment
     };
 
-    DWORD			m_dwSaveTabCount;
+    unsigned int			m_dwSaveTabCount;
     FILE  	    	*m_pFile;
     char			*m_pBuffer;
 

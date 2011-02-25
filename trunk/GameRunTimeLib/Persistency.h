@@ -31,7 +31,7 @@ class CMRPersistentReferenceT:public IMRPersistencyItem
 {
 protected:
 
-    DWORD		m_dwFlags;
+    unsigned int		m_dwFlags;
 
     T1			*m_pValue;
     char		m_sName[200];
@@ -42,7 +42,7 @@ public:
     T1	 *GetValueAddress(){return m_pValue;}
     void SetDefaultValue(){}
 
-    CMRPersistentReferenceT(T1 *pValue,const char *pName,DWORD flags)
+    CMRPersistentReferenceT(T1 *pValue,const char *pName,unsigned int flags)
     {
         m_dwFlags=flags;
         m_pValue=pValue;
@@ -64,7 +64,7 @@ public:
     bool Save(ISystemPersistencyNode *piNode){bool bOk=true;if(this->m_dwFlags&MRPF_WRITE){bOk=MRPersistencySave(piNode,this);}if(this->m_dwFlags&MRPF_OPTIONAL){return true;}return bOk;}
     bool Remove(ISystemPersistencyNode *piNode){bool bOk=true;if(this->m_dwFlags&MRPF_WRITE){bOk=MRPersistencyRemove(piNode,this);}if(this->m_dwFlags&MRPF_OPTIONAL){return true;}return bOk;}
 
-    CMRPersistentSimpleReferenceT(T1 *pValue,const char *pName,DWORD flags):CMRPersistentReferenceT<T1>(pValue,pName,flags){}
+    CMRPersistentSimpleReferenceT(T1 *pValue,const char *pName,unsigned int flags):CMRPersistentReferenceT<T1>(pValue,pName,flags){}
     virtual ~CMRPersistentSimpleReferenceT(){}
 };
 
@@ -82,7 +82,7 @@ public:
         return this;
     }
 
-    CMRPersistentValueReferenceT(T1 *pValue,const char *pName,DWORD flags)
+    CMRPersistentValueReferenceT(T1 *pValue,const char *pName,unsigned int flags)
         :CMRPersistentReferenceT<T1>(pValue,pName,flags)
     {
     }
@@ -97,8 +97,8 @@ public:
     ~CMRPersistentValueReferenceT(){}
 };
 
-template<typename T1> CMRPersistentValueReferenceT<T1> *MRCreateReferenceWithDefaultValue(T1 *pVar,const char *name,DWORD flags=MRPF_NORMAL){return new CMRPersistentValueReferenceT<T1>(pVar,name,flags);}
-template<typename T1> CMRPersistentSimpleReferenceT<T1> *MRCreateReference(T1 *pVar,const char *name,DWORD flags=MRPF_NORMAL){return new CMRPersistentSimpleReferenceT<T1>(pVar,name,flags);}
+template<typename T1> CMRPersistentValueReferenceT<T1> *MRCreateReferenceWithDefaultValue(T1 *pVar,const char *name,unsigned int flags=MRPF_NORMAL){return new CMRPersistentValueReferenceT<T1>(pVar,name,flags);}
+template<typename T1> CMRPersistentSimpleReferenceT<T1> *MRCreateReference(T1 *pVar,const char *name,unsigned int flags=MRPF_NORMAL){return new CMRPersistentSimpleReferenceT<T1>(pVar,name,flags);}
 
 #define DECLARE_SERIALIZABLE(className)\
     __UNUSED_ATTRIB__ static bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<className>*pItem)\
