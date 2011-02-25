@@ -251,7 +251,7 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 	ProcessInput();
 	
 	if((m_dwMovementType==MOVEMENT_TYPE_PLAY)||
-		(m_dwMovementType==MOVEMENT_TYPE_INSPECT && m_piGUIManager->IsKeyDown(VK_LSHIFT)))
+		(m_dwMovementType==MOVEMENT_TYPE_INSPECT && m_piGUIManager->IsKeyDown(GK_LSHIFT)))
 	{
 		m_PlayAreaManagerWrapper.m_piPlayAreaManager->ProcessInput(m_piGUIManager);
 	}
@@ -293,14 +293,14 @@ void CGameInterface::ProcessInput()
 			return;
 		}
 
-		if(m_piGUIManager->IsKeyDown(VK_F1))
+		if(m_piGUIManager->IsKeyDown(GK_F1))
 		{
 			bControlKeyPressed=true;
 			SetMovementType(m_dwMovementType == MOVEMENT_TYPE_INSPECT ? MOVEMENT_TYPE_PLAY : MOVEMENT_TYPE_INSPECT);
 		}
-		if(m_piGUIManager->IsKeyDown(VK_F2)){bControlKeyPressed=true;m_RenderWrapper.m_piRender->ToggleFlag(RENDER_SHOW_BBOXES);}
-		if(m_piGUIManager->IsKeyDown(VK_F3)){bControlKeyPressed=true;m_RenderWrapper.m_piRender->ToggleFlag(RENDER_ENABLE_TEXTURES|RENDER_ENABLE_SOLID);}
-		if(m_piGUIManager->IsKeyDown(VK_F4))
+		if(m_piGUIManager->IsKeyDown(GK_F2)){bControlKeyPressed=true;m_RenderWrapper.m_piRender->ToggleFlag(RENDER_SHOW_BBOXES);}
+		if(m_piGUIManager->IsKeyDown(GK_F3)){bControlKeyPressed=true;m_RenderWrapper.m_piRender->ToggleFlag(RENDER_ENABLE_TEXTURES|RENDER_ENABLE_SOLID);}
+		if(m_piGUIManager->IsKeyDown(GK_F4))
 		{
 			bControlKeyPressed=true;
 			m_bShowPerformanceIndicators=!m_bShowPerformanceIndicators;
@@ -315,25 +315,25 @@ void CGameInterface::ProcessInput()
 		}
 	}
 
-	if(m_piGUIManager->IsKeyDown(VK_PAUSE)){ProcessKey(KEY_PAUSE);}
+	if(m_piGUIManager->IsKeyDown(GK_PAUSE)){ProcessKey(KEY_PAUSE);}
 	if(m_piGUIManager->IsKeyDown('P')){ProcessKey(KEY_PROCESS_ONE_FRAME);}
 
 	if(m_dwMovementType==MOVEMENT_TYPE_INSPECT || 
 		(m_dwMovementType==MOVEMENT_TYPE_PLAY && !m_FrameManagerWrapper.m_piFrameManager->IsPaused()))
 	{
-		if(m_piGUIManager->IsKeyDown(VK_UP) || m_piGUIManager->IsKeyDown(VK_NUMPAD8) || m_piGUIManager->IsKeyDown('W')){ProcessKey(KEY_FORWARD);}
-		if(m_piGUIManager->IsKeyDown(VK_DOWN) || m_piGUIManager->IsKeyDown(VK_NUMPAD2) || m_piGUIManager->IsKeyDown('S')){ProcessKey(KEY_BACK);}
-		if(m_piGUIManager->IsKeyDown(VK_LEFT) || m_piGUIManager->IsKeyDown(VK_NUMPAD4) || m_piGUIManager->IsKeyDown('A')){ProcessKey(KEY_LEFT);bSideMovement=true;}
-		if(m_piGUIManager->IsKeyDown(VK_RIGHT) || m_piGUIManager->IsKeyDown(VK_NUMPAD6) || m_piGUIManager->IsKeyDown('D')){ProcessKey(KEY_RIGHT);bSideMovement=true;}
-		if(m_piGUIManager->IsKeyDown(VK_NUMPAD9) || m_piGUIManager->IsKeyDown('R')){ProcessKey(KEY_UP);}
-		if(m_piGUIManager->IsKeyDown(VK_NUMPAD3) || m_piGUIManager->IsKeyDown('F')){ProcessKey(KEY_DOWN);}
+		if(m_piGUIManager->IsKeyDown(GK_UP) || m_piGUIManager->IsKeyDown(GK_NUMPAD8) || m_piGUIManager->IsKeyDown('W')){ProcessKey(KEY_FORWARD);}
+		if(m_piGUIManager->IsKeyDown(GK_DOWN) || m_piGUIManager->IsKeyDown(GK_NUMPAD2) || m_piGUIManager->IsKeyDown('S')){ProcessKey(KEY_BACK);}
+		if(m_piGUIManager->IsKeyDown(GK_LEFT) || m_piGUIManager->IsKeyDown(GK_NUMPAD4) || m_piGUIManager->IsKeyDown('A')){ProcessKey(KEY_LEFT);bSideMovement=true;}
+		if(m_piGUIManager->IsKeyDown(GK_RIGHT) || m_piGUIManager->IsKeyDown(GK_NUMPAD6) || m_piGUIManager->IsKeyDown('D')){ProcessKey(KEY_RIGHT);bSideMovement=true;}
+		if(m_piGUIManager->IsKeyDown(GK_NUMPAD9) || m_piGUIManager->IsKeyDown('R')){ProcessKey(KEY_UP);}
+		if(m_piGUIManager->IsKeyDown(GK_NUMPAD3) || m_piGUIManager->IsKeyDown('F')){ProcessKey(KEY_DOWN);}
 	}
 }
 
 void CGameInterface::MoveInspection(WORD nKey)
 {
 	double dForwardSpeed=m_dMovementInspectionSpeed*m_FrameManagerWrapper.m_piFrameManager->GetRealTimeFraction();
-	if(m_piGUIManager->IsKeyDown(VK_LSHIFT)){dForwardSpeed*=3.0;}
+	if(m_piGUIManager->IsKeyDown(GK_LSHIFT)){dForwardSpeed*=3.0;}
 	if(nKey==KEY_FORWARD)	{CVector vCameraPos=m_InspectionCamera.m_piCamera->GetPosition()+m_InspectionCamera.m_piCamera->GetForwardVector()*(dForwardSpeed);m_InspectionCamera.m_piCamera->SetPosition(vCameraPos);}
 	else if(nKey==KEY_BACK)	{CVector vCameraPos=m_InspectionCamera.m_piCamera->GetPosition()-m_InspectionCamera.m_piCamera->GetForwardVector()*(dForwardSpeed);m_InspectionCamera.m_piCamera->SetPosition(vCameraPos);}
 	else if(nKey==KEY_LEFT)	{CVector vCameraPos=m_InspectionCamera.m_piCamera->GetPosition()-m_InspectionCamera.m_piCamera->GetRightVector()*(dForwardSpeed);m_InspectionCamera.m_piCamera->SetPosition(vCameraPos);}
@@ -365,7 +365,7 @@ void CGameInterface::ProcessKey(WORD nKey)
 		}
 	}
 
-	if(m_dwMovementType==MOVEMENT_TYPE_INSPECT && (m_piGUIManager->IsKeyDown(VK_LSHIFT))==0)
+	if(m_dwMovementType==MOVEMENT_TYPE_INSPECT && (m_piGUIManager->IsKeyDown(GK_LSHIFT))==0)
 	{
 		MoveInspection(nKey);
 	}

@@ -125,30 +125,30 @@ void CGameGUIEdit::OnKeyDown( int nKey,bool *pbProcessed )
 	strcpy(sCommand,m_sText.c_str());
 	nCommand=m_sText.length();
 
-	if(nKey==VK_LEFT)
+	if(nKey==GK_LEFT)
 	{
 		if(m_nEditionPos){m_nEditionPos--;}
 		*pbProcessed=true;
 	}
-	else if(nKey==VK_RIGHT)
+	else if(nKey==GK_RIGHT)
 	{
 		if(m_nEditionPos<nCommand){m_nEditionPos++;}
 		*pbProcessed=true;
 
 	}
-	else if(nKey==VK_HOME)
+	else if(nKey==GK_HOME)
 	{
 		m_nEditionPos=0;
 		*pbProcessed=true;
 
 	}
-	else if(nKey==VK_END)
+	else if(nKey==GK_END)
 	{
 		m_nEditionPos=nCommand;
 		*pbProcessed=true;
 
 	}			
-	else if(nKey==VK_BACK)
+	else if(nKey==GK_BACK)
 	{
 		if(m_nEditionPos)
 		{
@@ -159,7 +159,7 @@ void CGameGUIEdit::OnKeyDown( int nKey,bool *pbProcessed )
 		}
 		*pbProcessed=true;
 	}	
-	else if(nKey==VK_DELETE)
+	else if(nKey==GK_DELETE)
 	{
 		if(m_nEditionPos<nCommand)
 		{

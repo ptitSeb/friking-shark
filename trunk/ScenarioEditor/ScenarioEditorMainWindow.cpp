@@ -456,7 +456,7 @@ bool CScenarioEditorMainWindow::Unserialize(ISystemPersistencyNode *piNode)
 	m_WorldManagerWrapper.Attach("GameSystem","WorldManager");
 	
 	//OpenScenario("C:\\Game\\Demo\\MinimalResources\\test1.ges");
-	//OpenScenario("/home/javi/workspace/Game/Demo/Resources/new2.ges");
+	OpenScenario("/home/javi/workspace/Game/Demo/Resources/new2.ges");
 	return bOk;
 }
 
@@ -529,14 +529,14 @@ void CScenarioEditorMainWindow::ProcessInput(double dTimeFraction,double dRealTi
   
 	if(m_FrameManager.m_piFrameManager->GetCurrentRealTime()>m_dwNexControlKey)
 	{
-		if(m_piGUIManager->IsKeyDown(VK_F1) && m_bSimulationStarted)
+		if(m_piGUIManager->IsKeyDown(GK_F1) && m_bSimulationStarted)
 		{
 			m_bInspectionMode=!m_bInspectionMode;
 			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
 		}
-		if(m_piGUIManager->IsKeyDown(VK_F5))
+		if(m_piGUIManager->IsKeyDown(GK_F5))
 		{
-			if(m_piGUIManager->IsKeyDown(VK_LSHIFT))
+			if(m_piGUIManager->IsKeyDown(GK_LSHIFT))
 			{
 				StopGameSimulation();
 			}
@@ -546,9 +546,9 @@ void CScenarioEditorMainWindow::ProcessInput(double dTimeFraction,double dRealTi
 			}
 			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
 		}
-		if(m_piGUIManager->IsKeyDown(VK_F3)){ProcessFileOpen();m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;}
-		if(m_piGUIManager->IsKeyDown(VK_F2)){ProcessFileSave();m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;}
-		if(m_piGUIManager->IsKeyDown(VK_PAUSE)){m_FrameManager.m_piFrameManager->TogglePauseOnNextFrame();m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+100;}
+		if(m_piGUIManager->IsKeyDown(GK_F3)){ProcessFileOpen();m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;}
+		if(m_piGUIManager->IsKeyDown(GK_F2)){ProcessFileSave();m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;}
+		if(m_piGUIManager->IsKeyDown(GK_PAUSE)){m_FrameManager.m_piFrameManager->TogglePauseOnNextFrame();m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+100;}
 		if(m_piGUIManager->IsKeyDown('T'))
 		{
 			m_bTextures=!m_bTextures;
@@ -564,7 +564,7 @@ void CScenarioEditorMainWindow::ProcessInput(double dTimeFraction,double dRealTi
 			m_bFog=!m_bFog;
 			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
 		}
-		if(m_piGUIManager->IsKeyDown(VK_F10))
+		if(m_piGUIManager->IsKeyDown(GK_F10))
 		{
 			m_bShaders=!m_bShaders;
 			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
@@ -590,16 +590,16 @@ void CScenarioEditorMainWindow::ProcessInput(double dTimeFraction,double dRealTi
 			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
 		}
 		if(m_piGUIManager->IsKeyDown('B')){m_bBlend=!m_bBlend;m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;}
-		if(m_piGUIManager->IsKeyDown(VK_HOME)){CenterCamera();m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;}
+		if(m_piGUIManager->IsKeyDown(GK_HOME)){CenterCamera();m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;}
 	}
 	if(!m_bSimulationStarted || m_bInspectionMode)
 	{
-		if(m_piGUIManager->IsKeyDown(VK_UP) || m_piGUIManager->IsKeyDown(VK_NUMPAD8) || m_piGUIManager->IsKeyDown('W')){ProcessKey(KEY_FORWARD,dTimeFraction,dRealTimeFraction);}
-		if(m_piGUIManager->IsKeyDown(VK_DOWN) || m_piGUIManager->IsKeyDown(VK_NUMPAD2) || m_piGUIManager->IsKeyDown('S')){ProcessKey(KEY_BACK,dTimeFraction,dRealTimeFraction);}
-		if(m_piGUIManager->IsKeyDown(VK_LEFT) || m_piGUIManager->IsKeyDown(VK_NUMPAD4) || m_piGUIManager->IsKeyDown('A')){ProcessKey(KEY_LEFT,dTimeFraction,dRealTimeFraction);}
-		if(m_piGUIManager->IsKeyDown(VK_RIGHT) || m_piGUIManager->IsKeyDown(VK_NUMPAD6) || m_piGUIManager->IsKeyDown('D')){ProcessKey(KEY_RIGHT,dTimeFraction,dRealTimeFraction);}
-		if(m_piGUIManager->IsKeyDown(VK_NUMPAD9) || m_piGUIManager->IsKeyDown('R')){ProcessKey(KEY_UP,dTimeFraction,dRealTimeFraction);}
-		if(m_piGUIManager->IsKeyDown(VK_NUMPAD3) || m_piGUIManager->IsKeyDown('F')){ProcessKey(KEY_DOWN,dTimeFraction,dRealTimeFraction);}
+		if(m_piGUIManager->IsKeyDown(GK_UP) || m_piGUIManager->IsKeyDown(GK_NUMPAD8) || m_piGUIManager->IsKeyDown('W')){ProcessKey(KEY_FORWARD,dTimeFraction,dRealTimeFraction);}
+		if(m_piGUIManager->IsKeyDown(GK_DOWN) || m_piGUIManager->IsKeyDown(GK_NUMPAD2) || m_piGUIManager->IsKeyDown('S')){ProcessKey(KEY_BACK,dTimeFraction,dRealTimeFraction);}
+		if(m_piGUIManager->IsKeyDown(GK_LEFT) || m_piGUIManager->IsKeyDown(GK_NUMPAD4) || m_piGUIManager->IsKeyDown('A')){ProcessKey(KEY_LEFT,dTimeFraction,dRealTimeFraction);}
+		if(m_piGUIManager->IsKeyDown(GK_RIGHT) || m_piGUIManager->IsKeyDown(GK_NUMPAD6) || m_piGUIManager->IsKeyDown('D')){ProcessKey(KEY_RIGHT,dTimeFraction,dRealTimeFraction);}
+		if(m_piGUIManager->IsKeyDown(GK_NUMPAD9) || m_piGUIManager->IsKeyDown('R')){ProcessKey(KEY_UP,dTimeFraction,dRealTimeFraction);}
+		if(m_piGUIManager->IsKeyDown(GK_NUMPAD3) || m_piGUIManager->IsKeyDown('F')){ProcessKey(KEY_DOWN,dTimeFraction,dRealTimeFraction);}
 	}
 }
 
@@ -608,8 +608,8 @@ void CScenarioEditorMainWindow::ProcessKey(WORD nKey,double dTimeFraction,double
 	double dMovementInspectionSpeed=500.0;
 	double dForwardSpeed=dMovementInspectionSpeed*dTimeFraction;
 	double dCameraForwardSpeed=dMovementInspectionSpeed*dRealTimeFraction;
-	if(m_piGUIManager->IsKeyDown(VK_LSHIFT)){dForwardSpeed*=3.0;}
-	if(m_piGUIManager->IsKeyDown(VK_LCONTROL))
+	if(m_piGUIManager->IsKeyDown(GK_LSHIFT)){dForwardSpeed*=3.0;}
+	if(m_piGUIManager->IsKeyDown(GK_LCONTROL))
 	{
 		CVector vChange;
 		if(nKey==KEY_FORWARD)	{vChange.c[PITCH]-=dCameraForwardSpeed*0.3;}
@@ -2436,7 +2436,7 @@ void CScenarioEditorMainWindow::CenterCamera()
 
 void CScenarioEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(nKey==VK_DELETE)
+	if(nKey==GK_DELETE)
 	{
 		*pbProcessed=true;
 		if(m_nSelectedEntity!=-1 && m_nSelectedRoutePoint!=-1)
@@ -2448,7 +2448,7 @@ void CScenarioEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 			}
 		}
 	}
-	if(nKey==VK_INSERT)
+	if(nKey==GK_INSERT)
 	{
 		*pbProcessed=true;
 		if(m_nSelectedEntity!=-1)
@@ -2483,7 +2483,7 @@ void CScenarioEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 			m_nSelectedRoutePoint=m_nSelectedRoutePoint+1;
 		}
 	}
-	if(nKey==VK_ESCAPE)
+	if(nKey==GK_ESCAPE)
 	{
 		if(m_nSelectedEntity!=-1 || m_nSelectedEntityLayer!=-1 || 
 			m_nSelectedFormation!=-1 || m_nSelectedRoutePoint!=-1)
@@ -2505,7 +2505,7 @@ void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 {
 	if(m_nSelectedEntity!=-1)
 	{
-		if(nButton==MK_LBUTTON)
+		if(nButton==GK_LBUTTON)
 		{
 			m_Render.m_piRender->StartSelection(m_rRealRect,m_Camera.m_piCamera,dx,dy,10);
 			for(unsigned x=0;x<m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetRoutePoints();x++)

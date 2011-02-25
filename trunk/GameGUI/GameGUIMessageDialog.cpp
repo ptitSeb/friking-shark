@@ -42,13 +42,13 @@ void CGameGUIMessageDialog::OnEndDialog()
 
 void CGameGUIMessageDialog::OnButtonClicked(IGameGUIButton *piControl)
 {
-	if(piControl==m_piBTAccept){EndDialog(IDOK);}
+	if(piControl==m_piBTAccept){EndDialog(DIALOG_OK);}
 }
 
 void CGameGUIMessageDialog::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(nKey==VK_ESCAPE){EndDialog(IDOK);*pbProcessed=true;}
-	if(nKey==VK_RETURN){EndDialog(IDOK);*pbProcessed=true;}
+	if(nKey==GK_ESCAPE){EndDialog(DIALOG_OK);*pbProcessed=true;}
+	if(nKey==GK_RETURN){EndDialog(DIALOG_OK);*pbProcessed=true;}
 }
 
 void CGameGUIMessageDialog::ShowMessage(IGameWindow *piParent,std::string sText,std::string sTitle,EMessageDialogType eType)

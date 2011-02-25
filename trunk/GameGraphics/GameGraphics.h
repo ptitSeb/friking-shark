@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameRunTimeLib.h"
+#include "GameKeys.h"
 
 struct SGameRect;
 

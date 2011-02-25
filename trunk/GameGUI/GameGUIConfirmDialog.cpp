@@ -43,14 +43,14 @@ void CGameGUIConfirmDialog::OnEndDialog()
 
 void CGameGUIConfirmDialog::OnButtonClicked(IGameGUIButton *piControl)
 {
-	if(piControl==m_piBTYes){EndDialog(IDOK);}
-	if(piControl==m_piBTNo){EndDialog(IDCANCEL);}
+	if(piControl==m_piBTYes){EndDialog(DIALOG_OK);}
+	if(piControl==m_piBTNo){EndDialog(DIALOG_CANCEL);}
 }
 
 void CGameGUIConfirmDialog::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(nKey==VK_ESCAPE){EndDialog(IDCANCEL);*pbProcessed=true;}
-	if(nKey==VK_RETURN){EndDialog(IDOK);*pbProcessed=true;}
+	if(nKey==GK_ESCAPE){EndDialog(DIALOG_CANCEL);*pbProcessed=true;}
+	if(nKey==GK_RETURN){EndDialog(DIALOG_OK);*pbProcessed=true;}
 }
 
 bool CGameGUIConfirmDialog::Confirm(IGameWindow *piParent,std::string sText,std::string sTitle,EMessageDialogType eType)
@@ -58,7 +58,7 @@ bool CGameGUIConfirmDialog::Confirm(IGameWindow *piParent,std::string sText,std:
 	m_eType=eType;
 	m_sText=sText;
 	m_sTitle=sTitle;
-	return Execute(piParent)==IDOK;
+	return Execute(piParent)==DIALOG_OK;
 }
 
 

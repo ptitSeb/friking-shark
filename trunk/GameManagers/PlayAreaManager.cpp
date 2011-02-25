@@ -411,12 +411,12 @@ void CPlayAreaManager::ProcessInput(IGameGUIManager *piGUIManager)
 		return;
 	}
 
-	if(piGUIManager->IsKeyDown(VK_UP) || piGUIManager->IsKeyDown(VK_NUMPAD8) || piGUIManager->IsKeyDown('W')){MovePlayer(KEY_FORWARD);}
-	if(piGUIManager->IsKeyDown(VK_DOWN) || piGUIManager->IsKeyDown(VK_NUMPAD2) || piGUIManager->IsKeyDown('S')){MovePlayer(KEY_BACK);}
-	if(piGUIManager->IsKeyDown(VK_LEFT) || piGUIManager->IsKeyDown(VK_NUMPAD4) || piGUIManager->IsKeyDown('A')){MovePlayer(KEY_LEFT);}
-	if(piGUIManager->IsKeyDown(VK_RIGHT) || piGUIManager->IsKeyDown(VK_NUMPAD6) || piGUIManager->IsKeyDown('D')){MovePlayer(KEY_RIGHT);}
-	if(piGUIManager->IsKeyDown(VK_LCONTROL)){m_piPlayer->FireWeaponsOnSlot(0,m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime());}
-	if(piGUIManager->IsKeyDown(VK_MENU)){m_piPlayer->FireWeaponsOnSlot(1,m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime());}
+	if(piGUIManager->IsKeyDown(GK_UP) || piGUIManager->IsKeyDown(GK_NUMPAD8) || piGUIManager->IsKeyDown('W')){MovePlayer(KEY_FORWARD);}
+	if(piGUIManager->IsKeyDown(GK_DOWN) || piGUIManager->IsKeyDown(GK_NUMPAD2) || piGUIManager->IsKeyDown('S')){MovePlayer(KEY_BACK);}
+	if(piGUIManager->IsKeyDown(GK_LEFT) || piGUIManager->IsKeyDown(GK_NUMPAD4) || piGUIManager->IsKeyDown('A')){MovePlayer(KEY_LEFT);}
+	if(piGUIManager->IsKeyDown(GK_RIGHT) || piGUIManager->IsKeyDown(GK_NUMPAD6) || piGUIManager->IsKeyDown('D')){MovePlayer(KEY_RIGHT);}
+	if(piGUIManager->IsKeyDown(GK_LCONTROL)){m_piPlayer->FireWeaponsOnSlot(0,m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime());}
+	if(piGUIManager->IsKeyDown(GK_MENU)){m_piPlayer->FireWeaponsOnSlot(1,m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime());}
 }
 
 void CPlayAreaManager::MovePlayer(unsigned long nKey)

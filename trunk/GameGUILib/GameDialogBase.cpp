@@ -5,7 +5,7 @@
 CGameDialogBase::CGameDialogBase(void)
 {
 	m_bExecuting=false;
-	m_nDialogResult=IDOK;
+	m_nDialogResult=DIALOG_OK;
 }
 
 CGameDialogBase::~CGameDialogBase(void)
@@ -26,7 +26,7 @@ int	CGameDialogBase::Execute(IGameWindow *piParent)
 	}
 	else
 	{
-		return IDCANCEL;
+		return DIALOG_CANCEL;
 	}
 }
 
@@ -46,14 +46,14 @@ void CGameDialogBase::OnEndDialog()
 
 void CGameDialogBase::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(nKey==VK_ESCAPE)
+	if(nKey==GK_ESCAPE)
 	{
-		EndDialog(IDCANCEL);
+		EndDialog(DIALOG_CANCEL);
 		(*pbProcessed)=true;
 	}
-	else if(nKey==VK_RETURN)
+	else if(nKey==GK_RETURN)
 	{
-		EndDialog(IDOK);
+		EndDialog(DIALOG_OK);
 		(*pbProcessed)=true;
 	}
 }
