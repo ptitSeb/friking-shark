@@ -29,8 +29,8 @@
 #define PITCH	1
 #define ROLL	2
 
-#include "VectorLib.h"
 #include "GameRunTimeLib.h"
+#include "VectorLib.h"
 
 bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CVector> *pItem);
 bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CVector> *pItem);

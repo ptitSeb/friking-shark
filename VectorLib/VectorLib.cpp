@@ -5,7 +5,6 @@
 #include "./StdAfx.h"
 #include "VectorLib.h"
 #include "Utilities.h"
-#include "GameRunTimeLib.h"
 #include <algorithm>
 #ifndef WIN32
 #include <libgen.h>

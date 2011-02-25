@@ -12,5 +12,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "GameRunTimeLib.h"
 
 // TODO: reference additional headers your program requires here
