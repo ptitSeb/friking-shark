@@ -54,10 +54,7 @@
 
 #ifdef WIN32
 	#define WIN32_LEAN_AND_MEAN
-	#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+	#include <windows.h>
 	#include <GL/gl.h>
 #elif defined(__APPLE__) || defined(__APPLE_CC__)
     #define GL_GLEXT_LEGACY
@@ -801,10 +798,10 @@ GLEE_EXTERN GLboolean _GLEE_SGIX_texture_range;
         DECLARE_HANDLE(HGPUNV);
 
         typedef struct _GPU_DEVICE {
-            unsigned int  cb;
+            DWORD  cb;
             CHAR   DeviceName[32];
             CHAR   DeviceString[128];
-            unsigned int  Flags;
+            DWORD  Flags;
             RECT   rcVirtualScreen;
         } GPU_DEVICE, *PGPU_DEVICE;
     #endif
@@ -14622,7 +14619,7 @@ GLEE_EXTERN GLboolean _GLEE_SGIX_texture_range;
 #define GL_SAMPLE_MASK_VALUE_NV                            0x8E52
 #define GL_TEXTURE_BINDING_RENDERBUFFER_NV                 0x8E53
 #define GL_TEXTURE_RENDERBUFFER_DATA_STORE_BINDING_NV      0x8E54
-#define GL_MAX_SAMPLE_MASK_unsigned shortS_NV                        0x8E59
+#define GL_MAX_SAMPLE_MASK_WORDS_NV                        0x8E59
 #define GL_TEXTURE_RENDERBUFFER_NV                         0x8E55
 #define GL_SAMPLER_RENDERBUFFER_NV                         0x8E56
 #define GL_INT_SAMPLER_RENDERBUFFER_NV                     0x8E57
@@ -15271,7 +15268,7 @@ GLEE_EXTERN GLboolean _GLEE_SGIX_texture_range;
 #define GL_OES_byte_coordinates 1
 #define __GLEE_GL_OES_byte_coordinates 1
 /* Constants */
-#define GL_unsigned char                                            0x1400
+#define GL_BYTE                                            0x1400
 #endif 
 
 /* GL_OES_compressed_paletted_texture */
@@ -16081,7 +16078,7 @@ GLEE_EXTERN GLboolean _GLEE_WGL_NV_video_output;
 #define WGL_IMAGE_BUFFER_LOCK_I3D                          0x00000002
 #ifndef GLEE_H_DEFINED_wglCreateImageBufferI3D
 #define GLEE_H_DEFINED_wglCreateImageBufferI3D
-  typedef LPVOID (APIENTRYP GLEEPFNWGLCREATEIMAGEBUFFERI3DPROC) (HDC hDC, unsigned int dwSize, UINT uFlags);
+  typedef LPVOID (APIENTRYP GLEEPFNWGLCREATEIMAGEBUFFERI3DPROC) (HDC hDC, DWORD dwSize, UINT uFlags);
   GLEE_EXTERN GLEEPFNWGLCREATEIMAGEBUFFERI3DPROC GLeeFuncPtr_wglCreateImageBufferI3D;
   #define wglCreateImageBufferI3D GLeeFuncPtr_wglCreateImageBufferI3D
 #endif
@@ -16093,7 +16090,7 @@ GLEE_EXTERN GLboolean _GLEE_WGL_NV_video_output;
 #endif
 #ifndef GLEE_H_DEFINED_wglAssociateImageBufferEventsI3D
 #define GLEE_H_DEFINED_wglAssociateImageBufferEventsI3D
-  typedef BOOL (APIENTRYP GLEEPFNWGLASSOCIATEIMAGEBUFFEREVENTSI3DPROC) (HDC hDC, const HANDLE * pEvent, const LPVOID * pAddress, const unsigned int * pSize, UINT count);
+  typedef BOOL (APIENTRYP GLEEPFNWGLASSOCIATEIMAGEBUFFEREVENTSI3DPROC) (HDC hDC, const HANDLE * pEvent, const LPVOID * pAddress, const DWORD * pSize, UINT count);
   GLEE_EXTERN GLEEPFNWGLASSOCIATEIMAGEBUFFEREVENTSI3DPROC GLeeFuncPtr_wglAssociateImageBufferEventsI3D;
   #define wglAssociateImageBufferEventsI3D GLeeFuncPtr_wglAssociateImageBufferEventsI3D
 #endif
@@ -16484,7 +16481,7 @@ GLEE_EXTERN GLboolean _GLEE_WGL_NV_video_output;
 #endif
 #ifndef GLEE_H_DEFINED_wglQueryFrameTrackingI3D
 #define GLEE_H_DEFINED_wglQueryFrameTrackingI3D
-  typedef BOOL (APIENTRYP GLEEPFNWGLQUERYFRAMETRACKINGI3DPROC) (unsigned int * pFrameCount, unsigned int * pMissedFrames, float * pLastMissedUsage);
+  typedef BOOL (APIENTRYP GLEEPFNWGLQUERYFRAMETRACKINGI3DPROC) (DWORD * pFrameCount, DWORD * pMissedFrames, float * pLastMissedUsage);
   GLEE_EXTERN GLEEPFNWGLQUERYFRAMETRACKINGI3DPROC GLeeFuncPtr_wglQueryFrameTrackingI3D;
   #define wglQueryFrameTrackingI3D GLeeFuncPtr_wglQueryFrameTrackingI3D
 #endif

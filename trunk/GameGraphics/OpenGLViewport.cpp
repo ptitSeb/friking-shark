@@ -92,8 +92,8 @@ void COpenGLViewport::OnDestroy()
 
 LRESULT COpenGLViewport::ProcessMessage(HWND hWnd,UINT  uMsg, WPARAM  wParam,LPARAM  lParam)
 {
-	int pointX=(short)LOunsigned short(lParam);
-	int pointY=(short)HIunsigned short(lParam);
+	int pointX=(short)LOWORD(lParam);
+	int pointY=(short)HIWORD(lParam);
 
 	switch(uMsg)
 	{
@@ -106,7 +106,7 @@ LRESULT COpenGLViewport::ProcessMessage(HWND hWnd,UINT  uMsg, WPARAM  wParam,LPA
 		OnCreate(hWnd);
 		break;
 	case WM_SETCURSOR:
-		if(LOunsigned short(lParam)==HTCLIENT)
+		if(LOWORD(lParam)==HTCLIENT)
 		{
 			SetCursor(m_bShowSystemMouseCursor?LoadCursor(NULL,IDC_ARROW):NULL);
 			return 0L;
@@ -133,22 +133,22 @@ LRESULT COpenGLViewport::ProcessMessage(HWND hWnd,UINT  uMsg, WPARAM  wParam,LPA
 		OnKeyUp((unsigned short)wParam);
 		break;
 	case WM_LBUTTONDOWN:
-		OnLButtonDown(wParam,pointX,pointY);
+		OnLButtonDown(pointX,pointY);
 		break;
 	case WM_RBUTTONDOWN:
-		OnRButtonDown(wParam,pointX,pointY);
+		OnRButtonDown(pointX,pointY);
 		break;
 	case WM_LBUTTONUP:
-		OnLButtonUp(wParam,pointX,pointY);
+		OnLButtonUp(pointX,pointY);
 		break;
 	case WM_RBUTTONUP:
-		OnRButtonUp(wParam,pointX,pointY);
+		OnRButtonUp(pointX,pointY);
 		break;
 	case WM_MOUSEMOVE:
-		OnMouseMove(wParam,pointX,pointY);
+		OnMouseMove(pointX,pointY);
 		break;
 	case WM_SIZE:
-		OnSize(LOunsigned short(lParam),HIunsigned short(lParam));
+		OnSize(LOWORD(lParam),HIWORD(lParam));
 		break;
 	case WM_CHAR:
 		OnCharacter((unsigned short)wParam);
@@ -187,7 +187,7 @@ bool COpenGLViewport::Create(unsigned x, unsigned y, unsigned w, unsigned h, boo
 
 	unsigned int dwStyle=WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX|WS_MAXIMIZEBOX|WS_THICKFRAME|WS_OVERLAPPED;
 	if(dwStyle==0xFFFFFFFF){dwStyle=WS_OVERLAPPED;}
-	m_hWnd = CreateWindowEx(WS_EX_DLGMODALFRAME,VIEWPORT_CLASSNAME,"ViewPort",dwStyle,pRect->left,pRect->top,pRect->right-pRect->left,pRect->bottom-pRect->top,NULL,NULL,NULL,(void *)this);
+	m_hWnd = CreateWindowEx(WS_EX_DLGMODALFRAME,VIEWPORT_CLASSNAME,"ViewPort",dwStyle,x,y,w,h,NULL,NULL,NULL,(void *)this);
 	if(m_hWnd)
 	{
 		unsigned int dwStyle=GetWindowLong(m_hWnd,GWL_STYLE);
@@ -535,7 +535,7 @@ int TranslateKeyFromWindows(int nWindowsKey)
 	  case VK_LCONTROL:return GK_LCONTROL;
 	  case VK_HOME:return GK_HOME;
 	  case VK_END:return GK_END;
-	  case VK_BACK:return GK_BACKSPACE;
+	  case VK_BACK:return GK_BACK;
 	  case VK_DELETE:return GK_DELETE;
 	  case VK_ESCAPE:return GK_ESCAPE;
 	  case VK_RETURN:return GK_RETURN;
@@ -579,11 +579,11 @@ int TranslateKeyToWindows(int nGameKey)
 	  case GK_NUMPAD7:return VK_NUMPAD7;
 	  case GK_NUMPAD8:return VK_NUMPAD8;
 	  case GK_NUMPAD9:return VK_NUMPAD9;
-	  case GK_LCONTROL:return VK_LCTRL;
+	  case GK_LCONTROL:return VK_LCONTROL;
 	  case GK_MENU:return VK_MENU;
 	  case GK_HOME:return VK_HOME;
 	  case GK_END:return VK_END;
-	  case GK_BACKSPACE:return VK_BACK;
+	  case GK_BACK:return VK_BACK;
 	  case GK_DELETE:return VK_DELETE;
 	  case GK_ESCAPE:return VK_ESCAPE;
 	  case GK_RETURN:return VK_RETURN;

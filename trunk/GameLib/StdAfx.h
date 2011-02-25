@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "GameRunTimeLib.h"
 #include <GL/gl.h>
 #include <GL/glext.h>
 #ifdef WIN32

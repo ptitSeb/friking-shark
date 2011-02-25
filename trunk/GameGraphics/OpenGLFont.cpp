@@ -288,7 +288,7 @@ void COpenGLFont::RenderText(double dFontHeight,double x,double y,const char *pT
 		SOpenGLSystemFont *pFont=GetSystemFontForHeight((unsigned int)dFontHeight);
 		if(pFont)
 		{
-			int nFinalY=y+pFont->nMetricDescent;
+			int nFinalY=(int)(y+pFont->nMetricDescent);
 			glRasterPos2d(x,nFinalY);
 			//RTTRACE("COpenGLFonts::RenderText -> %s: %d,%d",pText,(int)x,nFinalY);
 			

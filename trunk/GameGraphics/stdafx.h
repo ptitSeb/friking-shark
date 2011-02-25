@@ -15,6 +15,7 @@
 #include <string.h>
 #include <list>
 #include <stack>
+#include "GameRunTimeLib.h"
 #define GL_GLEXT_PROTOTYPES
 #include "GLee.h"
 #ifdef WIN32

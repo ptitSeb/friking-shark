@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "GameRunTimeLib.h"
 
 #ifdef WIN32
 #pragma warning ( disable : 4244 4018 )
