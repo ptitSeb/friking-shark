@@ -1,7 +1,7 @@
 #ifndef __ANIMATION_SYSTEMS__
 #define __ANIMATION_SYSTEMS__
 
-#include "GameRunTimeLib.h"
+#include "GameManagers.h"
 
 struct IAnimation;
 struct IAnimationType;

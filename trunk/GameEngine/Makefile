@@ -3,7 +3,12 @@
 
 CC=g++
 
-INCLUDES = -I. -I../GameRunTime  -I../VectorLib -I../GameRunTimeLib -I../GameGUI -I../GameGraphics
+INCLUDES = -I. \
+-I../GameRunTime \
+-I../GameRunTimeLib \
+-I../VectorLib \
+-I../GameGUI \
+-I../GameGraphics
 
 SOURCES = GameEngine.cpp\
 StdAfx.cpp

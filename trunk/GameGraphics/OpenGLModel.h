@@ -27,7 +27,7 @@ struct SModelRenderBuffer
 	GLfloat		*pColorArray;
 	GLuint 		*pFaceVertexIndexes;
 
-	vector<SModelTextureLevel *> vTextureLevels;
+	std::vector<SModelTextureLevel *> vTextureLevels;
 
 	SModelRenderBuffer();
 	~SModelRenderBuffer();
@@ -41,7 +41,7 @@ struct SModelFrame
 	CVector vSize;
 	double  dRadius;
 
-	vector<SModelRenderBuffer *> vRenderBuffers;
+	std::vector<SModelRenderBuffer *> vRenderBuffers;
 
 	SModelFrame();
 	~SModelFrame();
@@ -49,7 +49,7 @@ struct SModelFrame
 
 struct SModelAnimation
 {
-	vector<SModelFrame *> vFrames;
+	std::vector<SModelFrame *> vFrames;
 
 	SModelAnimation();
 	~SModelAnimation();
@@ -57,22 +57,25 @@ struct SModelAnimation
 
 class COpenGLModel : virtual public CSystemObjectBase,virtual public IGenericModel,virtual public IOpenGLModel
 {
-	std::string					 m_sFileName;
-	vector<SModelAnimation *>    m_vAnimations;
-	CBSPNode					*m_pModelBSP;
-	bool						 m_bLoadBSP;
-	bool						 m_bAutoGenerateBSP;
-	bool						 m_bAutoUpdateBSP;
+	std::string					 	m_sFileName;
+	std::vector<SModelAnimation *>  m_vAnimations;
+	CBSPNode						*m_pModelBSP;
+	bool						 	m_bLoadBSP;
+	bool						 	m_bAutoGenerateBSP;
+	bool						 	m_bAutoUpdateBSP;
 
 	bool LoadFromFile();
+	bool LoadBSP(const char *pFileName);
 	bool Unserialize(ISystemPersistencyNode *piNode);
+	
+	void GetGeometry(std::vector<CPolygon*> *pPolygons);
 
 	SModelRenderBuffer *GetRenderBuffer( unsigned long nAnimation, unsigned long nFrame, unsigned long nBuffer );
 
 public:
 
 	// IGenericModel
-	virtual bool Load(string sFileName);
+	virtual bool Load(std::string sFileName);
 	void		 Create();
 
 	std::string	 GetFileName();

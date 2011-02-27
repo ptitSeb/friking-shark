@@ -1,7 +1,6 @@
 #include "./stdafx.h"
 #include "resource.h"
 #include "GameRunTimeLib.h"
-#include "GameLib.h"
 #include "GameGUILib.h"
 #include "ScenarioEditorMainWindow.h"
 
@@ -452,7 +451,7 @@ bool CScenarioEditorMainWindow::Unserialize(ISystemPersistencyNode *piNode)
 	m_WorldManagerWrapper.Attach("GameSystem","WorldManager");
 	
 	//OpenScenario("C:\\Game\\Demo\\MinimalResources\\test1.ges");
-	//OpenScenario("/home/javi/workspace/Game/Demo/Resources/new2.ges");
+	OpenScenario("/home/javi/workspace/Game/Demo/Resources/new2.ges");
 	return bOk;
 }
 

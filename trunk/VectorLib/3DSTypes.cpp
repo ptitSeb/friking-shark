@@ -58,7 +58,6 @@ S3DSMaterial::S3DSMaterial()
 	fShininess=0;
 	fShininessStrength=0;
 	fTranparency=0;
-	dwMaterialType=MATERIAL_SOLID;
 	sName[0]=0;
 	sFile[0]=0;
 	sAlphaFile[0]=0;

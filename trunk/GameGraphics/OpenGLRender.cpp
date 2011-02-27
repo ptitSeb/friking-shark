@@ -1450,27 +1450,27 @@ void COpenGLRender::EndStagedRendering()
 			double dDistance=forwardPlane.GetSide(pVolumeToUse[x]);
 			double dRight=rightPlane.GetSide(pVolumeToUse[x]);
 			double dUp=upPlane.GetSide(pVolumeToUse[x]);
-			dLightNear=min(dLightNear,dDistance);
-			dLightFar=max(dLightFar,dDistance);
+			dLightNear=std::min(dLightNear,dDistance);
+			dLightFar=std::max(dLightFar,dDistance);
 
 			if(dDistance)
 			{
 				double dRightAngle=RadiansToDegrees(atan2(dRight,dDistance));
 				double dUpAngle=RadiansToDegrees(atan2(dUp,dDistance));
-				dLightMinRigthAngle=min(dLightMinRigthAngle,dRightAngle);
-				dLightMaxRigthAngle=max(dLightMaxRigthAngle,dRightAngle);
-				dLightMinUpAngle=min(dLightMinUpAngle,dUpAngle);
-				dLightMaxUpAngle=max(dLightMaxUpAngle,dUpAngle);
+				dLightMinRigthAngle=std::min(dLightMinRigthAngle,dRightAngle);
+				dLightMaxRigthAngle=std::max(dLightMaxRigthAngle,dRightAngle);
+				dLightMinUpAngle=std::min(dLightMinUpAngle,dUpAngle);
+				dLightMaxUpAngle=std::max(dLightMaxUpAngle,dUpAngle);
 			}
 		}
-		double dViewAngleRight=max(fabs(dLightMinRigthAngle),fabs(dLightMaxRigthAngle));
-		double dViewAngleUp=max(fabs(dLightMinUpAngle),fabs(dLightMaxUpAngle));
+		double dViewAngleRight=std::max(fabs(dLightMinRigthAngle),fabs(dLightMaxRigthAngle));
+		double dViewAngleUp=std::max(fabs(dLightMinUpAngle),fabs(dLightMaxUpAngle));
 	
-		dLightNear=min(dLightNear,m_dMinDistanceToLight);
+		dLightNear=std::min(dLightNear,m_dMinDistanceToLight);
 		if(dLightNear<1){dLightNear=1;}
 		if(dLightFar<1){dLightFar=1;}
 
-		double dLightViewAngle=max(dViewAngleRight,dViewAngleUp)*2.0;//dPreviousViewAngle*0.5;
+		double dLightViewAngle=std::max(dViewAngleRight,dViewAngleUp)*2.0;//dPreviousViewAngle*0.5;
 		double pLightModelViewMatrix[16];
 		double pLightProjectionMatrix[16];
 

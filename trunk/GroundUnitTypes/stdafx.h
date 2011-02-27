@@ -6,7 +6,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <list>
-#include "GameLib.h"
+#include "GameRunTimeLib.h"
+#include "VectorLib.h"
 #include "GameEntityLib.h"
 
 #endif

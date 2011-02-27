@@ -3,13 +3,14 @@
 
 CC=g++
 
-INCLUDES = -I. -I../GameRunTime -I../GameRunTimeLib
+INCLUDES = -I. \
+-I../GameRunTime \
+-I../GameRunTimeLib
 
 SOURCES = 3DSFiles.cpp\
 3DSTypes.cpp\
 ASEFiles.cpp\
 GBSFiles.cpp\
-QuakeFiles.cpp\
 StdAfx.cpp\
 VectorLib.cpp
 

@@ -75,7 +75,7 @@ public:
 
 	virtual unsigned GetOpenGLIndex();
 
-	virtual bool Load(string sFileName,CVector *pColorKey,string *pAlphaFile,float fOpacity);
+	virtual bool Load(std::string sFileName,CVector *pColorKey,std::string *pAlphaFile,float fOpacity);
 	virtual bool Create( unsigned nWidth,unsigned nHeight );
 	virtual bool CreateDepth( unsigned nWidth,unsigned nHeight );
 	virtual bool StartRenderingToTexture();

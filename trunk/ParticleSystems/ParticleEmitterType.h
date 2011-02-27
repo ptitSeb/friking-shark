@@ -37,8 +37,6 @@ public:
 
     // Propiedades RunTime
 
-    CTexture    *m_pTexture;
-
     IParticleEmitter *CreateInstance(unsigned int dwCurrentTime);
 
     BEGIN_PROP_MAP(CParticleEmitterType);

@@ -203,7 +203,7 @@ public:
 
 	virtual CVector		GetPixelColor(unsigned long x, unsigned long y)=0;
 
-	virtual bool		Load(string sFileName,CVector *pColorKey=NULL,string *pAlphaFile=NULL,float fOpacity=1.0)=0;
+	virtual bool		Load(std::string sFileName,CVector *pColorKey=NULL,std::string *pAlphaFile=NULL,float fOpacity=1.0)=0;
 	virtual bool		Create( unsigned nWidth,unsigned nHeight )=0;
 	virtual bool		CreateDepth( unsigned nWidth,unsigned nHeight )=0;
 
@@ -221,7 +221,7 @@ class IGenericModel:virtual public ISystemUnknown
 public:
 
 	virtual void Create()=0;
-	virtual bool Load(string sFileName)=0;
+	virtual bool Load(std::string sFileName)=0;
 
 	virtual void		  SetBSPOptions(bool bLoad,bool bAutoGenerate,bool bAutoUpdate)=0;
 	virtual void		  GetBSPOptions(bool *pbLoad,bool *pbAutoGenerate,bool *pbAutoUpdate)=0;
@@ -329,14 +329,14 @@ public:
 
 struct IGenericShader:virtual public ISystemUnknown
 {
-	virtual void Load(string sVertexShaderFile,string sFragmentShaderFile,string sPreprocessorDefinitions)=0;
-	virtual void Create(string sVertexShaderCode,string sFragmentShaderCode,string sPreprocessorDefinitions)=0;
+	virtual void Load(std::string sVertexShaderFile,std::string sFragmentShaderFile,std::string sPreprocessorDefinitions)=0;
+	virtual void Create(std::string sVertexShaderCode,std::string sFragmentShaderCode,std::string sPreprocessorDefinitions)=0;
 	
-	virtual void AddUniform( string sUniformName,int bValue )=0;
-	virtual void AddUniform( string sUniformName,float fValue )=0;
-	virtual void AddUniform( string sUniformName,const CVector &vVector )=0;
-	virtual void AddUniform( string sUniformName,const CVector &vColor, float fAlpha )=0;
-	virtual void AddUniform( string sUniformName,double *pMatrix)=0;
+	virtual void AddUniform( std::string sUniformName,int bValue )=0;
+	virtual void AddUniform( std::string sUniformName,float fValue )=0;
+	virtual void AddUniform( std::string sUniformName,const CVector &vVector )=0;
+	virtual void AddUniform( std::string sUniformName,const CVector &vColor, float fAlpha )=0;
+	virtual void AddUniform( std::string sUniformName,double *pMatrix)=0;
 
 	virtual bool Activate()=0;
 	virtual void Deactivate()=0;

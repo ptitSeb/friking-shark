@@ -11,27 +11,26 @@
 
 struct S3DSMaterial
 {
-	unsigned int		dwMaterialType;
-	CVector		vAmbientColor;
-	CVector		vDiffuseColor;
-	CVector 	vSpecularColor;
-	char		sName[MAX_PATH];
-	char		sFile[MAX_PATH];
-	char		sAlphaFile[MAX_PATH];
-	float		fShininess;
-	float		fShininessStrength;
-	float		fTranparency;
-	bool		bTwoSided;
+	CVector			vAmbientColor;
+	CVector			vDiffuseColor;
+	CVector 		vSpecularColor;
+	char			sName[MAX_PATH];
+	char			sFile[MAX_PATH];
+	char			sAlphaFile[MAX_PATH];
+	float			fShininess;
+	float			fShininessStrength;
+	float			fTranparency;
+	bool			bTwoSided;
 
-	float		fTextureUOffset;
-	float		fTextureVOffset;
-	float		fTextureUScale;
-	float		fTextureVScale;
-	float		fTextureAngle;
+	float			fTextureUOffset;
+	float			fTextureVOffset;
+	float			fTextureUScale;
+	float			fTextureVScale;
+	float			fTextureAngle;
 
-	bool		bSubMaterial; // Solo para ASE
-	unsigned int		dwMaterialId; // Solo para ASE
-	unsigned int		dwSubMaterialId; // Solo para ASE
+	bool			bSubMaterial; // Solo para ASE
+	unsigned int	dwMaterialId; // Solo para ASE
+	unsigned int	dwSubMaterialId; // Solo para ASE
 
 
 	S3DSMaterial();
@@ -87,7 +86,7 @@ struct S3DSFrame
 	S3DSTextureFace						*pTextFaces;
 	int									 nColorFaces;
 	S3DSColorFace						*pColorFaces;
-	unsigned int								*pFaceSubMaterials;// solo para archivos ASE
+	unsigned int						*pFaceSubMaterials;// solo para archivos ASE
 	std::vector<S3DSObjectMaterial*>	 sObjectMaterials;
 
 	S3DSFrame();
@@ -107,7 +106,7 @@ struct S3DSObject
 	CVector								 vFirstFrameScale;
 	float								 fFirstFrameRotationAngle;
 	CVector								 vFirstFrameRotationAxis;
-	unsigned int								 dwMaterialId; //solo para archivos ASE
+	unsigned int						 dwMaterialId; //solo para archivos ASE
 	CVector								 vWireframeColor;//solo para archivos ASE
 
 	S3DSFrame							 baseFrame;
@@ -120,7 +119,7 @@ struct S3DSObject
 
 struct S3DSLight
 {
-	char	sName[MAX_PATH];
+	char			sName[MAX_PATH];
 	unsigned int   dwType;
 
 	CMatrix		mTransformMatrix;
