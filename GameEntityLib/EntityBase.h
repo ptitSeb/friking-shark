@@ -4,6 +4,7 @@
 #include "AnimationSystems.h"
 #include "EntityTypeBase.h"
 #include "SteeringBehaviours.h"
+#include "GameManagers.h"
 
 class CEntityBase: public IEntity, public CPublisherBase, public CSubscriberBase
 {
@@ -72,7 +73,6 @@ public:
     void        Remove();
 
     // Render
-    void Render(CMaterial *pMaterial){}
     void Render(IGenericRender *piRender,IGenericCamera *piCamera);
 
     // Procesamiento

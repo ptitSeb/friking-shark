@@ -6,13 +6,13 @@ class COpenGLShader: virtual public CSystemObjectBase, virtual public IGenericSh
   GLhandleARB m_hFragmentShader;
   GLhandleARB m_hShaderProgram;
 
-  string m_sVertexShader;
-  string m_sVertexShaderCode;
-  string m_sFragmentShader;
-  string m_sFragmentShaderCode;
-  string m_sPreprocessorDefinitions;
+  std::string m_sVertexShader;
+  std::string m_sVertexShaderCode;
+  std::string m_sFragmentShader;
+  std::string m_sFragmentShaderCode;
+  std::string m_sPreprocessorDefinitions;
 
-  bool LoadCodeFile(string sSourceFile,string *psSourceCode);
+  bool LoadCodeFile(std::string sSourceFile,std::string *psSourceCode);
   void FreeShader();
   bool CreateShaderInstance();
 
@@ -21,14 +21,14 @@ public:
 
     // IGenericShader
 
-	void Load(string sVertexShaderFile,string sFragmentShaderFile,string sPreprocessorDefinitions);
-	void Create(string sVertexShaderCode,string sFragmentShaderCode,string sPreprocessorDefinitions);
+	void Load(std::string sVertexShaderFile,std::string sFragmentShaderFile,std::string sPreprocessorDefinitions);
+	void Create(std::string sVertexShaderCode,std::string sFragmentShaderCode,std::string sPreprocessorDefinitions);
 
-	void AddUniform( string sUniformName,int bValue );
-	void AddUniform( string sUniformName,float fValue );
-	void AddUniform( string sUniformName,const CVector &vVector );
-	void AddUniform( string sUniformName,const CVector &vColor, float fAlpha );
-	void AddUniform( string sUniformName,double *pMatrix);
+	void AddUniform( std::string sUniformName,int bValue );
+	void AddUniform( std::string sUniformName,float fValue );
+	void AddUniform( std::string sUniformName,const CVector &vVector );
+	void AddUniform( std::string sUniformName,const CVector &vColor, float fAlpha );
+	void AddUniform( std::string sUniformName,double *pMatrix);
     bool Activate();
     void Deactivate();
 

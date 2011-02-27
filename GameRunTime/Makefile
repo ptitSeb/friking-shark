@@ -3,7 +3,8 @@
 
 CC=g++
 
-INCLUDES = -I. -I../GameRunTimeLib
+INCLUDES = -I. \
+-I../GameRunTimeLib
 
 SOURCES = GameRunTime.cpp\
 InterfaceLeakAPI.cpp\

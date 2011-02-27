@@ -378,68 +378,6 @@ CPolyhedron::CPolyhedron()
 	_debugtag_='E';
 }
 
-CMaterialPolygon::CMaterialPolygon()
-{
-	m_pMaterial=NULL;
-	m_pTextureCoords=NULL;
-	m_pVertexNormals=NULL;
-	m_pVertexColors=NULL;
-}
-
-CMaterialPolygon::~CMaterialPolygon()
-{
-	if(m_pTextureCoords){delete [] m_pTextureCoords;m_pTextureCoords=NULL;}
-	if(m_pVertexNormals){delete [] m_pVertexNormals;m_pVertexNormals=NULL;}
-	if(m_pVertexColors){delete [] m_pVertexColors;m_pVertexColors=NULL;}
-}
-
-CMaterialPolygon &CMaterialPolygon::operator=(const CPolygon &polygon)
-{
-	if(m_pVertexes){delete [] m_pVertexes;m_pVertexes=NULL;}
-	if(m_pTextureCoords){delete [] m_pTextureCoords;m_pTextureCoords=NULL;}
-	if(m_pVertexNormals){delete [] m_pVertexNormals;m_pVertexNormals=NULL;}
-	if(m_pVertexColors){delete [] m_pVertexColors;m_pVertexColors=NULL;}
-	m_nVertexes=0;
-	m_pVertexes=NULL;
-	m_pTextureCoords=NULL;
-	if(polygon.m_nVertexes)
-	{
-		m_nVertexes=polygon.m_nVertexes;
-		m_pVertexes=new CVector[polygon.m_nVertexes];
-		m_pTextureCoords=new CVector[polygon.m_nVertexes];
-		m_pVertexNormals=new CVector[polygon.m_nVertexes];
-		memcpy(m_pVertexes,polygon.m_pVertexes,sizeof(CVector)*polygon.m_nVertexes);
-		m_Plane=polygon.m_Plane;
-	}
-	return *this;
-}
-
-CMaterialPolygon &CMaterialPolygon::operator=(const CMaterialPolygon &polygon)
-{
-	if(m_pVertexes){delete [] m_pVertexes;m_pVertexes=NULL;}
-	if(m_pTextureCoords){delete [] m_pTextureCoords;m_pTextureCoords=NULL;}
-	if(m_pVertexNormals){delete [] m_pVertexNormals;m_pVertexNormals=NULL;}
-	if(m_pVertexColors){delete [] m_pVertexColors;m_pVertexColors=NULL;}
-	m_nVertexes=0;
-	m_pVertexes=NULL;
-	m_pTextureCoords=NULL;
-	m_pVertexNormals=NULL;
-	m_pVertexColors=NULL;
-	if(polygon.m_nVertexes)
-	{
-		m_nVertexes=polygon.m_nVertexes;
-		m_pVertexes=new CVector[polygon.m_nVertexes];
-		m_pTextureCoords=new CVector[polygon.m_nVertexes];
-		m_pVertexNormals=new CVector[polygon.m_nVertexes];
-		memcpy(m_pVertexes,polygon.m_pVertexes,sizeof(CVector)*polygon.m_nVertexes);
-		memcpy(m_pTextureCoords,polygon.m_pTextureCoords,sizeof(CVector)*polygon.m_nVertexes);
-		memcpy(m_pVertexNormals,polygon.m_pVertexNormals,sizeof(CVector)*polygon.m_nVertexes);
-		memcpy(m_pVertexColors,polygon.m_pVertexColors,sizeof(CVector)*polygon.m_nVertexes);
-		m_Plane=polygon.m_Plane;
-	}
-	return *this;
-}
-
 CPolyhedron::CPolyhedron(CPolygon base, double width)
 {
 	_debugtag_='E';
@@ -2146,28 +2084,6 @@ double drand()
 	vRight.c[2] = -1.0*cr*cp;
 }*/
 
-
-CTexture::CTexture(std::string sName,int nWidth,int nHeight,void *pPixels,unsigned int dwColorType)
-{
-	m_nOpenGlIndex=0;
-	m_fOpacity=1.0;
-	m_sName=sName;
-	m_nWidth=nWidth;
-	m_nHeight=nHeight;
-	m_pPixels=pPixels;
-	m_dwColorType=dwColorType;
-	m_bColorKey=false;
-	m_bAlphaFile=false;
-}
-
-CTexture::~CTexture()
-{
-	m_nWidth=0;
-	m_nHeight=0;
-    #pragma message("Cuidado con este cast a char*")
-	if(m_pPixels!=NULL){delete [] (char*)m_pPixels;m_pPixels=NULL;}
-}
-
 CVector	CalcMins(CVector &v1,CVector &v2)
 {
 	CVector v;
@@ -2325,32 +2241,6 @@ CVector HSVDifference(CVector &v1,CVector &v2)
 	CVector v2HSV=RGBToHSV(v2);
 	return v2HSV-v1HSV;
 }
-
-CMaterial::CMaterial()
-{
-	dwMaterialType=MATERIAL_SOLID;
-	vAmbientColor=CVector(0.5,0.5,0.5);
-	vDiffuseColor=CVector(0.5,0.5,0.5);
-	vSpecularColor=CVector(0.5,0.5,0.5);
-	fShininess=0;
-	fOpacity=1.0;
-	bTwoSided=false;
-}
-
-CMaterial::~CMaterial()
-{
-}
-
-bool CMaterial::operator == (const CMaterial &material)
-{
-	if(dwMaterialType!=material.dwMaterialType){return false;}
-	if(vAmbientColor!=material.vAmbientColor){return false;}
-	if(vDiffuseColor!=material.vDiffuseColor){return false;}
-	if(vSpecularColor!=material.vSpecularColor){return false;}
-	if(sTexture!=material.sTexture){return false;}
-	return true;
-}
-
 
 void FromOpenGLMatrix(double *dMatrix,CMatrix *pMatrix)
 {

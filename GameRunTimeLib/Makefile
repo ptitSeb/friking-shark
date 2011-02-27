@@ -3,7 +3,8 @@
 
 CC=g++
 
-INCLUDES = -I. -I../GameRunTime
+INCLUDES = -I. \
+-I../GameRunTime
 
 SOURCES = PlatformDependent.cpp\
 ConfigFile.cpp\

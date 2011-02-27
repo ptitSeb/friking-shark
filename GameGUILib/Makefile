@@ -3,7 +3,12 @@
 
 CC=g++
 
-INCLUDES = -I. -I../GameRunTime -I../GameRunTimeLib -I../VectorLib -I../GameGraphics  -I../GameGUI -I../GameLib
+INCLUDES = -I. \
+-I../GameRunTime \
+-I../GameRunTimeLib \
+-I../VectorLib \
+-I../GameGraphics  \
+-I../GameGUI
 
 SOURCES = GameGUIUtil.cpp\
 GameWindowBase.cpp\

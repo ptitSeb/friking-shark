@@ -1,4 +1,5 @@
 #include "GameRunTimeLib.h"
+#include "GameManagers.h"
 
 struct IParticle;
 struct IParticleEmitter;

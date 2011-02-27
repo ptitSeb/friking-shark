@@ -3,7 +3,12 @@
 
 CC=g++
 
-INCLUDES = -I. -I../AnimationSystems  -I../GameLib -I../GameRunTime -I../GameRunTimeLib -I../VectorLib
+INCLUDES = -I. \
+-I../AnimationSystems  \
+-I../GameManagers \
+-I../GameRunTime \
+-I../GameRunTimeLib \
+-I../VectorLib
 
 SOURCES = GameEntityLib.cpp\
 EntityBase.cpp\

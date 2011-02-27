@@ -17,6 +17,5 @@
 #include <dsound.h>
 #include "dxutSound.h"
 
-#include "GameLib.h"
 
 #endif

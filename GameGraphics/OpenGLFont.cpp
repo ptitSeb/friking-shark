@@ -2,7 +2,7 @@
 #include "OpenGLGraphics.h"
 #include "OpenGLFont.h"
 
-bool LoadImageHelper(string sFile,unsigned int dwColorType,unsigned *pOpenGLSkinWidth,unsigned *pOpenGLSkinHeight,unsigned char **ppBuffer);
+bool LoadImageHelper(std::string sFile,unsigned int dwColorType,unsigned *pOpenGLSkinWidth,unsigned *pOpenGLSkinHeight,unsigned char **ppBuffer);
 
 SOpenGLSystemFont::SOpenGLSystemFont()
 {

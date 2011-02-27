@@ -13,7 +13,7 @@ COpenGLShader::~COpenGLShader(void)
 {
 }
 
-bool COpenGLShader::LoadCodeFile(string sSourceFile,string *psSourceCode)
+bool COpenGLShader::LoadCodeFile(std::string sSourceFile,std::string *psSourceCode)
 {
 	char *pSource=NULL;
 	unsigned int dwSize=0;
@@ -158,8 +158,8 @@ void COpenGLShader::Deactivate()
 bool COpenGLShader::Unserialize(ISystemPersistencyNode *piNode)
 {
   bool bOk=CSystemObjectBase::Unserialize(piNode);
-  string sVertexShaderCode;
-  string sFragmentShaderCode;
+  std::string sVertexShaderCode;
+  std::string sFragmentShaderCode;
   if(m_sVertexShader.c_str()){LoadCodeFile(m_sVertexShader,&sVertexShaderCode);}
   if(m_sFragmentShader.c_str()){LoadCodeFile(m_sFragmentShader,&sFragmentShaderCode);}
   m_sVertexShaderCode=m_sPreprocessorDefinitions+"\n"+sVertexShaderCode;
@@ -168,15 +168,15 @@ bool COpenGLShader::Unserialize(ISystemPersistencyNode *piNode)
   return bOk;
 }
 
-void COpenGLShader::Load( string sVertexShaderFile,string sFragmentShaderFile,string sPreprocessorDefinitions)
+void COpenGLShader::Load( std::string sVertexShaderFile,std::string sFragmentShaderFile,std::string sPreprocessorDefinitions)
 {
 	m_sFragmentShader=sFragmentShaderFile;
 	m_sFragmentShaderCode="";
 	m_sVertexShader=sVertexShaderFile;
 	m_sVertexShaderCode="";
 	m_sPreprocessorDefinitions=sPreprocessorDefinitions;
-	string sVertexShaderCode;
-	string sFragmentShaderCode;
+	std::string sVertexShaderCode;
+	std::string sFragmentShaderCode;
 	if(m_sVertexShader.length()){LoadCodeFile(m_sVertexShader,&sVertexShaderCode);}
 	if(m_sFragmentShader.length()){LoadCodeFile(m_sFragmentShader,&sFragmentShaderCode);}
 	m_sVertexShaderCode=sPreprocessorDefinitions+"\n"+sVertexShaderCode;
@@ -184,7 +184,7 @@ void COpenGLShader::Load( string sVertexShaderFile,string sFragmentShaderFile,st
 	CreateShaderInstance();
 }
 
-void COpenGLShader::Create( string sVertexShaderCode,string sFragmentShaderCode,string sPreprocessorDefinitions)
+void COpenGLShader::Create( std::string sVertexShaderCode,std::string sFragmentShaderCode,std::string sPreprocessorDefinitions)
 {
 	m_sFragmentShader="";
 	m_sFragmentShaderCode=sPreprocessorDefinitions+"\n"+sFragmentShaderCode;
@@ -194,33 +194,33 @@ void COpenGLShader::Create( string sVertexShaderCode,string sFragmentShaderCode,
 	CreateShaderInstance();
 }
 
-void COpenGLShader::AddUniform( string sUniformName,int bValue )
+void COpenGLShader::AddUniform( std::string sUniformName,int bValue )
 {
 	int location=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str()); 
 	glUniform1iARB(location, bValue);
 
 }
 
-void COpenGLShader::AddUniform( string sUniformName,float fValue )
+void COpenGLShader::AddUniform( std::string sUniformName,float fValue )
 {
 	int location=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str()); 
 	glUniform1fARB(location, (float)fValue);
 
 }
 
-void COpenGLShader::AddUniform( string sUniformName,const CVector &vVector )
+void COpenGLShader::AddUniform( std::string sUniformName,const CVector &vVector )
 {
 	int location=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str()); 
 	glUniform3fARB(location, (float)vVector.c[0],(float)vVector.c[1],(float)vVector.c[2]);
 }
 
-void COpenGLShader::AddUniform( string sUniformName,const CVector &vColor, float fAlpha )
+void COpenGLShader::AddUniform( std::string sUniformName,const CVector &vColor, float fAlpha )
 {
 	int location=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str()); 
 	glUniform4fARB(location, (float)vColor.c[0],(float)vColor.c[1],(float)vColor.c[2],(float)fAlpha);
 }
 
-void COpenGLShader::AddUniform( string sUniformName,double *pMatrix)
+void COpenGLShader::AddUniform( std::string sUniformName,double *pMatrix)
 {
 	int location=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str()); 
 	float fTemp[16];

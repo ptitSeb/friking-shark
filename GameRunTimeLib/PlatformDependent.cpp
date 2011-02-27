@@ -99,7 +99,7 @@ void RTTRACE(const char *format, ...)
 	printf("%s",pTempBuffer);
 }
 
-unsigned int GetCurrentTime()
+unsigned int GetTimeStamp()
 {
 	timeval tNow;
 	gettimeofday(&tNow, NULL);

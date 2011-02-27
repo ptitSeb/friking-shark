@@ -94,7 +94,7 @@ bool LoadBMPFile(const char *pFileName,unsigned int nBits,unsigned int *pnWidth,
 }
 
 
-bool LoadJPEGImageHelper(string sFile,unsigned int dwColorType,unsigned *pOpenGLSkinWidth,unsigned *pOpenGLSkinHeight,unsigned char **ppBuffer)
+bool LoadJPEGImageHelper(std::string sFile,unsigned int dwColorType,unsigned *pOpenGLSkinWidth,unsigned *pOpenGLSkinHeight,unsigned char **ppBuffer)
 {
 	Pjpeg_decoder_file_stream Pinput_stream = new jpeg_decoder_file_stream();
 
@@ -172,7 +172,7 @@ bool LoadJPEGImageHelper(string sFile,unsigned int dwColorType,unsigned *pOpenGL
 	return true;
 }
 
-bool LoadImageHelper(string sFile,unsigned int dwColorType,unsigned *pOpenGLSkinWidth,unsigned *pOpenGLSkinHeight,unsigned char **ppBuffer)
+bool LoadImageHelper(std::string sFile,unsigned int dwColorType,unsigned *pOpenGLSkinWidth,unsigned *pOpenGLSkinHeight,unsigned char **ppBuffer)
 {
 	*pOpenGLSkinWidth=0;
 	*pOpenGLSkinHeight=0;
@@ -189,7 +189,7 @@ bool LoadImageHelper(string sFile,unsigned int dwColorType,unsigned *pOpenGLSkin
 	GetFileFolder(sFileName,pFileFolder);
 	if(pFileFolder[0]==0 || strcmp(pFileFolder,".")==0)
 	{
-		string sTemp="Textures/";
+		std::string sTemp="Textures/";
 		sTemp+=path;
 		path=sTemp;
 	}
@@ -283,6 +283,8 @@ unsigned 	COpenGLTexture::GetOpenGLIndex()
 
 bool COpenGLTexture::LoadFromFile()
 {
+	int nStartTime=GetTimeStamp();
+  
 	bool bResult=true;
 	unsigned int	 dwColorType=HasAlphaChannel()?GL_RGBA:GL_RGB;
 
@@ -371,7 +373,7 @@ bool COpenGLTexture::LoadFromFile()
 		}
 		m_bRenderTarget=false;
 		
-		RTTRACE("COpenGLTexture::LoadFromFile -> Loaded texture %s",m_sFileName.c_str());
+		RTTRACE("COpenGLTexture::LoadFromFile -> Loaded texture %s (%d ms)",m_sFileName.c_str(),GetTimeStamp()-nStartTime);
 	}
 	else
 	{
@@ -392,7 +394,7 @@ bool COpenGLTexture::HasAlphaChannel(){return (m_bColorKey || m_sAlphaFileName!=
 unsigned long COpenGLTexture::GetByteBufferLength(){return HasAlphaChannel()?m_dwHeight*m_dwWidth*4:m_dwHeight*m_dwWidth*3;}
 void		  *COpenGLTexture::GetByteBuffer(){return m_pBuffer;}
 
-bool COpenGLTexture::Load(string sFileName,CVector *pColorKey,string *pAlphaFile,float fOpacity)
+bool COpenGLTexture::Load(std::string sFileName,CVector *pColorKey,std::string *pAlphaFile,float fOpacity)
 {
 	Clear();
 

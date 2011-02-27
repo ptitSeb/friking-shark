@@ -20,6 +20,10 @@
 #define FP_PRECISION	0.0002
 #define PI				3.1415926535
 
+#define YAW		0
+#define PITCH	1
+#define ROLL	2
+
 class CMatrix;
 class CBSPDrawNode;
 
@@ -180,64 +184,6 @@ public:
 	~CPolygon();
 };
 
-#define MATERIAL_SOLID		1
-#define MATERIAL_TEXTURED	2
-
-class CTexture
-{
-public:
-
-	std::string	 m_sName;
-	std::string  m_sAlphaFileName;
-	bool		 m_bAlphaFile;
-	bool		 m_bColorKey;
-	CVector	 	 m_vColorKey;
-	float		 m_fOpacity;
-
-	unsigned m_nWidth;
-	unsigned m_nHeight;
-	void	*m_pPixels;
-	unsigned int	 m_dwColorType;
-
-	unsigned m_nOpenGlIndex;
-	CTexture(std::string sName,int nWidth,int nHeight,void *pPixels,unsigned int dwColorType);
-	~CTexture();
-};
-
-struct CMaterial
-{
-	unsigned int		dwMaterialType;
-	CVector		vAmbientColor;
-	CVector		vDiffuseColor;
-	CVector		vSpecularColor;
-	float		fShininess;
-	float		fOpacity;
-	bool		bTwoSided;
-	std::string sTexture;
-
-
-	CMaterial();
-	~CMaterial();
-
-	bool operator == (const CMaterial &material);
-};
-
-class CMaterialPolygon: public CPolygon
-{
-public:
-
-	CMaterial	*m_pMaterial;
-	CVector		*m_pTextureCoords;
-	CVector		*m_pVertexNormals;
-	CVector		*m_pVertexColors;
-
-	CMaterialPolygon &operator=(const CPolygon &pol);
-	CMaterialPolygon &operator=(const CMaterialPolygon &pol);
-
-	CMaterialPolygon();
-	~CMaterialPolygon();
-};
-
 class CPolyhedron
 {
 public:
@@ -368,10 +314,8 @@ void MRPersistencyInitialize(CMRPersistentReferenceT<CRGBColor> *pItem);
 void MRPersistencyFree(CMRPersistentReferenceT<CRGBColor> *pItem);
 
 #include "GBSFiles.h"
-#include "QuakeFiles.h"
 #include "3DSTypes.h"
 #include "3DSFiles.h"
 #include "ASEFiles.h"
-#include "GBSFiles.h"
 
 #endif

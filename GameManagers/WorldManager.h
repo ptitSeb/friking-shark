@@ -110,8 +110,6 @@ class CWorldManager:virtual public CSystemObjectBase, virtual public IGameManage
  
     CWorldEntity            *m_pWorldEntity;
    
-	void Render(CMaterial *pMaterial);
-
 	CEntityManagerWrapper   m_EntityManagerWrapper;
 	CGameControllerWrapper  m_GameControllerWrapper;
 	CGameRenderWrapper      m_RenderWrapper;

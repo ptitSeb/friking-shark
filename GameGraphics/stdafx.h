@@ -9,7 +9,6 @@
 #include <stack>
 #include "GameRunTimeLib.h"
 #include "VectorLib.h"
-#include "GameLib.h"
 #include "GameGraphics.h"
 #include "OpenGLGraphics.h"
 
