@@ -5,10 +5,14 @@
 #define EDITOR_BORDER_SIZE 1.0
 #define EDITOR_TEXT_MARGIN 2.0
 #define EDITOR_TOTAL_MARGIN (EDITOR_BORDER_SIZE +EDITOR_TEXT_MARGIN ) 
+#define NON_SEPARATOR_CHARACTERS "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_-"
+
+bool IsSeparator(unsigned char c){return (strchr(NON_SEPARATOR_CHARACTERS,c)==NULL);}
 
 CGameGUIEdit::CGameGUIEdit(void)
 {
 	m_nEditionPos=0;
+	m_nSelectionPos=m_nEditionPos;
 	PersistencyDefaultValue();
 }
 
@@ -19,6 +23,7 @@ CGameGUIEdit::~CGameGUIEdit(void)
 void CGameGUIEdit::SetText(std::string sText)
 {
 	m_nEditionPos=0;
+	m_nSelectionPos=m_nEditionPos;
 	CGameGUILabel::SetText(sText);
 }
 
@@ -64,7 +69,7 @@ void CGameGUIEdit::OnDraw(IGenericRender *piRender)
 	if(m_sText.length())
 	{
 		std::string sFontName;
-		double			dFontSize=0;
+		double dFontSize=0;
 
 		IGenericFont *piFont=NULL;
 		GetFont(&piFont,&dFontSize);
@@ -74,8 +79,48 @@ void CGameGUIEdit::OnDraw(IGenericRender *piRender)
 			{
 				dFontSize=m_rRealRect.h-EDITOR_TOTAL_MARGIN*2.0;
 			}
-			piRender->SetColor(m_vTextColor,m_dTextAlpha);
-			piFont->RenderTextEx(dFontSize,EDITOR_TOTAL_MARGIN,EDITOR_TOTAL_MARGIN,m_rRealRect.w-EDITOR_TOTAL_MARGIN*2.0,m_rRealRect.h-EDITOR_TOTAL_MARGIN*2.0,m_sText.c_str(),m_eHorizontalAlignment,m_eVerticalAlignment);
+			
+			if(m_nSelectionPos!=m_nEditionPos)
+			{
+			  int nSelectionStart=std::min(m_nEditionPos,m_nSelectionPos);
+			  int nSelectionEnd=std::max(m_nEditionPos,m_nSelectionPos);
+			  std::string sPre=m_sText.substr(0,nSelectionStart);
+			  std::string sSel=m_sText.substr(nSelectionStart,nSelectionEnd-nSelectionStart);
+			  std::string sPost=m_sText.substr(nSelectionEnd,m_sText.length()-nSelectionEnd);
+			  
+			  double dx=EDITOR_TOTAL_MARGIN;
+			  double dy=EDITOR_TOTAL_MARGIN;
+			  double dw=m_rRealRect.w-EDITOR_TOTAL_MARGIN*2.0;
+			  double dh=m_rRealRect.h-EDITOR_TOTAL_MARGIN*2.0;
+			  if(sPre.length())
+			  {
+				piRender->SetColor(m_vTextColor,m_dTextAlpha);
+				piFont->CalcTextSize(dFontSize,sPre.c_str(),&dTextWidth,&dTextHeight);
+				piFont->RenderTextEx(dFontSize,dx,dy,dw,dh,sPre.c_str(),m_eHorizontalAlignment,m_eVerticalAlignment);
+				dx+=dTextWidth;
+				dw-=dTextWidth;
+			  }
+			  if(sSel.length())
+			  {
+				piFont->CalcTextSize(dFontSize,sSel.c_str(),&dTextWidth,&dTextHeight);
+				piRender->SetColor(m_vSelectedBackgroundColor,m_dTextAlpha);
+				piRender->RenderRect(dx,dy,std::min(dTextWidth,dw),dh);
+				piRender->SetColor(m_vSelectedTextColor,m_dTextAlpha);
+				piFont->RenderTextEx(dFontSize,dx,dy,dw,dh,sSel.c_str(),m_eHorizontalAlignment,m_eVerticalAlignment);
+				dx+=dTextWidth;
+				dw-=dTextWidth;
+			  }
+			  if(sPost.length())
+			  {
+				piRender->SetColor(m_vTextColor,m_dTextAlpha);
+				piFont->RenderTextEx(dFontSize,dx,dy,dw,dh,sPost.c_str(),m_eHorizontalAlignment,m_eVerticalAlignment);
+			  }
+			}
+			else
+			{
+			  piRender->SetColor(m_vTextColor,m_dTextAlpha);
+			  piFont->RenderTextEx(dFontSize,EDITOR_TOTAL_MARGIN,EDITOR_TOTAL_MARGIN,m_rRealRect.w-EDITOR_TOTAL_MARGIN*2.0,m_rRealRect.h-EDITOR_TOTAL_MARGIN*2.0,m_sText.c_str(),m_eHorizontalAlignment,m_eVerticalAlignment);
+			}
 			piFont->CalcTextSize(dFontSize,m_sText.substr(0,m_nEditionPos).c_str(),&dTextWidth,&dTextHeight);
 		}
 		REL(piFont);
@@ -98,7 +143,7 @@ void CGameGUIEdit::OnDraw(IGenericRender *piRender)
 
 void CGameGUIEdit::OnCharacter( int nKey,bool *pbProcessed )
 {
-	if(nKey<32){return;}
+	DeleteSelection();
 
 	unsigned long nCommand=0;
 	char sCommand[10*1024];
@@ -114,6 +159,7 @@ void CGameGUIEdit::OnCharacter( int nKey,bool *pbProcessed )
 		sCommand[nCommand]=0;
 	}
 
+	m_nSelectionPos=m_nEditionPos;
 	m_sText=sCommand;
 	*pbProcessed=true;
 }
@@ -127,47 +173,166 @@ void CGameGUIEdit::OnKeyDown( int nKey,bool *pbProcessed )
 
 	if(nKey==GK_LEFT)
 	{
-		if(m_nEditionPos){m_nEditionPos--;}
+		if(m_piGUIManager->IsKeyDown(GK_LCONTROL))
+		{
+		  int nOldPos=m_nEditionPos?m_nEditionPos-1:m_nEditionPos;
+		  while(nOldPos>=0 && IsSeparator(sCommand[nOldPos])){m_nEditionPos=nOldPos;nOldPos--;}
+		  while(nOldPos>=0 && !IsSeparator(sCommand[nOldPos])){m_nEditionPos=nOldPos;nOldPos--;}
+		  m_nEditionPos=(nOldPos>=0)?m_nEditionPos:0;
+		}
+		else
+		{ 
+		  if(m_nEditionPos){m_nEditionPos--;}
+		}
+		if(!m_piGUIManager->IsKeyDown(GK_LSHIFT)){m_nSelectionPos=m_nEditionPos;}
 		*pbProcessed=true;
 	}
 	else if(nKey==GK_RIGHT)
 	{
-		if(m_nEditionPos<nCommand){m_nEditionPos++;}
+		if(m_piGUIManager->IsKeyDown(GK_LCONTROL))
+		{
+		  int nOldPos=m_nEditionPos;
+		  m_nEditionPos=nCommand;
+		  while(nOldPos<nCommand && IsSeparator(sCommand[nOldPos])){m_nEditionPos=nOldPos;nOldPos++;}
+		  while(nOldPos<nCommand && !IsSeparator(sCommand[nOldPos])){m_nEditionPos=nOldPos;nOldPos++;}
+		  m_nEditionPos=nOldPos;
+		}
+		else
+		{
+		  if(m_nEditionPos<nCommand){m_nEditionPos++;}
+		}
+		if(!m_piGUIManager->IsKeyDown(GK_LSHIFT)){m_nSelectionPos=m_nEditionPos;}
 		*pbProcessed=true;
 
 	}
 	else if(nKey==GK_HOME)
 	{
 		m_nEditionPos=0;
+		if(!m_piGUIManager->IsKeyDown(GK_LSHIFT)){m_nSelectionPos=m_nEditionPos;}
 		*pbProcessed=true;
 
 	}
 	else if(nKey==GK_END)
 	{
 		m_nEditionPos=nCommand;
+		if(!m_piGUIManager->IsKeyDown(GK_LSHIFT)){m_nSelectionPos=m_nEditionPos;}
 		*pbProcessed=true;
 
 	}			
 	else if(nKey==GK_BACK)
 	{
-		if(m_nEditionPos)
+		if(m_nEditionPos!=m_nSelectionPos)
+		{
+		  DeleteSelection();
+		  return;
+		}
+		else if(m_nEditionPos)
 		{
 			memmove(sCommand+m_nEditionPos-1,sCommand+m_nEditionPos,nCommand-m_nEditionPos);
 			nCommand--;
 			m_nEditionPos--;
+			m_nSelectionPos=m_nEditionPos;
 			sCommand[nCommand]=0;
 		}
 		*pbProcessed=true;
 	}	
 	else if(nKey==GK_DELETE)
 	{
-		if(m_nEditionPos<nCommand)
+		if(m_nEditionPos!=m_nSelectionPos)
+		{
+		  DeleteSelection();
+		  return;
+		}
+		else if(m_nEditionPos<nCommand)
 		{
 			memmove(sCommand+m_nEditionPos,sCommand+m_nEditionPos+1,nCommand-m_nEditionPos-1);
 			nCommand--;
 			sCommand[nCommand]=0;
 		}
+		m_nSelectionPos=m_nEditionPos;
 		*pbProcessed=true;
 	}
 	m_sText=sCommand;
 }
+
+void CGameGUIEdit::DeleteSelection()
+{
+   if(m_nEditionPos!=m_nSelectionPos)
+   {
+	  int nSelectionStart=std::min(m_nEditionPos,m_nSelectionPos);
+	  int nSelectionEnd=std::max(m_nEditionPos,m_nSelectionPos);
+	  
+  	 m_sText.replace(nSelectionStart,nSelectionEnd-nSelectionStart,"");	 
+	 m_nEditionPos=m_nSelectionPos=nSelectionStart;
+   }
+}
+
+
+int CGameGUIEdit::GetCharacterFromCoordinates(double x,double y)
+{
+	int nPos=m_sText.length();
+	
+	double dFontSize=0;
+	IGenericFont *piFont=NULL;
+	GetFont(&piFont,&dFontSize);
+	if(piFont)
+	{
+		if(m_bAutoResizeFont)
+		{
+			dFontSize=m_rRealRect.h-EDITOR_TOTAL_MARGIN*2.0;
+		}
+		
+		for(int c=0;c<nPos;c++)
+		{
+		  double w,h;
+		  piFont->CalcTextSize(dFontSize,m_sText.substr(0,c).c_str(),&w,&h);
+		  if((EDITOR_TOTAL_MARGIN+w)>x){return c?c-1:0;}
+		}
+	}
+	REL(piFont);
+	return nPos;
+}
+
+void CGameGUIEdit::OnMouseMove(double x,double y)
+{
+  CGameGUILabel::OnMouseMove(x,y);
+
+  IGameWindow *piCapture=m_piGUIManager->GetMouseCapture();
+  if(piCapture==this)
+  {
+	m_nEditionPos=GetCharacterFromCoordinates(x,y);
+  }
+  REL(piCapture);
+}
+
+void CGameGUIEdit::OnMouseDown(int nButton,double x,double y)
+{
+  CGameGUILabel::OnMouseDown(nButton,x,y);
+
+  int nPos=GetCharacterFromCoordinates(x,y);
+  if(DetectDrag(x,y))
+  {
+	m_piGUIManager->SetMouseCapture(this);
+	m_nEditionPos=nPos;
+	m_nSelectionPos=m_nEditionPos;
+  }
+  else
+  {  
+	m_nEditionPos=nPos;
+	if(!m_piGUIManager->IsKeyDown(GK_LSHIFT)){m_nSelectionPos=m_nEditionPos;}
+  }
+}
+
+void CGameGUIEdit::OnMouseUp(int nButton,double x,double y)
+{
+  CGameGUILabel::OnMouseUp(nButton,x,y);
+  
+  IGameWindow *piCapture=m_piGUIManager->GetMouseCapture();
+  if(piCapture==this){m_piGUIManager->ReleaseMouseCapture();}
+  REL(piCapture);
+}
+
+
+
+
+

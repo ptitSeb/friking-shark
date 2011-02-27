@@ -15,7 +15,7 @@
 
 int TranslateKeyFromWindows(int nWindowsKey)
 {
-	if(nWindowsKey>=32 && nWindowsKey<128){return nWindowsKey;}
+	if(nWindowsKey>=32 && nWindowsKey<127){return nWindowsKey;}
 	switch(nWindowsKey)
 	{
 	case VK_UP:return GK_UP;
@@ -62,7 +62,7 @@ int TranslateKeyFromWindows(int nWindowsKey)
 int TranslateKeyToWindows(int nGameKey)
 {
 	if(nGameKey>='a' && nGameKey<='z'){return nGameKey-('a'-'A');}
-	if(nGameKey>=32 && nGameKey<128){return nGameKey;}
+	if(nGameKey>=32 && nGameKey<127){return nGameKey;}
 	switch(nGameKey)
 	{
 	case GK_UP:return VK_UP;
@@ -104,7 +104,7 @@ int TranslateKeyToWindows(int nGameKey)
 
 int TranslateKeyFromX11(int nX11Key)
 {
-	if(nX11Key>=32 && nX11Key<128){return nX11Key;}
+	if(nX11Key>=32 && nX11Key<127){return nX11Key;}
 	switch(nX11Key)
 	{
 	case XK_Up:return GK_UP;
@@ -151,7 +151,7 @@ int TranslateKeyFromX11(int nX11Key)
 int TranslateKeyToX11(int nGameKey)
 {
 	if(nGameKey>='A' && nGameKey<='Z'){return nGameKey+('a'-'A');}
-	if(nGameKey>=32 && nGameKey<128){return nGameKey;}
+	if(nGameKey>=32 && nGameKey<127){return nGameKey;}
 	switch(nGameKey)
 	{
 	case GK_UP:return XK_Up;
@@ -729,6 +729,10 @@ void COpenGLViewport::EnterLoop()
 			{
 				OnKeyDown(TranslateKeyFromX11(key));
 			}
+		
+			char cKey=0;
+			XLookupString(&event.xkey, &cKey,1, &key, NULL);  
+			if(cKey>=32 && cKey<127){OnCharacter(cKey);}
 		  }
 		  else if (event.type==KeyRelease) 
 		  {
