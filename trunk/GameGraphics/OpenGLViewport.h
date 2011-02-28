@@ -58,10 +58,15 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 	void OnMove();
 	
 	void OnLButtonDown(int pointX,int pointY);
+	void OnLButtonDoubleClick(int pointX,int pointY);
 	void OnLButtonUp(int pointX,int pointY);
+	void OnRButtonDoubleClick(int pointX,int pointY);
 	void OnRButtonDown(int pointX,int pointY);
 	void OnRButtonUp(int pointX,int pointY);
 	void OnMouseMove(int pointX,int pointY);
+	void OnMouseWheelUp(int pointX,int pointY);
+	void OnMouseWheelDown(int pointX,int pointY);
+	
 public:
 
 	//IGenericViewport

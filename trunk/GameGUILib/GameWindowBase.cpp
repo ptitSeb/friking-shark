@@ -369,6 +369,10 @@ void CGameWindowBase::OnKeyUp(int nKey,bool *pbProcessed)
 void CGameWindowBase::OnMouseDown(int nButton,double x,double y){}
 void CGameWindowBase::OnMouseUp(int nButton,double x,double y){}
 void CGameWindowBase::OnMouseMove(double x,double y){}
+void CGameWindowBase::OnMouseDoubleClick(int nButton,double x,double y){}
+void CGameWindowBase::OnMouseWheelUp(double x,double y){}
+void CGameWindowBase::OnMouseWheelDown(double x,double y){}
+
 void CGameWindowBase::OnDrawMouseCursor(SGamePos position,IGenericRender *piRender,bool *pbDrawed)
 {
 	if(m_MouseCursorTexture.m_piTexture)

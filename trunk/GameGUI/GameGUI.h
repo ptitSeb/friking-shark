@@ -162,8 +162,11 @@ public:
 	virtual void OnKeyUp(int nKey,bool *pbProcessed)=0;
 
 	virtual void OnMouseDown(int nButton,double x,double y)=0;
+	virtual void OnMouseDoubleClick(int nButton,double x,double y)=0;
 	virtual void OnMouseUp(int nButton,double x,double y)=0;
 	virtual void OnMouseMove(double x,double y)=0;
+	virtual void OnMouseWheelUp(double x,double y)=0;
+	virtual void OnMouseWheelDown(double x,double y)=0;
 
 	virtual void OnDrawMouseCursor(SGamePos position,IGenericRender *piRender,bool *pbDrawed)=0;
 	virtual void OnDrawBackground(IGenericRender *piRender)=0;
@@ -223,6 +226,29 @@ public:
 	 virtual void OnButtonClicked(IGameGUIButton *piControl)=0;
 
 	 virtual ~IGameGUIButtonEvents(){}
+};
+
+class IGameGUIList: virtual public IGameWindow
+{
+public:
+
+	virtual unsigned long AddElement(std::string sText)=0;
+	virtual void		  RemoveElement(unsigned long nIndex)=0;
+	virtual void		  Clear()=0;
+	
+	virtual std::string  GetElement(unsigned int nElement)=0;
+	virtual unsigned int GetElementCount()=0;
+	
+	virtual void 		 SetSelectedElement(unsigned int nElement)=0;
+	virtual unsigned int GetSelectedElement()=0;
+};
+
+class IGameGUIListEvents
+{
+public:
+	 virtual void OnSelectionChanged(IGameGUIList *piControl,IGameWindow *piwindow)=0;
+
+	 virtual ~IGameGUIListEvents(){}
 };
 
 class IGameGUIMessageDialog: virtual public ISystemUnknown

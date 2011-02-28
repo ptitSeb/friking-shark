@@ -15,6 +15,7 @@ SOURCES = GameGUIButton.cpp\
 GameGUILabel.cpp\
 GameGUIEdit.cpp\
 GameGUIGroup.cpp\
+GameGUIList.cpp\
 GameMainWindow.cpp\
 GameGUIMessageDialog.cpp\
 GameGUIConfirmDialog.cpp\

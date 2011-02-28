@@ -191,6 +191,10 @@ void CGameMainWindow::OnKeyUp(int nKey,bool *pbProcessed){}
 void CGameMainWindow::OnMouseDown(int nButton,double x,double y){}
 void CGameMainWindow::OnMouseUp(int nButton,double x,double y){}
 void CGameMainWindow::OnMouseMove(double x,double y){}
+void CGameMainWindow::OnMouseDoubleClick(int nButton,double x,double y){}
+void CGameMainWindow::OnMouseWheelUp(double x,double y){}
+void CGameMainWindow::OnMouseWheelDown(double x,double y){}
+
 void CGameMainWindow::OnDrawMouseCursor(SGamePos position,IGenericRender *piRender,bool *pbDrawed){}
 void CGameMainWindow::OnDrawBackground(IGenericRender *piRender){}
 void CGameMainWindow::OnDraw(IGenericRender *piRender){}

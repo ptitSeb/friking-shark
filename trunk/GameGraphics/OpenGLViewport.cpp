@@ -42,6 +42,8 @@ int TranslateKeyFromWindows(int nWindowsKey)
 	case GK_LMENU:return GK_LMENU;
 	case VK_LSHIFT:return GK_LSHIFT;
 	case VK_INSERT:return GK_INSERT;
+	case VK_PAGEUP:return GK_PAGEUP;
+	case VK_PAGEDOWN:return GK_PAGEDOWN;
 	case VK_F1:return GK_F1;
 	case VK_F2:return GK_F2;
 	case VK_F3:return GK_F3;
@@ -97,6 +99,8 @@ int TranslateKeyToWindows(int nGameKey)
 	case GK_F5:return VK_F5;
 	case GK_PAUSE:return VK_PAUSE;
 	case GK_F10:return VK_F10;
+	case GK_PAGEUP:return VK_PAGEUP;
+	case GK_PAGEDOWN:return VK_PAGEDOWN;
 	};
 	return 0;
 }
@@ -144,6 +148,8 @@ int TranslateKeyFromX11(int nX11Key)
 	case XK_F11:return GK_F11;
 	case XK_F12:return GK_F12;
 	case XK_Pause:return GK_PAUSE;
+	case XK_Page_Up:return GK_PAGEUP;
+	case XK_Page_Down:return GK_PAGEDOWN;
 	};
 	return 0;
 }
@@ -186,6 +192,8 @@ int TranslateKeyToX11(int nGameKey)
 	case GK_F5:return XK_F5;
 	case GK_PAUSE:return XK_Pause;
 	case GK_F10:return XK_F10;
+	case GK_PAGEUP:return XK_Page_Up;
+	case GK_PAGEDOWN:return XK_Page_Down;
 	};
 	return 0;
 }
@@ -312,11 +320,27 @@ LRESULT COpenGLViewport::ProcessMessage(HWND hWnd,UINT  uMsg, WPARAM  wParam,LPA
 	case WM_SYSKEYUP:
 		OnKeyUp(TranslateKeyFromWindows((unsigned short)wParam));
 		break;
+	case WM_MOUSEWHEEL:
+		if(GET_WHEEL_DELTA_WPARAM(wParam)>0)
+		{
+		  OnMouseWheelUp(pointX,pointY);
+		}
+		else
+		{
+		  OnMouseWheelDown(pointX,pointY);
+		}
+		break;		
 	case WM_LBUTTONDOWN:
 		OnLButtonDown(pointX,pointY);
 		break;
+	case WM_LBUTTONDBLCLK:
+		OnLButtonDoubleClick(pointX,pointY);
+		break;
 	case WM_RBUTTONDOWN:
 		OnRButtonDown(pointX,pointY);
+		break;
+	case WM_RBUTTONDBLCLK:
+		OnRButtonDoubleClick(pointX,pointY);
 		break;
 	case WM_LBUTTONUP:
 		OnLButtonUp(pointX,pointY);
@@ -650,11 +674,15 @@ void COpenGLViewport::Render()
 #endif
 }
 
-void COpenGLViewport::OnLButtonDown(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnLButtonDown(0,pointX,pointY);}}
-void COpenGLViewport::OnLButtonUp(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnLButtonUp(0,pointX,pointY);}}
-void COpenGLViewport::OnRButtonDown(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnRButtonDown(0,pointX,pointY);}}
-void COpenGLViewport::OnRButtonUp(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnRButtonUp(0,pointX,pointY);}}
+void COpenGLViewport::OnLButtonDoubleClick(int pointX,int pointY){RTTRACE("LDBLCLK");if(m_piCallBack){m_piCallBack->OnLButtonDoubleClick(pointX,pointY);}}
+void COpenGLViewport::OnLButtonDown(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnLButtonDown(pointX,pointY);}}
+void COpenGLViewport::OnLButtonUp(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnLButtonUp(pointX,pointY);}}
+void COpenGLViewport::OnRButtonDoubleClick(int pointX,int pointY){RTTRACE("RDBLCLK");if(m_piCallBack){m_piCallBack->OnRButtonDoubleClick(pointX,pointY);}}
+void COpenGLViewport::OnRButtonDown(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnRButtonDown(pointX,pointY);}}
+void COpenGLViewport::OnRButtonUp(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnRButtonUp(pointX,pointY);}}
 void COpenGLViewport::OnMouseMove(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnMouseMove(pointX,pointY);}}
+void COpenGLViewport::OnMouseWheelUp(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnMouseWheelUp(pointX,pointY);}}
+void COpenGLViewport::OnMouseWheelDown(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnMouseWheelDown(pointX,pointY);}}
 void COpenGLViewport::OnCharacter(unsigned short wChar){if(m_piCallBack){m_piCallBack->OnCharacter(wChar);}}
 void COpenGLViewport::OnKeyDown(unsigned short wKey){if(m_piCallBack){m_piCallBack->OnKeyDown(wKey);}}
 void COpenGLViewport::OnKeyUp(unsigned short wKey){if(m_piCallBack){m_piCallBack->OnKeyUp(wKey);}}
@@ -729,7 +757,6 @@ void COpenGLViewport::EnterLoop()
 			{
 				OnKeyDown(TranslateKeyFromX11(key));
 			}
-		
 			char cKey=0;
 			XLookupString(&event.xkey, &cKey,1, &key, NULL);  
 			if(cKey>=32 && cKey<127){OnCharacter(cKey);}
@@ -745,12 +772,14 @@ void COpenGLViewport::EnterLoop()
 		  else if (event.type==ButtonPress) 
 		  {
 			  if(event.xbutton.button==Button1){OnLButtonDown(event.xbutton.x,event.xbutton.y);}
-			  else if(event.xbutton.button==Button2){OnRButtonDown(event.xbutton.x,event.xbutton.y);}
+			  else if(event.xbutton.button==Button3){OnRButtonDown(event.xbutton.x,event.xbutton.y);}
+			  else if(event.xbutton.button==Button4){OnMouseWheelUp(event.xbutton.x,event.xbutton.y);}
+			  else if(event.xbutton.button==Button5){OnMouseWheelDown(event.xbutton.x,event.xbutton.y);}
 		  }
 		  else if (event.type==ButtonRelease) 
 		  {
 			  if(event.xbutton.button==Button1){OnLButtonUp(event.xbutton.x,event.xbutton.y);}
-			  else if(event.xbutton.button==Button2){OnRButtonUp(event.xbutton.x,event.xbutton.y);}
+			  else if(event.xbutton.button==Button3){OnRButtonUp(event.xbutton.x,event.xbutton.y);}
 			  
 			  if(m_nDetectDragButton==event.xbutton.button)
 			  {

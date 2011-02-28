@@ -439,6 +439,16 @@ void COpenGLRender::RenderRect(const CVector &vCenter,const CVector &vAxisW,cons
 	glEnd();
 }
 
+void COpenGLRender::RenderRect(double x,double y,double w,double h)
+{
+	glBegin(GL_QUADS);
+	glVertex2d(x,y);
+	glVertex2d(x+w,y);
+	glVertex2d(x+w,y+h);
+	glVertex2d(x,y+h);
+	glEnd();
+}
+
 void COpenGLRender::RenderPolygon(unsigned int nVertexes,const CVector *pVertexes,const CVector *pColors)
 {
 	glBegin(GL_QUADS);
