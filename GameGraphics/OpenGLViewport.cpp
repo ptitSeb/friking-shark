@@ -15,7 +15,10 @@
 
 int TranslateKeyFromWindows(int nWindowsKey)
 {
-	if(nWindowsKey>=32 && nWindowsKey<127){return nWindowsKey;}
+	if( nWindowsKey=='\t' || nWindowsKey==' ' || 
+		(nWindowsKey>='A' && nWindowsKey<='Z') ||
+		(nWindowsKey>='0' && nWindowsKey<='9')){return nWindowsKey;}
+
 	switch(nWindowsKey)
 	{
 	case VK_UP:return GK_UP;
@@ -42,8 +45,8 @@ int TranslateKeyFromWindows(int nWindowsKey)
 	case GK_LMENU:return GK_LMENU;
 	case VK_LSHIFT:return GK_LSHIFT;
 	case VK_INSERT:return GK_INSERT;
-	case VK_PAGEUP:return GK_PAGEUP;
-	case VK_PAGEDOWN:return GK_PAGEDOWN;
+	case VK_PRIOR:return GK_PAGEUP;
+	case VK_NEXT:return GK_PAGEDOWN;
 	case VK_F1:return GK_F1;
 	case VK_F2:return GK_F2;
 	case VK_F3:return GK_F3;
@@ -64,7 +67,10 @@ int TranslateKeyFromWindows(int nWindowsKey)
 int TranslateKeyToWindows(int nGameKey)
 {
 	if(nGameKey>='a' && nGameKey<='z'){return nGameKey-('a'-'A');}
-	if(nGameKey>=32 && nGameKey<127){return nGameKey;}
+	if( nGameKey=='\t' || nGameKey==' ' || 
+		(nGameKey>='A' && nGameKey<='Z') ||
+		(nGameKey>='0' && nGameKey<='9')){return nGameKey;}
+
 	switch(nGameKey)
 	{
 	case GK_UP:return VK_UP;
@@ -99,8 +105,8 @@ int TranslateKeyToWindows(int nGameKey)
 	case GK_F5:return VK_F5;
 	case GK_PAUSE:return VK_PAUSE;
 	case GK_F10:return VK_F10;
-	case GK_PAGEUP:return VK_PAGEUP;
-	case GK_PAGEDOWN:return VK_PAGEDOWN;
+	case GK_PAGEUP:return VK_PRIOR;
+	case GK_PAGEDOWN:return VK_NEXT;
 	};
 	return 0;
 }
@@ -305,10 +311,6 @@ LRESULT COpenGLViewport::ProcessMessage(HWND hWnd,UINT  uMsg, WPARAM  wParam,LPA
 		m_hWnd=NULL;
 		break;
 	case WM_PAINT:
-		if(m_hRenderContext!=wglGetCurrentContext())
-		{
-			wglMakeCurrent(m_hDC,m_hRenderContext);
-		}
 		Render();
 		return 0;
 		break;
@@ -355,7 +357,7 @@ LRESULT COpenGLViewport::ProcessMessage(HWND hWnd,UINT  uMsg, WPARAM  wParam,LPA
 		OnSize(LOWORD(lParam),HIWORD(lParam));
 		break;
 	case WM_CHAR:
-		OnCharacter((unsigned short)wParam);
+		if((unsigned short)wParam>=32 && (unsigned short)wParam<127){OnCharacter((unsigned short)wParam);}
 		break;
 	case WM_MOVE:
 		OnMove();
@@ -646,6 +648,10 @@ void COpenGLViewport::SetCallBack(IGenericViewportCallBack *pCallBack)
 void COpenGLViewport::SetCurrentRenderTarget(bool bSetAsCurrent){}
 void COpenGLViewport::Render()
 {
+	if(m_hRenderContext!=wglGetCurrentContext())
+	{
+		wglMakeCurrent(m_hDC,m_hRenderContext);
+	}
 	glFrontFace(GL_CCW);
 	glEnable(GL_POINT_SMOOTH);
 	glEnable(GL_POLYGON_SMOOTH);
@@ -875,9 +881,15 @@ void  COpenGLViewport::SetCursorPos(int x,int y)
 #endif
 }
 
+#ifdef WIN32
+bool  COpenGLViewport::HasMouseCapture(){return GetCapture()==m_hWnd;}
+void  COpenGLViewport::SetMouseCapture(){SetCapture(m_hWnd);}
+void  COpenGLViewport::ReleaseMouseCapture(){ReleaseCapture();}
+#else
 bool  COpenGLViewport::HasMouseCapture(){return false;}
 void  COpenGLViewport::SetMouseCapture(){}
 void  COpenGLViewport::ReleaseMouseCapture(){}
+#endif
 
 bool  COpenGLViewport::IsKeyDown(unsigned int nKey)
 {

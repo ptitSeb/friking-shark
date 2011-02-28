@@ -19,6 +19,7 @@ DECLARE_CUSTOM_WRAPPER1(CGenericCameraWrapper,IGenericCamera,m_piCamera)
 DECLARE_CUSTOM_WRAPPER1(CMessageDialogWrapper,IGameGUIMessageDialog,m_piMessageDialog)
 DECLARE_CUSTOM_WRAPPER1(CConfirmDialogWrapper,IGameGUIConfirmDialog,m_piConfirmDialog)
 DECLARE_CUSTOM_WRAPPER1(CColorDialogWrapper,IGameGUIColorDialog,m_piColorDialog)
+DECLARE_CUSTOM_WRAPPER1(CFileDialogWrapper,IGameGUIFileDialog,m_piFileDialog)
 
 class CGameWindowBase :	virtual public CSystemObjectBase, virtual public IGameWindow
 {

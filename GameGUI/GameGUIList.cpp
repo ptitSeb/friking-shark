@@ -4,6 +4,8 @@
 
 CGameGUIList::CGameGUIList(void)
 {
+	m_dThumbPixelsPerLine=0;
+	m_nScrollThumbDragStartFirstVisible=0;
 	m_nFirstVisible=0;
 	m_nVisibleCount=0;
 	m_dFontPixelHeight=0;
@@ -50,28 +52,49 @@ void CGameGUIList::OnDraw(IGenericRender *piRender)
   piFont->CalcTextSize(dFontSize,"A",&dFontPixelWidth,&m_dFontPixelHeight);
 
   double y=m_rRealRect.h;
-  m_nVisibleCount=m_dFontPixelHeight?m_rRealRect.h/m_dFontPixelHeight:0;
+  m_nVisibleCount=(int)(m_dFontPixelHeight?m_rRealRect.h/m_dFontPixelHeight:0);
   double dElementWidth=m_rRealRect.w;
   if(m_nVisibleCount<(int)m_vElements.size())
   {
-	dElementWidth=m_rRealRect.w-m_dScrollWidth;
+	dElementWidth=m_rRealRect.w-m_dScrollBarWidth;
 	piRender->PushState();
 	piRender->ActivateBlending();
+
+	m_dThumbPixelsPerLine=m_vElements.size()?((m_rRealRect.h-m_dScrollBarWidth*2-2*2)/((double)m_vElements.size())):m_rRealRect.h-m_dScrollBarWidth*2-2*2;
+	double dThumbSize=((double)m_nVisibleCount)*m_dThumbPixelsPerLine;
+
+	m_rScrollUp.x=dElementWidth;
+	m_rScrollUp.y=m_rRealRect.h-m_dScrollBarWidth;
+	m_rScrollUp.w=m_dScrollBarWidth;
+	m_rScrollUp.h=m_dScrollBarWidth;
+
+	m_rScrollDown.x=dElementWidth;
+	m_rScrollDown.y=0;
+	m_rScrollDown.w=m_dScrollBarWidth;
+	m_rScrollDown.h=m_dScrollBarWidth;
+
+	m_rScroll.x=dElementWidth;
+	m_rScroll.y=m_dScrollBarWidth;
+	m_rScroll.w=m_dScrollBarWidth;
+	m_rScroll.h=m_rRealRect.h-m_dScrollBarWidth*2.0;
+
+	m_rScrollThumb.x=dElementWidth+2;
+	m_rScrollThumb.y=(m_rRealRect.h-m_dScrollBarWidth)-dThumbSize-((double)m_nFirstVisible)*m_dThumbPixelsPerLine-2;
+	m_rScrollThumb.w=m_dScrollBarWidth-2*2;
+	m_rScrollThumb.h=dThumbSize;
+
 	// Boton superior
 	piRender->SetColor(m_vScrollButtonColor,1);
-	piRender->RenderRect(dElementWidth, m_rRealRect.h-m_dScrollWidth,m_dScrollWidth,m_dScrollWidth);
+	piRender->RenderRect(m_rScrollUp.x,m_rScrollUp.y,m_rScrollUp.w,m_rScrollUp.h);
 	// ScrollBar
 	piRender->SetColor(m_vScrollBkColor,m_dBackgroundAlpha);
-	piRender->RenderRect(dElementWidth, m_dScrollWidth              ,m_dScrollWidth,m_rRealRect.h-m_dScrollWidth*2.0);
+	piRender->RenderRect(m_rScroll.x,m_rScroll.y,m_rScroll.w,m_rScroll.h);
 	// Thumb
 	piRender->SetColor(m_vScrollButtonColor,1);
-	double dThumbPixelsPerLine=m_vElements.size()?((m_rRealRect.h-m_dScrollWidth*2-2*2)/((double)m_vElements.size())):m_rRealRect.h-m_dScrollWidth*2-2*2;
-	double dThumbSize=((double)m_nVisibleCount)*dThumbPixelsPerLine;
-	double dThumbPos=(m_rRealRect.h-m_dScrollWidth)-dThumbSize-((double)m_nFirstVisible)*dThumbPixelsPerLine-2;
-	piRender->RenderRect(dElementWidth+2,dThumbPos                  ,m_dScrollWidth-2*2,dThumbSize);
+	piRender->RenderRect(m_rScrollThumb.x,m_rScrollThumb.y,m_rScrollThumb.w,m_rScrollThumb.h);
 	// Boton inferior
 	piRender->SetColor(m_vScrollButtonColor,1);
-	piRender->RenderRect(dElementWidth, 0                           ,m_dScrollWidth,m_dScrollWidth);
+	piRender->RenderRect(m_rScrollDown.x,m_rScrollDown.y,m_rScrollDown.w,m_rScrollDown.h);
 	piRender->PopState();
   }
   
@@ -139,33 +162,53 @@ void CGameGUIList::OnMouseDown(int nButton,double x,double y)
 {
   CGameWindowBase::OnMouseDown(nButton,x,y);
   
-  if(m_nVisibleCount<(int)m_vElements.size() && x>=(m_rRealRect.w-m_dScrollWidth))
+  SGamePos pos(x,y);
+  if(m_nVisibleCount<(int)m_vElements.size() && x>=m_rScroll.x)
   {
-	// Top Button
-	if(y>=(m_rRealRect.h-m_dScrollWidth))
+	if(m_rScrollUp.Contains(pos)){SelectPrevious();}
+	else if(m_rScrollDown.Contains(pos)){SelectNext();}
+	else if(m_rScrollThumb.Contains(pos))
 	{
-	  SelectPrevious();
+		if(DetectDrag(x,y))
+		{
+			m_piGUIManager->SetMouseCapture(this);
+			m_ptScrollThumbDragStart=pos;
+			m_nScrollThumbDragStartFirstVisible=m_nFirstVisible;
+		}
 	}
-	// Bottom Button
-	else if(y<=m_dScrollWidth)
+	else if(m_rScroll.Contains(pos))
 	{
-	  SelectNext();
-	}
-	else // Scroll bar
-	{
+		if(y<m_rScrollThumb.y){SelectNextPage();}
+		else if(y>(m_rScrollThumb.y+m_rScrollThumb.h)){SelectPreviousPage();}
 	}
   }
   else
   {
-	m_nSelectedElement=m_nFirstVisible+((m_rRealRect.h-y)/m_dFontPixelHeight);
+	m_nSelectedElement=m_nFirstVisible+(int)((m_rRealRect.h-y)/m_dFontPixelHeight);
 	if(m_nSelectedElement<0){m_nSelectedElement=-1;}
 	if(m_nSelectedElement>(int)m_vElements.size()){m_nSelectedElement=-1;}
   }
 }
 
+void CGameGUIList::OnMouseMove(double x,double y)
+{
+	CGameWindowBase::OnMouseMove(x,y);
+	IGameWindow *piCapture=m_piGUIManager->GetMouseCapture();
+	if(piCapture==this)
+	{
+		m_nFirstVisible=m_nScrollThumbDragStartFirstVisible-(int)((y-m_ptScrollThumbDragStart.y)/m_dThumbPixelsPerLine);
+		if(m_nFirstVisible>=((int)m_vElements.size()-m_nVisibleCount)){m_nFirstVisible=m_vElements.size()-m_nVisibleCount;}
+		if(m_nFirstVisible<0){m_nFirstVisible=0;}
+	}
+	REL(piCapture);
+}
 
+void CGameGUIList::OnMouseUp(int nButton,double x,double y)
+{
+	CGameWindowBase::OnMouseUp(nButton,x,y);
 
-
-
-
+	IGameWindow *piCapture=m_piGUIManager->GetMouseCapture();
+	if(piCapture==this){m_piGUIManager->ReleaseMouseCapture();}
+	REL(piCapture);
+}
 

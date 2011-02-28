@@ -11,8 +11,16 @@ class CGameGUIList: virtual public CGameWindowBase,virtual public IGameGUIList
 	CVector m_vScrollBkColor;
 	CVector m_vScrollButtonColor;
 	int 	m_nSelectedElement;
-	
-	double  m_dScrollWidth;
+
+	double    m_dThumbPixelsPerLine;
+	SGamePos  m_ptScrollThumbDragStart;
+	int       m_nScrollThumbDragStartFirstVisible;
+	SGameRect m_rScrollUp;
+	SGameRect m_rScrollDown;
+	SGameRect m_rScroll;
+	SGameRect m_rScrollThumb;
+
+	double  m_dScrollBarWidth;
 	
 	int 	m_nFirstVisible;
 	int 	m_nVisibleCount;
@@ -35,7 +43,7 @@ public:
 		PROP_VALUE_FLAGS(m_vSelectedBackgroundColor,"SelectedBKColor",CVector(0,0,1),MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_vElements,"Elements",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_nSelectedElement,"Selected",-1,MRPF_NORMAL|MRPF_OPTIONAL)
-		PROP_VALUE_FLAGS(m_dScrollWidth,"ScrollWidth",15.0,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_dScrollBarWidth,"ScrollWidth",15.0,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_vScrollBkColor,"ScrollBkColor",CVector(0.4,0.4,0.4),MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_vScrollButtonColor,"ScrollButtonColor",CVector(0.7,0.7,0.7),MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_nMouseWheelPageSize,"MouseWheelPageSize",3,MRPF_NORMAL|MRPF_OPTIONAL)
@@ -46,6 +54,8 @@ public:
 	void OnDraw(IGenericRender *piRender);
 	void OnKeyDown(int nKey,bool *pbProcessed);
 	void OnMouseDown(int nButton,double x,double y);
+	void OnMouseMove(double x,double y);
+	void OnMouseUp(int nButton,double x,double y);
 	void OnMouseWheelDown(double x,double y);
 	void OnMouseWheelUp(double x,double y);
 
