@@ -13,6 +13,7 @@
 #include "GameGUIMessageDialog.h"
 #include "GameGUIConfirmDialog.h"
 #include "GameGUIColorDialog.h"
+#include "GameGUIFileDialog.h"
 
 BEGIN_SYSTEM_MODULE()
 SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameGUIManager,"CGameGUIManager")
@@ -24,5 +25,6 @@ SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameGUIList,"CGameGUIList")
 SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameGUIMessageDialog,"CGameGUIMessageDialog")
 SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameGUIConfirmDialog,"CGameGUIConfirmDialog")
 SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameGUIColorDialog,"CGameGUIColorDialog")
+SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameGUIFileDialog,"CGameGUIFileDialog")
 END_SYSTEM_MODULE()
 

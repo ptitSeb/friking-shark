@@ -451,7 +451,7 @@ bool CScenarioEditorMainWindow::Unserialize(ISystemPersistencyNode *piNode)
 	m_WorldManagerWrapper.Attach("GameSystem","WorldManager");
 	
 	//OpenScenario("C:\\Game\\Demo\\MinimalResources\\test1.ges");
-	OpenScenario("/home/javi/workspace/Game/Demo/Resources/new2.ges");
+	//OpenScenario("/home/javi/workspace/Game/Demo/Resources/new2.ges");
 	return bOk;
 }
 
@@ -541,8 +541,6 @@ void CScenarioEditorMainWindow::ProcessInput(double dTimeFraction,double dRealTi
 			}
 			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
 		}
-		if(m_piGUIManager->IsKeyDown(GK_F3)){ProcessFileOpen();m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;}
-		if(m_piGUIManager->IsKeyDown(GK_F2)){ProcessFileSave();m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;}
 		if(m_piGUIManager->IsKeyDown(GK_PAUSE)){m_FrameManager.m_piFrameManager->TogglePauseOnNextFrame();m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+100;}
 		if(m_piGUIManager->IsKeyDown('T'))
 		{
@@ -2431,6 +2429,9 @@ void CScenarioEditorMainWindow::CenterCamera()
 
 void CScenarioEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 {
+	if(nKey==GK_F3){ProcessFileOpen();*pbProcessed=true;}
+	if(nKey==GK_F2){ProcessFileSave();*pbProcessed=true;}
+
 	if(nKey==GK_DELETE)
 	{
 		*pbProcessed=true;

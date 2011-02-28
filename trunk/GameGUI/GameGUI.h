@@ -275,3 +275,13 @@ public:
 };
 
 
+class IGameGUIFileDialog: virtual public ISystemUnknown
+{
+public:
+
+	virtual bool OpenFile(IGameWindow *piParent,std::string sTitle,const char *psFilter,std::string *psFile)=0;
+	virtual bool SaveFile(IGameWindow *piParent,std::string sTitle,const char *psFilter,std::string *psFile,bool bOverWriteWarn)=0;
+};
+
+
+

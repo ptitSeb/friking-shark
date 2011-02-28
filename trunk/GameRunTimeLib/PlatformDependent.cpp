@@ -10,7 +10,8 @@
 #ifndef WIN32
 #include <sys/time.h>
 #include <libgen.h>
-#endif
+#include <glob.h>
+#endif 
 
 void ReplaceExtension(char *pFileName,const char *pExt)
 {
@@ -25,6 +26,14 @@ void GetExtension(const char *pFileName,char *pExt)
   if(pExtStart){strcpy(pExt,pExtStart);}
   else{*pExt=0;}
 }
+
+std::string AppendPathSeparator(std::string sFile)
+{
+	int nLen=sFile.length();
+	if(nLen && sFile[nLen-1]!=PATH_SEPARATOR_CHAR){sFile+=PATH_SEPARATOR;}
+	return sFile;
+}
+
 
 #ifdef WIN32
 
@@ -69,6 +78,47 @@ unsigned int GetTimeStamp()
 	return (unsigned int)(ldNow.QuadPart*1000/ldPerformanceFrequency.QuadPart);
 }
 
+
+bool FindFiles(const char *psPattern, EFindFilesMode eMode,std::set<std::string> *psFiles)
+{
+	char sFolder[MAX_PATH];
+	GetFileFolder(psPattern,sFolder);
+
+	WIN32_FIND_DATA FileData;
+	HANDLE hFind = FindFirstFile(psPattern, &FileData);
+	if(hFind != INVALID_HANDLE_VALUE) 
+	{
+		do
+		{
+			std::string sFile=AppendPathSeparator(sFolder)+FileData.cFileName;
+			bool bDirectory=((GetFileAttributes(sFile.c_str())&FILE_ATTRIBUTE_DIRECTORY)!=0);
+			switch(eMode)
+			{
+			case eFindFilesMode_OnlyFiles:	if(!bDirectory){psFiles->insert(sFile);};break;
+			case eFindFilesMode_OnlyDirs:	psFiles->insert(sFile);break;
+			case eFindFilesMode_DirsAndFiles:psFiles->insert(sFile);break;
+			}
+		}
+		while(FindNextFile(hFind, &FileData));
+
+		FindClose(hFind);
+		hFind=INVALID_HANDLE_VALUE;
+	}
+	return true;
+}
+
+std::string GetWorkingFolder()
+{
+	char sCurrentPath[MAX_PATH]={0};
+	GetCurrentDirectory(MAX_PATH,sCurrentPath);
+	return sCurrentPath;
+}
+
+bool SetWorkingFolder(std::string sFolder)
+{
+	return (SetCurrentDirectory(sFolder.c_str())==TRUE);
+}
+
 #else
 
 void GetFileFolder(const char *pFilePath,char *pFolder)
@@ -104,6 +154,41 @@ unsigned int GetTimeStamp()
 	timeval tNow;
 	gettimeofday(&tNow, NULL);
 	return ((double)tNow.tv_sec)*1000.0+((double)tNow.tv_usec)/1000.0;
+}
+
+bool FindFiles(const char *psPattern, EFindFilesMode eMode,std::set<std::string> *psFiles);
+{
+	glob_t globbuf={0};
+	int nFlags=GLOB_MARK;
+	nFlags|=((eMode==eFindFilesMode_OnlyDirs)?GLOB_ONLYDIR:0);
+	glob(psPattern,nFlags,NULL,&globbuf);
+	//liberamos la memoria	
+	for (int i=0; i <globbuf.gl_pathc; i++)
+	{
+		const char *pFile=globbuf.gl_pathv[i];
+		if(pFile[0]==0){continue;}
+		bool bDirectory=(pFile[strlen(pFile)-1]==PATH_SEPARATOR_CHAR);
+		switch(eMode)
+		{
+		case eFindFilesMode_OnlyFiles:	if(!bDirectory){psFiles->insert(pFile);};break;
+		case eFindFilesMode_OnlyDirs:	psFiles->insert(pFile);break;
+		case eFindFilesMode_DirsAndFiles:psFiles->insert(pFile);break;
+		}
+	}
+	globfree(&globbuf);
+	return true;
+}
+
+std::string GetWorkingFolder()
+{
+	char sCurrentPath[MAX_PATH]={0};
+	if(!getcwd(sCurrentPath,MAX_PATH)){sCurrentPath[0]=0;}
+	return sCurrentPath;
+}
+
+bool SetWorkingFolder(std::string sFolder)
+{
+	return (chdir(sFolder.c_str())==0);
 }
 #endif
 

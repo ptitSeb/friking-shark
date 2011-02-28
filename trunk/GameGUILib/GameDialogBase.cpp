@@ -11,6 +11,7 @@ CGameDialogBase::CGameDialogBase(void)
 CGameDialogBase::~CGameDialogBase(void)
 {
 }
+
 int	CGameDialogBase::Execute(IGameWindow *piParent)
 {
 	if(CGameWindowBase::InitWindow(piParent,true))

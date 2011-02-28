@@ -10,8 +10,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameRunTime", "..\GameRunTi
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameRunTimeLib", "..\GameRunTimeLib\GameRunTimeLib.vcxproj", "{1ACA288E-6E1A-4FE5-BDBF-D9C06A26C298}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameLib", "..\GameLib\GameLib.vcxproj", "{2FD9DB84-B33B-4B8A-B51F-6939783489EC}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VectorLib", "..\VectorLib\VectorLib.vcxproj", "{E5D975D9-5FB1-4FDA-8075-3007BF987B1F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AnimationSystems", "..\AnimationSystems\AnimationSystems.vcxproj", "{8B59658A-C0F4-4E80-A83E-9948EE4DD8A2}"
@@ -68,10 +66,6 @@ Global
 		{1ACA288E-6E1A-4FE5-BDBF-D9C06A26C298}.Debug|Win32.Build.0 = Debug|Win32
 		{1ACA288E-6E1A-4FE5-BDBF-D9C06A26C298}.Release|Win32.ActiveCfg = Release|Win32
 		{1ACA288E-6E1A-4FE5-BDBF-D9C06A26C298}.Release|Win32.Build.0 = Release|Win32
-		{2FD9DB84-B33B-4B8A-B51F-6939783489EC}.Debug|Win32.ActiveCfg = Debug|Win32
-		{2FD9DB84-B33B-4B8A-B51F-6939783489EC}.Debug|Win32.Build.0 = Debug|Win32
-		{2FD9DB84-B33B-4B8A-B51F-6939783489EC}.Release|Win32.ActiveCfg = Release|Win32
-		{2FD9DB84-B33B-4B8A-B51F-6939783489EC}.Release|Win32.Build.0 = Release|Win32
 		{E5D975D9-5FB1-4FDA-8075-3007BF987B1F}.Debug|Win32.ActiveCfg = Debug|Win32
 		{E5D975D9-5FB1-4FDA-8075-3007BF987B1F}.Debug|Win32.Build.0 = Debug|Win32
 		{E5D975D9-5FB1-4FDA-8075-3007BF987B1F}.Release|Win32.ActiveCfg = Release|Win32

@@ -219,6 +219,11 @@ void CGameGUIManager::RenderWindow(IGenericRender *piRender,IGameWindow *piWindo
 
 
 	piWindow->OnDrawBackground(piRender);
+
+	m_Render.m_piRender->SetOrthographicProjection(rRect.w,rRect.h);
+	m_Render.m_piRender->SetViewport(rRect.x,rRect.y,rRect.w,rRect.h);
+	m_Render.m_piRender->SetCamera(CVector(rRect.w*0.5,rRect.h*0.5,200),90,0,0);
+	m_Render.m_piRender->DeactivateDepth();
 	piWindow->OnDraw(piRender);
 
 	if(!piWindow->IsPopup() && piParent)

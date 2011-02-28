@@ -30,38 +30,20 @@ void CGameEngineApp::Run()
 	if(piPathControl)
 	{
 		// Add executable folder as library path
-		piPathControl->AddLibraryPath(g_sExecutableFolder);
+		piPathControl->AddLibraryPath(AppendPathSeparator(g_sExecutableFolder));
 		
 		// Add working folder as library path
-		char sCurrentPath[MAX_PATH]={0};
-#ifdef WIN32
-		GetCurrentDirectory(MAX_PATH,sCurrentPath);
-#else
-		if(!getcwd(sCurrentPath,MAX_PATH))
-		{
-		  sCurrentPath[0]=0;
-		}
-#endif
-		int len=strlen(sCurrentPath);
-		if(len && sCurrentPath[len-1]!=PATH_SEPARATOR_CHAR)
-		{
-			sCurrentPath[len]=PATH_SEPARATOR_CHAR;
-			sCurrentPath[len+1]=0;
-		}
+		std::string sCurrentPath=AppendPathSeparator(GetWorkingFolder());
 		piPathControl->AddLibraryPath(sCurrentPath);
 	}
 
 	if(g_sRootFolder!="")
 	{
 		RTTRACE("CGameEngineApp::Run -> Setting root folder to %s",g_sRootFolder.c_str());
-#ifdef WIN32
-		SetCurrentDirectory(g_sRootFolder.c_str());
-#else
-		if(chdir(g_sRootFolder.c_str())!=0)
+		if(!SetWorkingFolder(g_sRootFolder))
 		{
-		  RTTRACE("CGameEngineApp::Run -> Error setting root folder to %s",g_sRootFolder.c_str());
+			RTTRACE("CGameEngineApp::Run -> Error setting root folder to %s",g_sRootFolder.c_str());
 		}
-#endif
 	}
 	if(configFile.Open(g_sInitialConfigFile))
 	{

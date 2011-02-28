@@ -1,8 +1,5 @@
 #include "./stdafx.h"
 #include "GameWindowBase.h"
-#ifdef WIN32
-#include "commdlg.h"
-#endif
 
 
 CGameWindowBase::CGameWindowBase(void)
@@ -471,58 +468,21 @@ void	CGameWindowBase::SetBackgroundColor(CVector vColor,double dAlpha)
 }
 
 bool CGameWindowBase::OpenFileDialog(std::string sTitle,const char *psFilter,std::string *psFile)
-{
-#ifdef WIN32
-	GUITHREADINFO threadInfo={0};
-	threadInfo.cbSize=sizeof(threadInfo);
-	GetGUIThreadInfo(GetCurrentThreadId(),&threadInfo);
-
-	char sFileName[MAX_PATH	];
-	strcpy(sFileName,psFile->c_str());
-	OPENFILENAME ofn={0};
-	ofn.lStructSize=sizeof(ofn);
-	ofn.hwndOwner=threadInfo.hwndActive;
-	ofn.lpstrFilter=psFilter;
-	ofn.lpstrFile=sFileName;
-	ofn.nMaxFile=sizeof(sFileName);
-	ofn.lpstrTitle=sTitle.c_str();
-	ofn.Flags=OFN_FILEMUSTEXIST|OFN_NOCHANGEDIR;
-	ShowCursor(true);
-	bool bOk=(GetOpenFileName(&ofn)==TRUE);
-	if(bOk){*psFile=sFileName;}
-	ShowCursor(false);
+{	
+	CFileDialogWrapper dialog;
+	dialog.Attach("GameGUI","FileDialog");
+	bool bOk=false;
+	if(dialog.m_piFileDialog){bOk=dialog.m_piFileDialog->OpenFile(this,sTitle,psFilter,psFile);}
 	return bOk;
-#else
-	return false;
-#endif
 }
 
 bool CGameWindowBase::SaveFileDialog(std::string sTitle,const char *psFilter,std::string *psFile,bool bOverWriteWarn)
 {
-#ifdef WIN32
-	GUITHREADINFO threadInfo={0};
-	threadInfo.cbSize=sizeof(threadInfo);
-	GetGUIThreadInfo(GetCurrentThreadId(),&threadInfo);
-
-	char sFileName[MAX_PATH	];
-	strcpy(sFileName,psFile->c_str());
-	OPENFILENAME ofn={0};
-	ofn.lStructSize=sizeof(ofn);
-	ofn.hwndOwner=threadInfo.hwndActive;
-	ofn.lpstrFilter=psFilter;
-	ofn.lpstrFile=sFileName;
-	ofn.nMaxFile=sizeof(sFileName);
-	ofn.lpstrTitle=sTitle.c_str();
-	ofn.Flags=OFN_PATHMUSTEXIST;
-	if(bOverWriteWarn){ofn.Flags|=OFN_OVERWRITEPROMPT;}
-	ShowCursor(true);
-	bool bOk=(GetSaveFileName(&ofn)==TRUE);
-	if(bOk){*psFile=sFileName;}
-	ShowCursor(false);
+	CFileDialogWrapper dialog;
+	dialog.Attach("GameGUI","FileDialog");
+	bool bOk=false;
+	if(dialog.m_piFileDialog){bOk=dialog.m_piFileDialog->SaveFile(this,sTitle,psFilter,psFile,bOverWriteWarn);}
 	return bOk;
-#else
-	return false;
-#endif
 }
 
 bool CGameWindowBase::SelectColorDialog(std::string sTitle,CVector *pvColor)
