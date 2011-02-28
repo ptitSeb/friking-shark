@@ -45,5 +45,7 @@
 #define GK_F11 339
 #define GK_F12 340
 #define GK_PAUSE 329
+#define GK_PAGEUP 341
+#define GK_PAGEDOWN 342
 
 #endif

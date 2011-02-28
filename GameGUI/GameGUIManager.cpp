@@ -435,7 +435,7 @@ void CGameGUIManager::ProcessMouseActivation(IGameWindow *piWindow)
 	}
 }
 
-void CGameGUIManager::OnLButtonDown(unsigned short wKeyState,unsigned x,unsigned y)
+void CGameGUIManager::OnLButtonDown(unsigned x,unsigned y)
 {
 	SGameSize size;
 	SGamePos pos;
@@ -453,7 +453,7 @@ void CGameGUIManager::OnLButtonDown(unsigned short wKeyState,unsigned x,unsigned
 	REL(piWindow);
 }
 
-void CGameGUIManager::OnRButtonDown(unsigned short wKeyState,unsigned x,unsigned y)
+void CGameGUIManager::OnRButtonDown(unsigned x,unsigned y)
 {
 	SGameSize size;
 	SGamePos pos;
@@ -471,7 +471,43 @@ void CGameGUIManager::OnRButtonDown(unsigned short wKeyState,unsigned x,unsigned
 	REL(piWindow);
 }
 
-void CGameGUIManager::OnLButtonUp(unsigned short wKeyState,unsigned x,unsigned y)
+void CGameGUIManager::OnLButtonDoubleClick(unsigned x,unsigned y)
+{
+	SGameSize size;
+	SGamePos pos;
+	GetWindowSize(&size);
+	pos.x=x;
+	pos.y=size.h-(double)y;
+	IGameWindow *piWindow=m_piMouseCaptureWindow?ADD(m_piMouseCaptureWindow):GetWindowFromPos(&pos,true);
+	if(piWindow)
+	{
+		SGameRect rRect;
+		piWindow->GetRealRect(&rRect);
+		ProcessMouseActivation(piWindow);
+		piWindow->OnMouseDoubleClick(GK_LBUTTON,pos.x-rRect.x,pos.y-rRect.y);
+	}
+	REL(piWindow);
+}
+
+void CGameGUIManager::OnRButtonDoubleClick(unsigned x,unsigned y)
+{
+	SGameSize size;
+	SGamePos pos;
+	GetWindowSize(&size);
+	pos.x=x;
+	pos.y=size.h-(double)y;
+	IGameWindow *piWindow=m_piMouseCaptureWindow?ADD(m_piMouseCaptureWindow):GetWindowFromPos(&pos,true);
+	if(piWindow)
+	{
+		SGameRect rRect;
+		piWindow->GetRealRect(&rRect);
+		ProcessMouseActivation(piWindow);
+		piWindow->OnMouseDoubleClick(GK_RBUTTON,pos.x-rRect.x,pos.y-rRect.y);
+	}
+	REL(piWindow);
+}
+
+void CGameGUIManager::OnLButtonUp(unsigned x,unsigned y)
 {
 	SGameSize size;
 	SGamePos pos;
@@ -488,7 +524,7 @@ void CGameGUIManager::OnLButtonUp(unsigned short wKeyState,unsigned x,unsigned y
 	REL(piWindow);
 }
 
-void CGameGUIManager::OnRButtonUp(unsigned short wKeyState,unsigned x,unsigned y)
+void CGameGUIManager::OnRButtonUp(unsigned x,unsigned y)
 {
 	SGameSize size;
 	SGamePos pos;
@@ -522,6 +558,43 @@ void CGameGUIManager::OnMouseMove(unsigned x,unsigned y)
 	REL(piWindow);
 }
 
+void CGameGUIManager::OnMouseWheelUp(unsigned x,unsigned y)
+{
+	SGameSize size;
+	SGamePos pos;
+	GetWindowSize(&size);
+	pos.x=x;
+	pos.y=size.h-(double)y;
+	IGameWindow *piWindow=m_piMouseCaptureWindow?ADD(m_piMouseCaptureWindow):GetWindowFromPos(&pos,true);
+	if(piWindow)
+	{
+		SGameRect rRect;
+		piWindow->GetRealRect(&rRect);
+		ProcessMouseActivation(piWindow);
+		piWindow->OnMouseWheelUp(pos.x-rRect.x,pos.y-rRect.y);
+	}
+	REL(piWindow);
+}
+
+
+void CGameGUIManager::OnMouseWheelDown(unsigned x,unsigned y)
+{
+	SGameSize size;
+	SGamePos pos;
+	GetWindowSize(&size);
+	pos.x=x;
+	pos.y=size.h-(double)y;
+	IGameWindow *piWindow=m_piMouseCaptureWindow?ADD(m_piMouseCaptureWindow):GetWindowFromPos(&pos,true);
+	if(piWindow)
+	{
+		SGameRect rRect;
+		piWindow->GetRealRect(&rRect);
+		ProcessMouseActivation(piWindow);
+		piWindow->OnMouseWheelDown(pos.x-rRect.x,pos.y-rRect.y);
+	}
+	REL(piWindow);
+}
+
 void CGameGUIManager::OnCharacter(unsigned short wCharacter)
 {
 	if(m_piFocusedWindow)
@@ -548,9 +621,9 @@ void CGameGUIManager::OnCharacter(unsigned short wCharacter)
 	}
 }
 
-void CGameGUIManager::OnKeyDown(unsigned short wKeyState)
+void CGameGUIManager::OnKeyDown(unsigned short wKey)
 {
-	if(wKeyState==GK_RETURN && IsKeyDown(GK_LMENU) && IsKeyDown(GK_LCONTROL))
+	if(wKey==GK_RETURN && IsKeyDown(GK_LMENU) && IsKeyDown(GK_LCONTROL))
 	{
 		m_sScreenProperties.bFullScreen=!m_sScreenProperties.bFullScreen;
 		UpdateScreenPlacement();
@@ -564,7 +637,7 @@ void CGameGUIManager::OnKeyDown(unsigned short wKeyState)
 
 		while(piWindow)
 		{
-			piWindow->OnKeyDown(wKeyState,&bProcessed);
+			piWindow->OnKeyDown(wKey,&bProcessed);
 			if(piWindow->IsPopup() || bProcessed)
 			{
 				REL(piWindow);
@@ -580,7 +653,7 @@ void CGameGUIManager::OnKeyDown(unsigned short wKeyState)
 	}
 }
 
-void CGameGUIManager::OnKeyUp(unsigned short wKeyState)
+void CGameGUIManager::OnKeyUp(unsigned short wKey)
 {
 	if(m_piFocusedWindow)
 	{
@@ -590,7 +663,7 @@ void CGameGUIManager::OnKeyUp(unsigned short wKeyState)
 
 		while(piWindow)
 		{
-			piWindow->OnKeyUp(wKeyState,&bProcessed);
+			piWindow->OnKeyUp(wKey,&bProcessed);
 			if(piWindow->IsPopup() || bProcessed)
 			{
 				REL(piWindow);

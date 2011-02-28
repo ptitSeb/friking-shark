@@ -112,15 +112,19 @@ public:
 
 	virtual void OnRender()=0;
 
-	virtual void OnLButtonDown(unsigned short wKeyState,unsigned x,unsigned y)=0;
-	virtual void OnLButtonUp(unsigned short wKeyState,unsigned x,unsigned y)=0;
-	virtual void OnRButtonDown(unsigned short wKeyState,unsigned x,unsigned y)=0;
-	virtual void OnRButtonUp(unsigned short wKeyState,unsigned x,unsigned y)=0;
+	virtual void OnLButtonDown(unsigned x,unsigned y)=0;
+	virtual void OnLButtonDoubleClick(unsigned x,unsigned y)=0;
+	virtual void OnLButtonUp(unsigned x,unsigned y)=0;
+	virtual void OnRButtonDown(unsigned x,unsigned y)=0;
+	virtual void OnRButtonDoubleClick(unsigned x,unsigned y)=0;
+	virtual void OnRButtonUp(unsigned x,unsigned y)=0;
 	virtual void OnMouseMove(unsigned x,unsigned y)=0;
-	
+	virtual void OnMouseWheelUp(unsigned x,unsigned y)=0;
+	virtual void OnMouseWheelDown(unsigned x,unsigned y)=0;
+		
 	virtual void OnCharacter(unsigned short wCharacter)=0;
-	virtual void OnKeyDown(unsigned short wKeyState)=0;
-	virtual void OnKeyUp(unsigned short wKeyState)=0;
+	virtual void OnKeyDown(unsigned short wKey)=0;
+	virtual void OnKeyUp(unsigned short wKey)=0;
 
 	virtual void OnSize(unsigned cx,unsigned cy)=0;
 	virtual void OnMove()=0;

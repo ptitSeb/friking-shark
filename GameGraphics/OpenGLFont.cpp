@@ -254,6 +254,7 @@ void COpenGLFont::RenderText(double dFontHeight,double x,double y,const char *pT
 		CVector vOrigin(x,y+dFontHeight,0);
 		CVector vOrientation(CVector(1,0,0));
 
+		glBegin(GL_QUADS);
 		int x=0;
 		while(pText[x]!=0)
 		{
@@ -264,7 +265,6 @@ void COpenGLFont::RenderText(double dFontHeight,double x,double y,const char *pT
 			{
 				double s1=pCharacterData->dPixelW*dSizeFactor,s2=pCharacterData->dPixelH*dSizeFactor;
 
-				glBegin(GL_QUADS);
 				glTexCoord2d(pCharacterData->dTextCoordX+pCharacterData->dTextCoordW,pCharacterData->dTextCoordY+pCharacterData->dTextCoordH);
 				glVertex3dv((vOrigin+vOrientation*s1).c);
 				glTexCoord2d(pCharacterData->dTextCoordX,pCharacterData->dTextCoordY+pCharacterData->dTextCoordH);
@@ -273,12 +273,12 @@ void COpenGLFont::RenderText(double dFontHeight,double x,double y,const char *pT
 				glVertex3dv((vOrigin+vAxis2*s2).c);
 				glTexCoord2d(pCharacterData->dTextCoordX+pCharacterData->dTextCoordW,pCharacterData->dTextCoordY);
 				glVertex3dv((vOrigin+vOrientation*s1+vAxis2*s2).c);
-				glEnd();
 			}
 
 			vOrigin.c[0]+=(pCharacterData->dPixelW+m_dTextureFontCharacterSeparation)*dSizeFactor;
 			x++;
 		}
+		glEnd();
 
 		glDisable(GL_TEXTURE_2D);
 		glPopAttrib();

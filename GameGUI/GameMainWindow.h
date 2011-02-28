@@ -64,7 +64,10 @@ public:
 	void 	OnMouseDown(int nButton,double x,double y);
 	void 	OnMouseUp(int nButton,double x,double y);
 	void 	OnMouseMove(double x,double y);
-
+	void 	OnMouseDoubleClick(int nButton,double x,double y);
+	void 	OnMouseWheelUp(double x,double y);
+	void 	OnMouseWheelDown(double x,double y);
+	 
 	void 	OnDrawMouseCursor(SGamePos position,IGenericRender *piRender,bool *pbDrawed);
 	void 	OnDrawBackground(IGenericRender *piRender);
 	void 	OnDraw(IGenericRender *piRender);

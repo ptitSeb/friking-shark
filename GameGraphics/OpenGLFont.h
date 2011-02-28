@@ -85,7 +85,7 @@ public:
 		PROP_FLAGS(m_sTextureFontFileName,"Archivo",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_sTextureFontCharacterSet,"JuegoDeCaracteres",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_dTextureFontCharacterSeparation,"SeparacionCaracteres",MRPF_NORMAL|MRPF_OPTIONAL)
-		PROP_FLAGS(m_dTextureFontSpaceSize,"TamañoEspacio",MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_FLAGS(m_dTextureFontSpaceSize,"TamanoEspacio",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_dTextureFontAlphaTolerance,"ToleranciaAlpha",0,MRPF_NORMAL|MRPF_OPTIONAL);
 
 		PROP_FLAGS(m_sSystemFontName,"Familia",MRPF_NORMAL|MRPF_OPTIONAL)
