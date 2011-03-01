@@ -37,8 +37,8 @@ void          CGameGUIList::RemoveElement(unsigned long nIndex)
 void CGameGUIList::Clear(){ m_vElements.clear();m_nSelectedElement=-1;m_nFirstVisible=0;}
 std::string  CGameGUIList::GetElement(unsigned int nElement){if(nElement<m_vElements.size()){return m_vElements[nElement];}return "";}
 unsigned int CGameGUIList::GetElementCount(){return m_vElements.size();}
-void 		 CGameGUIList::SetSelectedElement(unsigned int nElement){if(nElement<m_vElements.size()){m_nSelectedElement=nElement;}}
-unsigned int CGameGUIList::GetSelectedElement(){return m_nSelectedElement;}
+void 		 CGameGUIList::SetSelectedElement(int nElement){m_nSelectedElement=nElement;ValidateSelection();}
+int 		 CGameGUIList::GetSelectedElement(){return m_nSelectedElement;}
 
 
 void CGameGUIList::OnDraw(IGenericRender *piRender)
@@ -189,7 +189,7 @@ void CGameGUIList::OnMouseDown(int nButton,double x,double y)
   {
 	m_nSelectedElement=m_nFirstVisible+(int)((m_rRealRect.h-y)/m_dFontPixelHeight);
 	if(m_nSelectedElement<0){m_nSelectedElement=-1;}
-	if(m_nSelectedElement>(int)m_vElements.size()){m_nSelectedElement=-1;}
+	if(m_nSelectedElement>=(int)m_vElements.size()){m_nSelectedElement=-1;}
 	std::string sElement=(m_nSelectedElement!=-1)?m_vElements[m_nSelectedElement]:"";
 	NOTIFY_EVENT(IGameGUIListEvents,OnSelectionChanged(this,m_nSelectedElement,sElement));
   }  

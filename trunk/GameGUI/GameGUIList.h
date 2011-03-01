@@ -69,8 +69,8 @@ public:
 	std::string  GetElement(unsigned int nElement);
 	unsigned int GetElementCount();
 	
-	void 		 SetSelectedElement(unsigned int nElement);
-	unsigned int GetSelectedElement();
+	void 		 SetSelectedElement(int nElement);
+	int 		 GetSelectedElement();
 	
 	CGameGUIList(void);
 	~CGameGUIList(void);

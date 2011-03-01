@@ -248,15 +248,15 @@ public:
 	virtual std::string  GetElement(unsigned int nElement)=0;
 	virtual unsigned int GetElementCount()=0;
 	
-	virtual void 		 SetSelectedElement(unsigned int nElement)=0;
-	virtual unsigned int GetSelectedElement()=0;
+	virtual void 		 SetSelectedElement(int nElement)=0;
+	virtual int 		 GetSelectedElement()=0;
 };
 
 class IGameGUIListEvents
 {
 public:
-	 virtual void OnSelectionChanged(IGameGUIList *piControl,unsigned int nElement,std::string sElement)=0;
-	 virtual void OnSelectionDoubleCliked(IGameGUIList *piControl,unsigned int nElement,std::string sElement)=0;
+	 virtual void OnSelectionChanged(IGameGUIList *piControl,int nElement,std::string sElement)=0;
+	 virtual void OnSelectionDoubleCliked(IGameGUIList *piControl,int nElement,std::string sElement)=0;
 
 	 virtual ~IGameGUIListEvents(){}
 };
