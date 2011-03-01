@@ -193,9 +193,16 @@ bool COpenGLModel::LoadFromFile()
 						key.c[1]=p3DSFrame->pVertexes[nSourceVertexIndex].c[1];
 						key.c[2]=p3DSFrame->pVertexes[nSourceVertexIndex].c[2];
 
-						key.n[0]=p3DSFrame->pVertexNormals[nSourceVertexIndex].c[0];
-						key.n[1]=p3DSFrame->pVertexNormals[nSourceVertexIndex].c[1];
-						key.n[2]=p3DSFrame->pVertexNormals[nSourceVertexIndex].c[2];
+						if(p3DSFrame->pVertexNormals)
+						{
+						  key.n[0]=p3DSFrame->pVertexNormals[nSourceVertexIndex].c[0];
+						  key.n[1]=p3DSFrame->pVertexNormals[nSourceVertexIndex].c[1];
+						  key.n[2]=p3DSFrame->pVertexNormals[nSourceVertexIndex].c[2];
+						}
+						else
+						{
+						  key.n[0]=key.n[1]=key.n[2]=0;
+						}
 
 						key.col[0]=pColorFace?p3DSFrame->pColorVertexes[pColorFace->pColorVertexes[v]].c[0]:ambient[0];
 						key.col[1]=pColorFace?p3DSFrame->pColorVertexes[pColorFace->pColorVertexes[v]].c[1]:ambient[1];

@@ -58,6 +58,7 @@ public:
 	void OnMouseUp(int nButton,double x,double y);
 	void OnMouseWheelDown(double x,double y);
 	void OnMouseWheelUp(double x,double y);
+	void OnMouseDoubleClick(int nButton,double x,double y);
 
 	//IGameGUIList
 	

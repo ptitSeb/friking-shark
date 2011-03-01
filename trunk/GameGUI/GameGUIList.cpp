@@ -8,6 +8,7 @@ CGameGUIList::CGameGUIList(void)
 	m_nScrollThumbDragStartFirstVisible=0;
 	m_nFirstVisible=0;
 	m_nVisibleCount=0;
+	m_nSelectedElement=-1;
 	m_dFontPixelHeight=0;
 	PersistencyDefaultValue();
 }
@@ -33,7 +34,7 @@ void          CGameGUIList::RemoveElement(unsigned long nIndex)
   }
 }
 
-void CGameGUIList::Clear(){ m_vElements.clear();}
+void CGameGUIList::Clear(){ m_vElements.clear();m_nSelectedElement=-1;m_nFirstVisible=0;}
 std::string  CGameGUIList::GetElement(unsigned int nElement){if(nElement<m_vElements.size()){return m_vElements[nElement];}return "";}
 unsigned int CGameGUIList::GetElementCount(){return m_vElements.size();}
 void 		 CGameGUIList::SetSelectedElement(unsigned int nElement){if(nElement<m_vElements.size()){m_nSelectedElement=nElement;}}
@@ -143,6 +144,8 @@ void CGameGUIList::ValidateSelection()
 	{
 	  m_nFirstVisible=(m_nSelectedElement-(m_nVisibleCount-1));
 	}
+	std::string sElement=(m_nSelectedElement!=-1)?m_vElements[m_nSelectedElement]:"";
+	NOTIFY_EVENT(IGameGUIListEvents,OnSelectionChanged(this,m_nSelectedElement,sElement));
 }
 
 void CGameGUIList::OnMouseWheelDown(double x,double y)
@@ -187,7 +190,9 @@ void CGameGUIList::OnMouseDown(int nButton,double x,double y)
 	m_nSelectedElement=m_nFirstVisible+(int)((m_rRealRect.h-y)/m_dFontPixelHeight);
 	if(m_nSelectedElement<0){m_nSelectedElement=-1;}
 	if(m_nSelectedElement>(int)m_vElements.size()){m_nSelectedElement=-1;}
-  }
+	std::string sElement=(m_nSelectedElement!=-1)?m_vElements[m_nSelectedElement]:"";
+	NOTIFY_EVENT(IGameGUIListEvents,OnSelectionChanged(this,m_nSelectedElement,sElement));
+  }  
 }
 
 void CGameGUIList::OnMouseMove(double x,double y)
@@ -211,4 +216,19 @@ void CGameGUIList::OnMouseUp(int nButton,double x,double y)
 	if(piCapture==this){m_piGUIManager->ReleaseMouseCapture();}
 	REL(piCapture);
 }
+
+
+void CGameGUIList::OnMouseDoubleClick(int nButton,double x,double y)
+{
+  CGameWindowBase::OnMouseDoubleClick(nButton,x,y);
+
+  if(m_nSelectedElement>=0 && m_nSelectedElement<(int)m_vElements.size())
+  {
+	NOTIFY_EVENT(IGameGUIListEvents,OnSelectionDoubleCliked(this,m_nSelectedElement,m_vElements[m_nSelectedElement]));
+  }
+}
+
+
+
+
 

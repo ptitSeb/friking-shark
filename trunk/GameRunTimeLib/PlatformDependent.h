@@ -44,14 +44,19 @@ enum EFindFilesMode
 	eFindFilesMode_DirsAndFiles
 };
 
-void ReplaceExtension(char *pFileName,const char *pExt);
-void GetExtension(const char *pFileName,char *pExt);
-void GetFileFolder(const char *pFilePath,char *pFolder);
-void GetFileName(const char *pFilePath,char *pFileName);
-bool FindFiles(const char *psPattern, EFindFilesMode eMode,std::set<std::string> *psFiles);
+void 		ReplaceExtension(char *pFileName,const char *pExt);
+void 		GetExtension(const char *pFileName,char *pExt);
+void 		GetFileFolder(const char *pFilePath,char *pFolder);
+void 		GetFileName(const char *pFilePath,char *pFileName);
 std::string AppendPathSeparator(std::string sFile);
+
+bool 		FindFiles(const char *psPattern, EFindFilesMode eMode,std::set<std::string> *psFiles);
+
+time_t 		GetFileTimeStamp(const char *pFileName);
+bool 		FileExists(const char *pFileName);
+bool 		FileIsDirectory(const char *pFileName);
 std::string GetWorkingFolder();
-bool SetWorkingFolder(std::string sFolder);
+bool 		SetWorkingFolder(std::string sFolder);
 
 unsigned int GetTimeStamp();
 

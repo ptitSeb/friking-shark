@@ -16,9 +16,9 @@ int	CGameDialogBase::Execute(IGameWindow *piParent)
 {
 	if(CGameWindowBase::InitWindow(piParent,true))
 	{
+		m_piGUIManager->SetFocus(this);
 		OnInitDialog();
 		Show(true);
-		m_piGUIManager->SetFocus(this);
 		m_piGUIManager->EnterGUILoop();
 		Show(false);
 		OnEndDialog();

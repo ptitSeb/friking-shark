@@ -213,6 +213,15 @@ class IGameGUIEdit: virtual public IGameGUILabel
 public:
 	virtual void	GetBorderColor(CVector *pvColor,double *pdAlpha)=0;
 	virtual void	SetBorderColor(CVector vColor,double dAlpha)=0;
+	virtual void	SetCursor(int nIndex)=0;
+};
+
+class IGameGUIEditEvents
+{
+public:
+	 virtual void OnTextChanged(IGameGUIEdit *piControl,std::string sNewText)=0;
+  
+  	 virtual ~IGameGUIEditEvents(){}
 };
 
 class IGameGUIButton : virtual public IGameGUILabel
@@ -246,7 +255,8 @@ public:
 class IGameGUIListEvents
 {
 public:
-	 virtual void OnSelectionChanged(IGameGUIList *piControl,IGameWindow *piwindow)=0;
+	 virtual void OnSelectionChanged(IGameGUIList *piControl,unsigned int nElement,std::string sElement)=0;
+	 virtual void OnSelectionDoubleCliked(IGameGUIList *piControl,unsigned int nElement,std::string sElement)=0;
 
 	 virtual ~IGameGUIListEvents(){}
 };

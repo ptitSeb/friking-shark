@@ -8,6 +8,7 @@
 #include "PlatformDependent.h"
 
 #ifndef WIN32
+#include <sys/stat.h>
 #include <sys/time.h>
 #include <libgen.h>
 #include <glob.h>
@@ -156,20 +157,21 @@ unsigned int GetTimeStamp()
 	return ((double)tNow.tv_sec)*1000.0+((double)tNow.tv_usec)/1000.0;
 }
 
-bool FindFiles(const char *psPattern, EFindFilesMode eMode,std::set<std::string> *psFiles);
+bool FindFiles(const char *psPattern, EFindFilesMode eMode,std::set<std::string> *psFiles)
 {
 	glob_t globbuf={0};
-	int nFlags=GLOB_MARK;
+	unsigned int nFlags=GLOB_MARK;
 	nFlags|=((eMode==eFindFilesMode_OnlyDirs)?GLOB_ONLYDIR:0);
 	glob(psPattern,nFlags,NULL,&globbuf);
 	//liberamos la memoria	
-	for (int i=0; i <globbuf.gl_pathc; i++)
+	for (unsigned int i=0; i <globbuf.gl_pathc; i++)
 	{
 		const char *pFile=globbuf.gl_pathv[i];
 		if(pFile[0]==0){continue;}
 		bool bDirectory=(pFile[strlen(pFile)-1]==PATH_SEPARATOR_CHAR);
 		switch(eMode)
 		{
+		case eFindFilesMode_Unknown:break;
 		case eFindFilesMode_OnlyFiles:	if(!bDirectory){psFiles->insert(pFile);};break;
 		case eFindFilesMode_OnlyDirs:	psFiles->insert(pFile);break;
 		case eFindFilesMode_DirsAndFiles:psFiles->insert(pFile);break;
@@ -189,6 +191,22 @@ std::string GetWorkingFolder()
 bool SetWorkingFolder(std::string sFolder)
 {
 	return (chdir(sFolder.c_str())==0);
+}
+bool FileExists(const char *pFileName)
+{
+	return (access(pFileName,F_OK)==0);
+}
+bool FileIsDirectory(const char *pFileName)
+{
+	struct stat data;
+	if(stat(pFileName,&data)!=0){return false;}
+	return S_ISDIR(data.st_mode);
+}
+time_t GetFileTimeStamp(const char *pFileName)
+{
+	struct stat data;
+	if(stat(pFileName,&data)!=0){return 0;}
+	return data.st_mtime;
 }
 #endif
 

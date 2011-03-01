@@ -36,7 +36,8 @@ public:
 	void	GetBorderColor(CVector *pvColor,double *pdAlpha);
 	void	SetBorderColor(CVector vColor,double dAlpha);
 
-	void				SetText(std::string sText);
+	void	SetText(std::string sText);
+	void 	SetCursor(int nIndex);
 	// Base
 
 	void 	OnCharacter( int nKey,bool *pbProcessed );
