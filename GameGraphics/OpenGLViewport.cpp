@@ -73,6 +73,7 @@ int TranslateKeyToWindows(int nGameKey)
 
 	switch(nGameKey)
 	{
+	case '\t':return XK_Tab;
 	case GK_UP:return VK_UP;
 	case GK_DOWN:return VK_DOWN;
 	case GK_LEFT:return VK_LEFT;
@@ -117,6 +118,7 @@ int TranslateKeyFromX11(int nX11Key)
 	if(nX11Key>=32 && nX11Key<127){return nX11Key;}
 	switch(nX11Key)
 	{
+	case XK_Tab:return '\t';
 	case XK_Up:return GK_UP;
 	case XK_Down:return GK_DOWN;
 	case XK_Left:return GK_LEFT;
@@ -233,6 +235,14 @@ COpenGLViewport::COpenGLViewport(void)
 	m_nDetectDragX=0;
 	m_nDetectDragY=0;
 	m_nDetectDragButton=0;
+	
+	m_nDblClkDetectLastButton=0;
+	m_nDblClkDetectLastX=0;
+	m_nDblClkDetectLastY=0;
+	m_nDblClkDetectLastTime=0;
+	m_nDblClkDetectMilliseconds=300;
+	m_nDblClkDetectDistance=3;
+	
 #endif
 }
 
@@ -311,6 +321,10 @@ LRESULT COpenGLViewport::ProcessMessage(HWND hWnd,UINT  uMsg, WPARAM  wParam,LPA
 		m_hWnd=NULL;
 		break;
 	case WM_PAINT:
+		if(m_hRenderContext!=wglGetCurrentContext())
+		{
+			wglMakeCurrent(m_hDC,m_hRenderContext);
+		}
 		Render();
 		return 0;
 		break;
@@ -648,10 +662,6 @@ void COpenGLViewport::SetCallBack(IGenericViewportCallBack *pCallBack)
 void COpenGLViewport::SetCurrentRenderTarget(bool bSetAsCurrent){}
 void COpenGLViewport::Render()
 {
-	if(m_hRenderContext!=wglGetCurrentContext())
-	{
-		wglMakeCurrent(m_hDC,m_hRenderContext);
-	}
 	glFrontFace(GL_CCW);
 	glEnable(GL_POINT_SMOOTH);
 	glEnable(GL_POLYGON_SMOOTH);
@@ -680,10 +690,10 @@ void COpenGLViewport::Render()
 #endif
 }
 
-void COpenGLViewport::OnLButtonDoubleClick(int pointX,int pointY){RTTRACE("LDBLCLK");if(m_piCallBack){m_piCallBack->OnLButtonDoubleClick(pointX,pointY);}}
+void COpenGLViewport::OnLButtonDoubleClick(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnLButtonDoubleClick(pointX,pointY);}}
 void COpenGLViewport::OnLButtonDown(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnLButtonDown(pointX,pointY);}}
 void COpenGLViewport::OnLButtonUp(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnLButtonUp(pointX,pointY);}}
-void COpenGLViewport::OnRButtonDoubleClick(int pointX,int pointY){RTTRACE("RDBLCLK");if(m_piCallBack){m_piCallBack->OnRButtonDoubleClick(pointX,pointY);}}
+void COpenGLViewport::OnRButtonDoubleClick(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnRButtonDoubleClick(pointX,pointY);}}
 void COpenGLViewport::OnRButtonDown(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnRButtonDown(pointX,pointY);}}
 void COpenGLViewport::OnRButtonUp(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnRButtonUp(pointX,pointY);}}
 void COpenGLViewport::OnMouseMove(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnMouseMove(pointX,pointY);}}
@@ -777,10 +787,35 @@ void COpenGLViewport::EnterLoop()
 		  }
 		  else if (event.type==ButtonPress) 
 		  {
-			  if(event.xbutton.button==Button1){OnLButtonDown(event.xbutton.x,event.xbutton.y);}
-			  else if(event.xbutton.button==Button3){OnRButtonDown(event.xbutton.x,event.xbutton.y);}
-			  else if(event.xbutton.button==Button4){OnMouseWheelUp(event.xbutton.x,event.xbutton.y);}
-			  else if(event.xbutton.button==Button5){OnMouseWheelDown(event.xbutton.x,event.xbutton.y);}
+			int nCurrentTime=GetTimeStamp();
+			
+			// Regular click processing
+			if(event.xbutton.button==Button1){OnLButtonDown(event.xbutton.x,event.xbutton.y);}
+			else if(event.xbutton.button==Button3){OnRButtonDown(event.xbutton.x,event.xbutton.y);}
+			else if(event.xbutton.button==Button4){OnMouseWheelUp(event.xbutton.x,event.xbutton.y);}
+			else if(event.xbutton.button==Button5){OnMouseWheelDown(event.xbutton.x,event.xbutton.y);}
+			// Double click Detection
+			if((event.xbutton.button==Button1 || event.xbutton.button==Button3) &&
+			   m_nDblClkDetectLastButton==event.xbutton.button && 
+			   (nCurrentTime-m_nDblClkDetectLastTime)<=m_nDblClkDetectMilliseconds &&
+			   fabs(m_nDblClkDetectLastX-event.xbutton.x)<=m_nDblClkDetectDistance &&
+			   fabs(m_nDblClkDetectLastY-event.xbutton.y)<=m_nDblClkDetectDistance)
+			{
+				m_nDblClkDetectLastButton=0;
+				m_nDblClkDetectLastX=0;
+				m_nDblClkDetectLastY=0;
+				m_nDblClkDetectLastTime=0;
+
+				if(event.xbutton.button==Button1){OnLButtonDoubleClick(event.xbutton.x,event.xbutton.y);}
+				else if(event.xbutton.button==Button3){OnRButtonDoubleClick(event.xbutton.x,event.xbutton.y);}
+			}
+			else
+			{
+			    m_nDblClkDetectLastButton=event.xbutton.button;
+				m_nDblClkDetectLastX=event.xbutton.x;
+				m_nDblClkDetectLastY=event.xbutton.y;
+				m_nDblClkDetectLastTime=nCurrentTime;
+			}
 		  }
 		  else if (event.type==ButtonRelease) 
 		  {

@@ -20,6 +20,7 @@ GameMainWindow.cpp\
 GameGUIMessageDialog.cpp\
 GameGUIConfirmDialog.cpp\
 GameGUIColorDialog.cpp\
+GameGUIFileDialog.cpp\
 stdafx.cpp\
 GameGUIManager.cpp\
 GameGUI.cpp

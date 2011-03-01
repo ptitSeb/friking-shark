@@ -450,8 +450,7 @@ bool CScenarioEditorMainWindow::Unserialize(ISystemPersistencyNode *piNode)
 	m_FrameManager.Attach("GameSystem","FrameManager");
 	m_WorldManagerWrapper.Attach("GameSystem","WorldManager");
 	
-	//OpenScenario("C:\\Game\\Demo\\MinimalResources\\test1.ges");
-	//OpenScenario("/home/javi/workspace/Game/Demo/Resources/new2.ges");
+	//OpenScenario("/home/javi/workspace/Game/Demo/Resources/new21.ges");
 	return bOk;
 }
 
@@ -521,7 +520,9 @@ void CScenarioEditorMainWindow::Reset()
 
 void CScenarioEditorMainWindow::ProcessInput(double dTimeFraction,double dRealTimeFraction)
 {
-  
+	//IGameWindow *piFocused=m_piGUIManager->GetFocus();
+	//if(piFocused!=this){return;}
+	
 	if(m_FrameManager.m_piFrameManager->GetCurrentRealTime()>m_dwNexControlKey)
 	{
 		if(m_piGUIManager->IsKeyDown(GK_F1) && m_bSimulationStarted)
@@ -808,6 +809,7 @@ void CScenarioEditorMainWindow::ProcessFileSaveAs()
 	{
 		m_GameControllerWrapper.m_piGameController->SaveScenario(sScenario);	
 		m_sFile=sScenario;
+		UpdateCaption();
 	}
 }
 void CScenarioEditorMainWindow::ProcessFileExit()
@@ -3169,7 +3171,16 @@ double CScenarioEditorMainWindow::GetAirPlaneAbsoluteHeight()
 void CScenarioEditorMainWindow::OpenScenario( std::string sScenario )
 {
 	Reset();
-	m_GameControllerWrapper.m_piGameController->LoadScenario(sScenario);	
+	if(!m_GameControllerWrapper.m_piGameController->LoadScenario(sScenario))
+	{
+	  std::string sMessage=(std::string)"Failed to load '"+sScenario+"'";
+	  
+	  Reset();
+	  if(m_GameControllerWrapper.m_piGameController){m_GameControllerWrapper.m_piGameController->CreateScenario();}
+
+	  MessageDialog(sMessage,"Error",eMessageDialogType_Error);
+	  return;
+	}
 	m_sFile=sScenario;
 	UpdateColorLayerControls();
 	UpdateHeightLayerControls();

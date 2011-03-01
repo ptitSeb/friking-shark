@@ -39,6 +39,13 @@ void CGameGUIEdit::SetBorderColor(CVector vColor,double dAlpha)
 	m_dBorderAlpha=dAlpha;
 }
 
+void CGameGUIEdit::SetCursor(int nIndex)
+{
+	if(nIndex>(int)m_sText.length()){nIndex=m_sText.length()-1;}
+	if(nIndex<0){nIndex=0;}
+	m_nEditionPos=m_nSelectionPos=nIndex;
+}
+
 
 void CGameGUIEdit::DrawText(IGenericRender *piRender,CVector &vColor,double dAlpha)
 {
@@ -162,10 +169,14 @@ void CGameGUIEdit::OnCharacter( int nKey,bool *pbProcessed )
 	m_nSelectionPos=m_nEditionPos;
 	m_sText=sCommand;
 	*pbProcessed=true;
+	
+	NOTIFY_EVENT(IGameGUIEditEvents,OnTextChanged(this,m_sText))
 }
 
 void CGameGUIEdit::OnKeyDown( int nKey,bool *pbProcessed )
 {
+	bool bNotify=false;
+	 
 	int nCommand=0;
 	char sCommand[10*1024];
 	strcpy(sCommand,m_sText.c_str());
@@ -233,6 +244,7 @@ void CGameGUIEdit::OnKeyDown( int nKey,bool *pbProcessed )
 			m_nEditionPos--;
 			m_nSelectionPos=m_nEditionPos;
 			sCommand[nCommand]=0;
+			bNotify=true;
 		}
 		*pbProcessed=true;
 	}	
@@ -248,11 +260,13 @@ void CGameGUIEdit::OnKeyDown( int nKey,bool *pbProcessed )
 			memmove(sCommand+m_nEditionPos,sCommand+m_nEditionPos+1,nCommand-m_nEditionPos-1);
 			nCommand--;
 			sCommand[nCommand]=0;
+			bNotify=true;
 		}
 		m_nSelectionPos=m_nEditionPos;
 		*pbProcessed=true;
 	}
 	m_sText=sCommand;
+	if(bNotify){NOTIFY_EVENT(IGameGUIEditEvents,OnTextChanged(this,m_sText));}
 }
 
 void CGameGUIEdit::DeleteSelection()
@@ -264,6 +278,8 @@ void CGameGUIEdit::DeleteSelection()
 	  
   	 m_sText.replace(nSelectionStart,nSelectionEnd-nSelectionStart,"");	 
 	 m_nEditionPos=m_nSelectionPos=nSelectionStart;
+
+	 NOTIFY_EVENT(IGameGUIEditEvents,OnTextChanged(this,m_sText))
    }
 }
 

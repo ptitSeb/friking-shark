@@ -1,6 +1,9 @@
 #pragma once
 
-class CGameGUIFileDialog: public CGameDialogBase, virtual public IGameGUIFileDialog, virtual public IGameGUIButtonEvents
+class CGameGUIFileDialog: public CGameDialogBase, virtual public IGameGUIFileDialog, 
+	virtual public IGameGUIButtonEvents,
+	virtual public IGameGUIEditEvents,
+	virtual public IGameGUIListEvents
 {
 	IGameGUIButton *m_piBTCancel;
 	IGameGUIButton *m_piBTSelect;
@@ -17,19 +20,27 @@ protected:
 
 	BEGIN_CHILD_MAP()
 		CHILD_MAP_ENTRY("Title",m_piSTTitle);
-		CHILD_MAP_ENTRY("Path",m_piEDPath);
-		CHILD_MAP_ENTRY("Files",m_piLSFiles);
+		CHILD_MAP_ENTRY_EX("Path",m_piEDPath,IGameGUIEditEvents);
+		CHILD_MAP_ENTRY_EX("Files",m_piLSFiles,IGameGUIListEvents);
 		CHILD_MAP_ENTRY_EX("Cancel",m_piBTCancel,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Select",m_piBTSelect,IGameGUIButtonEvents);
 	END_CHILD_MAP()
 	
 	void OnButtonClicked(IGameGUIButton *piControl);
+	void OnTextChanged(IGameGUIEdit *piControl,std::string sNewText);
+	void OnSelectionChanged(IGameGUIList *piControl,unsigned int nElement,std::string sElement);
+	void OnSelectionDoubleCliked(IGameGUIList *piControl,unsigned int nElement,std::string sElement);
+
 	void OnKeyDown(int nKey,bool *pbProcessed);
 	
 	void OnInitDialog();
 	void OnEndDialog();
 
 	void UpdateFiles();
+
+	void ProcessSelect();
+
+	void AutoComplete();
 
 public:
 	// IGameGUIFileDialog

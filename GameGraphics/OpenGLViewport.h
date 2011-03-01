@@ -31,6 +31,13 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 		int 		 m_XLastWidth;
 		int 		 m_XLastHeight;
 		bool		 m_bXExit;
+		unsigned int m_nDblClkDetectLastButton;
+		int 		 m_nDblClkDetectLastX;
+		int 		 m_nDblClkDetectLastY;
+		int 		 m_nDblClkDetectLastTime;
+		int 		 m_nDblClkDetectMilliseconds;
+		int 		 m_nDblClkDetectDistance;
+
 
 		int          m_nLoopDepth;
 		int 		 m_nDetectDragX;
