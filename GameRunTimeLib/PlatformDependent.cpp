@@ -13,7 +13,10 @@
 #include <sys/time.h>
 #include <libgen.h>
 #include <glob.h>
+#else
+#include <io.h>
 #endif
+
 
 void ReplaceExtension(char *pFileName,const char *pExt)
 {
@@ -38,36 +41,30 @@ std::string AppendPathSeparator(std::string sFile)
 
 std::string NormalizePath(std::string sPath)
 {
-#ifdef WIN32
-	char sDrive[MAX_PATH]={0},sFolder[MAX_PATH]={0},sFile[MAX_PATH]={0},sExt[MAX_PATH]={0};
-	_splitpath(sPath.c_str(),sDrive,sFolder,sFile,sExt);
-	std::string sNormalized=sDrive;
-	std::string sFileName=sFile;
-	sFileName+=sExt;
-	sNormalized+=PATH_SEPARATOR;
-#else
+	std::string sFolder=sPath;
 	std::string sFileName=GetFileName(sPath);
-	GetFileFolder(sPath.c_str(),sFolder);
-#endif
-
+	
 	std::deque<std::string> sFolders;
-	char *pContext=NULL;
-	char *pToken=strtok_r(sFolder,PATH_SEPARATOR,&pContext);
-	while(pToken)
+	std::string sFolderName;
+	
+	int nToSkip=0;
+	while((sFolderName=GetFileName(sFolder))!="")
 	{
-		if(strcmp(pToken,".")==0){continue;}
-		else if(strcmp(pToken,"..")==0){if(sFolders.size()){sFolders.pop_back();}}
-		else {sFolders.push_back(pToken);}
-
-		pToken=strtok_r(NULL,PATH_SEPARATOR,&pContext);
+		if(sFolder=="."){break;}
+		if(sFolderName==".."){nToSkip++;}
+		else if(sFolderName!="."){if(nToSkip){nToSkip--;}else{sFolders.push_back(sFolderName);}}
+		sFolder=GetFileFolder(sFolder);
 	}
-	std::deque<std::string>::iterator i;
-	for(i=sFolders.begin();i!=sFolders.end();i++)
+	// Aqui sFolder conteniene / en Linux y C:\ en windows
+	std::string sNormalized=sFolder;
+	
+	std::deque<std::string>::reverse_iterator i;
+	for(i=sFolders.rbegin();i!=sFolders.rend();i++)
 	{
-		sNormalized+=*i;
-		sNormalized+=PATH_SEPARATOR;
+		sNormalized=AppendPathSeparator(sNormalized);
+		sNormalized+=(*i);
 	}
-	sNormalized+=sFileName;
+	if(FileIsDirectory(sNormalized.c_str())){sNormalized=AppendPathSeparator(sNormalized);}
 	return sNormalized;
 }
 
@@ -77,7 +74,13 @@ void GetFileFolder(const char *pFilePath,char *pFolder)
 {
 	char sDrive[MAX_PATH]={0};
 	char sFolder[MAX_PATH]={0};
-	_splitpath(pFilePath,sDrive,sFolder,NULL,NULL);
+	char pTempFilePath[MAX_PATH]={0};
+	strcpy(pTempFilePath,pFilePath);
+	int nLen=strlen(pTempFilePath);
+	if(nLen && pTempFilePath[nLen-1]==PATH_SEPARATOR_CHAR){pTempFilePath[nLen-1]=0;}
+	// SplitPath devuelve FileName "" para c:\Temp\ en lugar de Temp
+	// Para evitarlo se le quita la barra final
+	_splitpath(pTempFilePath,sDrive,sFolder,NULL,NULL);
 	strcpy(pFolder,sDrive);
 	strcat(pFolder,sFolder);
 }
@@ -86,6 +89,12 @@ void GetFileName(const char *pFilePath,char *pFileName)
 {
 	char sFile[MAX_PATH]={0};
 	char sExt[MAX_PATH]={0};
+	char pTempFilePath[MAX_PATH]={0};
+	// SplitPath devuelve FileName "" para c:\Temp\ en lugar de Temp
+	// Para evitarlo se le quita la barra final
+	strcpy(pTempFilePath,pFilePath);
+	int nLen=strlen(pTempFilePath);
+	if(nLen && pTempFilePath[nLen-1]==PATH_SEPARATOR_CHAR){pTempFilePath[nLen-1]=0;}
 	_splitpath(pFilePath,NULL,NULL,sFile,sExt);
 	strcpy(pFileName,sFile);
 	strcat(pFileName,sExt);
@@ -96,8 +105,8 @@ std::string GetFileFolder(std::string sFilePath)
 	std::string sFileFolder;
 	char sDrive[MAX_PATH]={0};
 	char sFolder[MAX_PATH]={0};
-
-	// SplitPath devuelve Folder "C:\Temp\" para C:\Temp\ en lugar de C:\
+	
+	// SplitPath devuelve Folder "C:\Temp\" para C:\Temp\ en lugar de C:\.
 	// Para evitarlo se le quita la barra final
 	if(sFilePath.length() && sFilePath.at(sFilePath.length()-1)==PATH_SEPARATOR_CHAR)
 	{
@@ -221,6 +230,7 @@ void GetFileName(const char *pFilePath,char *pFileName)
 {
 	char *pTemp=strdup(pFilePath);
 	strcpy(pFileName,basename(pTemp));
+	if(strcmp(pFileName,"/")==0){pFileName[0]=0;}
 	free(pTemp);
 }
 
@@ -237,7 +247,8 @@ std::string GetFileName(std::string sFilePath)
 {
 	std::string sFileName;
 	char *pTemp=strdup(sFilePath.c_str());
-	sFileName=basename(pTemp));
+	sFileName=basename(pTemp);
+	if(sFileName=="/"){return "";}
 	free(pTemp);
 	return sFileName;
 }
@@ -269,6 +280,11 @@ bool FindFiles(const char *psPattern, EFindFilesMode eMode,std::set<std::string>
 	unsigned int nFlags=GLOB_MARK;
 	nFlags|=((eMode==eFindFilesMode_OnlyDirs)?GLOB_ONLYDIR:0);
 	glob(psPattern,nFlags,NULL,&globbuf);
+	if(eMode!=eFindFilesMode_OnlyFiles )
+	{
+	  std::string sParent=GetFileFolder(psPattern)+PATH_SEPARATOR+".."+PATH_SEPARATOR;
+	  if(FileExists(sParent.c_str())){psFiles->insert(sParent);}
+	}
 	//liberamos la memoria	
 	for (unsigned int i=0; i <globbuf.gl_pathc; i++)
 	{
@@ -279,7 +295,7 @@ bool FindFiles(const char *psPattern, EFindFilesMode eMode,std::set<std::string>
 		{
 		case eFindFilesMode_Unknown:break;
 		case eFindFilesMode_OnlyFiles:	if(!bDirectory){psFiles->insert(pFile);};break;
-		case eFindFilesMode_OnlyDirs:	if(!bDirectory){psFiles->insert(pFile);};break;
+		case eFindFilesMode_OnlyDirs:	if(bDirectory){psFiles->insert(pFile);};break;
 		case eFindFilesMode_DirsAndFiles:psFiles->insert(pFile);break;
 		}
 	}
@@ -315,14 +331,5 @@ time_t GetFileTimeStamp(const char *pFileName)
 	return data.st_mtime;
 }
 
-
-std::string NormalizePath(std::string sPath)
-{
-	char sTemp[MAX_PATH]={0};
-	int nLength=readlink(sPath.c_str(),sTemp,sizeof(sTemp)-1);
-	if(nLength==-1){return sPath;}
-	sTemp[nLength]=0;
-	return sTemp;
-}
 #endif
 

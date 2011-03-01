@@ -179,9 +179,9 @@ void CGameGUIFileDialog::OnTextChanged(IGameGUIEdit *piControl,std::string sNewT
   UpdateFiles();
 }
 
-void CGameGUIFileDialog::OnSelectionChanged(IGameGUIList *piControl,unsigned int nElement,std::string sElement)
+void CGameGUIFileDialog::OnSelectionChanged(IGameGUIList *piControl,int nElement,std::string sElement)
 {
-  if(m_piEDPath)
+  if(nElement!=-1 && m_piEDPath)
   {
     std::string sNormalized=NormalizePath(sElement);
 	m_piEDPath->SetText(sNormalized);
@@ -189,7 +189,7 @@ void CGameGUIFileDialog::OnSelectionChanged(IGameGUIList *piControl,unsigned int
   }
 }
 
-void CGameGUIFileDialog::OnSelectionDoubleCliked(IGameGUIList *piControl,unsigned int nElement,std::string sElement)
+void CGameGUIFileDialog::OnSelectionDoubleCliked(IGameGUIList *piControl,int nElement,std::string sElement)
 {
   if(m_piEDPath)
   {

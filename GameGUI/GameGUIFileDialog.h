@@ -29,8 +29,8 @@ protected:
 	
 	void OnButtonClicked(IGameGUIButton *piControl);
 	void OnTextChanged(IGameGUIEdit *piControl,std::string sNewText);
-	void OnSelectionChanged(IGameGUIList *piControl,unsigned int nElement,std::string sElement);
-	void OnSelectionDoubleCliked(IGameGUIList *piControl,unsigned int nElement,std::string sElement);
+	void OnSelectionChanged(IGameGUIList *piControl,int nElement,std::string sElement);
+	void OnSelectionDoubleCliked(IGameGUIList *piControl,int nElement,std::string sElement);
 
 	void OnKeyDown(int nKey,bool *pbProcessed);
 	
