@@ -14,6 +14,7 @@
 	#define PATH_SEPARATOR "\\"
 	#define PATH_SEPARATOR_CHAR '\\'
 	#define strcasecmp _stricmp
+	#define strtok_r strtok_s
 
 	#define RTASSERT(x) _ASSERTE((x))
 	#define __UNUSED_ATTRIB__
@@ -47,7 +48,9 @@ enum EFindFilesMode
 void 		ReplaceExtension(char *pFileName,const char *pExt);
 void 		GetExtension(const char *pFileName,char *pExt);
 void 		GetFileFolder(const char *pFilePath,char *pFolder);
+std::string GetFileFolder(std::string sFilePath);
 void 		GetFileName(const char *pFilePath,char *pFileName);
+std::string GetFileName(std::string sFilePath);
 std::string AppendPathSeparator(std::string sFile);
 
 bool 		FindFiles(const char *psPattern, EFindFilesMode eMode,std::set<std::string> *psFiles);
@@ -57,6 +60,7 @@ bool 		FileExists(const char *pFileName);
 bool 		FileIsDirectory(const char *pFileName);
 std::string GetWorkingFolder();
 bool 		SetWorkingFolder(std::string sFolder);
+std::string NormalizePath(std::string sPath);
 
 unsigned int GetTimeStamp();
 

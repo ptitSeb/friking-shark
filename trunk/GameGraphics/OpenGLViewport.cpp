@@ -73,7 +73,6 @@ int TranslateKeyToWindows(int nGameKey)
 
 	switch(nGameKey)
 	{
-	case '\t':return XK_Tab;
 	case GK_UP:return VK_UP;
 	case GK_DOWN:return VK_DOWN;
 	case GK_LEFT:return VK_LEFT;
@@ -168,6 +167,7 @@ int TranslateKeyToX11(int nGameKey)
 	if(nGameKey>=32 && nGameKey<127){return nGameKey;}
 	switch(nGameKey)
 	{
+	case '\t':return XK_Tab;
 	case GK_UP:return XK_Up;
 	case GK_DOWN:return XK_Down;
 	case GK_LEFT:return XK_Left;
