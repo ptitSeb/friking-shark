@@ -55,7 +55,7 @@ std::string NormalizePath(std::string sPath)
 		else if(sFolderName!="."){if(nToSkip){nToSkip--;}else{sFolders.push_back(sFolderName);}}
 		sFolder=GetFileFolder(sFolder);
 	}
-	// Aqui sFolder conteniene / en Linux y C:\ en windows
+	// Aqui sFolder contiene / en Linux y C:\ en windows
 	std::string sNormalized=sFolder;
 	
 	std::deque<std::string>::reverse_iterator i;
@@ -136,7 +136,6 @@ std::string GetFileName(std::string sFilePath)
 	_splitpath(sFilePath.c_str(),NULL,NULL,sFile,sExt);
 	sFileName=sFile;
 	sFileName+=sExt;
-	if(bSeparatorRemoved){sFileName+=PATH_SEPARATOR;}
 	return sFileName;
 }
 void RTTRACE(const char *format, ...)
@@ -215,7 +214,9 @@ bool FileExists(const char *pFileName)
 
 bool FileIsDirectory(const char *pFileName)
 {
-	return ((GetFileAttributes(pFileName)&FILE_ATTRIBUTE_DIRECTORY)!=0);
+	DWORD dwAttrib=GetFileAttributes(pFileName);
+	if(dwAttrib==0xFFFFFFFF){return false;}
+	return ((dwAttrib&FILE_ATTRIBUTE_DIRECTORY)!=0);
 }
 #else
 
