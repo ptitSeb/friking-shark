@@ -780,7 +780,7 @@ void CScenarioEditorMainWindow::ProcessFileNew()
 void CScenarioEditorMainWindow::ProcessFileOpen()
 {
 	std::string sScenario=m_sFile;
-	if(OpenFileDialog("Load scenario...","Scenario files (*.ges)\0*.ges\0\0",&sScenario))
+	if(OpenFileDialog("Load scenario...",".ges",&sScenario))
 	{
 		OpenScenario(sScenario);
 
@@ -852,7 +852,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		std::string sBaseModel;
 		m_WorldManagerWrapper.m_piTerrain->GetTerrainBaseModel(&sBaseModel,NULL);
 		std::string sFile="*.ase";
-		if(OpenFileDialog("Select model...","All supported files\0*.ase;*.mdl\0ASE files (*.ase)\0*.ase\0Quake Models (*.mdl)\0*.mdl\0\0",&sBaseModel))
+		if(OpenFileDialog("Select model...",".ase",&sBaseModel))
 		{
 			m_WorldManagerWrapper.m_piTerrain->SetTerrainBaseModel(sBaseModel);
 		}
@@ -863,7 +863,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	{
 		std::string sColorMap;
 		m_WorldManagerWrapper.m_piTerrain->GetTerrainColorMap(&sColorMap,NULL);
-		if(OpenFileDialog("Select layer texture...","All supported files\0*.jpg;*.jpeg;*.bmp\0JPEG files (*.jpg)\0*.jpg;*.jpeg\0BMP files (*.bmp)\0*.bmp\0\0",&sColorMap))
+		if(OpenFileDialog("Select layer texture...",".jpg;.jpeg;.bmp",&sColorMap))
 		{
 			m_WorldManagerWrapper.m_piTerrain->SetTerrainColorMap(sColorMap);
 			UpdateTexturization();	
@@ -1038,7 +1038,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		STerrainColorLayer layer;
 		layer.dHorizontalResolution=1;
 		layer.dVerticalResolution=1;
-		if(OpenFileDialog("Select layer texture...","All supported files\0*.jpg;*.jpeg;*.bmp\0JPEG files (*.jpg)\0*.jpg;*.jpeg\0BMP files (*.bmp)\0*.bmp\0\0",&layer.sTextureFile))
+		if(OpenFileDialog("Select layer texture...",".jpg;.jpeg;.bmp",&layer.sTextureFile))
 		{
 			m_WorldManagerWrapper.m_piTerrain->AddTerrainColorLayer(&layer);
 			UpdateColorLayerControls();
@@ -1068,7 +1068,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			layer.dMinHeight=0;
 			layer.dMaxHeight=1.0;
 		}
-		if(OpenFileDialog("Select layer texture...","All supported files\0*.jpg;*.jpeg;*.bmp\0JPEG files (*.jpg)\0*.jpg;*.jpeg\0BMP files (*.bmp)\0*.bmp\0\0",&layer.sTextureFile))
+		if(OpenFileDialog("Select layer texture...",".jpg;.jpeg;.bmp",&layer.sTextureFile))
 		{
 			m_WorldManagerWrapper.m_piTerrain->AddTerrainHeightLayer(&layer);
 			UpdateHeightLayerControls();
@@ -1185,7 +1185,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		} 
 		else if(piControl==m_piBTHeightLayerSample)
 		{
-			if(OpenFileDialog("Open texture...","All supported files\0*.jpg;*.jpeg;*.bmp\0JPEG files (*.jpg)\0*.jpg;*.jpeg\0BMP files (*.bmp)\0*.bmp\0\0",&heightLayer.sTextureFile))
+			if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp",&heightLayer.sTextureFile))
 			{
 				bChange=true;
 			}
@@ -1292,7 +1292,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		} 
 		else if(piControl==m_piBTColorLayerSample)
 		{
-			if(OpenFileDialog("Open texture...","All supported files\0*.jpg;*.jpeg;*.bmp\0JPEG files (*.jpg)\0*.jpg;*.jpeg\0BMP files (*.bmp)\0*.bmp\0\0",&colorLayer.sTextureFile))
+			if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp",&colorLayer.sTextureFile))
 			{
 				bChange=true;
 			}
@@ -1502,14 +1502,14 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	}
 	else if(piControl==m_piBTWaterSample)
 	{
-		if(OpenFileDialog("Open texture...","All supported files\0*.jpg;*.jpeg;*.bmp\0JPEG files (*.jpg)\0*.jpg;*.jpeg\0BMP files (*.bmp)\0*.bmp\0\0",&sWater.sTextureFile1))
+		if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp",&sWater.sTextureFile1))
 		{
 			bWaterChanged=true;
 		}
 	}
 	else if(piControl==m_piBTWaterSecondSample)
 	{
-		if(OpenFileDialog("Open texture...","All supported files\0*.jpg;*.jpeg;*.bmp\0JPEG files (*.jpg)\0*.jpg;*.jpeg\0BMP files (*.bmp)\0*.bmp\0\0",&sWater.sTextureFile2))
+		if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp",&sWater.sTextureFile2))
 		{
 			bWaterChanged=true;
 		}
@@ -1585,7 +1585,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	}
 	else if(piControl==m_piBTSkySample)
 	{
-		if(OpenFileDialog("Open texture...","All supported files\0*.jpg;*.jpeg;*.bmp\0JPEG files (*.jpg)\0*.jpg;*.jpeg\0BMP files (*.bmp)\0*.bmp\0\0",&sSky.sTextureFile))
+		if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp",&sSky.sTextureFile))
 		{
 			bSkyChanged=true;
 		}

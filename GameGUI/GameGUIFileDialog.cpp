@@ -40,10 +40,16 @@ void CGameGUIFileDialog::UpdateFiles()
 		std::string sFilter=sFile+"*";
 		std::set<std::string> sFiles;
 		std::set<std::string>::iterator i;
-		FindFiles(sFilter.c_str(),eFindFilesMode_DirsAndFiles,&sFiles);
 		m_piLSFiles->Clear();
+
+		FindFiles((sFilter).c_str(),eFindFilesMode_OnlyDirs,&sFiles);
+		for(i=sFiles.begin();i!=sFiles.end();i++){m_piLSFiles->AddElement(*i);}
+		sFiles.clear();
+		FindFiles((sFilter).c_str(),eFindFilesMode_OnlyFiles,&sFiles);
 		for(i=sFiles.begin();i!=sFiles.end();i++)
 		{
+			if(i->length()<m_sPattern.length()){continue;}
+			if(strcmp(i->c_str()+i->length()-m_sPattern.length(),m_sPattern.c_str())!=0){continue;}
 			m_piLSFiles->AddElement(*i);
 		}
 	}
@@ -84,8 +90,9 @@ void CGameGUIFileDialog::AutoComplete()
 	}
 	if(m_piEDPath)
 	{
-	  m_piEDPath->SetText(sFile);
-	  m_piEDPath->SetCursor(sFile.length());
+	  std::string sNormalized=NormalizePath(sFile);
+	  m_piEDPath->SetText(sNormalized);
+	  m_piEDPath->SetCursor(sNormalized.length());
 	  
 	  UpdateFiles();
 	}
@@ -148,6 +155,7 @@ bool CGameGUIFileDialog::OpenFile(IGameWindow *piParent,std::string sTitle,const
 {	
 	m_sFile=*psFile;
 	m_sTitle=sTitle;
+	m_sPattern=psFilter;
 	m_bOpenMode=true;
 	if(Execute(piParent)!=DIALOG_OK){return false;}
 	*psFile=m_sFile;
@@ -158,6 +166,7 @@ bool CGameGUIFileDialog::SaveFile(IGameWindow *piParent,std::string sTitle,const
 {	
 	m_sFile=*psFile;
 	m_sTitle=sTitle;
+	m_sPattern=psFilter;
 	m_bOverWriteWarn=bOverWriteWarn;
 	m_bOpenMode=false;
 	if(Execute(piParent)!=DIALOG_OK){return false;}
@@ -174,8 +183,9 @@ void CGameGUIFileDialog::OnSelectionChanged(IGameGUIList *piControl,unsigned int
 {
   if(m_piEDPath)
   {
-	m_piEDPath->SetText(sElement);
-	m_piEDPath->SetCursor(sElement.length());
+    std::string sNormalized=NormalizePath(sElement);
+	m_piEDPath->SetText(sNormalized);
+	m_piEDPath->SetCursor(sNormalized.length());
   }
 }
 
@@ -183,8 +193,9 @@ void CGameGUIFileDialog::OnSelectionDoubleCliked(IGameGUIList *piControl,unsigne
 {
   if(m_piEDPath)
   {
-	m_piEDPath->SetText(sElement);
-	m_piEDPath->SetCursor(sElement.length());
+    std::string sNormalized=NormalizePath(sElement);
+	m_piEDPath->SetText(sNormalized);
+	m_piEDPath->SetCursor(sNormalized.length());
   }
   ProcessSelect();
 }
