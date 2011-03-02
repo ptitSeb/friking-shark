@@ -191,9 +191,9 @@ IGameWindow *CGameGUIManager::GetWindowFromPos(SGamePos *pPosition,bool bOnlyAct
 	return GetWindowFromPos(m_piMainWindow,pPosition,bOnlyActive);
 }
 
-void CGameGUIManager::RenderWindow(IGenericRender *piRender,IGameWindow *piWindow)
+void CGameGUIManager::RenderWindow(IGenericRender *piRender,IGameWindow *piWindow,SGameRect rParentClipRect)
 {
-	SGameRect									rRect;
+	SGameRect				  rRect;
 	std::vector<IGameWindow*> vChildren;
 	std::vector<IGameWindow*>::iterator iChildren;
 	IGameWindow *piParent=piWindow->GetParent();
@@ -204,18 +204,14 @@ void CGameGUIManager::RenderWindow(IGenericRender *piRender,IGameWindow *piWindo
 	m_Render.m_piRender->SetCamera(CVector(rRect.w*0.5,rRect.h*0.5,200),90,0,0);
 	m_Render.m_piRender->DeactivateDepth();
 
+	SGameRect rClipRect=rRect;
+	rClipRect.ClipToRect(&rParentClipRect);
+	
 	if(!piWindow->IsPopup() && piParent)
 	{
-		SGameRect clipRect=rRect;
-		SGameRect	rParentRect;
-
-		piRender->ActivateClipping(true);
-
-		piParent->GetRealRect(&rParentRect);
-		clipRect.ClipToRect(&rParentRect);
-		piRender->SetClipRect(clipRect.x,clipRect.y,clipRect.w,clipRect.h);
+		piRender->ActivateClipping(true); 
+		piRender->SetClipRect(rClipRect.x,rClipRect.y,rClipRect.w,rClipRect.h);
 	}
-
 
 	piWindow->OnDrawBackground(piRender);
 
@@ -237,7 +233,7 @@ void CGameGUIManager::RenderWindow(IGenericRender *piRender,IGameWindow *piWindo
 		IGameWindow *piChild=*iChildren;
 		if(piChild->IsVisible())
 		{
-			RenderWindow(piRender,piChild);
+			RenderWindow(piRender,piChild,rClipRect);
 		}
 		REL(piChild);
 	}
@@ -247,14 +243,17 @@ void CGameGUIManager::RenderWindow(IGenericRender *piRender,IGameWindow *piWindo
 void CGameGUIManager::OnRender()
 {
 	SGameSize size;
+	SGameRect sClipRect;
 	GetWindowSize(&size);
-
-	RenderWindow(m_Render.m_piRender,m_piMainWindow);
+	sClipRect.w=size.w;
+	sClipRect.h=size.h;
+	
+	RenderWindow(m_Render.m_piRender,m_piMainWindow,sClipRect);
 	for(unsigned x=0;x<m_vPopups.size();x++)
 	{
 		if(m_vPopups[x]->IsVisible())
 		{
-			RenderWindow(m_Render.m_piRender,m_vPopups[x]);
+			RenderWindow(m_Render.m_piRender,m_vPopups[x],sClipRect);
 		}
 	}
 	if(m_bShowMouseCursor)
