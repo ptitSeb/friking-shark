@@ -520,8 +520,7 @@ void CScenarioEditorMainWindow::Reset()
 
 void CScenarioEditorMainWindow::ProcessInput(double dTimeFraction,double dRealTimeFraction)
 {
-	/*IGameWindow *piFocused=m_piGUIManager->GetFocus();
-	if(piFocused!=this){return;}*/
+//	if(!m_piGUIManager->HasFocus(this)){return;}
 	
 	if(!m_bSimulationStarted || m_bInspectionMode)
 	{
@@ -2711,9 +2710,7 @@ void CScenarioEditorMainWindow::OnMouseMove( double x,double y )
 
 void CScenarioEditorMainWindow::OnMouseUp( int nButton,double x,double y )
 {
-	IGameWindow *piCapture=m_piGUIManager->GetMouseCapture();
-	if(piCapture==this){m_piGUIManager->ReleaseMouseCapture();}
-	REL(piCapture);
+	if(m_piGUIManager->HasMouseCapture(this)){m_piGUIManager->ReleaseMouseCapture();}
 	m_bMovingObject=false;
 	m_bMovingRoutePoint=false;
 }

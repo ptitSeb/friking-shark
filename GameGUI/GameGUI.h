@@ -80,11 +80,11 @@ public:
 	virtual bool				IsMouseDown(int nMouseButton)=0;
 
 	virtual void				SetFocus(IGameWindow *piWindow)=0;
-	virtual IGameWindow*GetFocus()=0;
+	virtual bool				HasFocus(IGameWindow *piWindow)=0;
 
 	virtual void				SetMouseCapture(IGameWindow *piWindow)=0;
 	virtual void				ReleaseMouseCapture()=0;
-	virtual IGameWindow *GetMouseCapture()=0;
+	virtual bool				HasMouseCapture(IGameWindow *piWindow)=0;
 
 	virtual void				ShowMouseCursor(bool bShow)=0;
 	virtual bool				IsMouseCursorVisible()=0;

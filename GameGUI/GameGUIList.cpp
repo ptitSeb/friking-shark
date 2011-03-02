@@ -198,23 +198,19 @@ void CGameGUIList::OnMouseDown(int nButton,double x,double y)
 void CGameGUIList::OnMouseMove(double x,double y)
 {
 	CGameWindowBase::OnMouseMove(x,y);
-	IGameWindow *piCapture=m_piGUIManager->GetMouseCapture();
-	if(piCapture==this)
+	if(m_piGUIManager->HasMouseCapture(this))
 	{
 		m_nFirstVisible=m_nScrollThumbDragStartFirstVisible-(int)((y-m_ptScrollThumbDragStart.y)/m_dThumbPixelsPerLine);
 		if(m_nFirstVisible>=((int)m_vElements.size()-m_nVisibleCount)){m_nFirstVisible=m_vElements.size()-m_nVisibleCount;}
 		if(m_nFirstVisible<0){m_nFirstVisible=0;}
 	}
-	REL(piCapture);
 }
 
 void CGameGUIList::OnMouseUp(int nButton,double x,double y)
 {
 	CGameWindowBase::OnMouseUp(nButton,x,y);
 
-	IGameWindow *piCapture=m_piGUIManager->GetMouseCapture();
-	if(piCapture==this){m_piGUIManager->ReleaseMouseCapture();}
-	REL(piCapture);
+	if(m_piGUIManager->HasMouseCapture(this)){m_piGUIManager->ReleaseMouseCapture();}
 }
 
 

@@ -407,8 +407,7 @@ void CGameInterface::OnMouseMove(double x,double y)
 {
 	if(m_bFrozen){return;}
 
-	IGameWindow *piCapture=m_piGUIManager->GetMouseCapture();
-	if(m_dwMovementType==MOVEMENT_TYPE_INSPECT && piCapture==this && m_rRealRect.w && m_rRealRect.h)
+	if(m_dwMovementType==MOVEMENT_TYPE_INSPECT && m_piGUIManager->HasMouseCapture(this) && m_rRealRect.w && m_rRealRect.h)
 	{
 		if(m_InspectionMovementStartPoint.x!=x || m_InspectionMovementStartPoint.y!=y)
 		{
@@ -423,7 +422,6 @@ void CGameInterface::OnMouseMove(double x,double y)
 			m_piGUIManager->SetMousePosition(this,m_InspectionMovementStartPoint);
 		}
 	}
-	REL(piCapture);
 	return CGameWindowBase::OnMouseMove(x,y);
 }
 
@@ -436,12 +434,10 @@ void CGameInterface::SetMovementType(unsigned long nType)
 #pragma message ("CGameInterface::SetMovementType -> como se ha quitado la camara del render hay que dar otra forma para hacer el cambio a inspeccion")
 		m_dwMovementType=nType;
 		//m_RenderWrapper.m_piRender->SetCamera(m_PlayCamera.m_piCamera);
-		IGameWindow *piCapture=m_piGUIManager->GetMouseCapture();
-		if(piCapture==this)
+		if(m_piGUIManager->HasMouseCapture(this))
 		{
 			m_piGUIManager->ReleaseMouseCapture();
 		}
-		REL(piCapture);
 	}
 	else if(nType==MOVEMENT_TYPE_INSPECT)
 	{

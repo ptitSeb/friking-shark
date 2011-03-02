@@ -72,16 +72,14 @@ void CGameWindowBase::DestroyWindow()
 
 	if(m_piGUIManager)
 	{
-		if(m_piGUIManager->GetFocus()==this)
+		if(m_piGUIManager->HasFocus(this))
 		{
 			m_piGUIManager->SetFocus(m_piParent);
 		}
-		IGameWindow *piCapture=m_piGUIManager->GetMouseCapture();
-		if(piCapture==this)
+		if(m_piGUIManager->HasMouseCapture(this))
 		{
 			m_piGUIManager->ReleaseMouseCapture();
 		}
-		REL(piCapture);
 	}
 	if(m_bPopup)
 	{
