@@ -31,7 +31,8 @@ public:
 
 	void	UpdateRealRect();
 	void	GetRealRect(SGameRect *pRect);
-
+	double  GetSizeInLayout();
+	
 	void	SetReferenceSystem(eGameGUIReferenceSystem eRefSystem);
 	eGameGUIReferenceSystem GetReferenceSystem();
 

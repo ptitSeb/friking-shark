@@ -18,6 +18,12 @@ enum eGameGUIReferenceSystem
 	eGameGUIReferenceSystem_Relative
 };
 
+enum eGameGUIChildrenLayout
+{
+	eGameGUIChildrenLayout_None,
+	eGameGUIChildrenLayout_Vertical,
+	eGameGUIChildrenLayout_Horizontal
+};
 
 enum EMessageDialogType
 {
@@ -28,6 +34,7 @@ enum EMessageDialogType
 };
 
 DECLARE_SERIALIZABLE_ENUMERATION(eGameGUIReferenceSystem)
+DECLARE_SERIALIZABLE_ENUMERATION(eGameGUIChildrenLayout)
 
 struct SGameScreenProperties
 {
@@ -132,6 +139,7 @@ public:
 
 	virtual void		UpdateRealRect()=0;
 	virtual void		GetRealRect(SGameRect *pRect)=0;
+	virtual	double 		GetSizeInLayout()=0;
 
 	virtual void		SetReferenceSystem(eGameGUIReferenceSystem eRefSystem)=0;
 	virtual eGameGUIReferenceSystem GetReferenceSystem()=0;
