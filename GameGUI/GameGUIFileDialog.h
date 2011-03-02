@@ -16,7 +16,7 @@ class CGameGUIFileDialog: public CGameDialogBase, virtual public IGameGUIFileDia
 
 	std::string m_sFile;
 	std::string m_sTitle;
-	std::string m_sPattern;
+	std::vector<std::string> m_vPatterns;
 protected:
 
 	BEGIN_CHILD_MAP()
