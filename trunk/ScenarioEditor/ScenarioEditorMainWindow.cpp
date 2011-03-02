@@ -520,72 +520,9 @@ void CScenarioEditorMainWindow::Reset()
 
 void CScenarioEditorMainWindow::ProcessInput(double dTimeFraction,double dRealTimeFraction)
 {
-	//IGameWindow *piFocused=m_piGUIManager->GetFocus();
-	//if(piFocused!=this){return;}
+	/*IGameWindow *piFocused=m_piGUIManager->GetFocus();
+	if(piFocused!=this){return;}*/
 	
-	if(m_FrameManager.m_piFrameManager->GetCurrentRealTime()>m_dwNexControlKey)
-	{
-		if(m_piGUIManager->IsKeyDown(GK_F1) && m_bSimulationStarted)
-		{
-			m_bInspectionMode=!m_bInspectionMode;
-			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
-		}
-		if(m_piGUIManager->IsKeyDown(GK_F5))
-		{
-			if(m_piGUIManager->IsKeyDown(GK_LSHIFT))
-			{
-				StopGameSimulation();
-			}
-			else
-			{
-				StartGameSimulation();
-			}
-			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
-		}
-		if(m_piGUIManager->IsKeyDown(GK_PAUSE)){m_FrameManager.m_piFrameManager->TogglePauseOnNextFrame();m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+100;}
-		if(m_piGUIManager->IsKeyDown('T'))
-		{
-			m_bTextures=!m_bTextures;
-			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
-		}
-		if(m_piGUIManager->IsKeyDown('P'))
-		{
-			m_bRenderPlayArea=!m_bRenderPlayArea;
-			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
-		}
-		if(m_piGUIManager->IsKeyDown('G'))
-		{
-			m_bFog=!m_bFog;
-			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
-		}
-		if(m_piGUIManager->IsKeyDown(GK_F10))
-		{
-			m_bShaders=!m_bShaders;
-			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
-		}
-		if(m_piGUIManager->IsKeyDown('C'))
-		{
-			m_bColors=!m_bColors;
-			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
-		}
-		if(m_piGUIManager->IsKeyDown('L'))
-		{
-			m_bSolid=!m_bSolid;
-			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
-		}
-		if(m_piGUIManager->IsKeyDown('I'))
-		{
-			m_bLighting=!m_bLighting;
-			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
-		}
-		if(m_piGUIManager->IsKeyDown('H'))
-		{
-			m_bShadows=!m_bShadows;
-			m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;
-		}
-		if(m_piGUIManager->IsKeyDown('B')){m_bBlend=!m_bBlend;m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;}
-		if(m_piGUIManager->IsKeyDown(GK_HOME)){CenterCamera();m_dwNexControlKey=m_FrameManager.m_piFrameManager->GetCurrentRealTime()+500;}
-	}
 	if(!m_bSimulationStarted || m_bInspectionMode)
 	{
 		if(m_piGUIManager->IsKeyDown(GK_UP) || m_piGUIManager->IsKeyDown(GK_NUMPAD8) || m_piGUIManager->IsKeyDown('W')){ProcessKey(KEY_FORWARD,dTimeFraction,dRealTimeFraction);}
@@ -779,7 +716,7 @@ void CScenarioEditorMainWindow::ProcessFileNew()
 
 void CScenarioEditorMainWindow::ProcessFileOpen()
 {
-	std::string sScenario=m_sFile;
+	std::string sScenario="./";
 	if(OpenFileDialog("Load scenario...",".ges",&sScenario))
 	{
 		OpenScenario(sScenario);
@@ -849,9 +786,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	}
 	if(m_piBTGeneralChangeModel==piControl)
 	{
-		std::string sBaseModel;
-		m_WorldManagerWrapper.m_piTerrain->GetTerrainBaseModel(&sBaseModel,NULL);
-		std::string sFile="*.ase";
+		std::string sBaseModel="./Models/";
 		if(OpenFileDialog("Select model...",".ase",&sBaseModel))
 		{
 			m_WorldManagerWrapper.m_piTerrain->SetTerrainBaseModel(sBaseModel);
@@ -861,8 +796,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	}
 	if(m_piBTGeneralChangeColorMap==piControl)
 	{
-		std::string sColorMap;
-		m_WorldManagerWrapper.m_piTerrain->GetTerrainColorMap(&sColorMap,NULL);
+		std::string sColorMap="./Textures/";
 		if(OpenFileDialog("Select layer texture...",".jpg;.jpeg;.bmp",&sColorMap))
 		{
 			m_WorldManagerWrapper.m_piTerrain->SetTerrainColorMap(sColorMap);
@@ -1038,8 +972,10 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		STerrainColorLayer layer;
 		layer.dHorizontalResolution=1;
 		layer.dVerticalResolution=1;
-		if(OpenFileDialog("Select layer texture...",".jpg;.jpeg;.bmp",&layer.sTextureFile))
+		std::string sTexture="./Textures/";
+		if(OpenFileDialog("Select layer texture...",".jpg;.jpeg;.bmp",&sTexture))
 		{
+			layer.sTextureFile=sTexture;
 			m_WorldManagerWrapper.m_piTerrain->AddTerrainColorLayer(&layer);
 			UpdateColorLayerControls();
 			UpdateTexturization();	
@@ -1068,8 +1004,10 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			layer.dMinHeight=0;
 			layer.dMaxHeight=1.0;
 		}
-		if(OpenFileDialog("Select layer texture...",".jpg;.jpeg;.bmp",&layer.sTextureFile))
+		std::string sTexture="./Textures/";
+		if(OpenFileDialog("Select layer texture...",".jpg;.jpeg;.bmp",&sTexture))
 		{
+			layer.sTextureFile=sTexture;
 			m_WorldManagerWrapper.m_piTerrain->AddTerrainHeightLayer(&layer);
 			UpdateHeightLayerControls();
 			UpdateTexturization();	
@@ -1185,8 +1123,10 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		} 
 		else if(piControl==m_piBTHeightLayerSample)
 		{
-			if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp",&heightLayer.sTextureFile))
+			std::string sTexture="./Textures/";
+			if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp",&sTexture))
 			{
+				heightLayer.sTextureFile=sTexture;
 				bChange=true;
 			}
 		}
@@ -1292,8 +1232,10 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		} 
 		else if(piControl==m_piBTColorLayerSample)
 		{
-			if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp",&colorLayer.sTextureFile))
+			std::string sTexture="./Textures/";
+			if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp",&sTexture))
 			{
+				colorLayer.sTextureFile=sTexture;
 				bChange=true;
 			}
 		}
@@ -1502,15 +1444,19 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	}
 	else if(piControl==m_piBTWaterSample)
 	{
-		if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp",&sWater.sTextureFile1))
+		std::string sTexture="./Textures/";
+		if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp",&sTexture))
 		{
+			sWater.sTextureFile1=sTexture;
 			bWaterChanged=true;
 		}
 	}
 	else if(piControl==m_piBTWaterSecondSample)
 	{
-		if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp",&sWater.sTextureFile2))
+		std::string sTexture="./Textures/";
+		if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp",&sTexture))
 		{
+			sWater.sTextureFile2=sTexture;
 			bWaterChanged=true;
 		}
 	}	
@@ -1585,8 +1531,10 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	}
 	else if(piControl==m_piBTSkySample)
 	{
+		std::string sTexture="./Textures/";
 		if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp",&sSky.sTextureFile))
 		{
+			sSky.sTextureFile=sTexture;
 			bSkyChanged=true;
 		}
 	}
@@ -2431,10 +2379,22 @@ void CScenarioEditorMainWindow::CenterCamera()
 
 void CScenarioEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(nKey==GK_F3){ProcessFileOpen();*pbProcessed=true;}
-	if(nKey==GK_F2){ProcessFileSave();*pbProcessed=true;}
-
-	if(nKey==GK_DELETE)
+	if(nKey==GK_F1 && m_bSimulationStarted){m_bInspectionMode=!m_bInspectionMode;*pbProcessed=true;}
+	else if(nKey==GK_F2){ProcessFileSave();*pbProcessed=true;}
+	else if(nKey==GK_F3){ProcessFileOpen();*pbProcessed=true;}
+	else if(nKey==GK_F5){if(m_piGUIManager->IsKeyDown(GK_LSHIFT)){StopGameSimulation();}else{StartGameSimulation();}*pbProcessed=true;}
+	else if(nKey==GK_F10){m_bShaders=!m_bShaders;*pbProcessed=true;}
+	else if(nKey==GK_PAUSE){m_FrameManager.m_piFrameManager->TogglePauseOnNextFrame();*pbProcessed=true;}
+	else if(nKey=='T'){m_bTextures=!m_bTextures;*pbProcessed=true;}
+	else if(nKey=='P'){m_bRenderPlayArea=!m_bRenderPlayArea;*pbProcessed=true;}
+	else if(nKey=='G'){m_bFog=!m_bFog;*pbProcessed=true;}
+	else if(nKey=='C'){m_bColors=!m_bColors;*pbProcessed=true;}
+	else if(nKey=='L'){m_bSolid=!m_bSolid;*pbProcessed=true;}
+	else if(nKey=='I'){m_bLighting=!m_bLighting;*pbProcessed=true;}
+	else if(nKey=='H'){m_bShadows=!m_bShadows;*pbProcessed=true;}
+	else if(nKey=='B'){m_bBlend=!m_bBlend;*pbProcessed=true;}
+	else if(nKey==GK_HOME){CenterCamera();*pbProcessed=true;}
+	else if(nKey==GK_DELETE)
 	{
 		*pbProcessed=true;
 		if(m_nSelectedEntity!=-1 && m_nSelectedRoutePoint!=-1)
@@ -2446,7 +2406,7 @@ void CScenarioEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 			}
 		}
 	}
-	if(nKey==GK_INSERT)
+	else if(nKey==GK_INSERT)
 	{
 		*pbProcessed=true;
 		if(m_nSelectedEntity!=-1)
@@ -2481,7 +2441,7 @@ void CScenarioEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 			m_nSelectedRoutePoint=m_nSelectedRoutePoint+1;
 		}
 	}
-	if(nKey==GK_ESCAPE)
+	else if(nKey==GK_ESCAPE)
 	{
 		if(m_nSelectedEntity!=-1 || m_nSelectedEntityLayer!=-1 || 
 			m_nSelectedFormation!=-1 || m_nSelectedRoutePoint!=-1)

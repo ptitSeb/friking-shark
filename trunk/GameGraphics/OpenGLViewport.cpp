@@ -114,6 +114,7 @@ int TranslateKeyToWindows(int nGameKey)
 
 int TranslateKeyFromX11(int nX11Key)
 {
+	if(nX11Key>='a' && nX11Key<='z'){return nX11Key-('a'-'A');}
 	if(nX11Key>=32 && nX11Key<127){return nX11Key;}
 	switch(nX11Key)
 	{

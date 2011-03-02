@@ -48,9 +48,26 @@ void CGameGUIFileDialog::UpdateFiles()
 		FindFiles((sFilter).c_str(),eFindFilesMode_OnlyFiles,&sFiles);
 		for(i=sFiles.begin();i!=sFiles.end();i++)
 		{
-			if(i->length()<m_sPattern.length()){continue;}
-			if(strcmp(i->c_str()+i->length()-m_sPattern.length(),m_sPattern.c_str())!=0){continue;}
-			m_piLSFiles->AddElement(*i);
+			const char  *pFile=i->c_str();
+			unsigned int nFile=i->length();
+			if(m_vPatterns.size()==0)
+			{
+			  m_piLSFiles->AddElement(*i);
+			}
+			else
+			{
+			  for(unsigned int x=0;x<m_vPatterns.size();x++)
+			  {
+				unsigned int nPattern=m_vPatterns[x].length();
+				const char  *pPattern=m_vPatterns[x].c_str();
+				if(nFile>=nPattern &&
+				  strcmp(pFile+nFile-nPattern,pPattern)==0)
+				{
+				  m_piLSFiles->AddElement(*i);
+				  break;
+				}
+			  }
+			}
 		}
 	}
 }
@@ -155,7 +172,15 @@ bool CGameGUIFileDialog::OpenFile(IGameWindow *piParent,std::string sTitle,const
 {	
 	m_sFile=*psFile;
 	m_sTitle=sTitle;
-	m_sPattern=psFilter;
+
+	m_vPatterns.clear();
+	char *pTemp=NULL;
+	char *pPatternList=strdup(psFilter);
+	char *pPattern=strtok_r(pPatternList,";",&pTemp);
+	while(pPattern){m_vPatterns.push_back(pPattern);pPattern=strtok_r(NULL,";",&pTemp);}
+	free(pPatternList);
+	pPatternList=NULL;
+	
 	m_bOpenMode=true;
 	if(Execute(piParent)!=DIALOG_OK){return false;}
 	*psFile=m_sFile;
@@ -166,7 +191,15 @@ bool CGameGUIFileDialog::SaveFile(IGameWindow *piParent,std::string sTitle,const
 {	
 	m_sFile=*psFile;
 	m_sTitle=sTitle;
-	m_sPattern=psFilter;
+
+	m_vPatterns.clear();
+	char *pTemp=NULL;
+	char *pPatternList=strdup(psFilter);
+	char *pPattern=strtok_r(pPatternList,";",&pTemp);
+	while(pPattern){m_vPatterns.push_back(pPattern);pPattern=strtok_r(NULL,";",&pTemp);}
+	free(pPatternList);
+	pPatternList=NULL;
+
 	m_bOverWriteWarn=bOverWriteWarn;
 	m_bOpenMode=false;
 	if(Execute(piParent)!=DIALOG_OK){return false;}
