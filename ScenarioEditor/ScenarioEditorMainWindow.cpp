@@ -520,7 +520,7 @@ void CScenarioEditorMainWindow::Reset()
 
 void CScenarioEditorMainWindow::ProcessInput(double dTimeFraction,double dRealTimeFraction)
 {
-//	if(!m_piGUIManager->HasFocus(this)){return;}
+	if(!m_piGUIManager->HasFocus(this)){return;}
 	
 	if(!m_bSimulationStarted || m_bInspectionMode)
 	{
@@ -3167,3 +3167,4 @@ void CScenarioEditorMainWindow::RenderRoute( IGenericRender * piRender, int nSel
 	}
 	piRender->PopState();
 }
+void CScenarioEditorMainWindow::OnWantFocus(bool *pbWant){*pbWant=true;}

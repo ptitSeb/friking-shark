@@ -74,6 +74,8 @@ public:
 
 	void 	OnSetFocus();
 	void 	OnKillFocus(IGameWindow *piFocusedWindow);
+	void 	OnWantFocus(bool *pbWant);
+
 	void 	OnReleaseMouseCapture();
 
 	CGameMainWindow(IGameGUIManager *piGUIManager);

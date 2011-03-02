@@ -343,7 +343,4 @@ void CGameGUIEdit::OnMouseUp(int nButton,double x,double y)
   if(m_piGUIManager->HasMouseCapture(this)){m_piGUIManager->ReleaseMouseCapture();}
 }
 
-
-
-
-
+void CGameGUIEdit::OnWantFocus(bool *pbWant){*pbWant=true;}

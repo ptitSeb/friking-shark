@@ -20,6 +20,7 @@ public:
 	int	Execute(IGameWindow *piParent);
 
 	void OnKeyDown(int nKey,bool *pbProcessed);
+	void OnWantFocus(bool *pbWant);
 
 	CGameDialogBase(void);
 	~CGameDialogBase(void);

@@ -350,11 +350,16 @@ void CGameGUIManager::SetFocus(IGameWindow *piWindow)
 {
 	if(piWindow!=m_piFocusedWindow)
 	{
-		if(m_piFocusedWindow){m_piFocusedWindow->OnKillFocus(piWindow);}
-		REL(m_piFocusedWindow);
-		
-		m_piFocusedWindow=ADD(piWindow);
-		if(m_piFocusedWindow){m_piFocusedWindow->OnSetFocus();}
+		bool bWantFocus=true;
+		if(piWindow){piWindow->OnWantFocus(&bWantFocus);}
+		if(bWantFocus)
+		{
+		  if(m_piFocusedWindow){m_piFocusedWindow->OnKillFocus(piWindow);}
+		  REL(m_piFocusedWindow);
+		  
+		  m_piFocusedWindow=ADD(piWindow);
+		  if(m_piFocusedWindow){m_piFocusedWindow->OnSetFocus();}
+		}
 	}
 }
 
@@ -423,16 +428,21 @@ void CGameGUIManager::ProcessMouseActivation(IGameWindow *piWindow)
 
 	if(m_piFocusedWindow!=piWindow)
 	{
-		if(m_piFocusedWindow)
+		bool bWantFocus=true;
+		if(piWindow){piWindow->OnWantFocus(&bWantFocus);}
+		if(bWantFocus)
 		{
-			m_piFocusedWindow->OnKillFocus(piWindow);
-		}
-		REL(m_piFocusedWindow);
-		m_piFocusedWindow=ADD(piWindow);
-		
-		if(m_piFocusedWindow)
-		{
-			m_piFocusedWindow->OnSetFocus();
+		  if(m_piFocusedWindow)
+		  {
+			  m_piFocusedWindow->OnKillFocus(piWindow);
+		  }
+		  REL(m_piFocusedWindow);
+		  m_piFocusedWindow=ADD(piWindow);
+		  
+		  if(m_piFocusedWindow)
+		  {
+			  m_piFocusedWindow->OnSetFocus();
+		  }
 		}
 	}
 

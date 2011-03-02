@@ -47,6 +47,7 @@ public:
 	void OnMouseMove(double x,double y);
 	void OnMouseDown(int nButton,double x,double y);
 	void OnMouseUp(int nButton,double x,double y);
+	void OnWantFocus(bool *pbWant);
 	
    CGameGUIEdit(void);
 	~CGameGUIEdit(void);

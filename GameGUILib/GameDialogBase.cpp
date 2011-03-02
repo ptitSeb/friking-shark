@@ -45,6 +45,8 @@ void CGameDialogBase::OnEndDialog()
 {
 }
 
+void CGameDialogBase::OnWantFocus(bool *pbWant){*pbWant=true;}
+
 void CGameDialogBase::OnKeyDown(int nKey,bool *pbProcessed)
 {
 	if(nKey==GK_ESCAPE)

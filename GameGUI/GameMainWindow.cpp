@@ -202,6 +202,7 @@ void CGameMainWindow::OnDraw(IGenericRender *piRender){}
 void CGameMainWindow::OnSetFocus(){}
 void CGameMainWindow::OnKillFocus(IGameWindow *piFocusedWindow){}
 void CGameMainWindow::OnReleaseMouseCapture(){}
+void CGameMainWindow::OnWantFocus(bool *pbWant){*pbWant=false;}
 
 IGenericTexture *CGameMainWindow::GetBackgroundTexture()
 {
