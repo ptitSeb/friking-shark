@@ -59,6 +59,7 @@ public:
 	void OnMouseWheelDown(double x,double y);
 	void OnMouseWheelUp(double x,double y);
 	void OnMouseDoubleClick(int nButton,double x,double y);
+	void OnWantFocus(bool *pbWant);
 
 	//IGameGUIList
 	

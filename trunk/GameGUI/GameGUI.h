@@ -174,6 +174,7 @@ public:
 
 	virtual void OnSetFocus()=0;
 	virtual void OnKillFocus(IGameWindow *piFocusedWindow)=0;
+	virtual void OnWantFocus(bool *pbWant)=0;
 
 	virtual void OnReleaseMouseCapture()=0;
 };

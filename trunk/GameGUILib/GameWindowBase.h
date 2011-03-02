@@ -143,6 +143,7 @@ public:
 
 	 void OnSetFocus();
 	 void OnKillFocus(IGameWindow *piFocusedWindow);
+	 void OnWantFocus(bool *pbWant);
 	 void OnReleaseMouseCapture();
 
 	 bool OpenFileDialog(std::string sTitle,const char *psFilter,std::string *psFile);

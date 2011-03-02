@@ -224,7 +224,4 @@ void CGameGUIList::OnMouseDoubleClick(int nButton,double x,double y)
   }
 }
 
-
-
-
-
+void CGameGUIList::OnWantFocus(bool *pbWant){*pbWant=true;}

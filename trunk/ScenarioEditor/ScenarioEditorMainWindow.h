@@ -598,6 +598,7 @@ public:
 	bool Unserialize(ISystemPersistencyNode *piNode);
 	void DestroyWindow();
 
+	void OnWantFocus(bool *pbWant);
 	void OnDraw(IGenericRender *piRender);
 	void OnButtonClicked(IGameGUIButton *piControl);
 	void OnKeyDown(int nKey,bool *pbProcessed);
