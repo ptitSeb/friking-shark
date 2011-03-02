@@ -13,7 +13,12 @@ CGameWindowBase::CGameWindowBase(void)
 	m_dBackgroundAlpha=1.0;
 	m_piGUIManager=NULL;
 	m_eReferenceSystem=eGameGUIReferenceSystem_Absolute;
+	m_eChildrenLayout=eGameGUIChildrenLayout_None;
 	m_dFontSize=0;
+	m_bRegisterOnCreation=false;
+	m_dSizeInLayout=0;
+	m_dLayoutMargin=0;
+	m_dLayoutSeparation=0;
 }
 
 CGameWindowBase::~CGameWindowBase(void)
@@ -216,12 +221,90 @@ void CGameWindowBase::UpdateRealRect()
 		rTempRect.h=rParentRealRect.h;
 		m_rRealRect.CenterOnRect(&rTempRect);
 	}
+	UpdateChildrenRealRects();
+}
 
-	for(unsigned x=0;x<m_vChildren.size();x++)
+void CGameWindowBase::UpdateChildrenRealRects()
+{
+	if(m_eChildrenLayout==eGameGUIChildrenLayout_Vertical)
 	{
-		m_vChildren[x]->UpdateRealRect();
+		double dVariableSize=m_rRealRect.h-(m_dLayoutMargin*2);
+		double dVariableChildCount=0;
+		for(unsigned x=0;x<m_vChildren.size();x++)
+		{
+			if(x!=0){dVariableSize-=m_dLayoutSeparation;}
+			IGameWindow *piWindow=m_vChildren[x];
+			double dSizeInLayout=piWindow->GetSizeInLayout();
+			if(dSizeInLayout>0)
+			{
+				dVariableSize-=dSizeInLayout;
+			}
+			else
+			{
+				dVariableChildCount++;
+			}
+		}
+		if(dVariableSize<0){dVariableSize=0;}
+		double dUsedHeight=m_dLayoutMargin;
+		SGameRect rChildRealRect;
+		for(unsigned x=0;x<m_vChildren.size();x++)
+		{
+			if(x!=0){dUsedHeight+=m_dLayoutSeparation;}
+			IGameWindow *piWindow=m_vChildren[x];
+			double dSizeInLayout=piWindow->GetSizeInLayout();
+			rChildRealRect.h=(dSizeInLayout>0)?dSizeInLayout:dVariableSize/dVariableChildCount;
+			dUsedHeight+=rChildRealRect.h;
+			rChildRealRect.x=m_dLayoutMargin;
+			rChildRealRect.y=m_rRealRect.h-dUsedHeight;
+			rChildRealRect.w=m_rRealRect.w-m_dLayoutMargin*2;
+			piWindow->SetReferenceSystem(eGameGUIReferenceSystem_Absolute);
+			piWindow->SetRect(&rChildRealRect);
+		}
+	}
+	else if(m_eChildrenLayout==eGameGUIChildrenLayout_Horizontal)
+	{
+		double dVariableSize=m_rRealRect.w-(m_dLayoutMargin*2);
+		double dVariableChildCount=0;
+		for(unsigned x=0;x<m_vChildren.size();x++)
+		{
+			if(x!=0){dVariableSize-=m_dLayoutSeparation;}
+			IGameWindow *piWindow=m_vChildren[x];
+			double dSizeInLayout=piWindow->GetSizeInLayout();
+			if(dSizeInLayout>0)
+			{
+				dVariableSize-=dSizeInLayout;
+			}
+			else
+			{
+				dVariableChildCount++;
+			}
+		}
+		if(dVariableSize<0){dVariableSize=0;}
+		double dUsedWidth=m_dLayoutMargin;
+		SGameRect rChildRealRect;
+		for(unsigned x=0;x<m_vChildren.size();x++)
+		{
+			if(x!=0){dUsedWidth+=m_dLayoutSeparation;}
+			IGameWindow *piWindow=m_vChildren[x];
+			double dSizeInLayout=piWindow->GetSizeInLayout();
+			dUsedWidth+=rChildRealRect.w;
+			rChildRealRect.x=dUsedWidth;
+			rChildRealRect.y=m_dLayoutMargin;
+			rChildRealRect.w=(dSizeInLayout>0)?dSizeInLayout:dVariableSize/dVariableChildCount;
+			rChildRealRect.h=m_rRealRect.h-m_dLayoutMargin*2;
+			piWindow->SetReferenceSystem(eGameGUIReferenceSystem_Absolute);
+			piWindow->SetRect(&rChildRealRect);
+		}
+	}
+	else
+	{
+		for(unsigned x=0;x<m_vChildren.size();x++)
+		{
+			m_vChildren[x]->UpdateRealRect();
+		}
 	}
 }
+
 
 void CGameWindowBase::SetFont(IGenericFont *piFont,double dSize)
 {
@@ -514,3 +597,20 @@ bool CGameWindowBase::DetectDrag(double dx,double dy)
   if(!m_piGUIManager){return false;}
   return m_piGUIManager->DetectDrag(m_rRealRect.x+dx,m_rRealRect.y+dy);
 }
+
+bool CGameWindowBase::Unserialize( ISystemPersistencyNode *piNode )
+{
+	bool bOk=CSystemObjectBase::Unserialize(piNode);
+	if(bOk && m_bRegisterOnCreation)
+	{
+		CGameGUIManagerWrapper guiManager;
+		guiManager.Attach("GameGUI","GUIManager");
+		IGameWindow *piMainWindow=guiManager.m_piInterface->GetMainWindow();
+		InitWindow(piMainWindow,false);
+		Show(true);
+		REL(piMainWindow);
+	}
+	return bOk;
+}
+
+double 	CGameWindowBase::GetSizeInLayout(){return m_dSizeInLayout;}

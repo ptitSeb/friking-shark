@@ -10,6 +10,8 @@
 #define CHILD_MAP_ENTRY_EX_FLAGS(_text,_interface,_eventInterface,_flags) if(!bMapping){if(_interface){IPublisher *piPublisher=NULL;	piPublisher=dynamic_cast<IPublisher*>(_interface);	if(piPublisher){UNSUBSCRIBE_FROM_PUBLISHER(piPublisher);}}REL(_interface);}else{if(bResult){IGameWindow *piControl=FindChild(_text);if(piControl==NULL){if((_flags&CMEF_OPTIONAL)==0){bResult=false;}}else{_interface=__make_qi(piControl,_interface,__FILE__,__LINE__);REL(piControl);if(_interface==NULL){if((_flags&CMEF_OPTIONAL)==0){bResult=false;}}else{IPublisher *piPublisher=NULL;piPublisher=dynamic_cast<IPublisher*>(_interface);if(piPublisher==NULL){REL(_interface);if((_flags&CMEF_OPTIONAL)==0){bResult=false;}}else{if(SUBSCRIBE_TO(piPublisher,_eventInterface)==false){REL(_interface);if((_flags&CMEF_OPTIONAL)==0){bResult=false;}}}}}if(!bResult){RTTRACE("Failed to map child window %s, interface %s",_text,#_interface);}}}
 #define END_CHILD_MAP() return bResult;}
 
+
+DECLARE_CUSTOM_WRAPPER1(CGameGUIManagerWrapper,IGameGUIManager,m_piInterface)
 DECLARE_CUSTOM_WRAPPER1(CGameWindowWrapper,IGameWindow,m_piWindow)
 DECLARE_CUSTOM_WRAPPER1(CGenericTextureWrapper,IGenericTexture,m_piTexture)
 DECLARE_CUSTOM_WRAPPER1(CGenericFontWrapper,IGenericFont,m_piFont)
@@ -39,9 +41,15 @@ protected:
 	bool					m_bVisible;
 	bool					m_bActive;
 	bool					m_bPopup;
-	std::string		m_sWindowName;
+	std::string				m_sWindowName;
 
 	eGameGUIReferenceSystem m_eReferenceSystem;
+	eGameGUIChildrenLayout  m_eChildrenLayout;
+	double 					m_dSizeInLayout;
+	double 					m_dLayoutMargin; // Desde los bordes de esta ventana al los hijos
+	double 					m_dLayoutSeparation; // Entre los hijos
+
+	bool m_bRegisterOnCreation;
 
 protected:
 
@@ -59,15 +67,25 @@ protected:
 
 	bool DetectDrag(double dx,double dy);
 
+	void UpdateChildrenRealRects();
+
+	bool Unserialize(ISystemPersistencyNode *piNode);
+
+
 public:
 
 	BEGIN_PROP_MAP(CGameWindowBase)
+		PROP_VALUE_FLAGS(m_bRegisterOnCreation,"RegisterOnCreation",false,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_rRect,"Position",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_vLoadedChildrenList,"Children",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_Font,"Font",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_dFontSize,"FontSize",0,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_bCentered,"Centered",false,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_sWindowName,"Name","",MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_eChildrenLayout,"ChildrenLayout",eGameGUIChildrenLayout_None,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_dSizeInLayout,"SizeInLayout",0,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_dLayoutMargin,"LayoutMargin",0,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_dLayoutSeparation,"LayoutSeparation",0,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_eReferenceSystem,"ReferenceSystem",eGameGUIReferenceSystem_Absolute,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_dBackgroundAlpha,"BkAlpha",1.0,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_vBackgroundColor,"BkColor",CVector(0.5,0.5,0.5),MRPF_NORMAL|MRPF_OPTIONAL)
@@ -100,6 +118,7 @@ public:
 
 	 void		UpdateRealRect();
 	 void		GetRealRect(SGameRect *pRect);
+	 double 	GetSizeInLayout();
 
 	 void		SetReferenceSystem(eGameGUIReferenceSystem eRefSystem);
 	 eGameGUIReferenceSystem GetReferenceSystem();
