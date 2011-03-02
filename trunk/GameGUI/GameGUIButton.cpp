@@ -19,8 +19,7 @@ CGameGUIButton::~CGameGUIButton(void)
 
 void CGameGUIButton::OnDrawBackground(IGenericRender *piRender)
 {
-	IGameWindow *piCapture=m_piGUIManager->GetMouseCapture();
-	if(piCapture==this && m_bHoverEnabled)
+	if(m_piGUIManager->HasMouseCapture(this) && m_bHoverEnabled)
 	{
 		if(m_HoverTexture.m_piTexture)
 		{
@@ -43,13 +42,11 @@ void CGameGUIButton::OnDrawBackground(IGenericRender *piRender)
 	{
 		CGameGUILabel::OnDrawBackground(piRender);	
 	}
-	REL(piCapture);
 }
 
 void CGameGUIButton::OnDraw(IGenericRender *piRender)
 {
-	IGameWindow *piCapture=m_piGUIManager->GetMouseCapture();
-	if(piCapture==this && m_bHoverEnabled)
+	if(m_piGUIManager->HasMouseCapture(this) && m_bHoverEnabled)
 	{
 		DrawText(piRender,m_vHoverTextColor,m_dHoverTextAlpha);
 	}
@@ -57,24 +54,21 @@ void CGameGUIButton::OnDraw(IGenericRender *piRender)
 	{
 		CGameGUILabel::OnDraw(piRender);	
 	}
-	REL(piCapture);
 }
 
 void CGameGUIButton::OnMouseMove(double x,double y)
 {
-	IGameWindow *piCaptureWindow=m_piGUIManager->GetMouseCapture();
-	if(piCaptureWindow==NULL)
+	if(m_piGUIManager->HasMouseCapture(NULL))
 	{
 		m_piGUIManager->SetMouseCapture(this);
 	}
-	else if(piCaptureWindow==this && !m_bClickInProgress)
+	else if(m_piGUIManager->HasMouseCapture(this) && !m_bClickInProgress)
 	{
 		if(x<0 || x>m_rRealRect.w || y<0 || y>m_rRealRect.h)
 		{
 			m_piGUIManager->ReleaseMouseCapture();
 		}
 	}
-	REL(piCaptureWindow);
 }
 
 void CGameGUIButton::OnMouseDown(int nButton,double x,double y)
@@ -90,8 +84,7 @@ void CGameGUIButton::OnMouseUp(int nButton,double x,double y)
 
 	m_bClickInProgress=false;
 
-	IGameWindow *piCapture=m_piGUIManager->GetMouseCapture();
-	if(piCapture==this)
+	if(m_piGUIManager->HasMouseCapture(this))
 	{
 		SGamePos pos;
 		pos.x=x+m_rRealRect.x;
@@ -103,5 +96,4 @@ void CGameGUIButton::OnMouseUp(int nButton,double x,double y)
 			NOTIFY_EVENT(IGameGUIButtonEvents,OnButtonClicked(this))
 		}
 	}
-	REL(piCapture);
 }

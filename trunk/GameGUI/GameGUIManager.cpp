@@ -26,7 +26,7 @@ bool CGameGUIManager::Init(std::string sClass,std::string sName,ISystem *piSyste
 
 	m_piMainWindow=new CGameMainWindow(this);
 	m_piMainWindow->InitWindow(NULL,true);
-	m_piFocusedWindow=m_piMainWindow;
+	m_piFocusedWindow=ADD(m_piMainWindow);
 
 	if(m_Viewport.m_piViewport)
 	{
@@ -46,7 +46,6 @@ void CGameGUIManager::Destroy()
 		//  m_Viewport.m_piViewport->SetCurrentVideoMode(&m_sOldVideoMode);
 		  m_bScreenSettingsChanged=false;
 	  }
-	  
 	    m_Viewport.m_piViewport->ShowMouseCursor(true);
 		m_Viewport.m_piViewport->SetCallBack(NULL);
 	}
@@ -64,9 +63,9 @@ void CGameGUIManager::Destroy()
 	}
 
 	REL(m_piMainWindow);
+	REL(m_piFocusedWindow);
 	m_Viewport.Detach();
 	m_Render.Detach();
-	m_piFocusedWindow=NULL;
 
 	CSystemObjectBase::Destroy();
 }
@@ -352,14 +351,16 @@ void CGameGUIManager::SetFocus(IGameWindow *piWindow)
 	if(piWindow!=m_piFocusedWindow)
 	{
 		if(m_piFocusedWindow){m_piFocusedWindow->OnKillFocus(piWindow);}
-		m_piFocusedWindow=piWindow;
-		if(piWindow){piWindow->OnSetFocus();}
+		REL(m_piFocusedWindow);
+		
+		m_piFocusedWindow=ADD(piWindow);
+		if(m_piFocusedWindow){m_piFocusedWindow->OnSetFocus();}
 	}
 }
 
-IGameWindow *CGameGUIManager::GetFocus()
+bool CGameGUIManager::HasFocus(IGameWindow *piWindow)
 {
-	return m_piFocusedWindow;
+	return m_piFocusedWindow==piWindow;
 }
 
 void CGameGUIManager::SetMouseCapture(IGameWindow *piWindow)
@@ -391,9 +392,9 @@ void CGameGUIManager::ReleaseMouseCapture()
 	m_Viewport.m_piViewport->ReleaseMouseCapture();
 }
 
-IGameWindow *CGameGUIManager::GetMouseCapture()
+bool CGameGUIManager::HasMouseCapture(IGameWindow *piWindow)
 {
-	return ADD(m_piMouseCaptureWindow);
+	return m_piMouseCaptureWindow==piWindow;
 }
 
 void CGameGUIManager::ShowMouseCursor(bool bShow)
@@ -426,8 +427,9 @@ void CGameGUIManager::ProcessMouseActivation(IGameWindow *piWindow)
 		{
 			m_piFocusedWindow->OnKillFocus(piWindow);
 		}
-
-		m_piFocusedWindow=piWindow;
+		REL(m_piFocusedWindow);
+		m_piFocusedWindow=ADD(piWindow);
+		
 		if(m_piFocusedWindow)
 		{
 			m_piFocusedWindow->OnSetFocus();

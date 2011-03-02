@@ -72,11 +72,11 @@ public:
 	bool		IsMouseDown(int nMouseButton);
 
 	void		SetFocus(IGameWindow *piWindow);
-	IGameWindow *GetFocus();
+	bool		HasFocus(IGameWindow *piWindow);
 
 	void		SetMouseCapture(IGameWindow *piWindow);
 	void		ReleaseMouseCapture();
-	IGameWindow *GetMouseCapture();
+	bool		HasMouseCapture(IGameWindow *piWindow);
 
 	void 		ShowMouseCursor(bool bShow);
 	bool 		IsMouseCursorVisible();

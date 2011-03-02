@@ -84,8 +84,7 @@ void CGameGUIColorDialog::OnMouseDown(int nButton,double x,double y)
 
 void CGameGUIColorDialog::OnMouseMove(double x,double y)
 {
-	IGameWindow *piCapture=m_piGUIManager->GetMouseCapture();
-	if(piCapture==this)
+	if(m_piGUIManager->HasMouseCapture(this))
 	{
 	  SGameRect sSVRect;
 	  SGameRect sHRect;
@@ -108,14 +107,11 @@ void CGameGUIColorDialog::OnMouseMove(double x,double y)
 		  m_vColor.c[2]=((pos.x-sSVRect.x)/sSVRect.w);
 	  } 
 	}
-	REL(piCapture);
 }
 
 void CGameGUIColorDialog::OnMouseUp(int nButton,double x,double y)
 {
-	IGameWindow *piCapture=m_piGUIManager->GetMouseCapture();
-	if(piCapture==this){m_piGUIManager->ReleaseMouseCapture();m_bDraggingH=false;m_bDraggingSV=false;}
-	REL(piCapture);
+	if(m_piGUIManager->HasMouseCapture(this)){m_piGUIManager->ReleaseMouseCapture();m_bDraggingH=false;m_bDraggingSV=false;}
 }
 
 void CGameGUIColorDialog::OnDraw(IGenericRender *piRender)

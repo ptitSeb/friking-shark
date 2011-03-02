@@ -132,14 +132,13 @@ void CGameGUIEdit::OnDraw(IGenericRender *piRender)
 		}
 		REL(piFont);
 	}
-
-	bool bFocused=(m_piGUIManager->GetFocus()==this);
-
+	bool bFocused=m_piGUIManager->HasFocus(this);
 	piRender->ActivateBlending();
 	piRender->DeactivateSolid();
 	piRender->SetColor(m_vBorderColor,bFocused?m_dBorderAlpha:m_dBorderAlpha*0.5);
 	piRender->RenderRect(CVector(m_rRealRect.w*0.5,m_rRealRect.h*0.5,0),AxisNegX,AxisPosY,m_rRealRect.w-2.0,m_rRealRect.h-2.0);
 	piRender->DeactivateBlending();
+	
 	if(bFocused)
 	{
 		piRender->RenderLine(CVector(dTextWidth+EDITOR_TOTAL_MARGIN,EDITOR_TOTAL_MARGIN,0),CVector(dTextWidth+EDITOR_TOTAL_MARGIN,m_rRealRect.h-EDITOR_TOTAL_MARGIN,0),m_vTextColor,0xFFFF);
@@ -313,12 +312,10 @@ void CGameGUIEdit::OnMouseMove(double x,double y)
 {
   CGameGUILabel::OnMouseMove(x,y);
 
-  IGameWindow *piCapture=m_piGUIManager->GetMouseCapture();
-  if(piCapture==this)
+  if(m_piGUIManager->HasMouseCapture(this))
   {
 	m_nEditionPos=GetCharacterFromCoordinates(x,y);
   }
-  REL(piCapture);
 }
 
 void CGameGUIEdit::OnMouseDown(int nButton,double x,double y)
@@ -343,9 +340,7 @@ void CGameGUIEdit::OnMouseUp(int nButton,double x,double y)
 {
   CGameGUILabel::OnMouseUp(nButton,x,y);
   
-  IGameWindow *piCapture=m_piGUIManager->GetMouseCapture();
-  if(piCapture==this){m_piGUIManager->ReleaseMouseCapture();}
-  REL(piCapture);
+  if(m_piGUIManager->HasMouseCapture(this)){m_piGUIManager->ReleaseMouseCapture();}
 }
 
 
