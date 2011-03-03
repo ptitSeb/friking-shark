@@ -177,7 +177,7 @@ bool CSoundObject::HasFinished()
 {
   if(!m_piSound){return true;}
   unsigned int dwStatus=0;
-  m_piSound->GetStatus( &dwStatus );
+  m_piSound->GetStatus( (DWORD*)&dwStatus );
   if(dwStatus&DSBSTATUS_PLAYING)
   {
      return false;

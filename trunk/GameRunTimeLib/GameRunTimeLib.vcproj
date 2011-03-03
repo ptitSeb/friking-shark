@@ -181,6 +181,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PlatformDependent.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -244,6 +248,10 @@
 			</File>
 			<File
 				RelativePath=".\PersistentTypes.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PlatformDependent.h"
 				>
 			</File>
 			<File

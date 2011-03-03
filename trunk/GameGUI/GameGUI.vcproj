@@ -41,8 +41,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameLib;..\GameGUILib;..\GameGraphics"
-				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;GameGUI_EXPORTS"
+				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGUILib;..\GameGraphics"
+				PreprocessorDefinitions="NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;GameGUI_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -66,7 +66,7 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/GameGUI.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\GameRunTime\Debug;..\GameRunTimeLib\Debug;..\GameEntityLib\Debug;..\GameLib\Debug;..\VectorLib\Debug;..\GameGUILib\Debug;..\GameGraphics\Debug"
+				AdditionalLibraryDirectories="..\GameRunTime\Debug;..\GameRunTimeLib\Debug;..\GameEntityLib\Debug;..\GameManagers\Debug;..\VectorLib\Debug;..\GameGUILib\Debug;..\GameGraphics\Debug"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/GameGUI.pdb"
 				SubSystem="2"
@@ -124,8 +124,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="..\GameRunTimeLib;..\GameRunTime;..\VectorLib;..\GameLib;..\GameGUILib;..\GameGraphics"
-				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;_USRDLL;GameGUI_EXPORTS"
+				AdditionalIncludeDirectories="..\GameRunTimeLib;..\GameRunTime;..\VectorLib;..\GameManagers;..\GameGUILib;..\GameGraphics"
+				PreprocessorDefinitions="NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;_USRDLL;GameGUI_EXPORTS"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="2"
@@ -147,7 +147,7 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/GameGUI.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\GameRunTime\Release;..\GameRunTimeLib\Release;..\GameEntityLib\Release;..\GameLib\Release;..\VectorLib\Release"
+				AdditionalLibraryDirectories="..\GameRunTime\Release;..\GameRunTimeLib\Release;..\GameEntityLib\Release;..\GameManagers\Release;..\VectorLib\Release"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -210,11 +210,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GameGUIFileDialog.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\GameGUIGroup.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\GameGUILabel.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GameGUIList.cpp"
 				>
 			</File>
 			<File
@@ -276,11 +284,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GameGUIFileDialog.h"
+				>
+			</File>
+			<File
 				RelativePath=".\GameGUIGroup.h"
 				>
 			</File>
 			<File
 				RelativePath=".\GameGUILabel.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GameGUIList.h"
 				>
 			</File>
 			<File
