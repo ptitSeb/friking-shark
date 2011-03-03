@@ -4,13 +4,9 @@
 
 CGameGUIFileDialog::CGameGUIFileDialog(void)
 {
-	m_piBTCancel=NULL;
-	m_piBTSelect=NULL;
-	m_piSTTitle=NULL;
-	m_piEDPath=NULL;
-	m_piLSFiles=NULL;
 	m_bOverWriteWarn=true;
 	m_bOpenMode=true;
+	InitializeChildren();
 }
 
 CGameGUIFileDialog::~CGameGUIFileDialog(void)

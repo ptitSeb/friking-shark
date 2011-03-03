@@ -19,34 +19,23 @@ CIATestMainWindow::CIATestMainWindow(void)
 	memset(m_pdProjectionMatrix,0,sizeof(m_pdProjectionMatrix));
 	memset(m_pnViewport,0,sizeof(m_pnViewport));
 
-	m_piSTFps=NULL;
-	m_piSTTime=NULL;
-	m_piSTEntityPos=NULL;
-	m_piSTEntityVel=NULL;
 	m_piCurrentScenario=NULL;
 	m_bVisible=true;
 	m_pSelectedEntity=NULL;
 	m_dwNextAcceptedPauseKeyTime=0;
+
+	InitializeChildren();
 }
 
 CIATestMainWindow::~CIATestMainWindow(void)
 {
 }
-
-bool CIATestMainWindow::Unserialize(ISystemPersistencyNode *piNode)
+bool CIATestMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 {
-	bool bOk=CGameWindowBase::Unserialize(piNode);
+	bool bOk=CGameWindowBase::InitWindow(piParent,bPopup);
 	if(bOk)
 	{
-		CGameGUIManagerWrapper guiManager;
-		guiManager.Attach("GameGUI","GUIManager");
-		IGameWindow *piMainWindow=guiManager.m_piInterface->GetMainWindow();
-		InitWindow(piMainWindow,false);
-		Show(true);
-		REL(piMainWindow);
-
 		m_FrameManager.Attach("GameGUI","FrameManager");
-
 	}
 	if(bOk)
 	{

@@ -4,11 +4,8 @@
 
 CGameGUIConfirmDialog::CGameGUIConfirmDialog(void)
 {
-	m_piBTYes=NULL;
-	m_piBTNo=NULL;
-	m_piSTTitle=NULL;
-	m_piSTText=NULL;
 	m_eType=eMessageDialogType_Info;
+	InitializeChildren();
 }
 
 CGameGUIConfirmDialog::~CGameGUIConfirmDialog(void)

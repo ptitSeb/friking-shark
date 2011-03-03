@@ -3,8 +3,8 @@
 
 CScenarioEditorColorSelector::CScenarioEditorColorSelector(void)
 {
-	m_piSTColorMap=NULL;
 	m_piColorMapTexture=NULL;
+	InitializeChildren();
 }
 
 CScenarioEditorColorSelector::~CScenarioEditorColorSelector(void)

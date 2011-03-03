@@ -69,7 +69,7 @@ public:
 		PROP_VALUE_FLAGS(m_eReferenceSystem,"ReferenceSystem",eGameGUIReferenceSystem_Relative,MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP()
 
-    bool Unserialize(ISystemPersistencyNode *piNode);
+    bool InitWindow(IGameWindow *piParent,bool bPopup);
 	void DestroyWindow();
 
 	void OnDraw(IGenericRender *piRender);

@@ -4,10 +4,8 @@
 
 CGameGUIMessageDialog::CGameGUIMessageDialog(void)
 {
-	m_piBTAccept=NULL;
-	m_piSTTitle=NULL;
-	m_piSTText=NULL;
 	m_eType=eMessageDialogType_Info;
+	InitializeChildren();
 }
 
 CGameGUIMessageDialog::~CGameGUIMessageDialog(void)

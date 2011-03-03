@@ -54,7 +54,7 @@ bool CGameWindowBase::InitWindow(IGameWindow *piParent,bool bPopup)
 
 	if(bResult)
 	{
-		bResult=MapChildren(true);
+		bResult=MapChildren(true,false);
 	}
 
 	UpdateRealRect();
@@ -73,7 +73,7 @@ void CGameWindowBase::DestroyWindow()
 		REL(piWindow);
 	}
 
-	MapChildren(false);
+	MapChildren(false,false);
 
 	if(m_piGUIManager)
 	{
@@ -112,7 +112,7 @@ void CGameWindowBase::Destroy()
 	CSystemObjectBase::Destroy();
 }
 
-bool CGameWindowBase::MapChildren(bool bMapping/*false=Unmapping*/)
+bool CGameWindowBase::MapChildren(bool bMapping/*false=Unmapping*/,bool bInitialize)
 {
 	return true;
 }
