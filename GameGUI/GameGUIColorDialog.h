@@ -9,9 +9,13 @@ class CGameGUIColorDialog: public CGameDialogBase, virtual public IGameGUIColorD
 	IGameGUILabel  *m_piSTHSV;
 	IGameGUILabel  *m_piSTSample;
 	IGameGUILabel  *m_piSTHSelector;
+	IGameGUILabel  *m_piSTSSelector;
+	IGameGUILabel  *m_piSTVSelector;
 	IGameGUILabel  *m_piSTSVSelector;
 	
 	bool            m_bDraggingH;
+	bool            m_bDraggingS;
+	bool            m_bDraggingV;
 	bool            m_bDraggingSV;
 	
 	CVector     m_vColor;
@@ -24,6 +28,8 @@ protected:
 		CHILD_MAP_ENTRY("HSV",m_piSTHSV);
 		CHILD_MAP_ENTRY("Sample",m_piSTSample);
 		CHILD_MAP_ENTRY("HSelector",m_piSTHSelector);
+		CHILD_MAP_ENTRY("SSelector",m_piSTSSelector);
+		CHILD_MAP_ENTRY("VSelector",m_piSTVSelector);
 		CHILD_MAP_ENTRY("SVSelector",m_piSTSVSelector);
 		CHILD_MAP_ENTRY_EX("Cancel",m_piBTCancel,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Select",m_piBTSelect,IGameGUIButtonEvents);

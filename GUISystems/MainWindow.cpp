@@ -5,8 +5,6 @@
 #include "GUISystems.h"
 #include "MainWindow.h"
 
-DECLARE_CUSTOM_WRAPPER1(CGameGUIManagerWrapper,IGameGUIManager,m_piInterface)
-
 extern CSystemModuleHelper *g_pSystemModuleHelper;
 
 CMainWindow::CMainWindow(void)
@@ -146,3 +144,5 @@ void CMainWindow::OnScenarioFinished(eScenarioFinishedReason eReason)
 	m_BackgroundWindow.m_piWindow->Show(true);
 	m_eStage=eInterfaceStage_MainMenu;
 }
+
+void CMainWindow::OnWantFocus(bool *pbWant){*pbWant=true;}

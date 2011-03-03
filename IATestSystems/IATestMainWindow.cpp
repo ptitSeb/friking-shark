@@ -9,8 +9,6 @@
 float dBaseSize=1000.0;
 float dBaseThickness=2.0;
 
-DECLARE_CUSTOM_WRAPPER1(CGameGUIManagerWrapper,IGameGUIManager,m_piInterface)
-
 extern CSystemModuleHelper *g_pSystemModuleHelper;
 
 CIATestMainWindow::CIATestMainWindow(void)

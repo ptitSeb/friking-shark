@@ -5,6 +5,7 @@
 
 CGameGUIButton::CGameGUIButton(void)
 {
+  	m_bActive=true;
 	m_bClickInProgress=false;
 	m_bHoverEnabled=true;
 	m_dHoverBackgroundAlpha=1.0;

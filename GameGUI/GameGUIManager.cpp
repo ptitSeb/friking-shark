@@ -144,10 +144,6 @@ IGameWindow *CGameGUIManager::GetWindowFromPos(IGameWindow *piWindow,SGamePos *p
 		return NULL;
 	}
 
-	if(bOnlyActive && !piWindow->IsActive())
-	{
-		return NULL;
-	}
 
 
 	piWindow->GetRealRect(&windowRect);
@@ -174,8 +170,12 @@ IGameWindow *CGameGUIManager::GetWindowFromPos(IGameWindow *piWindow,SGamePos *p
 		{
 			return piChildFound;
 		}
-		ADD(piWindow);
-		return piWindow;
+		
+		if(!bOnlyActive || piWindow->IsActive())
+		{
+		  ADD(piWindow);
+		  return piWindow;
+		}
 	}
 
 	return NULL;

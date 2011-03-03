@@ -27,6 +27,7 @@ class CGameWindowBase :	virtual public CSystemObjectBase, virtual public IGameWi
 {
 protected:
 	std::vector<IGameWindow*> m_vChildren;
+	std::vector<IGameWindow*> m_vChildrenZOrder;
 	std::vector<CGameWindowWrapper> m_vLoadedChildrenList;
 
 	CVector		m_vBackgroundColor;
@@ -42,7 +43,7 @@ protected:
 	bool					m_bActive;
 	bool					m_bPopup;
 	std::string				m_sWindowName;
-
+	
 	eGameGUIReferenceSystem m_eReferenceSystem;
 	eGameGUIChildrenLayout  m_eChildrenLayout;
 	double 					m_dSizeInLayout;
@@ -55,11 +56,12 @@ protected:
 
 	IGameWindow		*m_piParent;
 
-	std::string		m_sFontName;
+	std::string			m_sFontName;
 	double				m_dFontSize;
 
 	SGameRect			m_rRect;
 	SGameRect			m_rRealRect;
+	SGameSize           m_sMargin;
 
 	IGameGUIManager *m_piGUIManager;
 
@@ -79,6 +81,7 @@ public:
 		PROP_FLAGS(m_rRect,"Position",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_vLoadedChildrenList,"Children",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_Font,"Font",MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_FLAGS(m_sMargin,"Margin",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_dFontSize,"FontSize",0,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_bCentered,"Centered",false,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_sWindowName,"Name","",MRPF_NORMAL|MRPF_OPTIONAL)

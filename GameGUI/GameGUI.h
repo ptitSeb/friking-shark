@@ -117,7 +117,7 @@ class IGameWindow: virtual public ISystemObject
 {	
 public:
 	virtual bool		InitWindow(IGameWindow *piParent,bool bPopup)=0;
-  virtual void		DestroyWindow()=0;
+	virtual void		DestroyWindow()=0;
 
 	virtual void		SetWindowName(std::string sName)=0;
 	virtual std::string GetWindowName()=0;
