@@ -201,17 +201,17 @@ void CGameWindowBase::UpdateRealRect()
 
 	if(m_eReferenceSystem==eGameGUIReferenceSystem_Relative)
 	{
-		m_rRealRect.x=rParentRealRect.x+rParentRealRect.w*m_rRect.x;
-		m_rRealRect.y=rParentRealRect.y+rParentRealRect.h*m_rRect.y;
-		m_rRealRect.w=rParentRealRect.w*m_rRect.w;
-		m_rRealRect.h=rParentRealRect.h*m_rRect.h;
+		m_rRealRect.x=rParentRealRect.x+m_sMargin.w+rParentRealRect.w*m_rRect.x;
+		m_rRealRect.y=rParentRealRect.y+m_sMargin.h+rParentRealRect.h*m_rRect.y;
+		m_rRealRect.w=rParentRealRect.w*m_rRect.w-(m_sMargin.w*2.0);
+		m_rRealRect.h=rParentRealRect.h*m_rRect.h-(m_sMargin.h*2.0);
 	}
 	else
 	{
-		m_rRealRect.x=rParentRealRect.x+m_rRect.x;
-		m_rRealRect.y=rParentRealRect.y+m_rRect.y;
-		m_rRealRect.w=m_rRect.w;
-		m_rRealRect.h=m_rRect.h;
+		m_rRealRect.x=rParentRealRect.x+m_rRect.x+m_sMargin.w;
+		m_rRealRect.y=rParentRealRect.y+m_rRect.y+m_sMargin.h;
+		m_rRealRect.w=m_rRect.w-(m_sMargin.w*2.0);
+		m_rRealRect.h=m_rRect.h-(m_sMargin.h*2.0);
 	}
 
 	if(m_bCentered)
@@ -346,7 +346,7 @@ void CGameWindowBase::GetChildren(std::vector<IGameWindow *> *pvChildren)
 {
 	std::vector<IGameWindow*>::iterator i;
 
-	for(i=m_vChildren.begin();i!=m_vChildren.end();i++)
+	for(i=m_vChildrenZOrder.begin();i!=m_vChildrenZOrder.end();i++)
 	{
 		IGameWindow *piWindow=*i;
 		ADD(piWindow);
@@ -358,6 +358,7 @@ void CGameWindowBase::AddChild(IGameWindow *piWindow)
 {
 	ADD(piWindow);
 	m_vChildren.push_back(piWindow);
+	m_vChildrenZOrder.push_back(piWindow);
 }
 
 void CGameWindowBase::RemoveChild(IGameWindow *piWindow)
@@ -373,6 +374,10 @@ void CGameWindowBase::RemoveChild(IGameWindow *piWindow)
 			REL(piTempWindow);
 			break;
 		}
+	}
+	for(i=m_vChildrenZOrder.begin();i!=m_vChildrenZOrder.end();i++)
+	{
+		if(*i==piWindow){m_vChildrenZOrder.erase(i);break;}
 	}
 }
 
@@ -412,12 +417,12 @@ void CGameWindowBase::BringChildToFront(IGameWindow *piWindow)
 {
 	std::vector<IGameWindow*>::iterator i;
 
-	for(i=m_vChildren.begin();i!=m_vChildren.end();i++)
+	for(i=m_vChildrenZOrder.begin();i!=m_vChildrenZOrder.end();i++)
 	{
 		if(*i==piWindow)
 		{
-			m_vChildren.erase(i);
-			m_vChildren.push_back(piWindow);
+			m_vChildrenZOrder.erase(i);
+			m_vChildrenZOrder.push_back(piWindow);
 			break;
 		}
 	}
@@ -428,7 +433,7 @@ void CGameWindowBase::EnumerateChildren(IGameWindowEnumerationCallback *piCallba
 	bool bStopEnumerating=false;
 	std::vector<IGameWindow*>::iterator i;
 
-	for(i=m_vChildren.begin();i!=m_vChildren.end() && !bStopEnumerating;i++)
+	for(i=m_vChildrenZOrder.begin();i!=m_vChildrenZOrder.end() && !bStopEnumerating;i++)
 	{
 		piCallback->ProcessEnumeratedWindow(*i,&bStopEnumerating);
 	}

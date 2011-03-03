@@ -11,6 +11,7 @@ bool IsSeparator(unsigned char c){return (strchr(NON_SEPARATOR_CHARACTERS,c)==NU
 
 CGameGUIEdit::CGameGUIEdit(void)
 {
+  	m_bActive=true;
 	m_nEditionPos=0;
 	m_nSelectionPos=m_nEditionPos;
 	PersistencyDefaultValue();

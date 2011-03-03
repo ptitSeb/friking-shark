@@ -51,7 +51,7 @@ void CGamePlayWindow::OnDraw(IGenericRender *piRender)
 		vAngles=piCamera->GetAngles();
 		vPosition=piCamera->GetPosition();
 
-		piRender->SetViewport(dx,0,cx,m_rRealRect.h);
+		piRender->SetViewport(m_rRealRect.x+dx,m_rRealRect.y,cx,m_rRealRect.h);
 		piRender->SetPerspectiveProjection(dViewAngle,dNearPlane,100000);
 		piRender->SetCamera(vPosition,vAngles.c[YAW],vAngles.c[PITCH],vAngles.c[ROLL]);
 

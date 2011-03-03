@@ -5,6 +5,7 @@
 CGameGUILabel::CGameGUILabel(void)
 {
 	m_dTextAlpha=1.0;
+	m_bActive=false;
 	m_bAutoResizeFont=false;
 }
 

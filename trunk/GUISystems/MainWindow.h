@@ -38,7 +38,8 @@ public:
 
 	bool InitWindow(IGameWindow *piParent,bool bPopup);
 	void OnKeyDown(int nKey,bool *pbProcessed);
-
+	void OnWantFocus(bool *pbWant);
+	 
 	void	OnScenarioFinished(eScenarioFinishedReason eReason);
 
 	CMainWindow(void);

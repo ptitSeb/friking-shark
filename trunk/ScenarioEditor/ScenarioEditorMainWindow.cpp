@@ -6,8 +6,6 @@
 
 #define SELECT_FORMATION_BASE_INDEX 0x800
 
-DECLARE_CUSTOM_WRAPPER1(CGameGUIManagerWrapper,IGameGUIManager,m_piInterface)
-
 extern CSystemModuleHelper *g_pSystemModuleHelper;
 
 CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)

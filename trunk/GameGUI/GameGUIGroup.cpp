@@ -4,6 +4,7 @@
 
 CGameGUIGroup::CGameGUIGroup(void)
 {
+  m_bActive=false;
 }
 
 CGameGUIGroup::~CGameGUIGroup(void)

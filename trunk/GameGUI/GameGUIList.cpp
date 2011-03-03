@@ -4,6 +4,7 @@
 
 CGameGUIList::CGameGUIList(void)
 {
+  	m_bActive=true;
 	m_dThumbPixelsPerLine=0;
 	m_nScrollThumbDragStartFirstVisible=0;
 	m_nFirstVisible=0;
