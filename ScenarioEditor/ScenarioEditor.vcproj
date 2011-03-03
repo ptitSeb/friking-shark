@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameLib;..\GameGUI;..\GameGUILib;..\GameGraphics;..\PlayAreaElements;..\GameManagers"
+				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGUI;..\GameGUILib;..\GameGraphics;..\PlayAreaElements;..\GameManagers"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;SCENARIOEDITOR_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -63,7 +63,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\GameRunTime\Debug;..\GameRunTimeLib\Debug;..\GameEntityLib\Debug;..\GameLib\Debug;..\VectorLib\Debug;..\GUISystemsLib\Debug;..\GameGUILib\Debug"
+				AdditionalLibraryDirectories="..\GameRunTime\Debug;..\GameRunTimeLib\Debug;..\GameEntityLib\Debug;..\GameManagers\Debug;..\VectorLib\Debug;..\GUISystemsLib\Debug;..\GameGUILib\Debug"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/ScenarioEditor.pdb"
 				SubSystem="2"
@@ -119,7 +119,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameLib;..\GameGUI;..\GameGUILib;..\GameGraphics;..\PlayAreaElements;..\GameManagers"
+				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGUI;..\GameGUILib;..\GameGraphics;..\PlayAreaElements;..\GameManagers"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;_USRDLL;SCENARIOEDITOR_EXPORTS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -140,7 +140,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\GameRunTime\Release;..\GameRunTimeLib\Release;..\GameEntityLib\Release;..\GameLib\Release;..\VectorLib\Release;..\GUISystemsLib\Release;..\GameGUILib\Release"
+				AdditionalLibraryDirectories="..\GameRunTime\Release;..\GameRunTimeLib\Release;..\GameEntityLib\Release;..\GameManagers\Release;..\VectorLib\Release;..\GUISystemsLib\Release;..\GameGUILib\Release"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"

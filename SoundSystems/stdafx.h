@@ -16,6 +16,9 @@
 #include <mmreg.h>
 #include <dsound.h>
 #include "dxutSound.h"
-
+#include <GameRunTime.h>
+#include <GameRunTimeLib.h>
+#include <VectorLib.h>
+#include <GameManagers.h>
 
 #endif

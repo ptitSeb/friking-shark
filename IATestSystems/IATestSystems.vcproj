@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameLib;..\GameGUI;..\GameGUILib;..\GameGraphics;..\PlayAreaElements"
+				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGUI;..\GameGUILib;..\GameGraphics;..\PlayAreaElements"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;IATESTSYSTEMS_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -66,7 +66,7 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/IATestSystems.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\GameRunTime\Debug;..\GameRunTimeLib\Debug;..\GameEntityLib\Debug;..\GameLib\Debug;..\VectorLib\Debug;..\GUISystemsLib\Debug"
+				AdditionalLibraryDirectories="..\GameRunTime\Debug;..\GameRunTimeLib\Debug;..\GameEntityLib\Debug;..\GameManagers\Debug;..\VectorLib\Debug;..\GUISystemsLib\Debug"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/IATestSystems.pdb"
 				SubSystem="2"
@@ -123,7 +123,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\VectorLib;..\GameRunTime;..\GameRunTimeLib;..\GameGUI;..\GameGUILib;..\GameLib;..\GameGraphics"
+				AdditionalIncludeDirectories="..\VectorLib;..\GameRunTime;..\GameRunTimeLib;..\GameGUI;..\GameGUILib;..\GameManagers;..\GameGraphics"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;_USRDLL;IATESTSYSTEMS_EXPORTS"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="true"
@@ -146,7 +146,7 @@
 				Name="VCLinkerTool"
 				OutputFile="$(OutDir)/IATestSystems.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\GameRunTime\Release;..\GameRunTimeLib\Release;..\GameEntityLib\Release;..\GameLib\Release;..\VectorLib\Release;..\GUISystemsLib\Release"
+				AdditionalLibraryDirectories="..\GameRunTime\Release;..\GameRunTimeLib\Release;..\GameEntityLib\Release;..\GameManagers\Release;..\VectorLib\Release;..\GUISystemsLib\Release"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
