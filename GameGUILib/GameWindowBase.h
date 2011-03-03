@@ -3,11 +3,11 @@
 #define CMEF_MANDATORY	0x0000
 #define CMEF_OPTIONAL		0x0001
 
-#define BEGIN_CHILD_MAP() bool MapChildren(bool bMapping/*false=Unmapping*/){bool bResult=true;
+#define BEGIN_CHILD_MAP() void InitializeChildren(){MapChildren(false,true);}bool MapChildren(bool bMapping/*false=Unmapping*/,bool bInitialize){bool bResult=true;
 #define CHILD_MAP_ENTRY(_text,_interface) CHILD_MAP_ENTRY_FLAGS(_text,_interface,CMEF_MANDATORY)
-#define CHILD_MAP_ENTRY_FLAGS(_text,_interface,_flags) if(!bMapping){REL(_interface);}else{if(bResult){IGameWindow *piControl=FindChild(_text);if(piControl==NULL){if((_flags&CMEF_OPTIONAL)==0){	bResult=false;}}else{_interface=__make_qi(piControl,_interface,__FILE__,__LINE__);REL(piControl);if(_interface==NULL){if((_flags&CMEF_OPTIONAL)==0){bResult=false;}}}if(!bResult){RTTRACE("Failed to map child window %s, interface %s",_text,#_interface);}}}
+#define CHILD_MAP_ENTRY_FLAGS(_text,_interface,_flags) if(bInitialize){_interface=NULL;}else if(!bMapping){REL(_interface);}else{if(bResult){IGameWindow *piControl=FindChild(_text);if(piControl==NULL){if((_flags&CMEF_OPTIONAL)==0){	bResult=false;}}else{_interface=__make_qi(piControl,_interface,__FILE__,__LINE__);REL(piControl);if(_interface==NULL){if((_flags&CMEF_OPTIONAL)==0){bResult=false;}}}if(!bResult){RTTRACE("Failed to map child window %s, interface %s",_text,#_interface);}}}
 #define CHILD_MAP_ENTRY_EX(_text,_interface,_eventInterface) CHILD_MAP_ENTRY_EX_FLAGS(_text,_interface,_eventInterface,CMEF_MANDATORY)
-#define CHILD_MAP_ENTRY_EX_FLAGS(_text,_interface,_eventInterface,_flags) if(!bMapping){if(_interface){IPublisher *piPublisher=NULL;	piPublisher=dynamic_cast<IPublisher*>(_interface);	if(piPublisher){UNSUBSCRIBE_FROM_PUBLISHER(piPublisher);}}REL(_interface);}else{if(bResult){IGameWindow *piControl=FindChild(_text);if(piControl==NULL){if((_flags&CMEF_OPTIONAL)==0){bResult=false;}}else{_interface=__make_qi(piControl,_interface,__FILE__,__LINE__);REL(piControl);if(_interface==NULL){if((_flags&CMEF_OPTIONAL)==0){bResult=false;}}else{IPublisher *piPublisher=NULL;piPublisher=dynamic_cast<IPublisher*>(_interface);if(piPublisher==NULL){REL(_interface);if((_flags&CMEF_OPTIONAL)==0){bResult=false;}}else{if(SUBSCRIBE_TO(piPublisher,_eventInterface)==false){REL(_interface);if((_flags&CMEF_OPTIONAL)==0){bResult=false;}}}}}if(!bResult){RTTRACE("Failed to map child window %s, interface %s",_text,#_interface);}}}
+#define CHILD_MAP_ENTRY_EX_FLAGS(_text,_interface,_eventInterface,_flags) if(bInitialize){_interface=NULL;}else if(!bMapping){if(_interface){IPublisher *piPublisher=NULL;	piPublisher=dynamic_cast<IPublisher*>(_interface);	if(piPublisher){UNSUBSCRIBE_FROM_PUBLISHER(piPublisher);}}REL(_interface);}else{if(bResult){IGameWindow *piControl=FindChild(_text);if(piControl==NULL){if((_flags&CMEF_OPTIONAL)==0){bResult=false;}}else{_interface=__make_qi(piControl,_interface,__FILE__,__LINE__);REL(piControl);if(_interface==NULL){if((_flags&CMEF_OPTIONAL)==0){bResult=false;}}else{IPublisher *piPublisher=NULL;piPublisher=dynamic_cast<IPublisher*>(_interface);if(piPublisher==NULL){REL(_interface);if((_flags&CMEF_OPTIONAL)==0){bResult=false;}}else{if(SUBSCRIBE_TO(piPublisher,_eventInterface)==false){REL(_interface);if((_flags&CMEF_OPTIONAL)==0){bResult=false;}}}}}if(!bResult){RTTRACE("Failed to map child window %s, interface %s",_text,#_interface);}}}
 #define END_CHILD_MAP() return bResult;}
 
 
@@ -65,7 +65,7 @@ protected:
 
 	IGameGUIManager *m_piGUIManager;
 
-	virtual bool MapChildren(bool bMapping/*false=Unmapping*/);
+	virtual bool MapChildren(bool bMapping/*false=Unmapping*/,bool bInitialize);
 
 	bool DetectDrag(double dx,double dy);
 

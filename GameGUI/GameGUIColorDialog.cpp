@@ -4,19 +4,12 @@
 
 CGameGUIColorDialog::CGameGUIColorDialog(void)
 {
-	m_piBTCancel=NULL;
-	m_piBTSelect=NULL;
-	m_piSTTitle=NULL;
-	m_piSTRGB=NULL;
-	m_piSTHSV=NULL;
-	m_piSTHSelector=NULL;
-	m_piSTSSelector=NULL;
-	m_piSTVSelector=NULL;
-	m_piSTSVSelector=NULL;
 	m_bDraggingH=false;
 	m_bDraggingS=false;
 	m_bDraggingV=false;
 	m_bDraggingSV=false;
+
+	InitializeChildren();
 }
 
 CGameGUIColorDialog::~CGameGUIColorDialog(void)

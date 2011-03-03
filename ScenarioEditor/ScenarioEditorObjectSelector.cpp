@@ -7,10 +7,11 @@
 CScenarioEditorObjectSelector::CScenarioEditorObjectSelector(void)
 {
 	m_nSelectedObject=0;
-	m_piSTObjectList=NULL;
 	m_pvObjects=NULL;
 	m_dButtonSizeX=DEFAULT_OBJECT_SELECTOR_BUTTON_SIZE;
 	m_dButtonSizeY=DEFAULT_OBJECT_SELECTOR_BUTTON_SIZE;
+
+	InitializeChildren();
 }
 
 CScenarioEditorObjectSelector::~CScenarioEditorObjectSelector(void)
