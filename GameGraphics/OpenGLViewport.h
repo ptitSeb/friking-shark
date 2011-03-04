@@ -13,6 +13,7 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 		HGLRC		m_hRenderContext;
 		HWND		m_hWnd;
 		int			m_nPixelFormatIndex;
+		DEVMODE		m_OriginalVideoMode;
 
 		void OnCreate(HWND hWnd);
 		void OnDestroy();
@@ -62,7 +63,7 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 	void OnKeyUp(unsigned short wKeyState);
 	
 	void OnSize(unsigned short cx,unsigned short cy);
-	void OnMove();
+	void OnMove(unsigned x,unsigned y);
 	
 	void OnLButtonDown(int pointX,int pointY);
 	void OnLButtonDoubleClick(int pointX,int pointY);
@@ -84,17 +85,8 @@ public:
 	bool IsMaximized();
 	void SetMaximized(bool bMaximized);
 
-	void SetPos(unsigned dwX,unsigned dwY);
-	void GetPos(unsigned *pdwX,unsigned *pdwY);
-
 	void GetSize(unsigned *pdwWidth,unsigned *pdwHeight);
-	void SetSize(unsigned dwWidth,unsigned dwHeight);
-
-	void GetClientSize(unsigned *pdwWidth,unsigned *pdwHeight);
-
-	void GetRect(unsigned *pdwX,unsigned *pdwY,unsigned *pdwWidth,unsigned *pdwHeight);
-	void SetRect(unsigned dwX,unsigned dwY,unsigned dwWidth,unsigned dwHeight);
-
+	
 	void SetCallBack(IGenericViewportCallBack *pCallBack);
 
 	void SetVSync(bool bVSync);
