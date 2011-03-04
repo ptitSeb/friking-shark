@@ -127,7 +127,7 @@ public:
 	virtual void OnKeyUp(unsigned short wKey)=0;
 
 	virtual void OnSize(unsigned cx,unsigned cy)=0;
-	virtual void OnMove()=0;
+	virtual void OnMove(unsigned x,unsigned y)=0;
 };
 
 class IGenericViewport:virtual public ISystemUnknown
@@ -139,16 +139,7 @@ public:
 	virtual bool IsMaximized()=0;
 	virtual void SetMaximized(bool bMaximized)=0;
 
-	virtual void SetPos(unsigned dwX,unsigned dwY)=0;
-	virtual void GetPos(unsigned *pdwX,unsigned *pdwY)=0;
-
 	virtual void GetSize(unsigned *pdwWidth,unsigned *pdwHeight)=0;
-	virtual void SetSize(unsigned dwWidth,unsigned dwHeight)=0;
-
-	virtual void GetClientSize(unsigned *pdwWidth,unsigned *pdwHeight)=0;
-
-	virtual void GetRect(unsigned *pdwX,unsigned *pdwY,unsigned *pdwWidth,unsigned *pdwHeight)=0;
-	virtual void SetRect(unsigned dwX,unsigned dwY,unsigned dwWidth,unsigned dwHeight)=0;
 
 	virtual void SetVSync(bool bVSync)=0;
 	virtual bool GetVSync()=0;

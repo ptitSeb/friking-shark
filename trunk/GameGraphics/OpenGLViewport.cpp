@@ -214,6 +214,10 @@ COpenGLViewport::COpenGLViewport(void)
 	m_bVerticalSync=false;
 
 #ifdef WIN32
+	memset(&m_OriginalVideoMode,0,sizeof(m_OriginalVideoMode));
+	m_OriginalVideoMode.dmSize=sizeof(m_OriginalVideoMode);
+	EnumDisplaySettings(NULL,ENUM_CURRENT_SETTINGS,&m_OriginalVideoMode);
+
 	m_hDC=NULL;
 	m_hWnd=NULL;
 	m_hRenderContext=NULL;
@@ -375,7 +379,7 @@ LRESULT COpenGLViewport::ProcessMessage(HWND hWnd,UINT  uMsg, WPARAM  wParam,LPA
 		if((unsigned short)wParam>=32 && (unsigned short)wParam<127){OnCharacter((unsigned short)wParam);}
 		break;
 	case WM_MOVE:
-		OnMove();
+		OnMove(LOWORD(lParam),HIWORD(lParam));
 		break;
 	}
 	return DefWindowProc(hWnd,uMsg,wParam,lParam);
@@ -476,6 +480,7 @@ bool COpenGLViewport::Create(unsigned x, unsigned y, unsigned w, unsigned h, boo
 void COpenGLViewport::Destroy()
 {
 #ifdef WIN32
+	ChangeDisplaySettings(&m_OriginalVideoMode,CDS_FULLSCREEN);
 	if(m_hWnd){DestroyWindow(m_hWnd);m_hWnd=NULL;}
 #else
 	if(m_pXHollowCursor && !m_bShowSystemMouseCursor)
@@ -544,62 +549,7 @@ void COpenGLViewport::SetMaximized(bool bMaximized)
 #endif
 }
 
-void COpenGLViewport::SetPos(unsigned dwX,unsigned dwY)
-{
-#ifdef WIN32
-	SetWindowPos(m_hWnd,NULL,dwX,dwY,0,0,SWP_NOSIZE|SWP_NOZORDER);
-#else
-	if(m_XWindow!=None){XMoveWindow(m_pXDisplay,m_XWindow,dwX,dwY);}
-#endif
-}
-
-void COpenGLViewport::GetPos(unsigned *pdwX,unsigned *pdwY)
-{
-#ifdef WIN32
-	RECT R={0};
-	GetWindowRect(m_hWnd,&R);
-	*pdwX=R.left;
-	*pdwY=R.top;
-#else
-	if(m_XWindow!=None)
-	{
-		XWindowAttributes attribs;
-		XGetWindowAttributes(m_pXDisplay, m_XWindow, &attribs);
-		*pdwX=attribs.x;
-		*pdwY=attribs.y;
-	}
-	else
-	{
-		*pdwX=0;
-		*pdwY=0;
-	}
-#endif
-}
-
 void COpenGLViewport::GetSize(unsigned *pdwWidth,unsigned *pdwHeight)
-{
-#ifdef WIN32
-	RECT R={0};
-	GetWindowRect(m_hWnd,&R);
-	*pdwWidth=R.right-R.left;
-	*pdwHeight=R.bottom-R.top;
-#else
-	if(m_XWindow!=None)
-	{
-		XWindowAttributes attribs;
-		XGetWindowAttributes(m_pXDisplay, m_XWindow, &attribs);
-		*pdwWidth=attribs.width;
-		*pdwHeight=attribs.height;
-	}
-	else
-	{
-		*pdwWidth=0;
-		*pdwHeight=0;
-	}
-#endif
-}
-
-void COpenGLViewport::GetClientSize(unsigned *pdwWidth,unsigned *pdwHeight)
 {
 #ifdef WIN32
 	RECT R={0};
@@ -608,50 +558,6 @@ void COpenGLViewport::GetClientSize(unsigned *pdwWidth,unsigned *pdwHeight)
 	*pdwHeight=R.bottom-R.top;
 #else
 	return GetSize(pdwWidth,pdwHeight);
-#endif
-}
-
-void COpenGLViewport::SetSize(unsigned dwWidth,unsigned dwHeight)
-{
-#ifdef WIN32
-	SetWindowPos(m_hWnd,NULL,0,0,dwWidth,dwHeight,SWP_NOMOVE|SWP_NOZORDER);
-#else
-	if(m_XWindow!=None){XResizeWindow(m_pXDisplay,m_XWindow,dwWidth,dwHeight);}
-#endif
-}
-
-void COpenGLViewport::GetRect(unsigned *pdwX,unsigned *pdwY,unsigned *pdwWidth,unsigned *pdwHeight)
-{
-#ifdef WIN32
-	RECT R={0};
-	GetWindowRect(m_hWnd,&R);
-	*pdwX=R.left;
-	*pdwY=R.top;
-	*pdwWidth=R.right-R.left;
-	*pdwHeight=R.bottom-R.top;
-#else
-	if(m_XWindow!=None)
-	{
-		XWindowAttributes attribs;
-		XGetWindowAttributes(m_pXDisplay, m_XWindow, &attribs);
-		*pdwX=attribs.x;
-		*pdwY=attribs.y;
-		*pdwWidth=attribs.width;
-		*pdwHeight=attribs.height;
-	}
-#endif
-}
-
-void COpenGLViewport::SetRect(unsigned dwX,unsigned dwY,unsigned dwWidth,unsigned dwHeight)
-{
-#ifdef WIN32
-	SetWindowPos(m_hWnd,NULL,dwX,dwY,dwWidth,dwHeight,SWP_NOZORDER);
-#else
-	if(m_XWindow!=None)
-	{
-		XMoveWindow(m_pXDisplay,m_XWindow,dwX,dwY);
-		XResizeWindow(m_pXDisplay,m_XWindow,dwWidth,dwHeight);
-	}
 #endif
 }
 
@@ -704,7 +610,7 @@ void COpenGLViewport::OnCharacter(unsigned short wChar){if(m_piCallBack){m_piCal
 void COpenGLViewport::OnKeyDown(unsigned short wKey){if(m_piCallBack){m_piCallBack->OnKeyDown(wKey);}}
 void COpenGLViewport::OnKeyUp(unsigned short wKey){if(m_piCallBack){m_piCallBack->OnKeyUp(wKey);}}
 void COpenGLViewport::OnSize(unsigned short cx,unsigned short cy){if(m_piCallBack){m_piCallBack->OnSize(cx,cy);}}
-void COpenGLViewport::OnMove(){if(m_piCallBack){m_piCallBack->OnMove();}}
+void COpenGLViewport::OnMove(unsigned x,unsigned y){if(m_piCallBack){m_piCallBack->OnMove(x,y);}}
 
 void COpenGLViewport::SetVSync(bool bVSync)
 {
@@ -852,7 +758,7 @@ void COpenGLViewport::EnterLoop()
 			if(m_XLastX!=event.xconfigure.x || 
 			   m_XLastY!=event.xconfigure.y)
 			{
-			  OnMove();
+			  OnMove(event.xconfigure.x,event.xconfigure.y);
 			}
 			if(m_XLastWidth!=event.xconfigure.width || 
 			   m_XLastHeight!=event.xconfigure.height)
@@ -1037,8 +943,18 @@ bool COpenGLViewport::SetFullScreen(unsigned int w,unsigned int h,unsigned int b
 {
 #ifdef WIN32
 	SetMaximized(true);
+
+	DEVMODE mode={0};
+	mode.dmSize=sizeof(DEVMODE);
+	mode.dmBitsPerPel=(DWORD)bpp;
+	mode.dmPelsWidth=(DWORD)w;
+	mode.dmPelsHeight=(DWORD)h;
+	mode.dmDisplayFrequency=(DWORD)rate;
+	mode.dmFields=DM_BITSPERPEL|DM_PELSWIDTH|DM_PELSHEIGHT|DM_DISPLAYFREQUENCY;
+	ChangeDisplaySettings(&mode,CDS_FULLSCREEN);
 	return true;
 #else
+
 	/*if((m_nSDLWindowFlags&SDL_FULLSCREEN)==0)
 	{
 	  SDL_WM_ToggleFullScreen(m_pSDLWindow); 
@@ -1046,18 +962,34 @@ bool COpenGLViewport::SetFullScreen(unsigned int w,unsigned int h,unsigned int b
 	}*/
 	return true;
 #endif
-/*	RTTRACE("COpenGLViewport::SetCurrentVideoMode -> Setting full screen video mode to %dx%d : %d",w,h,bpp);
-	m_nSDLWindowFlags|=SDL_FULLSCREEN;
-	m_pSDLWindow=SDL_WM_ToggleFullScreen(); 
-	if(m_pSDLWindow){OnSize(m_pSDLWindow->w,m_pSDLWindow->h);}
-	return m_pSDLWindow!=NULL;*/
-	//if(m_pSDLWindow){OnSize(m_pSDLWindow->w,m_pSDLWindow->h);}
 }
-
 bool COpenGLViewport::SetWindowed(unsigned int x,unsigned int y,unsigned int w,unsigned int h)
 {
 #ifdef WIN32
+
+	DEVMODE mode={0};
+	ChangeDisplaySettings(&m_OriginalVideoMode,CDS_FULLSCREEN);
+
+	// Las coordenadas y tamaños que se gestion siempre son del area cliente.
+	// por lo que al establecer la pos de la ventana se deben convertir a coordenadas
+	// de pantalla.
+
 	SetMaximized(false);
+	RECT wr={0},cr={0};
+	GetWindowRect(m_hWnd,&wr);
+	GetClientRect(m_hWnd,&cr);
+	SIZE ws,cs;
+	ws.cx=wr.right-wr.left;
+	ws.cy=wr.bottom-wr.top;
+	cs.cx=cr.right-cr.left;
+	cs.cy=cr.bottom-cr.top;
+	SIZE nonclientsize;
+	nonclientsize.cx=ws.cx-cs.cx;
+	nonclientsize.cy=ws.cy-cs.cy;
+
+	POINT p={0};
+	ClientToScreen(m_hWnd,&p);
+	SetWindowPos(m_hWnd,NULL,x-(p.x-wr.left),y-(p.y-wr.top),w+nonclientsize.cx,h+nonclientsize.cy,SWP_NOZORDER);
 	return true;
 #else
 	/*if((m_nSDLWindowFlags&SDL_FULLSCREEN)!=0)

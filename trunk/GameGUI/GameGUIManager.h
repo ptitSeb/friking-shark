@@ -10,9 +10,9 @@ class CGameGUIManager :	virtual public CSystemObjectBase,virtual public IGameGUI
 	IGameWindow *m_piMouseCaptureWindow;
 
 	bool		m_bShowMouseCursor;
-	bool		m_bScreenSettingsChanged;
-	SVideoMode  m_sOldVideoMode;
+	SGameSize   m_sWindowedResolution;
 	SGameScreenProperties m_sScreenProperties;
+
 
 	CRenderWrapper m_Render;
 	CViewportWrapper m_Viewport;
@@ -44,7 +44,7 @@ class CGameGUIManager :	virtual public CSystemObjectBase,virtual public IGameGUI
 	void OnKeyUp(unsigned short wKey);
 	
 	void OnSize(unsigned cx,unsigned cy);
-	void OnMove();
+	void OnMove(unsigned x,unsigned y);
 	
 	void UpdateScreenPlacement();
 
