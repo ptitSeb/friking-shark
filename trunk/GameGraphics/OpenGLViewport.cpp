@@ -6,6 +6,7 @@
   #define VIEWPORT_CLASSNAME "OpenGLViewport"
   #define WM_GL_VIEWPORT_END_LOOP WM_USER+0x001
 #else
+  #include <X11/extensions/Xrandr.h>
   #define DETECT_DRAG_SIZE 3
   #define X_WINDOWS_EVENT_MASK ExposureMask|ButtonPressMask|ButtonReleaseMask|PointerMotionMask|KeyPressMask|KeyReleaseMask|StructureNotifyMask
 #endif
@@ -206,6 +207,13 @@ int TranslateKeyToX11(int nGameKey)
 	};
 	return 0;
 }
+
+int COpenGLViewport::CustomXIOErrorHandler( Display*)
+{
+  RTTRACE("COpenGLViewport -> X11 ConnectionLost, Exiting");
+  return 0;
+}
+
 #endif
 
 COpenGLViewport::COpenGLViewport(void)
@@ -213,11 +221,9 @@ COpenGLViewport::COpenGLViewport(void)
 	m_piCallBack=NULL;
 	m_bVerticalSync=false;
 
+	GetCurrentVideoMode(&m_OriginalVideoMode);
+	
 #ifdef WIN32
-	memset(&m_OriginalVideoMode,0,sizeof(m_OriginalVideoMode));
-	m_OriginalVideoMode.dmSize=sizeof(m_OriginalVideoMode);
-	EnumDisplaySettings(NULL,ENUM_CURRENT_SETTINGS,&m_OriginalVideoMode);
-
 	m_hDC=NULL;
 	m_hWnd=NULL;
 	m_hRenderContext=NULL;
@@ -429,6 +435,7 @@ bool COpenGLViewport::Create(unsigned x, unsigned y, unsigned w, unsigned h, boo
 	m_pXDisplay=XOpenDisplay(NULL);
 	if(m_pXDisplay)
 	{
+	  XSetIOErrorHandler(CustomXIOErrorHandler);
 	  int nScreen = DefaultScreen( m_pXDisplay );
 	  int pVisualAttribs[] = {GLX_RGBA,GLX_RED_SIZE,8,GLX_GREEN_SIZE,8,GLX_BLUE_SIZE,8,GLX_ALPHA_SIZE,8,GLX_DEPTH_SIZE,8,GLX_DOUBLEBUFFER,None};
 	  pVisualInfo = glXChooseVisual( m_pXDisplay, nScreen,pVisualAttribs);
@@ -479,8 +486,12 @@ bool COpenGLViewport::Create(unsigned x, unsigned y, unsigned w, unsigned h, boo
 
 void COpenGLViewport::Destroy()
 {
+	if(m_XWindow!=None)
+	{
+	  SetVideoMode(&m_OriginalVideoMode);
+	}
+  
 #ifdef WIN32
-	ChangeDisplaySettings(&m_OriginalVideoMode,CDS_FULLSCREEN);
 	if(m_hWnd){DestroyWindow(m_hWnd);m_hWnd=NULL;}
 #else
 	if(m_pXHollowCursor && !m_bShowSystemMouseCursor)
@@ -557,7 +568,18 @@ void COpenGLViewport::GetSize(unsigned *pdwWidth,unsigned *pdwHeight)
 	*pdwWidth=R.right-R.left;
 	*pdwHeight=R.bottom-R.top;
 #else
-	return GetSize(pdwWidth,pdwHeight);
+	if(m_XWindow!=None)
+	{
+		XWindowAttributes attribs;
+		XGetWindowAttributes(m_pXDisplay, m_XWindow, &attribs);
+		*pdwWidth=attribs.width;
+		*pdwHeight=attribs.height;
+	}
+	else
+	{
+		*pdwWidth=0;
+		*pdwHeight=0;
+	}
 #endif
 }
 
@@ -668,9 +690,9 @@ void COpenGLViewport::EnterLoop()
 #else
 	XEvent event;
 	int nLoopId=++m_nLoopDepth;
-	
+
 	while(m_XWindow!=None && m_nLoopDepth>=nLoopId && !m_bXExit)
-	{		
+	{	
 		while(m_XWindow!=None && XCheckWindowEvent(m_pXDisplay,m_XWindow,X_WINDOWS_EVENT_MASK,&event))
 		{
 		  if (event.type==KeyPress) 
@@ -768,7 +790,6 @@ void COpenGLViewport::EnterLoop()
 		  }
 		  else if (event.type==DestroyNotify) 
 		  {
-			printf("Exit notified\n");
 			m_bXExit=true;
 		  }
 		}
@@ -926,53 +947,141 @@ void COpenGLViewport::GetCurrentVideoMode(SVideoMode *pMode)
 	pMode->h=mode.dmPelsHeight;
 	pMode->rate=60;
 #else
-	Display* pDisplay = XOpenDisplay( NULL );
-	if (!pDisplay ) {return;}
-	Screen *pScreen = DefaultScreenOfDisplay( pDisplay );
-	if ( !pScreen ) {return;}
+	Display *pDisplay=XOpenDisplay(NULL);
+	if(pDisplay)
+	{
+	  int nScreen=DefaultScreen(pDisplay);
+	  pMode->w = DisplayWidth(pDisplay,nScreen);
+	  pMode->h = DisplayHeight(pDisplay,nScreen);
+	  pMode->bpp = DefaultDepth(pDisplay,nScreen);
+	  pMode->rate=60;
+	  
+	  XCloseDisplay(pDisplay);
+	  pDisplay=NULL;
+	}	
+	//RTTRACE("GetCurrentVideoMode : %dx%d : %d",pMode->w,pMode->h,pMode->bpp);
+#endif
+}
 
-	pMode->w = pScreen->width;
-	pMode->h = pScreen->height;
-	pMode->bpp = pScreen->root_depth;
-	pMode->rate=60;
-	XCloseDisplay( pDisplay );
+bool COpenGLViewport::SetVideoMode(SVideoMode *pMode)
+{
+#ifdef WIN32
+	DEVMODE mode={0};
+	mode.dmSize=sizeof(DEVMODE);
+	mode.dmBitsPerPel=(DWORD)pMode->bpp;
+	mode.dmPelsWidth=(DWORD)pMode->w;
+	mode.dmPelsHeight=(DWORD)pMode->h;
+	mode.dmDisplayFrequency=(DWORD)pMode->rate;
+	mode.dmFields=DM_BITSPERPEL|DM_PELSWIDTH|DM_PELSHEIGHT|DM_DISPLAYFREQUENCY;
+	return ChangeDisplaySettings(&mode,CDS_FULLSCREEN)==DISP_CHANGE_SUCCESSFUL;
+#else
+	int nSizeIndex=-1;
+	int nScreenSizes=0;
+	int nScreenRates=0;
+	SVideoMode sCurrentMode;
+	GetCurrentVideoMode(&sCurrentMode);
+	if(sCurrentMode.w==pMode->w && sCurrentMode.h==pMode->h){return true;}
+
+	XRRScreenConfiguration *pScreenConfig=XRRGetScreenInfo (m_pXDisplay,m_XWindow);
+	if(pScreenConfig==NULL)
+	{
+	  RTTRACE("COpenGLViewport::SetVideoMode -> Failed to get screen configuration");
+	  return false;
+	}
+	XRRScreenSize *pScreenSizes=XRRConfigSizes(pScreenConfig,&nScreenSizes);
+	for(int x=0;x<nScreenSizes;x++)
+	{
+		//RTTRACE("COpenGLViewport::SetVideoMode -> Supported size %dx%d",pScreenSizes[x].width,pScreenSizes[x].height);
+		if(pScreenSizes[x].width==(int)pMode->w && pScreenSizes[x].height==(int)pMode->h){nSizeIndex=x;}
+	}
+	if(nSizeIndex==-1)
+	{
+	  RTTRACE("COpenGLViewport::SetVideoMode -> Current screen does not support %dx%d",pMode->w,pMode->h);
+  	  XRRFreeScreenConfigInfo(pScreenConfig);
+	  return false;
+	}
+	short int rate=pMode->rate;
+	bool bRateFound=false;
+	short int *pScreenRates=XRRConfigRates(pScreenConfig,nSizeIndex,&nScreenRates);
+	for(int x=0;x<nScreenRates;x++)
+	{
+		//RTTRACE("COpenGLViewport::SetVideoMode -> Supported size %dx%d, rate %d",pMode->w,pMode->h,pScreenRates[x]);
+		if(pScreenRates[x]==(short int)pMode->rate){bRateFound=true;}
+	}
+	if(!bRateFound)
+	{
+	  if(nScreenRates)
+	  {
+		rate=pScreenRates[nScreenRates-1];
+		RTTRACE("COpenGLViewport::SetVideoMode -> Warning! Current screen %dx%d does not support rate %d, applying rate %d",pMode->w,pMode->h,pMode->rate,rate);
+	  }
+	  else
+	  {
+		RTTRACE("COpenGLViewport::SetVideoMode -> Error! no rate supported for %dx%d",pMode->w,pMode->h);
+		XRRFreeScreenConfigInfo(pScreenConfig);
+		return false;
+	  }  
+	}
+	Status result=XRRSetScreenConfigAndRate(m_pXDisplay,pScreenConfig,m_XWindow,nSizeIndex,RR_Rotate_0,rate,CurrentTime);
+	if(result==RRSetConfigSuccess)
+	{
+	  XRRFreeScreenConfigInfo(pScreenConfig);
+	  sleep(1);
+	  return true;
+	}
+	else
+	{
+	  RTTRACE("COpenGLViewport::SetVideoMode -> Error! Video mode change result %d",result);
+	  XRRFreeScreenConfigInfo(pScreenConfig);
+	  return false;
+	}
 #endif
 }
 
 bool COpenGLViewport::SetFullScreen(unsigned int w,unsigned int h,unsigned int bpp,unsigned int rate)
 {
+	SVideoMode mode;
+	mode.bpp=bpp;
+	mode.h=h;
+	mode.w=w;
+	mode.rate=rate;
+
 #ifdef WIN32
 	SetMaximized(true);
-
-	DEVMODE mode={0};
-	mode.dmSize=sizeof(DEVMODE);
-	mode.dmBitsPerPel=(DWORD)bpp;
-	mode.dmPelsWidth=(DWORD)w;
-	mode.dmPelsHeight=(DWORD)h;
-	mode.dmDisplayFrequency=(DWORD)rate;
-	mode.dmFields=DM_BITSPERPEL|DM_PELSWIDTH|DM_PELSHEIGHT|DM_DISPLAYFREQUENCY;
-	ChangeDisplaySettings(&mode,CDS_FULLSCREEN);
+	SetVideoMode(&mode);
 	return true;
 #else
+	//RTTRACE("COpenGLViewport::SetFullScreen -> Enter %dx%d",w,h);
+		
+	SetVideoMode(&mode);
+	
+	XSetWindowAttributes attributes;
+	attributes.override_redirect=true;
+	XChangeWindowAttributes(m_pXDisplay,m_XWindow,CWOverrideRedirect,&attributes);
 
-	/*if((m_nSDLWindowFlags&SDL_FULLSCREEN)==0)
-	{
-	  SDL_WM_ToggleFullScreen(m_pSDLWindow); 
-	  m_nSDLWindowFlags|=(SDL_FULLSCREEN);
-	}*/
+	XWindowChanges changes;
+	changes.width=w;
+	changes.height=h;
+	changes.x=0;
+	changes.y=0;
+	changes.border_width=0;
+	XConfigureWindow(m_pXDisplay,m_XWindow,CWX|CWY|CWWidth|CWHeight|CWBorderWidth,&changes);
+	XRaiseWindow(m_pXDisplay,m_XWindow);
+	XSetInputFocus(m_pXDisplay,m_XWindow,RevertToPointerRoot,CurrentTime);
+	XGrabKeyboard( m_pXDisplay,m_XWindow, True, GrabModeAsync, GrabModeAsync, CurrentTime );
+	
+	//RTTRACE("COpenGLViewport::SetFullScreen -> %dx%d:%d",w,h,bpp);
 	return true;
 #endif
 }
 bool COpenGLViewport::SetWindowed(unsigned int x,unsigned int y,unsigned int w,unsigned int h)
 {
+
 #ifdef WIN32
-
-	DEVMODE mode={0};
-	ChangeDisplaySettings(&m_OriginalVideoMode,CDS_FULLSCREEN);
-
 	// Las coordenadas y tamaños que se gestion siempre son del area cliente.
 	// por lo que al establecer la pos de la ventana se deben convertir a coordenadas
 	// de pantalla.
+	SetVideoMode(&m_OriginalVideoMode);
 
 	SetMaximized(false);
 	RECT wr={0},cr={0};
@@ -992,44 +1101,26 @@ bool COpenGLViewport::SetWindowed(unsigned int x,unsigned int y,unsigned int w,u
 	SetWindowPos(m_hWnd,NULL,x-(p.x-wr.left),y-(p.y-wr.top),w+nonclientsize.cx,h+nonclientsize.cy,SWP_NOZORDER);
 	return true;
 #else
-	/*if((m_nSDLWindowFlags&SDL_FULLSCREEN)!=0)
-	{
-	  SDL_WM_ToggleFullScreen(m_pSDLWindow); 
-	  m_nSDLWindowFlags&=~(SDL_FULLSCREEN);
-	}*/
+
+	//RTTRACE("COpenGLViewport::SetWindowed -> Enter %dx%d",w,h);
+	
+	SetVideoMode(&m_OriginalVideoMode);
+	
+	XUngrabKeyboard( m_pXDisplay,CurrentTime);
+	XSetWindowAttributes attributes;
+	attributes.override_redirect=false;
+	XChangeWindowAttributes(m_pXDisplay,m_XWindow,CWOverrideRedirect,&attributes);
+	
+	XWindowChanges changes;
+	changes.width=w;
+	changes.height=h;
+	changes.x=x;
+	changes.y=y;
+	changes.border_width=0;
+	XConfigureWindow(m_pXDisplay,m_XWindow,CWX|CWY|CWWidth|CWHeight|CWBorderWidth,&changes);
+		
+	//RTTRACE("COpenGLViewport::SetWindowed -> Exit %dx%d",w,h);
 	return true;
 #endif
-	/*RTTRACE("COpenGLViewport::SetCurrentVideoMode -> Setting windowed %dx%d - %dx%d",x,y,w,h);
-	m_nSDLWindowFlags&=~(SDL_FULLSCREEN);
-	m_pSDLWindow=SDL_SetVideoMode(w, h, 0,m_nSDLWindowFlags); 
-	if(m_pSDLWindow){OnSize(m_pSDLWindow->w,m_pSDLWindow->h);}
-	return m_pSDLWindow!=NULL;*/
-/*		DEVMODE mode={0};
-		mode.dmSize=sizeof(DEVMODE);
-		mode.dmBitsPerPel=(unsigned int)m_sScreenProperties.dFullScreenRefreshBitsPerPixel;
-		mode.dmPelsWidth=(unsigned int)m_sScreenProperties.sFullScreenResolution.w;
-		mode.dmPelsHeight=(unsigned int)m_sScreenProperties.sFullScreenResolution.h;
-		mode.dmDisplayFrequency=(unsigned int)m_sScreenProperties.dFullScreenRefreshRate;
-		mode.dmFields=DM_BITSPERPEL|DM_PELSWIDTH|DM_PELSHEIGHT|DM_DISPLAYFREQUENCY;
-		ChangeDisplaySettings(&mode,CDS_FULLSCREEN);*/
 }
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
 

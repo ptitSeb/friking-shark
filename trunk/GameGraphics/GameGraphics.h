@@ -51,7 +51,7 @@ struct SVideoMode
 	unsigned int bpp;
 	unsigned int rate;
 	
-	SVideoMode();
+	SVideoMode(){w=h=bpp=rate=0;}
 };
 
 BEGIN_STRUCT_PROPS(SGameRect)

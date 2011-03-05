@@ -89,4 +89,3 @@ void SGameRect::CenterOnRect(SGameRect *pRect)
 	y=(pRect->h-h)/2;
 }
 
-SVideoMode::SVideoMode(){w=h=bpp=rate=0;}
