@@ -801,8 +801,8 @@ bool CGameGUIManager::Unserialize(ISystemPersistencyNode *piNode)
 		}
 		if(m_sScreenProperties.sFullScreenResolution.w==0 || m_sScreenProperties.sFullScreenResolution.h==0)
 		{
-			m_sScreenProperties.sFullScreenResolution.w=m_sWindowedResolution.w;
-			m_sScreenProperties.sFullScreenResolution.h=m_sWindowedResolution.h;
+			m_sScreenProperties.sFullScreenResolution.w=sVideoMode.w;
+			m_sScreenProperties.sFullScreenResolution.h=sVideoMode.h;
 		}
 		if(m_sScreenProperties.dFullScreenRefreshRate==0)
 		{

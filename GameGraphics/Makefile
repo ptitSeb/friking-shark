@@ -26,8 +26,8 @@ SOURCES_C = GLee.c
 CFLAGS += -DNDEBUG -fPIC -Wall -Werror -D_DO_NOT_USE_ASSEMBLER_ -D_REENTRANT -O3 -g
 CFLAGS_DEBUG += -DDEBUG -fPIC -Wall -Werror -D_DO_NOT_USE_ASSEMBLER_ -D_REENTRANT -g
 
-LIBS = ../GameRunTimeLib/lib/GameRuntimeLib.a   ../VectorLib/lib/VectorLib.a -ldl -lGLU -lGL -lX11
-LIBS_DEBUG =  ../GameRunTimeLib/lib/GameRuntimeLibd.a  ../VectorLib/lib/VectorLibd.a -ldl -lGLU -lGL -lX11
+LIBS = ../GameRunTimeLib/lib/GameRuntimeLib.a   ../VectorLib/lib/VectorLib.a -ldl -lGLU -lGL -lX11 -lXrandr
+LIBS_DEBUG =  ../GameRunTimeLib/lib/GameRuntimeLibd.a  ../VectorLib/lib/VectorLibd.a -ldl -lGLU -lGL -lX11 -lXrandr
 
 INTERMEDIATE_DIR = ./.intermediate
 OUT_SOURCES=$(addprefix $(INTERMEDIATE_DIR)/,$(SOURCES))

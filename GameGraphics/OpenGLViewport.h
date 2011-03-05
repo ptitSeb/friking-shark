@@ -13,7 +13,6 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 		HGLRC		m_hRenderContext;
 		HWND		m_hWnd;
 		int			m_nPixelFormatIndex;
-		DEVMODE		m_OriginalVideoMode;
 
 		void OnCreate(HWND hWnd);
 		void OnDestroy();
@@ -21,6 +20,8 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 		static LRESULT WindowProc(HWND  hWnd,UINT  uMsg, WPARAM  wParam,LPARAM  lParam);
 
 	#else
+		
+		static int CustomXIOErrorHandler(Display*);
 		
 		Display 	*m_pXDisplay;
 		Colormap 	 m_pXColorMap;
@@ -46,6 +47,9 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 		unsigned int m_nDetectDragButton;
 		bool 		 m_bDetectedDrag;
 	#endif
+		
+	SVideoMode  	m_OriginalVideoMode;
+
 	
 	bool  	m_bShowSystemMouseCursor;
 	bool  	m_bVerticalSync;
@@ -74,6 +78,8 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 	void OnMouseMove(int pointX,int pointY);
 	void OnMouseWheelUp(int pointX,int pointY);
 	void OnMouseWheelDown(int pointX,int pointY);
+	
+	bool SetVideoMode(SVideoMode *pMode);
 	
 public:
 
