@@ -34,7 +34,7 @@ bool CSoundType::Unserialize(ISystemPersistencyNode *piNode)
 		for(unsigned int x=0;x<m_nChannels;x++)
 		{
 		  alSourcei(pSources[x],AL_BUFFER,m_iSoundBuffer);
-		  alSourcef(pSources[x],AL_GAIN,m_dVolume/100.0);
+		  alSourcef(pSources[x],AL_GAIN,(float)(m_dVolume/100.0));
 	  
 		  m_dAvailableSources.push_back(pSources[x]);
 		}
