@@ -5,7 +5,7 @@
 
 CSoundSystemManager::CSoundSystemManager()
 {
-  m_dMasterVolume=100;
+  m_nMasterVolume=100;
   m_bEnable3DSound=false;
   m_piPlayerEntity=NULL;
   m_pContext = NULL;
@@ -63,7 +63,7 @@ void CSoundSystemManager::Stop()
 }
 void CSoundSystemManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
-  alListenerf(AL_GAIN ,(m_dMasterVolume/100.0));
+  alListenerf(AL_GAIN ,((float)m_nMasterVolume)/(float)100.0);
   if(!Is3DSoundEnabled()){return;}
 
   if(m_EntityManagerWrapper.m_piEntityManager && m_piPlayerEntity==NULL)
@@ -80,7 +80,7 @@ void CSoundSystemManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFr
  }
 }
 
-int  CSoundSystemManager::GetMasterVolume(){return m_dMasterVolume;}
-void CSoundSystemManager::SetMasterVolume(int dVolume){m_dMasterVolume=dVolume;NOTIFY_EVENT(ISoundManagerEvents,OnMasterPanChanged(m_dMasterVolume));}
+unsigned int  CSoundSystemManager::GetMasterVolume(){return m_nMasterVolume;}
+void CSoundSystemManager::SetMasterVolume(unsigned int nVolume){m_nMasterVolume=nVolume;NOTIFY_EVENT(ISoundManagerEvents,OnMasterVolumeChanged(m_nMasterVolume));}
 bool CSoundSystemManager::Is3DSoundEnabled(){return m_bEnable3DSound;}
 

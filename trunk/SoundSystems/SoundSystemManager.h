@@ -10,7 +10,7 @@ class CSoundSystemManager:virtual public CSystemObjectBase, virtual public ISoun
 	CGameControllerWrapper  m_GameControllerWrapper;
 	CEntityManagerWrapper   m_EntityManagerWrapper;
 
-	double m_dMasterVolume;// 0,100
+	unsigned int m_nMasterVolume;// 0,100
 	bool m_bEnable3DSound;
 	IEntity *m_piPlayerEntity;
 
@@ -32,11 +32,11 @@ public:
 
 	bool Is3DSoundEnabled();
 
-	int  GetMasterVolume();
-	void SetMasterVolume(int dVolume);
+	unsigned int  GetMasterVolume();
+	void SetMasterVolume(unsigned int dVolume);
 
 	BEGIN_PROP_MAP(CSoundSystemManager)
-		PROP_VALUE_FLAGS(m_dMasterVolume,"Volume",100,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_nMasterVolume,"Volume",100,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_bEnable3DSound,"3DSound",false,MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP();
 
