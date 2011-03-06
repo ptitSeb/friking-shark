@@ -127,7 +127,7 @@ AreaDeJuego
 }
 Terrain
 {
-	AmbientColor=0.000000,0.000000,0.000000
+	AmbientColor=0.207465,0.201244,0.201244
 	BaseModel
 	{
 		Class=Model
