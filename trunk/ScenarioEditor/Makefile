@@ -12,6 +12,7 @@ INCLUDES = -I. \
 -I../GameGUILib \
 -I../GameGraphics \
 -I../GameManagers \
+-I../SoundSystems \
 -I../VectorLib \
 
 SOURCES = ScenarioEditor.cpp\

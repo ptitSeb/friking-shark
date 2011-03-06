@@ -124,6 +124,9 @@ public:
 
 
 	IGameGUILabel *m_piSTFps;
+	IGameGUILabel *m_piSTVolume;
+	IGameGUILabel *m_piBTDecreaseVolume;
+	IGameGUILabel *m_piBTIncreaseVolume;
 
 	IGameWindow	  *m_piGRHeightLayerPanel;
 	IGameWindow	  *m_piGRColorLayerPanel;
@@ -358,6 +361,7 @@ public:
 	CPlayAreaManagerWrapper  m_PlayAreaManagerWrapper;
 	CGameRenderWrapper		 m_GameRenderWrapper;
 	CWorldManagerWrapper	 m_WorldManagerWrapper;
+	CSoundManagerWrapper	 m_SoundManagerWrapper;
 
 	void ProcessInput(double dTimeFraction,double dRealTimeFraction);
 	void ProcessKey(unsigned short nKey,double dTimeFraction,double dRealTimeFraction);
@@ -374,6 +378,10 @@ public:
 
 	BEGIN_CHILD_MAP()
 		CHILD_MAP_ENTRY("FPS",m_piSTFps);
+		CHILD_MAP_ENTRY("Volume",m_piSTVolume);
+		CHILD_MAP_ENTRY_EX("DecreaseVolume",m_piBTDecreaseVolume,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("IncreaseVolume",m_piBTIncreaseVolume,IGameGUIButtonEvents);
+
 		CHILD_MAP_ENTRY_EX("Options",m_piBTShowOptionsPanel,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Terrain",m_piBTShowTerrainPanel,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Entities",m_piBTShowEntitiesPanel,IGameGUIButtonEvents);
