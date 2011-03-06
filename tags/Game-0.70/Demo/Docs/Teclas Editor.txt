@@ -1,0 +1,46 @@
+Teclas:
+
+Visores
+--------
+
+S					- Modo de Seleccion
+W					- Modo de Traslacion de Elementos
+E/R					- Modo de Rotacion de Elementos
+Z					- Zoom
+Alt+Z				- Zoom de los elementos seleccionados
+Ctrl+Alt+Z			- Zoom de todos los elementos en todos los visores
+X					- Mover vista
+C					- Rotar vista
+Espacio				- Cambiar entre 1 Visor y 3 Visores
+Ctrl+D				- Cambiar entre maximo/minimo nivel de detalle
+Ctrl+Espacio		- Cambiar entre Texturas/Alambres
+8					- Vista desde Arriba
+2					- Vista desde Abajo
+4					- Vista desde la Izquierda
+6					- Vista desde la Derecha
+5					- Vista en perspectiva
+7					- Vista desde el Frente
+1					- Vista desde Atras
+
+Undo/Redo
+-----------
+
+'-'					- Deshacer operacion / seleccion
+'+'					- Rehacer operacion / seleccion
+CTRL+'-'			- Deshacer cambio de vista
+CTRL+'+'			- Rehacer cambio de vista
+
+Archivos 
+-------------------------
+
+F3 					- Abrir Archivo
+Alt+F3 				- Cerrar Archivo
+F2 / Ctrl+S			- Guardar
+Alt+F2 				- Guardar Como
+
+Integracion con el Engine
+---------------------------
+
+F5 / F12 			- Ejecutar
+Ctrl+F5 /Shift+F12 	- Ejecutar en Inspeccion
+F8 					- Configuracion Engine

@@ -1,0 +1,153 @@
+ColorLayers
+{
+	Item0
+	{
+		AbrupEnd=0
+		Color=0.000000,1.000000,0.000000
+		ColorSaturationMargin=1.000000
+		ColorValueMargin=0.000000
+		HorzResolution=3.000000
+		Texture="D:\\Desarrollo\\Game\\Textures\\hiervsPeq.jpg"
+		VertResolution=3.000000
+	}
+	Item1
+	{
+		AbrupEnd=0
+		Color=1.000000,1.000000,0.000000
+		ColorSaturationMargin=1.000000
+		ColorValueMargin=0.000000
+		HorzResolution=3.000000
+		Texture="D:\\Desarrollo\\Game\\Textures\\sandPeq.jpg"
+		VertResolution=3.000000
+	}
+	Item2
+	{
+		AbrupEnd=0
+		Color=0.000000,0.000000,1.000000
+		ColorSaturationMargin=1.000000
+		ColorValueMargin=0.000000
+		HorzResolution=3.000000
+		Texture="D:\\Desarrollo\\Game\\Textures\\concrete1.jpg"
+		VertResolution=3.000000
+	}
+	Item3
+	{
+		AbrupEnd=0
+		Color=0.000000,1.000000,1.000000
+		ColorSaturationMargin=1.000000
+		ColorValueMargin=0.000000
+		HorzResolution=2.500000
+		Texture="D:\\Desarrollo\\Game\\Textures\\Azulejos.jpg"
+		VertResolution=2.500000
+	}
+}
+ColorMap="D:\\Desarrollo\\Game\\Textures\\ColorMap.bmp"
+HeightLayers
+{
+	Item0
+	{
+		HeightMargin=0.000000
+		HorzResolution=4.000000
+		MaxHeight=0.660000
+		MinHeight=0.000000
+		Texture2="D:\\Desarrollo\\Game\\Textures\\LechoInferior.jpg"
+		VertResolution=4.000000
+	}
+	Item1
+	{
+		HeightMargin=0.080000
+		HorzResolution=3.000000
+		MaxHeight=0.920000
+		MinHeight=0.340000
+		Texture2="D:\\Desarrollo\\Game\\Textures\\LechoSuperior.jpg"
+		VertResolution=3.000000
+	}
+	Item2
+	{
+		HeightMargin=0.190000
+		HorzResolution=3.000000
+		MaxHeight=1.000000
+		MinHeight=0.920000
+		Texture2="D:\\Desarrollo\\Game\\Textures\\ArenaOscura.jpg"
+		VertResolution=3.000000
+	}
+}
+Model="D:\\Desarrollo\\Game\\Demo\\Resources\\Models\\TextureTester.ase"
+ObjectLayers
+{
+	Item0
+	{
+		CastShadows=1
+		Color=0.000000,1.000000,0.000000
+		ColorSaturationMargin=1.000000
+		ColorValueMargin=0.000000
+		Model="D:\\Desarrollo\\Game\\Demo\\Resources\\Models\\palmera.ASE"
+		PositionJitter=0.300000
+		Separation=0.700000
+		ShadowLevel=1
+		YawJitter=360.000000
+	}
+}
+Objects
+{
+	Item0
+	{
+		Angles=0.000000,0.000000,0.000000
+		CastShadows=1
+		ConsiderAsTerrain=0
+		GroundTied=1
+		Height=0.000000
+		Locked=0
+		Model="D:\\Desarrollo\\Game\\Demo\\Resources\\Models\\t26.ase"
+		Position=832.345558,53.278400,-31.340371
+		ShadowLevel=1
+	}
+	Item1
+	{
+		Angles=0.000000,0.000000,0.000000
+		CastShadows=1
+		ConsiderAsTerrain=0
+		GroundTied=1
+		Height=0.000000
+		Locked=0
+		Model="D:\\Desarrollo\\Game\\Demo\\Resources\\Models\\t26.ase"
+		Position=239.475937,27.283300,11.032735
+		ShadowLevel=1
+	}
+	Item2
+	{
+		Angles=0.000000,0.000000,0.000000
+		CastShadows=1
+		ConsiderAsTerrain=1
+		GroundTied=0
+		Height=79.000000
+		Locked=0
+		Model="D:\\Desarrollo\\Game\\Demo\\Resources\\Models\\temp1.ase"
+		Position=332.610113,79.000000,-5.611734
+		ShadowLevel=0
+	}
+	Item3
+	{
+		Angles=0.000000,0.000000,0.000000
+		CastShadows=1
+		ConsiderAsTerrain=0
+		GroundTied=0
+		Height=91.000000
+		Locked=0
+		Model="D:\\Desarrollo\\Game\\Demo\\Resources\\Models\\p51player.ASE"
+		Position=299.496838,91.000000,27.595337
+		ShadowLevel=2
+	}
+	Item4
+	{
+		Angles=0.000000,0.000000,0.000000
+		CastShadows=1
+		ConsiderAsTerrain=1
+		GroundTied=1
+		Height=25.000000
+		Locked=1
+		Model="D:\\Desarrollo\\Game\\Demo\\Resources\\Models\\pasarelas.ASE"
+		Position=826.990442,52.283300,-49.045024
+		ShadowLevel=0
+	}
+}
