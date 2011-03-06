@@ -6,7 +6,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <list>
-#include <AL/al.h>
 #include <AL/alut.h>
 #include "GameRunTimeLib.h"
 #include "VectorLib.h"
