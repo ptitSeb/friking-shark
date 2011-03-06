@@ -637,8 +637,12 @@ void COpenGLViewport::OnMove(unsigned x,unsigned y){if(m_piCallBack){m_piCallBac
 void COpenGLViewport::SetVSync(bool bVSync)
 {
 	m_bVerticalSync=bVSync;
-	#pragma message("COpenGLViewport::Create -> me he cargado el SetVSync de OpenGLExtensions (deberia ir a traves de Glee)")
-	//COpenGLExtensions::SetVSync(m_bVerticalSync);
+
+#ifdef WIN32
+	wglSwapIntervalEXT(m_bVerticalSync);
+#else
+	glXSwapIntervalSGI(m_bVerticalSync);
+#endif
 }
 
 bool COpenGLViewport::GetVSync()

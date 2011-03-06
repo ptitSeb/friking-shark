@@ -771,7 +771,7 @@ void CGameGUIManager::UpdateScreenPlacement()
 		}
 		m_Viewport.m_piViewport->SetWindowed((unsigned)rFinalRect.x,(unsigned)rFinalRect.y,(unsigned)rFinalRect.w,(unsigned)rFinalRect.h);
 	}
-// 	m_Viewport.m_piViewport->SetVSync(m_sScreenProperties.bVerticalSync);
+ 	m_Viewport.m_piViewport->SetVSync(m_sScreenProperties.bVerticalSync);
 }
 
 bool CGameGUIManager::Unserialize(ISystemPersistencyNode *piNode)
