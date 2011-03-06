@@ -486,14 +486,15 @@ bool COpenGLViewport::Create(unsigned x, unsigned y, unsigned w, unsigned h, boo
 
 void COpenGLViewport::Destroy()
 {
-	if(m_XWindow!=None)
-	{
-	  SetVideoMode(&m_OriginalVideoMode);
-	}
-  
+ 
 #ifdef WIN32
 	if(m_hWnd){DestroyWindow(m_hWnd);m_hWnd=NULL;}
+	SetVideoMode(&m_OriginalVideoMode);
 #else
+	if(m_XWindow!=None)
+	{
+		SetVideoMode(&m_OriginalVideoMode);
+	}
 	if(m_pXHollowCursor && !m_bShowSystemMouseCursor)
 	{
 	  XUndefineCursor(m_pXDisplay,m_XWindow);
