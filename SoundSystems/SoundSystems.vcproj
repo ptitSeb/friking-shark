@@ -64,10 +64,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib d3dx9d.lib winmm.lib dsound.lib dxguid.lib odbc32.lib dxerr.lib odbccp32.lib"
+				AdditionalDependencies="openal32.lib alut.lib comctl32.lib winmm.lib odbc32.lib odbccp32.lib"
 				OutputFile="$(OutDir)/SoundSystems.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\GameRunTime\Debug;..\GameRunTimeLib\Debug;..\GameManagers\Debug;..\VectorLib\Debug;..\AnimationSystems\Debug;D:\DXSDK\Lib\x86"
+				AdditionalLibraryDirectories="..\GameRunTime\Debug;..\GameRunTimeLib\Debug;..\GameManagers\Debug;..\VectorLib\Debug;..\AnimationSystems\Debug"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/SoundSystems.pdb"
 				SubSystem="2"
@@ -146,10 +146,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib dxerr.lib d3dx9d.lib winmm.lib dsound.lib dxguid.lib odbc32.lib odbccp32.lib"
+				AdditionalDependencies="openal32.lib alut.lib comctl32.lib winmm.lib odbc32.lib odbccp32.lib"
 				OutputFile="$(OutDir)/SoundSystems.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\GameRunTime\Release;..\GameRunTimeLib\Release;..\GameManagers\Release;..\VectorLib\Release;..\AnimationSystems\Release;D:\DXSDK\Lib\x86"
+				AdditionalLibraryDirectories="..\GameRunTime\Release;..\GameRunTimeLib\Release;..\GameManagers\Release;..\VectorLib\Release;..\AnimationSystems\Release"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -192,30 +192,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\dxstdafx.h"
-				>
-			</File>
-			<File
-				RelativePath=".\DXUTsound.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath=".\SoundSystemManager.cpp"
 				>
 			</File>
@@ -224,7 +200,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\SoundType .cpp"
+				RelativePath=".\SoundType.cpp"
 				>
 			</File>
 			<File
@@ -253,10 +229,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<File
-				RelativePath=".\DXUTsound.h"
-				>
-			</File>
 			<File
 				RelativePath=".\resource.h"
 				>
