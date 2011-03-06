@@ -782,7 +782,6 @@ bool CGameGUIManager::Unserialize(ISystemPersistencyNode *piNode)
 	{
 		SVideoMode sVideoMode;
 		m_Viewport.m_piViewport->GetCurrentVideoMode(&sVideoMode);
-		m_Viewport.m_piViewport->ShowMouseCursor(false);
 
 		m_sWindowedResolution.w=sVideoMode.w;
 		m_sWindowedResolution.h=sVideoMode.h;
@@ -828,6 +827,7 @@ bool CGameGUIManager::Unserialize(ISystemPersistencyNode *piNode)
 			rWindowRect=m_sScreenProperties.rWindowRect;
 		}
 		bOk=m_Viewport.m_piViewport->Create((unsigned int)rWindowRect.x,(unsigned int)rWindowRect.y,(unsigned int)rWindowRect.w,(unsigned int)rWindowRect.h,false);
+		if(bOk){m_Viewport.m_piViewport->ShowMouseCursor(false);}
 
 		UpdateScreenPlacement();
 	}
