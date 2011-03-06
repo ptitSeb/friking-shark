@@ -99,6 +99,7 @@ bool CScenarioEditorMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 	m_PlayAreaManagerWrapper.Attach("GameSystem","PlayAreaManager");
 	m_FrameManager.Attach("GameSystem","FrameManager");
 	m_WorldManagerWrapper.Attach("GameSystem","WorldManager");
+	m_SoundManagerWrapper.Attach("GameSystem","SoundManager");
 	
 	//OpenScenario("/home/javi/workspace/Game/Demo/Resources/new21.ges");
 	return bOk;
@@ -109,6 +110,7 @@ void CScenarioEditorMainWindow::DestroyWindow()
 	StopGameSimulation();
 	Reset();
 	if(m_GameControllerWrapper.m_piGameController){m_GameControllerWrapper.m_piGameController->EndGame();}
+	m_SoundManagerWrapper.Detach();
 	m_PlayAreaManagerWrapper.Detach();
 	m_GameControllerWrapper.Detach();
 	m_GameRenderWrapper.Detach();
@@ -339,6 +341,12 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 		sprintf(A,"Fps: %.02f",m_FrameManager.m_piFrameManager->GetCurrentFps());
 		m_piSTFps->SetText(A);
 	}
+	if(m_piSTVolume && m_SoundManagerWrapper.m_piSoundManager)
+	{
+		char A[200];
+		sprintf(A,"Vol: %d%%",m_SoundManagerWrapper.m_piSoundManager->GetMasterVolume());
+		m_piSTVolume->SetText(A);
+	}
 
 	UpdateLayerPanel();
 }
@@ -408,6 +416,21 @@ void CScenarioEditorMainWindow::ProcessFileExit()
 
 void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 {
+	if(m_piBTIncreaseVolume==piControl && m_SoundManagerWrapper.m_piSoundManager)
+	{
+	  int volume=m_SoundManagerWrapper.m_piSoundManager->GetMasterVolume();
+	  volume+=5;
+	  m_SoundManagerWrapper.m_piSoundManager->SetMasterVolume(volume);
+	}
+
+	if(m_piBTDecreaseVolume==piControl && m_SoundManagerWrapper.m_piSoundManager)
+	{
+	  int volume=m_SoundManagerWrapper.m_piSoundManager->GetMasterVolume();
+	  volume-=5;
+	  if(volume<0){volume=0;}
+	  m_SoundManagerWrapper.m_piSoundManager->SetMasterVolume(volume);
+	}
+
 	if(m_piBTFileNew==piControl)
 	{
 		ProcessFileNew();

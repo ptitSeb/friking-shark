@@ -1,15 +1,12 @@
-// SoundSystems.cpp : Defines the entry point for the DLL application.
-//
-
 #include "./stdafx.h"
 #include "SoundSystems.h"
 #include "SoundSystemManager.h"
 #include "SoundType.h"
 
 BEGIN_SYSTEM_MODULE()
-  SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CSoundSystemManager,"CSoundSystemManager");
-  SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CSoundType,"SoundType");
-END_SYSTEM_MODULE();
+  SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CSoundSystemManager,"CSoundSystemManager")
+  SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CSoundType,"SoundType")
+END_SYSTEM_MODULE()
 
 double DeciblesToPercentage(double dDb)
 {

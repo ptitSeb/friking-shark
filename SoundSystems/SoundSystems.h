@@ -22,5 +22,24 @@ struct ISound
     virtual ~ISound(){}
 };
 
+struct ISoundManager : virtual public ISystemUnknown
+{
+  virtual bool Is3DSoundEnabled()=0;
+
+  virtual int  GetMasterVolume()=0;
+  virtual void SetMasterVolume(int dVolume)=0;
+
+  virtual ~ISoundManager(){}
+};
+
+struct ISoundManagerEvents : virtual public ISystemUnknown
+{
+  virtual void OnMasterPanChanged(int dMasterPan)=0;
+  virtual void OnMasterVolumeChanged(int dMasterVolume)=0;
+
+  virtual ~ISoundManagerEvents(){}
+};
+
+
 double DeciblesToPercentage(double dDb);
 double PercentageToDecibels(double dPercentage);

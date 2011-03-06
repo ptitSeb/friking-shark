@@ -1,16 +1,15 @@
 #include "./stdafx.h"
-#include "GameRuntimeLib.h"
-#include ".\SoundSystems.h"
-#include ".\SoundSystemManager.h"
+#include "GameRunTimeLib.h"
+#include "SoundSystems.h"
+#include "SoundSystemManager.h"
 
 CSoundSystemManager::CSoundSystemManager()
 {
-  m_dMasterPan=0;
   m_dMasterVolume=100;
   m_bEnable3DSound=false;
   m_piPlayerEntity=NULL;
-  m_piListener=NULL;
-  m_hMainWindow=NULL;
+  m_pContext = NULL;
+  m_pDevice = NULL;
 }
 
 CSoundSystemManager::~CSoundSystemManager()
@@ -18,28 +17,20 @@ CSoundSystemManager::~CSoundSystemManager()
 
 }
 
-BOOL CALLBACK CSoundSystemManager::FindTopLevelWindow(HWND hwnd, LPARAM lParam)
-{
-	if(GetParent(hwnd)==NULL && GetWindowThreadProcessId(hwnd,NULL)==GetCurrentThreadId())
-	{
-		CSoundSystemManager *pManager =(CSoundSystemManager *)lParam;
-		pManager->m_hMainWindow=hwnd;
-		return FALSE;
-	}
-	return TRUE;
-}
 
 bool CSoundSystemManager::Init(std::string sClass,std::string sName,ISystem *piSystem)
 {
   bool bOk=CSystemObjectBase::Init(sClass,sName,piSystem);;
-  if(bOk){bOk=m_ViewportWrapper.Attach("GameGUI","Viewport");}
   if(bOk){bOk=m_GameControllerWrapper.Attach("GameSystem","GameController");}
   if(bOk){m_GameControllerWrapper.m_piGameController->RegisterManager(500,this);}
-  if(bOk)
+  
+  if(bOk) {m_pDevice=alcOpenDevice(NULL);bOk=(m_pDevice!=NULL);}
+  if(bOk) {m_pContext=alcCreateContext(m_pDevice,NULL);bOk=(m_pContext!=NULL);}
+  if(bOk) {alcMakeContextCurrent(m_pContext);}
+  if(bOk) {alutInitWithoutContext(NULL,NULL);}
+  if(!bOk)
   {
-	EnumWindows(FindTopLevelWindow, (LPARAM)this); 
-    m_dxSoundManager.Initialize(m_hMainWindow,DSSCL_NORMAL);
-    HRESULT hr=m_dxSoundManager.Get3DListenerInterface(&m_piListener);
+	  RTTRACE("CSoundSystemManager::Init -> Failed to create sound context %d",alGetError());
   }
   return bOk;
 }
@@ -47,8 +38,10 @@ bool CSoundSystemManager::Init(std::string sClass,std::string sName,ISystem *piS
 
 void CSoundSystemManager::Destroy()
 {
+  if(m_pContext){alutExit();}
+  if(m_pContext){alcMakeContextCurrent(NULL);alcDestroyContext(m_pContext);m_pContext=NULL;}
+  if(m_pDevice){alcCloseDevice(m_pDevice);m_pDevice=NULL;}
   if(m_GameControllerWrapper.m_piGameController){m_GameControllerWrapper.m_piGameController->UnregisterManager(this);}
-  m_ViewportWrapper.Detach();
   m_GameControllerWrapper.Detach();
   CSystemObjectBase::Destroy();
 }
@@ -70,6 +63,7 @@ void CSoundSystemManager::Stop()
 }
 void CSoundSystemManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
+  alListenerf(AL_GAIN ,(m_dMasterVolume/100.0));
   if(!Is3DSoundEnabled()){return;}
 
   if(m_EntityManagerWrapper.m_piEntityManager && m_piPlayerEntity==NULL)
@@ -79,28 +73,14 @@ void CSoundSystemManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFr
 
   if(m_piPlayerEntity )
   {
-    if(m_piListener)
-    {
       SPhysicInfo *pPhysicInfo=m_piPlayerEntity->GetPhysicInfo();
-      DS3DLISTENER listener={0};
-      listener.dwSize=sizeof(listener);
-      m_piListener->GetAllParameters(&listener);
-
-      CVector vForward(1,0,0),vUp(0,1,0);
-      //VectorsFromAngles(pPhysicInfo->vAngles,&vForward,NULL,&vUp);
-      HRESULT hr=S_OK;
-      vUp=Origin-vUp;
-      hr=m_piListener->SetOrientation((D3DVALUE)vForward.c[0],(D3DVALUE)vForward.c[1],(D3DVALUE)vForward.c[2],(D3DVALUE)vUp.c[0],(D3DVALUE)vUp.c[1],(D3DVALUE)vUp.c[2],DS3D_DEFERRED);
-      hr=m_piListener->SetPosition((D3DVALUE)pPhysicInfo->vPosition.c[0],(D3DVALUE)pPhysicInfo->vPosition.c[1],0,DS3D_DEFERRED);
-      hr=m_piListener->CommitDeferredSettings();
-    }
-  }
+	  alListener3f(AL_POSITION,(float)pPhysicInfo->vPosition.c[0],(float)pPhysicInfo->vPosition.c[1],(float)pPhysicInfo->vPosition.c[2]);
+	  alListener3f(AL_VELOCITY,(float)pPhysicInfo->vVelocity.c[0],(float)pPhysicInfo->vVelocity.c[1],(float)pPhysicInfo->vVelocity.c[2]);
+	  alListener3f(AL_ORIENTATION,(float)pPhysicInfo->vForward.c[0],(float)pPhysicInfo->vForward.c[1],(float)pPhysicInfo->vForward.c[2]);
+ }
 }
 
-int  CSoundSystemManager::GetMasterPan(){return m_dMasterPan;}
-void CSoundSystemManager::SetMasterPan(int dPan){m_dMasterPan=dPan;NOTIFY_EVENT(ISoundManagerEvents,OnMasterPanChanged(m_dMasterPan));}
 int  CSoundSystemManager::GetMasterVolume(){return m_dMasterVolume;}
 void CSoundSystemManager::SetMasterVolume(int dVolume){m_dMasterVolume=dVolume;NOTIFY_EVENT(ISoundManagerEvents,OnMasterPanChanged(m_dMasterVolume));}
-CSoundManager *CSoundSystemManager::GetSoundManager(){return &m_dxSoundManager;}
 bool CSoundSystemManager::Is3DSoundEnabled(){return m_bEnable3DSound;}
 

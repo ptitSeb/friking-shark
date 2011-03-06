@@ -11,6 +11,7 @@
 #include "GameGUILib.h"
 #include "GameGraphics.h"
 #include "GameManagers.h"
+#include "SoundSystems.h"
 #include "ScenarioEditor.h"
 
 DECLARE_CUSTOM_WRAPPER1(CGenericViewportWrapper,IGenericViewport,m_piViewport)
@@ -20,6 +21,8 @@ DECLARE_CUSTOM_WRAPPER2(CPlayAreaManagerWrapper,IPlayAreaManager,m_piPlayAreaMan
 DECLARE_CUSTOM_WRAPPER1(CEntityManagerWrapper,IEntityManager,m_piEntityManager)
 DECLARE_CUSTOM_WRAPPER1(CGameRenderWrapper,IGameRender,m_piRender)
 DECLARE_CUSTOM_WRAPPER2(CWorldManagerWrapper,ITerrainDesign,m_piTerrain,IWorldManager,m_piWorldManager)
+DECLARE_CUSTOM_WRAPPER1(CSoundManagerWrapper,ISoundManager,m_piSoundManager)
+
 
 DECLARE_CUSTOM_WRAPPER1(CRenderWrapper,IGenericRender,m_piRender)
 DECLARE_CUSTOM_WRAPPER1(CViewportWrapper,IGenericViewport,m_piViewport)
