@@ -156,9 +156,9 @@ void COpenGLRender::SetCamera(const CVector &vPosition,double dYaw, double dPitc
 	{
 		m_bHardwareSupportRead=true;
 
-		RTTRACE("COpenGLRender -> shaders disabled!!!");
+		//RTTRACE("COpenGLRender -> shaders disabled!!!");
 		GLhandleARB hFakeShaderProgram=glCreateProgramObjectARB();
-		m_sHardwareSupport.bShaders=false;(hFakeShaderProgram!=0);
+		m_sHardwareSupport.bShaders=(hFakeShaderProgram!=0);
 		if(hFakeShaderProgram){glDeleteObjectARB(hFakeShaderProgram);hFakeShaderProgram=NULL;}
 
 		glGetIntegerv(GL_MAX_LIGHTS,&m_sHardwareSupport.nMaxLights);

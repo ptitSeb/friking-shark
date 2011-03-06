@@ -1052,8 +1052,8 @@ bool COpenGLViewport::SetFullScreen(unsigned int w,unsigned int h,unsigned int b
 	mode.rate=rate;
 
 #ifdef WIN32
-	SetMaximized(true);
 	SetVideoMode(&mode);
+	SetMaximized(true);
 	return true;
 #else
 	//RTTRACE("COpenGLViewport::SetFullScreen -> Enter %dx%d",w,h);
