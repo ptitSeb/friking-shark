@@ -14,34 +14,36 @@ SOURCES = GameEngine.cpp\
 StdAfx.cpp
 
 
-CFLAGS += -DNDEBUG -pedantic -pedantic-errors -Wall -Werror  -D_REENTRANT -O3 -g
-CFLAGS_DEBUG += -DDEBUG  -pedantic -pedantic-errors -Wall -Werror  -D_REENTRANT -g
+CFLAGS += -DNDEBUG -pedantic -pedantic-errors -Wall -Werror  -D_REENTRANT -O3 -MMD -g
+CFLAGS_DEBUG += -DDEBUG  -pedantic -pedantic-errors -Wall -Werror  -D_REENTRANT -MMD -g
 
-LIBS = ../GameRunTimeLib/lib/GameRuntimeLib.a  ./GameRuntime.so -lpthread
-LIBS_DEBUG = ../GameRunTimeLib/lib/GameRuntimeLibd.a  ./GameRuntime.so -lpthread
+LIBS = ../GameRunTimeLib/lib/GameRuntimeLib.a 
+LIBS_DEBUG = ../GameRunTimeLib/lib/GameRuntimeLibd.a
 
 INTERMEDIATE_DIR = ./.intermediate
 OUT_SOURCES=$(addprefix $(INTERMEDIATE_DIR)/,$(SOURCES))
 
 all: release debug
+release: ../Demo/Bin/Release/GameEngine
+debug: ../Demo/Bin/Debug/GameEngine
 
-release: $(OUT_SOURCES:.cpp=.o)
+../Demo/Bin/Release/GameEngine: $(OUT_SOURCES:.cpp=.o) $(LIBS) 
 	cp ../Demo/Bin/Release/GameRuntime.so .
-	rm -f ../Demo/Bin/Release/GameEngine
-	$(CC) -o ../Demo/Bin/Release/GameEngine $< $(CFLAGS) $(LIBS)
+	$(CC) -o ../Demo/Bin/Release/GameEngine .intermediate/*.o $(CFLAGS) $(LIBS) ./GameRuntime.so -lpthread
 
-debug: $(OUT_SOURCES:.cpp=.od)
+../Demo/Bin/Debug/GameEngine: $(OUT_SOURCES:.cpp=.od) $(LIBS_DEBUG) 
 	cp ../Demo/Bin/Debug/GameRuntime.so .
-	rm -f ../Demo/Bin/Debug/GameEngine
-	$(CC) -o ../Demo/Bin/Debug/GameEngine $< $(CFLAGS_DEBUG) $(LIBS_DEBUG)
+	$(CC) -o ../Demo/Bin/Debug/GameEngine .intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG) ./GameRuntime.so -lpthread
 
 $(INTERMEDIATE_DIR)/%.o: ./%.cpp
-	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS) $(INCLUDES) $<
+	$(CXX) -MF $@.dep -o $@ -c $(DFLAGS) $(CFLAGS) $(INCLUDES) $<
 
 $(INTERMEDIATE_DIR)/%.od: ./%.cpp
-	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS_DEBUG) $(INCLUDES) $<
+	$(CXX) -MF $@.dep -o $@ -c $(DFLAGS) $(CFLAGS_DEBUG) $(INCLUDES) $<
 
 clean:
 	rm -f ../Demo/Bin/*/GameEngine
 	rm -f ./.intermediate/*
 
+-include $(OUT_SOURCES:cpp=o.dep)
+-include $(OUT_SOURCES:cpp=od.dep)

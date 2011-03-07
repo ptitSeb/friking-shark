@@ -23,46 +23,46 @@ stdafx.cpp
 
 SOURCES_C = GLee.c
 
-CFLAGS += -DNDEBUG -fPIC -Wall -Werror -D_DO_NOT_USE_ASSEMBLER_ -D_REENTRANT -O3 -g
-CFLAGS_DEBUG += -DDEBUG -fPIC -Wall -Werror -D_DO_NOT_USE_ASSEMBLER_ -D_REENTRANT -g
+CFLAGS += -DNDEBUG -fPIC -Wall -Werror -D_DO_NOT_USE_ASSEMBLER_ -D_REENTRANT -O3 -MMD -g
+CFLAGS_DEBUG += -DDEBUG -fPIC -Wall -Werror -D_DO_NOT_USE_ASSEMBLER_ -D_REENTRANT -MMD -g
 
-LIBS = ../GameRunTimeLib/lib/GameRuntimeLib.a   ../VectorLib/lib/VectorLib.a -ldl -lGLU -lGL -lX11 -lXrandr
-LIBS_DEBUG =  ../GameRunTimeLib/lib/GameRuntimeLibd.a  ../VectorLib/lib/VectorLibd.a -ldl -lGLU -lGL -lX11 -lXrandr
+LIBS = ../GameRunTimeLib/lib/GameRuntimeLib.a   ../VectorLib/lib/VectorLib.a 
+LIBS_DEBUG =  ../GameRunTimeLib/lib/GameRuntimeLibd.a  ../VectorLib/lib/VectorLibd.a
 
 INTERMEDIATE_DIR = ./.intermediate
 OUT_SOURCES=$(addprefix $(INTERMEDIATE_DIR)/,$(SOURCES))
 OUT_SOURCES_C=$(addprefix $(INTERMEDIATE_DIR)/,$(SOURCES_C))
 
 all: release debug
-cfiles_release:$(OUT_SOURCES_C:.c=.o)
-cppfiles_release: $(OUT_SOURCES:.cpp=.o)  
-cfiles_debug:$(OUT_SOURCES_C:.c=.od)
-cppfiles_debug: $(OUT_SOURCES:.cpp=.od)  
+release: ../Demo/Bin/Release/GameGraphics.so
+debug: ../Demo/Bin/Debug/GameGraphics.so
 
-release: cfiles_release cppfiles_release
-	rm -f ../Demo/Bin/Release/GameGraphics.so
-	$(CC) -shared -o ../Demo/Bin/Release/GameGraphics.so ../JPEGLibrary/.intermediate/*.o .intermediate/*.o $(CFLAGS) $(LIBS)
+../Demo/Bin/Release/GameGraphics.so: $(OUT_SOURCES_C:.c=.o)  $(OUT_SOURCES:.cpp=.o) $(LIBS)
+	$(CC) -shared -o ../Demo/Bin/Release/GameGraphics.so .intermediate/*.o ../JPEGLibrary/.intermediate/*.o $(CFLAGS) $(LIBS) -ldl -lGLU -lGL -lX11 -lXrandr
 
-debug: cfiles_debug cppfiles_debug
-	rm -f ../Demo/Bin/Debug/GameGraphics.so 
-	$(CC) -shared -o ../Demo/Bin/Debug/GameGraphics.so  ../JPEGLibrary/.intermediate/*.od .intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG)
+../Demo/Bin/Debug/GameGraphics.so:  $(OUT_SOURCES_C:.c=.od)  $(OUT_SOURCES:.cpp=.od) $(LIBS_DEBUG)
+	$(CC) -shared -o ../Demo/Bin/Debug/GameGraphics.so .intermediate/*.od ../JPEGLibrary/.intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG) -ldl -lGLU -lGL -lX11 -lXrandr
 
 $(INTERMEDIATE_DIR)/%.o: ./%.cpp
-	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS) $(INCLUDES) $<
+	$(CXX) -MF $@.dep -o $@ -c $(DFLAGS) $(CFLAGS) $(INCLUDES) $<
 
 $(INTERMEDIATE_DIR)/%.o: ./%.c
-	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS) $(INCLUDES) $<
+	$(CXX) -MF $@.dep -o $@ -c $(DFLAGS) $(CFLAGS) $(INCLUDES) $<
 
 $(INTERMEDIATE_DIR)/%.od: ./%.cpp
-	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS_DEBUG) $(INCLUDES) $<
+	$(CXX) -MF $@.dep -o $@ -c $(DFLAGS) $(CFLAGS_DEBUG) $(INCLUDES) $<
 
 $(INTERMEDIATE_DIR)/%.od: ./%.c
-	$(CXX) -o $@ -c $(DFLAGS) $(CFLAGS_DEBUG) $(INCLUDES) $<
+	$(CXX) -MF $@.dep -o $@ -c $(DFLAGS) $(CFLAGS_DEBUG) $(INCLUDES) $<
 
 clean:
 	rm -f ../Demo/Bin/*/GameGraphics.so 
 	rm -f ./.intermediate/*
 
+-include $(OUT_SOURCES:cpp=o.dep)
+-include $(OUT_SOURCES_C:c=o.dep)
+-include $(OUT_SOURCES:cpp=od.dep)
+-include $(OUT_SOURCES_C:c=od.dep)
 
 
 
