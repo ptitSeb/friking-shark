@@ -8,17 +8,19 @@ public:
     CRoute               m_Route;
 	CEntityTypeWrapper   m_EntityType;
     unsigned int         m_nEntityCount;
-    unsigned int         m_nTimeInterval;
+    unsigned int         m_nInterval;
+	unsigned int 		 m_nDelay;
 
-    SFormationElement(){m_nTimeInterval=0;m_nEntityCount=0;}
+    SFormationElement(){m_nDelay=0;m_nInterval=0;m_nEntityCount=0;}
     ~SFormationElement(){}
 };
 
 BEGIN_STRUCT_PROPS(SFormationElement)
-	PROP(m_EntityType,"Tipo")
-    PROP(m_Route,"Ruta")
-    PROP_VALUE_FLAGS(m_nEntityCount,"Numero",1,MRPF_NORMAL|MRPF_OPTIONAL)
-    PROP_VALUE_FLAGS(m_nTimeInterval,"TiempoEntreEntidades",1000,MRPF_NORMAL|MRPF_OPTIONAL)
+	PROP(m_EntityType,"EntityType")
+    PROP(m_Route,"Route")
+    PROP_VALUE_FLAGS(m_nEntityCount,"Count",1,MRPF_NORMAL|MRPF_OPTIONAL)
+    PROP_VALUE_FLAGS(m_nInterval,"Interval",1000,MRPF_NORMAL|MRPF_OPTIONAL)
+	PROP_VALUE_FLAGS(m_nDelay,"Delay",0,MRPF_NORMAL|MRPF_OPTIONAL)
 END_STRUCT_PROPS()
 
 class CFormationType: virtual public CSystemObjectBase, virtual public IFormationType,virtual public IFormationTypeDesign
@@ -51,6 +53,9 @@ public:
 	void 		 SetElementEntityInterval(unsigned int nElement,unsigned int nMilliseconds);
 	unsigned int GetElementEntityInterval(unsigned int nElement);
 	
+	void 		 SetElementEntityDelay(unsigned int nElement,unsigned int nMilliseconds);
+	unsigned int GetElementEntityDelay(unsigned int nElement);
+
 	unsigned int GetElementRoutePoints(unsigned int nElement);
 	bool 		 GetElementRoutePoint(unsigned int nElement,unsigned int nIndex,SRoutePoint *psPoint);
 	bool 		 AddElementRoutePoint(unsigned int nElement,unsigned int nIndex,const SRoutePoint &sPoint);
@@ -78,6 +83,7 @@ class CFormation:virtual public CSystemObjectBase,virtual public IFormation,virt
     CVector                               m_vPosition;
     set<IEntity*>                         m_sEntities;
     bool                                  m_bAllUnitsCreated;
+	unsigned int						  m_nActivationTime;
 
 public:
     void AddEntity(IEntity *piEntity);

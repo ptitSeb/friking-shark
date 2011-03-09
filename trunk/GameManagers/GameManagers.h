@@ -278,6 +278,9 @@ public:
 	virtual void 		 SetElementEntityCount(unsigned int nElement,unsigned int nCount)=0;
 	virtual unsigned int GetElementEntityCount(unsigned int nElement)=0;
 	
+	virtual void 		 SetElementEntityDelay(unsigned int nElement,unsigned int nMilliseconds)=0;
+	virtual unsigned int GetElementEntityDelay(unsigned int nElement)=0;
+
 	virtual void 		 SetElementEntityInterval(unsigned int nElement,unsigned int nMilliseconds)=0;
 	virtual unsigned int GetElementEntityInterval(unsigned int nElement)=0;
 	
