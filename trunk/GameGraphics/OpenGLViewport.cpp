@@ -1109,6 +1109,7 @@ bool COpenGLViewport::SetWindowed(unsigned int x,unsigned int y,unsigned int w,u
 
 	//RTTRACE("COpenGLViewport::SetWindowed -> Enter %dx%d",w,h);
 	
+	if(m_pXDisplay==NULL || m_XWindow==None){return false;}
 	SetVideoMode(&m_OriginalVideoMode);
 	
 	XUngrabKeyboard( m_pXDisplay,CurrentTime);

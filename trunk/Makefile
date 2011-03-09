@@ -18,6 +18,7 @@ IATestSystems\
 ParticleSystems\
 PlayAreaElements\
 ScenarioEditor\
+FormationEditor\
 SoundSystems\
 WeaponTypes\
 
