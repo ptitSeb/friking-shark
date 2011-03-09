@@ -18,9 +18,6 @@
     <ClCompile Include="FormationEditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FormationEditorColorSelector.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FormationEditorMainWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -36,9 +33,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FormationEditor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FormationEditorColorSelector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FormationEditorMainWindow.h">

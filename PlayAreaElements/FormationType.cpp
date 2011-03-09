@@ -143,8 +143,10 @@ void		 CFormationType::RemoveElementRoutePoint(unsigned int nElement,unsigned in
 void 		 CFormationType::ClearElementRoute(unsigned int nElement){if(nElement>=m_vElements.size()){return;} m_vElements[nElement].m_Route.Clear();}
 void 		 CFormationType::SetElementEntityCount(unsigned int nElement,unsigned int nCount){if(nElement>=m_vElements.size()){return;} m_vElements[nElement].m_nEntityCount=nCount;}
 unsigned int CFormationType::GetElementEntityCount(unsigned int nElement){if(nElement>=m_vElements.size()){return 0;} return m_vElements[nElement].m_nEntityCount;}
-void 		 CFormationType::SetElementEntityInterval(unsigned int nElement,unsigned int nMilliseconds){if(nElement>=m_vElements.size()){return;} m_vElements[nElement].m_nTimeInterval=nMilliseconds;}
-unsigned int CFormationType::GetElementEntityInterval(unsigned int nElement){if(nElement>=m_vElements.size()){return 0;} return m_vElements[nElement].m_nTimeInterval;}
+void 		 CFormationType::SetElementEntityInterval(unsigned int nElement,unsigned int nMilliseconds){if(nElement>=m_vElements.size()){return;} m_vElements[nElement].m_nInterval=nMilliseconds;}
+unsigned int CFormationType::GetElementEntityInterval(unsigned int nElement){if(nElement>=m_vElements.size()){return 0;} return m_vElements[nElement].m_nInterval;}
+void 		 CFormationType::SetElementEntityDelay(unsigned int nElement,unsigned int nMilliseconds){if(nElement>=m_vElements.size()){return;} m_vElements[nElement].m_nDelay=nMilliseconds;}
+unsigned int CFormationType::GetElementEntityDelay(unsigned int nElement){if(nElement>=m_vElements.size()){return 0;} return m_vElements[nElement].m_nDelay;}
 
 CFormation::CFormation(CFormationType *pType,CVector vPosition)
 {
@@ -152,6 +154,7 @@ CFormation::CFormation(CFormationType *pType,CVector vPosition)
     m_bAllUnitsCreated=true;
     m_pType=pType;
     m_vPosition=vPosition;
+	m_nActivationTime=0;
     
     m_vElementRunTimeInfo.resize(m_pType->m_vElements.size());
     for(unsigned x=0;x<m_pType->m_vElements.size();x++)
@@ -200,6 +203,8 @@ void CFormation::OnKilled(IEntity *piEntity)
 bool CFormation::ProcessFrame(unsigned int dwCurrentTime,double dInterval)
 {
     bool bFinished=false;
+	if(m_nActivationTime==0){m_nActivationTime=dwCurrentTime;}
+
     m_bAllUnitsCreated=true;
     for(unsigned x=0;x<m_vElementRunTimeInfo.size();x++)
     {
@@ -207,7 +212,11 @@ bool CFormation::ProcessFrame(unsigned int dwCurrentTime,double dInterval)
 		if(pElement->m_pFormationTypeElement->m_EntityType.m_piEntityType==NULL){continue;}
         if(pElement->m_dwCreatedEntities==pElement->m_pFormationTypeElement->m_nEntityCount){continue;}
 
-        if(pElement->m_dwCreatedEntities==0 || dwCurrentTime>(pElement->m_dwLastEntityTime+pElement->m_pFormationTypeElement->m_nTimeInterval))
+		// Activar la siguiente entidad:
+		// Si es la primera entidad y ha pasado el delay o
+		// No es la primera entidad y ha pasado el intervalo entre entidades
+        if(    (pElement->m_dwCreatedEntities==0 && dwCurrentTime>=m_nActivationTime+pElement->m_pFormationTypeElement->m_nDelay) 
+			|| (pElement->m_dwCreatedEntities!=0  && dwCurrentTime>=(pElement->m_dwLastEntityTime+pElement->m_pFormationTypeElement->m_nInterval)))
         {
 			IEntity *piEntity=pElement->m_pFormationTypeElement->m_EntityType.m_piEntityType->CreateInstance(NULL,dwCurrentTime);
             piEntity->GetPhysicInfo()->vPosition=pElement->m_pFormationTypeElement->m_Route.GetAbsolutePoint(0);

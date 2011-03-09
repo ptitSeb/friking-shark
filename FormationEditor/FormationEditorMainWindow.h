@@ -41,8 +41,11 @@ public:
 	CPlayAreaManagerWrapper  m_PlayAreaManagerWrapper;
 	CGameRenderWrapper		 m_GameRenderWrapper;
 	CSoundManagerWrapper	 m_SoundManagerWrapper;
+	CWorldManagerWrapper	 m_WorldManagerWrapper;
 	
-	CFormationTypeWrapper    m_Formation;
+	CFormationTypeWrapper    m_FormationType;
+	CFormationWrapper		 m_Formation;
+	unsigned int			 m_nFormationId;
 	
 	std::vector<SEntityControls *>		m_vEntityControls;
 
@@ -89,9 +92,15 @@ public:
 	IFormationEditorObjectLabel *m_piSTEntityObjectLabel;
 	IGameGUIButton *m_piBTEntitySample;
 	IGameGUIButton *m_piBTEntityRemove;
-	IGameGUILabel  *m_piSTEntityYaw;
-	IGameGUIButton *m_piBTEntityDecreaseYaw;
-	IGameGUIButton *m_piBTEntityIncreaseYaw;
+	IGameGUILabel  *m_piSTEntityCount;
+	IGameGUIButton *m_piBTEntityDecreaseCount;
+	IGameGUIButton *m_piBTEntityIncreaseCount;
+	IGameGUILabel  *m_piSTEntityDelay;
+	IGameGUIButton *m_piBTEntityDecreaseDelay;
+	IGameGUIButton *m_piBTEntityIncreaseDelay;
+	IGameGUILabel  *m_piSTEntityInterval;
+	IGameGUIButton *m_piBTEntityDecreaseInterval;
+	IGameGUIButton *m_piBTEntityIncreaseInterval;
 	IGameGUIButton *m_piBTEntityClearRoute;
 
 	// Formation
@@ -178,11 +187,17 @@ public:
 		CHILD_MAP_ENTRY("EntityPanel",m_piGREntityPanel);
 		CHILD_MAP_ENTRY("EntityName",m_piSTEntityName);
 		CHILD_MAP_ENTRY("EntityObjectLabel",m_piSTEntityObjectLabel);
-		CHILD_MAP_ENTRY("EntityYaw",m_piSTEntityYaw);
+		CHILD_MAP_ENTRY("EntityCount",m_piSTEntityCount);
+		CHILD_MAP_ENTRY("EntityDelay",m_piSTEntityDelay);
+		CHILD_MAP_ENTRY("EntityInterval",m_piSTEntityInterval);
+		CHILD_MAP_ENTRY_EX("EntityDecreaseCount",m_piBTEntityDecreaseCount,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("EntityIncreaseCount",m_piBTEntityIncreaseCount,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("EntityDecreaseDelay",m_piBTEntityDecreaseDelay,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("EntityIncreaseDelay",m_piBTEntityIncreaseDelay,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("EntityDecreaseInterval",m_piBTEntityDecreaseInterval,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("EntityIncreaseInterval",m_piBTEntityIncreaseInterval,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("EntitySample",m_piBTEntitySample,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("EntityRemove",m_piBTEntityRemove,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("EntityDecreaseYaw",m_piBTEntityDecreaseYaw,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("EntityIncreaseYaw",m_piBTEntityIncreaseYaw,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("EntityClearRoute",m_piBTEntityClearRoute,IGameGUIButtonEvents);
 
 		CHILD_MAP_ENTRY("OptionsPanel",m_piGROptionsPanel);
