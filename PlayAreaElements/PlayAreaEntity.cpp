@@ -113,7 +113,7 @@ void CPlayAreaEntity::SetEntityType(IEntityType *piEntityType)
 
 CVector CPlayAreaEntity::GetPosition(){return m_vPosition;}
 CVector CPlayAreaEntity::GetAngles(){return m_vAngles;}
-void	CPlayAreaEntity::GetEntityType(IEntityType **piEntityType){if(piEntityType){*piEntityType=ADD(m_EntityType.m_piEntityType);}	}
+void	CPlayAreaEntity::GetEntityType(IEntityType **ppiEntityType){if(ppiEntityType){*ppiEntityType=ADD(m_EntityType.m_piEntityType);}	}
 
 void CPlayAreaEntity::DesignRender( IGenericRender *piRender,bool bSelected )
 {

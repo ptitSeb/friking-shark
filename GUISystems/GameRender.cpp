@@ -68,24 +68,13 @@ void CGameRender::Render(IGenericRender *piRender,IGenericCamera *piCamera)
 	}
 	if(piModel)
 	{
-		piRender->PushOptions();
 		piRender->PushState();
-		piRender->EnableTextures();
-		piRender->EnableSolid();
-		piRender->EnableBlending();
-		piRender->EnableLighting();	
-		piRender->EnableShadows();
-		piRender->EnableShaders();
-		piRender->EnableHeightFog();
-
 		piRender->ActivateDepth();
-		
 		piRender->StartStagedRendering();
 		m_WorldManager.m_piWorldManager->SetupRenderingEnvironment(piRender);
 		m_EntityManager.m_piEntityManager->PerformUnaryOperation(EntityOperation_CustomRender,piRender,piCamera);
 		piRender->EndStagedRendering();
 		piRender->PopState();
-		piRender->PopOptions();
 	}
 	REL(piModel);
 }

@@ -2,37 +2,8 @@
 #include "FormationType.h"
 #include "GameGraphics.h"
 
-CFormationType::CFormationType()
-{
-}
-
-CFormationType::~CFormationType()
-{
-    unsigned x;
-    for(x=0;x<m_dElements.size();x++)
-    {
-        SFormationElement *pElement=&m_dElements[x];
-        IEntityType *piEntityType=pElement->m_piEntityType;
-        REL(piEntityType);
-    }
-    m_dElements.clear();
-}
-
-bool CFormationType::Unserialize(ISystemPersistencyNode *piNode)
-{
-	bool bOk=CSystemObjectBase::Unserialize(piNode);
-	for(unsigned x=0;x<m_dElements.size();x++)
-	{
-		SFormationElement *pElement=&m_dElements[x];
-		if(pElement->m_piEntityType==NULL)
-		{
-			CSystemObjectWrapper wrapper;
-			wrapper.Attach("EntityTypes",pElement->m_sEntityType);
-			if(wrapper.m_piObject){pElement->m_piEntityType=QI(IEntityType,wrapper.m_piObject);}
-		}
-	}
-	return bOk;
-}
+CFormationType::CFormationType(){}
+CFormationType::~CFormationType(){}
 
 IFormation *CFormationType::CreateInstance(CVector vPosition,unsigned int dwCurrentTime)
 {
@@ -61,18 +32,18 @@ void CFormationType::DesignRender( IGenericRender *piRender,CVector &vPosition,C
 		piRender->PopState();
 	}
 
-	for(unsigned int x=0;x<m_dElements.size();x++)
+	for(unsigned int x=0;x<m_vElements.size();x++)
 	{
-		SFormationElement *pElement=&m_dElements[x];
-		if(pElement->m_piEntityType)
+		SFormationElement *pElement=&m_vElements[x];
+		if(pElement->m_EntityType.m_piEntityType)
 		{		
 			piRender->PushState();
 			piRender->DeactivateShadowReception();
 			piRender->DeactivateHeightFog();
-			for(unsigned int y=0;y<m_dElements[x].m_Route.GetPointCount()-1;y++)
+			for(unsigned int y=0;y<m_vElements[x].m_Route.GetPointCount()-1;y++)
 			{
-				CVector vPos1=m_dElements[x].m_Route.GetPlayAreaElementPoint(vPosition,y);
-				CVector vPos2=m_dElements[x].m_Route.GetPlayAreaElementPoint(vPosition,y+1);
+				CVector vPos1=m_vElements[x].m_Route.GetPlayAreaElementPoint(vPosition,y);
+				CVector vPos2=m_vElements[x].m_Route.GetPlayAreaElementPoint(vPosition,y+1);
 				if(bSelected)
 				{
 					piRender->RenderLine(vPos1,vPos2,CVector(1,1,1),0x8888);
@@ -84,16 +55,16 @@ void CFormationType::DesignRender( IGenericRender *piRender,CVector &vPosition,C
 			}
 			piRender->PopState();
 			
-			CVector vPos=m_dElements[x].m_Route.GetPlayAreaElementPoint(vPosition,0);
-			CVector vAngles=AnglesFromVector(m_dElements[x].m_Route.GetDirection(0));
-			pElement->m_piEntityType->DesignRender(piRender,vPos,vAngles,bSelected);
+			CVector vPos=m_vElements[x].m_Route.GetPlayAreaElementPoint(vPosition,0);
+			CVector vAngles=AnglesFromVector(m_vElements[x].m_Route.GetDirection(0));
+			pElement->m_EntityType.m_piEntityType->DesignRender(piRender,vPos,vAngles,bSelected);
 		}
 	}
 }
 
 void CFormationType::DesignGetBBox( CVector *pvMins,CVector *pvMaxs )
 {
-	if(m_dElements.size())
+	if(m_vElements.size())
 	{
 		// Se deducir las coordenadas a partir de los puntos de ruta con el minimo en -1,-1,1,1
 		// De esta forma se incluyen todos los puntos de ruta que esten fuera del area de juego
@@ -104,19 +75,19 @@ void CFormationType::DesignGetBBox( CVector *pvMins,CVector *pvMaxs )
 		routeMaxs.bAbsolutePoint=false;
 		routeMins.vPosition=CVector(-1,-1,0);
 		routeMaxs.vPosition=CVector(1,1,0);
-		for(unsigned int x=0;x<m_dElements.size();x++)
+		for(unsigned int x=0;x<m_vElements.size();x++)
 		{
-			for(unsigned int y=0;y<m_dElements[x].m_Route.GetPointCount();y++)
+			for(unsigned int y=0;y<m_vElements[x].m_Route.GetPointCount();y++)
 			{
 				CVector vTempMins=routeMins.vPosition;
 				CVector vTempMaxs=routeMaxs.vPosition;
-				routeMins.vPosition.Mins(vTempMins,m_dElements[x].m_Route.GetRelativePoint(y));
-				routeMaxs.vPosition.Maxs(vTempMaxs,m_dElements[x].m_Route.GetRelativePoint(y));
+				routeMins.vPosition.Mins(vTempMins,m_vElements[x].m_Route.GetRelativePoint(y));
+				routeMaxs.vPosition.Maxs(vTempMaxs,m_vElements[x].m_Route.GetRelativePoint(y));
 			}
 
 		}
-		CVector vMins=m_dElements[0].m_Route.GetPlayAreaElementRoutePoint(Origin,&routeMins);
-		CVector vMaxs=m_dElements[0].m_Route.GetPlayAreaElementRoutePoint(Origin,&routeMaxs);
+		CVector vMins=m_vElements[0].m_Route.GetPlayAreaElementRoutePoint(Origin,&routeMins);
+		CVector vMaxs=m_vElements[0].m_Route.GetPlayAreaElementRoutePoint(Origin,&routeMaxs);
 		pvMins->Mins(vMins,vMaxs);
 		pvMaxs->Maxs(vMins,vMaxs);
 	}
@@ -137,6 +108,44 @@ CTraceInfo CFormationType::DesignGetTrace( const CVector &vPosition,const CVecto
 	return info;
 }
 
+unsigned long CFormationType::AddElement()
+{
+	unsigned long nElement=m_vElements.size();
+	
+	SFormationElement element;
+	m_vElements.push_back(element);
+	return nElement;
+}
+
+void CFormationType::RemoveElement(unsigned int nIndex)
+{
+	if(nIndex>=m_vElements.size()){return;}
+	unsigned int x;
+	std::vector<SFormationElement>::iterator i;
+	for(x=0,i=m_vElements.begin();i!=m_vElements.end();i++,x++)
+	{
+		if(x==nIndex)
+		{
+			m_vElements.erase(i);
+			break;
+		}
+	}
+}
+unsigned int CFormationType::GetElements(){return m_vElements.size();}
+
+void 		 CFormationType::SetElementEntityType(unsigned int nElement,IEntityType *piEntityType){if(nElement>=m_vElements.size()){return;}m_vElements[nElement].m_EntityType.Attach(piEntityType);}
+void		 CFormationType::GetElementEntityType(unsigned int nElement,IEntityType **ppiEntityType){if(nElement>=m_vElements.size()){return;}if(ppiEntityType){*ppiEntityType=ADD(m_vElements[nElement].m_EntityType.m_piEntityType);}}
+unsigned int CFormationType::GetElementRoutePoints(unsigned int nElement){if(nElement>=m_vElements.size()){return 0;} return m_vElements[nElement].m_Route.GetPointCount();}
+bool 		 CFormationType::GetElementRoutePoint(unsigned int nElement,unsigned int nIndex,SRoutePoint *psPoint){if(nElement>=m_vElements.size()){return false;} return m_vElements[nElement].m_Route.GetPoint(nIndex,psPoint);}
+bool 		 CFormationType::AddElementRoutePoint(unsigned int nElement,unsigned int nIndex,const SRoutePoint &sPoint){if(nElement>=m_vElements.size()){return false;} return m_vElements[nElement].m_Route.AddPoint(nIndex,sPoint);}
+bool 		 CFormationType::SetElementRoutePoint(unsigned int nElement,unsigned int nIndex,const SRoutePoint &sPoint){if(nElement>=m_vElements.size()){return false;} return m_vElements[nElement].m_Route.SetPoint(nIndex,sPoint);}
+void		 CFormationType::RemoveElementRoutePoint(unsigned int nElement,unsigned int nIndex){if(nElement>=m_vElements.size()){return;} m_vElements[nElement].m_Route.RemovePoint(nIndex);}
+void 		 CFormationType::ClearElementRoute(unsigned int nElement){if(nElement>=m_vElements.size()){return;} m_vElements[nElement].m_Route.Clear();}
+void 		 CFormationType::SetElementEntityCount(unsigned int nElement,unsigned int nCount){if(nElement>=m_vElements.size()){return;} m_vElements[nElement].m_nEntityCount=nCount;}
+unsigned int CFormationType::GetElementEntityCount(unsigned int nElement){if(nElement>=m_vElements.size()){return 0;} return m_vElements[nElement].m_nEntityCount;}
+void 		 CFormationType::SetElementEntityInterval(unsigned int nElement,unsigned int nMilliseconds){if(nElement>=m_vElements.size()){return;} m_vElements[nElement].m_nTimeInterval=nMilliseconds;}
+unsigned int CFormationType::GetElementEntityInterval(unsigned int nElement){if(nElement>=m_vElements.size()){return 0;} return m_vElements[nElement].m_nTimeInterval;}
+
 CFormation::CFormation(CFormationType *pType,CVector vPosition)
 {
     g_PlayAreaManagerWrapper.AddRef();
@@ -144,15 +153,15 @@ CFormation::CFormation(CFormationType *pType,CVector vPosition)
     m_pType=pType;
     m_vPosition=vPosition;
     
-    m_vElementRunTimeInfo.resize(m_pType->m_dElements.size());
-    for(unsigned x=0;x<m_pType->m_dElements.size();x++)
+    m_vElementRunTimeInfo.resize(m_pType->m_vElements.size());
+    for(unsigned x=0;x<m_pType->m_vElements.size();x++)
     {
         SFormationElementRunTimeInfo runtimeElement;
         runtimeElement.m_dwCreatedEntities=0;
         runtimeElement.m_dwLastEntityTime=0;
-        runtimeElement.m_pFormationTypeElement=&pType->m_dElements[x];        
+        runtimeElement.m_pFormationTypeElement=&pType->m_vElements[x];        
         m_vElementRunTimeInfo[x]=runtimeElement;
-        if(runtimeElement.m_pFormationTypeElement->m_dwEntityCount){m_bAllUnitsCreated=false;}
+        if(runtimeElement.m_pFormationTypeElement->m_nEntityCount){m_bAllUnitsCreated=false;}
     }
 }
 
@@ -195,12 +204,12 @@ bool CFormation::ProcessFrame(unsigned int dwCurrentTime,double dInterval)
     for(unsigned x=0;x<m_vElementRunTimeInfo.size();x++)
     {
         SFormationElementRunTimeInfo *pElement=&m_vElementRunTimeInfo[x];
-        if(pElement->m_pFormationTypeElement->m_piEntityType==NULL){continue;}
-        if(pElement->m_dwCreatedEntities==pElement->m_pFormationTypeElement->m_dwEntityCount){continue;}
+		if(pElement->m_pFormationTypeElement->m_EntityType.m_piEntityType==NULL){continue;}
+        if(pElement->m_dwCreatedEntities==pElement->m_pFormationTypeElement->m_nEntityCount){continue;}
 
-        if(pElement->m_dwCreatedEntities==0 || dwCurrentTime>(pElement->m_dwLastEntityTime+pElement->m_pFormationTypeElement->m_dwTimeBetweenEntities))
+        if(pElement->m_dwCreatedEntities==0 || dwCurrentTime>(pElement->m_dwLastEntityTime+pElement->m_pFormationTypeElement->m_nTimeInterval))
         {
-            IEntity *piEntity=pElement->m_pFormationTypeElement->m_piEntityType->CreateInstance(NULL,dwCurrentTime);
+			IEntity *piEntity=pElement->m_pFormationTypeElement->m_EntityType.m_piEntityType->CreateInstance(NULL,dwCurrentTime);
             piEntity->GetPhysicInfo()->vPosition=pElement->m_pFormationTypeElement->m_Route.GetAbsolutePoint(0);
             AnglesFromVector(pElement->m_pFormationTypeElement->m_Route.GetDirection(0),&piEntity->GetPhysicInfo()->vAngles);
             piEntity->SetRoute(&pElement->m_pFormationTypeElement->m_Route);
@@ -208,7 +217,7 @@ bool CFormation::ProcessFrame(unsigned int dwCurrentTime,double dInterval)
             pElement->m_dwLastEntityTime=dwCurrentTime;
             pElement->m_dwCreatedEntities++;
         }
-        if(pElement->m_dwCreatedEntities<pElement->m_pFormationTypeElement->m_dwEntityCount)
+        if(pElement->m_dwCreatedEntities<pElement->m_pFormationTypeElement->m_nEntityCount)
         {
             m_bAllUnitsCreated=false;
         }

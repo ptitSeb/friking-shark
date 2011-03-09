@@ -55,7 +55,20 @@ void CGamePlayWindow::OnDraw(IGenericRender *piRender)
 		piRender->SetPerspectiveProjection(dViewAngle,dNearPlane,100000);
 		piRender->SetCamera(vPosition,vAngles.c[YAW],vAngles.c[PITCH],vAngles.c[ROLL]);
 
+		piRender->PushOptions();
+		piRender->PushState();
+		piRender->EnableTextures();
+		piRender->EnableSolid();
+		piRender->EnableBlending();
+		piRender->EnableLighting();	
+		piRender->EnableShadows();
+		piRender->EnableShaders();
+		piRender->EnableHeightFog();
+		
 		m_Render.m_piRender->Render(piRender,piCamera);
+	
+		piRender->PopState();
+		piRender->PopOptions();
 	}
 	REL(piCamera);
 }

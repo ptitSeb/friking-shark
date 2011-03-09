@@ -57,6 +57,15 @@ struct IPlayAreaElement;
 
 using namespace std;
 
+struct SRoutePoint
+{
+public:
+	
+	bool        bAbsolutePoint; // si es falso son valores de 0 a 1 relativos al plano de juego aereo
+	CVector     vPosition;
+};
+
+
 struct SPhysicForce
 {
     unsigned int   dwForceType;
@@ -256,6 +265,29 @@ struct IFormationType:virtual public ISystemUnknown,virtual public IDesignObject
 	virtual IFormation *CreateInstance(CVector vPosition,unsigned int dwCurrentTime)=0;
 };
 
+struct IFormationTypeDesign:virtual public IDesignObject
+{
+public:
+	virtual unsigned long	AddElement()=0;
+	virtual void			RemoveElement(unsigned int nIndex)=0;
+	virtual unsigned int	GetElements()=0;
+	
+	virtual void 		SetElementEntityType(unsigned int nElement,IEntityType *piEntityType)=0;
+	virtual void		GetElementEntityType(unsigned int nElement,IEntityType **piEntityType)=0;
+	
+	virtual void 		 SetElementEntityCount(unsigned int nElement,unsigned int nCount)=0;
+	virtual unsigned int GetElementEntityCount(unsigned int nElement)=0;
+	
+	virtual void 		 SetElementEntityInterval(unsigned int nElement,unsigned int nMilliseconds)=0;
+	virtual unsigned int GetElementEntityInterval(unsigned int nElement)=0;
+	
+	virtual unsigned int GetElementRoutePoints(unsigned int nElement)=0;
+	virtual bool 		 GetElementRoutePoint(unsigned int nElement,unsigned int nIndex,SRoutePoint *psPoint)=0;
+	virtual bool 		 AddElementRoutePoint(unsigned int nElement,unsigned int nIndex,const SRoutePoint &sPoint)=0;
+	virtual bool 		 SetElementRoutePoint(unsigned int nElement,unsigned int nIndex,const SRoutePoint &sPoint)=0;
+	virtual void		 RemoveElementRoutePoint(unsigned int nElement,unsigned int nIndex)=0;
+	virtual void 		 ClearElementRoute(unsigned int nElement)=0;	
+};
 
 struct IPlayAreaCheckPoint:virtual public ISystemUnknown
 {
@@ -376,15 +408,6 @@ struct SPlayAreaInfo
 #define KEY_DOWN		6
 #define KEY_PAUSE		7
 #define KEY_PROCESS_ONE_FRAME		8
-
-struct SRoutePoint
-{
-public:
-
-	bool        bAbsolutePoint; // si es falso son valores de 0 a 1 relativos al plano de juego aereo
-	CVector     vPosition;
-};
-
 
 struct IPlayAreaElement:virtual public ISystemUnknown
 {

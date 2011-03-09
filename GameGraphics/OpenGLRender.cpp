@@ -1381,11 +1381,14 @@ void COpenGLRender::EndStagedRendering()
 				}
 			}
 		}
-		if(m_ShadowShader.m_piShader==NULL)
+		if(m_sHardwareSupport.bShaders)
 		{
-			if(m_ShadowShader.Create(m_piSystem,"Shader",""))
+			if(m_ShadowShader.m_piShader==NULL)
 			{
-				m_ShadowShader.m_piShader->Load("Shaders/ShadowBufferShader-Vertex.c","Shaders/ShadowBufferShader-Fragment.c","");
+				if(m_ShadowShader.Create(m_piSystem,"Shader",""))
+				{
+					m_ShadowShader.m_piShader->Load("Shaders/ShadowBufferShader-Vertex.c","Shaders/ShadowBufferShader-Fragment.c","");
+				}
 			}
 		}
 	}
@@ -1423,17 +1426,20 @@ void COpenGLRender::EndStagedRendering()
 		}
 	}
 
+	double dPreviousNear=m_dPerspectiveNearPlane;
+	double dPreviousFar=m_dPerspectiveFarPlane;
+	double dPreviousViewAngle=m_dPerspectiveViewAngle;
+	
 	if(m_sRenderOptions.bEnableShadows && m_ShadowTexture.m_piTexture && m_sHardwareSupport.nMaxTextureUnits>1)
 	{
 		int nPreviousViewportX=m_nViewportX;
 		int nPreviousViewportY=m_nViewportY;
 		int nPreviousViewportW=m_nViewportW;
 		int nPreviousViewportH=m_nViewportH;
-		double dPreviousViewAngle=m_dPerspectiveViewAngle;
 		double dPreviousViewAspect=((m_nViewportH)==0)?1:(double)(m_nViewportW)/(double)(m_nViewportH);
 		CVector vPreviousCameraPosition=m_vCameraPos;
 		CVector vPreviousCameraAngles=m_vCameraAngles;
-
+		
 		CalcCameraVolume(vPreviousCameraPosition,vPreviousCameraAngles,dPreviousViewAngle,dPreviousViewAspect,m_dStagedRenderingMinZ,m_dStagedRenderingMaxZ,pvCameraVolume);
 		CalcBBoxVolume(Origin,Origin,m_vShadowVolumeMins,m_vShadowVolumeMaxs,pvShadowVolume);
 
@@ -1732,6 +1738,7 @@ void COpenGLRender::EndStagedRendering()
 	m_mLineStages.clear();
 	m_mPointStages.clear();
 
+	SetPerspectiveProjection(dPreviousViewAngle,dPreviousNear,dPreviousFar);
 	SetRenderState(m_sPreStagedRenderingState,true);
 	if(m_pCurrentShader){m_pCurrentShader->m_piShader->Deactivate();m_pCurrentShader=NULL;}
 	m_bRenderingWithShader=false;
