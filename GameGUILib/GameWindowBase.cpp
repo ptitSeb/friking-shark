@@ -619,3 +619,25 @@ bool CGameWindowBase::Unserialize( ISystemPersistencyNode *piNode )
 }
 
 double 	CGameWindowBase::GetSizeInLayout(){return m_dSizeInLayout;}
+
+CLine CGameWindowBase::GetMouseRay(double x,double y,double dLength,IGenericCamera *piCamera)
+{
+	double dAspect=piCamera->GetAspectRatio();
+	double dRightDisplace=(x-m_rRealRect.w*0.5)/(m_rRealRect.w*0.5);
+	double dUpDisplace=(y-m_rRealRect.h*0.5)/(m_rRealRect.h*0.5);
+
+	double dProjPlaneW=tan(DegreesToRadians(piCamera->GetViewAngle()*0.5))*dLength*dAspect;
+	double dProjPlaneH=tan(DegreesToRadians(piCamera->GetViewAngle()*0.5))*dLength;
+
+	double dProjPlaneRight=dProjPlaneW*dRightDisplace;
+	double dProjPlaneUp=dProjPlaneH*dUpDisplace;
+
+	CVector vProjPlaneCenter=piCamera->GetPosition()+piCamera->GetForwardVector()*dLength;
+	CVector vProjPlanePos=vProjPlaneCenter+piCamera->GetRightVector()*dProjPlaneRight+piCamera->GetUpVector()*dProjPlaneUp;
+
+	CLine line;
+	line.m_Points[0]=piCamera->GetPosition();
+	line.m_Points[1]=vProjPlanePos;
+	return line;
+}
+

@@ -2269,27 +2269,16 @@ bool CScenarioEditorMainWindow::GetHeightAt(CVector vPoint,bool bIgnoreTerrainOb
 
 bool CScenarioEditorMainWindow::GetAirPlaneCoordinatesFromCursorPos(double x,double y,CVector *pAirPlanePos)
 {
-	double dRightDisplace=(x-m_rRealRect.w*0.5)/(m_rRealRect.w*0.5);
-	double dUpDisplace=(y-m_rRealRect.h*0.5)/(m_rRealRect.h*0.5);
-	dRightDisplace*=m_rRealRect.w/m_rRealRect.h;
-
-	double dRightAngle=m_Camera.m_piCamera->GetViewAngle()*0.5*dRightDisplace;
-	double dUpAngle=m_Camera.m_piCamera->GetViewAngle()*0.5*dUpDisplace;
-	CVector vPoint1,vPoint2;
-	vPoint1=m_Camera.m_piCamera->GetPosition();
-	vPoint2=m_Camera.m_piCamera->GetPosition()+m_Camera.m_piCamera->GetForwardVector()*1000.0;
-	vPoint2+=m_Camera.m_piCamera->GetRightVector()*1000.0*sin(DegreesToRadians(dRightAngle));
-	vPoint2+=m_Camera.m_piCamera->GetUpVector()*1000.0*sin(DegreesToRadians(dUpAngle));
-
+	CLine mouseRay=GetMouseRay(x,y,10000.0,m_Camera.m_piCamera);
 
 	double dAirPlaneHeight=GetAirPlaneAbsoluteHeight();
 
 	CPlane airPlane(AxisPosY,CVector(0,dAirPlaneHeight,0));
-	double dSide1=airPlane.GetSide(vPoint1);
-	double dSide2=airPlane.GetSide(vPoint2);
+	double dSide1=airPlane.GetSide(mouseRay.m_Points[0]);
+	double dSide2=airPlane.GetSide(mouseRay.m_Points[1]);
 	double dLength=(dSide1-dSide2);
 	double dFraction=dLength?dSide1/dLength:0;
-	CVector vPos=vPoint1+(vPoint2-vPoint1)*dFraction;
+	CVector vPos=mouseRay.m_Points[0]+(mouseRay.m_Points[1]-mouseRay.m_Points[0])*dFraction;
 
 	if(m_PlayAreaManagerWrapper.m_piPlayAreaManager)
 	{
@@ -2311,30 +2300,19 @@ bool CScenarioEditorMainWindow::GetAirPlaneCoordinatesFromCursorPos(double x,dou
 
 bool CScenarioEditorMainWindow::GetTerrainCoordinatesFromCursorPos(double x,double y,bool bIgnoreTerrainObjects, CVector *pTerrainPos)
 {
-	double dRightDisplace=(x-m_rRealRect.w*0.5)/(m_rRealRect.w*0.5);
-	double dUpDisplace=(y-m_rRealRect.h*0.5)/(m_rRealRect.h*0.5);
-	dRightDisplace*=m_rRealRect.w/m_rRealRect.h;
-
-	double dRightAngle=m_Camera.m_piCamera->GetViewAngle()*0.5*dRightDisplace;
-	double dUpAngle=m_Camera.m_piCamera->GetViewAngle()*0.5*dUpDisplace;
-	CVector vPoint1,vPoint2;
-	vPoint1=m_Camera.m_piCamera->GetPosition();
-	vPoint2=m_Camera.m_piCamera->GetPosition()+m_Camera.m_piCamera->GetForwardVector()*1000.0;
-	vPoint2+=m_Camera.m_piCamera->GetRightVector()*1000.0*sin(DegreesToRadians(dRightAngle));
-	vPoint2+=m_Camera.m_piCamera->GetUpVector()*1000.0*sin(DegreesToRadians(dUpAngle));
-
+	CLine mouseRay=GetMouseRay(x,y,10000.0,m_Camera.m_piCamera);
 	if(m_WorldManagerWrapper.m_piTerrain)
 	{
-		bool bHit=m_WorldManagerWrapper.m_piTerrain->GetTerrainTrace(vPoint1,vPoint2,pTerrainPos);
+		bool bHit=m_WorldManagerWrapper.m_piTerrain->GetTerrainTrace(mouseRay.m_Points[0],mouseRay.m_Points[1],pTerrainPos);
 		for(unsigned int x=0;x<m_vEntityControls.size();x++)
 		{
 			if((int)x==m_nSelectedEntity){continue;}
 			CVector vPos=m_vEntityControls[x]->m_piPlayAreaEntity->GetPosition();
 			CVector vAngles=m_vEntityControls[x]->m_piPlayAreaEntity->GetAngles();
-			CTraceInfo info=m_vEntityControls[x]->m_piDesignObject->DesignGetTrace(vPos,vAngles,vPoint1,vPoint2);
+			CTraceInfo info=m_vEntityControls[x]->m_piDesignObject->DesignGetTrace(vPos,vAngles,mouseRay.m_Points[0],mouseRay.m_Points[1]);
 			if(info.m_bTraceHit)
 			{
-				if((info.m_vTracePos-vPoint1)<(*pTerrainPos-vPoint1))
+				if((info.m_vTracePos-mouseRay.m_Points[0])<(*pTerrainPos-mouseRay.m_Points[0]))
 				{
 					*pTerrainPos=info.m_vTracePos;
 				}

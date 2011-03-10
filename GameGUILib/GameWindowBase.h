@@ -73,6 +73,8 @@ protected:
 
 	bool Unserialize(ISystemPersistencyNode *piNode);
 
+	CLine GetMouseRay(double x,double y,double dLength,IGenericCamera *piCamera);
+
 
 public:
 
