@@ -206,8 +206,8 @@ void CFormationEditorMainWindow::OnDraw(IGenericRender *piRender)
 	m_bTextures?m_Render.m_piRender->EnableTextures():m_Render.m_piRender->DisableTextures();
 	m_bSolid?m_Render.m_piRender->EnableSolid():m_Render.m_piRender->DisableSolid();
 	m_bBlend?m_Render.m_piRender->EnableBlending():m_Render.m_piRender->DisableBlending();
+	m_Render.m_piRender->EnableShadows();
 	m_Render.m_piRender->DisableLighting();
-	//m_Render.m_piRender->DisableShadows();
 	m_Render.m_piRender->DisableHeightFog();
 	m_Render.m_piRender->DisableShaders();
 	
@@ -901,39 +901,19 @@ void CFormationEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 	}
 }
 
-
 bool CFormationEditorMainWindow::GetAirPlaneCoordinatesFromCursorPos(double x,double y,CVector *pAirPlanePos)
 {
-	double dRightDisplace=(x-m_rRealRect.w*0.5)/(m_rRealRect.w*0.5);
-	double dUpDisplace=(y-m_rRealRect.h*0.5)/(m_rRealRect.h*0.5);
-	dRightDisplace*=m_rRealRect.w/m_rRealRect.h;
+	CLine mouseRay=GetMouseRay(x,y,10000.0,m_Camera.m_piCamera);
 
-	double dRightAngle=m_Camera.m_piCamera->GetViewAngle()*0.5*dRightDisplace;
-	double dUpAngle=m_Camera.m_piCamera->GetViewAngle()*0.5*dUpDisplace;
-	CVector vPoint1,vPoint2;
-	vPoint1=m_Camera.m_piCamera->GetPosition();
-	vPoint2=m_Camera.m_piCamera->GetPosition()+m_Camera.m_piCamera->GetForwardVector()*1000.0;
-	vPoint2+=m_Camera.m_piCamera->GetRightVector()*1000.0*sin(DegreesToRadians(dRightAngle));
-	vPoint2+=m_Camera.m_piCamera->GetUpVector()*1000.0*sin(DegreesToRadians(dUpAngle));
+	CVector vPlayAreaMins,vPlayAreaMaxs;
+	m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetVisibleAirPlayPlane(&vPlayAreaMins,&vPlayAreaMaxs);
 
-
-	double dAirPlaneHeight=GetAirPlaneAbsoluteHeight();
-
-	CPlane airPlane(AxisPosY,CVector(0,dAirPlaneHeight,0));
-	double dSide1=airPlane.GetSide(vPoint1);
-	double dSide2=airPlane.GetSide(vPoint2);
+	CPlane airPlane(AxisPosY,vPlayAreaMins);
+	double dSide1=airPlane.GetSide(mouseRay.m_Points[0]);
+	double dSide2=airPlane.GetSide(mouseRay.m_Points[1]);
 	double dLength=(dSide1-dSide2);
 	double dFraction=dLength?dSide1/dLength:0;
-	CVector vPos=vPoint1+(vPoint2-vPoint1)*dFraction;
-
-	if(m_PlayAreaManagerWrapper.m_piPlayAreaManager)
-	{
-		CVector vPlayerRouteStart,vPlayerRouteEnd;
-		CVector vPlayAreaMins,vPlayAreaMaxs;
-		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayerRoute(&vPlayerRouteStart,&vPlayerRouteEnd);
-		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayAreaPlaneAt(vPos,&vPlayAreaMins,&vPlayAreaMaxs);
-	}
-
+	CVector vPos=mouseRay.m_Points[0]+(mouseRay.m_Points[1]-mouseRay.m_Points[0])*dFraction;
 
 	if(pAirPlanePos){*pAirPlanePos=WorldToFormation(vPos);}
 
@@ -1070,20 +1050,6 @@ void CFormationEditorMainWindow::UpdateEntityControls()
 		m_nSelectedEntity=(int)(m_vEntityControls.size()-1);
 	}
 }
-
-
-double CFormationEditorMainWindow::GetAirPlaneAbsoluteHeight()
-{
-	double dAirPlaneHeight=0;
-	SPlayAreaConfig sPlayAreaConfig;
-	if(m_PlayAreaManagerWrapper.m_piPlayAreaDesign)
-	{
-		m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sPlayAreaConfig);
-		dAirPlaneHeight+=sPlayAreaConfig.dAirPlaneHeight;
-	}
-	return dAirPlaneHeight;
-}
-
 
 CVector CFormationEditorMainWindow::WorldToFormation(CVector vWorldPoint)
 {
