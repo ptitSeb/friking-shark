@@ -10,9 +10,11 @@ extern CSystemModuleHelper *g_pSystemModuleHelper;
 
 CFormationEditorMainWindow::CFormationEditorMainWindow(void)
 {
+	m_d3DFontSize=0;
 	m_nFormationId=0;
 	m_bMovingRoutePoint=false;
 	m_bRenderPlayArea=false;
+	m_bRenderWorld=true;
 	
 	m_bInspectionMode=false;
 	m_bShowOptionsPanel=false;
@@ -71,7 +73,7 @@ bool CFormationEditorMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 	{
 	  m_GameControllerWrapper.m_piGameController->SetupGame();
 	  m_GameControllerWrapper.m_piGameController->CreateScenario();
-	  m_FormationType.Create("FormationTypes","CFormationType","__unnamed__");
+	  m_FormationType.Create("FormationTypes","CFormationType","");
 	}
 
 	m_WorldManagerWrapper.Attach("GameSystem","WorldManager");
@@ -140,6 +142,7 @@ void CFormationEditorMainWindow::Reset()
 	m_bInspectionMode=false;
 	m_bMovingRoutePoint=false;
 	m_nSelectedRoutePoint=-1;
+	m_sFormationName="";
 
 	UpdateCaption();
 }
@@ -245,7 +248,10 @@ void CFormationEditorMainWindow::OnDraw(IGenericRender *piRender)
 	{
 		SetupRenderOptions(piRender,m_Camera.m_piCamera);
 		piRender->StartStagedRendering();
-		m_WorldManagerWrapper.m_piTerrain->DesignRender(piRender);
+		if(m_bRenderWorld && m_WorldManagerWrapper.m_piTerrain)
+		{
+			m_WorldManagerWrapper.m_piTerrain->DesignRender(piRender);
+		}
 		for(unsigned int x=0;x<m_vEntityControls.size();x++)
 		{
 			SRoutePoint point,point2;
@@ -271,6 +277,45 @@ void CFormationEditorMainWindow::OnDraw(IGenericRender *piRender)
 		m_PlayAreaManagerWrapper.m_piPlayAreaDesign->DesignRender(piRender);
 
 		piRender->EndStagedRendering();
+		piRender->SetColor(CVector(1,1,1),1);
+
+		double dFontSize=0;
+		IGenericFont *piFont=NULL;
+		GetFont(&piFont,&dFontSize);
+		if(m_d3DFontSize>0){dFontSize=m_d3DFontSize;}
+		if(piFont && dFontSize>0)
+		{
+			char sDescr[128];
+			for(unsigned int x=0;x<m_vEntityControls.size();x++)
+			{
+				SRoutePoint sPoint;
+				unsigned int nDescrLen=0;
+				m_FormationType.m_piFormationTypeDesign->GetElementRoutePoint(x,0,&sPoint);
+				unsigned int nCount=m_FormationType.m_piFormationTypeDesign->GetElementEntityCount(x);
+				unsigned int nDelay=m_FormationType.m_piFormationTypeDesign->GetElementEntityDelay(x);
+				if(nCount>1)
+				{
+					nDescrLen+=sprintf(sDescr+nDescrLen,"x%d",nCount);
+					unsigned int nInterval=m_FormationType.m_piFormationTypeDesign->GetElementEntityInterval(x);
+					if(nInterval){nDescrLen+=sprintf(sDescr+nDescrLen," (%.02f s)",((double)nInterval)/1000.0);}		
+				}
+				if(nDelay){nDescrLen+=sprintf(sDescr+nDescrLen," + %.02f s",((double)nDelay)/1000.0);}
+				if(nDescrLen)
+				{
+					CVector vPos=FormationToWorld(sPoint.vPosition);
+					IEntityType *piType=NULL;
+					m_FormationType.m_piFormationTypeDesign->GetElementEntityType(x,&piType);
+					if(piType)
+					{
+						vPos+=m_Camera.m_piCamera->GetUpVector()*piType->DesignGetRadius();
+						vPos-=m_Camera.m_piCamera->GetRightVector()*piType->DesignGetRadius();
+					}
+					piFont->RenderText(dFontSize,vPos,sDescr);
+					REL(piType);
+				}
+			}
+		}
+		REL(piFont);
 	}
 
 	m_Render.m_piRender->PopOptions();
@@ -328,11 +373,9 @@ void CFormationEditorMainWindow::ProcessFileNew()
 {
 	if(ConfirmDialog("Reset all and start a new project?","New project",eMessageDialogType_Warning))
 	{
-		m_FormationType.Detach();
-		m_FormationType.Create("FormationTypes","CFormationType","__unnamed__");
-		
-		
+		m_sFormationName="";
 		Reset();
+		m_FormationType.Create("FormationTypes","CFormationType","__unnamed__");
 		UpdateEntityControls();
 		UpdateLayerPanel();
 		UpdateCaption();
@@ -350,13 +393,30 @@ void CFormationEditorMainWindow::ProcessFileOpen()
 	unsigned long nSelectedFormationType=0;
 	std::vector<IDesignObject *> vFormationTypes;
 	GetSystemObjects("FormationTypes",&vFormationTypes);
+
+	// Se filtramos la formacion temporal que se usa para editar
+	std::vector<IDesignObject *>::iterator i;
+	for(i=vFormationTypes.begin();i!=vFormationTypes.end();i++)
+	{
+		ISystemUnknown *piTemp=static_cast<ISystemUnknown*>(*i);
+		if(piTemp==m_FormationType.m_piFormationType){REL(piTemp);vFormationTypes.erase(i);break;}
+	}
+
 	SPlayAreaConfig sPlayAreaConfig;
 	m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sPlayAreaConfig);
 	if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vFormationTypes,&nSelectedFormationType,96.0,(96.0)/sPlayAreaConfig.dCameraAspectRatio))
 	{
 		Reset();
-		if(m_FormationType.Attach(vFormationTypes[nSelectedFormationType]))
+		CConfigFile cfg;
+		CFormationTypeWrapper existingWrapper;
+		bool bOk=existingWrapper.Attach(vFormationTypes[nSelectedFormationType]);
+		if(bOk){bOk=existingWrapper.m_piSerializable->Serialize(cfg.GetRoot());}
+		if(bOk){bOk=m_FormationType.Create("FormationTypes","CFormationType","");}
+		if(bOk){bOk=m_FormationType.m_piSerializable->Unserialize(cfg.GetRoot());}
+		if(bOk)
 		{
+			m_sFormationName=existingWrapper.m_piObject->GetName();
+
 			UpdateEntityControls();
 			UpdateLayerPanel();
 			UpdateCaption();
@@ -368,27 +428,92 @@ void CFormationEditorMainWindow::ProcessFileOpen()
 
 void CFormationEditorMainWindow::ProcessFileSave()
 {
-	/*std::string sScenario=m_sFile;
+	std::string sName=m_sFormationName;
 	bool bSave=true;
-	if(m_sFile.length()==0)
+	while(bSave && sName.length()==0)
 	{
-		bSave=SaveFileDialog("Save scenario...","Scenario files (*.ges)\0*.ges\0\0",&sScenario,true);
+		bSave=InputDialog(&sName,"Save formation as...");
+		if(bSave)
+		{
+			if(sName.length()==0)
+			{
+				MessageDialog("Please provide a valid formation name","Formation Editor",eMessageDialogType_Error);
+			}
+			else
+			{
+				CFormationTypeWrapper existingWrapper;
+				if(existingWrapper.Attach("FormationTypes",sName) && sName!=m_sFormationName)
+				{
+					std::string sText="Formation '";
+					sText+=sName;
+					sText+="' already exists. Overwrite?";
+					if(!ConfirmDialog(sText,"Formation Editor",eMessageDialogType_Warning))
+					{
+						bSave=false;
+					}
+				}
+			}
+		}
 	}
 	if(bSave)
 	{
-	}*/
+		CConfigFile cfg;
+		CFormationTypeWrapper existingWrapper;
+		bool bOk=true;
+		bOk=existingWrapper.Create("FormationTypes","CFormationType",sName);
+		if(bOk){bOk=m_FormationType.m_piSerializable->Serialize(cfg.GetRoot());}
+		if(bOk){bOk=existingWrapper.m_piSerializable->Unserialize(cfg.GetRoot());}
+		if(bOk){m_sFormationName=sName;}
+		existingWrapper.Detach(false);
+		UpdateCaption();
+	}
 }
 
 void CFormationEditorMainWindow::ProcessFileSaveAs()
 {
-/*	std::string sScenario=m_sFile;
-	if(SaveFileDialog("Save scenario...","Scenario files (*.ges)\0*.ges\0\0",&sScenario,true))
+	std::string sName=m_sFormationName;
+	bool bSave=true;
+	do
 	{
-		m_GameControllerWrapper.m_piGameController->SaveScenario(sScenario);	
-		m_sFile=sScenario;
+		bSave=InputDialog(&sName,"Save formation as...");
+		if(bSave)
+		{
+			if(sName.length()==0)
+			{
+				MessageDialog("Please provide a valid formation name","Formation Editor",eMessageDialogType_Error);
+			}
+			else
+			{
+				CFormationTypeWrapper existingWrapper;
+				if(existingWrapper.Attach("FormationTypes",sName) && sName!=m_sFormationName)
+				{
+					std::string sText="Formation '";
+					sText+=sName;
+					sText+="' already exists. Overwrite?";
+					if(!ConfirmDialog(sText,"Formation Editor",eMessageDialogType_Warning))
+					{
+						bSave=false;
+					}
+				}
+			}
+		}
+	}
+	while(bSave && sName.length()==0);
+
+	if(bSave)
+	{
+		CConfigFile cfg;
+		CFormationTypeWrapper existingWrapper;
+		bool bOk=true;
+		bOk=existingWrapper.Create("FormationTypes","CFormationType",sName);
+		if(bOk){bOk=m_FormationType.m_piSerializable->Serialize(cfg.GetRoot());}
+		if(bOk){bOk=existingWrapper.m_piSerializable->Unserialize(cfg.GetRoot());}
+		if(bOk){m_sFormationName=sName;}
+		existingWrapper.Detach(false);
 		UpdateCaption();
-	}*/
+	}
 }
+
 void CFormationEditorMainWindow::ProcessFileExit()
 {
 	if(ConfirmDialog("Do you really want to exit?","Scenario Editor",eMessageDialogType_Question))
@@ -629,7 +754,7 @@ void CFormationEditorMainWindow::UpdateCaption()
 	if(m_Viewport.m_piViewport)
 	{
 		std::string sCaption="Formation Editor";
-		if(m_FormationType.m_piObject){sCaption+=" - "+m_FormationType.m_piObject->GetName();}
+		if(m_sFormationName!=""){sCaption+=" - "+m_sFormationName;}
 		m_Viewport.m_piViewport->SetCaption(sCaption);
 	}
 }
@@ -780,6 +905,7 @@ void CFormationEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 	else if(nKey=='C'){m_bColors=!m_bColors;*pbProcessed=true;}
 	else if(nKey=='L'){m_bSolid=!m_bSolid;*pbProcessed=true;}
 	else if(nKey=='B'){m_bBlend=!m_bBlend;*pbProcessed=true;}
+	else if(nKey=='O'){m_bRenderWorld=!m_bRenderWorld;*pbProcessed=true;}
 	else if(nKey==GK_HOME){CenterCamera();*pbProcessed=true;}
 	else if(nKey==GK_DELETE)
 	{
