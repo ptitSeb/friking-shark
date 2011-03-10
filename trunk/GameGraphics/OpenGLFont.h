@@ -99,6 +99,7 @@ public:
 
 	void CalcTextSize(double dFontHeight,const char *pText,double *pdWidth,double *pdHeight);
 	void RenderText(double dFontHeight,double x,double y,const char *pText);
+	void RenderText(double dFontHeight,CVector vPosition,const char *pText);
 	void RenderTextEx(double dFontHeight,double x,double y,double w,double h,const char *pText,eTextAlignment dwHorzAlign,eTextAlignment dwVertAlign);
 
 	COpenGLFont(void);

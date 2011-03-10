@@ -159,9 +159,6 @@
     <ProjectReference Include="..\GameGUI\GameGUI.vcxproj">
       <Project>{f5229844-8a54-437a-bca0-54750d0fe5ec}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\GameManagers\GameLib.vcxproj">
-      <Project>{2fd9db84-b33b-4b8a-b51f-6939783489ec}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\GameRunTimeLib\GameRunTimeLib.vcxproj">
       <Project>{1aca288e-6e1a-4fe5-bdbf-d9c06a26c298}</Project>
     </ProjectReference>

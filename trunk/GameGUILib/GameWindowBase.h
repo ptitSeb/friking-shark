@@ -22,6 +22,7 @@ DECLARE_CUSTOM_WRAPPER1(CMessageDialogWrapper,IGameGUIMessageDialog,m_piMessageD
 DECLARE_CUSTOM_WRAPPER1(CConfirmDialogWrapper,IGameGUIConfirmDialog,m_piConfirmDialog)
 DECLARE_CUSTOM_WRAPPER1(CColorDialogWrapper,IGameGUIColorDialog,m_piColorDialog)
 DECLARE_CUSTOM_WRAPPER1(CFileDialogWrapper,IGameGUIFileDialog,m_piFileDialog)
+DECLARE_CUSTOM_WRAPPER1(CInputDialogWrapper,IGameGUIInputDialog,m_piInputDialog)
 
 class CGameWindowBase :	virtual public CSystemObjectBase, virtual public IGameWindow
 {
@@ -175,6 +176,7 @@ public:
 	 bool SelectColorDialog(std::string sTitle,CVector *pvColor);
 	 bool ConfirmDialog(std::string sText,std::string sTitle,EMessageDialogType eType);
 	 void MessageDialog(std::string sText,std::string sTitle,EMessageDialogType eType);
+	 bool InputDialog(std::string *psText,std::string sTitle);
 
 	CGameWindowBase(void);
 	~CGameWindowBase(void);

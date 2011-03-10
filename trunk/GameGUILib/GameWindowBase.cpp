@@ -590,6 +590,15 @@ bool CGameWindowBase::ConfirmDialog(std::string sText,std::string sTitle,EMessag
 	return bOk;
 }
 
+bool CGameWindowBase::InputDialog(std::string *psText,std::string sTitle)
+{	
+	CInputDialogWrapper dialog;
+	dialog.Attach("GameGUI","InputDialog");
+	bool bOk=false;
+	if(dialog.m_piInputDialog){bOk=dialog.m_piInputDialog->ShowInput(this,psText,sTitle);}
+	return bOk;
+}
+
 void CGameWindowBase::MessageDialog(std::string sText,std::string sTitle,EMessageDialogType eType)
 {
 	CMessageDialogWrapper dialog;

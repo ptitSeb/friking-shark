@@ -277,6 +277,12 @@ public:
 	virtual void ShowMessage(IGameWindow *piParent,std::string sText,std::string sTitle,EMessageDialogType eType)=0;
 };
 
+class IGameGUIInputDialog: virtual public ISystemUnknown
+{
+public:
+
+	virtual bool ShowInput(IGameWindow *piParent,std::string *psText,std::string sTitle)=0;
+};
 
 class IGameGUIConfirmDialog: virtual public ISystemUnknown
 {

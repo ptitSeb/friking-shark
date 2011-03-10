@@ -237,8 +237,6 @@ void COpenGLFont::CalcTextSize(double dFontHeight,const char *pText,double *pdWi
 		}
 	}
 }
-
-
 void COpenGLFont::RenderText(double dFontHeight,double x,double y,const char *pText)
 {
 	if(m_eFontType==eGenericFontType_Texture)
@@ -292,6 +290,23 @@ void COpenGLFont::RenderText(double dFontHeight,double x,double y,const char *pT
 			glRasterPos2d(x,nFinalY);
 			//RTTRACE("COpenGLFonts::RenderText -> %s: %d,%d",pText,(int)x,nFinalY);
 			
+			while(*pText)
+			{
+				glCallList(pFont->nTexturesBaseIndex+*pText);
+				pText++;
+			}
+		}
+	}
+}
+
+void COpenGLFont::RenderText(double dFontHeight,CVector vPosition,const char *pText)
+{
+	if(m_eFontType==eGenericFontType_System)
+	{
+		SOpenGLSystemFont *pFont=GetSystemFontForHeight((unsigned int)dFontHeight);
+		if(pFont)
+		{
+			glRasterPos3d(vPosition.c[0],vPosition.c[1],vPosition.c[2]);
 			while(*pText)
 			{
 				glCallList(pFont->nTexturesBaseIndex+*pText);
@@ -364,6 +379,11 @@ SOpenGLSystemFont *COpenGLFont::GetSystemFontForHeight(unsigned int nHeight)
 			if(wglUseFontBitmaps(hdc,0,255,pFont->nTexturesBaseIndex))
 			{
 				bOk=true;
+			}
+			else
+			{
+				unsigned int nError=GetLastError();
+				RTTRACE("COpenGLFont::GetSystemFontForHeight -> wglUseFontBitmaps failed with error code %d ",nError);
 			}
 			SelectObject(hdc,hOlfFont);
 		}

@@ -121,6 +121,7 @@
     <ClCompile Include="GameGUIEdit.cpp" />
     <ClCompile Include="GameGUIFileDialog.cpp" />
     <ClCompile Include="GameGUIGroup.cpp" />
+    <ClCompile Include="GameGUIInputDialog.cpp" />
     <ClCompile Include="GameGUILabel.cpp" />
     <ClCompile Include="GameGUIList.cpp" />
     <ClCompile Include="GameGUIManager.cpp" />
@@ -139,6 +140,7 @@
     <ClInclude Include="GameGUIEdit.h" />
     <ClInclude Include="GameGUIFileDialog.h" />
     <ClInclude Include="GameGUIGroup.h" />
+    <ClInclude Include="GameGUIInputDialog.h" />
     <ClInclude Include="GameGUILabel.h" />
     <ClInclude Include="GameGUIList.h" />
     <ClInclude Include="GameGUIManager.h" />
@@ -156,9 +158,6 @@
   <ItemGroup>
     <ProjectReference Include="..\GameGUILib\GameGUILib.vcxproj">
       <Project>{acd90f68-d2e5-4c06-aacc-4678341b073b}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\GameManagers\GameLib.vcxproj">
-      <Project>{2fd9db84-b33b-4b8a-b51f-6939783489ec}</Project>
     </ProjectReference>
     <ProjectReference Include="..\GameRunTimeLib\GameRunTimeLib.vcxproj">
       <Project>{1aca288e-6e1a-4fe5-bdbf-d9c06a26c298}</Project>

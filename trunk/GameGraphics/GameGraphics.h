@@ -319,6 +319,7 @@ public:
 
 	virtual void CalcTextSize(double dFontHeight,const char *pText,double *pdWidth,double *pdHeight)=0;
 	virtual void RenderText(double dFontHeight,double x,double y,const char *pText)=0;
+	virtual void RenderText(double dFontHeight,CVector vPosition,const char *pText)=0;
 	virtual void RenderTextEx(double dFontHeight,double x,double y,double w,double h,const char *pText,eTextAlignment dwHorzAlign,eTextAlignment dwVertAlign)=0;
 };
 

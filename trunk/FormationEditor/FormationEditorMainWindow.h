@@ -46,7 +46,9 @@ public:
 	CFormationTypeWrapper    m_FormationType;
 	CFormationWrapper		 m_Formation;
 	unsigned int			 m_nFormationId;
+	std::string 			 m_sFormationName;
 	
+	double					 m_d3DFontSize;
 	std::string 			 m_sWorldModelFile;
 	std::string 			 m_sWorldTextureFile;
 	
@@ -63,6 +65,7 @@ public:
 	bool				m_bShowOptionsPanel;
 	bool				m_bShowPlayAreaPanel;
 	bool				m_bRenderPlayArea;
+	bool				m_bRenderWorld;
 
 	int					m_nSelectedRoutePoint;
 
@@ -240,7 +243,8 @@ public:
 		PROP_CLASS_CHAIN(CGameWindowBase)
 		PROP_VALUE_FLAGS(m_sWorldModelFile,"WorldModelFile","",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_sWorldTextureFile,"WorldTextureFile","",MRPF_NORMAL|MRPF_OPTIONAL)
-		END_PROP_MAP();
+		PROP_VALUE_FLAGS(m_d3DFontSize,"3DFontSize",0,MRPF_NORMAL|MRPF_OPTIONAL)
+	END_PROP_MAP();
 public:
 
 	CFormationEditorObjectSelectorWrapper m_ObjectSelector;
