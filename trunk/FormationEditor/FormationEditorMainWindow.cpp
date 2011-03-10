@@ -79,7 +79,22 @@ bool CFormationEditorMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 	m_PlayAreaManagerWrapper.Attach("GameSystem","PlayAreaManager");
 	m_FrameManager.Attach("GameSystem","FrameManager");
 	m_SoundManagerWrapper.Attach("GameSystem","SoundManager");
-	if(m_WorldManagerWrapper.m_piTerrain){m_WorldManagerWrapper.m_piTerrain->SetTerrainBaseModel("terreno.ASE");m_WorldManagerWrapper.m_piTerrain->UpdateTerrain();}
+	if(m_WorldManagerWrapper.m_piTerrain && m_sWorldModelFile!="")
+	{
+		m_WorldManagerWrapper.m_piTerrain->SetTerrainBaseModel(m_sWorldModelFile);
+		if(m_sWorldTextureFile!="")
+		{
+			STerrainHeightLayer sLayer;
+			sLayer.dMinHeight=0;
+			sLayer.dMaxHeight=1;
+			sLayer.dHorizontalResolution=5;
+			sLayer.dVerticalResolution=5;
+			sLayer.dDecayMargin=0;
+			sLayer.sTextureFile=m_sWorldTextureFile;
+			m_WorldManagerWrapper.m_piTerrain->AddTerrainHeightLayer(&sLayer);
+		}
+		m_WorldManagerWrapper.m_piTerrain->UpdateTerrain();
+	}
 	if(m_PlayAreaManagerWrapper.m_piPlayAreaDesign){m_PlayAreaManagerWrapper.m_piPlayAreaDesign->UpdatePlayArea();}
 	CenterCamera();
 	return bOk;
@@ -268,7 +283,7 @@ void CFormationEditorMainWindow::OnDraw(IGenericRender *piRender)
 	CVector vPlayAreaMins,vPlayAreaMaxs;
 	SPlayAreaConfig vPlayAreaConfig;
 	m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&vPlayAreaConfig);
-	m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetAirPlayPlane(&vPlayAreaMins,&vPlayAreaMaxs);
+	m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetVisibleAirPlayPlane(&vPlayAreaMins,&vPlayAreaMaxs);
 	CVector vCenter=(vPlayAreaMaxs+vPlayAreaMins)*0.5;
 	CVector vSize=(vPlayAreaMaxs-vPlayAreaMins);
 
@@ -282,10 +297,10 @@ void CFormationEditorMainWindow::OnDraw(IGenericRender *piRender)
 	//Right scroll
 	piRender->SetColor(CVector(1,1,1),0.05);
 	piRender->RenderRect(vCenter+CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
-
-	piRender->ActivateDepth();
+	
 	piRender->DeactivateSolid();
-
+	piRender->DeactivateDepth();
+	
 	piRender->SetColor(CVector(1,1,1),1.0);
 	piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2]);
 	piRender->RenderRect(vCenter-CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
@@ -729,21 +744,23 @@ void CFormationEditorMainWindow::CenterCamera()
 	{
 		bCenter=true;
 		CVector vMins,vMaxs;
-		CVector vPlayerRouteStart,vPlayerRouteEnd;
-		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayerRoute(&vPlayerRouteStart,&vPlayerRouteEnd);
-		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayAreaPlaneAt(vPlayerRouteStart,&vMins,&vMaxs);
-		vCenter=vPlayerRouteStart+(vMaxs+vMins)*0.5;
-		vSize=(vMaxs-vMins)*2.0;
+		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetVisibleAirPlayPlane(&vMins,&vMaxs);
+		vCenter=(vMaxs+vMins)*0.5;
+		vSize=(vMaxs-vMins)*1.5;
 	}
 	if(bCenter)
 	{
 		double dNearPlane=0,dFarPlane=0;
 		m_Camera.m_piCamera->GetClippingPlanes(dNearPlane,dFarPlane);
+		double dAspect=m_Camera.m_piCamera->GetAspectRatio();
 	
 		CVector vPos;
 		vPos.c[0]=vCenter.c[0];
 		vPos.c[2]=vCenter.c[2];
-		vPos.c[1]=vCenter.c[1]+fabs(tan(m_Camera.m_piCamera->GetViewAngle()*2.0)*(vSize.c[0]+dNearPlane));
+		double dw=vCenter.c[1]+(vSize.c[0]*0.5)/fabs(tan(DegreesToRadians(m_Camera.m_piCamera->GetViewAngle()*0.5*dAspect)));
+		double dh=vCenter.c[1]+(vSize.c[2]*0.5)/(fabs(tan(DegreesToRadians(m_Camera.m_piCamera->GetViewAngle()*0.5))));
+		vPos.c[1]=std::max(dw,dh);
+		
 		CVector vAngles;
 		m_Camera.m_piCamera->SetPosition(vPos);
 		AnglesFromVector(vCenter-vPos,&vAngles);
