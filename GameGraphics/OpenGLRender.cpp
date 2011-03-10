@@ -6,6 +6,7 @@ COpenGLRender::COpenGLRender(void)
 {
 	m_pCurrentShader=NULL;
 	m_bHardwareSupportRead=false;
+	m_bIgnoreShaderSupport=false;
 	m_bShadowVolumeFirstVertex=false;
 	m_bRenderingWithShader=false;
 	m_bRenderingShadowReception=false;
@@ -156,8 +157,7 @@ void COpenGLRender::SetCamera(const CVector &vPosition,double dYaw, double dPitc
 	{
 		m_bHardwareSupportRead=true;
 
-		//RTTRACE("COpenGLRender -> shaders disabled!!!");
-		GLhandleARB hFakeShaderProgram=glCreateProgramObjectARB();
+		GLhandleARB hFakeShaderProgram=m_bIgnoreShaderSupport?0:glCreateProgramObjectARB();
 		m_sHardwareSupport.bShaders=(hFakeShaderProgram!=0);
 		if(hFakeShaderProgram){glDeleteObjectARB(hFakeShaderProgram);hFakeShaderProgram=NULL;}
 
@@ -1531,8 +1531,10 @@ void COpenGLRender::EndStagedRendering()
 		glMatrixMode(GL_MODELVIEW);
 		glPopMatrix();
 
-		glPopAttrib();
+		glDisable( GL_POLYGON_OFFSET_FILL );
 		glPolygonOffset( 0.0, 0.0 );
+		
+		glPopAttrib();
 		m_ShadowTexture.m_piTexture->StopRenderingToTexture();
 
 		// Se hace esto porque el inicio y fin del pintado a textura hace un push attrib y pop attrib
@@ -1540,9 +1542,9 @@ void COpenGLRender::EndStagedRendering()
 		SetRenderState(m_sStagedRenderingState,true);
 
 		SetViewport(nPreviousViewportX, nPreviousViewportY,nPreviousViewportW, nPreviousViewportH);
-		SetPerspectiveProjection(dPreviousViewAngle,m_dStagedRenderingMinZ>1.0?m_dStagedRenderingMinZ-1.0:m_dStagedRenderingMinZ,m_dStagedRenderingMaxZ+1.0);
+		SetPerspectiveProjection(dPreviousViewAngle,dPreviousNear,dPreviousFar);//m_dStagedRenderingMinZ>1.0?m_dStagedRenderingMinZ-1.0:m_dStagedRenderingMinZ,m_dStagedRenderingMaxZ+1.0);
 		SetCamera(vPreviousCameraPosition,vPreviousCameraAngles.c[YAW],vPreviousCameraAngles.c[PITCH],vPreviousCameraAngles.c[ROLL]);
-
+	
 		//glPushAttrib(GL_ALL_ATTRIB_BITS);
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
@@ -1686,7 +1688,7 @@ void COpenGLRender::EndStagedRendering()
 	}
 	else
 	{
-		SetPerspectiveProjection(m_dPerspectiveViewAngle,m_dStagedRenderingMinZ>1.0?m_dStagedRenderingMinZ-1.0:m_dStagedRenderingMinZ,m_dStagedRenderingMaxZ+1.0);
+		//SetPerspectiveProjection(m_dPerspectiveViewAngle,m_dStagedRenderingMinZ>1.0?m_dStagedRenderingMinZ-1.0:m_dStagedRenderingMinZ,m_dStagedRenderingMaxZ+1.0);
 		RenderAllStages(false,true);
 	}
 
@@ -1738,7 +1740,7 @@ void COpenGLRender::EndStagedRendering()
 	m_mLineStages.clear();
 	m_mPointStages.clear();
 
-	SetPerspectiveProjection(dPreviousViewAngle,dPreviousNear,dPreviousFar);
+	//SetPerspectiveProjection(dPreviousViewAngle,dPreviousNear,dPreviousFar);
 	SetRenderState(m_sPreStagedRenderingState,true);
 	if(m_pCurrentShader){m_pCurrentShader->m_piShader->Deactivate();m_pCurrentShader=NULL;}
 	m_bRenderingWithShader=false;

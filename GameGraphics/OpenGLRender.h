@@ -351,6 +351,8 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	CVector				m_vShadowVolumeMaxs;
 	bool				m_bHardwareSupportRead;
 	SHardwareSupport	m_sHardwareSupport;
+	bool				m_bIgnoreShaderSupport;
+	
 	std::stack<SRenderState> m_sStagedRenderingStateStack;
 	std::stack<SRenderState> m_sRenderStateStack;
 	std::stack<SRenderOptions> m_sRenderOptionsStack;
@@ -518,7 +520,11 @@ public:
 	int EndSelection();
 
 	IOpenGLViewport *GetOpenGLViewPort(); // solo valido entre StartFrame y EndFrame.
-
+	
+	BEGIN_PROP_MAP(COpenGLRender)
+	PROP_VALUE_FLAGS(m_bIgnoreShaderSupport,"IgnoreShaderSupport",false,MRPF_NORMAL|MRPF_OPTIONAL)
+	END_PROP_MAP();
+	
 	COpenGLRender(void);
 	~COpenGLRender(void);
 };

@@ -1,5 +1,6 @@
 AreaDeJuego
 {
+	AlturaJuego=20.000000
 	Camara
 	{
 		Class=Camera
@@ -10,196 +11,80 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=10000.000000
 			NearPlane=10.000000
-			Posicion=25.860000,513.731076,-1.768066
+			Posicion=42.509077,289.758377,-1.768066
 		}
 		Name=PlayCamera
 		System=GameSystem
 	}
-	Destino=600.000000,1.768066,89.758377
-	DistanciaCamara=115
+	Destino=428.500923,1.768066,89.758377
+	DistanciaCamara=200.000000
 	Elementos
 	{
 		Item0
 		{
-			Class=CPlayAreaFormation
+			Class=CPlayAreaEntity
 			Data
 			{
-				Bonus=Bonus:Live
-				Posicion=50.000000,-2.547510,81.671682
-				Tipo=Formacion3
+				Angulos=0.000000,0.000000,0.000000
+				Posicion=-86.000000,-28.918899,61.922785
+				Tipo
+				{
+					Name=Tank
+					System=EntityTypes
+				}
 			}
 			Name=""
 			System=GameSystem
 		}
 		Item1
 		{
-			Class=CPlayAreaFormation
+			Class=CPlayAreaEntity
 			Data
 			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=-65.102379,-2.547510,81.671682
-				Tipo=Formacion5
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item10
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=60.102379,-2.547510,81.671682
-				Tipo=P51TrianguloDerechaInclinado
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item11
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=130.102379,-2.547510,81.671682
-				Tipo=P51TrianguloIzquierdaInclinado
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item12
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=130.102379,-2.547510,81.671682
-				Tipo=P51TrianguloDerechaInclinado
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item13
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=65.102379,-2.547510,81.671682
-				Tipo=CuñaPorDelante
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item14
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=80.102379,-2.547510,81.671682
-				Tipo=CuñaPorDelante
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item15
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=90.102379,-2.547510,81.671682
-				Tipo=P51TrianguloIzquierdaInclinado
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item16
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=90.102379,-2.547510,81.671682
-				Tipo=P51TrianguloDerechaInclinado
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item17
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=110.102379,-2.547510,81.671682
-				Tipo=CuñaPorDelante
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item18
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=-35.102379,-2.547510,81.671682
-				Tipo=BombarderoPorDetrasDerecha
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item19
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot1
-				Posicion=-35.102379,-2.547510,81.671682
-				Tipo=Formacion5
+				Angulos=0.000000,0.000000,0.000000
+				Posicion=-86.000000,13.973855,58.628011
+				Tipo
+				{
+					Name=P51
+					System=EntityTypes
+				}
 			}
 			Name=""
 			System=GameSystem
 		}
 		Item2
 		{
-			Class=CPlayAreaFormation
+			Class=CPlayAreaEntity
 			Data
 			{
-				Bonus=Bonus:Upgrade_Slot1
-				Posicion=-45.102379,-2.547510,81.671682
-				Tipo=CuñaPorDelante
+				Angulos=0.000000,0.000000,0.000000
+				Posicion=-59.500000,-68.640954,57.804220
+				Tipo
+				{
+					Name=Tank
+					System=EntityTypes
+				}
 			}
 			Name=""
 			System=GameSystem
 		}
-		Item20
+		Item3
 		{
-			Class=CPlayAreaFormation
+			Class=CPlayAreaEntity
 			Data
 			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=150.102379,-2.547510,81.671682
-				Tipo=CuñaPorDelante
+				Angulos=0.000000,0.000000,0.000000
+				Posicion=-86.500000,-62.253453,51.416718
+				Tipo
+				{
+					Name=Tank
+					System=EntityTypes
+				}
 			}
 			Name=""
 			System=GameSystem
 		}
-		Item21
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=170.102379,-2.547510,81.671682
-				Tipo=CuñaPorDelante
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item22
+		Item4
 		{
 			Class=CPlayAreaCheckPoint
 			Data
@@ -209,7 +94,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item23
+		Item5
 		{
 			Class=CPlayAreaCheckPoint
 			Data
@@ -219,7 +104,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item24
+		Item6
 		{
 			Class=CPlayAreaCheckPoint
 			Data
@@ -229,86 +114,22 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item3
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=50.102379,-2.547510,81.671682
-				Tipo=P51TrianguloIzquierdaRecto
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item4
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=55.102379,-2.547510,81.671682
-				Tipo=P51TrianguloIzquierdaInclinado
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item5
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot1
-				Posicion=-5.102379,-2.547510,81.671682
-				Tipo=CuñaPorDetras
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item6
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=-65.102379,-2.547510,81.671682
-				Tipo=P51TrianguloIzquierdaRecto
-			}
-			Name=""
-			System=GameSystem
-		}
 		Item7
 		{
 			Class=CPlayAreaFormation
 			Data
 			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=10.102379,-2.547510,81.671682
-				Tipo=P51TrianguloIzquierdaRecto
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item8
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=30.102379,-2.547510,81.671682
-				Tipo=P51TrianguloDerechaInclinado
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item9
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus=Bonus:Upgrade_Slot0
-				Posicion=40.102379,-2.547510,81.671682
-				Tipo=CuñaPorDelante
+				Bonus
+				{
+					Name=Bonus:Upgrade_Slot1
+					System=EntityTypes
+				}
+				Posicion=126.000000,1.768066,89.758377
+				Tipo
+				{
+					Name=CuñaPorDelante
+					System=FormationTypes
+				}
 			}
 			Name=""
 			System=GameSystem
@@ -321,43 +142,26 @@ AreaDeJuego
 			Config
 			{
 				CastShadows=1
-				Color=0.000000,1.000000,0.000000
+				Color=0.000000,0.000000,0.000000
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.000000
-				EntityType=Palmera
-				PositionJitter=0.300000
-				Separation=0.700000
+				EntityType=Tank
+				PositionJitter=0.000000
+				Separation=1.300000
 				ShadowLevel=1
-				YawJitter=360.000000
+				YawJitter=0.000000
 			}
 			EntityType
 			{
-				Class=CTruck
-				Data
-				{
-					Animaciones
-					{
-						Item0=Animation:Palmera-Stand
-					}
-					Armas
-					BBoxMaxs=10.000000,3.000000,10.000000
-					BBoxMins=-10.000000,0.000000,-10.000000
-					Bando=2
-					MovimientoAereo=0
-					Solido=1
-					Velocidad=40.000000
-					VelocidadAngularMaxima=60.000000
-					Vida=1.000000
-				}
-				Name=Palmera
+				Name=Tank
 				System=EntityTypes
 			}
 		}
 	}
 	InclinacionVista=0.000000
 	MaximoScrollHorz=0.000000
-	Origen=-200.000000,1.768066,89.758377
-	VelocidadCamara=20.000000
+	Origen=-28.500923,1.768066,89.758377
+	VelocidadCamara=30.000000
 }
 Terrain
 {
@@ -366,7 +170,7 @@ Terrain
 		Class=Model
 		Data
 		{
-			Archivo="C:\\TerrainGenerator\\Resources\\Models\\terreno2.ASE"
+			Archivo="terreno2.ASE"
 			AutoGenerateBSP=0
 			AutoUpdateBSP=0
 			LoadBSP=0
@@ -374,14 +178,14 @@ Terrain
 		Name=""
 		System=GameResources
 	}
-	BaseModelFile="C:\\TerrainGenerator\\Resources\\Models\\terreno2.ASE"
+	BaseModelFile="terreno2.ASE"
 	ColorLayers
 	ColorMap
 	{
 		Class=Texture
 		Data
 		{
-			Archivo="C:\\TerrainGenerator\\Resources\\Textures\\ColorMap.bmp"
+			Archivo="ColorMap.bmp"
 			ArchivoAlpha=""
 			ColorKey=0.000000,0.000000,0.000000
 			UsarColorKey=0
@@ -389,18 +193,18 @@ Terrain
 		Name=""
 		System=GameResources
 	}
-	ColorMapFile="C:\\TerrainGenerator\\Resources\\Textures\\ColorMap.bmp"
+	ColorMapFile="ColorMap.bmp"
 	HeightLayers
 	{
 		Item0
 		{
 			Config
 			{
-				HeightMargin=0.000000
+				HeightMargin=0.190000
 				HorzResolution=2.500000
 				MaxHeight=0.300000
 				MinHeight=0.000000
-				Texture="C:\\TerrainGenerator\\Resources\\Textures\\LechoInferior.jpg"
+				Texture="hiervsPeq.jpg"
 				VertResolution=2.500000
 			}
 			Texture
@@ -408,7 +212,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo="C:\\TerrainGenerator\\Resources\\Textures\\LechoInferior.jpg"
+					Archivo="hiervsPeq.jpg"
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -421,11 +225,11 @@ Terrain
 		{
 			Config
 			{
-				HeightMargin=0.100000
+				HeightMargin=0.310000
 				HorzResolution=2.500000
 				MaxHeight=1.000000
 				MinHeight=0.240000
-				Texture="C:\\TerrainGenerator\\Resources\\Textures\\LechoSuperior.jpg"
+				Texture="LechoInferior.jpg"
 				VertResolution=2.500000
 			}
 			Texture
@@ -433,7 +237,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo="C:\\TerrainGenerator\\Resources\\Textures\\LechoSuperior.jpg"
+					Archivo="LechoInferior.jpg"
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -446,11 +250,11 @@ Terrain
 		{
 			Config
 			{
-				HeightMargin=0.090000
+				HeightMargin=0.100000
 				HorzResolution=2.500000
 				MaxHeight=1.000000
 				MinHeight=0.800000
-				Texture="C:\\TerrainGenerator\\Resources\\Textures\\hiervsPeq.jpg"
+				Texture="LechoSuperior.jpg"
 				VertResolution=2.500000
 			}
 			Texture
@@ -458,7 +262,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo="C:\\TerrainGenerator\\Resources\\Textures\\hiervsPeq.jpg"
+					Archivo="LechoSuperior.jpg"
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -466,6 +270,59 @@ Terrain
 				Name=""
 				System=GameResources
 			}
+		}
+	}
+	Sky
+	{
+		Config
+		{
+			Enabled=0
+			HorzResolution=1.000000
+			Opacity=1.000000
+			Speed=0.000000
+			Texture=""
+			VertResolution=1.000000
+		}
+		Texture
+	}
+	Water
+	{
+		Config
+		{
+			Enabled=0
+			Height=0.080000
+			HorzResolution=4.000000
+			Opacity=0.200000
+			Speed=0.000000
+			Texture1="rtice_1.bmp"
+			Texture2="hiervsPeq.jpg"
+			VertResolution=3.000000
+		}
+		Texture1
+		{
+			Class=Texture
+			Data
+			{
+				Archivo="rtice_1.bmp"
+				ArchivoAlpha=""
+				ColorKey=0.000000,0.000000,0.000000
+				UsarColorKey=0
+			}
+			Name=""
+			System=GameResources
+		}
+		Texture2
+		{
+			Class=Texture
+			Data
+			{
+				Archivo="hiervsPeq.jpg"
+				ArchivoAlpha=""
+				ColorKey=0.000000,0.000000,0.000000
+				UsarColorKey=0
+			}
+			Name=""
+			System=GameResources
 		}
 	}
 }

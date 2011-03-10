@@ -47,6 +47,9 @@ public:
 	CFormationWrapper		 m_Formation;
 	unsigned int			 m_nFormationId;
 	
+	std::string 			 m_sWorldModelFile;
+	std::string 			 m_sWorldTextureFile;
+	
 	std::vector<SEntityControls *>		m_vEntityControls;
 
 	unsigned long		m_dwNexControlKey;
@@ -232,7 +235,12 @@ public:
 		CHILD_MAP_ENTRY_EX("PlayAreaDecreaseScroll",m_piBTPlayAreaDecreaseScroll,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("PlayAreaIncreaseScroll",m_piBTPlayAreaIncreaseScroll,IGameGUIButtonEvents);
 	END_CHILD_MAP()
-
+	
+	BEGIN_PROP_MAP(CFormationEditorMainWindow)
+		PROP_CLASS_CHAIN(CGameWindowBase)
+		PROP_VALUE_FLAGS(m_sWorldModelFile,"WorldModelFile","",MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_sWorldTextureFile,"WorldTextureFile","",MRPF_NORMAL|MRPF_OPTIONAL)
+		END_PROP_MAP();
 public:
 
 	CFormationEditorObjectSelectorWrapper m_ObjectSelector;
