@@ -88,7 +88,6 @@ public:
 	bool				m_bTextures;
 	bool				m_bFog;
 	bool				m_bShaders;
-	bool				m_bColors;
 	bool				m_bShadows;
 	bool				m_bLighting;
 	bool				m_bShowFilePanel;
@@ -246,17 +245,16 @@ public:
 	IGameGUIButton *m_piBTOptionsTextures;
 	IGameGUIButton *m_piBTOptionsSolid;
 	IGameGUIButton *m_piBTOptionsBlend;
-	IGameGUIButton *m_piBTOptionsLayerOnly;
-	IGameGUIButton *m_piBTOptionsModelOriginal;
-	IGameGUIButton *m_piBTOptionsModelGenerated;
-
+	IGameGUIButton *m_piBTOptionsShadows;
+	IGameGUIButton *m_piBTOptionsShaders;
+	IGameGUIButton *m_piBTOptionsLighting;
+	IGameGUIButton *m_piBTOptionsFog;
 	// File
 	IGameWindow	   *m_piGRFile;
 	IGameGUIButton *m_piBTFileNew;
 	IGameGUIButton *m_piBTFileOpen;
 	IGameGUIButton *m_piBTFileSave;
 	IGameGUIButton *m_piBTFileSaveAs;
-	IGameGUIButton *m_piBTFileCompile;
 	IGameGUIButton *m_piBTFileExit;
 
 	// General
@@ -482,16 +480,16 @@ public:
 		CHILD_MAP_ENTRY_EX("OptionShowTextures",m_piBTOptionsTextures,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("OptionSolid",m_piBTOptionsSolid,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("OptionBlend",m_piBTOptionsBlend,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("OptionSelectedLayerOnly",m_piBTOptionsLayerOnly,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("OptionOriginalModel",m_piBTOptionsModelOriginal,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("OptionGeneratedModel",m_piBTOptionsModelGenerated,IGameGUIButtonEvents);
-
+		CHILD_MAP_ENTRY_EX("OptionShadows",m_piBTOptionsShadows,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("OptionShaders",m_piBTOptionsShaders,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("OptionFog",m_piBTOptionsFog,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("OptionLighting",m_piBTOptionsLighting,IGameGUIButtonEvents);
+		
 		CHILD_MAP_ENTRY("FilePanel",m_piGRFile);
 		CHILD_MAP_ENTRY_EX("FileNew",m_piBTFileNew,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("FileOpen",m_piBTFileOpen,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("FileSave",m_piBTFileSave,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("FileSaveAs",m_piBTFileSaveAs,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("FileCompile",m_piBTFileCompile,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("FileExit",m_piBTFileExit,IGameGUIButtonEvents);
 
 		CHILD_MAP_ENTRY("GeneralModelName",m_piSTGeneralModelName);

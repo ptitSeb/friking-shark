@@ -23,12 +23,13 @@ CFormationEditorMainWindow::CFormationEditorMainWindow(void)
 	m_bShowFilePanel=false;
 	m_bShowPlayAreaPanel=false;
 	m_nSelectedRoutePoint=-1;
+	m_dAutoAlignThreshold=3;
 
 	m_dwNexControlKey=0;
 	m_bTextures=1;
-	m_bColors=1;
 	m_bSolid=1;
-	m_bBlend=1;
+	m_bRenderWorld=1;
+	m_bAutoAlign=1;
 	m_nSelectedEntity=-1;
 
 	InitializeChildren();
@@ -43,25 +44,23 @@ CFormationEditorMainWindow::~CFormationEditorMainWindow(void)
 bool CFormationEditorMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 {
 	bool bOk=CGameWindowBase::InitWindow(piParent,bPopup);
-	if(bOk)
-	{
-		m_ObjectSelector.Attach("GameGUI","ObjectSelector");
-		m_Viewport.Attach("GameGUI","Viewport");
-		m_Render.Attach("GameGUI","Render");
-		m_Viewport.m_piViewport->SetCaption("Formation Editor");
-		m_Camera.Create("GameGUI","Camera","");
+	if(!bOk){return false;}
+	
+	m_ObjectSelector.Attach("GameGUI","ObjectSelector");
+	m_Viewport.Attach("GameGUI","Viewport");
+	m_Render.Attach("GameGUI","Render");
+	m_Viewport.m_piViewport->SetCaption("Formation Editor");
+	m_Camera.Create("GameGUI","Camera","");
 
-		SGameRect sRect;
-		sRect.x=0;
-		sRect.y=0;
-		sRect.w=1;
-		sRect.h=1;
-		m_eReferenceSystem=eGameGUIReferenceSystem_Relative;
-		SetRect(&sRect);
+	SGameRect sRect;
+	sRect.x=0;
+	sRect.y=0;
+	sRect.w=1;
+	sRect.h=1;
+	m_eReferenceSystem=eGameGUIReferenceSystem_Relative;
+	SetRect(&sRect);
 
-		m_piGUIManager->SetFocus(this);
-	}
-
+	m_piGUIManager->SetFocus(this);
 	m_piSTEntityObjectLabel->Activate(false);
 
 	UpdateLayerPanel();
@@ -223,7 +222,7 @@ void CFormationEditorMainWindow::OnDraw(IGenericRender *piRender)
 
 	m_bTextures?m_Render.m_piRender->EnableTextures():m_Render.m_piRender->DisableTextures();
 	m_bSolid?m_Render.m_piRender->EnableSolid():m_Render.m_piRender->DisableSolid();
-	m_bBlend?m_Render.m_piRender->EnableBlending():m_Render.m_piRender->DisableBlending();
+	m_Render.m_piRender->EnableBlending();
 	m_Render.m_piRender->EnableShadows();
 	m_Render.m_piRender->DisableLighting();
 	m_Render.m_piRender->DisableHeightFog();
@@ -389,7 +388,6 @@ void CFormationEditorMainWindow::ProcessFileOpen()
 	if(m_ObjectSelector.m_piObjectSelector==NULL){return;}
 	if(m_PlayAreaManagerWrapper.m_piPlayAreaDesign==NULL){return;}
 	
-	std::string sScenario="./";
 	unsigned long nSelectedFormationType=0;
 	std::vector<IDesignObject *> vFormationTypes;
 	GetSystemObjects("FormationTypes",&vFormationTypes);
@@ -404,7 +402,7 @@ void CFormationEditorMainWindow::ProcessFileOpen()
 
 	SPlayAreaConfig sPlayAreaConfig;
 	m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sPlayAreaConfig);
-	if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vFormationTypes,&nSelectedFormationType,96.0,(96.0)/sPlayAreaConfig.dCameraAspectRatio))
+	if(m_ObjectSelector.m_piObjectSelector->SelectObject("Open Formation...",this,&vFormationTypes,&nSelectedFormationType,96.0,(96.0)/sPlayAreaConfig.dCameraAspectRatio))
 	{
 		Reset();
 		CConfigFile cfg;
@@ -458,15 +456,47 @@ void CFormationEditorMainWindow::ProcessFileSave()
 	if(bSave)
 	{
 		CConfigFile cfg;
+		CSystemSaverHelper helper;
 		CFormationTypeWrapper existingWrapper;
 		bool bOk=true;
 		bOk=existingWrapper.Create("FormationTypes","CFormationType",sName);
 		if(bOk){bOk=m_FormationType.m_piSerializable->Serialize(cfg.GetRoot());}
 		if(bOk){bOk=existingWrapper.m_piSerializable->Unserialize(cfg.GetRoot());}
+		// Dump all formations to the formation config file
+		if(bOk){bOk=helper.SaveSystemNamedObjects("Scripts/FormationTypes.cfg","FormationTypes");}
 		if(bOk){m_sFormationName=sName;}
 		existingWrapper.Detach(false);
 		UpdateCaption();
 	}
+}
+
+
+void CFormationEditorMainWindow::ProcessFileRemove()
+{
+	unsigned long nSelectedFormationType=0;
+	std::vector<IDesignObject *> vFormationTypes;
+	GetSystemObjects("FormationTypes",&vFormationTypes);
+	
+	SPlayAreaConfig sPlayAreaConfig;
+	m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sPlayAreaConfig);
+	if(m_ObjectSelector.m_piObjectSelector->SelectObject("Remove Formation...",this,&vFormationTypes,&nSelectedFormationType,96.0,(96.0)/sPlayAreaConfig.dCameraAspectRatio))
+	{
+		CFormationTypeWrapper existingWrapper;
+		bool bOk=existingWrapper.Attach(vFormationTypes[nSelectedFormationType]);
+		if(bOk)
+		{
+			std::string sText="Remove formation '";
+			sText+=existingWrapper.m_piObject->GetName();
+			sText+="' ?";
+			if(ConfirmDialog(sText,"Formation Editor",eMessageDialogType_Error))
+			{
+				existingWrapper.Destroy();
+				CSystemSaverHelper helper;
+				helper.SaveSystemNamedObjects("Scripts/FormationTypes.cfg","FormationTypes");
+			}
+		}
+	}
+	for(unsigned long x=0;x<vFormationTypes.size();x++){IDesignObject *piFormationType=vFormationTypes[x];REL(piFormationType);}
 }
 
 void CFormationEditorMainWindow::ProcessFileSaveAs()
@@ -503,12 +533,15 @@ void CFormationEditorMainWindow::ProcessFileSaveAs()
 	if(bSave)
 	{
 		CConfigFile cfg;
+		CSystemSaverHelper helper;
 		CFormationTypeWrapper existingWrapper;
 		bool bOk=true;
 		bOk=existingWrapper.Create("FormationTypes","CFormationType",sName);
 		if(bOk){bOk=m_FormationType.m_piSerializable->Serialize(cfg.GetRoot());}
 		if(bOk){bOk=existingWrapper.m_piSerializable->Unserialize(cfg.GetRoot());}
 		if(bOk){m_sFormationName=sName;}
+		// Dump all formations to the formation config file
+		if(bOk){bOk=helper.SaveSystemNamedObjects("Scripts/FormationTypes.cfg","FormationTypes");}
 		existingWrapper.Detach(false);
 		UpdateCaption();
 	}
@@ -516,7 +549,7 @@ void CFormationEditorMainWindow::ProcessFileSaveAs()
 
 void CFormationEditorMainWindow::ProcessFileExit()
 {
-	if(ConfirmDialog("Do you really want to exit?","Scenario Editor",eMessageDialogType_Question))
+	if(ConfirmDialog("Do you really want to exit?","Formation Editor",eMessageDialogType_Question))
 	{
 		m_piGUIManager->ExitGUILoop();
 	}
@@ -559,6 +592,11 @@ void CFormationEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		ProcessFileSaveAs();
 		m_bShowFilePanel=false;
 	}
+	if(m_piBTFormationRemove==piControl)
+	{
+		ProcessFileRemove();
+		m_bShowFilePanel=false;
+	}	
 	if(m_piBTFormationExit==piControl)
 	{
 		ProcessFileExit();
@@ -568,37 +606,13 @@ void CFormationEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	if(m_piBTShowEntitiesPanel==piControl){m_bShowEntitiesPanel=!m_bShowEntitiesPanel;}
 	if(m_piBTShowFilePanel==piControl){m_bShowFilePanel=!m_bShowFilePanel;}
 	if(m_piBTShowPlayAreaProperties==piControl){m_bShowPlayAreaPanel=true;m_nSelectedEntity=-1;}
-	if(m_piBTOptionsBlend==piControl){m_bBlend=!m_bBlend;}
+	if(m_piBTOptionsShowWorld==piControl){m_bRenderWorld=!m_bRenderWorld;}
+	if(m_piBTOptionsAutoAlign==piControl){m_bAutoAlign=!m_bAutoAlign;}
 	if(m_piBTOptionsTextures==piControl){m_bTextures=!m_bTextures;}
 	if(m_piBTOptionsSolid==piControl){m_bSolid=!m_bSolid;}
 	if(m_piBTNewEntity==piControl)
 	{
-		unsigned long nSelectedEntityType=0;
-		std::vector<IDesignObject *> vEntityTypes;
-		GetSystemObjects("EntityTypes",&vEntityTypes);
-		if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vEntityTypes,&nSelectedEntityType))
-		{
-			ISystemObject *piObject=QI(ISystemObject,vEntityTypes[nSelectedEntityType]);
-			IEntityType *piEntityType=QI(IEntityType,vEntityTypes[nSelectedEntityType]);
-			std::string sEntityType=piObject?piObject->GetName():"";
-
-			if(piEntityType)
-			{
-				SRoutePoint point;
-				point.bAbsolutePoint=false;
-				unsigned long nObjectIndex=m_FormationType.m_piFormationTypeDesign->AddElement();
-				GetAirPlaneCoordinatesFromCursorPos(m_rRealRect.w/2,m_rRealRect.h/2,&point.vPosition);
-				m_FormationType.m_piFormationTypeDesign->AddElementRoutePoint(nObjectIndex,0,point);
-				m_FormationType.m_piFormationTypeDesign->SetElementEntityCount(nObjectIndex,1);
-				m_FormationType.m_piFormationTypeDesign->SetElementEntityInterval(nObjectIndex,1000);
-				m_FormationType.m_piFormationTypeDesign->SetElementEntityType(nObjectIndex,piEntityType);
-			}
-			REL(piObject);
-			REL(piEntityType);
-			UpdateEntityControls();
-			m_nSelectedEntity=m_vEntityControls.size()-1;
-		}
-		for(unsigned long x=0;x<vEntityTypes.size();x++){IDesignObject *piEntityType=vEntityTypes[x];REL(piEntityType);}
+		ProcessAddEntity();
 	}
 	
 	for(unsigned int x=0;x<m_vEntityControls.size();x++)
@@ -622,7 +636,7 @@ void CFormationEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			unsigned long nSelectedEntityType=0;
 			std::vector<IDesignObject *> vEntityTypes;
 			GetSystemObjects("EntityTypes",&vEntityTypes);
-			if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vEntityTypes,&nSelectedEntityType))
+			if(m_ObjectSelector.m_piObjectSelector->SelectObject("Select Entity...",this,&vEntityTypes,&nSelectedEntityType))
 			{
 				IEntityType *piEntityType=QI(IEntityType,vEntityTypes[nSelectedEntityType]);
 				m_FormationType.m_piFormationTypeDesign->SetElementEntityType(m_nSelectedEntity,piEntityType);
@@ -722,7 +736,7 @@ void CFormationEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		if(m_piBTEntityDecreaseCount==piControl)
 		{
 			int nCount=m_FormationType.m_piFormationTypeDesign->GetElementEntityCount(m_nSelectedEntity);
-			if(nCount){m_FormationType.m_piFormationTypeDesign->SetElementEntityCount(m_nSelectedEntity,nCount-1);}
+			if(nCount>1){m_FormationType.m_piFormationTypeDesign->SetElementEntityCount(m_nSelectedEntity,nCount-1);}
 		}
 		if(m_piBTEntityIncreaseDelay==piControl)
 		{
@@ -772,7 +786,7 @@ void CFormationEditorMainWindow::UpdateLayerPanel()
 	m_piGREntityPanel->Show(false);
 	
 	SGameRect sListRect;
-	if(m_piGREntityLayerList){m_piGREntityLayerList->GetRealRect(&sListRect);}
+	if(m_piGREntityList){m_piGREntityList->GetRealRect(&sListRect);}
 	
 	double dCurrentY=sListRect.h;
 	
@@ -854,27 +868,43 @@ void CFormationEditorMainWindow::CenterCamera()
 {
 	if(m_PlayAreaManagerWrapper.m_piPlayAreaManager==NULL){return;}
 	bool bCenter=false;
-	CVector vCenter,vSize;
+	CVector vMins,vMaxs;
 	if(m_nSelectedEntity!=-1 && m_vEntityControls[m_nSelectedEntity]->m_piDesignObject)
 	{
-		CVector vMins,vMaxs;
 		SRoutePoint point;
 		m_vEntityControls[m_nSelectedEntity]->m_piDesignObject->DesignGetBBox(&vMins,&vMaxs);		
 		m_FormationType.m_piFormationTypeDesign->GetElementRoutePoint(m_nSelectedEntity,0,&point);
 		bCenter=true;
-		vCenter=FormationToWorld(point.vPosition)+(vMaxs+vMins)*0.5;
-		vSize=(vMaxs-vMins);
+		
+		CVector vPos=FormationToWorld(point.vPosition);
+		vMins+=vPos;
+		vMaxs+=vPos;
 	}
 	else
 	{
 		bCenter=true;
-		CVector vMins,vMaxs;
 		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetVisibleAirPlayPlane(&vMins,&vMaxs);
-		vCenter=(vMaxs+vMins)*0.5;
-		vSize=(vMaxs-vMins)*1.5;
+		
+		for(unsigned int x=0;x<m_vEntityControls.size();x++)
+		{
+			SRoutePoint sPoint;
+			m_FormationType.m_piFormationTypeDesign->GetElementRoutePoint(x,0,&sPoint);
+			CVector vPoint=FormationToWorld(sPoint.vPosition);
+			CVector vMinTemp;
+			CVector vMaxTemp;
+			
+			vMinTemp.Mins(vMins,vPoint);
+			vMaxTemp.Maxs(vMaxs,vPoint);
+			vMins=vMinTemp;
+			vMaxs=vMaxTemp;
+		}		
 	}
 	if(bCenter)
 	{
+		CVector vCenter,vSize;
+		vCenter=(vMaxs+vMins)*0.5;
+		vSize=(vMaxs-vMins)*1.5;
+		
 		double dNearPlane=0,dFarPlane=0;
 		m_Camera.m_piCamera->GetClippingPlanes(dNearPlane,dFarPlane);
 		double dAspect=m_Camera.m_piCamera->GetAspectRatio();
@@ -902,10 +932,9 @@ void CFormationEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 	else if(nKey==GK_PAUSE){m_FrameManager.m_piFrameManager->TogglePauseOnNextFrame();*pbProcessed=true;}
 	else if(nKey=='T'){m_bTextures=!m_bTextures;*pbProcessed=true;}
 	else if(nKey=='P'){m_bRenderPlayArea=!m_bRenderPlayArea;*pbProcessed=true;}
-	else if(nKey=='C'){m_bColors=!m_bColors;*pbProcessed=true;}
 	else if(nKey=='L'){m_bSolid=!m_bSolid;*pbProcessed=true;}
-	else if(nKey=='B'){m_bBlend=!m_bBlend;*pbProcessed=true;}
 	else if(nKey=='O'){m_bRenderWorld=!m_bRenderWorld;*pbProcessed=true;}
+	else if(nKey=='G'){m_bAutoAlign=!m_bAutoAlign;*pbProcessed=true;}
 	else if(nKey==GK_HOME){CenterCamera();*pbProcessed=true;}
 	else if(nKey==GK_DELETE)
 	{
@@ -922,7 +951,11 @@ void CFormationEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 	else if(nKey==GK_INSERT)
 	{
 		*pbProcessed=true;
-		if(m_nSelectedEntity!=-1)
+		if(m_nSelectedEntity==-1)
+		{
+			ProcessAddEntity();
+		}
+		else
 		{
 			SRoutePoint firstPoint;
 			firstPoint.bAbsolutePoint=false;
@@ -961,7 +994,7 @@ void CFormationEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 	}
 	else if(nKey==GK_ESCAPE)
 	{
-		if(m_nSelectedEntity!=-1 || m_nSelectedRoutePoint!=-1)
+		if(m_nSelectedEntity!=-1)
 		{
 			m_nSelectedEntity=-1;
 			m_nSelectedRoutePoint=-1;
@@ -1024,8 +1057,6 @@ void CFormationEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 					m_piGUIManager->SetMouseCapture(this);
 					SRoutePoint point;
 					m_FormationType.m_piFormationTypeDesign->GetElementRoutePoint(x,nNewSelection,&point);
-					m_vObjectOriginalPosition=point.vPosition;
-					GetAirPlaneCoordinatesFromCursorPos(dx,dy,&m_vCursorOriginalPosition);
 				}
 				m_bShowEntityPanel=true;
 				m_bShowEntitiesPanel=true;
@@ -1063,17 +1094,44 @@ bool CFormationEditorMainWindow::GetAirPlaneCoordinatesFromCursorPos(double x,do
 	return (dSide1*dSide2)<0;
 }
 
+CVector CFormationEditorMainWindow::AutoAlign(CVector vPoint,int nEntity,int nRoutePoint)
+{
+	CVector vWorldPoint=FormationToWorld(vPoint);
+	for(unsigned int x=0;x<m_vEntityControls.size();x++)
+	{
+		int nRoutePointCount=m_FormationType.m_piFormationTypeDesign->GetElementRoutePoints(x);
+		for(int y=0;y<nRoutePointCount;y++)
+		{
+			if((int)x==nEntity && y==nRoutePoint){continue;}
+			SRoutePoint sPoint;
+			m_FormationType.m_piFormationTypeDesign->GetElementRoutePoint(x,y,&sPoint);
+			CVector vTemp=FormationToWorld(sPoint.vPosition);
+			if(fabs(vWorldPoint.c[0]-vTemp.c[0])<m_dAutoAlignThreshold)
+			{
+				vWorldPoint.c[0]=vTemp.c[0];
+			}
+			if(fabs(vWorldPoint.c[2]-vTemp.c[2])<m_dAutoAlignThreshold)
+			{
+				vWorldPoint.c[2]=vTemp.c[2];
+			}
+		}
+	}
+	return WorldToFormation(vWorldPoint);
+}
 
 void CFormationEditorMainWindow::OnMouseMove( double x,double y )
 {
 	if(m_bMovingRoutePoint && m_nSelectedRoutePoint!=-1)
 	{
 		CVector vTemp;
+		
 		if(GetAirPlaneCoordinatesFromCursorPos(x,y,&vTemp))
 		{
 			SRoutePoint point;
 			point.vPosition=vTemp;
 			point.bAbsolutePoint=false;
+			if(m_bAutoAlign){point.vPosition=AutoAlign(point.vPosition,m_nSelectedEntity,m_nSelectedRoutePoint);}
+			
 			m_FormationType.m_piFormationTypeDesign->SetElementRoutePoint(m_nSelectedEntity,m_nSelectedRoutePoint,point);
 		}
 	}
@@ -1164,7 +1222,7 @@ void CFormationEditorMainWindow::UpdateEntityControls()
 			pControls->m_piObject=QI(ISystemObject,piEntityType);
 			if(pControls->m_BTListRow.m_piButton)
 			{
-				pControls->m_BTListRow.m_piButton->InitWindow(m_piGREntityLayerList,false);
+				pControls->m_BTListRow.m_piButton->InitWindow(m_piGREntityList,false);
 				pControls->m_BTListRow.m_piButton->SetReferenceSystem(eGameGUIReferenceSystem_Absolute);
 				pControls->m_BTListRow.m_piButton->SetBackgroundColor(CVector(1,1,1),0.1);
 				pControls->m_BTListRow.m_piButton->Show(true);
@@ -1258,3 +1316,33 @@ void CFormationEditorMainWindow::RenderRoute( IGenericRender * piRender, int nEn
 	piRender->PopState();
 }
 void CFormationEditorMainWindow::OnWantFocus(bool *pbWant){*pbWant=true;}
+
+void CFormationEditorMainWindow::ProcessAddEntity()
+{
+	unsigned long nSelectedEntityType=0;
+	std::vector<IDesignObject *> vEntityTypes;
+	GetSystemObjects("EntityTypes",&vEntityTypes);
+	if(m_ObjectSelector.m_piObjectSelector->SelectObject("Select Entity...",this,&vEntityTypes,&nSelectedEntityType))
+	{
+		ISystemObject *piObject=QI(ISystemObject,vEntityTypes[nSelectedEntityType]);
+		IEntityType *piEntityType=QI(IEntityType,vEntityTypes[nSelectedEntityType]);
+		std::string sEntityType=piObject?piObject->GetName():"";
+		
+		if(piEntityType)
+		{
+			SRoutePoint point;
+			point.bAbsolutePoint=false;
+			unsigned long nObjectIndex=m_FormationType.m_piFormationTypeDesign->AddElement();
+			GetAirPlaneCoordinatesFromCursorPos(m_rRealRect.w/2,m_rRealRect.h/2,&point.vPosition);
+			m_FormationType.m_piFormationTypeDesign->AddElementRoutePoint(nObjectIndex,0,point);
+			m_FormationType.m_piFormationTypeDesign->SetElementEntityCount(nObjectIndex,1);
+			m_FormationType.m_piFormationTypeDesign->SetElementEntityInterval(nObjectIndex,1000);
+			m_FormationType.m_piFormationTypeDesign->SetElementEntityType(nObjectIndex,piEntityType);
+		}
+		REL(piObject);
+		REL(piEntityType);
+		UpdateEntityControls();
+		m_nSelectedEntity=m_vEntityControls.size()-1;
+	}
+	for(unsigned long x=0;x<vEntityTypes.size();x++){IDesignObject *piEntityType=vEntityTypes[x];REL(piEntityType);}
+}

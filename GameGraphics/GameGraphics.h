@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __GAME_GRAPHICS__
+#define __GAME_GRAPHICS__
 
 #include "GameRunTimeLib.h"
 #include "GameKeys.h"
@@ -465,3 +466,5 @@ public:
 	virtual void PushOptions()=0;
 	virtual void PopOptions()=0;
 };
+
+#endif

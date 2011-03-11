@@ -74,4 +74,42 @@ ISystem *CSystemLoaderHelper::LoadSystem(ISystemPersistencyNode *piParent,std::s
 }
 
 
+bool CSystemSaverHelper::SaveSystemNamedObjects(std::string sFile,std::string sSystemName)
+{
+	CConfigFile configFile;
+	if(!configFile.Open(sFile))
+	{
+		RTTRACE("CSystemSaverHelper::SaveSystemNamedObjects -> Failed to open config file %s to save system %s objects",sSystemName.c_str());
+	}	
+	
+	ISystemPersistencyNode  *piNode=configFile.GetRoot()->AddNode(sSystemName);
+	bool bOk=(piNode!=NULL);
+	if(bOk){bOk=PersistencyLoad(piNode);}
+	if(bOk){bOk=SaveSystemNamedObjects(piNode,sSystemName);}
+	if(bOk){bOk=configFile.Save(sFile);}	
+	return bOk;
+}
+
+bool CSystemSaverHelper::SaveSystemNamedObjects(ISystemPersistencyNode *piNode,std::string sSystemName)
+{
+	std::vector<ISystemObject *> vObjects;
+	GetSystemObjects(sSystemName,&vObjects);
+	for(unsigned long x=0;x<vObjects.size();x++)
+	{
+		ISystemObject *piObject=vObjects[x];
+		CSystemObjectWrapper wrapper;
+		// Aqui se usa create para que el wrapper serialice el objeto
+		if(wrapper.Create(sSystemName,piObject->GetClass(),piObject->GetName()))
+		{
+			m_dObjects.push_back(wrapper);
+			
+		}
+	}
+	for(unsigned long x=0;x<vObjects.size();x++){ISystemObject *piObject=vObjects[x];REL(piObject);}
+	// Carga de objetos.
+	return PersistencySave(piNode);
+}
+
+CSystemSaverHelper::CSystemSaverHelper(){}
+CSystemSaverHelper::~CSystemSaverHelper(){}
 

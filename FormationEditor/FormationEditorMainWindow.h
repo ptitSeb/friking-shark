@@ -51,28 +51,27 @@ public:
 	double					 m_d3DFontSize;
 	std::string 			 m_sWorldModelFile;
 	std::string 			 m_sWorldTextureFile;
+	double					 m_dAutoAlignThreshold;
 	
 	std::vector<SEntityControls *>		m_vEntityControls;
 
 	unsigned long		m_dwNexControlKey;
-	bool				m_bBlend;
 	bool				m_bSolid;
 	bool				m_bTextures;
 	bool				m_bColors;
+	bool				m_bRenderPlayArea;
+	bool				m_bRenderWorld;
+	bool				m_bAutoAlign;
+
+	
 	bool				m_bShowFilePanel;
 	bool				m_bShowEntitiesPanel;
 	bool				m_bShowEntityPanel;
 	bool				m_bShowOptionsPanel;
 	bool				m_bShowPlayAreaPanel;
-	bool				m_bRenderPlayArea;
-	bool				m_bRenderWorld;
-
-	int					m_nSelectedRoutePoint;
-
+	
 	bool				m_bMovingRoutePoint;
-	CVector				m_vObjectOriginalPosition;
-	CVector				m_vCursorOriginalPosition;
-
+	int					m_nSelectedRoutePoint;
 	int					m_nSelectedEntity;
 
 
@@ -85,6 +84,7 @@ public:
 	IGameWindow	  *m_piGRPlayAreaPanel;
 	IGameWindow	  *m_piGREntitiesPanel;
 	IGameWindow	  *m_piGROptionsPanel;
+	IGameWindow   *m_piGREntityList;
 
 	IGameGUIButton *m_piBTShowOptionsPanel;
 	IGameGUIButton *m_piBTShowEntitiesPanel;
@@ -109,24 +109,13 @@ public:
 	IGameGUIButton *m_piBTEntityIncreaseInterval;
 	IGameGUIButton *m_piBTEntityClearRoute;
 
-	// Formation
-
-	IGameGUIButton *m_piBTNewFormation;
-	IGameGUILabel  *m_piSTFormationName;
-	IGameGUIButton *m_piBTFormationSample;
-	IGameGUIButton *m_piBTFormationBonusSample;
-	IGameGUIButton *m_piBTFormationRemove;
-
-	// Entity Layers
-
-	IGameWindow *m_piGREntityLayerList;
-
 	// Options
 
 	IGameGUIButton *m_piBTOptionsTextures;
 	IGameGUIButton *m_piBTOptionsSolid;
-	IGameGUIButton *m_piBTOptionsBlend;
-
+	IGameGUIButton *m_piBTOptionsShowWorld;
+	IGameGUIButton *m_piBTOptionsAutoAlign;
+	
 
 	// File
 	IGameWindow	   *m_piGRFormation;
@@ -135,6 +124,7 @@ public:
 	IGameGUIButton *m_piBTFormationSave;
 	IGameGUIButton *m_piBTFormationSaveAs;
 	IGameGUIButton *m_piBTFormationCompile;
+	IGameGUIButton *m_piBTFormationRemove;
 	IGameGUIButton *m_piBTFormationExit;
 
 	// Play Area
@@ -162,6 +152,8 @@ public:
 	CVector WorldToFormation(CVector vWorldPoint);
 	CVector FormationToWorld(CVector vFormationPoint);
 	
+	CVector AutoAlign(CVector vPoint,int nEntity,int nRoutePoint);
+	
 	
 	void ProcessInput(double dTimeFraction,double dRealTimeFraction);
 	void ProcessKey(unsigned short nKey,double dTimeFraction,double dRealTimeFraction);
@@ -171,8 +163,11 @@ public:
 
 	void ProcessFileSave();
 	void ProcessFileSaveAs();
+	void ProcessFileRemove();
 	void ProcessFileExit();
-
+	
+	void ProcessAddEntity();
+	
 	void Reset();
 
 	BEGIN_CHILD_MAP()
@@ -187,7 +182,7 @@ public:
 		CHILD_MAP_ENTRY_EX("Formation",m_piBTShowFilePanel,IGameGUIButtonEvents);
 
 		CHILD_MAP_ENTRY("EntitiesPanel",m_piGREntitiesPanel);
-		CHILD_MAP_ENTRY("EntityLayerList",m_piGREntityLayerList);
+		CHILD_MAP_ENTRY("EntityList",m_piGREntityList);
 		CHILD_MAP_ENTRY_EX("NewEntity",m_piBTNewEntity,IGameGUIButtonEvents);
 	
 		CHILD_MAP_ENTRY("EntityPanel",m_piGREntityPanel);
@@ -209,13 +204,15 @@ public:
 		CHILD_MAP_ENTRY("OptionsPanel",m_piGROptionsPanel);
 		CHILD_MAP_ENTRY_EX("OptionShowTextures",m_piBTOptionsTextures,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("OptionSolid",m_piBTOptionsSolid,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("OptionBlend",m_piBTOptionsBlend,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("OptionShowWorld",m_piBTOptionsShowWorld,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("OptionAutoAlign",m_piBTOptionsAutoAlign,IGameGUIButtonEvents);
 
 		CHILD_MAP_ENTRY("FormationPanel",m_piGRFormation);
 		CHILD_MAP_ENTRY_EX("FormationNew",m_piBTFormationNew,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("FormationOpen",m_piBTFormationOpen,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("FormationSave",m_piBTFormationSave,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("FormationSaveAs",m_piBTFormationSaveAs,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("FormationRemove",m_piBTFormationRemove,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("FormationExit",m_piBTFormationExit,IGameGUIButtonEvents);
 
 		CHILD_MAP_ENTRY("PlayAreaPanel",m_piGRPlayAreaPanel);
@@ -244,6 +241,7 @@ public:
 		PROP_VALUE_FLAGS(m_sWorldModelFile,"WorldModelFile","",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_sWorldTextureFile,"WorldTextureFile","",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_d3DFontSize,"3DFontSize",0,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_dAutoAlignThreshold,"AutoAlignThreshold",3,MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP();
 public:
 
