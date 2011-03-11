@@ -80,6 +80,19 @@ bool CFormationEditorMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 	m_PlayAreaManagerWrapper.Attach("GameSystem","PlayAreaManager");
 	m_FrameManager.Attach("GameSystem","FrameManager");
 	m_SoundManagerWrapper.Attach("GameSystem","SoundManager");
+	
+	if(m_PlayAreaManagerWrapper.m_piPlayAreaDesign)
+	{
+		SPlayAreaConfig sConfig;
+		m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sConfig);
+		sConfig.dCameraDistance=140;
+		sConfig.dCameraAspectRatio=0.7;
+		sConfig.dCameraSpeed=15;
+		sConfig.dCameraViewAngle=60;
+		sConfig.dCameraScroll=10;
+		sConfig.dAirPlaneHeight=35;	
+		m_PlayAreaManagerWrapper.m_piPlayAreaDesign->SetPlayAreaConfig(&sConfig);
+	}
 	if(m_WorldManagerWrapper.m_piTerrain && m_sWorldModelFile!="")
 	{
 		m_WorldManagerWrapper.m_piTerrain->SetTerrainBaseModel(m_sWorldModelFile);
