@@ -43,6 +43,11 @@ void CFormationEditorObjectSelector::OnDraw(IGenericRender *piRender)
 void CFormationEditorObjectSelector::OnInitDialog()
 {
 	CGameDialogBase::OnInitDialog();
+	if(m_piSTTitle)
+	{
+		m_piSTTitle->SetText(m_sTitle);
+	}
+		
 	if(m_piSTObjectList)
 	{
 		for(unsigned long x=0;x<m_pvObjects->size();x++)
@@ -95,9 +100,10 @@ void CFormationEditorObjectSelector::OnEndDialog()
 	CGameDialogBase::OnEndDialog();
 }
 
-bool CFormationEditorObjectSelector::SelectObject(IGameWindow *piParent,std::vector<IDesignObject *> *vObjects,unsigned long *pnSelectedObject,double dButtonSizeX,double dButtonSizeY)
+bool CFormationEditorObjectSelector::SelectObject(std::string sTitle,IGameWindow *piParent,std::vector<IDesignObject *> *vObjects,unsigned long *pnSelectedObject,double dButtonSizeX,double dButtonSizeY)
 {
 	if(pnSelectedObject){*pnSelectedObject=0;}
+	m_sTitle=sTitle;
 	m_pvObjects=vObjects;
 	m_dButtonSizeX=dButtonSizeX;
 	m_dButtonSizeY=dButtonSizeY;

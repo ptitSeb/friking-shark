@@ -922,10 +922,7 @@ CTraceInfo COpenGLModel::GetTrace( const CVector &vOrigin,const CVector &vAngles
 			info.m_dTraceFraction=1.0;
 			info.m_vTracePos=p2;
 		}
-		else
-		{
-			RTTRACE("Trace hit");
-		}
+		//else{RTTRACE("Trace hit");}
 		return info;
 	}
 	else

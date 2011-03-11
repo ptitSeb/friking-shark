@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __GAME_GUI__
+#define __GAME_GUI__
 
 #include <GameRunTimeLib.h>
 #include <GameGraphics.h>
@@ -308,5 +309,4 @@ public:
 	virtual bool SaveFile(IGameWindow *piParent,std::string sTitle,const char *psFilter,std::string *psFile,bool bOverWriteWarn)=0;
 };
 
-
-
+#endif

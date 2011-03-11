@@ -59,7 +59,7 @@ void CTruck::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
 
-	RTTRACE("On surface %d",m_PhysicInfo.bOnSurface);
+	//RTTRACE("On surface %d",m_PhysicInfo.bOnSurface);
 	VectorsFromAngles(m_PhysicInfo.vAngles,&m_PhysicInfo.vForward);
 	if(m_PhysicInfo.bOnSurface)
 	{

@@ -184,7 +184,7 @@ void CPlayAreaManager::Stop()
 	m_bProcessingPlayerOutroPhase1=false;
 	m_bProcessingPlayerOutroPhase2=false;
 }
-CVector vSunAngles(0,90,0);
+
 void CPlayAreaManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	if(!m_bStarted)
@@ -416,7 +416,7 @@ void CPlayAreaManager::ProcessInput(IGameGUIManager *piGUIManager)
 	if(piGUIManager->IsKeyDown(GK_LEFT) || piGUIManager->IsKeyDown(GK_NUMPAD4) || piGUIManager->IsKeyDown('A')){MovePlayer(KEY_LEFT);}
 	if(piGUIManager->IsKeyDown(GK_RIGHT) || piGUIManager->IsKeyDown(GK_NUMPAD6) || piGUIManager->IsKeyDown('D')){MovePlayer(KEY_RIGHT);}
 	if(piGUIManager->IsKeyDown(GK_LCONTROL)){m_piPlayer->FireWeaponsOnSlot(0,m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime());}
-	if(piGUIManager->IsKeyDown(GK_MENU)){m_piPlayer->FireWeaponsOnSlot(1,m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime());}
+	if(piGUIManager->IsKeyDown(GK_MENU)){m_piPlayer->FireWeaponsOnSlot(1,m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime());}	
 }
 
 void CPlayAreaManager::MovePlayer(unsigned long nKey)

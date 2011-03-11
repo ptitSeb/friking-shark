@@ -36,7 +36,6 @@ CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 	m_bTextures=1;
 	m_bFog=1;
 	m_bShaders=1;
-	m_bColors=1;
 	m_bShadows=1;
 	m_bSolid=1;
 	m_bLighting=1;
@@ -549,6 +548,10 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	if(m_piBTOptionsBlend==piControl){m_bBlend=!m_bBlend;}
 	if(m_piBTOptionsTextures==piControl){m_bTextures=!m_bTextures;}
 	if(m_piBTOptionsSolid==piControl){m_bSolid=!m_bSolid;}
+	if(m_piBTOptionsShadows==piControl){m_bShadows=!m_bShadows;}
+	if(m_piBTOptionsShaders==piControl){m_bShaders=!m_bShaders;}
+	if(m_piBTOptionsLighting==piControl){m_bLighting=!m_bLighting;}
+	if(m_piBTOptionsFog==piControl){m_bFog=!m_bFog;}
 	if(m_piBTNewEntity==piControl)
 	{
 		unsigned long nSelectedEntityType=0;
@@ -2055,15 +2058,14 @@ void CScenarioEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 	else if(nKey==GK_F2){ProcessFileSave();*pbProcessed=true;}
 	else if(nKey==GK_F3){ProcessFileOpen();*pbProcessed=true;}
 	else if(nKey==GK_F5){if(m_piGUIManager->IsKeyDown(GK_LSHIFT)){StopGameSimulation();}else{StartGameSimulation();}*pbProcessed=true;}
-	else if(nKey==GK_F10){m_bShaders=!m_bShaders;*pbProcessed=true;}
 	else if(nKey==GK_PAUSE){m_FrameManager.m_piFrameManager->TogglePauseOnNextFrame();*pbProcessed=true;}
 	else if(nKey=='T'){m_bTextures=!m_bTextures;*pbProcessed=true;}
 	else if(nKey=='P'){m_bRenderPlayArea=!m_bRenderPlayArea;*pbProcessed=true;}
 	else if(nKey=='G'){m_bFog=!m_bFog;*pbProcessed=true;}
-	else if(nKey=='C'){m_bColors=!m_bColors;*pbProcessed=true;}
 	else if(nKey=='L'){m_bSolid=!m_bSolid;*pbProcessed=true;}
 	else if(nKey=='I'){m_bLighting=!m_bLighting;*pbProcessed=true;}
-	else if(nKey=='H'){m_bShadows=!m_bShadows;*pbProcessed=true;}
+	else if(nKey=='O'){m_bShadows=!m_bShadows;*pbProcessed=true;}
+	else if(nKey=='H'){m_bShaders=!m_bShaders;*pbProcessed=true;}
 	else if(nKey=='B'){m_bBlend=!m_bBlend;*pbProcessed=true;}
 	else if(nKey==GK_HOME){CenterCamera();*pbProcessed=true;}
 	else if(nKey==GK_DELETE)
