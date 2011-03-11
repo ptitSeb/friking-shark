@@ -154,7 +154,7 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
 	theApp.Run();
  // DumpMonitorizationLeaks();
  // EndMonitorization();
-  return 0;
+  	return 0;
 }
 #else
 int main(int argc, char *argv[])
@@ -167,8 +167,6 @@ int main(int argc, char *argv[])
 	}
 	theApp.InterpretCommandLine(sFolder,vParams);
 	theApp.Run();
- // DumpMonitorizationLeaks();
- // EndMonitorization();
-  return 0;
+	return 0;
 }
 #endif
