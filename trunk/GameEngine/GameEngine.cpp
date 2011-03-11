@@ -14,7 +14,7 @@ DECLARE_CUSTOM_WRAPPER1(CGameWindowWrapper,IGameWindow,m_piWindow)
 
 string g_sRootFolder;
 string g_sExecutableFolder;
-string g_sInitialConfigFile="Scripts" PATH_SEPARATOR "GameGUI.cfg";
+string g_sInitialConfigFile;
 
 CGameEngineApp::CGameEngineApp()
 {
@@ -92,25 +92,35 @@ void CGameEngineApp::Run()
 
 void CGameEngineApp::InterpretCommandLine(std::string sExecutableFolder,std::vector<std::string> &vParams)
 {
-	g_sRootFolder=sExecutableFolder;
+	g_sRootFolder=AppendPathSeparator(sExecutableFolder)+".." PATH_SEPARATOR ".." PATH_SEPARATOR "Resources";
+	g_sInitialConfigFile="Scripts" PATH_SEPARATOR "GameGUI.cfg";
 	g_sExecutableFolder=sExecutableFolder;
-
-	for(unsigned int x=0;x<vParams.size();x++)
+	
+	// Si se ejecuta con un solo parametro y sin opciones presuponemos que es la forma abreviada
+	// es decir GameEngine <Modulo>, por ejemplo GameEngine ScenarioEditor
+	if(vParams.size()==1 && vParams[0].at(0)!='-')
 	{
-		const char *pParam=vParams[x].c_str();
-		if(pParam[0]=='-')
+		g_sInitialConfigFile=vParams[0]+PATH_SEPARATOR+vParams[0]+".cfg";
+	}
+	else
+	{
+		for(unsigned int x=0;x<vParams.size();x++)
 		{
-			if(strcmp(pParam,"-folder")==0 && (x+1)<vParams.size())
+			const char *pParam=vParams[x].c_str();
+			if(pParam[0]=='-')
 			{
-				const char *pFolder=vParams[x+1].c_str();
-				g_sRootFolder=pFolder;
-				x++;
-			}
-			else if(strcmp(pParam,"-config")==0 && (x+1)<vParams.size())
-			{
-				const char *pFileName=vParams[x+1].c_str();
-				g_sInitialConfigFile=pFileName;
-				x++;
+				if(strcmp(pParam,"-folder")==0 && (x+1)<vParams.size())
+				{
+					const char *pFolder=vParams[x+1].c_str();
+					g_sRootFolder=pFolder;
+					x++;
+				}
+				else if(strcmp(pParam,"-config")==0 && (x+1)<vParams.size())
+				{
+					const char *pFileName=vParams[x+1].c_str();
+					g_sInitialConfigFile=pFileName;
+					x++;
+				}
 			}
 		}
 	}
@@ -125,15 +135,9 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF|_CRTDBG_LEAK_CHECK_DF);
   
 	char szExecutableFullPath[MAX_PATH]={0};
-	char szExecutableFolder[MAX_PATH]={0};
-	char szExecutableDrive[MAX_PATH]={0};
 	GetModuleFileName(NULL,szExecutableFullPath,sizeof(szExecutableFullPath));
-	_splitpath(szExecutableFullPath,szExecutableDrive,szExecutableFolder,NULL,NULL);
+	std::string sFolder=GetFileFolder(szExecutableFullPath);
 	
-	std::string sFolder;
-	sFolder=szExecutableDrive;
-	sFolder+=szExecutableFolder;
-
 	wchar_t *pWCommand=GetCommandLineW();
 
 	int nArgs=0;
@@ -155,11 +159,7 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
 #else
 int main(int argc, char *argv[])
 {
-	char *pTempExecutable=strdup(argv[0]);
-	char *pTempFolder=strtok(pTempExecutable,"/");
-	std::string sFolder=pTempFolder?pTempFolder:pTempExecutable;
-	free(pTempExecutable);
-
+	std::string sFolder=GetFileFolder(argv[0]);
 	std::vector<std::string> vParams;
 	for(int x=1;x<argc;x++)
 	{
