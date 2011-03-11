@@ -912,7 +912,7 @@ void CFormationEditorMainWindow::CenterCamera(bool bForceWholeFormation)
 		CVector vPos;
 		vPos.c[0]=vCenter.c[0];
 		vPos.c[2]=vCenter.c[2];
-		double dw=vCenter.c[1]+(vSize.c[0]*0.5)/fabs(tan(DegreesToRadians(m_Camera.m_piCamera->GetViewAngle()*0.5*dAspect)));
+		double dw=vCenter.c[1]+(vSize.c[0]*0.5)/(fabs(tan(DegreesToRadians(m_Camera.m_piCamera->GetViewAngle()*0.5)))*dAspect);
 		double dh=vCenter.c[1]+(vSize.c[2]*0.5)/(fabs(tan(DegreesToRadians(m_Camera.m_piCamera->GetViewAngle()*0.5))));
 		vPos.c[1]=std::max(dw,dh);
 		
