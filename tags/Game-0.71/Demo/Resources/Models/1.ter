@@ -1,0 +1,60 @@
+ColorLayers
+ColorMap="D:\\Desarrollo\\Game\\Textures\\ColorMap.bmp"
+HeightLayers
+{
+	Item0
+	{
+		HeightMargin=0.190000
+		HorzResolution=3.000000
+		MaxHeight=0.620000
+		MinHeight=0.000000
+		Texture2="D:\\Desarrollo\\Game\\Textures\\LechoInferior.jpg"
+		VertResolution=3.000000
+	}
+	Item1
+	{
+		HeightMargin=0.090000
+		HorzResolution=4.000000
+		MaxHeight=1.000000
+		MinHeight=0.620000
+		Texture2="D:\\Desarrollo\\Game\\Textures\\LechoSuperior.jpg"
+		VertResolution=4.500000
+	}
+}
+Model="D:\\Desarrollo\\Game\\Demo\\Resources\\Models\\terreno2.ASE"
+ObjectLayers
+Objects
+{
+	Item0
+	{
+		Angles=0.000000,0.000000,0.000000
+		CastShadows=1
+		ConsiderAsTerrain=0
+		GroundTied=1
+		Height=11.000000
+		Locked=0
+		Model="D:\\Desarrollo\\Game\\Demo\\Resources\\Models\\biplano.ASE"
+		Position=-8.561493,55.041755,-91.037564
+		ShadowLevel=0
+	}
+}
+Sky
+{
+	Enabled=1
+	HorzResolution=3.000000
+	Opacity=0.900000
+	Speed=0.025000
+	Texture="C:\\TerrainGenerator\\Resources\\Textures\\nubes.jpg"
+	VertResolution=3.000000
+}
+Water
+{
+	Enabled=0
+	Height=0.500000
+	HorzResolution=1.000000
+	Opacity=0.800000
+	SecondTexture="C:\\TerrainGenerator\\Resources\\Textures\\hiervsPeq.jpg"
+	Speed=0.015000
+	Texture="D:\\Desarrollo\\Game\\Textures\\Concrete5.jpg"
+	VertResolution=1.000000
+}
