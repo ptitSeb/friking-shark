@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="FormationEditor"
-	ProjectGUID="{21706190-2684-46E2-938E-DB801AA33102}"
+	ProjectGUID="{89F86DB3-2706-4A08-883F-487687DE3B62}"
 	RootNamespace="FormationEditor"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGUI;..\GameGUILib;..\GameGraphics;..\PlayAreaElements;..\SoundSystems"
-				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;SCENARIOEDITOR_EXPORTS"
+				PreprocessorDefinitions="NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;SCENARIOEDITOR_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -120,7 +120,8 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGUI;..\GameGUILib;..\GameGraphics;..\PlayAreaElements;..\SoundSystems"
-				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;_USRDLL;SCENARIOEDITOR_EXPORTS"
+				PreprocessorDefinitions="NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;_USRDLL;SCENARIOEDITOR_EXPORTS"
+				IgnoreStandardIncludePath="false"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
@@ -184,10 +185,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\FormationEditorColorSelector.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\FormationEditorMainWindow.cpp"
 				>
 			</File>
@@ -227,10 +224,6 @@
 			>
 			<File
 				RelativePath=".\FormationEditor.h"
-				>
-			</File>
-			<File
-				RelativePath=".\FormationEditorColorSelector.h"
 				>
 			</File>
 			<File
