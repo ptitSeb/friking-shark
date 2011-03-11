@@ -265,7 +265,7 @@ public:
 	void UpdateLayerPanel();
 	void UpdateCaption();
 
-	void CenterCamera();
+	void CenterCamera(bool bForceWholeFormation=false);
 
 	void SetupRenderOptions(IGenericRender *piRender,IGenericCamera *piCamera);
 

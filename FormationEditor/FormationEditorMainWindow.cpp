@@ -864,12 +864,12 @@ void CFormationEditorMainWindow::UpdateLayerPanel()
 	}
 }
 
-void CFormationEditorMainWindow::CenterCamera()
+void CFormationEditorMainWindow::CenterCamera(bool bForceWholeFormation)
 {
 	if(m_PlayAreaManagerWrapper.m_piPlayAreaManager==NULL){return;}
 	bool bCenter=false;
 	CVector vMins,vMaxs;
-	if(m_nSelectedEntity!=-1 && m_vEntityControls[m_nSelectedEntity]->m_piDesignObject)
+	if(!bForceWholeFormation && m_nSelectedEntity!=-1 && m_vEntityControls[m_nSelectedEntity]->m_piDesignObject)
 	{
 		SRoutePoint point;
 		m_vEntityControls[m_nSelectedEntity]->m_piDesignObject->DesignGetBBox(&vMins,&vMaxs);		
@@ -928,7 +928,8 @@ void CFormationEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 	if(nKey==GK_F1 && m_bSimulationStarted){m_bInspectionMode=!m_bInspectionMode;*pbProcessed=true;}
 	else if(nKey==GK_F2){ProcessFileSave();*pbProcessed=true;}
 	else if(nKey==GK_F3){ProcessFileOpen();*pbProcessed=true;}
-	else if(nKey==GK_F5){if(m_piGUIManager->IsKeyDown(GK_LSHIFT)){StopGameSimulation();}else{StartGameSimulation();}*pbProcessed=true;}
+	else if(nKey==GK_F5 && m_piGUIManager->IsKeyDown(GK_LSHIFT)){StopGameSimulation();CenterCamera(true);*pbProcessed=true;}
+	else if(nKey==GK_F5 && !m_piGUIManager->IsKeyDown(GK_LSHIFT)){StartGameSimulation();*pbProcessed=true;}
 	else if(nKey==GK_PAUSE){m_FrameManager.m_piFrameManager->TogglePauseOnNextFrame();*pbProcessed=true;}
 	else if(nKey=='T'){m_bTextures=!m_bTextures;*pbProcessed=true;}
 	else if(nKey=='P'){m_bRenderPlayArea=!m_bRenderPlayArea;*pbProcessed=true;}
