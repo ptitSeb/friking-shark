@@ -144,7 +144,7 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
 	wchar_t **ppArgs=NULL;
 	ppArgs=CommandLineToArgvW(pWCommand,&nArgs);
 	std::vector<std::string> vParams;
-	for(int x=0;x<nArgs;x++)
+	for(int x=1;x<nArgs;x++)
 	{
 		char pTemp[1024]={0};
 		WideCharToMultiByte(CP_ACP,0,ppArgs[x],wcslen(ppArgs[x]),pTemp,1024,NULL,NULL);
