@@ -418,7 +418,7 @@ bool COpenGLViewport::Create(unsigned x, unsigned y, unsigned w, unsigned h, boo
 
 	unsigned int dwStyle=WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX|WS_MAXIMIZEBOX|WS_THICKFRAME|WS_OVERLAPPED;
 	if(dwStyle==0xFFFFFFFF){dwStyle=WS_OVERLAPPED;}
-	m_hWnd = CreateWindowEx(WS_EX_DLGMODALFRAME,VIEWPORT_CLASSNAME,"ViewPort",dwStyle,x,y,w,h,NULL,NULL,NULL,(void *)this);
+	m_hWnd = CreateWindowEx(WS_EX_DLGMODALFRAME,VIEWPORT_CLASSNAME,"Loading...",dwStyle,x,y,w,h,NULL,NULL,NULL,(void *)this);
 	if(m_hWnd)
 	{
 		unsigned int dwStyle=GetWindowLong(m_hWnd,GWL_STYLE);
@@ -456,7 +456,7 @@ bool COpenGLViewport::Create(unsigned x, unsigned y, unsigned w, unsigned h, boo
 	}
 	if(m_XWindow!=None)
 	{
-	  XSetStandardProperties(m_pXDisplay,m_XWindow,"ViewPort","ViewPort",None,NULL,0,NULL);
+		XSetStandardProperties(m_pXDisplay,m_XWindow,"Loading...","Loading...",None,NULL,0,NULL);
 	  XMapWindow(m_pXDisplay,m_XWindow);
 	  glXMakeCurrent(m_pXDisplay,m_XWindow,m_pGLXContext);
 	  
