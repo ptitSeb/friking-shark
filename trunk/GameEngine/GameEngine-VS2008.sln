@@ -110,6 +110,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ScenarioEditor", "..\Scenar
 		{E5D975D9-5FB1-4FDA-8075-3007BF987B1F} = {E5D975D9-5FB1-4FDA-8075-3007BF987B1F}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FormationEditor", "..\FormationEditor\FormationEditor.vcproj", "{89F86DB3-2706-4A08-883F-487687DE3B62}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -194,6 +196,10 @@ Global
 		{21706190-2684-46E2-938E-DB801AA33102}.Debug|Win32.Build.0 = Debug|Win32
 		{21706190-2684-46E2-938E-DB801AA33102}.Release|Win32.ActiveCfg = Release|Win32
 		{21706190-2684-46E2-938E-DB801AA33102}.Release|Win32.Build.0 = Release|Win32
+		{89F86DB3-2706-4A08-883F-487687DE3B62}.Debug|Win32.ActiveCfg = Debug|Win32
+		{89F86DB3-2706-4A08-883F-487687DE3B62}.Debug|Win32.Build.0 = Debug|Win32
+		{89F86DB3-2706-4A08-883F-487687DE3B62}.Release|Win32.ActiveCfg = Release|Win32
+		{89F86DB3-2706-4A08-883F-487687DE3B62}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
