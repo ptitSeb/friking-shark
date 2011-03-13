@@ -63,7 +63,7 @@ bool MRLoadFromContainer(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<
         pRef=NULL;
         if(!bOk)
 		{
-			RTTRACE("GameRunTimeLib::MRLoadFromContainer-> Failed To Load container item %s, result 0x%08x",piChildNode->GetDebugInfoPath().c_str(),bOk);
+			RTTRACE("GameRunTimeLib::MRLoadFromContainer-> Failed To Load container item %s",piChildNode->GetDebugInfoPath().c_str());
 			bFinalOk=bOk;
 		}
     }
@@ -91,7 +91,7 @@ bool MRSaveToContainer(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<T1
             bOk=MRPersistencySave(piChildNode,pRef);
             if(!bOk)
 			{
-				RTTRACE("GameRunTimeLib::MRLoadFromContainer-> Failed To Save container item %s, result 0x%08x",piChildNode->GetDebugInfoPath().c_str(),bOk);
+				RTTRACE("GameRunTimeLib::MRLoadFromContainer-> Failed To Save container item %s",piChildNode->GetDebugInfoPath().c_str());
 				bFinalOk=bOk;
 			}
             delete pRef;
@@ -104,82 +104,98 @@ bool MRSaveToContainer(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<T1
 /////////////////////////////////////////////////////
 // Funciones para guardar contenedores asociativos
 
-template<typename T1,typename KEY_TYPE,typename CONTAINED_TYPE>
-bool MRLoadFromContainer(ISystemPersistencyNode *piParent,CMRPersistentReferenceT<T1>*pItem)
+template<typename T1,typename KEY_TYPE,typename CONTENT_TYPE>
+bool MRLoadFromContainer(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<T1>*pItem)
 {
- /*   ISystemPersistencyNode *piNode=piParent->GetNode(pItem->GetName());
-    if(piNode==NULL){return false;}
-    pItem->GetValueAddress()->clear();
-
-    unsigned int itemCount=piNode->GetItemCount();
-
-    bool bOk=true,bFinalOk=true;
-    for(unsigned int x=0;x<itemCount;x++)
-    {
-        char keyName[512];
-        char valueName[512];
-        sprintf(keyName,"ItemKey%d",x);
-        sprintf(valueName,"ItemValue%d",x);
-
-        KEY_TYPE        key;
-        CONTAINED_TYPE  value;
-        CMRPersistentSimpleReferenceT<KEY_TYPE>         *pKeyRef=MRCreateReference(&key,keyName);
-        CMRPersistentSimpleReferenceT<CONTAINED_TYPE>   *pValueRef=MRCreateReference(&value,valueName);
-        MRPersistencyInitialize(pKeyRef);
-        MRPersistencyInitialize(pValueRef);
-        bOk=MRPersistencyLoad(piNode,pKeyRef);
-        if(bOk){bOk=MRPersistencyLoad(piNode,pValueRef);}
-        if(bOk){pItem->GetValueAddress()->insert(T1::value_type(key,value));}
-        delete pKeyRef;
-        delete pValueRef;
-        pKeyRef=NULL;
-        pValueRef=NULL;
-        if(!bOk){bFinalOk=bOk;}
-    }
-    return bFinalOk;*/
-	return false;
+	if(piNode==NULL){return false;}
+	pItem->GetValueAddress()->clear();
+	
+	bool bOk=true,bFinalOk=true;
+	unsigned int itemCount=piNode->GetNodeCount();
+	for(unsigned int x=0;x<itemCount;x++)
+	{
+		KEY_TYPE key;
+		CONTENT_TYPE content;
+		ISystemPersistencyNode *piChildNode=piNode->GetNode(x);
+		ISystemPersistencyNode *piChildKeyNode=piChildNode?piChildNode->GetNode("Key"):NULL;
+		ISystemPersistencyNode *piChildContentNode=piChildNode?piChildNode->GetNode("Content"):NULL;
+		bOk=(piChildKeyNode!=NULL && piChildContentNode!=NULL);
+		if(!bOk)
+		{
+			RTTRACE("GameRunTimeLib::MRLoadFromContainer-> Failed To Load associative container item %s",piChildNode->GetDebugInfoPath().c_str());
+			bFinalOk=bOk;
+		}
+		if(bOk)
+		{
+			CMRPersistentSimpleReferenceT<KEY_TYPE>     *pKeyRef=MRCreateReference(&key,piChildKeyNode->GetName());
+			CMRPersistentSimpleReferenceT<CONTENT_TYPE> *pContentRef=MRCreateReference(&content,piChildContentNode->GetName());
+			MRPersistencyInitialize(pKeyRef);
+			MRPersistencyInitialize(pContentRef);
+			bOk=MRPersistencyLoad(piChildKeyNode,pKeyRef);
+			if(!bOk){RTTRACE("GameRunTimeLib::MRLoadFromContainer-> Failed To Load key %s",piChildKeyNode->GetDebugInfoPath().c_str());}
+			
+			if(bOk)
+			{
+				bOk=MRPersistencyLoad(piChildContentNode,pContentRef);
+				if(!bOk){RTTRACE("GameRunTimeLib::MRLoadFromContainer-> Failed To Load content %s",piChildContentNode->GetDebugInfoPath().c_str());}
+			}
+			if(bOk){pItem->GetValueAddress()->insert(std::pair<KEY_TYPE,CONTENT_TYPE>(*pKeyRef->GetValueAddress(),*pContentRef->GetValueAddress()));}
+			delete pKeyRef;
+			delete pContentRef;
+			pKeyRef=NULL;
+			pContentRef=NULL;
+		}
+	}
+	
+	return bFinalOk;
 }
 
-template<typename T1,typename KEY_TYPE,typename CONTAINED_TYPE>
-bool MRSaveToContainer(ISystemPersistencyNode *piParent,CMRPersistentReferenceT<T1> *pItem)
+template<typename T1,typename KEY_TYPE,typename CONTENT_TYPE>
+bool MRSaveToContainer(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<T1> *pItem)
 {
-	return false;
-	/*
-    ISystemPersistencyNode *piNode=piParent->AddNode(pItem->GetName());
-    if(piNode==NULL){return false;}
-    piNode->Clear();
-
-    char countValue[512];
-    sprintf(countValue,"%d",pItem->GetValueAddress()->size());
-    SSystemProperty countProp;
-    countProp.name="ItemCount";
-    countProp.value=countValue;
-    piNode->AddProperty(countProp);
-
-    unsigned int itemCount=0;
-    bool bOk=true,bFinalOk=true;
-    if(bFinalOk)
-    {
-        T1::iterator i;
-        for(i=pItem->GetValueAddress()->begin();i!=pItem->GetValueAddress()->end();i++)
-        {
-            char keyName[512];
-            char valueName[512];
-            sprintf(keyName,"ItemKey%d",itemCount);
-            sprintf(valueName,"ItemValue%d",itemCount);
-            CMRPersistentSimpleReferenceT<KEY_TYPE>         *pKeyRef=MRCreateReference(const_cast<KEY_TYPE *>(&(i->first)),keyName);
-            CMRPersistentSimpleReferenceT<CONTAINED_TYPE>   *pValueRef=MRCreateReference(&(i->second),valueName);
-            bOk=MRPersistencySave(piNode,pKeyRef);
-            if(bOk){bOk=MRPersistencySave(piNode,pValueRef);}
-            if(bOk){itemCount++;}
-            if(bOk){bFinalOk=bOk;}
-            delete pKeyRef;
-            delete pValueRef;
-            pKeyRef=NULL;
-            pValueRef=NULL;
-        }
-    }
-    return bFinalOk;*/
+	if(piNode==NULL){return false;}
+	piNode->Clear();
+	
+	bool bOk=true,bFinalOk=true;
+	if(bFinalOk)
+	{
+		typename T1::iterator i;
+		int x=0;
+		for(x=0,i=pItem->GetValueAddress()->begin();i!=pItem->GetValueAddress()->end();i++,x++)
+		{
+			char sItemName[200];
+			sprintf(sItemName,"Item%d",x);
+			ISystemPersistencyNode *piChildNode=piNode->AddNode(sItemName);
+			ISystemPersistencyNode *piChildKeyNode=piChildNode?piChildNode->AddNode("Key"):NULL;
+			ISystemPersistencyNode *piChildContentNode=piChildNode?piChildNode->AddNode("Content"):NULL;
+			bOk=(piChildKeyNode!=NULL && piChildContentNode!=NULL);
+			if(bOk)
+			{
+				CMRPersistentSimpleReferenceT<KEY_TYPE> *pKeyRef=MRCreateReference(const_cast<KEY_TYPE*>(&(i->first)),piChildKeyNode->GetName());
+				CMRPersistentSimpleReferenceT<CONTENT_TYPE> *pContentRef=MRCreateReference(&(i->second),piChildContentNode->GetName());
+				bOk=MRPersistencySave(piChildKeyNode,pKeyRef);
+				if(!bOk)
+				{
+					RTTRACE("GameRunTimeLib::MRLoadFromContainer-> Failed To Save container key %s",piChildKeyNode->GetDebugInfoPath().c_str());
+					bFinalOk=bOk;
+				}
+				if(bOk)
+				{
+					bOk=MRPersistencySave(piChildContentNode,pContentRef);
+					if(!bOk)
+					{
+						RTTRACE("GameRunTimeLib::MRLoadFromContainer-> Failed To Save container content %s",piChildContentNode->GetDebugInfoPath().c_str());
+						bFinalOk=bOk;
+					}
+				}
+				delete pKeyRef;
+				delete pContentRef;
+				pKeyRef=NULL;
+				pContentRef=NULL;
+			}
+		}
+	}
+	return bFinalOk;
 }
 
 /////////////////////////////////////////////////////

@@ -28,7 +28,7 @@ bool PersistencyItemListSave(IMRPersistencyItem **ppiList,ISystemPersistencyNode
             bOk=ppiList[x]->Save(piChildNode);
             if(!bOk)
             {
-				RTTRACE("GameRunTimeLib::PersistencyLoad-> Failed To Save item %s\\%s, result 0x%08x",piNode->GetDebugInfoPath().c_str(),ppiList[x]->GetName(),bOk);
+				RTTRACE("GameRunTimeLib::PersistencyLoad-> Failed To Save item %s\\%s",piNode->GetDebugInfoPath().c_str(),ppiList[x]->GetName());
                 bFinalOk=bOk;
             }
             x++;
@@ -48,7 +48,7 @@ bool PersistencyItemListLoad(IMRPersistencyItem **ppiList,ISystemPersistencyNode
             bOk=ppiList[x]->Load(piChildNode);
             if(!bOk)
             {
-                RTTRACE("GameRunTimeLib::PersistencyLoad-> Failed To Load item %s\\%s, result 0x%08x",piNode->GetDebugInfoPath().c_str(),ppiList[x]->GetName(),bOk);
+                RTTRACE("GameRunTimeLib::PersistencyLoad-> Failed To Load item %s\\%s",piNode->GetDebugInfoPath().c_str(),ppiList[x]->GetName());
                 bFinalOk=bOk;
             }
             x++;
