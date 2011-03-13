@@ -4,6 +4,8 @@
 CStaticStructureType::CStaticStructureType()
 {
 	m_dMaxHealth=0;
+	m_nDamageType=DAMAGE_TYPE_NORMAL;
+	m_nMovementType=PHYSIC_MOVE_TYPE_NONE;
 }
 
 CStaticStructureType::~CStaticStructureType()
@@ -20,15 +22,13 @@ IEntity *CStaticStructureType::CreateInstance(IEntity *piParent,unsigned int dwC
 void CStaticStructureType::InitializeEntity( CEntityBase *piEntity,unsigned int dwCurrentTime )
 {
 	CEntityTypeBase::InitializeEntity(piEntity,dwCurrentTime);
-	piEntity->GetPhysicInfo()->dwMoveType=PHYSIC_MOVE_TYPE_NONE;
-	piEntity->SetCurrentAnimation(0);
+	piEntity->SetState(eStaticStructureState_Normal);
 }
 
 CStaticStructure::CStaticStructure(CStaticStructureType *pType)
 {
 	m_sClassName="CStaticStructure";
 	m_pType=pType;
-	m_dwDamageType=DAMAGE_TYPE_NORMAL;
 	m_dMaxHealth=m_dHealth=pType->m_dMaxHealth;
 }
 
@@ -36,12 +36,14 @@ void CStaticStructure::OnKilled()
 {
 	bool bRemove=false;
 	m_PhysicInfo.dwBoundsType=PHYSIC_BOUNDS_TYPE_NONE;
-	if(m_dAnimations.size()>1)
+	
+	if(m_pTypeBase->GetStateAnimations(eStaticStructureState_Destroyed))
 	{
 		m_dwDamageType=DAMAGE_TYPE_NONE;
 		m_PhysicInfo.dwBoundsType=PHYSIC_BOUNDS_TYPE_NONE;
 		m_PhysicInfo.dwMoveType=PHYSIC_MOVE_TYPE_NONE;
-		SetCurrentAnimation(1);
+		
+		SetState(eStaticStructureState_Destroyed);
 	}
 	else
 	{

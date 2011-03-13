@@ -6,23 +6,31 @@ class CParticleSystemAnimationObjectType: public CAnimationObjectTypeBase
 {
 public:
 
-    CParticleSystemTypeWrapper m_ParticleSystemType;
-    CVector              m_vPosition;
-    unsigned int                m_dwStartTime;
-    unsigned int                m_dwEndTime;
-    bool                 m_bTrackEntity;
+    CParticleSystemTypeWrapper  m_ParticleSystemType;
+    CVector              		m_vPosition;
+    unsigned int                m_nStartTime;
+    unsigned int                m_nEndTime;
+    bool                		m_bTrackEntity;
 
     IAnimationObject *CreateInstance(IAnimation *piAnimation,unsigned int dwCurrentTime);
 
     BEGIN_PROP_MAP(CParticleSystemAnimationObjectType)
         PROP_CLASS_CHAIN(CAnimationObjectTypeBase)
-        PROP(m_ParticleSystemType,"SistemaDeParticulas")
-        PROP_FLAGS(m_vPosition,"Posicion",MRPF_NORMAL|MRPF_OPTIONAL)
-        PROP_VALUE_FLAGS(m_bTrackEntity,"Seguimiento",false,MRPF_NORMAL|MRPF_OPTIONAL)
-        PROP_VALUE_FLAGS(m_dwStartTime,"TiempoInicio",0,MRPF_NORMAL|MRPF_OPTIONAL)
-        PROP_VALUE_FLAGS(m_dwEndTime,"TiempoFin",0,MRPF_NORMAL|MRPF_OPTIONAL)
+        PROP(m_ParticleSystemType,"ParticleSystem")
+        PROP_FLAGS(m_vPosition,"Position",MRPF_NORMAL|MRPF_OPTIONAL)
+        PROP_VALUE_FLAGS(m_bTrackEntity,"TrackEntity",false,MRPF_NORMAL|MRPF_OPTIONAL)
+        PROP_VALUE_FLAGS(m_nStartTime,"StartTime",0,MRPF_NORMAL|MRPF_OPTIONAL)
+        PROP_VALUE_FLAGS(m_nEndTime,"EndTime",0,MRPF_NORMAL|MRPF_OPTIONAL)
     END_PROP_MAP();
 
+	
+	// IParticleSystemAnimationObjectTypeDesignn
+	
+	void GetConfig(SParticleSystemAnimationObjectTypeConfig *pConfig);
+	void SetConfig(SParticleSystemAnimationObjectTypeConfig *pConfig);
+	void SetParticleSystemType(IParticleSystemType *piParticleSystemType);
+	void GetParticleSystemType(IParticleSystemType **ppiParticleSystemType);
+	
     CParticleSystemAnimationObjectType();
     ~CParticleSystemAnimationObjectType();
 };

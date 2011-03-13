@@ -11,6 +11,10 @@ CHomingMissileProjectileType::CHomingMissileProjectileType()
   m_dwTimeBettwenAcquireTargetAttemps=300;
   m_dwTimeToWaitToAcquireTargets=500;
   m_dwMaximunTargetsToAcquire=0;
+  
+  m_nDamageType=DAMAGE_TYPE_NORMAL;
+  m_nCollisionType=PHYSIC_COLLISION_TYPE_THROUGH;
+  m_nMovementType=PHYSIC_MOVE_TYPE_FLY;  
 }
 
 CHomingMissileProjectileType::~CHomingMissileProjectileType(){}
@@ -20,7 +24,7 @@ IEntity *CHomingMissileProjectileType::CreateInstance(IEntity *piParent,unsigned
   CHomingMissileProjectile *piEntity=new CHomingMissileProjectile(this,piParent);
   InitializeEntity(piEntity,dwCurrentTime);
   piEntity->SetAlignment(piParent->GetAlignment());
-  piEntity->SetCurrentAnimation(0);
+  piEntity->SetState(eHomingMissileState_Normal);
   return piEntity;
 }
 
@@ -33,11 +37,7 @@ CHomingMissileProjectile::CHomingMissileProjectile(CHomingMissileProjectileType 
   m_piTarget=NULL;
   m_dwNextTimeToAcquireTarget=0;
   m_dwTargetsAcquired=0;
-	m_dHealth=1;
-	m_dwDamageType=DAMAGE_TYPE_NORMAL;
-  m_PhysicInfo.dwCollisionType=PHYSIC_COLLISION_TYPE_THROUGH;
-  m_PhysicInfo.dwBoundsType=PHYSIC_BOUNDS_TYPE_BBOX;
-  m_PhysicInfo.dwMoveType=PHYSIC_MOVE_TYPE_FLY;
+  m_dHealth=1;
 }
 
 double CustomApproachAngle(double actual,double ideal, double ammount) 
@@ -89,9 +89,9 @@ void CHomingMissileProjectile::ProcessFrame(unsigned int dwCurrentTime,double dT
 
   if((m_dwCreationTime+m_pType->m_dwDuration)<dwCurrentTime)
   {
-    if(m_dAnimations.size()>1 && GetCurrentAnimation()!=1)
+	if(m_pTypeBase->GetStateAnimations(eHomingMissileState_OutOfFuel) && GetState()!=eHomingMissileState_OutOfFuel)
     {
-      SetCurrentAnimation(1);
+      SetState(eHomingMissileState_OutOfFuel);
     }
     m_PhysicInfo.dwMoveType=PHYSIC_MOVE_TYPE_NORMAL;
     return;
@@ -163,10 +163,10 @@ bool CHomingMissileProjectile::OnCollision(IEntity *piOther,CVector &vCollisionP
   {
     piOther->OnDamage(m_pType->m_dDamage,m_piParent);
 
-    if(m_dAnimations.size()>2)
-    {
-      SetCurrentAnimation(2);
-    }
+	if(m_pTypeBase->GetStateAnimations(eHomingMissileState_Hit))
+	{
+		SetState(eHomingMissileState_Hit);
+	}
     Remove();
   }
   return false;
@@ -188,9 +188,9 @@ void CHomingMissileProjectile::AcquireTargetOperation(IEntity *piEntity,void *pP
 
 void CHomingMissileProjectile::OnKilled()
 {
-	if(m_dAnimations.size()>2)
+	if(m_pTypeBase->GetStateAnimations(eHomingMissileState_Hit))
 	{
-		SetCurrentAnimation(2);
+		SetState(eHomingMissileState_Hit);
 	}
 	CEntityBase::OnKilled();
 }

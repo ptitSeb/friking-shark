@@ -7,6 +7,55 @@ struct IAnimation;
 struct IAnimationType;
 struct IAnimationObject;
 struct IAnimationObjectType;
+struct IParticleSystemType;
+struct ISoundType;
+
+#define OBJECT_INVALID (unsigned int)(-1)
+
+struct SAnimationTypeConfig
+{
+	bool bLoop;
+
+	SAnimationTypeConfig(){bLoop=false;}
+};
+
+struct SEventAnimationObjectTypeConfig
+{
+	string      	sName;
+	string      	sParams;
+	unsigned int    nTime;
+
+	SEventAnimationObjectTypeConfig(){nTime=0;}
+};
+
+struct SModelAnimationObjectTypeConfig
+{
+	unsigned int nStartTime;
+	unsigned int nEndTime;
+	float 		 dFps;
+	bool 		 bLoop;
+	bool 		 bCastShadow;
+
+	SModelAnimationObjectTypeConfig(){dFps=50.0;nStartTime=0;nEndTime=0;bLoop=false;bCastShadow=true;}
+};
+
+struct SParticleSystemAnimationObjectTypeConfig
+{
+	CVector     	vPosition;
+	unsigned int    nStartTime;
+	unsigned int    nEndTime;
+	bool            bTrackEntity;
+
+	SParticleSystemAnimationObjectTypeConfig(){nStartTime=0;nEndTime=0;bTrackEntity=false;}
+};
+
+struct SSoundAnimationObjectTypeConfig
+{
+	unsigned int nStartTime;
+	unsigned int nEndTime;
+
+	SSoundAnimationObjectTypeConfig(){nStartTime=0;nEndTime=0;}
+};
 
 struct IAnimationType:virtual public ISystemUnknown,virtual public IDesignObject
 {
@@ -57,6 +106,49 @@ struct IAnimation
     virtual void CustomRender(IGenericRender *piRender,IGenericCamera *piCamera)=0;
 
     virtual ~IAnimation(){}
+};
+
+struct IAnimationTypeDesign:virtual public ISystemUnknown
+{
+	virtual void		 GetAnimationTypeConfig(SAnimationTypeConfig *pConfig)=0;
+	virtual void		 SetAnimationTypeConfig(SAnimationTypeConfig *pConfig)=0;
+
+	// Object management
+
+	virtual unsigned int	AddObject(std::string sObjectType)=0;
+	virtual bool			RemoveObject(unsigned int nObject)=0;
+	virtual bool			GetObject(unsigned int nObject,IAnimationObjectType **ppiObject)=0;
+	virtual unsigned int	GetObjectCount()=0;
+};
+
+struct IEventAnimationObjectTypeDesign:virtual public ISystemUnknown
+{
+	virtual void		 GetConfig(SEventAnimationObjectTypeConfig *pConfig)=0;
+	virtual void		 SetConfig(SEventAnimationObjectTypeConfig *pConfig)=0;
+};
+
+struct IModelAnimationObjectTypeDesign:virtual public ISystemUnknown
+{
+	virtual void		 GetConfig(SModelAnimationObjectTypeConfig *pConfig)=0;
+	virtual void		 SetConfig(SModelAnimationObjectTypeConfig *pConfig)=0;
+	virtual void		 SetModel(IGenericModel *piModel)=0;
+	virtual void		 GetModel(IGenericModel **ppiModel)=0;
+};
+
+struct IParticleSystemAnimationObjectTypeDesignn:virtual public ISystemUnknown
+{
+	virtual void		 GetConfig(SParticleSystemAnimationObjectTypeConfig *pConfig)=0;
+	virtual void		 SetConfig(SParticleSystemAnimationObjectTypeConfig *pConfig)=0;
+	virtual void		 SetParticleSystemType(IParticleSystemType *piParticleSystemType)=0;
+	virtual void		 GetParticleSystemType(IParticleSystemType **ppiParticleSystemType)=0;
+};
+
+struct ISoundAnimationObjectTypeDesignn:virtual public ISystemUnknown
+{
+	virtual void		 GetConfig(SSoundAnimationObjectTypeConfig *pConfig)=0;
+	virtual void		 SetConfig(SSoundAnimationObjectTypeConfig *pConfig)=0;
+	virtual void		 SetSound(ISoundType *piSoundType)=0;
+	virtual void		 GetSound(ISoundType **ppiSoundType)=0;
 };
 
 #endif

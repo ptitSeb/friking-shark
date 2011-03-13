@@ -22,27 +22,12 @@
 #define PHYSIC_COLLISION_TYPE_BOUNCE		3
 #define PHYSIC_COLLISION_TYPE_THROUGH		4 // el objeto no modifica su posicion en la colision "pasa a traves"
 
-#define RENDER_ENABLE_AUTO_NORMALS			0x0001
-#define RENDER_ENABLE_LIGHTING				0x0002
-#define RENDER_ENABLE_FOG					0x0004
-#define RENDER_ENABLE_TEXTURES				0x0008
-#define RENDER_SHOW_LIGHTS					0x0010
-#define RENDER_SHOW_BBOXES					0x0020
-#define RENDER_ENABLE_MODEL_LOD				0x0040
-#define RENDER_ENABLE_TRANSPARENCY			0x0080
-#define RENDER_ENABLE_WORLD_LIGHTING        0x0100
-#define RENDER_ENABLE_SOLID					0x0200
-#define RENDER_ENABLE_MIPMAPS				0x0400
-#define RENDER_SHOW_NORMALS					0x0800
-
 #define ENTITY_ALIGNMENT_NEUTRAL		  0x0000
 #define ENTITY_ALIGNMENT_PLAYER 		  0x0001
 #define ENTITY_ALIGNMENT_ENEMIES      0x0002
 
 #define DAMAGE_TYPE_NONE    0
 #define DAMAGE_TYPE_NORMAL  1
-
-#define	MAX_DETAIL_LEVELS		            10
 
 class IGenericModel;
 class IGenericCamera;
@@ -54,6 +39,7 @@ struct IEntity;
 struct IEntityType;
 struct IFormationType;
 struct IPlayAreaElement;
+struct IAnimationType;
 
 using namespace std;
 
@@ -725,6 +711,82 @@ public:
 		virtual double GetTimeFraction()=0;
 		virtual double GetRealTimeFraction()=0;
 		virtual double GetCurrentFps()=0;
+};
+
+
+enum EEntityAttributeType
+{
+	eEntityAttributeType_None=0,
+	eEntityAttributeType_Bool,
+	eEntityAttributeType_Int,
+	eEntityAttributeType_Float,
+	eEntityAttributeType_Vector,
+	eEntityAttributeType_String
+};
+
+struct SEntityTypeConfig
+{
+	CVector 		vBBoxMins;
+	CVector 		vBBoxMaxs;
+	unsigned int	nMovementType;
+	unsigned int 	nCollisionType;
+	unsigned int 	nDamageType;
+	unsigned int 	nBoundsType;
+	unsigned int 	nAlignment;
+
+	SEntityTypeConfig(){nDamageType=DAMAGE_TYPE_NONE;nMovementType=PHYSIC_MOVE_TYPE_NONE;nCollisionType=PHYSIC_COLLISION_TYPE_STUCK;nBoundsType=PHYSIC_BOUNDS_TYPE_NONE;nAlignment=ENTITY_ALIGNMENT_NEUTRAL;}
+};
+
+struct IAttributeManagement:virtual public ISystemUnknown
+{
+	// Attribute Management.
+	
+	virtual unsigned int GetAttributeCount()=0;
+	virtual bool		 GetAttributeType(unsigned int nIndex,EEntityAttributeType *peType)=0;
+	virtual bool		 GetAttributeName(unsigned int nIndex,std::string *psName)=0;
+	
+	virtual bool		 SetAttributeValue(std::string sName,bool bValue)=0;
+	virtual bool		 SetAttributeValue(std::string sName,unsigned int nValue)=0;
+	virtual bool		 SetAttributeValue(std::string sName,double dValue)=0;
+	virtual bool		 SetAttributeValue(std::string sName,CVector vValue)=0;
+	virtual bool		 SetAttributeValue(std::string sName,string sValue)=0;
+	
+	virtual bool		 GetAttributeValue(std::string sName,bool *pbValue)=0;
+	virtual bool		 GetAttributeValue(std::string sName,unsigned int *pnValue)=0;
+	virtual bool		 GetAttributeValue(std::string sName,double *pdValue)=0;
+	virtual bool		 GetAttributeValue(std::string sName,CVector *pvValue)=0;
+	virtual bool		 GetAttributeValue(std::string sName,string *psValue)=0;
+};
+
+#define ENTITY_STATE_BASE 	 0
+#define ENTITY_STATE_INVALID (unsigned int)(-1)
+#define ANIMATION_RANDOM     (unsigned int)(-2)
+#define ANIMATION_INVALID	 (unsigned int)(-1)
+#define WEAPON_INVALID	 	 (unsigned int)(-1)
+
+struct IEntityTypeDesign:virtual public ISystemUnknown
+{
+	virtual void		 GetEntityTypeConfig(SEntityTypeConfig *pConfig)=0;
+	virtual void		 SetEntityTypeConfig(SEntityTypeConfig *pConfig)=0;
+
+	// State Management
+
+	virtual unsigned int GetStateCount()=0;
+	virtual bool		 GetStateName(unsigned int nIndex,std::string *psName)=0;
+
+	// Animation management
+
+	virtual unsigned int	AddStateAnimation(unsigned int nState)=0;
+	virtual bool			RemoveStateAnimation(unsigned int nState,unsigned int nAnimation)=0;
+	virtual bool			GetStateAnimation(unsigned int nState,unsigned int nAnimation,IAnimationType **ppiAnimation)=0;
+	virtual unsigned int	GetStateAnimationCount(unsigned int nState)=0;
+
+	// Weapon management
+
+	virtual unsigned int	AddWeapon(std::string sWeaponType)=0;
+	virtual bool			RemoveWeapon(unsigned int nWeapon)=0;
+	virtual bool			GetWeapon(unsigned int nWeapon,IWeaponType **ppiWeapon)=0;
+	virtual unsigned int	GetWeaponCount(unsigned int nState)=0;
 };
 
 #endif

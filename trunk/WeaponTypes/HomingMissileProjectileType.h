@@ -1,5 +1,12 @@
 #pragma once
 
+enum EHomingMissileState
+{
+	eHomingMissileState_Normal=ENTITY_STATE_BASE,
+	eHomingMissileState_OutOfFuel,
+	eHomingMissileState_Hit
+};
+
 class CHomingMissileProjectileType: public CEntityTypeBase
 {
 public:
@@ -26,7 +33,13 @@ public:
     PROP_VALUE_FLAGS(m_dwMaximunTargetsToAcquire,"NumeroMaximoObjetivos",0,MRPF_NORMAL|MRPF_OPTIONAL)
     PROP_CLASS_CHAIN(CEntityTypeBase)
   END_PROP_MAP()
-
+  
+  BEGIN_ENTITY_STATE_MAP()
+	ENTITY_STATE_CHAIN(CEntityTypeBase)
+	ENTITY_STATE(eHomingMissileState_OutOfFuel,"OutOfFuel")
+	ENTITY_STATE(eHomingMissileState_Hit,"Hit")
+  END_ENTITY_STATE_MAP()
+  
   CHomingMissileProjectileType();
   ~CHomingMissileProjectileType();
 };

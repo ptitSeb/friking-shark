@@ -1,5 +1,12 @@
 #pragma once
 
+enum EPlayerState
+{
+	ePlayerState_Normal=ENTITY_STATE_BASE,
+	ePlayerState_Falling,
+	ePlayerState_Crashed
+};
+
 class CPlayerType: public CEntityTypeBase
 {
     double m_dMaxSpeed;
@@ -10,7 +17,13 @@ public:
       PROP_VALUE_FLAGS(m_dMaxSpeed,"Velocidad",80,MRPF_NORMAL|MRPF_OPTIONAL);
       PROP_CLASS_CHAIN(CEntityTypeBase)
     END_PROP_MAP();
-
+	
+	BEGIN_ENTITY_STATE_MAP()
+		ENTITY_STATE_CHAIN(CEntityTypeBase)
+		ENTITY_STATE(ePlayerState_Falling,"Falling")
+		ENTITY_STATE(ePlayerState_Crashed,"Crashed")
+	END_ENTITY_STATE_MAP()
+	
     CPlayerType();
     ~CPlayerType();
 };
@@ -44,5 +57,6 @@ public:
     void  GetWeaponsOnSlot(unsigned int dwWeaponSlot,vector<IWeapon*> *pWeapons);
     void  FireWeaponsOnSlot(unsigned int dwWeaponSlot,unsigned int dwCurrentTime);
 
+	
     CPlayer(CPlayerType *pType);
 };

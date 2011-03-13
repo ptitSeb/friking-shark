@@ -20,7 +20,9 @@ CEntityBase::CEntityBase()
     m_dDamage=0;
     m_dHealth=0;
     m_dMaxHealth=0;
-    m_nCurrentAnimation=-1;
+	m_nCurrentState=ENTITY_STATE_INVALID;
+	m_nCurrentStateAnimation=ANIMATION_INVALID;
+	
     g_EntityManagerSingleton.m_piInterface->AddEntity(this);
     m_piRoute=NULL;
     m_dwAlignment=ENTITY_ALIGNMENT_NEUTRAL;
@@ -31,14 +33,14 @@ CEntityBase::CEntityBase()
 CEntityBase::~CEntityBase()
 {
     unsigned x;
-    for(x=0;x<m_dAnimations.size();x++)
+    for(x=0;x<m_vActiveAnimations.size();x++)
     {
-        IAnimation *piAnimation=m_dAnimations[x];
+        IAnimation *piAnimation=m_vActiveAnimations[x];
         delete piAnimation;
     }
-    for(x=0;x<m_dWeapons.size();x++)
+    for(x=0;x<m_vWeapons.size();x++)
     {
-      IWeapon *piWeapon=m_dWeapons[x];
+      IWeapon *piWeapon=m_vWeapons[x];
       delete piWeapon;
     }
     g_EntityManagerSingleton.Release();
@@ -55,7 +57,7 @@ void CEntityBase::OnDamage(double dDamage,IEntity *piAggresor)
 void         CEntityBase::OnKilledInternal(bool bRemove){NOTIFY_EVENT(IEntityEvents,OnKilled(this));if(bRemove){Remove();}}
 void         CEntityBase::OnKilled(){OnKilledInternal(true);}
 bool         CEntityBase::OnCollision(IEntity *pOther,CVector &vCollisionPos){return true;}
-void         CEntityBase::Remove(){m_bRemoved=true;SetCurrentAnimation(-1);NOTIFY_EVENT(IEntityEvents,OnRemoved(this));}
+void         CEntityBase::Remove(){m_bRemoved=true;SetState(ENTITY_STATE_INVALID,ANIMATION_INVALID);NOTIFY_EVENT(IEntityEvents,OnRemoved(this));}
 bool         CEntityBase::IsRemoved(){return m_bRemoved;}
 void         CEntityBase::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
@@ -79,39 +81,53 @@ double       CEntityBase::GetMaxHealth(){return m_dMaxHealth;}
 
 // Animaciones
 
-void CEntityBase::AddAnimation(unsigned index,IAnimation *piAnimation)
-{
-    if(index<=m_dAnimations.size()){m_dAnimations.resize(index+1);}
-    m_dAnimations[index]=piAnimation;
-}
+unsigned int  CEntityBase::GetState(){return m_nCurrentState;}
 
-int  CEntityBase::GetCurrentAnimation(){return m_nCurrentAnimation;}
-void CEntityBase::SetCurrentAnimation(int index)
+void CEntityBase::SetState(unsigned int nState,unsigned int nAnimation)
 {
-    if(m_nCurrentAnimation!=-1)
-    {
-        IAnimation *piOldAnimation=m_dAnimations[m_nCurrentAnimation];
-        if(piOldAnimation){piOldAnimation->Deactivate();}
-    }
-    m_nCurrentAnimation=index;
-    if(m_nCurrentAnimation!=-1)
-    {
-      IAnimation *piAnimation=m_dAnimations[m_nCurrentAnimation];
-      if(piAnimation){piAnimation->Activate(g_FrameManagerSingleton.m_piInterface->GetCurrentTime());}
-    }
+	if(nState==m_nCurrentState && nAnimation==ANIMATION_RANDOM){return;}
+	if(nState==m_nCurrentState && m_nCurrentStateAnimation==nAnimation){return;}
+	
+	m_nCurrentState=nState;
+	m_nCurrentStateAnimation=(nState==ENTITY_STATE_INVALID)?ANIMATION_INVALID:nAnimation;
+	
+	for(unsigned int x=0;x<m_vActiveAnimations.size();x++)
+	{
+		IAnimation *piAnimation=m_vActiveAnimations[x];
+		if(piAnimation && !piAnimation->HasFinished())
+		{
+			piAnimation->Deactivate();
+		}
+	}
+	if(nState!=ENTITY_STATE_INVALID)
+	{
+		unsigned long nTime=g_FrameManagerSingleton.m_piInterface->GetCurrentTime();
+		IAnimation *piAnimation=m_pTypeBase->CreateStateAnimation(this,nState,nAnimation,nTime);
+		if(piAnimation)
+		{
+			piAnimation->Activate(nTime);
+			m_vActiveAnimations.push_back(piAnimation);
+		}
+	}
 }
 
 void CEntityBase::ProcessAnimations(unsigned int dwCurrentTime,double dTimeFraction,bool *pbAnimationsFinished)
 {
-    unsigned x;
     (*pbAnimationsFinished)=true;
-    for(x=0;x<m_dAnimations.size();x++)
+	std::vector<IAnimation*>::iterator i;
+	for(i=m_vActiveAnimations.begin();i!=m_vActiveAnimations.end();)
     {
-        IAnimation *piAnimation=m_dAnimations[x];
-        if(piAnimation && !piAnimation->HasFinished())
+        IAnimation *piAnimation=*i;
+        if(piAnimation->HasFinished())
+		{
+			i=m_vActiveAnimations.erase(i);
+			delete piAnimation;
+		}
+		else
         {
             (*pbAnimationsFinished)=false;
             piAnimation->ProcessFrame(g_PhysicManagerSingleton.m_piInterface,dwCurrentTime,dTimeFraction);
+			i++;
         }
     }
     m_dwNextProcessFrame=dwCurrentTime+1;
@@ -120,9 +136,9 @@ void CEntityBase::ProcessAnimations(unsigned int dwCurrentTime,double dTimeFract
 void CEntityBase::Render(IGenericRender *piRender,IGenericCamera *piCamera)
 {
     unsigned x;
-    for(x=0;x<m_dAnimations.size();x++)
+	for(x=0;x<m_vActiveAnimations.size();x++)
     {
-        IAnimation *piAnimation=m_dAnimations[x];
+		IAnimation *piAnimation=m_vActiveAnimations[x];
         if(piAnimation && !piAnimation->HasFinished())
         {
             piAnimation->CustomRender(piRender,piCamera);
@@ -141,15 +157,15 @@ void CEntityBase::SetRoute(IRoute *piRoute)
 
 void CEntityBase::AddWeapon(IWeapon *piWeapon)
 {
-  m_dWeapons.push_back(piWeapon);
+  m_vWeapons.push_back(piWeapon);
 }
 
 void CEntityBase::FireWeapon(unsigned int dwWeaponSlot,unsigned int dwCurrentTime)
 {
   size_t x;
-  for(x=0;x<m_dWeapons.size();x++)
+  for(x=0;x<m_vWeapons.size();x++)
   {
-    IWeapon *piWeapon=m_dWeapons[x];
+    IWeapon *piWeapon=m_vWeapons[x];
     if(piWeapon->GetSlot()==dwWeaponSlot)
     {
       piWeapon->Fire(dwCurrentTime);
@@ -158,29 +174,37 @@ void CEntityBase::FireWeapon(unsigned int dwWeaponSlot,unsigned int dwCurrentTim
 }
 
 IEntityManager *CEntityBase::GetEntityManager(){return g_EntityManagerSingleton.m_piInterface;}
-IPhysicManager *CEntityBase::GetPhysicManager(){return g_PhysicManagerSingleton.m_piInterface;}
-IFrameManager  *CEntityBase::GetFrameManager(){return g_FrameManagerSingleton.m_piInterface;}
 IEntity *CEntityBase::GetTarget()
 {
   return m_piTarget;
 }
 
-unsigned int CEntityBase::GetDamageType()
-{
-  return m_dwDamageType;
-}
+unsigned int CEntityBase::GetDamageType(){return m_dwDamageType;}
+void 		 CEntityBase::SetDamageType(unsigned int dwDamageType){m_dwDamageType=dwDamageType;}
 
 CTraceInfo CEntityBase::GetTrace(const  CVector &p1,const CVector &p2 )
 {
 	CTraceInfo traceInfo;
-	if(m_nCurrentAnimation!=-1)
+	traceInfo.m_dTraceFraction=1.0;
+	traceInfo.m_vTracePos=p2;
+	
+	for(unsigned int x=0;x<m_vActiveAnimations.size();x++)
 	{
-		traceInfo=m_dAnimations[m_nCurrentAnimation]->GetTrace(m_PhysicInfo.vPosition,m_PhysicInfo.vAngles,p1,p2);
-	}
-	else
-	{
-		traceInfo.m_dTraceFraction=1.0;
-		traceInfo.m_vTracePos=p2;
-	}
+		IAnimation *piAnimation=m_vActiveAnimations[x];
+		if(piAnimation && !piAnimation->HasFinished())
+		{
+			CTraceInfo tempTraceInfo;
+			tempTraceInfo=piAnimation->GetTrace(m_PhysicInfo.vPosition,m_PhysicInfo.vAngles,p1,p2);
+			if(tempTraceInfo.m_bTraceHit && tempTraceInfo.m_dTraceFraction<traceInfo.m_dTraceFraction)
+			{
+				traceInfo=tempTraceInfo;
+			}
+		}
+	}	
 	return traceInfo;
+}
+
+void CEntityBase::SetEntityTypeBase(CEntityTypeBase *pTypeBase)
+{
+	m_pTypeBase=pTypeBase;
 }

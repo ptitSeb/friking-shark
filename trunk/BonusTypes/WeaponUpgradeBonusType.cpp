@@ -1,21 +1,27 @@
 #include "./stdafx.h"
 #include "WeaponUpgradeBonusType.h"
 
-CWeaponUpgradeBonusType::CWeaponUpgradeBonusType(){m_dwLevels=0;m_dwSlot=0;}
-CWeaponUpgradeBonusType::~CWeaponUpgradeBonusType(){}
+CWeaponUpgradeBonusType::CWeaponUpgradeBonusType()
+{
+	m_dwLevels=0;
+	m_dwSlot=0;
+	m_nMovementType=PHYSIC_MOVE_TYPE_NONE;
+	m_nCollisionType=PHYSIC_COLLISION_TYPE_THROUGH;
+}
+
+CWeaponUpgradeBonusType::~CWeaponUpgradeBonusType()
+{
+}
 
 IEntity *CWeaponUpgradeBonusType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
 {
   CWeaponUpgradeBonus *piEntity=new CWeaponUpgradeBonus(this);
   SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();
   InitializeEntity(piEntity,dwCurrentTime);
-  pPhysicInfo->dwMoveType=PHYSIC_MOVE_TYPE_NONE;
-  pPhysicInfo->dwCollisionType=PHYSIC_COLLISION_TYPE_THROUGH;
-  pPhysicInfo->dwBoundsType=PHYSIC_BOUNDS_TYPE_BBOX;
   pPhysicInfo->vPosition=piParent->GetPhysicInfo()->vPosition;
   pPhysicInfo->vAngleVelocity.c[0]=50.0;
   pPhysicInfo->vAngleVelocity.c[1]=150.0;
-  piEntity->SetCurrentAnimation(0);
+  piEntity->SetState(eWeaponUpgradeBonusState_Normal,ANIMATION_RANDOM);
   return piEntity;
 }
 
@@ -39,7 +45,7 @@ bool CWeaponUpgradeBonus::OnCollision(IEntity *pOther,CVector &vCollisionPos)
       IWeapon *piWeapon=vWeapons[x];
       piWeapon->SetCurrentLevel(piWeapon->GetCurrentLevel()+m_pType->m_dwLevels);
     }
-    if(m_dAnimations.size()>1){SetCurrentAnimation(1);}
+    SetState(eWeaponUpgradeBonusState_Taken);
     Remove();
   }
   return false;

@@ -7,18 +7,25 @@ class CSoundAnimationObjectType: public CAnimationObjectTypeBase
 public:
 
     CSoundTypeWrapper    m_SoundType;
-    unsigned int                m_dwStartTime;
-    unsigned int                m_dwEndTime;
+    unsigned int         m_nStartTime;
+    unsigned int         m_nEndTime;
 
     IAnimationObject *CreateInstance(IAnimation *piAnimation,unsigned int dwCurrentTime);
 
     BEGIN_PROP_MAP(CSoundAnimationObjectType)
-        PROP(m_SoundType,"TipoDeSonido")
-        PROP_VALUE_FLAGS(m_dwStartTime,"TiempoInicio",0,MRPF_NORMAL|MRPF_OPTIONAL)
-        PROP_VALUE_FLAGS(m_dwEndTime,"TiempoFin",0,MRPF_NORMAL|MRPF_OPTIONAL)
+        PROP(m_SoundType,"Sound")
+        PROP_VALUE_FLAGS(m_nStartTime,"StartTime",0,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_nEndTime,"EndTime",0,MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_CLASS_CHAIN(CAnimationObjectTypeBase)
     END_PROP_MAP();
 
+	
+	// ISoundAnimationObjectTypeDesignn
+	void GetConfig(SSoundAnimationObjectTypeConfig *pConfig);
+	void SetConfig(SSoundAnimationObjectTypeConfig *pConfig);
+	void SetSound(ISoundType *piSoundType);
+	void GetSound(ISoundType **ppiSoundType);
+	
     CSoundAnimationObjectType();
     ~CSoundAnimationObjectType();
 };

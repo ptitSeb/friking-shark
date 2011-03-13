@@ -2,14 +2,14 @@
 
 DECLARE_CUSTOM_WRAPPER1(CAnimationObjectTypeWrapper,IAnimationObjectType,m_piObjectType)
 
-class CAnimationType: virtual public CSystemObjectBase,virtual public IAnimationType
+class CAnimationType: virtual public CSystemObjectBase,virtual public IAnimationType,virtual public IAnimationTypeDesign
 {
 public:
 
     // Propiedades Persistentes
 
-    deque<CAnimationObjectTypeWrapper>  m_dObjects;
-    bool                                m_bCyclic;
+	vector<CAnimationObjectTypeWrapper> m_vObjects;
+	bool                                m_bLoop;
 
     IAnimation *CreateInstance(IEntity *piEntity,unsigned int dwCurrentTime);
 
@@ -19,11 +19,23 @@ public:
 	CTraceInfo DesignGetTrace(const CVector &vPosition,const CVector &vAngles,const CVector &p1,const CVector &p2 );
 
     BEGIN_PROP_MAP(CAnimationType);
-        PROP(m_dObjects,"Objetos");
-        PROP_VALUE_FLAGS(m_bCyclic,"Repetir",false,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP(m_vObjects,"Objects");
+        PROP_VALUE_FLAGS(m_bLoop,"Loop",false,MRPF_NORMAL|MRPF_OPTIONAL);
     END_PROP_MAP();
 
-    CAnimationType();
+	// IAnimationTypeDesign
+	
+	void GetAnimationTypeConfig(SAnimationTypeConfig *pConfig);
+	void SetAnimationTypeConfig(SAnimationTypeConfig *pConfig);
+	
+	// Object management
+	
+	unsigned int	AddObject(std::string sObjectType);
+	bool			RemoveObject(unsigned int nObject);
+	bool			GetObject(unsigned int nObject,IAnimationObjectType **ppiObject);
+	unsigned int	GetObjectCount();
+	
+	CAnimationType();
     ~CAnimationType();
 };
 
@@ -31,12 +43,12 @@ class CAnimation:public IAnimation
 {
 protected:
 
-    deque<IAnimationObject *>   m_dObjects;
+    vector<IAnimationObject *>  m_vObjects;
     CAnimationType             *m_pType;
     bool                        m_bActive;
     bool                        m_bFinished;
     IEntity                    *m_piEntity;
-    unsigned int                       m_dwCurrentTimeBase;
+    unsigned int                m_dwCurrentTimeBase;
 
 public:
 

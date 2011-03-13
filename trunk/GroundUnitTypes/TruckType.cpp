@@ -17,7 +17,7 @@ IEntity *CTruckType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime
 {
     CTruck *piEntity=new CTruck(this);
     InitializeEntity(piEntity,dwCurrentTime);
-    piEntity->SetCurrentAnimation(0);
+    piEntity->SetState(eTruckState_Normal);
 	piEntity->GetPhysicInfo()->dMaxVelocity=m_dMaxSpeed;
 	piEntity->GetPhysicInfo()->dMaxForce=m_dMaxSpeed;
 	piEntity->GetPhysicInfo()->dMass=1;
@@ -39,13 +39,14 @@ void CTruck::OnKilled()
 {
   bool bRemove=false;
   m_PhysicInfo.dwBoundsType=PHYSIC_BOUNDS_TYPE_NONE;
-  if(m_dAnimations.size()>1)
+  if(m_pTypeBase->GetStateAnimations(eTruckState_Destroyed))
   {
     m_dwDamageType=DAMAGE_TYPE_NONE;
     m_PhysicInfo.dwBoundsType=PHYSIC_BOUNDS_TYPE_NONE;
     m_PhysicInfo.dwMoveType=PHYSIC_MOVE_TYPE_NONE;
     m_PhysicInfo.dwCollisionType=PHYSIC_COLLISION_TYPE_STUCK;
-    SetCurrentAnimation(1);
+	
+	SetState(eTruckState_Destroyed);
   }
   else
   {

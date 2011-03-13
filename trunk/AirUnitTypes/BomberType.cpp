@@ -9,6 +9,8 @@ CBomberType::CBomberType()
   m_dTimeFirstShotMax=0;
   m_dTimeBetweenShotsMin=0;
   m_dTimeBetweenShotsMax=0;
+  m_nDamageType=DAMAGE_TYPE_NORMAL;
+  m_nMovementType=PHYSIC_MOVE_TYPE_FLY;
 }
 
 CBomberType::~CBomberType(){}
@@ -17,7 +19,7 @@ IEntity *CBomberType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTim
 {
   CBomber *piEntity=new CBomber(this,dwCurrentTime);
   InitializeEntity(piEntity,dwCurrentTime);
-  piEntity->SetCurrentAnimation(0);
+  piEntity->SetState(ENTITY_STATE_BASE,0);
   return piEntity;
 }
 
@@ -28,7 +30,6 @@ CBomber::CBomber(CBomberType *pType,unsigned int dwCurrentTime)
   m_nRoutePoint=0;
   m_PhysicInfo.fOwnForce.dForce=0;
   m_PhysicInfo.fOwnForce.dMaxVelocity=m_pType->m_dMaxVelocity;
-  m_dwDamageType=DAMAGE_TYPE_NORMAL;
   m_dMaxHealth=m_dHealth=m_pType->m_dMaxHealth;
   m_dwNextProcessFrame=dwCurrentTime+100;
   m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeFirstShotMax-m_pType->m_dTimeFirstShotMin)+m_pType->m_dTimeFirstShotMin;
@@ -61,12 +62,10 @@ void CBomber::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 
   if(m_pType->m_dMaxHealth)
   {
-    nAnimationToSet=(size_t)(((m_pType->m_dMaxHealth-m_dHealth)/m_pType->m_dMaxHealth)*((double)m_dAnimations.size()));
-    if(nAnimationToSet>m_dAnimations.size()-1){nAnimationToSet=m_dAnimations.size()-1;}
-    if(GetCurrentAnimation()!=(int)nAnimationToSet)
-    {
-      SetCurrentAnimation((int)nAnimationToSet);
-    }
+	unsigned int nAnimations=m_pTypeBase->GetStateAnimations(ENTITY_STATE_BASE);
+	nAnimationToSet=(size_t)(((m_pType->m_dMaxHealth-m_dHealth)/m_pType->m_dMaxHealth)*((double)nAnimations));
+	if(nAnimationToSet>nAnimations-1){nAnimationToSet=nAnimations-1;}
+    SetState(ENTITY_STATE_BASE,(int)nAnimationToSet);
   }
   if(m_dHealth>0)
   {
