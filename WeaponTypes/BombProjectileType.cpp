@@ -4,6 +4,8 @@
 CBombProjectileType::CBombProjectileType()
 {
   m_dDamage=1.0;
+  m_nCollisionType=PHYSIC_COLLISION_TYPE_THROUGH;
+  m_nMovementType=PHYSIC_MOVE_TYPE_NORMAL;
 }
 
 CBombProjectileType::~CBombProjectileType(){}
@@ -13,7 +15,7 @@ IEntity *CBombProjectileType::CreateInstance(IEntity *piParent,unsigned int dwCu
   CBombProjectile *piEntity=new CBombProjectile(this,piParent);
   InitializeEntity(piEntity,dwCurrentTime);
   piEntity->SetAlignment(piParent->GetAlignment());
-  piEntity->SetCurrentAnimation(0);
+  piEntity->SetState(eBombState_Normal);
   return piEntity;
 }
 
@@ -23,9 +25,6 @@ CBombProjectile::CBombProjectile(CBombProjectileType *pType,IEntity *piParent)
   m_sName="BombProjectile";
   m_pType=pType;
   m_piParent=piParent;
-  m_PhysicInfo.dwCollisionType=PHYSIC_COLLISION_TYPE_THROUGH;
-  m_PhysicInfo.dwBoundsType=PHYSIC_BOUNDS_TYPE_BBOX;
-  m_PhysicInfo.dwMoveType=PHYSIC_MOVE_TYPE_NORMAL;
 }
 
 bool CBombProjectile::OnCollision(IEntity *piOther,CVector &vCollisionPos)
@@ -34,9 +33,9 @@ bool CBombProjectile::OnCollision(IEntity *piOther,CVector &vCollisionPos)
   {
     piOther->OnDamage(m_pType->m_dDamage,m_piParent);
 
-    if(m_dAnimations.size()>1)
+	if(m_pTypeBase->GetStateAnimations(eBombState_Hit))
     {
-      SetCurrentAnimation(1);
+		SetState(eBombState_Hit);
     }
     Remove();
   }

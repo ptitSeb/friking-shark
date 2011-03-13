@@ -6,8 +6,8 @@
 
 CSoundAnimationObjectType::CSoundAnimationObjectType()
 {
-  m_dwStartTime=0;
-  m_dwEndTime=0;
+  m_nStartTime=0;
+  m_nEndTime=0;
 }
 
 CSoundAnimationObjectType::~CSoundAnimationObjectType()
@@ -19,6 +19,20 @@ IAnimationObject *CSoundAnimationObjectType::CreateInstance(IAnimation *piAnimat
     CSoundAnimationObject *pSound=new CSoundAnimationObject(this,piAnimation);
     return pSound;
 }
+
+void CSoundAnimationObjectType::GetConfig(SSoundAnimationObjectTypeConfig *pConfig)
+{
+	pConfig->nStartTime=m_nStartTime;
+	pConfig->nEndTime=m_nEndTime;
+}
+void CSoundAnimationObjectType::SetConfig(SSoundAnimationObjectTypeConfig *pConfig)
+{
+	m_nStartTime=pConfig->nStartTime;
+	m_nEndTime=pConfig->nEndTime;
+}
+
+void CSoundAnimationObjectType::SetSound(ISoundType *piSound){m_SoundType.Attach(piSound);}
+void CSoundAnimationObjectType::GetSound(ISoundType **ppiSound){(*ppiSound)=ADD(m_SoundType.m_piSoundType);}
 
 CSoundAnimationObject::CSoundAnimationObject(CSoundAnimationObjectType *pType,IAnimation *piAnimation)
 :CAnimationObjectBase(pType,piAnimation)

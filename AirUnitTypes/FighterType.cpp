@@ -11,6 +11,8 @@ CFighterType::CFighterType()
   m_dTimeFirstShotMax=0;
   m_dTimeBetweenShotsMin=0;
   m_dTimeBetweenShotsMax=0;
+  m_nDamageType=DAMAGE_TYPE_NORMAL;
+  m_nMovementType=PHYSIC_MOVE_TYPE_FLY;
 }
 
 CFighterType::~CFighterType(){}
@@ -19,7 +21,7 @@ IEntity *CFighterType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTi
 {
   CFighter *piEntity=new CFighter(this,dwCurrentTime);
   InitializeEntity(piEntity,dwCurrentTime);
-  piEntity->SetCurrentAnimation(0);
+  piEntity->SetState(eFighterState_Normal);
   return piEntity;
 }
 
@@ -28,7 +30,6 @@ CFighter::CFighter(CFighterType *pType,unsigned int dwCurrentTime)
   m_sClassName="CFighter";
   m_pType=pType;
   m_nRoutePoint=0;
-  m_dwDamageType=DAMAGE_TYPE_NORMAL;
   m_dMaxHealth=m_dHealth=pType->m_dMaxHealth;
   m_dwNextProcessFrame=dwCurrentTime+10;
   m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeFirstShotMax-m_pType->m_dTimeFirstShotMin)+m_pType->m_dTimeFirstShotMin;
@@ -37,12 +38,12 @@ CFighter::CFighter(CFighterType *pType,unsigned int dwCurrentTime)
 void CFighter::OnKilled()
 {
   bool bRemove=false;
-  if(m_dAnimations.size()>1)
+  if(m_pTypeBase->GetStateAnimations(eFighterState_Falling))
   {
-    if(GetCurrentAnimation()!=1)
+	if(GetState()!=eFighterState_Falling)
     {
       m_PhysicInfo.vAngleVelocity.c[2]+=drand()*300.0-150.0;
-      SetCurrentAnimation(1);
+	  SetState(eFighterState_Falling);
       m_PhysicInfo.dwMoveType=PHYSIC_MOVE_TYPE_NORMAL;
     }
   }
@@ -56,11 +57,11 @@ void CFighter::OnKilled()
 
 bool CFighter::OnCollision(IEntity *piOther,CVector &vCollisionPos)
 {
-	if(GetCurrentAnimation()==1 && piOther->GetAlignment()!=ENTITY_ALIGNMENT_PLAYER)
+	if(GetState()==eFighterState_Falling && piOther->GetAlignment()!=ENTITY_ALIGNMENT_PLAYER)
 	{
-		if(GetCurrentAnimation()!=2 && m_dAnimations.size()>2)
+		if(GetState()!=eFighterState_Crashed && m_pTypeBase->GetStateAnimations(eFighterState_Crashed))
 		{
-			SetCurrentAnimation(2);
+			SetState(eFighterState_Crashed);
 		}
 		Remove();
 	} 
@@ -78,7 +79,7 @@ void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
   if(!m_piRoute){return;}
   if(m_dHealth<=0)
   {
-    if(GetCurrentAnimation()==1)
+    if(GetState()==eFighterState_Falling)
     {
       ApproachAngle(m_PhysicInfo.vAngles.c[1],40,30);
     }

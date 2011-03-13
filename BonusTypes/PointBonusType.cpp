@@ -1,21 +1,27 @@
 #include "./stdafx.h"
 #include "PointBonusType.h"
 
-CPointBonusType::CPointBonusType(){m_dwPoints=0;}
-CPointBonusType::~CPointBonusType(){}
+CPointBonusType::CPointBonusType()
+{
+	m_dwPoints=0;
+	m_nMovementType=PHYSIC_MOVE_TYPE_NONE;
+	m_nCollisionType=PHYSIC_COLLISION_TYPE_THROUGH;
+}
+
+CPointBonusType::~CPointBonusType()
+{
+	
+}
 
 IEntity *CPointBonusType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
 {
   CPointBonus *piEntity=new CPointBonus(this);
   SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();
   InitializeEntity(piEntity,dwCurrentTime);
-  pPhysicInfo->dwMoveType=PHYSIC_MOVE_TYPE_NONE;
-  pPhysicInfo->dwCollisionType=PHYSIC_COLLISION_TYPE_THROUGH;
-  pPhysicInfo->dwBoundsType=PHYSIC_BOUNDS_TYPE_BBOX;
   pPhysicInfo->vPosition=piParent->GetPhysicInfo()->vPosition;
   pPhysicInfo->vAngleVelocity.c[0]=50.0;
   pPhysicInfo->vAngleVelocity.c[1]=150.0;
-  piEntity->SetCurrentAnimation(0);
+  piEntity->SetState(ePointBonusState_Normal);
   return piEntity;
 }
 
@@ -33,7 +39,7 @@ bool CPointBonus::OnCollision(IEntity *pOther,CVector &vCollisionPos)
   if(piPlayer)
   {
     piPlayer->AddPoints(m_pType->m_dwPoints);
-    if(m_dAnimations.size()>1){SetCurrentAnimation(1);}
+	SetState(ePointBonusState_Taken);
     Remove();
   }
   return false;

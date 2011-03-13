@@ -5,6 +5,9 @@ CBulletProjectileType::CBulletProjectileType()
 {
   m_dDamage=1.0;
   m_dwDuration=1000;
+  m_nCollisionType=PHYSIC_COLLISION_TYPE_THROUGH;
+  m_nMovementType=PHYSIC_MOVE_TYPE_FLY;
+  
 }
 
 CBulletProjectileType::~CBulletProjectileType(){}
@@ -14,7 +17,7 @@ IEntity *CBulletProjectileType::CreateInstance(IEntity *piParent,unsigned int dw
   CBulletProjectile *piEntity=new CBulletProjectile(this,piParent);
   InitializeEntity(piEntity,dwCurrentTime);
   piEntity->SetAlignment(piParent->GetAlignment());
-  piEntity->SetCurrentAnimation(0);
+  piEntity->SetState(eBulletState_Normal);
   return piEntity;
 }
 
@@ -24,9 +27,6 @@ CBulletProjectile::CBulletProjectile(CBulletProjectileType *pType,IEntity *piPar
   m_sName="BulletProjectile";
   m_pType=pType;
   m_piParent=piParent;
-  m_PhysicInfo.dwCollisionType=PHYSIC_COLLISION_TYPE_THROUGH;
-  m_PhysicInfo.dwBoundsType=PHYSIC_BOUNDS_TYPE_BBOX;
-  m_PhysicInfo.dwMoveType=PHYSIC_MOVE_TYPE_FLY;
 }
 
 void CBulletProjectile::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
@@ -45,9 +45,9 @@ bool CBulletProjectile::OnCollision(IEntity *piOther,CVector &vCollisionPos)
   {
     piOther->OnDamage(m_pType->m_dDamage,m_piParent);
 
-    if(m_dAnimations.size()>1)
+	if(m_pTypeBase->GetStateAnimations(eBulletState_Hit))
     {
-      SetCurrentAnimation(1);
+		SetState(eBulletState_Hit);
     }
     Remove();
   }

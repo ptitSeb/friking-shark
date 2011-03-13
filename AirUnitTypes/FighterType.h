@@ -1,4 +1,10 @@
 #pragma once
+enum EFighterState
+{
+	eFighterState_Normal=ENTITY_STATE_BASE,
+	eFighterState_Falling,
+	eFighterState_Crashed
+};
 
 class CFighterType: public CEntityTypeBase
 {
@@ -25,7 +31,13 @@ public:
         PROP_VALUE_FLAGS(m_dTimeBetweenShotsMin,"TiempoEntreDisparosMinimo",2000,MRPF_NORMAL|MRPF_OPTIONAL);
         PROP_VALUE_FLAGS(m_dTimeBetweenShotsMax,"TiempoEntreDisparosMaximo",5000,MRPF_NORMAL|MRPF_OPTIONAL);
     END_PROP_MAP();
-
+	
+	BEGIN_ENTITY_STATE_MAP()
+		ENTITY_STATE_CHAIN(CEntityTypeBase)
+		ENTITY_STATE(eFighterState_Falling,"Falling")
+		ENTITY_STATE(eFighterState_Crashed,"Crashed")
+	END_ENTITY_STATE_MAP()
+	
     CFighterType();
     ~CFighterType();
 };

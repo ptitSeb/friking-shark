@@ -1,5 +1,11 @@
 #pragma once
 
+enum EWeaponUpgradeBonusState
+{
+	eWeaponUpgradeBonusState_Normal=ENTITY_STATE_BASE,
+	eWeaponUpgradeBonusState_Taken
+};
+
 class CWeaponUpgradeBonusType: public CEntityTypeBase
 {
 public:
@@ -14,7 +20,12 @@ public:
     PROP(m_dwLevels,"Niveles");
     PROP(m_dwSlot,"Banco");
   END_PROP_MAP();
-
+  
+  BEGIN_ENTITY_STATE_MAP()
+	ENTITY_STATE_CHAIN(CEntityTypeBase)
+	ENTITY_STATE(eWeaponUpgradeBonusState_Taken,"Taken")
+  END_ENTITY_STATE_MAP()
+  
   CWeaponUpgradeBonusType();
   ~CWeaponUpgradeBonusType();
 };

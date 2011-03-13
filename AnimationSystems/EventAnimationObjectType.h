@@ -1,23 +1,27 @@
 #pragma once
 
-class CEventAnimationObjectType: public CAnimationObjectTypeBase
+class CEventAnimationObjectType: public CAnimationObjectTypeBase,virtual public IEventAnimationObjectTypeDesign
 {
 public:
 
     string      m_sEvent;
     string      m_sParams;
-    unsigned int       m_dwTime;
+    unsigned int       m_nTime;
     
     IAnimationObject *CreateInstance(IAnimation *piAnimation,unsigned int dwCurrentTime);
 
     BEGIN_PROP_MAP(CEventAnimationObjectType)
         PROP_CLASS_CHAIN(CAnimationObjectTypeBase)
-        PROP(m_dwTime,"Tiempo")
-        PROP(m_sEvent,"Evento")
-        PROP_VALUE_FLAGS(m_sParams,"Parametros","",MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP(m_nTime,"Time")
+        PROP(m_sEvent,"Event")
+        PROP_VALUE_FLAGS(m_sParams,"Parameters","",MRPF_NORMAL|MRPF_OPTIONAL)
     END_PROP_MAP();
 
-    CEventAnimationObjectType();
+	// IEventAnimationObjectTypeDesign
+	void GetConfig(SEventAnimationObjectTypeConfig *pConfig);
+	void SetConfig(SEventAnimationObjectTypeConfig *pConfig);
+	
+	CEventAnimationObjectType();
     ~CEventAnimationObjectType();
 };
 

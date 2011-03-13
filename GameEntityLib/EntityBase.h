@@ -12,9 +12,7 @@ protected:
 	CSteeringBehaviours m_Behaviours;
 
     IEntityManager *GetEntityManager();
-    IPhysicManager *GetPhysicManager();
-    IFrameManager  *GetFrameManager();
-
+    
     CEntityTypeBase *m_pTypeBase;
 
     string	m_sName;
@@ -36,17 +34,18 @@ protected:
     double	m_dMaxHealth;
     double	m_dHealth;
 
-		double  m_dLastFrameDamage;
+	double  m_dLastFrameDamage;
 
     bool	m_bRemoved;
 
     // Miembros de Animaciones
-    vector<IAnimation*>  m_dAnimations;
-    int                  m_nCurrentAnimation;
-
+    vector<IAnimation*>  m_vActiveAnimations;
+    unsigned int         m_nCurrentState;
+	unsigned int         m_nCurrentStateAnimation;
+	
     // Miembros para gestion de Armamento
 
-    vector<IWeapon*>     m_dWeapons;
+    vector<IWeapon*>     m_vWeapons;
 
     // Alineacion (Bando) de la entidad
 
@@ -59,18 +58,24 @@ protected:
 
     void FireWeapon(unsigned int dwWeaponSlot,unsigned int dwCurrentTime);
     void OnKilledInternal(bool bRemove);
-
+	
 public:
-
+	
+	void 		  SetState(unsigned int nState,unsigned int nAnimation=ANIMATION_RANDOM);
+	unsigned int  GetState();
+	
+	void 		  SetEntityTypeBase(CEntityTypeBase *pTypeBase);
+	
     string      *GetEntityClass();
     string      *GetEntityName();
     SPhysicInfo *GetPhysicInfo();
 
-    unsigned int       GetAlignment();
-    void        SetAlignment(unsigned int dwAlignment);
-
-    bool        IsRemoved();
-    void        Remove();
+    unsigned int	GetAlignment();
+    void        	SetAlignment(unsigned int dwAlignment);
+	
+	
+    bool        	IsRemoved();
+    void        	Remove();
 
     // Render
     void Render(IGenericRender *piRender,IGenericCamera *piCamera);
@@ -83,7 +88,8 @@ public:
     double GetHealth();
     double GetMaxHealth();
 	unsigned int  GetDamageType();
-
+	void          SetDamageType(unsigned int dwDamageType);
+	
 	CTraceInfo GetTrace(const CVector &p1,const CVector &p2);
 
     bool OnCollision(IEntity *pOther,CVector &vCollisionPos); 
@@ -93,11 +99,7 @@ public:
 	// Steering Behaviours
 
     // Animaciones
-    void AddAnimation(unsigned index,IAnimation *piAnimation);
-    void SetCurrentAnimation(int index);
-    int  GetCurrentAnimation();
     void ProcessAnimations(unsigned int dwCurrentTime,double dTimeFraction,bool *pbAnimationsFinished);
-
     void OnAnimationEvent(string sEvent,string sParams);
 
     // Armas

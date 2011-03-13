@@ -1,5 +1,11 @@
 #pragma once
 
+enum ESpeedUpgradeBonusState
+{
+	eSpeedUpgradeBonusState_Normal=ENTITY_STATE_BASE,
+	eSpeedUpgradeBonusState_Taken
+};
+
 class CSpeedUpgradeBonusType: public CEntityTypeBase
 {
 public:
@@ -13,6 +19,11 @@ public:
     PROP(m_dSpeed,"Velocidad");
   END_PROP_MAP();
 
+  BEGIN_ENTITY_STATE_MAP()
+	ENTITY_STATE_CHAIN(CEntityTypeBase)
+	ENTITY_STATE(eSpeedUpgradeBonusState_Taken,"Taken")
+  END_ENTITY_STATE_MAP()
+  
   CSpeedUpgradeBonusType();
   ~CSpeedUpgradeBonusType();
 };

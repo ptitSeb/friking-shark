@@ -1,5 +1,11 @@
 #pragma once
 
+enum EBombState
+{
+	eBombState_Normal=ENTITY_STATE_BASE,
+	eBombState_Hit
+};
+
 class CBombProjectileType: public CEntityTypeBase
 {
 public:
@@ -12,7 +18,12 @@ public:
     PROP_VALUE_FLAGS(m_dDamage,"Daño",1.0,MRPF_NORMAL|MRPF_OPTIONAL)
     PROP_CLASS_CHAIN(CEntityTypeBase)
   END_PROP_MAP();
-
+  
+  BEGIN_ENTITY_STATE_MAP()
+	ENTITY_STATE_CHAIN(CEntityTypeBase)
+	ENTITY_STATE(eBombState_Hit,"Hit")
+  END_ENTITY_STATE_MAP()
+  
   CBombProjectileType();
   ~CBombProjectileType();
 };

@@ -2,18 +2,18 @@
 
 #include "GameGraphics.h"
 
-class CModelAnimationObjectType: public CAnimationObjectTypeBase
+class CModelAnimationObjectType: public CAnimationObjectTypeBase,virtual public IModelAnimationObjectTypeDesign
 {
 public:
 
 	CGenericShaderWrapper   m_ShaderWrapper;
 	CGenericModelWrapper    m_ModelWrapper;
 
-    float       m_dFps;
-    unsigned int       m_dwStartTime;
-    unsigned int       m_dwEndTime;
-    bool        m_bCyclic;
-    bool        m_bCastShadow;
+    float       	m_dFps;
+    unsigned int	m_nStartTime;
+    unsigned int	m_nEndTime;
+    bool        	m_bLoop;
+    bool        	m_bCastShadow;
 
     IAnimationObject *CreateInstance(IAnimation *piAnimation,unsigned int dwCurrentTime);
 
@@ -24,15 +24,21 @@ public:
 
     BEGIN_PROP_MAP(CModelAnimationObjectType)
         PROP_CLASS_CHAIN(CAnimationObjectTypeBase)
-        PROP(m_ModelWrapper,"Modelo")
+        PROP(m_ModelWrapper,"Model")
         PROP_FLAGS(m_ShaderWrapper,"Shader",MRPF_NORMAL|MRPF_OPTIONAL)
-        PROP_VALUE_FLAGS(m_bCastShadow,"EmiteSombras",true,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_bCastShadow,"ShadowEmitter",true,MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_VALUE_FLAGS(m_dFps,"Fps",50.0,MRPF_NORMAL|MRPF_OPTIONAL)
-        PROP_VALUE_FLAGS(m_bCyclic,"Repetir",false,MRPF_NORMAL|MRPF_OPTIONAL)
-        PROP_VALUE_FLAGS(m_dwStartTime,"TiempoInicio",0,MRPF_NORMAL|MRPF_OPTIONAL)
-        PROP_VALUE_FLAGS(m_dwEndTime,"TiempoFin",0,MRPF_NORMAL|MRPF_OPTIONAL)
-   END_PROP_MAP();
+        PROP_VALUE_FLAGS(m_bLoop,"Loop",false,MRPF_NORMAL|MRPF_OPTIONAL)
+        PROP_VALUE_FLAGS(m_nStartTime,"StartTime",0,MRPF_NORMAL|MRPF_OPTIONAL)
+        PROP_VALUE_FLAGS(m_nEndTime,"EndTime",0,MRPF_NORMAL|MRPF_OPTIONAL)
+    END_PROP_MAP();
 
+   // IModelAnimationObjectTypeDesign
+   void GetConfig(SModelAnimationObjectTypeConfig *pConfig);
+   void SetConfig(SModelAnimationObjectTypeConfig *pConfig);
+   void SetModel(IGenericModel *piModel);
+   void GetModel(IGenericModel **ppiModel);
+   
     CModelAnimationObjectType();
     ~CModelAnimationObjectType();
 };

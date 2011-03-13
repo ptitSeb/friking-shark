@@ -7,9 +7,9 @@ CModelAnimationObjectType::CModelAnimationObjectType()
 {
     m_bCastShadow=true;
     m_dFps=50.0;
-    m_bCyclic=false;
-    m_dwStartTime=0;
-    m_dwEndTime=0;
+    m_bLoop=false;
+    m_nStartTime=0;
+    m_nEndTime=0;
 }
 
 CModelAnimationObjectType::~CModelAnimationObjectType()
@@ -75,6 +75,26 @@ CTraceInfo CModelAnimationObjectType::DesignGetTrace( const CVector &vOrigin,con
 	}
 }
 
+void CModelAnimationObjectType::GetConfig(SModelAnimationObjectTypeConfig *pConfig)
+{
+	pConfig->nStartTime=m_nStartTime;
+	pConfig->nEndTime=m_nEndTime;
+	pConfig->bCastShadow=m_bCastShadow;
+	pConfig->bLoop=m_bLoop;
+	pConfig->dFps=m_dFps;
+}
+void CModelAnimationObjectType::SetConfig(SModelAnimationObjectTypeConfig *pConfig)
+{
+	m_nStartTime=pConfig->nStartTime;
+	m_nEndTime=pConfig->nEndTime;
+	m_bCastShadow=pConfig->bCastShadow;
+	m_bLoop=pConfig->bLoop;
+	m_dFps=pConfig->dFps;
+}
+
+void CModelAnimationObjectType::SetModel(IGenericModel *piModel){m_ModelWrapper.Attach(piModel);}
+void CModelAnimationObjectType::GetModel(IGenericModel **ppiModel){(*ppiModel)=ADD(m_ModelWrapper.m_piModel);}
+
 CModelAnimationObject::CModelAnimationObject(CModelAnimationObjectType *pType,IAnimation *piAnimation)
 :CAnimationObjectBase(pType,piAnimation)
 {
@@ -113,8 +133,8 @@ void CModelAnimationObject::UpdateVisibility(unsigned int dwCurrentTime)
 {
     unsigned int dwRelativeTime=dwCurrentTime-m_piAnimation->GetCurrentTimeBase();
     m_bVisible=true;
-    if(dwRelativeTime<m_pType->m_dwStartTime){m_bVisible=false;}
-    if(dwRelativeTime>m_pType->m_dwEndTime && m_pType->m_dwEndTime){m_bVisible=false;}
+    if(dwRelativeTime<m_pType->m_nStartTime){m_bVisible=false;}
+    if(dwRelativeTime>m_pType->m_nEndTime && m_pType->m_nEndTime){m_bVisible=false;}
 }
 
 bool CModelAnimationObject::ProcessFrame(IPhysicManager *pPhysicManager,unsigned int dwCurrentTime,double dInterval)
@@ -126,11 +146,11 @@ bool CModelAnimationObject::ProcessFrame(IPhysicManager *pPhysicManager,unsigned
 
     if(nFrames) 
     {
-        unsigned int dwRelativeTime=dwCurrentTime-m_piAnimation->GetCurrentTimeBase()-m_pType->m_dwStartTime;
+        unsigned int dwRelativeTime=dwCurrentTime-m_piAnimation->GetCurrentTimeBase()-m_pType->m_nStartTime;
         m_nCurrentFrame=(int)((((double)dwRelativeTime)*m_pType->m_dFps)/1000.0);
         if(m_nCurrentFrame>(nFrames-1))
         {
-            if(m_pType->m_bCyclic)
+            if(m_pType->m_bLoop)
             {
                 m_nCurrentFrame=m_nCurrentFrame%nFrames;
             }

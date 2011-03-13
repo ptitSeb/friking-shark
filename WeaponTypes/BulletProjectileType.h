@@ -1,5 +1,11 @@
 #pragma once
 
+enum EBulletState
+{
+	eBulletState_Normal=ENTITY_STATE_BASE,
+	eBulletState_Hit
+};
+
 class CBulletProjectileType: public CEntityTypeBase
 {
 public:
@@ -14,7 +20,12 @@ public:
     PROP_VALUE_FLAGS(m_dwDuration,"Duracion",1000,MRPF_NORMAL|MRPF_OPTIONAL)
     PROP_CLASS_CHAIN(CEntityTypeBase)
   END_PROP_MAP();
-
+  
+  BEGIN_ENTITY_STATE_MAP()
+	ENTITY_STATE_CHAIN(CEntityTypeBase)
+	ENTITY_STATE(eBulletState_Hit,"Hit")
+  END_ENTITY_STATE_MAP()
+  
   CBulletProjectileType();
   ~CBulletProjectileType();
 };

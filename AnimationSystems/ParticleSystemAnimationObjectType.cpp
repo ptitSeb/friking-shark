@@ -5,8 +5,8 @@
 
 CParticleSystemAnimationObjectType::CParticleSystemAnimationObjectType()
 {
-    m_dwStartTime=0;
-    m_dwEndTime=0;
+    m_nStartTime=0;
+    m_nEndTime=0;
     m_bTrackEntity=false;
 }
 
@@ -19,6 +19,25 @@ IAnimationObject *CParticleSystemAnimationObjectType::CreateInstance(IAnimation 
     CParticleSystemAnimationObject *pParticle=new CParticleSystemAnimationObject(this,piAnimation);
     return pParticle;
 }
+
+void CParticleSystemAnimationObjectType::GetConfig(SParticleSystemAnimationObjectTypeConfig *pConfig)
+{
+	pConfig->nStartTime=m_nStartTime;
+	pConfig->nEndTime=m_nEndTime;
+	pConfig->vPosition=m_vPosition;
+	pConfig->bTrackEntity=m_bTrackEntity;
+}
+
+void CParticleSystemAnimationObjectType::SetConfig(SParticleSystemAnimationObjectTypeConfig *pConfig)
+{
+	m_nStartTime=pConfig->nStartTime;
+	m_nEndTime=pConfig->nEndTime;
+	m_vPosition=pConfig->vPosition;
+	m_bTrackEntity=pConfig->bTrackEntity;
+}
+
+void CParticleSystemAnimationObjectType::SetParticleSystemType(IParticleSystemType *piParticleSystem){m_ParticleSystemType.Attach(piParticleSystem);}
+void CParticleSystemAnimationObjectType::GetParticleSystemType(IParticleSystemType **ppiParticleSystem){(*ppiParticleSystem)=ADD(m_ParticleSystemType.m_piParticleSystemType);}
 
 CParticleSystemAnimationObject::CParticleSystemAnimationObject(CParticleSystemAnimationObjectType *pType,IAnimation *piAnimation)
 :CAnimationObjectBase(pType,piAnimation)
@@ -44,14 +63,14 @@ void CParticleSystemAnimationObject::CheckActivation(unsigned int dwCurrentTime)
     unsigned int dwRelativeTime=dwCurrentTime-m_piAnimation->GetCurrentTimeBase();
     if(m_piParticleSystem==NULL)
     {
-        if(m_pType->m_ParticleSystemType.m_piParticleSystemType && dwRelativeTime>=m_pType->m_dwStartTime)
+        if(m_pType->m_ParticleSystemType.m_piParticleSystemType && dwRelativeTime>=m_pType->m_nStartTime)
         {
             m_piParticleSystem=m_pType->m_ParticleSystemType.m_piParticleSystemType->CreateInstance(dwCurrentTime);
         }
     }
     else
     {
-        if(m_pType->m_ParticleSystemType.m_piParticleSystemType && m_pType->m_dwEndTime && dwRelativeTime>=m_pType->m_dwEndTime)
+        if(m_pType->m_ParticleSystemType.m_piParticleSystemType && m_pType->m_nEndTime && dwRelativeTime>=m_pType->m_nEndTime)
         {
             Deactivate();
         }

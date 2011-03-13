@@ -1,3 +1,6 @@
+#ifndef __PARTICLE_SYSTEMS__
+#define __PARTICLE_SYSTEMS__
+
 #include "GameRunTimeLib.h"
 #include "GameManagers.h"
 
@@ -96,3 +99,5 @@ struct IParticleModifier
  
     virtual ~IParticleModifier(){}
 };
+
+#endif

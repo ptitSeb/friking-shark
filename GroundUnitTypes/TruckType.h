@@ -1,5 +1,11 @@
 #pragma once
 
+enum ETruckState
+{
+	eTruckState_Normal=ENTITY_STATE_BASE,
+	eTruckState_Destroyed
+};
+
 class CTruckType: public CEntityTypeBase
 {
 public:
@@ -15,6 +21,11 @@ public:
         PROP_VALUE_FLAGS(m_dMaxHealth,"Vida",1,MRPF_NORMAL|MRPF_OPTIONAL);
         PROP_VALUE_FLAGS(m_dMaxAngularSpeed,"VelocidadAngularMaxima",60,MRPF_NORMAL|MRPF_OPTIONAL);
     END_PROP_MAP();
+	
+	BEGIN_ENTITY_STATE_MAP()
+		ENTITY_STATE_CHAIN(CEntityTypeBase)
+		ENTITY_STATE(eTruckState_Destroyed,"Destroyed")
+	END_ENTITY_STATE_MAP()
 
     CTruckType();
     ~CTruckType();

@@ -5,7 +5,7 @@
 
 CEventAnimationObjectType::CEventAnimationObjectType()
 {
-    m_dwTime=0;
+    m_nTime=0;
 }
 
 CEventAnimationObjectType::~CEventAnimationObjectType()
@@ -16,6 +16,20 @@ IAnimationObject *CEventAnimationObjectType::CreateInstance(IAnimation *piAnimat
 {
     CEventAnimationObject *pParticle=new CEventAnimationObject(this,piAnimation);
     return pParticle;
+}
+
+void CEventAnimationObjectType::GetConfig(SEventAnimationObjectTypeConfig *pConfig)
+{
+	pConfig->nTime=m_nTime;
+	pConfig->sName=m_sEvent;
+	pConfig->sParams=m_sParams;
+}
+
+void CEventAnimationObjectType::SetConfig(SEventAnimationObjectTypeConfig *pConfig)
+{
+	m_nTime=pConfig->nTime;
+	m_sEvent=pConfig->sName;
+	m_sParams=pConfig->sParams;
 }
 
 CEventAnimationObject::CEventAnimationObject(CEventAnimationObjectType *pType,IAnimation *piAnimation)
@@ -29,7 +43,7 @@ bool CEventAnimationObject::ProcessFrame(IPhysicManager *pPhysicManager,unsigned
 {
     if(!m_bActive){return false;}
     if(m_bFired){return false;}
-    if(dwCurrentTime>m_pType->m_dwTime)
+    if(dwCurrentTime>m_pType->m_nTime)
     {
         IEntity *piEntity=m_piAnimation->GetEntity();
         if(piEntity){piEntity->OnAnimationEvent(m_pType->m_sEvent,m_pType->m_sParams);}
