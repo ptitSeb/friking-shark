@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{DEC6F47B-0D1E-405E-8DAC-9D46570D556E}</ProjectGuid>
+    <ProjectGuid>{E0E740A3-6925-4048-A06E-5B98C1FCFE9B}</ProjectGuid>
     <RootNamespace>EntityEditor</RootNamespace>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -53,7 +53,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGUI;..\GameGUILib;..\GameGraphics;..\PlayAreaElements;..\SoundSystems;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGUI;..\GameGUILib;..\GameGraphics;..\PlayAreaElements;..\SoundSystems;..\GameEntityLib;..\AnimationSystems;..\ParticleSystems;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;SCENARIOEDITOR_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -78,7 +78,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGUI;..\GameGUILib;..\GameGraphics;..\PlayAreaElements;..\SoundSystems;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGUI;..\GameGUILib;..\GameGraphics;..\PlayAreaElements;..\SoundSystems;..\GameEntityLib;..\AnimationSystems;..\ParticleSystems;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;_USRDLL;SCENARIOEDITOR_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -101,7 +101,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="EntityEditor.cpp" />
+    <ClCompile Include="EntityEditorClassSelector.cpp" />
     <ClCompile Include="EntityEditorMainWindow.cpp" />
+    <ClCompile Include="EntityEditorNamedObjectSelector.cpp" />
     <ClCompile Include="EntityEditorObjectLabel.cpp" />
     <ClCompile Include="EntityEditorObjectSelector.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -111,7 +113,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EntityEditor.h" />
+    <ClInclude Include="EntityEditorClassSelector.h" />
     <ClInclude Include="EntityEditorMainWindow.h" />
+    <ClInclude Include="EntityEditorNamedObjectSelector.h" />
     <ClInclude Include="EntityEditorObjectLabel.h" />
     <ClInclude Include="EntityEditorObjectSelector.h" />
     <ClInclude Include="stdafx.h" />
