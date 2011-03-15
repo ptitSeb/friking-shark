@@ -21,6 +21,10 @@ EntityEditorMainWindow.cpp\
 EntityEditorNamedObjectSelector.cpp\
 EntityEditorObjectSelector.cpp\
 EntityEditorClassSelector.cpp\
+EntityEditorAnimationPropertyPanel.cpp\
+EntityEditorModelPropertyPanel.cpp\
+EntityEditorSoundPropertyPanel.cpp\
+EntityEditorParticleSystemPropertyPanel.cpp\
 stdafx.cpp
 
 

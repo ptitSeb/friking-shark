@@ -101,11 +101,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="EntityEditor.cpp" />
+    <ClCompile Include="EntityEditorAnimationPropertyPanel.cpp" />
     <ClCompile Include="EntityEditorClassSelector.cpp" />
+    <ClCompile Include="EntityEditorEventPropertyPanel.cpp" />
     <ClCompile Include="EntityEditorMainWindow.cpp" />
+    <ClCompile Include="EntityEditorModelPropertyPanel.cpp" />
     <ClCompile Include="EntityEditorNamedObjectSelector.cpp" />
     <ClCompile Include="EntityEditorObjectLabel.cpp" />
     <ClCompile Include="EntityEditorObjectSelector.cpp" />
+    <ClCompile Include="EntityEditorParticleSystemPropertyPanel.cpp" />
+    <ClCompile Include="EntityEditorSoundPropertyPanel.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -113,11 +118,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EntityEditor.h" />
+    <ClInclude Include="EntityEditorAnimationPropertyPanel.h" />
     <ClInclude Include="EntityEditorClassSelector.h" />
+    <ClInclude Include="EntityEditorEventPropertyPanel.h" />
     <ClInclude Include="EntityEditorMainWindow.h" />
+    <ClInclude Include="EntityEditorModelPropertyPanel.h" />
     <ClInclude Include="EntityEditorNamedObjectSelector.h" />
     <ClInclude Include="EntityEditorObjectLabel.h" />
     <ClInclude Include="EntityEditorObjectSelector.h" />
+    <ClInclude Include="EntityEditorParticleSystemPropertyPanel.h" />
+    <ClInclude Include="EntityEditorSoundPropertyPanel.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>

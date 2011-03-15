@@ -82,6 +82,7 @@ bool CEntityEditorMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 	m_PhysicManagerWrapper.Attach("GameSystem","PhysicManager");
 	m_SoundManagerWrapper.Attach("GameSystem","SoundManager");
 	UpdateVisiblePanels();
+	UpdateStateList();
 	return bOk;
 }
 
@@ -89,6 +90,7 @@ void CEntityEditorMainWindow::DestroyWindow()
 {
 	StopGameSimulation();
 	Reset();
+	UpdateStateList();
 	if(m_GameControllerWrapper.m_piGameController){m_GameControllerWrapper.m_piGameController->EndGame();}
 	if(m_GameControllerWrapper.m_piGameController){m_GameControllerWrapper.m_piGameController->CloseScenario();}
 	m_PhysicManagerWrapper.Detach();
@@ -503,6 +505,7 @@ void CEntityEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	if(m_piBTOptionsSolid==piControl){m_bSolid=!m_bSolid;}
 	if(m_piBTNewModel==piControl){ProcessNewModel();}
 	if(m_piBTNewSound==piControl){ProcessNewSound();}
+	if(m_piBTNewEvent==piControl){ProcessNewEvent();}
 	if(m_piBTNewParticleSystem==piControl){ProcessNewParticleSystem();}
 	if(m_piBTNewAnimation==piControl){ProcessNewAnimation();}
 	
@@ -646,10 +649,11 @@ void CEntityEditorMainWindow::UpdateSelectedAnimation()
 	UpdateRunningAnimation();	
 }
 
+
 void CEntityEditorMainWindow::UpdateObjectList()
 {
-	if(m_piLSObjectList==NULL){return;}
-	m_piLSObjectList->Clear();
+	if(m_piLSObjects==NULL){return;}
+	m_piLSObjects->Clear();
 	
 	int nAnimation=m_piLSAnimations->GetSelectedElement();
 	if(nAnimation!=-1)
@@ -671,7 +675,7 @@ void CEntityEditorMainWindow::UpdateObjectList()
 				IGenericModel *piModel=NULL;
 				modelWrapper.m_piDesign->GetModel(&piModel);
 				ISystemObject *piObject=QI(ISystemObject,piModel);				
-				m_piLSObjectList->AddElement(piObject?piObject->GetName():"Unknown");
+				m_piLSObjects->AddElement(piObject?piObject->GetName():"Unknown");
 				REL(piObject);
 				REL(piModel);
 			}
@@ -679,14 +683,14 @@ void CEntityEditorMainWindow::UpdateObjectList()
 			{
 				SEventAnimationObjectTypeConfig sConfig;
 				eventWrapper.m_piDesign->GetConfig(&sConfig);
-				m_piLSObjectList->AddElement(sConfig.sName+"("+sConfig.sParams+")");
+				m_piLSObjects->AddElement(sConfig.sName+"("+sConfig.sParams+")");
 			}
 			else if(piAnimationObject && particleSystemWrapper.Attach(piAnimationObject))
 			{
 				IParticleSystemType *piParticleSystem=NULL;
 				particleSystemWrapper.m_piDesign->GetParticleSystemType(&piParticleSystem);
 				ISystemObject *piObject=QI(ISystemObject,piParticleSystem);				
-				m_piLSObjectList->AddElement(piObject?piObject->GetName():"Unknown");
+				m_piLSObjects->AddElement(piObject?piObject->GetName():"Unknown");
 				REL(piParticleSystem);
 				REL(piObject);
 			}
@@ -695,17 +699,52 @@ void CEntityEditorMainWindow::UpdateObjectList()
 				ISoundType *piSound=NULL;
 				soundWrapper.m_piDesign->GetSound(&piSound);
 				ISystemObject *piObject=QI(ISystemObject,piSound);				
-				m_piLSObjectList->AddElement(piObject?piObject->GetName():"Unknown");
+				m_piLSObjects->AddElement(piObject?piObject->GetName():"Unknown");
 				REL(piSound);
 				REL(piObject);
 			}
 			else 
 			{
-				m_piLSObjectList->AddElement("Unknown Object Type");
+				m_piLSObjects->AddElement("Unknown Object Type");
 			}
 			REL(piAnimationObject);
 		}
 	}
+
+	UpdateSelectedObject();
+}
+
+
+void CEntityEditorMainWindow::UpdateSelectedObject()
+{
+	if(m_piLSAnimations==NULL){return;}
+	if(m_piLSObjects==NULL){return;}
+
+	int nSelectedAnimation=(m_piLSAnimations->GetSelectedElement());
+	int nSelectedObject=(m_piLSObjects->GetSelectedElement());
+	
+	IAnimationObjectType *piAnimationObject=NULL;
+	ISystemObject *piObject=NULL;
+
+	if(nSelectedAnimation!=-1 && nSelectedObject!=-1)
+	{
+		m_vAnimations[nSelectedAnimation].m_piAnimationTypeDesign->GetObject(nSelectedObject,&piAnimationObject);
+		piObject=QI(ISystemObject,piAnimationObject);
+	}
+
+	for(unsigned int x=0;x<ePropertyPanel_Count;x++)
+	{
+		if(m_ppiPropertyPanels[x]==NULL){continue;}
+		if(!m_ppiPropertyPanels[x]->SetObject(piObject))
+		{
+			m_ppiPropertyPanels[x]->Show(false);
+		}
+		else
+		{
+			m_ppiPropertyPanels[x]->Show(piObject!=NULL);
+		}
+	}
+	REL(piObject);
 }
 
 void CEntityEditorMainWindow::UpdateRunningAnimation()
@@ -735,6 +774,10 @@ void CEntityEditorMainWindow::OnSelectionChanged(IGameGUIList *piControl,int nEl
 	if(piControl==m_piLSAnimations)
 	{
 		UpdateSelectedAnimation();
+	}
+	if(piControl==m_piLSObjects)
+	{
+		UpdateSelectedObject();
 	}
 }
 void CEntityEditorMainWindow::OnSelectionDoubleCliked(IGameGUIList *piControl,int nElement,std::string sElement){}
@@ -950,7 +993,42 @@ void CEntityEditorMainWindow::ProcessNewSound()
 		}
 	}
 }
+void CEntityEditorMainWindow::ProcessNewEvent()
+{
+	if(m_piLSAnimations==NULL){return;}
+	int nSelected=(m_piLSAnimations->GetSelectedElement());
+	if(nSelected==-1)
+	{
+		MessageDialog("No animation selected.","Entity Editor",eMessageDialogType_Error);
+		return;
+	}
 
+	bool bOk=false;
+	std::string sEventName;
+
+	if(InputDialog(&sEventName,"New Event"))
+	{
+		if(sEventName.length()==0)
+		{
+			MessageDialog("Cannot create an unnamed event","Entity Editor",eMessageDialogType_Error);
+			return;
+		}
+
+		IAnimationObjectType *piAnimationObject=NULL;
+		CAnimationEventTypeWrapper animationObject;
+		unsigned int nIndex=m_vAnimations[nSelected].m_piAnimationTypeDesign->AddObject("EventAnimationObjectType");
+		m_vAnimations[nSelected].m_piAnimationTypeDesign->GetObject(nIndex,&piAnimationObject);
+		if(animationObject.Attach(piAnimationObject))
+		{
+			SEventAnimationObjectTypeConfig sConfig;
+			sConfig.sName=sEventName;
+			animationObject.m_piDesign->SetConfig(&sConfig);
+		}
+		REL(piAnimationObject);
+
+		UpdateSelectedAnimation();
+	}
+}
 
 void CEntityEditorMainWindow::ProcessNewParticleSystem()
 {
@@ -988,3 +1066,39 @@ void CEntityEditorMainWindow::ProcessNewParticleSystem()
 	}
 }
 
+void CEntityEditorMainWindow::OnObjectChanged(IEntityEditorPropertyPanel *piPanel,ISystemObject *piObject)
+{
+	UpdateRunningAnimation();
+}
+
+void CEntityEditorMainWindow::OnObjectRemoved(IEntityEditorPropertyPanel *piPanel,ISystemObject *piObject)
+{
+	if(m_piLSStates==NULL){return;}
+	if(m_piLSAnimations==NULL){return;}
+	if(m_piLSObjects==NULL){return;}
+
+	int nSelectedState=(m_piLSStates->GetSelectedElement());
+	int nSelectedAnimation=(m_piLSAnimations->GetSelectedElement());
+	int nSelectedObject=(m_piLSObjects->GetSelectedElement());
+
+	if(nSelectedAnimation!=-1 && (ISystemUnknown*)piObject==(ISystemUnknown*)m_vAnimations[nSelectedAnimation].m_piObject)
+	{
+		m_EntityType.m_piEntityTypeDesign->RemoveStateAnimation(nSelectedState,nSelectedAnimation);
+		UpdateSelectedAnimation();
+	}
+	if(nSelectedObject!=-1)
+	{
+		for(unsigned int x=0;x<m_vAnimations[nSelectedAnimation].m_piAnimationTypeDesign->GetObjectCount();x++)
+		{
+			IAnimationObjectType *piAnimationObject=NULL;
+			m_vAnimations[nSelectedAnimation].m_piAnimationTypeDesign->GetObject(x,&piAnimationObject);
+			if((ISystemUnknown*)piObject==(ISystemUnknown*)piAnimationObject)
+			{
+				m_vAnimations[nSelectedAnimation].m_piAnimationTypeDesign->RemoveObject(x);
+				break;
+			}
+			REL(piAnimationObject);
+		}
+		UpdateSelectedAnimation();
+	}
+}

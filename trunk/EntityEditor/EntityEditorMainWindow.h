@@ -35,7 +35,7 @@ public:
 	~CFakeEntity(){}	
 };
 
-class CEntityEditorMainWindow: public CGameWindowBase, public IGameGUIButtonEvents, public IGameGUIListEvents
+class CEntityEditorMainWindow: public CGameWindowBase, public IGameGUIButtonEvents, public IGameGUIListEvents, public IEntityEditorPropertyPanelEvents
 {
 public:
 	CConfigFile				m_GUIConfigFile;
@@ -55,7 +55,7 @@ public:
 	std::string				 m_sEntityName;
 	
 	IEntityEditorPropertyPanel *m_ppiPropertyPanels[ePropertyPanel_Count];
-	
+
 	double					 m_d3DFontSize;
 	
 	bool		m_bSolid;
@@ -92,7 +92,7 @@ public:
 	IGameGUIButton *m_piBTNewAnimation;
 	
 	IGameWindow     *m_piGRObjectPanel;
-	IGameGUIList    *m_piLSObjectList;
+	IGameGUIList    *m_piLSObjects;
 
 	IGameGUIButton  *m_piBTNewModel;
 	IGameGUIButton  *m_piBTNewSound;
@@ -130,6 +130,7 @@ public:
 	
 	void ProcessNewModel();
 	void ProcessNewSound();
+	void ProcessNewEvent();
 	void ProcessNewParticleSystem();
 	void ProcessNewAnimation();
 	
@@ -154,7 +155,7 @@ public:
 		CHILD_MAP_ENTRY_EX("NewAnimation",m_piBTNewAnimation,IGameGUIButtonEvents);
 		
 		CHILD_MAP_ENTRY("ObjectPanel",m_piGRObjectPanel);
-		CHILD_MAP_ENTRY_EX("ObjectList",m_piLSObjectList,IGameGUIListEvents);
+		CHILD_MAP_ENTRY_EX("ObjectList",m_piLSObjects,IGameGUIListEvents);
 		CHILD_MAP_ENTRY_EX("NewModel",m_piBTNewModel,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("NewSound",m_piBTNewSound,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("NewEvent",m_piBTNewEvent,IGameGUIButtonEvents);
@@ -168,13 +169,12 @@ public:
 		CHILD_MAP_ENTRY_EX("EntityRemove",m_piBTEntityRemove,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("EntityExit",m_piBTEntityExit,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY("EntityPanel",m_piGREntity);
-	/*	
 		CHILD_MAP_ENTRY_EX("AnimationPropertyPanel",m_ppiPropertyPanels[ePropertyPanel_Animation],IEntityEditorPropertyPanelEvents);
 		CHILD_MAP_ENTRY_EX("ModelPropertyPanel",m_ppiPropertyPanels[ePropertyPanel_Model],IEntityEditorPropertyPanelEvents);
-		CHILD_MAP_ENTRY_EX("SoundPropertyPanel",m_ppiPropertyPanels[ePropertyPanel_Sound],IEntityEditorPropertyPanelEvents);
 		CHILD_MAP_ENTRY_EX("EventPropertyPanel",m_ppiPropertyPanels[ePropertyPanel_Event],IEntityEditorPropertyPanelEvents);
+		CHILD_MAP_ENTRY_EX("SoundPropertyPanel",m_ppiPropertyPanels[ePropertyPanel_Sound],IEntityEditorPropertyPanelEvents);
 		CHILD_MAP_ENTRY_EX("ParticleSystemPropertyPanel",m_ppiPropertyPanels[ePropertyPanel_ParticleSystem],IEntityEditorPropertyPanelEvents);
-		*/
+		
 	END_CHILD_MAP()
 	
 	BEGIN_PROP_MAP(CEntityEditorMainWindow)
@@ -206,8 +206,9 @@ public:
 	void UpdateVisiblePanels();
 	void UpdateStateList();
 	void UpdateAnimationList();
-	void UpdateSelectedAnimation();
 	void UpdateObjectList();
+	void UpdateSelectedAnimation();
+	void UpdateSelectedObject();
 	
 	void UpdateRunningAnimation();
 	
@@ -220,7 +221,11 @@ public:
 	
 	void OnSelectionChanged(IGameGUIList *piControl,int nElement,std::string sElement);
 	void OnSelectionDoubleCliked(IGameGUIList *piControl,int nElement,std::string sElement);
-	
+
+	// IEntityEditorPropertyPanelEvents
+	void OnObjectChanged(IEntityEditorPropertyPanel *piPanel,ISystemObject *piObject);
+	void OnObjectRemoved(IEntityEditorPropertyPanel *piPanel,ISystemObject *piObject);
+
 	CEntityEditorMainWindow(void);
 	~CEntityEditorMainWindow(void);
 };

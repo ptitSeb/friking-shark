@@ -8,7 +8,11 @@
 #include "EntityEditorObjectLabel.h"
 #include "EntityEditorClassSelector.h"
 #include "EntityEditorNamedObjectSelector.h"
-
+#include "EntityEditorAnimationPropertyPanel.h"
+#include "EntityEditorModelPropertyPanel.h"
+#include "EntityEditorEventPropertyPanel.h"
+#include "EntityEditorSoundPropertyPanel.h"
+#include "EntityEditorParticleSystemPropertyPanel.h"
 
 BEGIN_SYSTEM_MODULE()
 SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityEditorMainWindow,"CEntityEditorMainWindow")
@@ -16,4 +20,9 @@ SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityEditorObjectSelector,"CEntityEditorObje
 SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityEditorObjectLabel,"CEntityEditorObjectLabel")
 SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityEditorClassSelector,"CEntityEditorClassSelector")
 SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityEditorNamedObjectSelector,"CEntityEditorNamedObjectSelector")
+SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityEditorAnimationPropertyPanel,"CEntityEditorAnimationPropertyPanel")
+SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityEditorModelPropertyPanel,"CEntityEditorModelPropertyPanel")
+SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityEditorEventPropertyPanel,"CEntityEditorEventPropertyPanel")
+SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityEditorSoundPropertyPanel,"CEntityEditorSoundPropertyPanel")
+SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityEditorParticleSystemPropertyPanel,"CEntityEditorParticleSystemPropertyPanel")
 END_SYSTEM_MODULE()

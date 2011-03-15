@@ -53,8 +53,10 @@ struct SSoundAnimationObjectTypeConfig
 {
 	unsigned int nStartTime;
 	unsigned int nEndTime;
+	bool 		 bLoop;
+	unsigned int nVolume;
 
-	SSoundAnimationObjectTypeConfig(){nStartTime=0;nEndTime=0;}
+	SSoundAnimationObjectTypeConfig(){nStartTime=0;nEndTime=0;nVolume=100;bLoop=false;}
 };
 
 struct IAnimationType:virtual public ISystemUnknown,virtual public IDesignObject
