@@ -141,7 +141,8 @@ public:
 	virtual void		UpdateRealRect()=0;
 	virtual void		GetRealRect(SGameRect *pRect)=0;
 	virtual	double 		GetSizeInLayout()=0;
-
+	virtual void    	SetSizeInLayout(double dSize)=0;
+	
 	virtual void		SetReferenceSystem(eGameGUIReferenceSystem eRefSystem)=0;
 	virtual eGameGUIReferenceSystem GetReferenceSystem()=0;
 

@@ -25,7 +25,8 @@ public:
 
     virtual bool LoadModule(std::string sPath,ISystemModule **ppiModule);
     virtual bool GetModule(std::string sPath,ISystemModule **ppiModule);
-    virtual bool RegisterModule(ISystemModule *piModule);
+	virtual void GetModules(std::vector<ISystemModule *> *pvModules);
+	virtual bool RegisterModule(ISystemModule *piModule);
     virtual void UnregisterModule(ISystemModule *piModule);
 
     virtual bool RegisterObject(ISystemObject *piObject);
@@ -36,6 +37,10 @@ public:
 
     virtual bool CreateObject(std::string sClass,ISystemObject **piObject);
     virtual bool CreateObject(std::string sClass,std::string sName,ISystemObject **piObject);
+
+	virtual bool GetClass(std::string sNameClass,ISystemClass **piClass);
+	virtual void GetClasses(std::vector<ISystemClass *> *pvClasses);
+	
 
 	virtual void DestroyAllObjects();
 

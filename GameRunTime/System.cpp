@@ -119,6 +119,15 @@ bool CSystem::GetModule(std::string sPath,ISystemModule **ppiModule)
     return true;
 }
 
+void CSystem::GetModules( std::vector<ISystemModule *> *pvModules )
+{
+	std::map<std::string,ISystemModule*>::iterator i;
+	for(i=m_mModules.begin();i!=m_mModules.end();i++)
+	{
+		pvModules->push_back(ADD(i->second));
+	}
+}
+
 bool CSystem::RegisterObject(ISystemObject *piObject)
 {
     std::map<std::string,ISystemObject*>::iterator i;
@@ -151,6 +160,15 @@ bool CSystem::GetObject(std::string sName,ISystemObject **ppiObject)
     *ppiObject=i->second;
     ADD(*ppiObject);
     return true;
+}
+
+void CSystem::GetObjects( std::vector<ISystemObject *> *pvObjects )
+{
+	std::map<std::string,ISystemObject*>::iterator i;
+	for(i=m_mObjects.begin();i!=m_mObjects.end();i++)
+	{
+		pvObjects->push_back(ADD(i->second));
+	}
 }
 
 bool CSystem::CreateObject(std::string sClass,ISystemObject **ppiObject)
@@ -195,11 +213,21 @@ bool CSystem::CreateObject(std::string sClass,std::string sName,ISystemObject **
     return false;
 }
 
-void CSystem::GetObjects( std::vector<ISystemObject *> *pvObjects )
+bool CSystem::GetClass(std::string sName,ISystemClass **ppiClass)
 {
-	std::map<std::string,ISystemObject*>::iterator i;
-	for(i=m_mObjects.begin();i!=m_mObjects.end();i++)
+	std::map<std::string,ISystemClass*>::iterator i;
+	i=m_mClasses.find(sName);
+	if(i==m_mClasses.end()){return false;}
+	*ppiClass=i->second;
+	ADD(*ppiClass);
+	return true;
+}
+
+void CSystem::GetClasses( std::vector<ISystemClass *> *pvClasses )
+{
+	std::map<std::string,ISystemClass*>::iterator i;
+	for(i=m_mClasses.begin();i!=m_mClasses.end();i++)
 	{
-		pvObjects->push_back(ADD(i->second));
+		pvClasses->push_back(ADD(i->second));
 	}
 }

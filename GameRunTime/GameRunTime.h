@@ -114,7 +114,8 @@ public:
 
     virtual bool LoadModule(std::string sPath,ISystemModule **ppiModule)=0;
     virtual bool GetModule(std::string sPath,ISystemModule **ppiModule)=0;
-    virtual bool RegisterModule(ISystemModule *piModule)=0;
+	virtual void GetModules(std::vector<ISystemModule *> *pvModules)=0;
+	virtual bool RegisterModule(ISystemModule *piModule)=0;
     virtual void UnregisterModule(ISystemModule *piModule)=0;
 
     // objects (controllers)
@@ -126,8 +127,13 @@ public:
 	virtual void GetObjects(std::vector<ISystemObject *> *pvObjects)=0;
     virtual bool CreateObject(std::string sClass,ISystemObject **piObject)=0;
     virtual bool CreateObject(std::string sClass,std::string sName,ISystemObject **piObject)=0;
+	
+	// Class enumeration
+	virtual bool GetClass(std::string sNameClass,ISystemClass **piClass)=0;
+	virtual void GetClasses(std::vector<ISystemClass *> *pvClasses)=0;
 
-		virtual void DestroyAllObjects()=0;
+	
+	virtual void DestroyAllObjects()=0;
 };
 
 class ISystemManager: virtual public ISystemUnknown
