@@ -1,34 +1,26 @@
 #pragma once
 
-#include "GameGraphics.h"
-
-DECLARE_CUSTOM_WRAPPER1(CGameControllerWrapper,IGameController,m_piGameController)
-DECLARE_CUSTOM_WRAPPER1(CEntityManagerWrapper,IEntityManager,m_piEntityManager)
-
-class CSoundSystemManager:virtual public CSystemObjectBase, virtual public ISoundManager, virtual public IGameManager
+class CSoundSystemManager:virtual public CSystemObjectBase, virtual public ISoundManager
 {
-	CGameControllerWrapper  m_GameControllerWrapper;
-	CEntityManagerWrapper   m_EntityManagerWrapper;
-
 	unsigned int m_nMasterVolume;// 0,100
 	bool m_bEnable3DSound;
-	IEntity *m_piPlayerEntity;
 
 	ALCcontext *m_pContext;
 	ALCdevice *m_pDevice;
 
-
+	CVector m_vListenerPosition;
+	CVector m_vListenerOrientation;
+	CVector m_vListenerVelocity;
+	
+	void UpdateListener();
+	
 public:
-  // IGameManager
-
-	void CreateScenario();
-	void LoadScenario(ISystemPersistencyNode *piNode);
-	void SaveScenario(ISystemPersistencyNode *piNode);
-	void CloseScenario();
-
-	void Start();
-	void Stop();
-	void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
+	
+	// ISoundManager
+	
+	void SetListenerPosition(CVector vPosition);
+	void SetListenerOrientation(CVector vOrientation);
+	void SetListenerVelocity(CVector vVelocity);
 
 	bool Is3DSoundEnabled();
 
@@ -43,6 +35,8 @@ public:
 	bool Init(std::string sClass,std::string sName,ISystem *piSystem);
 	void Destroy();
 
+	bool Unserialize(ISystemPersistencyNode *piNode);
+	
 	CSoundSystemManager();
 	virtual ~CSoundSystemManager();
 };

@@ -26,7 +26,7 @@ void CEntityEditorSoundPropertyPanel::UpdateData()
 	m_Object.m_piDesign->GetConfig(&sConfig);
 
 	char A[200];
-	if(m_piSTVolume)   {sprintf(A,"Vol  : %.02f%",sConfig.nVolume);m_piSTVolume->SetText(A);}
+	if(m_piSTVolume)   {sprintf(A,"Vol  : %d%%",sConfig.nVolume);m_piSTVolume->SetText(A);}
 	if(m_piSTStartTime){sprintf(A,"Start: %.02f s",((double)sConfig.nStartTime)/1000.0);m_piSTStartTime->SetText(A);}
 	if(m_piSTEndTime)  {sprintf(A,"End  : %.02f s",((double)sConfig.nEndTime)/1000.0);m_piSTEndTime->SetText(A);}
 	if(m_piBTLoop){m_piBTLoop->SetText(sConfig.bLoop?"Loop : On":"Loop : Off");}

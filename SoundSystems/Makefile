@@ -6,9 +6,6 @@ CC=g++
 INCLUDES = -I. \
 -I../GameRunTime \
 -I../GameRunTimeLib \
--I../GameGUI \
--I../GameGraphics \
--I../GameManagers \
 -I../VectorLib \
 
 SOURCES = SoundSystems.cpp\
