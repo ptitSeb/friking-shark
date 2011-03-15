@@ -92,7 +92,7 @@ unsigned int CAnimationType::AddObject(std::string sObjectType)
 {
 	CAnimationObjectTypeWrapper wrapper;
 	int nIndex=OBJECT_INVALID;
-	bool bOk=wrapper.Create("Objects",sObjectType,"");
+	bool bOk=wrapper.Create(m_piSystem,sObjectType,"");
 	if(bOk)
 	{
 		nIndex=m_vObjects.size();

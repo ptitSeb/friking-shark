@@ -135,7 +135,7 @@ struct IModelAnimationObjectTypeDesign:virtual public ISystemUnknown
 	virtual void		 GetModel(IGenericModel **ppiModel)=0;
 };
 
-struct IParticleSystemAnimationObjectTypeDesignn:virtual public ISystemUnknown
+struct IParticleSystemAnimationObjectTypeDesign:virtual public ISystemUnknown
 {
 	virtual void		 GetConfig(SParticleSystemAnimationObjectTypeConfig *pConfig)=0;
 	virtual void		 SetConfig(SParticleSystemAnimationObjectTypeConfig *pConfig)=0;
@@ -143,7 +143,7 @@ struct IParticleSystemAnimationObjectTypeDesignn:virtual public ISystemUnknown
 	virtual void		 GetParticleSystemType(IParticleSystemType **ppiParticleSystemType)=0;
 };
 
-struct ISoundAnimationObjectTypeDesignn:virtual public ISystemUnknown
+struct ISoundAnimationObjectTypeDesign:virtual public ISystemUnknown
 {
 	virtual void		 GetConfig(SSoundAnimationObjectTypeConfig *pConfig)=0;
 	virtual void		 SetConfig(SSoundAnimationObjectTypeConfig *pConfig)=0;

@@ -113,16 +113,20 @@ void CModelAnimationObject::Render(IGenericRender *piRender,IGenericCamera *piCa
 {
 	if(!m_bActive){return;}
 	if(!m_bVisible){return;}
+	CVector vPosition,vAngles;
+	
 	IEntity *piEntity=m_piAnimation->GetEntity();
 	if(m_pType->m_ModelWrapper.m_piModel && piEntity)
 	{
 		SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();
-		piRender->ActivateLighting();
-		if(m_pType->m_ShaderWrapper.m_piShader){m_pType->m_ShaderWrapper.m_piShader->Activate();}
-		piRender->RenderModel(pPhysicInfo->vPosition,pPhysicInfo->vAngles,m_pType->m_ModelWrapper.m_piModel,0,m_nCurrentFrame);
-		if(m_pType->m_ShaderWrapper.m_piShader){m_pType->m_ShaderWrapper.m_piShader->Deactivate();}
-		piRender->DeactivateLighting();
+		vPosition=pPhysicInfo->vPosition;
+		vAngles=pPhysicInfo->vAngles;
 	}
+	piRender->ActivateLighting();
+	if(m_pType->m_ShaderWrapper.m_piShader){m_pType->m_ShaderWrapper.m_piShader->Activate();}
+	piRender->RenderModel(vPosition,vAngles,m_pType->m_ModelWrapper.m_piModel,0,m_nCurrentFrame);
+	if(m_pType->m_ShaderWrapper.m_piShader){m_pType->m_ShaderWrapper.m_piShader->Deactivate();}
+	piRender->DeactivateLighting();
 }
 void CModelAnimationObject::CustomRender(IGenericRender *piRender,IGenericCamera *piCamera)
 {
