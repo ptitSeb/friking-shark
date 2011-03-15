@@ -72,6 +72,7 @@ void CGameMainWindow::UpdateRealRect()
 	}
 }
 double CGameMainWindow::GetSizeInLayout(){return 0;}
+void   CGameMainWindow::SetSizeInLayout(double dSize){}
 void CGameMainWindow::SetReferenceSystem(eGameGUIReferenceSystem eRefSystem){}
 eGameGUIReferenceSystem CGameMainWindow::GetReferenceSystem(){return eGameGUIReferenceSystem_Relative;}
 

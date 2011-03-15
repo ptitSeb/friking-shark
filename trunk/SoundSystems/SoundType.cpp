@@ -20,39 +20,62 @@ bool CSoundType::Unserialize(ISystemPersistencyNode *piNode)
 {
 	bool bOk=CSystemObjectBase::Unserialize(piNode);
 	if(!bOk){return false;}
+	if(m_sFileName.length()){bOk=LoadFromFile();}
+	return bOk;
+}
+
+bool CSoundType::Load(std::string sFileName)
+{
+	m_sFileName=sFileName;
+	return LoadFromFile();
+}
+
+bool CSoundType::LoadFromFile()
+{
+	bool bOk=true;
+	
+	for(size_t x=0;x<m_dAvailableSources.size();x++)
+	{
+		ALuint nSource=m_dAvailableSources[x];
+		if(nSource){alDeleteSources(1,&nSource);}
+	}
+	m_dAvailableSources.clear();
+	if(m_iSoundBuffer){alDeleteBuffers(1,&m_iSoundBuffer);m_iSoundBuffer=AL_NONE;}
 
 	m_iSoundBuffer=alutCreateBufferFromFile(m_sFileName.c_str());
 	if(m_iSoundBuffer!=AL_NONE)
 	{
-	  RTTRACE("CSoundType::CreateInstance -> Loaded Sound %s",m_sFileName.c_str());
-	  
-	  ALuint *pSources=new ALuint [m_nChannels];
-	  alGetError();
-	  alGenSources(m_nChannels,pSources);
-	  if(alGetError()==AL_NO_ERROR)
-	  {
-		for(unsigned int x=0;x<m_nChannels;x++)
+		RTTRACE("CSoundType::CreateInstance -> Loaded Sound %s",m_sFileName.c_str());
+		
+		ALuint *pSources=new ALuint [m_nChannels];
+		alGetError();
+		alGenSources(m_nChannels,pSources);
+		if(alGetError()==AL_NO_ERROR)
 		{
-		  alSourcei(pSources[x],AL_BUFFER,m_iSoundBuffer);
-		  alSourcef(pSources[x],AL_GAIN,(float)(m_dVolume/100.0));
-	  
-		  m_dAvailableSources.push_back(pSources[x]);
+			for(unsigned int x=0;x<m_nChannels;x++)
+			{
+				alSourcei(pSources[x],AL_BUFFER,m_iSoundBuffer);
+				alSourcef(pSources[x],AL_GAIN,(float)(m_dVolume/100.0));
+				
+				m_dAvailableSources.push_back(pSources[x]);
+			}
 		}
-	  }
-	  else
-	  {
-		RTTRACE("CSoundType::CreateInstance -> Failed to create sources. Error %d",alGetError());
-	  }
-	  delete [] pSources;
-	  pSources=NULL;
+		else
+		{
+			RTTRACE("CSoundType::CreateInstance -> Failed to create sources. Error %d",alGetError());
+		}
+		delete [] pSources;
+		pSources=NULL;
 	}
 	bOk=(m_dAvailableSources.size()!=0);
 	if(!bOk)
 	{
-	  RTTRACE("CSoundType::CreateInstance -> Failed to load sound %s. Error %d:%s",m_sFileName.c_str(),alutGetError(),alutGetErrorString(alutGetError()));
+		RTTRACE("CSoundType::CreateInstance -> Failed to load sound %s. Error %d:%s",m_sFileName.c_str(),alutGetError(),alutGetErrorString(alutGetError()));
 	}
 	return bOk;
 }
+
+std::string CSoundType::GetFileName(){return m_sFileName;}
 
 bool CSoundType::Init(std::string sClass,std::string sName,ISystem *piSystem)
 {
@@ -200,3 +223,5 @@ bool CSound::ProcessFrame(IPhysicManager *pPhysicManager,unsigned int dwCurrentT
   }
   return false;
 }
+
+

@@ -2,7 +2,6 @@
 
 #include "SoundSystemManager.h"
 
-#define DSBFREQUENCY_ORIGINAL 10
 
 class CSoundType: virtual public CSystemObjectBase,virtual public ISoundType
 {
@@ -11,6 +10,8 @@ class CSoundType: virtual public CSystemObjectBase,virtual public ISoundType
   ALuint		  m_iSoundBuffer;
   
   bool Unserialize(ISystemPersistencyNode *piNode);
+  
+  bool LoadFromFile();
   
 public:
 
@@ -30,6 +31,10 @@ public:
 
     bool Init(std::string sClass,std::string sName,ISystem *piSystem);
     void Destroy();
+	
+	bool        Load(std::string sFileName);
+	std::string GetFileName();
+	
 
     BEGIN_PROP_MAP(CSoundType);
         PROP(m_sFileName,"File");

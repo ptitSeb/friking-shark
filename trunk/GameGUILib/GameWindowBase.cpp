@@ -627,7 +627,8 @@ bool CGameWindowBase::Unserialize( ISystemPersistencyNode *piNode )
 	return bOk;
 }
 
-double 	CGameWindowBase::GetSizeInLayout(){return m_dSizeInLayout;}
+double  CGameWindowBase::GetSizeInLayout(){return m_dSizeInLayout;}
+void    CGameWindowBase::SetSizeInLayout(double dSize){m_dSizeInLayout=dSize;}
 
 CLine CGameWindowBase::GetMouseRay(double x,double y,double dLength,IGenericCamera *piCamera)
 {

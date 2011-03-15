@@ -7,6 +7,9 @@ struct ISoundType;
 struct ISoundType:virtual public ISystemUnknown
 {
     virtual ISound *CreateInstance(IEntity *piEntity,unsigned int dwCurrentTime)=0;
+
+	virtual bool        Load(std::string sFileName)=0;
+	virtual std::string GetFileName()=0;
 };
 
 struct ISound
