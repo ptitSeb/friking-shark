@@ -5,13 +5,14 @@
 class IEntityEditorPropertyPanel:virtual public IGameWindow
 {
 public:
-	virtual void SetObject(ISystemObject *piObject)=0;
+	virtual bool SetObject(ISystemObject *piObject)=0;
 };
 
 class IEntityEditorPropertyPanelEvents
 {
 public:
 	virtual void OnObjectChanged(IEntityEditorPropertyPanel *piPanel,ISystemObject *piObject)=0;
+	virtual void OnObjectRemoved(IEntityEditorPropertyPanel *piPanel,ISystemObject *piObject)=0;
 };
 
 class IEntityEditorObjectLabel:virtual public IGameWindow
