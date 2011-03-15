@@ -2,7 +2,7 @@
 
 DECLARE_CUSTOM_WRAPPER1(CSoundTypeWrapper,ISoundType,m_piSoundType)
 
-class CSoundAnimationObjectType: public CAnimationObjectTypeBase
+class CSoundAnimationObjectType: public CAnimationObjectTypeBase, public virtual ISoundAnimationObjectTypeDesign
 {
 public:
 

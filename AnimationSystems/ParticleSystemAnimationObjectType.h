@@ -2,7 +2,7 @@
 
 DECLARE_CUSTOM_WRAPPER1(CParticleSystemTypeWrapper,IParticleSystemType,m_piParticleSystemType)
 
-class CParticleSystemAnimationObjectType: public CAnimationObjectTypeBase
+class CParticleSystemAnimationObjectType: public CAnimationObjectTypeBase, public virtual IParticleSystemAnimationObjectTypeDesign
 {
 public:
 

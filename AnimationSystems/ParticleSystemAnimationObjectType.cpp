@@ -95,24 +95,25 @@ void CParticleSystemAnimationObject::UpdatePositionAndAngles()
     if(m_pType->m_bTrackEntity || !m_bPositionAndAnglesInitialized)
     {
         m_bPositionAndAnglesInitialized=true;
-        IEntity *piEntity=m_piAnimation->GetEntity();
+		CVector vForward,vRight,vUp,vPosition,vAngles;
+		IEntity *piEntity=m_piAnimation->GetEntity();
         if(piEntity)
         {
             SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();
-            CVector vForward,vRight,vUp,vPosition=pPhysicInfo->vPosition;
             vPosition=pPhysicInfo->vPosition;
-            m_piParticleSystem->SetAngles(pPhysicInfo->vAngles);
-            m_piParticleSystem->GetVectors(vForward,vRight,vUp);
+			vAngles=pPhysicInfo->vAngles;
+		}
+		m_piParticleSystem->SetAngles(vAngles);
+		m_piParticleSystem->GetVectors(vForward,vRight,vUp);
 
-            if(m_pType->m_vPosition!=Origin)
-            {
-                vPosition+=vForward*m_pType->m_vPosition.c[0];
-                vPosition+=vUp*m_pType->m_vPosition.c[1];
-                vPosition+=vRight*m_pType->m_vPosition.c[2];
-            }
-            m_piParticleSystem->SetPosition(vPosition);
-        }
-    }
+		if(m_pType->m_vPosition!=Origin)
+		{
+			vPosition+=vForward*m_pType->m_vPosition.c[0];
+			vPosition+=vUp*m_pType->m_vPosition.c[1];
+			vPosition+=vRight*m_pType->m_vPosition.c[2];
+		}
+		m_piParticleSystem->SetPosition(vPosition);
+	}
 }
 
 bool CParticleSystemAnimationObject::ProcessFrame(IPhysicManager *pPhysicManager,unsigned int dwCurrentTime,double dInterval)

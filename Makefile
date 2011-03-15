@@ -17,10 +17,11 @@ GUISystems\
 IATestSystems\
 ParticleSystems\
 PlayAreaElements\
-ScenarioEditor\
-FormationEditor\
 SoundSystems\
 WeaponTypes\
+ScenarioEditor\
+FormationEditor\
+EntityEditor
 
 all:
 	for dir in $(LIBS) $(MODULES); do \

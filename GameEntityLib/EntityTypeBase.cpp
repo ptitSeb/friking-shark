@@ -191,6 +191,7 @@ unsigned int CEntityTypeBase::AddStateAnimation(unsigned int nState)
 	{
 		nIndex=pState->vAnimations.size();
 		pState->vAnimations.push_back(wrapper);
+		m_mStateAnimations[pState->sName].push_back(wrapper);
 	}
 	return nIndex;
 }
@@ -205,6 +206,10 @@ bool CEntityTypeBase::RemoveStateAnimation(unsigned int nState,unsigned int nAni
 	for(x=0,i=pState->vAnimations.begin();x<pState->vAnimations.size();x++,i++)
 	{
 		if(x==nAnimation){pState->vAnimations.erase(i);return true;}
+	}
+	for(x=0,i=m_mStateAnimations[pState->sName].begin();x<m_mStateAnimations[pState->sName].size();x++,i++)
+	{
+		if(x==nAnimation){m_mStateAnimations[pState->sName].erase(i);return true;}
 	}
 	return false;
 }
