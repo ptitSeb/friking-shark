@@ -20,10 +20,12 @@ SOURCES = EntityEditor.cpp\
 EntityEditorMainWindow.cpp\
 EntityEditorNamedObjectSelector.cpp\
 EntityEditorObjectSelector.cpp\
+EntityEditorObjectLabel.cpp\
 EntityEditorClassSelector.cpp\
 EntityEditorAnimationPropertyPanel.cpp\
 EntityEditorModelPropertyPanel.cpp\
 EntityEditorSoundPropertyPanel.cpp\
+EntityEditorEventPropertyPanel.cpp\
 EntityEditorParticleSystemPropertyPanel.cpp\
 stdafx.cpp
 

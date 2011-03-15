@@ -45,7 +45,7 @@ bool CSoundType::LoadFromFile()
 	m_iSoundBuffer=alutCreateBufferFromFile(m_sFileName.c_str());
 	if(m_iSoundBuffer!=AL_NONE)
 	{
-		RTTRACE("CSoundType::CreateInstance -> Loaded Sound %s",m_sFileName.c_str());
+		RTTRACE("CSoundType::LoadFromFile -> Loaded Sound %s",m_sFileName.c_str());
 		
 		ALuint *pSources=new ALuint [m_nChannels];
 		alGetError();
@@ -62,7 +62,7 @@ bool CSoundType::LoadFromFile()
 		}
 		else
 		{
-			RTTRACE("CSoundType::CreateInstance -> Failed to create sources. Error %d",alGetError());
+			RTTRACE("CSoundType::LoadFromFile -> Failed to create sources. Error %d",alGetError());
 		}
 		delete [] pSources;
 		pSources=NULL;
@@ -70,7 +70,7 @@ bool CSoundType::LoadFromFile()
 	bOk=(m_dAvailableSources.size()!=0);
 	if(!bOk)
 	{
-		RTTRACE("CSoundType::CreateInstance -> Failed to load sound %s. Error %d:%s",m_sFileName.c_str(),alutGetError(),alutGetErrorString(alutGetError()));
+		RTTRACE("CSoundType::LoadFromFile -> Failed to load sound %s. Error %d:%s",m_sFileName.c_str(),alutGetError(),alutGetErrorString(alutGetError()));
 	}
 	return bOk;
 }
@@ -110,13 +110,15 @@ void CSoundType::Destroy()
   CSystemObjectBase::Destroy();
 }
 
-ISound *CSoundType::CreateInstance(IEntity *piEntity,unsigned int dwCurrentTime)
+ISound *CSoundType::CreateInstance()
 {
   if(m_piSoundManager==NULL)
   {
     return NULL;
   }
-  CSound *pSound=new CSound(this,piEntity,dwCurrentTime);
+  CSound *pSound=new CSound(this);
+  pSound->SetLoop(m_bLoop);
+  pSound->SetVolume(m_dVolume);
   return pSound;
 }
 
@@ -140,12 +142,13 @@ void CSoundType::ReleaseSoundSource(ALuint nSource)
 }
 
 
-CSound::CSound(CSoundType *pType,IEntity *piEntity,unsigned int dwCurrentTimeBase)
+CSound::CSound(CSoundType *pType)
 {
-  m_bActive=false;
   m_nSource=AL_NONE;
   m_pType=pType;
-  m_piEntity=piEntity;
+  m_bLoop=false;
+  m_dVolume=100;
+  
   SUBSCRIBE_TO_CAST(pType->m_piSoundManager,ISoundManagerEvents);
 }
 
@@ -160,40 +163,30 @@ CSound::~CSound()
     UNSUBSCRIBE_FROM_CAST(m_pType->m_piSoundManager,ISoundManagerEvents);
 }
 
-void CSound::Activate(unsigned int dwCurrentTime)
+void CSound::Play()
 {
-  m_bActive=true;
   if(m_nSource==AL_NONE)
   {
     m_nSource=m_pType->AcquireSoundSource();
     if(m_nSource!=AL_NONE)
 	{
-      alSourcei(m_nSource,AL_LOOPING,m_pType->m_bLoop?AL_TRUE:AL_FALSE);
-	  alSourcePlay(m_nSource);
+		UpdateSource();
+		alSourcePlay(m_nSource);
     }
   }
 }
 
-bool CSound::IsActive()
+void CSound::Stop()
 {
-  return m_bActive;
+	if(m_nSource!=AL_NONE)
+	{
+		alSourceStop(m_nSource);
+		m_pType->ReleaseSoundSource(m_nSource);
+		m_nSource=AL_NONE;
+	}
 }
 
-void CSound::Deactivate()
-{
-  if(m_pType->m_bLoop)
-  {
-    if(m_nSource!=AL_NONE)
-    {
-	  alSourceStop(m_nSource);
-      m_pType->ReleaseSoundSource(m_nSource);
-	  m_nSource=AL_NONE;
-    }
-  }
-  m_bActive=false;
-}
-
-bool CSound::HasFinished()
+bool CSound::IsPlaying()
 {
   if(m_nSource==AL_NONE){return true;}
   ALint nState=AL_STOPPED;
@@ -205,23 +198,28 @@ bool CSound::HasFinished()
   return true;
 }
 
-bool CSound::ProcessFrame(IPhysicManager *pPhysicManager,unsigned int dwCurrentTime,double dInterval)
+void CSound::UpdateSource()
 {
-  if(m_nSource==AL_NONE){return false;}
-  if(m_pType->m_piSoundManager->Is3DSoundEnabled())
-  {
-    if(m_piEntity)
-    {
-      SPhysicInfo *pPhysicInfo=m_piEntity->GetPhysicInfo();
-	  alSourcei(m_nSource,AL_CONE_INNER_ANGLE,360);
-	  alSourcei(m_nSource,AL_CONE_OUTER_ANGLE,360);
-	  alSourcei(m_nSource,AL_SOURCE_RELATIVE,AL_FALSE);
-	  alSource3f(m_nSource,AL_POSITION,(float)pPhysicInfo->vPosition.c[0],(float)pPhysicInfo->vPosition.c[1],(float)pPhysicInfo->vPosition.c[2]);
-	  alSource3f(m_nSource,AL_VELOCITY,(float)pPhysicInfo->vVelocity.c[0],(float)pPhysicInfo->vVelocity.c[1],(float)pPhysicInfo->vVelocity.c[2]);
-	  alSource3f(m_nSource,AL_DIRECTION,(float)pPhysicInfo->vForward.c[0],(float)pPhysicInfo->vForward.c[1],(float)pPhysicInfo->vForward.c[2]);
-    }
-  }
-  return false;
+	if(m_nSource==AL_NONE){return;}
+	
+	alSourcei(m_nSource,AL_LOOPING,m_bLoop?AL_TRUE:AL_FALSE);
+	alSourcef(m_nSource,AL_GAIN,(float)(m_dVolume/100.0));
+	
+	if(m_pType->m_piSoundManager->Is3DSoundEnabled())
+	{
+		alSourcei(m_nSource,AL_CONE_INNER_ANGLE,360);
+		alSourcei(m_nSource,AL_CONE_OUTER_ANGLE,360);
+		alSourcei(m_nSource,AL_SOURCE_RELATIVE,AL_FALSE);
+		alSource3f(m_nSource,AL_POSITION,(float)m_vPosition.c[0],(float)m_vPosition.c[1],(float)m_vPosition.c[2]);
+		alSource3f(m_nSource,AL_VELOCITY,(float)m_vVelocity.c[0],(float)m_vVelocity.c[1],(float)m_vVelocity.c[2]);
+		alSource3f(m_nSource,AL_DIRECTION,(float)m_vOrientation.c[0],(float)m_vOrientation.c[1],(float)m_vOrientation.c[2]);
+	}
 }
 
+void CSound::SetLoop(bool bLoop){m_bLoop=bLoop;UpdateSource();}
+void CSound::SetVolume(double dVolume){m_dVolume=dVolume;UpdateSource();}
+
+void CSound::SetPosition(CVector vPosition){m_vPosition=vPosition;UpdateSource();}
+void CSound::SetOrientation(CVector vOrientation){m_vOrientation=vOrientation;UpdateSource();}
+void CSound::SetVelocity(CVector vVelocity){m_vVelocity=vVelocity;UpdateSource();}
 

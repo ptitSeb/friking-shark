@@ -9,6 +9,4 @@
 #include <AL/alut.h>
 #include "GameRunTimeLib.h"
 #include "VectorLib.h"
-#include "GameManagers.h"
-
 #endif

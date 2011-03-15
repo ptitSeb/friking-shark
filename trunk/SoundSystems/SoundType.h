@@ -1,11 +1,12 @@
 #pragma once
 
 #include "SoundSystemManager.h"
+#include <deque>
 
 
 class CSoundType: virtual public CSystemObjectBase,virtual public ISoundType
 {
-  deque<ALuint>   m_dAvailableSources;
+  std::deque<ALuint>   m_dAvailableSources;
   bool            m_bSoundsAcquired;
   ALuint		  m_iSoundBuffer;
   
@@ -21,13 +22,13 @@ public:
 
     unsigned int    m_nChannels;
     bool    		m_bLoop;
-    string  		m_sFileName;
+    std::string  	m_sFileName;
     double  		m_dVolume;
 
     ALuint AcquireSoundSource();
     void   ReleaseSoundSource(ALuint nSource);
 
-    ISound *CreateInstance(IEntity *piEntity,unsigned int dwCurrentTime);
+    ISound *CreateInstance();
 
     bool Init(std::string sClass,std::string sName,ISystem *piSystem);
     void Destroy();
@@ -53,21 +54,30 @@ protected:
 
 	ALuint 					m_nSource;
     CSoundType             *m_pType;
-    bool                    m_bActive;
-    IEntity                 *m_piEntity;
-
+	
+	bool    				m_bLoop;
+	double  				m_dVolume;
+    
+	CVector m_vPosition;
+	CVector m_vOrientation;
+	CVector m_vVelocity;
+	
+	void UpdateSource();
 public:
 
     // ISound
 
-    void Activate(unsigned int dwCurrentTime);
-    void Deactivate();
-    bool IsActive();
-
-    bool HasFinished();
-
-    bool ProcessFrame(IPhysicManager *pPhysicManager,unsigned int dwCurrentTime,double dInterval);
-
-    CSound(CSoundType *pTyp,IEntity *piEntitye,unsigned int dwCurrentTimeBase);
+    void Play();
+    void Stop();
+    bool IsPlaying();
+	
+	void SetLoop(bool bLoop);
+	void SetVolume(double nVolume);
+	
+	void SetPosition(CVector vPosition);
+	void SetOrientation(CVector vOrientation);
+	void SetVelocity(CVector vVelocity);
+	
+    CSound(CSoundType *pType);
     virtual ~CSound();
 };

@@ -6,7 +6,7 @@ struct ISoundType;
 
 struct ISoundType:virtual public ISystemUnknown
 {
-    virtual ISound *CreateInstance(IEntity *piEntity,unsigned int dwCurrentTime)=0;
+    virtual ISound *CreateInstance()=0;
 
 	virtual bool        Load(std::string sFileName)=0;
 	virtual std::string GetFileName()=0;
@@ -14,14 +14,17 @@ struct ISoundType:virtual public ISystemUnknown
 
 struct ISound
 {
-    virtual void Activate(unsigned int dwCurrentTime)=0;
-    virtual void Deactivate()=0;
-    virtual bool IsActive()=0;
-
-    virtual bool HasFinished()=0;
-
-    virtual bool ProcessFrame(IPhysicManager *pPhysicManager,unsigned int dwCurrentTime,double dInterval)=0;
-
+    virtual void Play()=0;
+    virtual void Stop()=0;
+    virtual bool IsPlaying()=0;
+	
+	virtual void SetLoop(bool bLoop)=0;
+	virtual void SetVolume(double nVolume)=0;
+	
+	virtual void SetPosition(CVector vPosition)=0;
+	virtual void SetOrientation(CVector vOrientation)=0;
+	virtual void SetVelocity(CVector vVelocity)=0;
+	
     virtual ~ISound(){}
 };
 
@@ -31,7 +34,11 @@ struct ISoundManager : virtual public ISystemUnknown
 
   virtual unsigned int  GetMasterVolume()=0;
   virtual void			SetMasterVolume(unsigned int dVolume)=0;
-
+  
+  virtual void SetListenerPosition(CVector vPosition)=0;
+  virtual void SetListenerOrientation(CVector vOrientation)=0;
+  virtual void SetListenerVelocity(CVector vVelocity)=0;
+  
   virtual ~ISoundManager(){}
 };
 

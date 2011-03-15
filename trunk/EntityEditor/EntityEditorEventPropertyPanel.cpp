@@ -60,7 +60,6 @@ void CEntityEditorEventPropertyPanel::OnButtonClicked(IGameGUIButton *piControl)
 void CEntityEditorEventPropertyPanel::OnTextChanged(IGameGUIEdit *piControl,std::string sNewText)
 {
 	if(m_Object.m_piDesign==NULL){return;}
-	bool bUpdateConfig=false;
 	SEventAnimationObjectTypeConfig sConfig;
 	m_Object.m_piDesign->GetConfig(&sConfig);
 	if(piControl==m_piEDName){sConfig.sName=sNewText;}
