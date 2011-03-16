@@ -451,13 +451,39 @@ void COpenGLRender::RenderRect(double x,double y,double w,double h)
 
 void COpenGLRender::RenderPolygon(unsigned int nVertexes,const CVector *pVertexes,const CVector *pColors)
 {
-	glBegin(GL_QUADS);
+	glBegin(GL_POLYGON);
 	for(unsigned int x=0;x<nVertexes;x++)
 	{
 	  if(pColors){glColor4d(pColors[x].c[0],pColors[x].c[1],pColors[x].c[2],m_dAlpha);}
 	  glVertex3dv(pVertexes[x].c);
 	}
 	glColor4d(m_vColor.c[0],m_vColor.c[1],m_vColor.c[2],m_dAlpha);
+	glEnd();
+}
+
+void COpenGLRender::RenderArrowHead(const CVector &vPosition,const CVector &vDirection,CVector &vUp,double dForward,double dUp,double dRight)
+{
+	CVector pvBase[4];
+	CVector vHead;
+	CVector vRight=vDirection^vUp;
+	
+	pvBase[3]=vPosition+vUp*dUp-vRight*dRight;
+	pvBase[2]=vPosition+vUp*dUp+vRight*dRight;
+	pvBase[1]=vPosition-vUp*dUp+vRight*dRight;
+	pvBase[0]=vPosition-vUp*dUp-vRight*dRight;
+	vHead=vPosition+vDirection*dForward;
+	
+	glBegin(GL_QUADS);
+	for(unsigned int x=0;x<4;x++){glVertex3dv(pvBase[x].c);}
+	glEnd();
+	
+	glBegin(GL_TRIANGLES);
+	for(unsigned int x=0;x<4;x++)
+	{
+		glVertex3dv(vHead.c);
+		glVertex3dv(pvBase[(x+1)&0x3].c);
+		glVertex3dv(pvBase[x].c);
+	}
 	glEnd();
 }
 
@@ -2190,3 +2216,4 @@ int COpenGLRender::EndSelection()
 	}
 	return nNewIndex;
 }
+

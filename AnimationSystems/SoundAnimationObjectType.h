@@ -13,7 +13,8 @@ public:
 	bool                 m_bLoop;
 
     IAnimationObject *CreateInstance(IAnimation *piAnimation,unsigned int dwCurrentTime);
-
+	std::string 	  GetAnimationObjectDescription();
+	
     BEGIN_PROP_MAP(CSoundAnimationObjectType)
         PROP(m_SoundType,"Sound")
         PROP_VALUE_FLAGS(m_nStartTime,"StartTime",0,MRPF_NORMAL|MRPF_OPTIONAL)

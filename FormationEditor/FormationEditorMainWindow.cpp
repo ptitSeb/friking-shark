@@ -936,6 +936,15 @@ void CFormationEditorMainWindow::CenterCamera(bool bForceWholeFormation)
 	}
 }
 
+void CFormationEditorMainWindow::OnCharacter(int nKey,bool *pbProcessed)
+{
+	if     (nKey=='T'|| nKey=='t'){m_bTextures=!m_bTextures;*pbProcessed=true;}
+	else if(nKey=='P'|| nKey=='p'){m_bRenderPlayArea=!m_bRenderPlayArea;*pbProcessed=true;}
+	else if(nKey=='L'|| nKey=='l'){m_bSolid=!m_bSolid;*pbProcessed=true;}
+	else if(nKey=='O'|| nKey=='o'){m_bRenderWorld=!m_bRenderWorld;*pbProcessed=true;}
+	else if(nKey=='G'|| nKey=='g'){m_bAutoAlign=!m_bAutoAlign;*pbProcessed=true;}
+}
+
 void CFormationEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 {
 	if(nKey==GK_F1 && m_bSimulationStarted){m_bInspectionMode=!m_bInspectionMode;*pbProcessed=true;}
@@ -944,11 +953,6 @@ void CFormationEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 	else if(nKey==GK_F5 && m_piGUIManager->IsKeyDown(GK_LSHIFT)){StopGameSimulation();CenterCamera(true);*pbProcessed=true;}
 	else if(nKey==GK_F5 && !m_piGUIManager->IsKeyDown(GK_LSHIFT)){StartGameSimulation();*pbProcessed=true;}
 	else if(nKey==GK_PAUSE){m_FrameManager.m_piFrameManager->TogglePauseOnNextFrame();*pbProcessed=true;}
-	else if(nKey=='T'){m_bTextures=!m_bTextures;*pbProcessed=true;}
-	else if(nKey=='P'){m_bRenderPlayArea=!m_bRenderPlayArea;*pbProcessed=true;}
-	else if(nKey=='L'){m_bSolid=!m_bSolid;*pbProcessed=true;}
-	else if(nKey=='O'){m_bRenderWorld=!m_bRenderWorld;*pbProcessed=true;}
-	else if(nKey=='G'){m_bAutoAlign=!m_bAutoAlign;*pbProcessed=true;}
 	else if(nKey==GK_HOME){CenterCamera();*pbProcessed=true;}
 	else if(nKey==GK_DELETE)
 	{

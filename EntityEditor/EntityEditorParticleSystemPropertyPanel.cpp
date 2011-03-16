@@ -40,9 +40,9 @@ void CEntityEditorParticleSystemPropertyPanel::OnButtonClicked(IGameGUIButton *p
 
 	if(m_piBTTrackEntity==piControl){bUpdateConfig=true;sConfig.bTrackEntity=!sConfig.bTrackEntity;}
 	if(m_piBTIncreaseStartTime==piControl){bUpdateConfig=true;sConfig.nStartTime+=100;}
-	if(m_piBTDecreaseStartTime==piControl){bUpdateConfig=true;sConfig.nStartTime-=100;if(sConfig.nStartTime<0){sConfig.nStartTime=0;}}
+	if(m_piBTDecreaseStartTime==piControl){bUpdateConfig=true;sConfig.nStartTime=(sConfig.nStartTime<100)?0:sConfig.nStartTime-100;}
 	if(m_piBTIncreaseEndTime==piControl){bUpdateConfig=true;sConfig.nEndTime+=100;}
-	if(m_piBTDecreaseEndTime==piControl){bUpdateConfig=true;sConfig.nEndTime-=100;if(sConfig.nEndTime<0){sConfig.nEndTime=0;}}
+	if(m_piBTDecreaseEndTime==piControl){bUpdateConfig=true;sConfig.nEndTime=(sConfig.nEndTime<100)?0:sConfig.nEndTime-100;}
 
 	if(bUpdateConfig)
 	{
@@ -52,7 +52,7 @@ void CEntityEditorParticleSystemPropertyPanel::OnButtonClicked(IGameGUIButton *p
 	}
 	if(piControl==m_piBTRemove)
 	{
-		if(!ConfirmDialog("Remove particle system "+m_Object.m_piObject->GetName()+"?","Entity Editor",eMessageDialogType_Warning)){return;}
+		if(!ConfirmDialog("Remove particle system '"+m_Object.m_piDesign->GetAnimationObjectDescription()+"' ?","Entity Editor",eMessageDialogType_Warning)){return;}
 
 		ISystemObject *piObject=ADD(m_Object.m_piObject);
 		m_Object.Detach();

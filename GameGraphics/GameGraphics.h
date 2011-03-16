@@ -384,7 +384,8 @@ public:
 	virtual void RenderPolygon(unsigned int nVertexes,const CVector *pVertexes,const CVector *pColors)=0;
 	virtual void RenderPyramid(const CVector &vTopVertex,const CVector &vSizes,bool bSolid)=0;
 	virtual void RenderPyramid(const CVector &vTopVertex,double dUpperSizeX,double dUpperSizeZ,double dLowerSizeX,double dLowerSizeZ,double dHeight,bool bSolid)=0;
-
+	virtual void RenderArrowHead(const CVector &vPosition,const CVector &vDirection,CVector &vUp,double dForward,double dUp,double dRight)=0;
+	
 
 	// Render state
 

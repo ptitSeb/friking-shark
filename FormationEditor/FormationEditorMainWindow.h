@@ -257,6 +257,7 @@ public:
 	void OnWantFocus(bool *pbWant);
 	void OnDraw(IGenericRender *piRender);
 	void OnButtonClicked(IGameGUIButton *piControl);
+	void OnCharacter( int nKey,bool *pbProcessed );
 	void OnKeyDown(int nKey,bool *pbProcessed);
 	void OnMouseDown(int nButton,double x,double y);
 	void OnMouseMove(double x,double y);

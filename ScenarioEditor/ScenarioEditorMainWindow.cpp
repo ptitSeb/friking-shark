@@ -2052,6 +2052,18 @@ void CScenarioEditorMainWindow::CenterCamera()
 	}
 }
 
+void CScenarioEditorMainWindow::OnCharacter(int nKey,bool *pbProcessed)
+{
+	if     (nKey=='T'|| nKey=='t'){m_bTextures=!m_bTextures;*pbProcessed=true;}
+	else if(nKey=='P'|| nKey=='p'){m_bRenderPlayArea=!m_bRenderPlayArea;*pbProcessed=true;}
+	else if(nKey=='G'|| nKey=='g'){m_bFog=!m_bFog;*pbProcessed=true;}
+	else if(nKey=='L'|| nKey=='l'){m_bSolid=!m_bSolid;*pbProcessed=true;}
+	else if(nKey=='I'|| nKey=='i'){m_bLighting=!m_bLighting;*pbProcessed=true;}
+	else if(nKey=='O'|| nKey=='o'){m_bShadows=!m_bShadows;*pbProcessed=true;}
+	else if(nKey=='H'|| nKey=='h'){m_bShaders=!m_bShaders;*pbProcessed=true;}
+	else if(nKey=='B'|| nKey=='b'){m_bBlend=!m_bBlend;*pbProcessed=true;}
+}
+
 void CScenarioEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 {
 	if(nKey==GK_F1 && m_bSimulationStarted){m_bInspectionMode=!m_bInspectionMode;*pbProcessed=true;}
@@ -2059,14 +2071,6 @@ void CScenarioEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 	else if(nKey==GK_F3){ProcessFileOpen();*pbProcessed=true;}
 	else if(nKey==GK_F5){if(m_piGUIManager->IsKeyDown(GK_LSHIFT)){StopGameSimulation();}else{StartGameSimulation();}*pbProcessed=true;}
 	else if(nKey==GK_PAUSE){m_FrameManager.m_piFrameManager->TogglePauseOnNextFrame();*pbProcessed=true;}
-	else if(nKey=='T'){m_bTextures=!m_bTextures;*pbProcessed=true;}
-	else if(nKey=='P'){m_bRenderPlayArea=!m_bRenderPlayArea;*pbProcessed=true;}
-	else if(nKey=='G'){m_bFog=!m_bFog;*pbProcessed=true;}
-	else if(nKey=='L'){m_bSolid=!m_bSolid;*pbProcessed=true;}
-	else if(nKey=='I'){m_bLighting=!m_bLighting;*pbProcessed=true;}
-	else if(nKey=='O'){m_bShadows=!m_bShadows;*pbProcessed=true;}
-	else if(nKey=='H'){m_bShaders=!m_bShaders;*pbProcessed=true;}
-	else if(nKey=='B'){m_bBlend=!m_bBlend;*pbProcessed=true;}
 	else if(nKey==GK_HOME){CenterCamera();*pbProcessed=true;}
 	else if(nKey==GK_DELETE)
 	{

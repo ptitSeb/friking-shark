@@ -428,7 +428,8 @@ public:
 	void RenderPolygon(unsigned int nVertexes,const CVector *pVertexes,const CVector *pColors);
 	void RenderPyramid(const CVector &vTopVertex,const CVector &vSizes,bool bSolid);
 	void RenderPyramid(const CVector &vTopVertex,double dUpperSizeX,double dUpperSizeZ,double dLowerSizeX,double dLowerSizeZ,double dHeight,bool bSolid);
-
+	void RenderArrowHead(const CVector &vPosition,const CVector &vDirection,CVector &vUp,double dForward,double dUp,double dRight);
+	
 	void ActivateHeightFog(double dStart,double dEnd,const CVector &vColor);
 	void DeactivateHeightFog();
 	bool IsHeightFogActive();
