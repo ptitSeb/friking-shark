@@ -38,6 +38,7 @@ void CParticleSystemAnimationObjectType::SetConfig(SParticleSystemAnimationObjec
 
 void CParticleSystemAnimationObjectType::SetParticleSystemType(IParticleSystemType *piParticleSystem){m_ParticleSystemType.Attach(piParticleSystem);}
 void CParticleSystemAnimationObjectType::GetParticleSystemType(IParticleSystemType **ppiParticleSystem){(*ppiParticleSystem)=ADD(m_ParticleSystemType.m_piParticleSystemType);}
+std::string CParticleSystemAnimationObjectType::GetAnimationObjectDescription(){return m_ParticleSystemType.m_piObject?m_ParticleSystemType.m_piObject->GetName():"Unknown";}
 
 CParticleSystemAnimationObject::CParticleSystemAnimationObject(CParticleSystemAnimationObjectType *pType,IAnimation *piAnimation)
 :CAnimationObjectBase(pType,piAnimation)

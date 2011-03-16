@@ -38,7 +38,7 @@ void CEntityEditorEventPropertyPanel::OnButtonClicked(IGameGUIButton *piControl)
 	SEventAnimationObjectTypeConfig sConfig;
 	m_Object.m_piDesign->GetConfig(&sConfig);
 	if(m_piBTIncreaseTime==piControl){bUpdateConfig=true;sConfig.nTime+=100;}
-	if(m_piBTDecreaseTime==piControl){bUpdateConfig=true;sConfig.nTime-=100;if(sConfig.nTime<0){sConfig.nTime=0;}}
+	if(m_piBTDecreaseTime==piControl){bUpdateConfig=true;sConfig.nTime=(sConfig.nTime<100)?0:sConfig.nTime-100;}
 	if(bUpdateConfig)
 	{
 		m_Object.m_piDesign->SetConfig(&sConfig);
@@ -48,7 +48,7 @@ void CEntityEditorEventPropertyPanel::OnButtonClicked(IGameGUIButton *piControl)
 	}
 	if(piControl==m_piBTRemove)
 	{
-		if(!ConfirmDialog("Remove event "+sConfig.sName+"?","Entity Editor",eMessageDialogType_Warning)){return;}
+		if(!ConfirmDialog("Remove event '"+m_Object.m_piDesign->GetAnimationObjectDescription()+"' ?","Entity Editor",eMessageDialogType_Warning)){return;}
 
 		ISystemObject *piObject=ADD(m_Object.m_piObject);
 		m_Object.Detach();

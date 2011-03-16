@@ -27,12 +27,19 @@ void CGameGUIList::DestroyWindow()
 unsigned long CGameGUIList::AddElement(std::string sText){m_vElements.push_back(sText);return m_vElements.size()-1;}
 void          CGameGUIList::RemoveElement(unsigned long nIndex)
 {
+  if(nIndex>m_vElements.size()){return;}
   unsigned int x=0;
   std::vector<std::string>::iterator i;
   for(x=0,i=m_vElements.begin();x<m_vElements.size();x++,i++)
   {
 	if(x==nIndex){m_vElements.erase(i);break;}
   }
+}
+
+void CGameGUIList::SetElement(unsigned long nIndex,std::string sText)
+{
+	if(nIndex>m_vElements.size()){return;}
+	m_vElements[nIndex]=sText;
 }
 
 void CGameGUIList::Clear(){ m_vElements.clear();m_nSelectedElement=-1;m_nFirstVisible=0;}

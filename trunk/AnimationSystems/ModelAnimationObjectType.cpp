@@ -94,6 +94,8 @@ void CModelAnimationObjectType::SetConfig(SModelAnimationObjectTypeConfig *pConf
 
 void CModelAnimationObjectType::SetModel(IGenericModel *piModel){m_ModelWrapper.Attach(piModel);}
 void CModelAnimationObjectType::GetModel(IGenericModel **ppiModel){(*ppiModel)=ADD(m_ModelWrapper.m_piModel);}
+std::string CModelAnimationObjectType::GetAnimationObjectDescription(){return m_ModelWrapper.m_piObject?m_ModelWrapper.m_piObject->GetName():"Unknown";}
+
 
 CModelAnimationObject::CModelAnimationObject(CModelAnimationObjectType *pType,IAnimation *piAnimation)
 :CAnimationObjectBase(pType,piAnimation)

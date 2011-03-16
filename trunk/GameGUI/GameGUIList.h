@@ -64,6 +64,7 @@ public:
 	//IGameGUIList
 	
 	unsigned long AddElement(std::string sText);
+	void		  SetElement(unsigned long nIndex,std::string sText);
 	void		  RemoveElement(unsigned long nIndex);
 	void		  Clear();
 	

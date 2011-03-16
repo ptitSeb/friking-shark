@@ -32,6 +32,11 @@ void CEventAnimationObjectType::SetConfig(SEventAnimationObjectTypeConfig *pConf
 	m_sParams=pConfig->sParams;
 }
 
+std::string CEventAnimationObjectType::GetAnimationObjectDescription()
+{
+	return m_sEvent+"("+m_sParams+")";
+}
+
 CEventAnimationObject::CEventAnimationObject(CEventAnimationObjectType *pType,IAnimation *piAnimation)
 :CAnimationObjectBase(pType,piAnimation)
 {
@@ -51,4 +56,3 @@ bool CEventAnimationObject::ProcessFrame(IPhysicManager *pPhysicManager,unsigned
     }
     return true;
 }
-

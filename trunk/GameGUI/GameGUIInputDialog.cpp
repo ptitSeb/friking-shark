@@ -26,11 +26,14 @@ void CGameGUIInputDialog::OnEndDialog()
 
 void CGameGUIInputDialog::OnButtonClicked(IGameGUIButton *piControl)
 {
-	if(piControl==m_piBTAccept){EndDialog(DIALOG_OK);}
-	if(piControl==m_piBTCancel)
+	if(piControl==m_piBTAccept)
 	{
 		if(m_piEDText){m_sText=m_piEDText->GetText();}
 		EndDialog(DIALOG_OK);
+	}
+	if(piControl==m_piBTCancel)
+	{
+		EndDialog(DIALOG_CANCEL);
 	}
 }
 

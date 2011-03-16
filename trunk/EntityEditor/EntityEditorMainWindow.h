@@ -58,6 +58,10 @@ public:
 
 	double					 m_d3DFontSize;
 	
+	CVector 	m_vAxisPosition;
+	CVector 	m_vMovementOrigin;
+	bool		m_bMovingX;
+	
 	bool		m_bSolid;
 	bool		m_bTextures;
 	
@@ -135,7 +139,10 @@ public:
 	void ProcessNewAnimation();
 	
 	void Reset();
-
+	
+	void RenderAxis(CVector vOrigin,CVector vDir,CVector vUp,CVector vColor,double dSize);
+	void RenderAxisPlane(CVector vOrigin,CVector vDir,CVector vUp,CVector vColor,double dSize);
+	
 	BEGIN_CHILD_MAP()
 		CHILD_MAP_ENTRY("FPS",m_piSTFps);
 		CHILD_MAP_ENTRY("Volume",m_piSTVolume);
@@ -191,13 +198,13 @@ public:
 	bool m_bSimulationStarted;
 	bool m_bInspectionMode;
 
-	
 	bool InitWindow(IGameWindow *piParent,bool bPopup);
 	void DestroyWindow();
 
 	void OnWantFocus(bool *pbWant);
 	void OnDraw(IGenericRender *piRender);
 	void OnButtonClicked(IGameGUIButton *piControl);
+	void OnCharacter( int nKey,bool *pbProcessed );
 	void OnKeyDown(int nKey,bool *pbProcessed);
 	void OnMouseDown(int nButton,double x,double y);
 	void OnMouseMove(double x,double y);
@@ -212,7 +219,6 @@ public:
 	
 	void UpdateRunningAnimation();
 	
-
 	void UpdateCaption();
 	void CenterCamera();
 	void SetupRenderOptions(IGenericRender *piRender,IGenericCamera *piCamera);

@@ -16,7 +16,8 @@ public:
     bool        	m_bCastShadow;
 
     IAnimationObject *CreateInstance(IAnimation *piAnimation,unsigned int dwCurrentTime);
-
+	std::string 	  GetAnimationObjectDescription();
+	
 	void DesignRender(IGenericRender *pRender,CVector &vPosition,CVector &vAngles,bool bSelected);
 	void DesignGetBBox(CVector *pvMins,CVector *pvMaxs);
 	double DesignGetRadius();

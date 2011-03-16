@@ -67,6 +67,8 @@ struct IAnimationType:virtual public ISystemUnknown,virtual public IDesignObject
 struct IAnimationObjectType:virtual public ISystemUnknown,virtual public IDesignObject
 {
     virtual IAnimationObject *CreateInstance(IAnimation *piAnimation,unsigned int dwCurrentTime)=0;
+	
+	virtual std::string GetAnimationObjectDescription()=0;
 };
 
 struct IAnimationObject
@@ -123,13 +125,13 @@ struct IAnimationTypeDesign:virtual public ISystemUnknown
 	virtual unsigned int	GetObjectCount()=0;
 };
 
-struct IEventAnimationObjectTypeDesign:virtual public ISystemUnknown
+struct IEventAnimationObjectTypeDesign:virtual public IAnimationObjectType
 {
 	virtual void		 GetConfig(SEventAnimationObjectTypeConfig *pConfig)=0;
 	virtual void		 SetConfig(SEventAnimationObjectTypeConfig *pConfig)=0;
 };
 
-struct IModelAnimationObjectTypeDesign:virtual public ISystemUnknown
+struct IModelAnimationObjectTypeDesign:virtual public IAnimationObjectType
 {
 	virtual void		 GetConfig(SModelAnimationObjectTypeConfig *pConfig)=0;
 	virtual void		 SetConfig(SModelAnimationObjectTypeConfig *pConfig)=0;
@@ -137,7 +139,7 @@ struct IModelAnimationObjectTypeDesign:virtual public ISystemUnknown
 	virtual void		 GetModel(IGenericModel **ppiModel)=0;
 };
 
-struct IParticleSystemAnimationObjectTypeDesign:virtual public ISystemUnknown
+struct IParticleSystemAnimationObjectTypeDesign:virtual public IAnimationObjectType
 {
 	virtual void		 GetConfig(SParticleSystemAnimationObjectTypeConfig *pConfig)=0;
 	virtual void		 SetConfig(SParticleSystemAnimationObjectTypeConfig *pConfig)=0;
@@ -145,7 +147,7 @@ struct IParticleSystemAnimationObjectTypeDesign:virtual public ISystemUnknown
 	virtual void		 GetParticleSystemType(IParticleSystemType **ppiParticleSystemType)=0;
 };
 
-struct ISoundAnimationObjectTypeDesign:virtual public ISystemUnknown
+struct ISoundAnimationObjectTypeDesign:virtual public IAnimationObjectType
 {
 	virtual void		 GetConfig(SSoundAnimationObjectTypeConfig *pConfig)=0;
 	virtual void		 SetConfig(SSoundAnimationObjectTypeConfig *pConfig)=0;

@@ -40,6 +40,7 @@ void CSoundAnimationObjectType::SetConfig(SSoundAnimationObjectTypeConfig *pConf
 
 void CSoundAnimationObjectType::SetSound(ISoundType *piSound){m_SoundType.Attach(piSound);}
 void CSoundAnimationObjectType::GetSound(ISoundType **ppiSound){(*ppiSound)=ADD(m_SoundType.m_piSoundType);}
+std::string CSoundAnimationObjectType::GetAnimationObjectDescription(){return m_SoundType.m_piObject?m_SoundType.m_piObject->GetName():"Unknown";}
 
 CSoundAnimationObject::CSoundAnimationObject(CSoundAnimationObjectType *pType,IAnimation *piAnimation)
 :CAnimationObjectBase(pType,piAnimation)

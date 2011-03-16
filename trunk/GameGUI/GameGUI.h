@@ -253,6 +253,7 @@ class IGameGUIList: virtual public IGameWindow
 public:
 
 	virtual unsigned long AddElement(std::string sText)=0;
+	virtual void		  SetElement(unsigned long nIndex,std::string sText)=0;
 	virtual void		  RemoveElement(unsigned long nIndex)=0;
 	virtual void		  Clear()=0;
 	

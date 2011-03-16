@@ -43,9 +43,9 @@ void CEntityEditorSoundPropertyPanel::OnButtonClicked(IGameGUIButton *piControl)
 	if(m_piBTIncreaseVolume==piControl){bUpdateConfig=true;sConfig.nVolume+=5;if(sConfig.nVolume>100){sConfig.nVolume=100;}}
 	if(m_piBTDecreaseVolume==piControl){bUpdateConfig=true;sConfig.nVolume-=5;if(sConfig.nVolume<0){sConfig.nVolume=0;}}
 	if(m_piBTIncreaseStartTime==piControl){bUpdateConfig=true;sConfig.nStartTime+=100;}
-	if(m_piBTDecreaseStartTime==piControl){bUpdateConfig=true;sConfig.nStartTime-=100;if(sConfig.nStartTime<0){sConfig.nStartTime=0;}}
+	if(m_piBTDecreaseStartTime==piControl){bUpdateConfig=true;sConfig.nStartTime=(sConfig.nStartTime<100)?0:sConfig.nStartTime-100;}
 	if(m_piBTIncreaseEndTime==piControl){bUpdateConfig=true;sConfig.nEndTime+=100;}
-	if(m_piBTDecreaseEndTime==piControl){bUpdateConfig=true;sConfig.nEndTime-=100;if(sConfig.nEndTime<0){sConfig.nEndTime=0;}}
+	if(m_piBTDecreaseEndTime==piControl){bUpdateConfig=true;sConfig.nEndTime=(sConfig.nEndTime<100)?0:sConfig.nEndTime-100;}
 
 	if(bUpdateConfig)
 	{
@@ -55,7 +55,7 @@ void CEntityEditorSoundPropertyPanel::OnButtonClicked(IGameGUIButton *piControl)
 	}
 	if(piControl==m_piBTRemove)
 	{
-		if(!ConfirmDialog("Remove sound "+m_Object.m_piObject->GetName()+"?","Entity Editor",eMessageDialogType_Warning)){return;}
+		if(!ConfirmDialog("Remove sound '"+m_Object.m_piDesign->GetAnimationObjectDescription()+"' ?","Entity Editor",eMessageDialogType_Warning)){return;}
 
 		ISystemObject *piObject=ADD(m_Object.m_piObject);
 		m_Object.Detach();

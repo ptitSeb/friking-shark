@@ -13,7 +13,8 @@ public:
     bool                		m_bTrackEntity;
 
     IAnimationObject *CreateInstance(IAnimation *piAnimation,unsigned int dwCurrentTime);
-
+	std::string 	  GetAnimationObjectDescription();
+	
     BEGIN_PROP_MAP(CParticleSystemAnimationObjectType)
         PROP_CLASS_CHAIN(CAnimationObjectTypeBase)
         PROP(m_ParticleSystemType,"ParticleSystem")
