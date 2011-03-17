@@ -13,6 +13,8 @@ INCLUDES = -I. \
 SOURCES = GameGUIUtil.cpp\
 GameWindowBase.cpp\
 GameDialogBase.cpp\
+GameGUITranslationGizmo.cpp\
+GameGUIRotationGizmo.cpp\
 stdafx.cpp
 
 

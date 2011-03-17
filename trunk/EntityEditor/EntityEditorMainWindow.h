@@ -2,6 +2,8 @@
 
 #include "EntityEditor.h"
 #include "EntityEditorObjectSelector.h"
+#include "GameGUITranslationGizmo.h"
+#include "GameGUIRotationGizmo.h"
 
 DECLARE_CUSTOM_WRAPPER1(CEntityEditorObjectSelectorWrapper,IEntityEditorObjectSelector,m_piObjectSelector)
 DECLARE_CUSTOM_WRAPPER1(CEntityEditorNamedObjectSelectorWrapper,IEntityEditorNamedObjectSelector,m_piObjectSelector)
@@ -58,9 +60,12 @@ public:
 
 	double					 m_d3DFontSize;
 	
-	CVector 	m_vAxisPosition;
-	CVector 	m_vMovementOrigin;
-	bool		m_bMovingX;
+	CGameGUIRotationGizmo    	 m_RotationGizmo;
+	CGameGUITranslationGizmo 	 m_TranslationGizmo;
+	bool					 	 m_bMovingGizmo;
+/*	CVector 	m_vAxisPosition;
+	CVector 	m_vTranslationOrigin;
+	bool		m_bMovingGizmo;*/
 	
 	bool		m_bSolid;
 	bool		m_bTextures;
@@ -139,9 +144,6 @@ public:
 	void ProcessNewAnimation();
 	
 	void Reset();
-	
-	void RenderAxis(CVector vOrigin,CVector vDir,CVector vUp,CVector vColor,double dSize);
-	void RenderAxisPlane(CVector vOrigin,CVector vDir,CVector vUp,CVector vColor,double dSize);
 	
 	BEGIN_CHILD_MAP()
 		CHILD_MAP_ENTRY("FPS",m_piSTFps);

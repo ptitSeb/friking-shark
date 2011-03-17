@@ -12,7 +12,7 @@ CEntityEditorMainWindow::CEntityEditorMainWindow(void)
 {
 	m_d3DFontSize=0;
 	
-	m_bMovingX=false;
+	m_bMovingGizmo=false;
 	m_piAnimation=NULL;
 	
 	m_bShowOptionsPanel=false;
@@ -37,6 +37,8 @@ CEntityEditorMainWindow::CEntityEditorMainWindow(void)
 	m_piGameSystem=NULL;
 	m_bSimulationStarted=false;
 	
+	m_TranslationGizmo.SetSize(5);
+	m_RotationGizmo.SetRadius(3.725);
 }
 
 CEntityEditorMainWindow::~CEntityEditorMainWindow(void)
@@ -150,9 +152,9 @@ void CEntityEditorMainWindow::ProcessInput(double dTimeFraction,double dRealTime
 
 void CEntityEditorMainWindow::ProcessKey(unsigned short nKey,double dTimeFraction,double dRealTimeFraction)
 {
-	double dMovementInspectionSpeed=100.0;
-	double dForwardSpeed=dMovementInspectionSpeed*dTimeFraction;
-	double dCameraForwardSpeed=dMovementInspectionSpeed*dRealTimeFraction*3.0;
+	double dTranslationInspectionSpeed=100.0;
+	double dForwardSpeed=dTranslationInspectionSpeed*dTimeFraction;
+	double dCameraForwardSpeed=dTranslationInspectionSpeed*dRealTimeFraction*3.0;
 	if(m_piGUIManager->IsKeyDown(GK_LSHIFT)){dForwardSpeed*=3.0;}
 	if(m_piGUIManager->IsKeyDown(GK_LCONTROL))
 	{
@@ -190,51 +192,6 @@ void CEntityEditorMainWindow::SetupRenderOptions(IGenericRender *piRender,IGener
 	piRender->SetViewport(dx,0,cx,m_rRealRect.h);
 	piRender->SetPerspectiveProjection(dViewAngle,dNearPlane,dFarPlane);
 	piRender->SetCamera(vPosition,vAngles.c[YAW],vAngles.c[PITCH],vAngles.c[ROLL]);
-}
-
-void CEntityEditorMainWindow::RenderAxis(CVector vOrigin,CVector vDir,CVector vUp,CVector vColor,double dSize)
-{
-	CVector vPoint1=vOrigin,vPoint2=vOrigin+vDir*dSize;
-	m_Render.m_piRender->PushState();
-	m_Render.m_piRender->ActivateSolid();
-	m_Render.m_piRender->ActivateDepth();
-	m_Render.m_piRender->RenderLine(vPoint1,vPoint2,vColor,0xFFFF);
-	m_Render.m_piRender->SetColor(vColor,1);
-	m_Render.m_piRender->RenderArrowHead(vPoint2,vDir,vUp,dSize*0.2,dSize*0.05,dSize*0.05);
-	
-	m_Render.m_piRender->DeactivateDepth();
-	m_Render.m_piRender->DeactivateSolid();
-	m_Render.m_piRender->RenderLine(vPoint1,vPoint2,vColor,0x1111);
-	m_Render.m_piRender->SetColor(vColor,1);
-	m_Render.m_piRender->RenderArrowHead(vPoint2,vDir,vUp,dSize*0.2,dSize*0.05,dSize*0.05);
-	
-	m_Render.m_piRender->PopState();
-}
-
-void CEntityEditorMainWindow::RenderAxisPlane(CVector vOrigin,CVector vDir,CVector vUp,CVector vColor,double dSize)
-{
-	CVector pVertexes[3],pVertexesFlipped[3];
-	pVertexes[0]=vOrigin;
-	pVertexes[1]=vOrigin+vDir*dSize;
-	pVertexes[2]=vOrigin+vUp*dSize;
-	pVertexesFlipped[2]=vOrigin;
-	pVertexesFlipped[1]=vOrigin+vDir*dSize;
-	pVertexesFlipped[0]=vOrigin+vUp*dSize;
-	
-	m_Render.m_piRender->PushState();
-	m_Render.m_piRender->ActivateBlending();
-	m_Render.m_piRender->DeactivateSolid();
-	m_Render.m_piRender->DeactivateDepth();
-	m_Render.m_piRender->SetColor(vColor,0.5);
-	m_Render.m_piRender->RenderPolygon(3,pVertexes,NULL);
-	m_Render.m_piRender->RenderPolygon(3,pVertexesFlipped,NULL);
-	
-	m_Render.m_piRender->ActivateSolid();
-	m_Render.m_piRender->ActivateDepth();
-	m_Render.m_piRender->SetColor(vColor,0.5);
-	m_Render.m_piRender->RenderPolygon(3,pVertexes,NULL);
-	m_Render.m_piRender->RenderPolygon(3,pVertexesFlipped,NULL);
-	m_Render.m_piRender->PopState();
 }
 
 void CEntityEditorMainWindow::OnDraw(IGenericRender *piRender)
@@ -291,17 +248,11 @@ void CEntityEditorMainWindow::OnDraw(IGenericRender *piRender)
 	piRender->StartStagedRendering();
 	if(m_piAnimation){m_piAnimation->CustomRender(m_Render.m_piRender,m_Camera.m_piCamera);}
 	piRender->EndStagedRendering();
-	
-	if(m_pEntity)
-	{
-		RenderAxisPlane(m_vAxisPosition,AxisPosX,AxisPosY,CVector(0,0,0.7),2.5);
-		RenderAxisPlane(m_vAxisPosition,AxisPosX,AxisPosZ,CVector(0.7,0,0),2.5);
-		RenderAxisPlane(m_vAxisPosition,AxisPosY,AxisPosZ,CVector(0.7,0.7,0),2.5);
-		RenderAxis(m_vAxisPosition,AxisPosX,AxisPosY,CVector(1,0,0),5);
-		RenderAxis(m_vAxisPosition,AxisPosY,AxisPosZ,CVector(0,0,1),5);
-		RenderAxis(m_vAxisPosition,AxisPosZ,AxisPosX,CVector(1,1,0),5);
-	}
-	
+
+	m_RotationGizmo.SetPosition(m_TranslationGizmo.GetPosition());
+	m_TranslationGizmo.Render(m_Render.m_piRender,m_Camera.m_piCamera);
+	m_RotationGizmo.Render(m_Render.m_piRender,m_Camera.m_piCamera);
+
 	m_Render.m_piRender->PopOptions();
 	m_Render.m_piRender->PopState();
 
@@ -610,36 +561,53 @@ void CEntityEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 {
 	if(DetectDrag(dx,dy))
 	{
-		m_bMovingX=true;
-		m_piGUIManager->SetMouseCapture(this);
-		m_vMovementOrigin=m_vAxisPosition;
+		int nCurrentId=100;
+		m_Render.m_piRender->StartSelection(m_rRealRect,m_Camera.m_piCamera,dx,dy,5);
+		nCurrentId=m_TranslationGizmo.SelectionRender(nCurrentId,m_Render.m_piRender,m_Camera.m_piCamera);
+		nCurrentId=m_RotationGizmo.SelectionRender(nCurrentId,m_Render.m_piRender,m_Camera.m_piCamera);
+		int nSelectionId=m_Render.m_piRender->EndSelection();
+		m_TranslationGizmo.Select(nSelectionId);
+		m_RotationGizmo.Select(nSelectionId);
+
+		CLine mouseRay=GetMouseRay(dx,dy,10000.0,m_Camera.m_piCamera);
+		if( m_TranslationGizmo.BeginTranslation(&mouseRay,m_Camera.m_piCamera) ||
+			m_RotationGizmo.BeginRotation(&mouseRay,m_Camera.m_piCamera))
+		{
+			m_bMovingGizmo=true;
+			m_piGUIManager->SetMouseCapture(this);
+		}
 	}
 }
 
 void CEntityEditorMainWindow::OnMouseMove( double x,double y )
 {
-	if(m_bMovingX)
+	if(m_bMovingGizmo)
 	{
 		CLine mouseRay=GetMouseRay(x,y,10000.0,m_Camera.m_piCamera);
-		
-		double dAngleZ=AxisPosZ*m_Camera.m_piCamera->GetForwardVector();
-		CVector vAxis=fabs(dAngleZ)<0.5?AxisPosX:AxisPosZ;
-		
-		CPlane plane(vAxis,m_vAxisPosition);
-		double dSide1=plane.GetSide(mouseRay.m_Points[0]);
-		double dSide2=plane.GetSide(mouseRay.m_Points[1]);
-		double dLength=(dSide1-dSide2);
-		double dFraction=dLength?dSide1/dLength:0;
-		CVector vPos=mouseRay.m_Points[0]+(mouseRay.m_Points[1]-mouseRay.m_Points[0])*dFraction;
-		
-		m_vAxisPosition.c[1]=vPos.c[1];
+		m_TranslationGizmo.ProcessTranslation(&mouseRay,m_Camera.m_piCamera);
+		m_RotationGizmo.ProcessRotation(&mouseRay,m_Camera.m_piCamera);
+	}
+	else
+	{
+		int nCurrentId=100;
+		m_Render.m_piRender->StartSelection(m_rRealRect,m_Camera.m_piCamera,x,y,5);
+		nCurrentId=m_TranslationGizmo.SelectionRender(nCurrentId,m_Render.m_piRender,m_Camera.m_piCamera);
+		nCurrentId=m_RotationGizmo.SelectionRender(nCurrentId,m_Render.m_piRender,m_Camera.m_piCamera);
+		int nSelectionId=m_Render.m_piRender->EndSelection();
+		m_TranslationGizmo.Select(nSelectionId);
+		m_RotationGizmo.Select(nSelectionId);
 	}
 }
 
 void CEntityEditorMainWindow::OnMouseUp( int nButton,double x,double y )
 {
-	if(m_piGUIManager->HasMouseCapture(this)){m_piGUIManager->ReleaseMouseCapture();}
-	m_bMovingX=false;
+	if(m_piGUIManager->HasMouseCapture(this))
+	{
+		m_piGUIManager->ReleaseMouseCapture();
+		m_TranslationGizmo.EndTranslation();
+		m_RotationGizmo.EndRotation();	
+	}
+	m_bMovingGizmo=false;
 }
 
 void CEntityEditorMainWindow::StopGameSimulation()
