@@ -350,11 +350,19 @@ LRESULT COpenGLViewport::ProcessMessage(HWND hWnd,UINT  uMsg, WPARAM  wParam,LPA
 	case WM_MOUSEWHEEL:
 		if(GET_WHEEL_DELTA_WPARAM(wParam)>0)
 		{
-		  OnMouseWheelUp(pointX,pointY);
+			POINT p;
+			p.x=pointX;
+			p.y=pointY;
+			ScreenToClient(hWnd,&p);
+			OnMouseWheelUp(p.x,p.y);
 		}
 		else
 		{
-		  OnMouseWheelDown(pointX,pointY);
+			POINT p;
+			p.x=pointX;
+			p.y=pointY;
+			ScreenToClient(hWnd,&p);
+			OnMouseWheelDown(p.x,p.y);
 		}
 		break;		
 	case WM_LBUTTONDOWN:
