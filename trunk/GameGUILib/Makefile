@@ -15,6 +15,7 @@ GameWindowBase.cpp\
 GameDialogBase.cpp\
 GameGUITranslationGizmo.cpp\
 GameGUIRotationGizmo.cpp\
+GameGUIBBoxGizmo.cpp\
 stdafx.cpp
 
 
