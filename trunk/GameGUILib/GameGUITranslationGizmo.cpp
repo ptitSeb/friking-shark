@@ -110,6 +110,7 @@ void CGameGUITranslationGizmo::Select(int nSelectedElementId)
 
 bool CGameGUITranslationGizmo::BeginTranslation(CLine *pMouseRay,IGenericCamera *piCamera)
 {
+	if(m_nSelectedElement==-1){return false;}
 	m_vTranslationOrigin=PositionFromRay(pMouseRay,piCamera);
 	m_vTranslationStartPosition=m_vPosition;
 	return true;

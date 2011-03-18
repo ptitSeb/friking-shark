@@ -29,6 +29,17 @@ enum EPropertyPanel
 	ePropertyPanel_Count
 };
 
+enum EEntityEditorView
+{
+	eEntityEditorView_Perspective,
+	eEntityEditorView_Front,
+	eEntityEditorView_Back,
+	eEntityEditorView_Right,
+	eEntityEditorView_Left,
+	eEntityEditorView_Top,
+	eEntityEditorView_Bottom
+};
+
 class CFakeEntity: virtual public CEntityBase
 {
 public:
@@ -51,6 +62,9 @@ public:
 	CGameControllerWrapper   m_GameControllerWrapper;
 	CSoundManagerWrapper	 m_SoundManagerWrapper;
 	
+	CAnimationPositionWrapper    m_PositionWrapper;
+	CAnimationOrientationWrapper m_OrientationWrapper;
+	
 	std::vector<CAnimationDesignTypeWrapper> m_vAnimations;
 	IAnimation 				*m_piAnimation;
 	CEntityTypeWrapper		 m_EntityType;
@@ -60,6 +74,8 @@ public:
 
 	double					 m_d3DFontSize;
 	
+	bool						 m_bShowTranslationGizmo;
+	bool						 m_bShowRotationGizmo;
 	CGameGUIRotationGizmo    	 m_RotationGizmo;
 	CGameGUITranslationGizmo 	 m_TranslationGizmo;
 	bool					 	 m_bMovingGizmo;
@@ -222,7 +238,7 @@ public:
 	void UpdateRunningAnimation();
 	
 	void UpdateCaption();
-	void CenterCamera();
+	void CenterCamera(EEntityEditorView eView=eEntityEditorView_Perspective);
 	void SetupRenderOptions(IGenericRender *piRender,IGenericCamera *piCamera);
 	void StopGameSimulation();
 	void StartGameSimulation();

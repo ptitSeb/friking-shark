@@ -41,7 +41,6 @@ struct SModelAnimationObjectTypeConfig
 
 struct SParticleSystemAnimationObjectTypeConfig
 {
-	CVector     	vPosition;
 	unsigned int    nStartTime;
 	unsigned int    nEndTime;
 	bool            bTrackEntity;
@@ -123,6 +122,18 @@ struct IAnimationTypeDesign:virtual public ISystemUnknown
 	virtual bool			RemoveObject(unsigned int nObject)=0;
 	virtual bool			GetObject(unsigned int nObject,IAnimationObjectType **ppiObject)=0;
 	virtual unsigned int	GetObjectCount()=0;
+};
+
+struct IAnimationObjectTypePositionDesign:virtual public IAnimationObjectType
+{
+	virtual CVector GetPosition()=0;
+	virtual void	SetPosition(CVector vPosition)=0;
+};
+
+struct IAnimationObjectTypeOrientationDesign:virtual public IAnimationObjectType
+{
+	virtual CVector GetAngles()=0;
+	virtual void	SetAngles(CVector vAngles)=0;
 };
 
 struct IEventAnimationObjectTypeDesign:virtual public IAnimationObjectType

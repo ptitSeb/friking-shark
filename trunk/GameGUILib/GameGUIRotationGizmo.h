@@ -15,6 +15,11 @@ class CGameGUIRotationGizmo
 	CVector m_vRotationOrigin;
 	CVector m_vRotationStartAngles;
 
+	CVector m_vYawAxis1,m_vYawAxis2;
+	CVector m_vPitchAxis1,m_vPitchAxis2;
+	CVector m_vRollAxis1,m_vRollAxis2;
+
+	void UpdateAxises();
 	void RenderAngle(IGenericRender *piRender,IGenericCamera *piCamera,double dAngle,CVector vUp,CVector vRigth,CVector vColor);
 	CVector AnglesFromRay(CLine *pMouseRay,IGenericCamera *piCamera);
 	
