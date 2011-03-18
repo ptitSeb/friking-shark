@@ -69,25 +69,25 @@ void CGameGUIRotationGizmo::RenderAngle(IGenericRender *piRender,IGenericCamera 
 
 void CGameGUIRotationGizmo::Render(IGenericRender *piRender, IGenericCamera *piCamera)
 {
-	if(m_bVisibleAngles[YAW])  {RenderAngle(piRender,piCamera,m_vAngles.c[YAW],m_vYawAxis1,m_vYawAxis2,m_nSelectedElement==YAW?CVector(0,0,1):CVector(0,0,0.5));}
-	if(m_bVisibleAngles[PITCH]){RenderAngle(piRender,piCamera,m_vAngles.c[PITCH],m_vPitchAxis1,m_vPitchAxis2,m_nSelectedElement==PITCH?CVector(1,1,0):CVector(0.5,0.5,0));}
-	if(m_bVisibleAngles[ROLL]) {RenderAngle(piRender,piCamera,m_vAngles.c[ROLL],m_vRollAxis1,m_vRollAxis2,m_nSelectedElement==ROLL?CVector(1,0,0):CVector(0.5,0,0));}
+	if(m_bVisibleAngles[YAW])  {RenderAngle(piRender,piCamera,m_vAngles.c[YAW],m_vYawAxis1,m_vYawAxis2,m_nSelectedElement==YAW?CVector(1,0,0):CVector(0.5,0,0));}
+	if(m_bVisibleAngles[PITCH]){RenderAngle(piRender,piCamera,m_vAngles.c[PITCH],m_vPitchAxis1,m_vPitchAxis2,m_nSelectedElement==PITCH?CVector(0,0,1):CVector(0,0,0.5));}
+	if(m_bVisibleAngles[ROLL]) {RenderAngle(piRender,piCamera,m_vAngles.c[ROLL],m_vRollAxis1,m_vRollAxis2,m_nSelectedElement==ROLL?CVector(1,1,0):CVector(0.5,0.5,0));}
 }
 
 void CGameGUIRotationGizmo::UpdateAxises()
 {
 	CMatrix matrix1,matrix2,rot1,rot2;
 	CVector vAxis1,vAxis2;
-	rot1.R(AxisPosY,0-DegreesToRadians(m_vAngles.c[YAW]));
+	rot1.R(AxisPosY,DegreesToRadians(m_vAngles.c[YAW]));
 	matrix1*=rot1;
-	rot2.R(AxisPosZ,0-DegreesToRadians(m_vAngles.c[PITCH]));
+	rot2.R(AxisPosZ,DegreesToRadians(m_vAngles.c[PITCH]));
 	matrix2*=rot2;
 	matrix2*=rot1;
 
 	m_vYawAxis1=AxisPosX;
-	m_vYawAxis2=AxisPosZ;
+	m_vYawAxis2=AxisNegZ;
 	m_vPitchAxis1=AxisPosX;m_vPitchAxis1*=matrix1;
-	m_vPitchAxis2=AxisNegY;m_vPitchAxis2*=matrix1;
+	m_vPitchAxis2=AxisPosY;m_vPitchAxis2*=matrix1;
 	m_vRollAxis1=AxisPosY;m_vRollAxis1*=matrix2;
 	m_vRollAxis2=AxisPosZ;m_vRollAxis2*=matrix2;
 }
