@@ -2163,7 +2163,7 @@ void COpenGLRender::StartSelection(SGameRect rWindowRect,IGenericCamera *piCamer
 	glGetIntegerv(GL_VIEWPORT,viewport);
 	glViewport(viewport[0],viewport[1],viewport[2],viewport[3]);
 	gluPickMatrix(rWindowRect.x+dx,rWindowRect.y+dy,dPrecision,dPrecision,viewport);
-	gluPerspective(piCamera->GetViewAngle(),rWindowRect.w/rWindowRect.h,dNearPlane,dFarPlane);
+	gluPerspective(piCamera->GetViewAngle(),rWindowRect.w/rWindowRect.h,1,dFarPlane);
 
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
