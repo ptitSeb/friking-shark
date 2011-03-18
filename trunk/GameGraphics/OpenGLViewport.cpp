@@ -134,6 +134,16 @@ int TranslateKeyFromX11(int nX11Key)
 	case XK_KP_7:return GK_NUMPAD7;
 	case XK_KP_8:return GK_NUMPAD8;
 	case XK_KP_9:return GK_NUMPAD9;
+	case XK_KP_Insert:return GK_NUMPAD0;
+	case XK_KP_End:return GK_NUMPAD1;
+	case XK_KP_Down:return GK_NUMPAD2;
+	case XK_KP_Page_Down:return GK_NUMPAD3;
+	case XK_KP_Left:return GK_NUMPAD4;
+	case XK_KP_Begin:return GK_NUMPAD5;
+	case XK_KP_Right:return GK_NUMPAD6;
+	case XK_KP_Home:return GK_NUMPAD7;
+	case XK_KP_Up:return GK_NUMPAD8;
+	case XK_KP_Page_Up:return GK_NUMPAD9;
 	case XK_Control_L:return GK_LCONTROL;
 	case XK_Home:return GK_HOME;
 	case XK_End:return GK_END;
