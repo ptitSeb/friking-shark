@@ -2,7 +2,9 @@
 
 DECLARE_CUSTOM_WRAPPER1(CParticleSystemTypeWrapper,IParticleSystemType,m_piParticleSystemType)
 
-class CParticleSystemAnimationObjectType: public CAnimationObjectTypeBase, public virtual IParticleSystemAnimationObjectTypeDesign
+class CParticleSystemAnimationObjectType: public CAnimationObjectTypeBase, 
+public virtual IParticleSystemAnimationObjectTypeDesign,
+public virtual IAnimationObjectTypePositionDesign
 {
 public:
 
@@ -31,6 +33,11 @@ public:
 	void SetConfig(SParticleSystemAnimationObjectTypeConfig *pConfig);
 	void SetParticleSystemType(IParticleSystemType *piParticleSystemType);
 	void GetParticleSystemType(IParticleSystemType **ppiParticleSystemType);
+	
+	// IAnimationObjectTypePositionDesign
+	
+	CVector GetPosition();
+	void	SetPosition(CVector vPosition);
 	
     CParticleSystemAnimationObjectType();
     ~CParticleSystemAnimationObjectType();

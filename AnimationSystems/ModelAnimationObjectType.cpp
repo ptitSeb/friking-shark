@@ -97,6 +97,11 @@ void CModelAnimationObjectType::GetModel(IGenericModel **ppiModel){(*ppiModel)=A
 std::string CModelAnimationObjectType::GetAnimationObjectDescription(){return m_ModelWrapper.m_piObject?m_ModelWrapper.m_piObject->GetName():"Unknown";}
 
 
+CVector CModelAnimationObjectType::GetPosition(){return m_vPosition;}
+void	CModelAnimationObjectType::SetPosition(CVector vPosition){m_vPosition=vPosition;}
+CVector CModelAnimationObjectType::GetAngles(){return m_vAngles;}
+void	CModelAnimationObjectType::SetAngles(CVector vAngles){m_vAngles=vAngles;}
+
 CModelAnimationObject::CModelAnimationObject(CModelAnimationObjectType *pType,IAnimation *piAnimation)
 :CAnimationObjectBase(pType,piAnimation)
 {
@@ -123,6 +128,22 @@ void CModelAnimationObject::Render(IGenericRender *piRender,IGenericCamera *piCa
 		SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();
 		vPosition=pPhysicInfo->vPosition;
 		vAngles=pPhysicInfo->vAngles;
+		bool bRefSysComputed=false;
+		CVector vForward,vRight,vUp;
+		if(m_pType->m_vPosition.c[0]!=0 || m_pType->m_vPosition.c[1]!=0 || m_pType->m_vPosition.c[2]!=0)
+		{
+			if(!bRefSysComputed){VectorsFromAngles(vAngles,&vForward,&vRight,&vUp);bRefSysComputed=true;}
+			vPosition+=vForward*m_pType->m_vPosition.c[0]+vUp*m_pType->m_vPosition.c[1]+vRight*m_pType->m_vPosition.c[2];
+		}
+		if(m_pType->m_vAngles.c[0]!=0 || m_pType->m_vAngles.c[1]!=0 || m_pType->m_vAngles.c[2]!=0)
+		{
+			if(!bRefSysComputed){VectorsFromAngles(vAngles,&vForward,&vRight,&vUp);bRefSysComputed=true;}
+			CVector vLocalForward,vGlobalForward;
+			VectorsFromAngles(m_pType->m_vAngles,&vLocalForward);
+			vGlobalForward=vForward*vLocalForward.c[0]+vUp*vLocalForward.c[1]+vRight*vLocalForward.c[2];
+			vAngles=AnglesFromVector(vGlobalForward);
+			
+		}
 	}
 	piRender->ActivateLighting();
 	if(m_pType->m_ShaderWrapper.m_piShader){m_pType->m_ShaderWrapper.m_piShader->Activate();}

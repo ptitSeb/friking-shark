@@ -24,7 +24,6 @@ void CParticleSystemAnimationObjectType::GetConfig(SParticleSystemAnimationObjec
 {
 	pConfig->nStartTime=m_nStartTime;
 	pConfig->nEndTime=m_nEndTime;
-	pConfig->vPosition=m_vPosition;
 	pConfig->bTrackEntity=m_bTrackEntity;
 }
 
@@ -32,13 +31,16 @@ void CParticleSystemAnimationObjectType::SetConfig(SParticleSystemAnimationObjec
 {
 	m_nStartTime=pConfig->nStartTime;
 	m_nEndTime=pConfig->nEndTime;
-	m_vPosition=pConfig->vPosition;
 	m_bTrackEntity=pConfig->bTrackEntity;
 }
 
 void CParticleSystemAnimationObjectType::SetParticleSystemType(IParticleSystemType *piParticleSystem){m_ParticleSystemType.Attach(piParticleSystem);}
 void CParticleSystemAnimationObjectType::GetParticleSystemType(IParticleSystemType **ppiParticleSystem){(*ppiParticleSystem)=ADD(m_ParticleSystemType.m_piParticleSystemType);}
 std::string CParticleSystemAnimationObjectType::GetAnimationObjectDescription(){return m_ParticleSystemType.m_piObject?m_ParticleSystemType.m_piObject->GetName():"Unknown";}
+
+CVector CParticleSystemAnimationObjectType::GetPosition(){return m_vPosition;}
+void	CParticleSystemAnimationObjectType::SetPosition(CVector vPosition){m_vPosition=vPosition;}
+
 
 CParticleSystemAnimationObject::CParticleSystemAnimationObject(CParticleSystemAnimationObjectType *pType,IAnimation *piAnimation)
 :CAnimationObjectBase(pType,piAnimation)
