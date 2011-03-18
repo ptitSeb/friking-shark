@@ -15,7 +15,7 @@ public:
   IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
 
   BEGIN_PROP_MAP(CBombProjectileType)
-    PROP_VALUE_FLAGS(m_dDamage,"Daño",1.0,MRPF_NORMAL|MRPF_OPTIONAL)
+    PROP_VALUE_FLAGS(m_dDamage,"Damage",1.0,MRPF_NORMAL|MRPF_OPTIONAL)
     PROP_CLASS_CHAIN(CEntityTypeBase)
   END_PROP_MAP();
   

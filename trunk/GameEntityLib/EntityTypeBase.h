@@ -37,6 +37,8 @@ protected:
 	unsigned int m_nMovementType;
 	unsigned int m_nCollisionType;
 	unsigned int m_nAlignment;
+	double		 m_dMaxHealth;
+	double		 m_dMaxVelocity;
 	
 	vector<SEntityState> m_vStates;
 	
@@ -62,6 +64,8 @@ public:
 		PROP_FLAGS(m_nBoundsType,"BoundsType",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_nDamageType,"DamageType",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_nAlignment ,"Alignment",MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_FLAGS(m_dMaxHealth ,"MaxHealth",MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_FLAGS(m_dMaxVelocity,"MaxVelocity",MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP();
 
 	BEGIN_ENTITY_STATE_MAP()
@@ -70,7 +74,6 @@ public:
 
 	IAnimation  *CreateStateAnimation(CEntityBase *pEntity,unsigned int nState,unsigned int nIndex,unsigned int nCurrentTime);
 	unsigned int GetStateAnimations(unsigned int nState);
-	
 	
 	// IEntityTypeDesign
 	

@@ -3,7 +3,6 @@
 class CBomberType: public CEntityTypeBase
 {
 public:
-  double  m_dMaxHealth;
   double  m_dMaxVelocity;
   double  m_dTimeFirstShotMin;
   double  m_dTimeFirstShotMax;
@@ -13,13 +12,11 @@ public:
   IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
 
   BEGIN_PROP_MAP(CBomberType)
-    PROP_VALUE_FLAGS(m_dMaxHealth,"Vida",20,MRPF_NORMAL|MRPF_OPTIONAL);
-    PROP_VALUE_FLAGS(m_dMaxVelocity,"Velocidad",20,MRPF_NORMAL|MRPF_OPTIONAL);
-    PROP_VALUE_FLAGS(m_dTimeFirstShotMin,"TiempoPrimerDisparoMinimo",500,MRPF_NORMAL|MRPF_OPTIONAL);
-    PROP_VALUE_FLAGS(m_dTimeFirstShotMax,"TiempoPrimerDisparoMaximo",5000,MRPF_NORMAL|MRPF_OPTIONAL);
-    PROP_VALUE_FLAGS(m_dTimeBetweenShotsMin,"TiempoEntreDisparosMinimo",2000,MRPF_NORMAL|MRPF_OPTIONAL);
-    PROP_VALUE_FLAGS(m_dTimeBetweenShotsMax,"TiempoEntreDisparosMaximo",5000,MRPF_NORMAL|MRPF_OPTIONAL);
     PROP_CLASS_CHAIN(CEntityTypeBase)
+	PROP_VALUE_FLAGS(m_dTimeFirstShotMin,"TimeFirstShotMin",500,MRPF_NORMAL|MRPF_OPTIONAL);
+	PROP_VALUE_FLAGS(m_dTimeFirstShotMax,"TimeFirstShotMax",5000,MRPF_NORMAL|MRPF_OPTIONAL);
+	PROP_VALUE_FLAGS(m_dTimeBetweenShotsMin,"TimeBetweenShotsMin",2000,MRPF_NORMAL|MRPF_OPTIONAL);
+	PROP_VALUE_FLAGS(m_dTimeBetweenShotsMax,"TimeBetweenShotsMax",5000,MRPF_NORMAL|MRPF_OPTIONAL);
   END_PROP_MAP();
 
   CBomberType();

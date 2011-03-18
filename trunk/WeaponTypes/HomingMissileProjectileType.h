@@ -23,14 +23,13 @@ public:
   IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
 
   BEGIN_PROP_MAP(CHomingMissileProjectileType)
-    PROP_VALUE_FLAGS(m_dDamage,"Daño",1.0,MRPF_NORMAL|MRPF_OPTIONAL)
-    PROP_VALUE_FLAGS(m_dwDuration,"Duracion",4000,MRPF_NORMAL|MRPF_OPTIONAL)
-    PROP_VALUE_FLAGS(m_dwFallDuration,"DuracionCaida",5000,MRPF_NORMAL|MRPF_OPTIONAL)
-    PROP_VALUE_FLAGS(m_dMaxSpeed,"Velocidad",100,MRPF_NORMAL|MRPF_OPTIONAL)
-    PROP_VALUE_FLAGS(m_dMaxAngularSpeed,"VelocidadAngular",150,MRPF_NORMAL|MRPF_OPTIONAL)
-    PROP_VALUE_FLAGS(m_dwTimeBettwenAcquireTargetAttemps,"TiempoEntreBusquedasDeObjetivos",300,MRPF_NORMAL|MRPF_OPTIONAL)
-    PROP_VALUE_FLAGS(m_dwTimeToWaitToAcquireTargets,"TiempoInicioBusquedaObjetivos",300,MRPF_NORMAL|MRPF_OPTIONAL)
-    PROP_VALUE_FLAGS(m_dwMaximunTargetsToAcquire,"NumeroMaximoObjetivos",0,MRPF_NORMAL|MRPF_OPTIONAL)
+    PROP_VALUE_FLAGS(m_dDamage,"Damage",1.0,MRPF_NORMAL|MRPF_OPTIONAL)
+    PROP_VALUE_FLAGS(m_dwDuration,"Duration",4000,MRPF_NORMAL|MRPF_OPTIONAL)
+    PROP_VALUE_FLAGS(m_dwFallDuration,"FallingDuration",5000,MRPF_NORMAL|MRPF_OPTIONAL)
+    PROP_VALUE_FLAGS(m_dMaxAngularSpeed,"MaxAngularSpeed",150,MRPF_NORMAL|MRPF_OPTIONAL)
+    PROP_VALUE_FLAGS(m_dwTimeBettwenAcquireTargetAttemps,"SearchDelayBetweenTargets",300,MRPF_NORMAL|MRPF_OPTIONAL)
+    PROP_VALUE_FLAGS(m_dwTimeToWaitToAcquireTargets,"SearchDelayFirstTarget",300,MRPF_NORMAL|MRPF_OPTIONAL)
+    PROP_VALUE_FLAGS(m_dwMaximunTargetsToAcquire,"MaxTargets",0,MRPF_NORMAL|MRPF_OPTIONAL)
     PROP_CLASS_CHAIN(CEntityTypeBase)
   END_PROP_MAP()
   

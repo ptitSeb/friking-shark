@@ -85,8 +85,12 @@ public:
     void  ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
 
     // Colisiones y Daños
-    double GetHealth();
-    double GetMaxHealth();
+    double 	GetHealth();
+	void 	SetHealth(double dHealth);
+
+    double 	GetMaxHealth();
+	void 	SetMaxHealth(double dMaxHealth);
+
 	unsigned int  GetDamageType();
 	void          SetDamageType(unsigned int dwDamageType);
 	

@@ -11,8 +11,6 @@ class CFighterType: public CEntityTypeBase
 public:
     IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
 
-    double  m_dMaxSpeed;
-    double  m_dMaxHealth;
     double  m_dMaxRoll;
     double  m_dMaxAngularSpeed;
     double  m_dTimeFirstShotMin;
@@ -22,14 +20,12 @@ public:
 
     BEGIN_PROP_MAP(CFighterType)
         PROP_CLASS_CHAIN(CEntityTypeBase)
-        PROP_VALUE_FLAGS(m_dMaxSpeed,"Velocidad",40,MRPF_NORMAL|MRPF_OPTIONAL);
-        PROP_VALUE_FLAGS(m_dMaxHealth,"Vida",1,MRPF_NORMAL|MRPF_OPTIONAL);
-        PROP_VALUE_FLAGS(m_dMaxRoll,"GiroBarrilMaximo",40,MRPF_NORMAL|MRPF_OPTIONAL);
-        PROP_VALUE_FLAGS(m_dMaxAngularSpeed,"VelocidadAngularMaxima",60,MRPF_NORMAL|MRPF_OPTIONAL);
-        PROP_VALUE_FLAGS(m_dTimeFirstShotMin,"TiempoPrimerDisparoMinimo",500,MRPF_NORMAL|MRPF_OPTIONAL);
-        PROP_VALUE_FLAGS(m_dTimeFirstShotMax,"TiempoPrimerDisparoMaximo",5000,MRPF_NORMAL|MRPF_OPTIONAL);
-        PROP_VALUE_FLAGS(m_dTimeBetweenShotsMin,"TiempoEntreDisparosMinimo",2000,MRPF_NORMAL|MRPF_OPTIONAL);
-        PROP_VALUE_FLAGS(m_dTimeBetweenShotsMax,"TiempoEntreDisparosMaximo",5000,MRPF_NORMAL|MRPF_OPTIONAL);
+        PROP_VALUE_FLAGS(m_dMaxRoll,"MaxRoll",40,MRPF_NORMAL|MRPF_OPTIONAL);
+        PROP_VALUE_FLAGS(m_dMaxAngularSpeed,"MaxAngularVelocity",60,MRPF_NORMAL|MRPF_OPTIONAL);
+        PROP_VALUE_FLAGS(m_dTimeFirstShotMin,"TimeFirstShotMin",500,MRPF_NORMAL|MRPF_OPTIONAL);
+        PROP_VALUE_FLAGS(m_dTimeFirstShotMax,"TimeFirstShotMax",5000,MRPF_NORMAL|MRPF_OPTIONAL);
+        PROP_VALUE_FLAGS(m_dTimeBetweenShotsMin,"TimeBetweenShotsMin",2000,MRPF_NORMAL|MRPF_OPTIONAL);
+        PROP_VALUE_FLAGS(m_dTimeBetweenShotsMax,"TimeBetweenShotsMax",5000,MRPF_NORMAL|MRPF_OPTIONAL);
     END_PROP_MAP();
 	
 	BEGIN_ENTITY_STATE_MAP()
