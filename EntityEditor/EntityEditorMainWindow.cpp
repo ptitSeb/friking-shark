@@ -81,7 +81,6 @@ bool CEntityEditorMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 	}
 	m_pEntity=new CFakeEntity();
 	m_pEntity->GetPhysicInfo()->dMaxVelocity=10;
-	
 
 	m_FrameManager.Attach("GameSystem","FrameManager");
 	m_PhysicManagerWrapper.Attach("GameSystem","PhysicManager");
@@ -846,7 +845,6 @@ void CEntityEditorMainWindow::CenterCamera(EEntityEditorView eView)
 	CVector vMins,vMaxs;
 	m_vAnimations[nSelected].m_piAnimationType->DesignGetBBox(&vMins,&vMaxs);
 	bCenter=true;
-	if(m_pEntity){vCenter+=m_pEntity->GetPhysicInfo()->vPosition;}
 	vCenter+=(vMaxs+vMins)*0.5;
 	vSize=(vMaxs-vMins);
 
@@ -917,6 +915,7 @@ void CEntityEditorMainWindow::CenterCamera(EEntityEditorView eView)
 	}
 	CVector vAngles;
 	AnglesFromVector(vCenter-vPos,&vAngles);
+	if(m_pEntity){vPos+=m_pEntity->GetPhysicInfo()->vPosition;}
 	m_Camera.m_piCamera->SetPosition(vPos);
 	m_Camera.m_piCamera->SetAngles(vAngles);
 }
