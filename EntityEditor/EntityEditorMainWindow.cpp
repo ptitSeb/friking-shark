@@ -14,6 +14,7 @@ CEntityEditorMainWindow::CEntityEditorMainWindow(void)
 	
 	m_bShowTranslationGizmo=false;
 	m_bShowRotationGizmo=false;
+	m_bShowBBoxGizmo=true;
 	
 	m_bMovingGizmo=false;
 	m_piAnimation=NULL;
@@ -40,6 +41,7 @@ CEntityEditorMainWindow::CEntityEditorMainWindow(void)
 	m_piGameSystem=NULL;
 	m_bSimulationStarted=false;
 	
+	m_BBoxGizmo.SetArrowSize(5);
 	m_TranslationGizmo.SetSize(5);
 	m_RotationGizmo.SetRadius(3.725);
 }
@@ -255,10 +257,15 @@ void CEntityEditorMainWindow::OnDraw(IGenericRender *piRender)
 	{
 		m_TranslationGizmo.SetPosition(m_pEntity->GetPhysicInfo()->vPosition+m_PositionWrapper.m_piDesign->GetPosition());
 	}
+	if(!m_bMovingGizmo && m_pEntity)
+	{
+		m_BBoxGizmo.SetPosition(m_pEntity->GetPhysicInfo()->vPosition);
+	}
 		
 	m_RotationGizmo.SetPosition(m_TranslationGizmo.GetPosition());
 	if(m_bShowTranslationGizmo){m_TranslationGizmo.Render(m_Render.m_piRender,m_Camera.m_piCamera);}
 	if(m_bShowRotationGizmo){m_RotationGizmo.Render(m_Render.m_piRender,m_Camera.m_piCamera);}
+	if(m_bShowBBoxGizmo){m_BBoxGizmo.Render(m_Render.m_piRender,m_Camera.m_piCamera);}
 
 	m_Render.m_piRender->PopOptions();
 	m_Render.m_piRender->PopState();
@@ -314,6 +321,9 @@ void CEntityEditorMainWindow::ProcessFileOpen()
 		if(bOk){bOk=m_EntityType.m_piSerializable->Unserialize(cfg.GetRoot());}
 		if(bOk)
 		{
+			SEntityTypeConfig config;
+			m_EntityType.m_piEntityTypeDesign->GetEntityTypeConfig(&config);
+			m_BBoxGizmo.SetBounds(config.vBBoxMins,config.vBBoxMaxs);
 			m_sEntityName=existingWrapper.m_piObject->GetName();
 			UpdateCaption();
 			UpdateStateList();
@@ -573,17 +583,20 @@ void CEntityEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 {
 	int nCurrentId=100;
 	m_Render.m_piRender->StartSelection(m_rRealRect,m_Camera.m_piCamera,dx,dy,5);
-	nCurrentId=m_TranslationGizmo.SelectionRender(nCurrentId,m_Render.m_piRender,m_Camera.m_piCamera);
-	nCurrentId=m_RotationGizmo.SelectionRender(nCurrentId,m_Render.m_piRender,m_Camera.m_piCamera);
+	if(m_bShowTranslationGizmo){nCurrentId=m_TranslationGizmo.SelectionRender(nCurrentId,m_Render.m_piRender,m_Camera.m_piCamera);}
+	if(m_bShowRotationGizmo)   {nCurrentId=m_RotationGizmo.SelectionRender(nCurrentId,m_Render.m_piRender,m_Camera.m_piCamera);}
+	if(m_bShowBBoxGizmo)       {nCurrentId=m_BBoxGizmo.SelectionRender(nCurrentId,m_Render.m_piRender,m_Camera.m_piCamera);}
 	int nSelectionId=m_Render.m_piRender->EndSelection();
 	m_TranslationGizmo.Select(nSelectionId);
 	m_RotationGizmo.Select(nSelectionId);
+	m_BBoxGizmo.Select(nSelectionId);
 	
 	if(DetectDrag(dx,dy))
 	{
 		CLine mouseRay=GetMouseRay(dx,dy,10000.0,m_Camera.m_piCamera);
 		if( (m_bShowTranslationGizmo && m_TranslationGizmo.BeginTranslation(&mouseRay,m_Camera.m_piCamera)) ||
-			(m_bShowRotationGizmo && m_RotationGizmo.BeginRotation(&mouseRay,m_Camera.m_piCamera)) )
+			(m_bShowRotationGizmo && m_RotationGizmo.BeginRotation(&mouseRay,m_Camera.m_piCamera)) ||
+			(m_bShowBBoxGizmo && m_BBoxGizmo.BeginBBox(&mouseRay,m_Camera.m_piCamera)))
 		{
 			m_pEntity->GetPhysicInfo()->dMaxVelocity=0;
 			
@@ -600,6 +613,7 @@ void CEntityEditorMainWindow::OnMouseMove( double x,double y )
 		CLine mouseRay=GetMouseRay(x,y,10000.0,m_Camera.m_piCamera);
 		m_TranslationGizmo.ProcessTranslation(&mouseRay,m_Camera.m_piCamera);
 		m_RotationGizmo.ProcessRotation(&mouseRay,m_Camera.m_piCamera);
+		m_BBoxGizmo.ProcessBBox(&mouseRay,m_Camera.m_piCamera);
 		
 		if(m_PositionWrapper.m_piDesign && m_pEntity)
 		{
@@ -632,6 +646,7 @@ void CEntityEditorMainWindow::OnMouseUp( int nButton,double x,double y )
 		m_piGUIManager->ReleaseMouseCapture();
 		m_TranslationGizmo.EndTranslation();
 		m_RotationGizmo.EndRotation();	
+		m_BBoxGizmo.EndBBox();	
 		m_pEntity->GetPhysicInfo()->dMaxVelocity=10;
 	}
 	m_bMovingGizmo=false;

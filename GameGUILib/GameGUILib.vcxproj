@@ -84,6 +84,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="GameDialogBase.cpp" />
+    <ClCompile Include="GameGUIBBoxGizmo.cpp" />
     <ClCompile Include="GameGUIRotationGizmo.cpp" />
     <ClCompile Include="GameGUITranslationGizmo.cpp" />
     <ClCompile Include="GameGUIUtil.cpp" />
@@ -95,6 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameDialogBase.h" />
+    <ClInclude Include="GameGUIBBoxGizmo.h" />
     <ClInclude Include="GameGUILib.h" />
     <ClInclude Include="GameGUIRotationGizmo.h" />
     <ClInclude Include="GameGUITranslationGizmo.h" />

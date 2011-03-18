@@ -4,6 +4,7 @@
 #include "EntityEditorObjectSelector.h"
 #include "GameGUITranslationGizmo.h"
 #include "GameGUIRotationGizmo.h"
+#include "GameGUIBBoxGizmo.h"
 
 DECLARE_CUSTOM_WRAPPER1(CEntityEditorObjectSelectorWrapper,IEntityEditorObjectSelector,m_piObjectSelector)
 DECLARE_CUSTOM_WRAPPER1(CEntityEditorNamedObjectSelectorWrapper,IEntityEditorNamedObjectSelector,m_piObjectSelector)
@@ -76,8 +77,10 @@ public:
 	
 	bool						 m_bShowTranslationGizmo;
 	bool						 m_bShowRotationGizmo;
+	bool						 m_bShowBBoxGizmo;
 	CGameGUIRotationGizmo    	 m_RotationGizmo;
 	CGameGUITranslationGizmo 	 m_TranslationGizmo;
+	CGameGUIBBoxGizmo 	 		 m_BBoxGizmo;
 	bool					 	 m_bMovingGizmo;
 /*	CVector 	m_vAxisPosition;
 	CVector 	m_vTranslationOrigin;
