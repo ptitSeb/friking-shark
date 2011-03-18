@@ -38,10 +38,19 @@ void CModelAnimationObjectType::DesignRender( IGenericRender *piRender,CVector &
 		}
 		else
 		{
+			CVector vTempPos=vPosition;
+			CVector vTempAngles=vAngles+m_vAngles;
+
 			piRender->PushState();
 			piRender->ActivateLighting();
 			if(m_ShaderWrapper.m_piShader){m_ShaderWrapper.m_piShader->Activate();}
-			piRender->RenderModel(vPosition,vAngles,m_ModelWrapper.m_piModel);
+			if(m_vPosition.c[0]!=0 || m_vPosition.c[1]!=0 || m_vPosition.c[2]!=0)
+			{
+				CVector vForward,vRight,vUp;
+				VectorsFromAngles(vAngles,&vForward,&vRight,&vUp);
+				vTempPos+=vForward*m_vPosition.c[0]+vUp*m_vPosition.c[1]+vRight*m_vPosition.c[2];
+			}
+			piRender->RenderModel(vTempPos,vTempAngles,m_ModelWrapper.m_piModel);
 			if(m_ShaderWrapper.m_piShader){m_ShaderWrapper.m_piShader->Deactivate();}
 			piRender->PopState();
 		}
@@ -127,22 +136,12 @@ void CModelAnimationObject::Render(IGenericRender *piRender,IGenericCamera *piCa
 	{
 		SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();
 		vPosition=pPhysicInfo->vPosition;
-		vAngles=pPhysicInfo->vAngles;
-		bool bRefSysComputed=false;
-		CVector vForward,vRight,vUp;
+		vAngles=pPhysicInfo->vAngles+m_pType->m_vAngles;
 		if(m_pType->m_vPosition.c[0]!=0 || m_pType->m_vPosition.c[1]!=0 || m_pType->m_vPosition.c[2]!=0)
 		{
-			if(!bRefSysComputed){VectorsFromAngles(vAngles,&vForward,&vRight,&vUp);bRefSysComputed=true;}
+			CVector vForward,vRight,vUp;
+			VectorsFromAngles(vAngles,&vForward,&vRight,&vUp);
 			vPosition+=vForward*m_pType->m_vPosition.c[0]+vUp*m_pType->m_vPosition.c[1]+vRight*m_pType->m_vPosition.c[2];
-		}
-		if(m_pType->m_vAngles.c[0]!=0 || m_pType->m_vAngles.c[1]!=0 || m_pType->m_vAngles.c[2]!=0)
-		{
-			if(!bRefSysComputed){VectorsFromAngles(vAngles,&vForward,&vRight,&vUp);bRefSysComputed=true;}
-			CVector vLocalForward,vGlobalForward;
-			VectorsFromAngles(m_pType->m_vAngles,&vLocalForward);
-			vGlobalForward=vForward*vLocalForward.c[0]+vUp*vLocalForward.c[1]+vRight*vLocalForward.c[2];
-			vAngles=AnglesFromVector(vGlobalForward);
-			
 		}
 	}
 	piRender->ActivateLighting();
