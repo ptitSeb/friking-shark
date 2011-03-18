@@ -78,7 +78,8 @@ unsigned int        CEntityBase::GetAlignment(){return m_dwAlignment;}
 void         CEntityBase::SetAlignment(unsigned int dwAlignment){m_dwAlignment=dwAlignment;}
 double       CEntityBase::GetHealth(){return m_dHealth;}
 double       CEntityBase::GetMaxHealth(){return m_dMaxHealth;}
-
+void		 CEntityBase::SetHealth(double dHealth){m_dHealth=dHealth;}
+void		 CEntityBase::SetMaxHealth(double dMaxHealth){m_dMaxHealth=dMaxHealth;}
 // Animaciones
 
 unsigned int  CEntityBase::GetState(){return m_nCurrentState;}

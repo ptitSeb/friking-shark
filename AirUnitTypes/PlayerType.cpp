@@ -17,13 +17,13 @@ IEntity *CPlayerType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTim
     CPlayer *piEntity=new CPlayer(this);
     InitializeEntity(piEntity,dwCurrentTime);
 	piEntity->SetState(ePlayerState_Normal);
-    piEntity->SetSpeed(m_dMaxSpeed);
+    piEntity->SetSpeed(m_dMaxVelocity);
+	piEntity->SetHealth(10000000);
     return piEntity;
 }
 
 CPlayer::CPlayer(CPlayerType *pType)
 {
-  m_dHealth=10000000;
   m_dwPoints=0;
   m_dwLivesLeft=1;
   m_dSpeed=80;

@@ -9,15 +9,9 @@ enum EPlayerState
 
 class CPlayerType: public CEntityTypeBase
 {
-    double m_dMaxSpeed;
 public:
     IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
 
-    BEGIN_PROP_MAP(CPlayerType)
-      PROP_VALUE_FLAGS(m_dMaxSpeed,"Velocidad",80,MRPF_NORMAL|MRPF_OPTIONAL);
-      PROP_CLASS_CHAIN(CEntityTypeBase)
-    END_PROP_MAP();
-	
 	BEGIN_ENTITY_STATE_MAP()
 		ENTITY_STATE_CHAIN(CEntityTypeBase)
 		ENTITY_STATE(ePlayerState_Falling,"Falling")

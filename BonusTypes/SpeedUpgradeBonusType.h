@@ -16,7 +16,7 @@ public:
 
   BEGIN_PROP_MAP(CSpeedUpgradeBonusType)
     PROP_CLASS_CHAIN(CEntityTypeBase)
-    PROP(m_dSpeed,"Velocidad");
+    PROP(m_dSpeed,"Speed");
   END_PROP_MAP();
 
   BEGIN_ENTITY_STATE_MAP()

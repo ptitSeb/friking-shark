@@ -4,8 +4,6 @@
 
 CTruckType::CTruckType()
 {
-  m_dMaxHealth=0;
-  m_dMaxSpeed=0;
   m_dMaxAngularSpeed=0;
 }
 
@@ -18,8 +16,6 @@ IEntity *CTruckType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime
     CTruck *piEntity=new CTruck(this);
     InitializeEntity(piEntity,dwCurrentTime);
     piEntity->SetState(eTruckState_Normal);
-	piEntity->GetPhysicInfo()->dMaxVelocity=m_dMaxSpeed;
-	piEntity->GetPhysicInfo()->dMaxForce=m_dMaxSpeed;
 	piEntity->GetPhysicInfo()->dMass=1;
 	piEntity->GetPhysicInfo()->dwCollisionType=PHYSIC_COLLISION_TYPE_SLIDE;
 	piEntity->GetPhysicInfo()->dwMoveType=PHYSIC_MOVE_TYPE_NORMAL;
@@ -32,7 +28,6 @@ CTruck::CTruck(CTruckType *pType)
     m_sClassName="CTruck";
     m_pType=pType;
     m_dwDamageType=DAMAGE_TYPE_NORMAL;
-    m_dMaxHealth=m_dHealth=pType->m_dMaxHealth;
 }
 
 void CTruck::OnKilled()

@@ -16,7 +16,7 @@ public:
 
   BEGIN_PROP_MAP(CPointBonusType)
     PROP_CLASS_CHAIN(CEntityTypeBase)
-    PROP(m_dwPoints,"Puntos");
+    PROP(m_dwPoints,"Points");
   END_PROP_MAP();
   
   BEGIN_ENTITY_STATE_MAP()

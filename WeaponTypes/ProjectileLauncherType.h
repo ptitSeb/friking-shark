@@ -16,11 +16,11 @@ struct SProjectileLauncherProjectile
 };
 
 BEGIN_STRUCT_PROPS(SProjectileLauncherProjectile)
-  PROP(projectileEntityType,"Entidad")
-  PROP_VALUE_FLAGS(vOrigin,"Origen",Origin,MRPF_NORMAL|MRPF_OPTIONAL)
-  PROP_VALUE_FLAGS(vDirection,"Direccion",CVector(1,0,0),MRPF_NORMAL|MRPF_OPTIONAL)
-  PROP_VALUE_FLAGS(dVelocity,"Velocidad",CVector(1,0,0),MRPF_NORMAL|MRPF_OPTIONAL)
-  PROP_VALUE_FLAGS(dwReferenceSystem,"SistemaDeReferencia",eProjectileLauncherReferenceSystem_Owner,MRPF_NORMAL|MRPF_OPTIONAL)
+  PROP(projectileEntityType,"Entity")
+  PROP_VALUE_FLAGS(vOrigin,"Position",Origin,MRPF_NORMAL|MRPF_OPTIONAL)
+  PROP_VALUE_FLAGS(vDirection,"Heading",CVector(1,0,0),MRPF_NORMAL|MRPF_OPTIONAL)
+  PROP_VALUE_FLAGS(dVelocity,"Velocity",CVector(1,0,0),MRPF_NORMAL|MRPF_OPTIONAL)
+  PROP_VALUE_FLAGS(dwReferenceSystem,"ReferenceSystem",eProjectileLauncherReferenceSystem_Owner,MRPF_NORMAL|MRPF_OPTIONAL)
 END_STRUCT_PROPS()
 
 struct SProjectileLauncherLevel
@@ -33,9 +33,9 @@ struct SProjectileLauncherLevel
 };
 
 BEGIN_STRUCT_PROPS(SProjectileLauncherLevel)
-  PROP(dwReloadTime,"TiempoDeRecarga")
-  PROP(dProjectiles,"Proyectiles")
-  PROP_VALUE_FLAGS(dRange,"Alcance",0,MRPF_NORMAL|MRPF_OPTIONAL)
+  PROP(dwReloadTime,"ReloadTime")
+  PROP(dProjectiles,"Projectiles")
+  PROP_VALUE_FLAGS(dRange,"Range",0,MRPF_NORMAL|MRPF_OPTIONAL)
 END_STRUCT_PROPS()
 
 class CProjectileLauncherType: virtual public CSystemObjectBase,virtual public IWeaponType
@@ -56,9 +56,9 @@ public:
   SProjectileLauncherLevel *GetLevel(unsigned int dwLevel);
  
   BEGIN_PROP_MAP(CProjectileLauncherType)
-    PROP_FLAGS(m_dLevels,"Niveles",MRPF_NORMAL|MRPF_OPTIONAL)
-    PROP_VALUE_FLAGS(m_dwWeaponSlot,"Banco",0,MRPF_NORMAL|MRPF_OPTIONAL)
-    PROP_VALUE_FLAGS(m_bIgnoreRoll,"IgnorarAnguloRoll",true,MRPF_NORMAL|MRPF_OPTIONAL)
+    PROP_FLAGS(m_dLevels,"Levels",MRPF_NORMAL|MRPF_OPTIONAL)
+    PROP_VALUE_FLAGS(m_dwWeaponSlot,"Slot",0,MRPF_NORMAL|MRPF_OPTIONAL)
+    PROP_VALUE_FLAGS(m_bIgnoreRoll,"IgnoreRoll",true,MRPF_NORMAL|MRPF_OPTIONAL)
   END_PROP_MAP()
 
   CProjectileLauncherType();

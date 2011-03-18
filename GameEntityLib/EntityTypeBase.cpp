@@ -6,6 +6,8 @@
 
 CEntityTypeBase::CEntityTypeBase(void)
 {
+	m_dMaxVelocity=0;
+	m_dMaxHealth=1;
 	m_nDamageType=DAMAGE_TYPE_NONE;
 	m_nBoundsType=PHYSIC_BOUNDS_TYPE_BBOX;
 	m_nMovementType=PHYSIC_MOVE_TYPE_NORMAL;
@@ -46,10 +48,14 @@ void CEntityTypeBase::InitializeEntity(CEntityBase *pEntity,unsigned int dwCurre
 	pPhysicInfo->dwCollisionType=m_nCollisionType;
     pPhysicInfo->vMins=m_vBBoxMins;
     pPhysicInfo->vMaxs=m_vBBoxMaxs;
+	pPhysicInfo->dMaxVelocity=m_dMaxVelocity;
+	pPhysicInfo->dMaxForce=m_dMaxVelocity;
+
 	pEntity->SetEntityTypeBase(this);
     pEntity->SetAlignment(m_nAlignment);
 	pEntity->SetDamageType(m_nDamageType);
-	
+	pEntity->SetHealth(m_dMaxHealth);
+	pEntity->SetMaxHealth(m_dMaxHealth);
 }
 
 void CEntityTypeBase::GetBBox( CVector *pvMins,CVector *pvMaxs )

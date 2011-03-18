@@ -3,8 +3,6 @@
 
 CFighterType::CFighterType()
 {
-  m_dMaxSpeed=0;
-  m_dMaxHealth=0;
   m_dMaxRoll=0;
   m_dMaxAngularSpeed=0;
   m_dTimeFirstShotMin=0;
@@ -30,7 +28,6 @@ CFighter::CFighter(CFighterType *pType,unsigned int dwCurrentTime)
   m_sClassName="CFighter";
   m_pType=pType;
   m_nRoutePoint=0;
-  m_dMaxHealth=m_dHealth=pType->m_dMaxHealth;
   m_dwNextProcessFrame=dwCurrentTime+10;
   m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeFirstShotMax-m_pType->m_dTimeFirstShotMin)+m_pType->m_dTimeFirstShotMin;
 }
@@ -91,7 +88,7 @@ void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
   CVector vDest=m_piRoute->GetAbsolutePoint(m_piRoute->GetNextPointIndex(m_nRoutePoint));
   CVector vDir=vDest-m_PhysicInfo.vPosition;
   double dDist=vDir.N();
-  if(dDist<m_pType->m_dMaxSpeed/4.0)
+  if(dDist<m_PhysicInfo.dMaxVelocity/4.0)
   {
     int nNext=m_piRoute->GetNextPointIndex(m_nRoutePoint);
     if(nNext==m_nRoutePoint)
@@ -140,7 +137,7 @@ void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
     double dCurrentAngularSpeed=(m_PhysicInfo.vAngles.c[ROLL]/m_pType->m_dMaxRoll)*m_pType->m_dMaxAngularSpeed;
     m_PhysicInfo.vAngles.c[YAW]=ApproachAngle(m_PhysicInfo.vAngles.c[YAW],vAngles.c[YAW],-dCurrentAngularSpeed*dTimeFraction);
     VectorsFromAngles(m_PhysicInfo.vAngles,&m_PhysicInfo.vVelocity);
-    m_PhysicInfo.vVelocity*=m_pType->m_dMaxSpeed;
+    m_PhysicInfo.vVelocity*=m_PhysicInfo.dMaxVelocity;
     m_dwNextProcessFrame=dwCurrentTime+10;
   }
 

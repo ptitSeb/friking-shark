@@ -30,7 +30,6 @@ CBomber::CBomber(CBomberType *pType,unsigned int dwCurrentTime)
   m_nRoutePoint=0;
   m_PhysicInfo.fOwnForce.dForce=0;
   m_PhysicInfo.fOwnForce.dMaxVelocity=m_pType->m_dMaxVelocity;
-  m_dMaxHealth=m_dHealth=m_pType->m_dMaxHealth;
   m_dwNextProcessFrame=dwCurrentTime+100;
   m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeFirstShotMax-m_pType->m_dTimeFirstShotMin)+m_pType->m_dTimeFirstShotMin;
 }
@@ -60,10 +59,11 @@ void CBomber::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
 
-  if(m_pType->m_dMaxHealth)
+  double dMaxHealth=GetMaxHealth();
+  if(dMaxHealth)
   {
 	unsigned int nAnimations=m_pTypeBase->GetStateAnimations(ENTITY_STATE_BASE);
-	nAnimationToSet=(size_t)(((m_pType->m_dMaxHealth-m_dHealth)/m_pType->m_dMaxHealth)*((double)nAnimations));
+	nAnimationToSet=(size_t)(((dMaxHealth-m_dHealth)/dMaxHealth)*((double)nAnimations));
 	if(nAnimationToSet>nAnimations-1){nAnimationToSet=nAnimations-1;}
     SetState(ENTITY_STATE_BASE,(int)nAnimationToSet);
   }

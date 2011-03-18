@@ -3,7 +3,6 @@
 
 CStaticStructureType::CStaticStructureType()
 {
-	m_dMaxHealth=0;
 	m_nDamageType=DAMAGE_TYPE_NORMAL;
 	m_nMovementType=PHYSIC_MOVE_TYPE_NONE;
 }
@@ -29,7 +28,6 @@ CStaticStructure::CStaticStructure(CStaticStructureType *pType)
 {
 	m_sClassName="CStaticStructure";
 	m_pType=pType;
-	m_dMaxHealth=m_dHealth=pType->m_dMaxHealth;
 }
 
 void CStaticStructure::OnKilled()
