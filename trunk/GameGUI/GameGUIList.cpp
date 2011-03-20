@@ -45,7 +45,7 @@ void CGameGUIList::SetElement(unsigned long nIndex,std::string sText)
 void CGameGUIList::Clear(){ m_vElements.clear();m_nSelectedElement=-1;m_nFirstVisible=0;}
 std::string  CGameGUIList::GetElement(unsigned int nElement){if(nElement<m_vElements.size()){return m_vElements[nElement];}return "";}
 unsigned int CGameGUIList::GetElementCount(){return m_vElements.size();}
-void 		 CGameGUIList::SetSelectedElement(int nElement){m_nSelectedElement=nElement;ValidateSelection();}
+void 		 CGameGUIList::SetSelectedElement(int nElement){m_nSelectedElement=nElement;if(nElement!=-1){ValidateSelection();}}
 int 		 CGameGUIList::GetSelectedElement(){return m_nSelectedElement;}
 
 

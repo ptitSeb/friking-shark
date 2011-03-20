@@ -379,6 +379,8 @@ public:
 	virtual void RenderBBox(const CVector &vMins,const CVector &vMaxs,const CVector &vColor,unsigned long nStipple=0x8888)=0;
 	virtual void RenderBBox(const CVector &vOrigin,const CVector &vOrientation,const CVector &vMins,const CVector &vMaxs,const CVector &vColor,unsigned long nStipple=0x8888)=0;
 	virtual void RenderLine(const CVector &v1,const CVector &v2,const CVector &vColor,unsigned long nStipple=0x8888)=0;
+	virtual void RenderLines(unsigned int nLines,const CVector *pPoints,const CVector &vColor,unsigned long nStipple=0x8888)=0;
+	virtual void RenderLineStrip(unsigned int nPoints,const CVector *pPoints,const CVector &vColor,unsigned long nStipple=0x8888)=0;
 	virtual void RenderRect(const CVector &vCenter,const CVector &vAxisW,const CVector &vAxisH,double w,double h)=0;
 	virtual void RenderRect(double x, double y,double w,double h)=0;
 	virtual void RenderPolygon(unsigned int nVertexes,const CVector *pVertexes,const CVector *pColors)=0;

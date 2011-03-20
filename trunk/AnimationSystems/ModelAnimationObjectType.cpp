@@ -41,15 +41,33 @@ void CModelAnimationObjectType::DesignRender( IGenericRender *piRender,CVector &
 			CVector vTempPos=vPosition;
 			CVector vTempAngles=vAngles+m_vAngles;
 
-			piRender->PushState();
-			piRender->ActivateLighting();
-			if(m_ShaderWrapper.m_piShader){m_ShaderWrapper.m_piShader->Activate();}
+			bool bVectorsComputed=false;
+			CVector vForward,vRight,vUp;
 			if(m_vPosition.c[0]!=0 || m_vPosition.c[1]!=0 || m_vPosition.c[2]!=0)
 			{
-				CVector vForward,vRight,vUp;
-				VectorsFromAngles(vAngles,&vForward,&vRight,&vUp);
+				if(!bVectorsComputed){VectorsFromAngles(vAngles,&vForward,&vRight,&vUp);bVectorsComputed=true;}
+				
 				vTempPos+=vForward*m_vPosition.c[0]+vUp*m_vPosition.c[1]+vRight*m_vPosition.c[2];
 			}
+			if(m_vAngles.c[0]!=0 || m_vAngles.c[1]!=0 || m_vAngles.c[2]!=0)
+			{
+				if(!bVectorsComputed){VectorsFromAngles(vAngles,&vForward,&vRight,&vUp);bVectorsComputed=true;}
+				
+				CVector vLocalForward,vLocalRight,bLocalUp,vGlobalForward,vGlobalRight,vGlobalUp;
+				VectorsFromAngles(m_vAngles,&vLocalForward,&vLocalRight,&bLocalUp);
+				
+				vGlobalForward=vForward*vLocalForward.c[0]+vUp*vLocalForward.c[1]+vRight*vLocalForward.c[2];
+				vGlobalRight=vForward*vLocalRight.c[0]+vUp*vLocalRight.c[1]+vRight*vLocalRight.c[2];
+				vGlobalUp=vForward*bLocalUp.c[0]+vUp*bLocalUp.c[1]+vRight*bLocalUp.c[2];
+				
+				vTempAngles=AnglesFromVectors(vGlobalForward,vGlobalRight,vGlobalUp);
+			}
+			
+			piRender->PushState();
+			if(!m_bCastShadow){piRender->DeactivateShadowEmission();}
+			piRender->DeactivateHeightFog();
+			piRender->ActivateLighting();
+			if(m_ShaderWrapper.m_piShader){m_ShaderWrapper.m_piShader->Activate();}
 			piRender->RenderModel(vTempPos,vTempAngles,m_ModelWrapper.m_piModel);
 			if(m_ShaderWrapper.m_piShader){m_ShaderWrapper.m_piShader->Deactivate();}
 			piRender->PopState();
@@ -59,7 +77,12 @@ void CModelAnimationObjectType::DesignRender( IGenericRender *piRender,CVector &
 
 void CModelAnimationObjectType::DesignGetBBox( CVector *pvMins,CVector *pvMaxs )
 {
-	if(m_ModelWrapper.m_piModel){m_ModelWrapper.m_piModel->GetFrameBBox(0,0,pvMins,pvMaxs);}
+	if(m_ModelWrapper.m_piModel)
+	{
+		m_ModelWrapper.m_piModel->GetFrameBBox(0,0,pvMins,pvMaxs);
+		if(pvMins){*pvMins+=m_vPosition;}
+		if(pvMaxs){*pvMaxs+=m_vPosition;}
+	}
 }
 
 double CModelAnimationObjectType::DesignGetRadius()
@@ -132,23 +155,13 @@ void CModelAnimationObject::Render(IGenericRender *piRender,IGenericCamera *piCa
 	CVector vPosition,vAngles;
 	
 	IEntity *piEntity=m_piAnimation->GetEntity();
-	if(m_pType->m_ModelWrapper.m_piModel && piEntity)
+	if(piEntity)
 	{
 		SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();
 		vPosition=pPhysicInfo->vPosition;
-		vAngles=pPhysicInfo->vAngles+m_pType->m_vAngles;
-		if(m_pType->m_vPosition.c[0]!=0 || m_pType->m_vPosition.c[1]!=0 || m_pType->m_vPosition.c[2]!=0)
-		{
-			CVector vForward,vRight,vUp;
-			VectorsFromAngles(vAngles,&vForward,&vRight,&vUp);
-			vPosition+=vForward*m_pType->m_vPosition.c[0]+vUp*m_pType->m_vPosition.c[1]+vRight*m_pType->m_vPosition.c[2];
-		}
+		vAngles=pPhysicInfo->vAngles;
 	}
-	piRender->ActivateLighting();
-	if(m_pType->m_ShaderWrapper.m_piShader){m_pType->m_ShaderWrapper.m_piShader->Activate();}
-	piRender->RenderModel(vPosition,vAngles,m_pType->m_ModelWrapper.m_piModel,0,m_nCurrentFrame);
-	if(m_pType->m_ShaderWrapper.m_piShader){m_pType->m_ShaderWrapper.m_piShader->Deactivate();}
-	piRender->DeactivateLighting();
+	if(m_pType){m_pType->DesignRender(piRender,vPosition,vAngles,false);}
 }
 void CModelAnimationObject::CustomRender(IGenericRender *piRender,IGenericCamera *piCamera)
 {
