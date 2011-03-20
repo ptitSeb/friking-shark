@@ -358,6 +358,144 @@ void COpenGLRender::RenderBBox(const CVector &vMins,const CVector &vMaxs,const C
 	RenderLine(vPoints[3],vPoints[7],vColor,nStipple);
 }
 
+void COpenGLRender::RenderLineStrip(unsigned int nLines,const CVector *pPoints,const CVector &vColor,unsigned long nStipple)
+{
+	if(m_bStagedRendering)
+	{
+		SLineStageKey key(m_sStagedRenderingState,nStipple);
+		std::map<SLineStageKey,SLineStage>::iterator iParticleStage;
+		SLineStage *pStage=NULL;
+		iParticleStage=m_mLineStages.find(key);
+		if(iParticleStage==m_mLineStages.end())
+		{
+			pStage=&m_mLineStages[key];
+		}
+		else
+		{
+			pStage=&iParticleStage->second;
+		}
+		for(unsigned int x=0;x<nLines*2;x+=2)
+		{
+			int nBuffers=pStage->vBuffers.size();
+			SLineBuffer *pBuffer=nBuffers?pStage->vBuffers[nBuffers-1]:NULL;
+			if(pBuffer==NULL || pBuffer->nUsedElements>=LINE_BUFFER_SIZE)
+			{
+				pBuffer=new SLineBuffer;
+				pStage->vBuffers.push_back(pBuffer);
+			}
+			float *pVertexBuffer=pBuffer->pVertexBuffer+(pBuffer->nUsedElements*2*3);
+			float *pColorBuffer=pBuffer->pColorBuffer+(pBuffer->nUsedElements*2*4);
+			
+			*pVertexBuffer++=(float)pPoints[x].c[0];
+			*pVertexBuffer++=(float)pPoints[x].c[1];
+			*pVertexBuffer++=(float)pPoints[x].c[2];
+			
+			*pVertexBuffer++=(float)pPoints[x+1].c[0];
+			*pVertexBuffer++=(float)pPoints[x+1].c[1];
+			*pVertexBuffer++=(float)pPoints[x+1].c[2];
+			
+			*pColorBuffer++=(float)vColor.c[0];
+			*pColorBuffer++=(float)vColor.c[1];
+			*pColorBuffer++=(float)vColor.c[2];
+			*pColorBuffer++=1;
+			
+			*pColorBuffer++=(float)vColor.c[0];
+			*pColorBuffer++=(float)vColor.c[1];
+			*pColorBuffer++=(float)vColor.c[2];
+			*pColorBuffer++=1;
+			
+			pBuffer->nUsedElements++;
+		}
+	}
+	else
+	{
+		glPushAttrib(GL_ALL_ATTRIB_BITS);
+		glColor3d(vColor.c[0],vColor.c[1],vColor.c[2]);
+		glDisable(GL_TEXTURE_2D);
+		
+		glEnable(GL_LINE_STIPPLE);
+		glLineStipple(1,(unsigned short)nStipple);
+		
+		glBegin(GL_LINE_STRIP);
+		for(unsigned int x=0;x<nLines;x++)
+		{
+			glVertex3d(pPoints[x].c[0],pPoints[x].c[1],pPoints[x].c[2]);
+		}
+		glEnd();
+		
+		glPopAttrib();
+	}
+}
+
+
+void COpenGLRender::RenderLines(unsigned int nLines,const CVector *pPoints,const CVector &vColor,unsigned long nStipple)
+{
+	if(m_bStagedRendering)
+	{
+		SLineStageKey key(m_sStagedRenderingState,nStipple);
+		std::map<SLineStageKey,SLineStage>::iterator iParticleStage;
+		SLineStage *pStage=NULL;
+		iParticleStage=m_mLineStages.find(key);
+		if(iParticleStage==m_mLineStages.end())
+		{
+			pStage=&m_mLineStages[key];
+		}
+		else
+		{
+			pStage=&iParticleStage->second;
+		}
+		for(unsigned int x=0;x<nLines*2;x+=2)
+		{
+			int nBuffers=pStage->vBuffers.size();
+			SLineBuffer *pBuffer=nBuffers?pStage->vBuffers[nBuffers-1]:NULL;
+			if(pBuffer==NULL || pBuffer->nUsedElements>=LINE_BUFFER_SIZE)
+			{
+				pBuffer=new SLineBuffer;
+				pStage->vBuffers.push_back(pBuffer);
+			}
+			float *pVertexBuffer=pBuffer->pVertexBuffer+(pBuffer->nUsedElements*2*3);
+			float *pColorBuffer=pBuffer->pColorBuffer+(pBuffer->nUsedElements*2*4);
+			
+			*pVertexBuffer++=(float)pPoints[x].c[0];
+			*pVertexBuffer++=(float)pPoints[x].c[1];
+			*pVertexBuffer++=(float)pPoints[x].c[2];
+			
+			*pVertexBuffer++=(float)pPoints[x+1].c[0];
+			*pVertexBuffer++=(float)pPoints[x+1].c[1];
+			*pVertexBuffer++=(float)pPoints[x+1].c[2];
+			
+			*pColorBuffer++=(float)vColor.c[0];
+			*pColorBuffer++=(float)vColor.c[1];
+			*pColorBuffer++=(float)vColor.c[2];
+			*pColorBuffer++=1;
+			
+			*pColorBuffer++=(float)vColor.c[0];
+			*pColorBuffer++=(float)vColor.c[1];
+			*pColorBuffer++=(float)vColor.c[2];
+			*pColorBuffer++=1;
+			
+			pBuffer->nUsedElements++;
+		}
+	}
+	else
+	{
+		glPushAttrib(GL_ALL_ATTRIB_BITS);
+		glColor3d(vColor.c[0],vColor.c[1],vColor.c[2]);
+		glDisable(GL_TEXTURE_2D);
+		
+		glEnable(GL_LINE_STIPPLE);
+		glLineStipple(1,(unsigned short)nStipple);
+		
+		glBegin(GL_LINES);
+		for(unsigned int x=0;x<nLines*2;x++)
+		{
+			glVertex3d(pPoints[x].c[0],pPoints[x].c[1],pPoints[x].c[2]);
+		}
+		glEnd();
+		
+		glPopAttrib();
+	}
+}
 void COpenGLRender::RenderLine(const CVector &v1,const CVector &v2,const CVector &vColor,unsigned long nStipple)
 {
 	if(m_bStagedRendering)

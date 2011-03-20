@@ -2,6 +2,8 @@
 #include "GameGUILib.h"
 #include "GameGUIRotationGizmo.h"
 
+#define ROTATION_GIZMO_SEGMENTS 72
+
 CGameGUIRotationGizmo::CGameGUIRotationGizmo()
 {
 	m_bInteractiveAngles[YAW]=m_bInteractiveAngles[PITCH]=m_bInteractiveAngles[ROLL]=true;
@@ -34,44 +36,57 @@ void CGameGUIRotationGizmo::SetVisibleAngles(bool bYaw,bool bPitch,bool bRoll)
 	m_bVisibleAngles[ROLL]=bRoll;
 }
 
-void CGameGUIRotationGizmo::RenderAngle(IGenericRender *piRender,IGenericCamera *piCamera,double dCurrentAngle,CVector vX,CVector vY,CVector vColor)
+void CGameGUIRotationGizmo::RenderAngle(IGenericRender *piRender,IGenericCamera *piCamera,double dCurrentAngle,CVector vX,CVector vY,CVector vColor,double dRadius,bool bSelection)
 {
-	piRender->PushState();
-
 	CVector vZ=vX^vY;
 	CPlane vClipPlane=CPlane(piCamera->GetForwardVector(),m_vPosition);
 
-	piRender->DeactivateDepth();
-	piRender->DeactivateSolid();
-	piRender->SetColor(vColor,1);
-	unsigned int nSegments=36;
-	CVector vPoints[36];
+	if(!bSelection)
+	{
+		piRender->PushState();
+		piRender->DeactivateDepth();
+		piRender->DeactivateSolid();
+		piRender->SetColor(vColor,1);
+	}
+	CVector vPoints[ROTATION_GIZMO_SEGMENTS];
+	unsigned int nSegments=ROTATION_GIZMO_SEGMENTS;
 	double dSegmentSize=2.0*PI/(double)nSegments;
 	for(unsigned int x=0;x<nSegments;x++)
 	{
-		vPoints[x]=m_vPosition+vX*(cos(dSegmentSize*(double)x)*m_dRadius)+vY*(sin(dSegmentSize*(double)x)*m_dRadius);
+		vPoints[x]=m_vPosition+vX*(cos(dSegmentSize*(double)x)*dRadius)+vY*(sin(dSegmentSize*(double)x)*dRadius);
 	}
+	unsigned int nFrontPoints=0,nBackPoints=0;
+	CVector vFrontPoints[ROTATION_GIZMO_SEGMENTS*2];
+	CVector vBackPoints[ROTATION_GIZMO_SEGMENTS*2];
 	for(unsigned int x=0;x<nSegments;x++)
 	{
 		CVector vPoint1=vPoints[x];
 		CVector vPoint2=(x==nSegments-1)?vPoints[0]:vPoints[x+1];
+		
 		if(vClipPlane.GetSide(vPoint1)<0 && vClipPlane.GetSide(vPoint2)<0)
 		{
-			piRender->RenderLine(vPoint1,vPoint2,vColor,0xFFFF);
+			vFrontPoints[nFrontPoints++]=vPoint1;
+			vFrontPoints[nFrontPoints++]=vPoint2;
 		}
 		else
 		{
-			piRender->RenderLine(vPoint1,vPoint2,vColor*0.5,0x1111);
+			vBackPoints[nBackPoints++]=vPoint1;
+			vBackPoints[nBackPoints++]=vPoint2;
 		}
 	}
-	piRender->PopState();
+	if(nFrontPoints){piRender->RenderLines(nFrontPoints/2,vFrontPoints,vColor,0xFFFF);}
+	if(nBackPoints){piRender->RenderLines(nBackPoints/2,vBackPoints,vColor,0x1111);}
+	if(!bSelection)
+	{
+		piRender->PopState();
+	}
 }
 
 void CGameGUIRotationGizmo::Render(IGenericRender *piRender, IGenericCamera *piCamera)
 {
-	if(m_bVisibleAngles[YAW])  {RenderAngle(piRender,piCamera,m_vAngles.c[YAW],m_vYawAxis1,m_vYawAxis2,m_nSelectedElement==YAW?CVector(1,0,0):CVector(0.5,0,0));}
-	if(m_bVisibleAngles[PITCH]){RenderAngle(piRender,piCamera,m_vAngles.c[PITCH],m_vPitchAxis1,m_vPitchAxis2,m_nSelectedElement==PITCH?CVector(0,0,1):CVector(0,0,0.5));}
-	if(m_bVisibleAngles[ROLL]) {RenderAngle(piRender,piCamera,m_vAngles.c[ROLL],m_vRollAxis1,m_vRollAxis2,m_nSelectedElement==ROLL?CVector(1,1,0):CVector(0.5,0.5,0));}
+	if(m_bVisibleAngles[YAW])  {RenderAngle(piRender,piCamera,m_vAngles.c[YAW],m_vYawAxis1,m_vYawAxis2,m_nSelectedElement==YAW?CVector(1,0,0):CVector(0.5,0,0),m_dRadius,false);}
+	if(m_bVisibleAngles[PITCH]){RenderAngle(piRender,piCamera,m_vAngles.c[PITCH],m_vPitchAxis1,m_vPitchAxis2,m_nSelectedElement==PITCH?CVector(0,0,1):CVector(0,0,0.5),m_dRadius*0.95,false);}
+	if(m_bVisibleAngles[ROLL]) {RenderAngle(piRender,piCamera,m_vAngles.c[ROLL],m_vRollAxis1,m_vRollAxis2,m_nSelectedElement==ROLL?CVector(1,1,0):CVector(0.5,0.5,0),m_dRadius*0.9,false);}
 }
 
 void CGameGUIRotationGizmo::UpdateAxises()
@@ -86,8 +101,8 @@ void CGameGUIRotationGizmo::UpdateAxises()
 
 	m_vYawAxis1=AxisPosX;
 	m_vYawAxis2=AxisNegZ;
-	m_vPitchAxis1=AxisPosX;m_vPitchAxis1*=matrix1;
-	m_vPitchAxis2=AxisPosY;m_vPitchAxis2*=matrix1;
+	m_vPitchAxis1=AxisPosY;m_vPitchAxis1*=matrix1;
+	m_vPitchAxis2=AxisNegX;m_vPitchAxis2*=matrix1;
 	m_vRollAxis1=AxisPosY;m_vRollAxis1*=matrix2;
 	m_vRollAxis2=AxisPosZ;m_vRollAxis2*=matrix2;
 }
@@ -96,9 +111,9 @@ int CGameGUIRotationGizmo::SelectionRender(int nBaseId,IGenericRender *piRender,
 {
 	m_nSelectionBase=nBaseId;
 	
-	if(m_bInteractiveAngles[YAW])  {piRender->SetSelectionId(nBaseId+YAW);RenderAngle(piRender,piCamera,m_vAngles.c[YAW],m_vYawAxis1,m_vYawAxis2,m_nSelectedElement==YAW?CVector(0,0,1):CVector(0,0,0.5));}
-	if(m_bInteractiveAngles[PITCH]){piRender->SetSelectionId(nBaseId+PITCH);RenderAngle(piRender,piCamera,m_vAngles.c[PITCH],m_vPitchAxis1,m_vPitchAxis2,m_nSelectedElement==PITCH?CVector(1,1,0):CVector(0.5,0.5,0));}
-	if(m_bInteractiveAngles[ROLL]) {piRender->SetSelectionId(nBaseId+ROLL);RenderAngle(piRender,piCamera,m_vAngles.c[ROLL],m_vRollAxis1,m_vRollAxis2,m_nSelectedElement==ROLL?CVector(1,0,0):CVector(0.5,0,0));}
+	if(m_bInteractiveAngles[YAW])  {piRender->SetSelectionId(nBaseId+YAW);RenderAngle(piRender,piCamera,m_vAngles.c[YAW],m_vYawAxis1,m_vYawAxis2,m_nSelectedElement==YAW?CVector(0,0,1):CVector(0,0,0.5),m_dRadius,true);}
+	if(m_bInteractiveAngles[PITCH]){piRender->SetSelectionId(nBaseId+PITCH);RenderAngle(piRender,piCamera,m_vAngles.c[PITCH],m_vPitchAxis1,m_vPitchAxis2,m_nSelectedElement==PITCH?CVector(1,1,0):CVector(0.5,0.5,0),m_dRadius*0.95,true);}
+	if(m_bInteractiveAngles[ROLL]) {piRender->SetSelectionId(nBaseId+ROLL);RenderAngle(piRender,piCamera,m_vAngles.c[ROLL],m_vRollAxis1,m_vRollAxis2,m_nSelectedElement==ROLL?CVector(1,0,0):CVector(0.5,0,0),m_dRadius*0.9,true);}
 		
 	return m_nSelectionBase+6;
 }
@@ -171,7 +186,13 @@ CVector	CGameGUIRotationGizmo::ProcessRotation(CLine *pMouseRay,IGenericCamera *
 	if(m_nSelectedElement==0){m_vAngles.c[YAW]=m_vRotationStartAngles.c[YAW]+(vAngles.c[YAW]-m_vRotationOrigin.c[YAW]);}
 	if(m_nSelectedElement==1){m_vAngles.c[PITCH]=m_vRotationStartAngles.c[PITCH]+(vAngles.c[PITCH]-m_vRotationOrigin.c[PITCH]);}
 	if(m_nSelectedElement==2){m_vAngles.c[ROLL]=m_vRotationStartAngles.c[ROLL]+(vAngles.c[ROLL]-m_vRotationOrigin.c[ROLL]);}
-		
+	for(int c=0;c<3;c++)
+	{
+		if(((int)fabs(m_vAngles.c[c]))%90<10)
+		{
+			m_vAngles.c[c]=(((int)(m_vAngles.c[c]))/90)*90;
+		}
+	}
 	UpdateAxises();
 	return m_vAngles;
 }

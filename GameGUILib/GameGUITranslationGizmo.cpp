@@ -148,6 +148,11 @@ CVector	CGameGUITranslationGizmo::ProcessTranslation(CLine *pMouseRay,IGenericCa
 	if(m_nSelectedElement==0 || m_nSelectedElement==3 || m_nSelectedElement==4){m_vPosition.c[0]=m_vTranslationStartPosition.c[0]+(vPos.c[0]-m_vTranslationOrigin.c[0]);}
 	if(m_nSelectedElement==1 || m_nSelectedElement==3 || m_nSelectedElement==5){m_vPosition.c[1]=m_vTranslationStartPosition.c[1]+(vPos.c[1]-m_vTranslationOrigin.c[1]);}
 	if(m_nSelectedElement==2 || m_nSelectedElement==4 || m_nSelectedElement==5){m_vPosition.c[2]=m_vTranslationStartPosition.c[2]+(vPos.c[2]-m_vTranslationOrigin.c[2]);}
+
+	for(int c=0;c<3;c++)
+	{
+		if(fabs(m_vPosition.c[c]-m_vTranslationStartPosition.c[c])<1){m_vPosition.c[c]=m_vTranslationStartPosition.c[c];}
+	}
 	return m_vPosition;
 }
 CVector CGameGUITranslationGizmo::EndTranslation(){return m_vPosition;}
