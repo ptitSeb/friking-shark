@@ -1191,55 +1191,26 @@ void CMatrix::R(CVector vAxis,double dAngle,CVector vOffset)
 	Vt=Origin-vOffset;
 	T(Vt);
 
-	//Si rotamos en Z
-	if((vAxis.c[0]==0.0 || vAxis.c[0]==-0.0) &&
-		(vAxis.c[1]==0.0 || vAxis.c[1]==-0.0))
-	{
-		if (vAxis.c[2]<0.0) {dAngle=-dAngle;};
-		
-		aux.e[0][0]=cos(dAngle);aux.e[0][1]=-sin(dAngle);
-		aux.e[1][0]=sin(dAngle);aux.e[1][1]= cos(dAngle);
-		
-		(*this)*=aux; //Unimos las matrices
-		
-		aux.T(vOffset); //Deshacemos el desplazamiento
-		
-		(*this)*=aux; //Unimos las matrices
-		
-		return;
-	};
-	//Rotación en aux
-
-	double  x4,x2,y4,y2,x2y2,z2,x2z2,y2z2,xz,yz,xy,seno=sin(dAngle),coseno=cos(dAngle);
-
-	x2=vAxis.c[0]*vAxis.c[0];
-	x4=x2*x2;
-	y2=vAxis.c[1]*vAxis.c[1];
-	y4=y2*y2;
-	x2y2=x2*y2;
-	z2=vAxis.c[2]*vAxis.c[2];
-	x2z2=x2*z2;
-	y2z2=y2*z2;
-	xz=vAxis.c[0]*vAxis.c[2];
-	yz=vAxis.c[1]*vAxis.c[2];
-	xy=vAxis.c[0]*vAxis.c[1];
-
-
-	aux.e[0][0]=(x4 + x2y2 + y2*coseno + x2z2*coseno)      / (x2 + y2);
-	aux.e[0][1]=(xy*(-1 + z2)*coseno + (x2 + y2)*(xy - vAxis.c[2]*seno)) / (x2 + y2);
-	aux.e[0][2]=(xz - xz*coseno + vAxis.c[1]*seno);
-	aux.e[0][3]=0.0;  //OJO
-
-	aux.e[1][0]=(xy*(-1 + z2)*coseno + (x2 + y2)*(xy + vAxis.c[2]*seno)) / (x2 + y2);
-	aux.e[1][1]=(x2y2 + y4 + x2*coseno + y2z2*coseno)      / (x2 + y2);
-	aux.e[1][2]=(yz - yz*coseno - vAxis.c[0]*seno);
+	double seno=sin(dAngle),coseno=cos(dAngle);
+	double oneminuscos=1.0-coseno;
+	double x=vAxis.c[0],y=vAxis.c[1],z=vAxis.c[2];
+	double x2=x*x,y2=y*y,z2=z*z,xz=x*z,yz=y*z,xy=x*y;
+	
+	aux.e[0][0]=coseno+x2*oneminuscos;
+	aux.e[0][1]=xy*oneminuscos-z*seno;
+	aux.e[0][2]=xz*oneminuscos+y*seno;
+	aux.e[0][3]=0.0;
+	
+	aux.e[1][0]=xy*oneminuscos+z*seno;
+	aux.e[1][1]=coseno+y2*oneminuscos;
+	aux.e[1][2]=yz*oneminuscos-x*seno;
 	aux.e[1][3]=0.0;
-
-	aux.e[2][0]=(xz - xz*coseno - vAxis.c[1]*seno);
-	aux.e[2][1]=(yz - yz*coseno + vAxis.c[0]*seno);
-	aux.e[2][2]=(z2 + (x2 + y2)*coseno);
+	
+	aux.e[2][0]=xz*oneminuscos-y*seno;
+	aux.e[2][1]=yz*oneminuscos+x*seno;
+	aux.e[2][2]=coseno+z2*oneminuscos;
 	aux.e[2][3]=0.0;
-
+	
 	(*this)*=aux; //Juntamos las matrices
 
 	aux.T(vOffset); //Deshacemos el desplazamiento
@@ -1249,50 +1220,24 @@ void CMatrix::R(CVector vAxis,double dAngle,CVector vOffset)
 
 void CMatrix::R( CVector vAxis,double dAngle )
 {
-	//Si rotamos en Z
-	if((vAxis.c[0]==0.0 || vAxis.c[0]==-0.0) &&
-		(vAxis.c[1]==0.0 || vAxis.c[1]==-0.0))
-	{
-		CMatrix aux;
-		if (vAxis.c[2]<0.0) {dAngle=-dAngle;};
+	double seno=sin(dAngle),coseno=cos(dAngle);
+	double oneminuscos=1.0-coseno;
+	double x=vAxis.c[0],y=vAxis.c[1],z=vAxis.c[2];
+	double x2=x*x,y2=y*y,z2=z*z,xz=x*z,yz=y*z,xy=x*y;
 
-		aux.e[0][0]=cos(dAngle);aux.e[0][1]=-sin(dAngle);
-		aux.e[1][0]=sin(dAngle);aux.e[1][1]= cos(dAngle);
+	e[0][0]=coseno+x2*oneminuscos;
+	e[0][1]=xy*oneminuscos-z*seno;
+	e[0][2]=xz*oneminuscos+y*seno;
+	e[0][3]=0.0;
 
-		(*this)*=aux; //Unimos las matrices
-
-		return;
-	};
-	//Rotación en aux
-
-	double  x4,x2,y4,y2,x2y2,z2,x2z2,y2z2,xz,yz,xy,seno=sin(dAngle),coseno=cos(dAngle);
-
-	x2=vAxis.c[0]*vAxis.c[0];
-	x4=x2*x2;
-	y2=vAxis.c[1]*vAxis.c[1];
-	y4=y2*y2;
-	x2y2=x2*y2;
-	z2=vAxis.c[2]*vAxis.c[2];
-	x2z2=x2*z2;
-	y2z2=y2*z2;
-	xz=vAxis.c[0]*vAxis.c[2];
-	yz=vAxis.c[1]*vAxis.c[2];
-	xy=vAxis.c[0]*vAxis.c[1];
-
-
-	e[0][0]=(x4 + x2y2 + y2*coseno + x2z2*coseno)      / (x2 + y2);
-	e[0][1]=(xy*(-1 + z2)*coseno + (x2 + y2)*(xy - vAxis.c[2]*seno)) / (x2 + y2);
-	e[0][2]=(xz - xz*coseno + vAxis.c[1]*seno);
-	e[0][3]=0.0;  //OJO
-
-	e[1][0]=(xy*(-1 + z2)*coseno + (x2 + y2)*(xy + vAxis.c[2]*seno)) / (x2 + y2);
-	e[1][1]=(x2y2 + y4 + x2*coseno + y2z2*coseno)      / (x2 + y2);
-	e[1][2]=(yz - yz*coseno - vAxis.c[0]*seno);
+	e[1][0]=xy*oneminuscos+z*seno;
+	e[1][1]=coseno+y2*oneminuscos;
+	e[1][2]=yz*oneminuscos-x*seno;
 	e[1][3]=0.0;
 
-	e[2][0]=(xz - xz*coseno - vAxis.c[1]*seno);
-	e[2][1]=(yz - yz*coseno + vAxis.c[0]*seno);
-	e[2][2]=(z2 + (x2 + y2)*coseno);
+	e[2][0]=xz*oneminuscos-y*seno;
+	e[2][1]=yz*oneminuscos+x*seno;
+	e[2][2]=coseno+z2*oneminuscos;
 	e[2][3]=0.0;
 
 	e[3][0]=0.0;
@@ -1820,14 +1765,13 @@ void VectorsFromAngles(double dYaw,double dPitch, double dRoll,CVector &vForward
 }
 
 
-void AnglesFromVector(const CVector &vForward,double &dYaw,double &dPitch, double &dRoll)
+void AnglesFromVector(const CVector &vForward,double &dYaw,double &dPitch)
 {
 	CVector vTemp;
 	vTemp.c[0]=vForward.c[0];
 	vTemp.c[1]=-vForward.c[2];
 	vTemp.c[2]=vForward.c[1];
 	double	dForward;
-	dRoll=0;
 	
 	if (vTemp[1] == 0 && vTemp[0] == 0)
 	{
@@ -1848,15 +1792,40 @@ void AnglesFromVector(const CVector &vForward,double &dYaw,double &dPitch, doubl
 	}
 }
 
-void AnglesFromVector(const CVector &vForward,CVector *pAngels)
+CVector AnglesFromVectors(const CVector &vForward,const CVector &vRight,const CVector &vUp)
 {
-	AnglesFromVector(vForward,pAngels->c[0],pAngels->c[1],pAngels->c[2]);
+	double dYaw=0,dPitch=0,dRoll=0;
+	AnglesFromVector(vForward,dYaw,dPitch);
+	
+	CMatrix m,aux;
+	aux.R(CVector(0,0,1),(dPitch/360.0)*2.0*PI);m*=aux;
+	aux.R(CVector(0,1,0),(dYaw/360.0)*2.0*PI);m*=aux;
+
+	CVector vRightWithoutRoll(0,0,1),vUpWithoutRoll(0,1,0);
+	vRightWithoutRoll*=m;
+	vUpWithoutRoll*=m;
+	
+	double dSide=vUpWithoutRoll*vRight;
+	double dCos=vRightWithoutRoll*vRight;
+	if(dCos>1.0){dCos=1.0;}
+	if(dCos<-1.0){dCos=-1.0;}
+	dRoll=RadiansToDegrees(acos(dCos));
+	if(dSide>0){dRoll=360.0-dRoll;}
+	
+	CVector vAngles(dYaw,dPitch,dRoll);
+	return vAngles;
+}
+
+void AnglesFromVector(const CVector &vForward,CVector *pAngles)
+{
+	pAngles->c[2]=0;
+	AnglesFromVector(vForward,pAngles->c[0],pAngles->c[1]);
 }
 
 CVector AnglesFromVector(const CVector &vForward)
 {
 	CVector vAngles;
-	AnglesFromVector(vForward,vAngles.c[0],vAngles.c[1],vAngles.c[2]);
+	AnglesFromVector(vForward,vAngles.c[0],vAngles.c[1]);
 	return vAngles;
 }
 
