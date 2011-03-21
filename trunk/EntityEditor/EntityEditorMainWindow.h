@@ -22,6 +22,7 @@ DECLARE_CUSTOM_WRAPPER1(CEntityEditorClassSelectorWrapper,IEntityEditorClassSele
 enum EPropertyPanel
 {
 	ePropertyPanel_None,
+	ePropertyPanel_Entity,
 	ePropertyPanel_Animation,
 	ePropertyPanel_Sound,
 	ePropertyPanel_Model,
@@ -197,6 +198,7 @@ public:
 		CHILD_MAP_ENTRY_EX("EntityRemove",m_piBTEntityRemove,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("EntityExit",m_piBTEntityExit,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY("EntityPanel",m_piGREntity);
+		CHILD_MAP_ENTRY_EX("EntityPropertyPanel",m_ppiPropertyPanels[ePropertyPanel_Entity],IEntityEditorPropertyPanelEvents);
 		CHILD_MAP_ENTRY_EX("AnimationPropertyPanel",m_ppiPropertyPanels[ePropertyPanel_Animation],IEntityEditorPropertyPanelEvents);
 		CHILD_MAP_ENTRY_EX("ModelPropertyPanel",m_ppiPropertyPanels[ePropertyPanel_Model],IEntityEditorPropertyPanelEvents);
 		CHILD_MAP_ENTRY_EX("EventPropertyPanel",m_ppiPropertyPanels[ePropertyPanel_Event],IEntityEditorPropertyPanelEvents);

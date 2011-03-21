@@ -153,6 +153,8 @@ unsigned int CEntityTypeBase::GetStateAnimations(unsigned int nState)
 
 void CEntityTypeBase::GetEntityTypeConfig(SEntityTypeConfig *pConfig)
 {
+	pConfig->dMaxHealth=m_dMaxHealth;
+	pConfig->dMaxVelocity=m_dMaxVelocity;
 	pConfig->vBBoxMins=m_vBBoxMins;
 	pConfig->vBBoxMaxs=m_vBBoxMaxs;
 	pConfig->nMovementType=m_nMovementType;
@@ -164,6 +166,8 @@ void CEntityTypeBase::GetEntityTypeConfig(SEntityTypeConfig *pConfig)
 
 void CEntityTypeBase::SetEntityTypeConfig(SEntityTypeConfig *pConfig)
 {
+	m_dMaxHealth=pConfig->dMaxHealth;
+	m_dMaxVelocity=pConfig->dMaxVelocity;
 	m_vBBoxMins=pConfig->vBBoxMins;
 	m_vBBoxMaxs=pConfig->vBBoxMaxs;
 	m_nMovementType=pConfig->nMovementType;
@@ -211,13 +215,13 @@ bool CEntityTypeBase::RemoveStateAnimation(unsigned int nState,unsigned int nAni
 	vector<CAnimationTypeWrapper>::iterator i;
 	for(x=0,i=pState->vAnimations.begin();x<pState->vAnimations.size();x++,i++)
 	{
-		if(x==nAnimation){pState->vAnimations.erase(i);return true;}
+		if(x==nAnimation){pState->vAnimations.erase(i);break;}
 	}
 	for(x=0,i=m_mStateAnimations[pState->sName].begin();x<m_mStateAnimations[pState->sName].size();x++,i++)
 	{
-		if(x==nAnimation){m_mStateAnimations[pState->sName].erase(i);return true;}
+		if(x==nAnimation){m_mStateAnimations[pState->sName].erase(i);break;}
 	}
-	return false;
+	return true;
 }
 
 bool CEntityTypeBase::GetStateAnimation(unsigned int nState,unsigned int nAnimation,IAnimationType **ppiAnimation)

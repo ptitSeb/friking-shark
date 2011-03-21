@@ -8,6 +8,7 @@
 #include "EntityEditorObjectLabel.h"
 #include "EntityEditorClassSelector.h"
 #include "EntityEditorNamedObjectSelector.h"
+#include "EntityEditorEntityPropertyPanel.h"
 #include "EntityEditorAnimationPropertyPanel.h"
 #include "EntityEditorModelPropertyPanel.h"
 #include "EntityEditorEventPropertyPanel.h"
@@ -20,6 +21,7 @@ SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityEditorObjectSelector,"CEntityEditorObje
 SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityEditorObjectLabel,"CEntityEditorObjectLabel")
 SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityEditorClassSelector,"CEntityEditorClassSelector")
 SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityEditorNamedObjectSelector,"CEntityEditorNamedObjectSelector")
+SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityEditorEntityPropertyPanel,"CEntityEditorEntityPropertyPanel")
 SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityEditorAnimationPropertyPanel,"CEntityEditorAnimationPropertyPanel")
 SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityEditorModelPropertyPanel,"CEntityEditorModelPropertyPanel")
 SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityEditorEventPropertyPanel,"CEntityEditorEventPropertyPanel")
