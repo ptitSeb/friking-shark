@@ -817,6 +817,10 @@ void CEntityEditorMainWindow::UpdateSelectedObject()
 			piObject=ADD(m_vAnimations[nSelectedAnimation].m_piObject);
 		}
 	}
+	else
+	{
+		piObject=ADD(m_EntityType.m_piObject);
+	}
 		
 	for(unsigned int x=0;x<ePropertyPanel_Count;x++)
 	{
@@ -1227,20 +1231,22 @@ void CEntityEditorMainWindow::OnObjectChanged(IEntityEditorPropertyPanel *piPane
 	
 	int nSelectedAnimation=(m_piLSAnimations->GetSelectedElement());
 	
-	for(unsigned int x=0;x<m_vAnimations[nSelectedAnimation].m_piAnimationTypeDesign->GetObjectCount();x++)
+	if(nSelectedAnimation!=-1)
 	{
-		IAnimationObjectType *piAnimationObject=NULL;
-		m_vAnimations[nSelectedAnimation].m_piAnimationTypeDesign->GetObject(x,&piAnimationObject);
-		if((ISystemUnknown*)piObject==(ISystemUnknown*)piAnimationObject)
+		for(unsigned int x=0;x<m_vAnimations[nSelectedAnimation].m_piAnimationTypeDesign->GetObjectCount();x++)
 		{
-			m_piLSObjects->SetElement(x,piAnimationObject->GetAnimationObjectDescription());
+			IAnimationObjectType *piAnimationObject=NULL;
+			m_vAnimations[nSelectedAnimation].m_piAnimationTypeDesign->GetObject(x,&piAnimationObject);
+			if((ISystemUnknown*)piObject==(ISystemUnknown*)piAnimationObject)
+			{
+				m_piLSObjects->SetElement(x,piAnimationObject->GetAnimationObjectDescription());
+				REL(piAnimationObject);
+				break;
+			}
 			REL(piAnimationObject);
-			break;
 		}
-		REL(piAnimationObject);
+		UpdateRunningAnimation();
 	}
-	
-	UpdateRunningAnimation();
 }
 
 void CEntityEditorMainWindow::OnObjectRemoved(IEntityEditorPropertyPanel *piPanel,ISystemObject *piObject)

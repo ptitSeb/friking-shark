@@ -22,6 +22,7 @@ EntityEditorNamedObjectSelector.cpp\
 EntityEditorObjectSelector.cpp\
 EntityEditorObjectLabel.cpp\
 EntityEditorClassSelector.cpp\
+EntityEditorEntityPropertyPanel.cpp\
 EntityEditorAnimationPropertyPanel.cpp\
 EntityEditorModelPropertyPanel.cpp\
 EntityEditorSoundPropertyPanel.cpp\

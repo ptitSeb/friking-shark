@@ -61,6 +61,8 @@ public:
 		PROP_FLAGS(m_vWeapons   ,"Weapons",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_vBBoxMins  ,"BBoxMins",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_vBBoxMaxs  ,"BBoxMaxs",MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_FLAGS(m_nMovementType,"MovementType",MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_FLAGS(m_nCollisionType,"CollisionType",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_nBoundsType,"BoundsType",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_nDamageType,"DamageType",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_nAlignment ,"Alignment",MRPF_NORMAL|MRPF_OPTIONAL)
