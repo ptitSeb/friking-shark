@@ -6,7 +6,7 @@
 #include <X11/Xos.h>
 #endif
 
-class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericViewport,virtual public IOpenGLViewport
+class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericViewport
 {
 	#ifdef WIN32
 		HDC			m_hDC;
@@ -126,10 +126,6 @@ public:
 	bool SetWindowed(unsigned int x,unsigned int y,unsigned int w,unsigned int h);
 	bool SetFullScreen(unsigned int w,unsigned int h,unsigned int bpp,unsigned int rate);
 	
-	// IOpenGLViewport
-
-	void SetCurrentRenderTarget(bool bSetAsCurrent);
-
 	 COpenGLViewport(void);
 	~COpenGLViewport(void);
 };

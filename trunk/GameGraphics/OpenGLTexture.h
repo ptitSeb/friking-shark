@@ -1,7 +1,7 @@
 #pragma once
 #include "GameGraphics.h"
 
-class COpenGLTexture : virtual public CSystemObjectBase,virtual public IGenericTexture,virtual public IOpenGLTexture
+class COpenGLTexture : virtual public CSystemObjectBase,virtual public IGenericTexture
 {
 	unsigned m_dwWidth;
 	unsigned m_dwHeight;
@@ -69,11 +69,6 @@ public:
 	void		  *GetByteBuffer();
 
 	CVector		GetPixelColor(unsigned long x, unsigned long y);
-
-
-	// IOpenGLTexture
-
-	virtual unsigned GetOpenGLIndex();
 
 	virtual bool Load(std::string sFileName,CVector *pColorKey,std::string *pAlphaFile,float fOpacity);
 	virtual bool Create( unsigned nWidth,unsigned nHeight );

@@ -287,7 +287,7 @@ struct SShaderKey
 	SShaderKey(bool heightFog,bool shadows,int textureUnits,int activeLighs){bHeightFog=heightFog;bShadows=shadows;nTextureUnits=textureUnits;nActiveLighs=activeLighs;}
 };
 
-class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRender,virtual public IOpenGLRender
+class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRender
 {
 	bool		m_bPerspectiveProjection;
 	double		m_dPerspectiveViewAngle;
@@ -332,7 +332,6 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	double  m_dAlpha;
 	IGenericFont     *m_piSelectedFont;
 	IGenericViewport *m_piCurrentViewport;
-	IOpenGLViewport *m_piCurrentGLViewport;
 
 	CGenericShaderWrapper m_ShadowShader;
 	CGenericShaderWrapper *m_pCurrentShader;
@@ -522,8 +521,6 @@ public:
 	void SetSelectionId(unsigned int nId);
 	int EndSelection();
 
-	IOpenGLViewport *GetOpenGLViewPort(); // solo valido entre StartFrame y EndFrame.
-	
 	BEGIN_PROP_MAP(COpenGLRender)
 	PROP_VALUE_FLAGS(m_bIgnoreShaderSupport,"IgnoreShaderSupport",false,MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP();

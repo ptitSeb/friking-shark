@@ -278,21 +278,10 @@ void ProcessChildren(IEntity *piParent)
 		piParent->GetChildLocation(piChild,vPositionInParent,vAnglesInParent);
 		
 		VectorsFromAngles(pParentInfo->vAngles,&pChildInfo->vRefSysX,&pChildInfo->vRefSysZ,&pChildInfo->vRefSysY);
-		CVector vPos=pParentInfo->vPosition+pChildInfo->vRefSysX*vPositionInParent.c[0]+pChildInfo->vRefSysZ*vPositionInParent.c[2]+pChildInfo->vRefSysY*vPositionInParent.c[1];
 
-		CVector vAngles=pChildInfo->vAngles;
-		
-		if(vAnglesInParent!=Origin)
-		{
-			CVector vLocalForward,vLocalRight,bLocalUp,vGlobalForward,vGlobalRight,vGlobalUp;
-			VectorsFromAngles(vAnglesInParent,&vLocalForward,&vLocalRight,&bLocalUp);
-			
-			vGlobalForward=pChildInfo->vRefSysX*vLocalForward.c[0]+pChildInfo->vRefSysY*vLocalForward.c[1]+pChildInfo->vRefSysZ*vLocalForward.c[2];
-			vGlobalUp=pChildInfo->vRefSysX*bLocalUp.c[0]+pChildInfo->vRefSysY*bLocalUp.c[1]+pChildInfo->vRefSysZ*bLocalUp.c[2];
-			vGlobalRight=pChildInfo->vRefSysX*vLocalRight.c[0]+pChildInfo->vRefSysY*vLocalRight.c[1]+pChildInfo->vRefSysZ*vLocalRight.c[2];
-			vAngles=AnglesFromVectors(vGlobalForward,vGlobalRight,vGlobalUp);
-		}	
-		
+		CVector vPos,vAngles;
+		ComputeReferenceSystem(pParentInfo->vPosition,pParentInfo->vAngles,vPositionInParent,vAnglesInParent,&vPos,&vAngles);
+
 		pChildInfo->vPosition=vPos;
 		pChildInfo->vAngles=vAngles;
 		ProcessChildren(piChild);
