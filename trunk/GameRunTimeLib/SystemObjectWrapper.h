@@ -9,6 +9,8 @@ protected:
     virtual bool GetInterfaces(ISystemUnknown *piUnknown);
     virtual void ReleaseInterfaces();
 
+	virtual bool UnserializeObject(ISystemPersistencyNode *piNode);
+	
 public:
 
     ISystemObject           *m_piObject;
@@ -32,11 +34,13 @@ public:
             CSystemObjectWrapper();
     virtual ~CSystemObjectWrapper();
 };
+
+
 bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CSystemObjectWrapper> *pItem);
 bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CSystemObjectWrapper> *pItem);
 bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CSystemObjectWrapper> *pItem);
-void    MRPersistencyInitialize(CMRPersistentReferenceT<CSystemObjectWrapper> *pItem);
-void    MRPersistencyFree(CMRPersistentReferenceT<CSystemObjectWrapper> *pItem);
+void MRPersistencyInitialize(CMRPersistentReferenceT<CSystemObjectWrapper> *pItem);
+void MRPersistencyFree(CMRPersistentReferenceT<CSystemObjectWrapper> *pItem);
 
 
 #define DECLARE_CUSTOM_WRAPPER1(WRAPPER_NAME,INTERFACE,VARNAME)\

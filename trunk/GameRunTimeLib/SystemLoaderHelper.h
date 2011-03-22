@@ -19,11 +19,34 @@ struct CSystemLoaderHelperModuleList
 };
 
 
+class CDelayedUnserializeObjectWrapper: public CSystemObjectWrapper
+{
+protected:
+	ISystemPersistencyNode	*m_piNode;
+	
+	bool UnserializeObject(ISystemPersistencyNode *piNode);
+	
+public:
+	
+	bool UnserializeNow();
+	
+	CDelayedUnserializeObjectWrapper();
+	~CDelayedUnserializeObjectWrapper();
+	
+};
+
+bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CDelayedUnserializeObjectWrapper> *pItem);
+bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CDelayedUnserializeObjectWrapper> *pItem);
+bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CDelayedUnserializeObjectWrapper> *pItem);
+void MRPersistencyInitialize(CMRPersistentReferenceT<CDelayedUnserializeObjectWrapper> *pItem);
+void MRPersistencyFree(CMRPersistentReferenceT<CDelayedUnserializeObjectWrapper> *pItem);
+
 class CSystemLoaderHelper
 {
     CSystemLoaderHelperModuleList    m_Modules;
-    std::deque<CSystemObjectWrapper> m_dObjects;
-
+	std::deque<CDelayedUnserializeObjectWrapper> m_dObjects;
+	
+	
 public:
 
     ISystem *LoadSystem(ISystemPersistencyNode *piNode,std::string sSystemName);
@@ -34,7 +57,7 @@ public:
     END_PROP_MAP()
     
     CSystemLoaderHelper(void);
-    ~CSystemLoaderHelper(void);
+    virtual ~CSystemLoaderHelper(void);
 };
 
 class CSystemSaverHelper

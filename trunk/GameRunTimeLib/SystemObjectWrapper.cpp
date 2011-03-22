@@ -96,22 +96,24 @@ void CSystemObjectWrapper::Destroy()
     m_bObjectMustBeDestroyed=true;
     ReleaseInterfaces();
 }
+
+bool CSystemObjectWrapper::UnserializeObject(ISystemPersistencyNode *piNode)
+{
+	if(m_piSerializable==NULL){return false;}
+	return m_piSerializable->Unserialize(piNode);
+}
+
 bool CSystemObjectWrapper::Load(ISystemPersistencyNode *piNode,std::string sName)
 {
     if(!piNode){return false;}
 	ISystemPersistencyNode *piSystemNode=piNode->GetNode("System");
 	ISystemPersistencyNode *piClassNode=piNode->GetNode("Class");
 	ISystemPersistencyNode *piNameNode=piNode->GetNode("Name");
-	ISystemPersistencyNode *piConfigSource=piNode->GetNode("Config");
 	
-	std::string sSystem,sClass,sObjectName,sConfigFile,sConfigNode,sConfigSource;
+	std::string sSystem,sClass,sObjectName;
 	sSystem=piSystemNode?piSystemNode->GetValue():"";
 	sClass=piClassNode?piClassNode->GetValue():"";
 	sObjectName=piNameNode?piNameNode->GetValue():"";
-	sConfigSource=piConfigSource?piConfigSource->GetValue():"";
-	size_t pos=sConfigSource.find(":");
-	sConfigFile=pos!=std::string::npos?sConfigSource.substr(0,pos):sConfigSource;
-	sConfigNode=pos!=std::string::npos?sConfigSource.substr(pos):"";
 
 	if( piSystemNode)
 	{
@@ -128,17 +130,7 @@ bool CSystemObjectWrapper::Load(ISystemPersistencyNode *piNode,std::string sName
 				{
 					ISystemPersistencyNode *piPersistencyNode=piChild;
 					
-					CConfigFile sourceConfigFile;
-					if(sConfigSource.length())
-					{
-						if(!sourceConfigFile.Open(sConfigFile))
-						{
-							RTTRACE("CSystemObjectWrapper::Load -> Failed to unserialize System: %s, Class: %s, Object:%s from %s",sSystem.c_str(),sClass.c_str(),sName.c_str(),sConfigSource.c_str());
-							return false;
-						}
-						piPersistencyNode=sConfigNode.length()?sourceConfigFile.GetNode(sConfigNode):sourceConfigFile.GetRoot();
-					}
-					if(m_piSerializable->Unserialize(piPersistencyNode))
+					if(UnserializeObject(piPersistencyNode))
 					{
 						return true;
 					}
@@ -245,5 +237,5 @@ bool CSystemObjectWrapper::Create(ISystem *piSystem,std::string sClass,std::stri
 bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CSystemObjectWrapper> *pItem){return pItem->GetValueAddress()->Save(piNode,pItem->GetName())?true:false;}
 bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CSystemObjectWrapper> *pItem){return pItem->GetValueAddress()->Load(piNode,pItem->GetName())?true:false;}
 bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CSystemObjectWrapper> *pItem){piNode->DeleteNode(pItem->GetName());return true;}
-void    MRPersistencyInitialize(CMRPersistentReferenceT<CSystemObjectWrapper> *pItem){}
-void    MRPersistencyFree(CMRPersistentReferenceT<CSystemObjectWrapper> *pItem){}
+void MRPersistencyInitialize(CMRPersistentReferenceT<CSystemObjectWrapper> *pItem){}
+void MRPersistencyFree(CMRPersistentReferenceT<CSystemObjectWrapper> *pItem){}

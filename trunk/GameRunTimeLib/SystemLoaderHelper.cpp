@@ -51,10 +51,15 @@ ISystem *CSystemLoaderHelper::LoadSystem(ISystemPersistencyNode *piParent,std::s
 					}
 					REL(piModule);
 				}
-					// Carga de objetos.
+				// Carga de objetos. Como es un CDelayedUnserializeObjectWrapper
+				// El objeto solo se instancia, Realmente se deserializa en UnserializeNow
+				// Se hace esto para poder resolver referencias entre objetos con nombre de un sistema.
+				// Si no se hace, el attach funciona o no dependendiendo del orden en que se guardan
+				
 				PersistencyLoad(piNode);
 				for(x=0;x<m_dObjects.size();x++)
 				{
+					m_dObjects[x].UnserializeNow();
 					m_dObjects[x].Detach();
 				}
 				m_dObjects.clear();
@@ -113,3 +118,39 @@ bool CSystemSaverHelper::SaveSystemNamedObjects(ISystemPersistencyNode *piNode,s
 CSystemSaverHelper::CSystemSaverHelper(){}
 CSystemSaverHelper::~CSystemSaverHelper(){}
 
+
+CDelayedUnserializeObjectWrapper::CDelayedUnserializeObjectWrapper()
+{
+	m_piNode=NULL;
+}
+
+CDelayedUnserializeObjectWrapper::~CDelayedUnserializeObjectWrapper()
+{
+	m_piNode=NULL;
+}
+
+bool CDelayedUnserializeObjectWrapper::UnserializeObject(ISystemPersistencyNode *piNode)
+{
+	m_piNode=piNode;
+	return true;
+}
+
+bool CDelayedUnserializeObjectWrapper::UnserializeNow()
+{
+	if(m_piSerializable==NULL || m_piNode==NULL){return false;}
+	if(m_piSerializable->Unserialize(m_piNode))
+	{
+		return true;
+	}
+	else
+	{
+		RTTRACE("CSystemObjectWrapper::Load -> Failed to unserialize System: %s, Class: %s, Object:%s",m_piObject->GetSystemName().c_str(),m_piObject->GetClass().c_str(),m_piObject->GetName().c_str());
+		return false;
+	}
+}	
+
+bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CDelayedUnserializeObjectWrapper> *pItem){return pItem->GetValueAddress()->Save(piNode,pItem->GetName())?true:false;}
+bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CDelayedUnserializeObjectWrapper> *pItem){return pItem->GetValueAddress()->Load(piNode,pItem->GetName())?true:false;}
+bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CDelayedUnserializeObjectWrapper> *pItem){piNode->DeleteNode(pItem->GetName());return true;}
+void MRPersistencyInitialize(CMRPersistentReferenceT<CDelayedUnserializeObjectWrapper> *pItem){}
+void MRPersistencyFree(CMRPersistentReferenceT<CDelayedUnserializeObjectWrapper> *pItem){}
