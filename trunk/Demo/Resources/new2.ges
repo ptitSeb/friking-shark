@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=10000.000000
 			NearPlane=10.000000
-			Posicion=1528.479251,227.965199,2.490386
+			Posicion=115.749251,227.965199,4.577752
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -46,10 +46,15 @@ AreaDeJuego
 			Data
 			{
 				Angulos=0.000000,0.000000,0.000000
-				Posicion=1422.534405,0.368836,52.965399
+				Posicion=828.059600,54.392194,53.807677
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
 				Tipo
 				{
-					Name=Silo1
+					Name=Casa01
 					System=EntityTypes
 				}
 			}
@@ -62,10 +67,15 @@ AreaDeJuego
 			Data
 			{
 				Angulos=0.000000,0.000000,0.000000
-				Posicion=394.765876,35.286580,54.156631
+				Posicion=976.009044,-2.566307,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
 				Tipo
 				{
-					Name=Tank
+					Name=Hangar02
 					System=EntityTypes
 				}
 			}
@@ -78,10 +88,15 @@ AreaDeJuego
 			Data
 			{
 				Angulos=0.000000,0.000000,0.000000
-				Posicion=550.711013,2.603088,54.913456
+				Posicion=1422.534405,0.368836,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
 				Tipo
 				{
-					Name=Tank
+					Name=Silo1
 					System=EntityTypes
 				}
 			}
@@ -94,10 +109,15 @@ AreaDeJuego
 			Data
 			{
 				Angulos=0.000000,0.000000,0.000000
-				Posicion=780.669946,58.735196,52.951401
+				Posicion=1237.379038,-35.794681,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
 				Tipo
 				{
-					Name=Muelle2
+					Name=Silo0
 					System=EntityTypes
 				}
 			}
@@ -110,7 +130,12 @@ AreaDeJuego
 			Data
 			{
 				Angulos=0.000000,0.000000,0.000000
-				Posicion=835.679210,-46.102670,53.807675
+				Posicion=394.765876,35.286580,54.156631
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
 				Tipo
 				{
 					Name=Tank
@@ -126,7 +151,12 @@ AreaDeJuego
 			Data
 			{
 				Angulos=0.000000,0.000000,0.000000
-				Posicion=835.896759,-16.947101,53.807676
+				Posicion=550.711013,2.603088,54.913456
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
 				Tipo
 				{
 					Name=Tank
@@ -142,10 +172,15 @@ AreaDeJuego
 			Data
 			{
 				Angulos=0.000000,0.000000,0.000000
-				Posicion=904.078039,28.764935,52.965399
+				Posicion=780.669946,58.735196,52.951401
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
 				Tipo
 				{
-					Name=Tank
+					Name=Muelle2
 					System=EntityTypes
 				}
 			}
@@ -154,10 +189,21 @@ AreaDeJuego
 		}
 		Item17
 		{
-			Class=CPlayAreaCheckPoint
+			Class=CPlayAreaEntity
 			Data
 			{
-				Posicion=140.000000,-2.547510,81.671682
+				Angulos=0.000000,0.000000,0.000000
+				Posicion=835.679210,-46.102670,53.807675
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=Tank
+					System=EntityTypes
+				}
 			}
 			Name=""
 			System=GameSystem
@@ -168,10 +214,15 @@ AreaDeJuego
 			Data
 			{
 				Angulos=0.000000,0.000000,0.000000
-				Posicion=349.564788,71.559919,52.965399
+				Posicion=835.896759,-16.947101,53.807676
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
 				Tipo
 				{
-					Name=Muelle0
+					Name=Tank
 					System=EntityTypes
 				}
 			}
@@ -184,10 +235,15 @@ AreaDeJuego
 			Data
 			{
 				Angulos=0.000000,0.000000,0.000000
-				Posicion=918.597397,-69.281156,52.965399
+				Posicion=904.078039,28.764935,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
 				Tipo
 				{
-					Name=Hangar03
+					Name=Tank
 					System=EntityTypes
 				}
 			}
@@ -200,10 +256,15 @@ AreaDeJuego
 			Data
 			{
 				Angulos=0.000000,0.000000,0.000000
-				Posicion=753.697763,2.744797,52.924840
+				Posicion=349.564788,71.559919,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
 				Tipo
 				{
-					Name=Muelle3
+					Name=Muelle0
 					System=EntityTypes
 				}
 			}
@@ -212,15 +273,25 @@ AreaDeJuego
 		}
 		Item20
 		{
-			Class=CPlayAreaEntity
+			Class=CPlayAreaCheckPoint
 			Data
 			{
-				Angulos=0.000000,0.000000,0.000000
-				Posicion=1236.298759,-35.440823,60.839599
+				Posicion=140.000000,-2.547510,81.671682
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item21
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				Bonus
+				Posicion=46.535907,-4.682201,87.965199
 				Tipo
 				{
-					Name=Silo2
-					System=EntityTypes
+					Name=CuñaPorDelante
+					System=FormationTypes
 				}
 			}
 			Name=""
@@ -232,10 +303,15 @@ AreaDeJuego
 			Data
 			{
 				Angulos=0.000000,0.000000,0.000000
-				Posicion=624.441831,12.873176,52.965399
+				Posicion=918.597397,-69.281156,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
 				Tipo
 				{
-					Name=Muelle1
+					Name=Hangar03
 					System=EntityTypes
 				}
 			}
@@ -248,10 +324,15 @@ AreaDeJuego
 			Data
 			{
 				Angulos=0.000000,0.000000,0.000000
-				Posicion=-108.038964,-4.542234,52.965399
+				Posicion=753.697763,2.744797,52.924840
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
 				Tipo
 				{
-					Name=Hangar00
+					Name=Muelle3
 					System=EntityTypes
 				}
 			}
@@ -264,10 +345,15 @@ AreaDeJuego
 			Data
 			{
 				Angulos=0.000000,0.000000,0.000000
-				Posicion=616.494455,-9.900401,54.913456
+				Posicion=1236.298759,-35.440823,60.839599
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
 				Tipo
 				{
-					Name=Casa02
+					Name=Silo2
 					System=EntityTypes
 				}
 			}
@@ -280,10 +366,15 @@ AreaDeJuego
 			Data
 			{
 				Angulos=0.000000,0.000000,0.000000
-				Posicion=301.365058,41.844068,54.155086
+				Posicion=624.441831,12.873176,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
 				Tipo
 				{
-					Name=Hangar01
+					Name=Muelle1
 					System=EntityTypes
 				}
 			}
@@ -296,10 +387,15 @@ AreaDeJuego
 			Data
 			{
 				Angulos=0.000000,0.000000,0.000000
-				Posicion=828.059600,54.392194,53.807677
+				Posicion=-108.038964,-4.542234,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
 				Tipo
 				{
-					Name=Casa01
+					Name=Hangar00
 					System=EntityTypes
 				}
 			}
@@ -312,10 +408,15 @@ AreaDeJuego
 			Data
 			{
 				Angulos=0.000000,0.000000,0.000000
-				Posicion=976.009044,-2.566307,52.965399
+				Posicion=616.494455,-9.900401,54.913456
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
 				Tipo
 				{
-					Name=Hangar02
+					Name=Casa02
 					System=EntityTypes
 				}
 			}
@@ -328,10 +429,15 @@ AreaDeJuego
 			Data
 			{
 				Angulos=0.000000,0.000000,0.000000
-				Posicion=1237.379038,-35.794681,52.965399
+				Posicion=301.365058,41.844068,54.155086
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
 				Tipo
 				{
-					Name=Silo0
+					Name=Hangar01
 					System=EntityTypes
 				}
 			}
@@ -349,9 +455,9 @@ AreaDeJuego
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.000000
 				EntityType=Palmera
-				PositionJitter=0.400000
-				Separation=0.700000
-				YawJitter=225.000000
+				PositionJitter=3.400000
+				Separation=4.450000
+				YawJitter=240.000000
 			}
 			EntityType
 			{
@@ -373,7 +479,7 @@ Terrain
 		Class=Model
 		Data
 		{
-			Archivo="TextureTester.ase"
+			Archivo=TextureTester.ase
 			AutoGenerateBSP=1
 			AutoUpdateBSP=1
 			LoadBSP=1
@@ -381,7 +487,7 @@ Terrain
 		Name=""
 		System=GameResources
 	}
-	BaseModelFile="TextureTester.ase"
+	BaseModelFile=TextureTester.ase
 	ColorLayers
 	{
 		Item0
@@ -393,7 +499,7 @@ Terrain
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.000000
 				HorzResolution=4.000000
-				Texture="hiervsPeq.jpg"
+				Texture=hiervsPeq.jpg
 				VertResolution=4.000000
 			}
 			Texture
@@ -401,7 +507,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo="hiervsPeq.jpg"
+					Archivo=hiervsPeq.jpg
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -419,7 +525,7 @@ Terrain
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.000000
 				HorzResolution=4.000000
-				Texture="Azulejos.jpg"
+				Texture=Azulejos.jpg
 				VertResolution=4.000000
 			}
 			Texture
@@ -427,7 +533,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo="Azulejos.jpg"
+					Archivo=Azulejos.jpg
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -445,7 +551,7 @@ Terrain
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.000000
 				HorzResolution=3.000000
-				Texture="sandPeq.jpg"
+				Texture=sandPeq.jpg
 				VertResolution=3.000000
 			}
 			Texture
@@ -453,7 +559,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo="sandPeq.jpg"
+					Archivo=sandPeq.jpg
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -468,7 +574,7 @@ Terrain
 		Class=Texture
 		Data
 		{
-			Archivo="ColorMap.bmp"
+			Archivo=ColorMap.bmp
 			ArchivoAlpha=""
 			ColorKey=0.000000,0.000000,0.000000
 			UsarColorKey=0
@@ -476,7 +582,7 @@ Terrain
 		Name=""
 		System=GameResources
 	}
-	ColorMapFile="ColorMap.bmp"
+	ColorMapFile=ColorMap.bmp
 	Fog
 	{
 		Color=0.117647,0.243137,0.074510
@@ -494,7 +600,7 @@ Terrain
 				HorzResolution=4.000000
 				MaxHeight=0.380000
 				MinHeight=0.000000
-				Texture="LechoInferior.jpg"
+				Texture=LechoInferior.jpg
 				VertResolution=4.000000
 			}
 			Texture
@@ -502,7 +608,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo="LechoInferior.jpg"
+					Archivo=LechoInferior.jpg
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -519,7 +625,7 @@ Terrain
 				HorzResolution=4.500000
 				MaxHeight=0.880000
 				MinHeight=0.280000
-				Texture="LechoSuperior.jpg"
+				Texture=LechoSuperior.jpg
 				VertResolution=4.500000
 			}
 			Texture
@@ -527,7 +633,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo="LechoSuperior.jpg"
+					Archivo=LechoSuperior.jpg
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -544,7 +650,7 @@ Terrain
 				HorzResolution=4.500000
 				MaxHeight=1.000000
 				MinHeight=0.900000
-				Texture="ArenaOscura.jpg"
+				Texture=ArenaOscura.jpg
 				VertResolution=4.500000
 			}
 			Texture
@@ -552,7 +658,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo="ArenaOscura.jpg"
+					Archivo=ArenaOscura.jpg
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -591,8 +697,8 @@ Terrain
 			HorzResolution=14.000000
 			Opacity=0.200000
 			Speed=0.015000
-			Texture1="rtice_1.bmp"
-			Texture2="hiervsPeq.jpg"
+			Texture1=rtice_1.bmp
+			Texture2=hiervsPeq.jpg
 			VertResolution=2.500000
 		}
 		Texture1
@@ -600,7 +706,7 @@ Terrain
 			Class=Texture
 			Data
 			{
-				Archivo="rtice_1.bmp"
+				Archivo=rtice_1.bmp
 				ArchivoAlpha=""
 				ColorKey=0.000000,0.000000,0.000000
 				UsarColorKey=0
@@ -613,7 +719,7 @@ Terrain
 			Class=Texture
 			Data
 			{
-				Archivo="hiervsPeq.jpg"
+				Archivo=hiervsPeq.jpg
 				ArchivoAlpha=""
 				ColorKey=0.000000,0.000000,0.000000
 				UsarColorKey=0
