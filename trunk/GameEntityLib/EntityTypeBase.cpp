@@ -56,6 +56,13 @@ void CEntityTypeBase::InitializeEntity(CEntityBase *pEntity,unsigned int dwCurre
 	pEntity->SetDamageType(m_nDamageType);
 	pEntity->SetHealth(m_dMaxHealth);
 	pEntity->SetMaxHealth(m_dMaxHealth);
+	
+	for(unsigned int x=0;x<m_vChildren.size();x++)
+	{
+		if(m_vChildren[x].entityType.m_piEntityType==NULL){continue;}
+		IEntity *piEntity=m_vChildren[x].entityType.m_piEntityType->CreateInstance(NULL,dwCurrentTime);
+		if(piEntity){pEntity->AddChild(piEntity,m_vChildren[x].vPosition,m_vChildren[x].vAngles);}
+	}
 }
 
 void CEntityTypeBase::GetBBox( CVector *pvMins,CVector *pvMaxs )
@@ -276,3 +283,54 @@ bool CEntityTypeBase::GetWeapon(unsigned int nWeapon,IWeaponType **ppiWeapon)
 }
 
 unsigned int CEntityTypeBase::GetWeaponCount(unsigned int nState){return m_vWeapons.size();}
+
+// Child management
+
+unsigned int CEntityTypeBase::AddChild(std::string sEntityType)
+{
+	SChildEntityType child;
+	int nIndex=WEAPON_INVALID;
+	bool bOk=child.entityType.Attach("EntityTypes",sEntityType);
+	if(bOk)
+	{
+		nIndex=m_vChildren.size();
+		m_vChildren.push_back(child);
+	}
+	return nIndex;
+}
+
+bool CEntityTypeBase::RemoveChild(unsigned int nChild)
+{
+	if(nChild>=m_vChildren.size()){return false;}
+	unsigned int x=0;
+	vector<SChildEntityType>::iterator i;
+	for(x=0,i=m_vChildren.begin();x<m_vChildren.size();x++,i++)
+	{
+		if(x==nChild){m_vChildren.erase(i);return true;}
+	}
+	return false;
+}
+
+bool CEntityTypeBase::GetChild(unsigned int nChild,IEntityType **ppiChild)
+{
+	*ppiChild=NULL;
+	if(nChild>=m_vChildren.size()){return false;}
+	*ppiChild=ADD(m_vChildren[nChild].entityType.m_piEntityType);
+	return true;
+}
+
+unsigned int CEntityTypeBase::GetChildren(){return m_vChildren.size();}
+
+void CEntityTypeBase::SetChildLocation(unsigned int nChild,CVector vPosition,CVector vAngles)
+{
+	if(nChild>=m_vChildren.size()){return;}
+	m_vChildren[nChild].vPosition=vPosition;
+	m_vChildren[nChild].vAngles=vAngles;
+}
+
+void CEntityTypeBase::GetChildLocation(unsigned int nChild,CVector &vPosition,CVector &vAngles)
+{
+	if(nChild>=m_vChildren.size()){return;}
+	vPosition=m_vChildren[nChild].vPosition;
+	vAngles=m_vChildren[nChild].vAngles;
+}

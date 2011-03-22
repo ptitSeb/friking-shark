@@ -27,6 +27,7 @@ CEntityBase::CEntityBase()
     m_piRoute=NULL;
     m_dwAlignment=ENTITY_ALIGNMENT_NEUTRAL;
     m_piTarget=NULL;
+	m_piParent=NULL;
 	m_dLastFrameDamage=0;
 }
 
@@ -43,6 +44,7 @@ CEntityBase::~CEntityBase()
       IWeapon *piWeapon=m_vWeapons[x];
       delete piWeapon;
     }
+	
     g_EntityManagerSingleton.Release();
     g_PhysicManagerSingleton.Release();
     g_FrameManagerSingleton.Release();
@@ -57,7 +59,25 @@ void CEntityBase::OnDamage(double dDamage,IEntity *piAggresor)
 void         CEntityBase::OnKilledInternal(bool bRemove){NOTIFY_EVENT(IEntityEvents,OnKilled(this));if(bRemove){Remove();}}
 void         CEntityBase::OnKilled(){OnKilledInternal(true);}
 bool         CEntityBase::OnCollision(IEntity *pOther,CVector &vCollisionPos){return true;}
-void         CEntityBase::Remove(){m_bRemoved=true;SetState(ENTITY_STATE_INVALID,ANIMATION_INVALID);NOTIFY_EVENT(IEntityEvents,OnRemoved(this));}
+void         CEntityBase::Remove()
+{
+	m_bRemoved=true;
+	SetState(ENTITY_STATE_INVALID,ANIMATION_INVALID);
+	NOTIFY_EVENT(IEntityEvents,OnRemoved(this));
+	
+	if(m_vChildren.size())
+	{
+		vector<SChildEntity> sTemp=m_vChildren;
+		for(unsigned int x=0;x<sTemp.size();x++)
+		{
+			SChildEntity *pChildEntity=&sTemp[x];
+			pChildEntity->piEntity->Remove();
+		}
+		sTemp.clear();
+	}
+	if(m_piParent){m_piParent->RemoveChild(this);}
+}
+
 bool         CEntityBase::IsRemoved(){return m_bRemoved;}
 void         CEntityBase::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
@@ -208,4 +228,78 @@ CTraceInfo CEntityBase::GetTrace(const  CVector &p1,const CVector &p2 )
 void CEntityBase::SetEntityTypeBase(CEntityTypeBase *pTypeBase)
 {
 	m_pTypeBase=pTypeBase;
+}
+
+IEntity *CEntityBase::GetParent(){return m_piParent;}
+void CEntityBase::SetParent(IEntity *piEntity){m_piParent=piEntity;}
+
+void CEntityBase::AddChild(IEntity *piEntity,CVector vPosition,CVector vAngles)
+{
+	bool bFound=false;
+	for(unsigned int x=0;x<m_vChildren.size();x++)
+	{
+		if(m_vChildren[x].piEntity==piEntity){bFound=true;break;}
+	}
+	if(!bFound)
+	{
+		SChildEntity childEntity;
+		childEntity.piEntity=piEntity;
+		childEntity.vPosition=vPosition;
+		childEntity.vAngles=vAngles;
+		m_vChildren.push_back(childEntity);
+		piEntity->SetParent(this);
+	}
+}
+	
+void CEntityBase::RemoveChild(IEntity *piEntity)
+{
+	vector<SChildEntity>::iterator i;
+	for(i=m_vChildren.begin();i!=m_vChildren.end();i++)
+	{
+		if(i->piEntity==piEntity)
+		{
+			piEntity->SetParent(NULL);
+			m_vChildren.erase(i);
+			break;
+		}
+	}
+}
+
+unsigned int CEntityBase::GetChildren()
+{
+	return m_vChildren.size();
+}
+
+IEntity *CEntityBase::GetChild(unsigned int nIndex)
+{
+	if(nIndex>=m_vChildren.size()){return NULL;}
+	return m_vChildren[nIndex].piEntity;
+}
+
+void CEntityBase::SetChildLocation(IEntity *piEntity,CVector vPosition,CVector vAngles)
+{
+	for(unsigned int x=0;x<m_vChildren.size();x++)
+	{
+		SChildEntity *pChildEntity=&m_vChildren[x];
+		if(pChildEntity->piEntity==piEntity)
+		{
+			pChildEntity->vPosition=vPosition;
+			pChildEntity->vAngles=vAngles;
+			break;
+		}
+	}
+}
+
+void CEntityBase::GetChildLocation(IEntity *piEntity,CVector &vPosition,CVector &vAngles)
+{
+	for(unsigned int x=0;x<m_vChildren.size();x++)
+	{
+		SChildEntity *pChildEntity=&m_vChildren[x];
+		if(pChildEntity->piEntity==piEntity)
+		{
+			vPosition=pChildEntity->vPosition;
+			vAngles=pChildEntity->vAngles;
+			break;
+		}
+	}
 }

@@ -6,6 +6,15 @@
 #include "SteeringBehaviours.h"
 #include "GameManagers.h"
 
+struct SChildEntity
+{
+	CVector vPosition;
+	CVector vAngles;
+	IEntity *piEntity;
+	
+	SChildEntity(){piEntity=NULL;}
+};
+
 class CEntityBase: public IEntity, public CPublisherBase, public CSubscriberBase
 {
 protected:
@@ -47,6 +56,11 @@ protected:
 
     vector<IWeapon*>     m_vWeapons;
 
+	// Miembros para gestion de jerarquia
+	
+	IEntity 			*m_piParent;
+	vector<SChildEntity> m_vChildren;
+	
     // Alineacion (Bando) de la entidad
 
     unsigned int m_dwAlignment;
@@ -73,6 +87,14 @@ public:
     unsigned int	GetAlignment();
     void        	SetAlignment(unsigned int dwAlignment);
 	
+	IEntity      *GetParent();
+	void          SetParent(IEntity *piEntity);
+	void          AddChild(IEntity *piEntity,CVector vPos,CVector vAngles);
+	void          RemoveChild(IEntity *piEntity);
+	unsigned int  GetChildren();
+	IEntity      *GetChild(unsigned int nIndex);
+	void          SetChildLocation(IEntity *piEntity,CVector vPosition,CVector vAngles);
+	void          GetChildLocation(IEntity *piEntity,CVector &vPosition,CVector &vAngles);
 	
     bool        	IsRemoved();
     void        	Remove();
@@ -82,7 +104,7 @@ public:
 
     // Procesamiento
     unsigned int GetNextProcessFrame();
-    void  ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
+    void         ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
 
     // Colisiones y Daños
     double 	GetHealth();
