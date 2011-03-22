@@ -32,8 +32,33 @@ void CModelAnimationObjectType::DesignRender( IGenericRender *piRender,CVector &
 			piRender->PushState();
 			piRender->DeactivateShadowReception();
 			piRender->DeactivateHeightFog();
+
+			CVector vTempPos=vPosition;
+			CVector vTempAngles=vAngles+m_vAngles;
+			
+			bool bVectorsComputed=false;
+			CVector vForward,vRight,vUp;
+			if(m_vPosition.c[0]!=0 || m_vPosition.c[1]!=0 || m_vPosition.c[2]!=0)
+			{
+				if(!bVectorsComputed){VectorsFromAngles(vAngles,&vForward,&vRight,&vUp);bVectorsComputed=true;}
+				
+				vTempPos+=vForward*m_vPosition.c[0]+vUp*m_vPosition.c[1]+vRight*m_vPosition.c[2];
+			}
+			if(m_vAngles.c[0]!=0 || m_vAngles.c[1]!=0 || m_vAngles.c[2]!=0)
+			{
+				if(!bVectorsComputed){VectorsFromAngles(vAngles,&vForward,&vRight,&vUp);bVectorsComputed=true;}
+				
+				CVector vLocalForward,vLocalRight,bLocalUp,vGlobalForward,vGlobalRight,vGlobalUp;
+				VectorsFromAngles(m_vAngles,&vLocalForward,&vLocalRight,&bLocalUp);
+				
+				vGlobalForward=vForward*vLocalForward.c[0]+vUp*vLocalForward.c[1]+vRight*vLocalForward.c[2];
+				vGlobalRight=vForward*vLocalRight.c[0]+vUp*vLocalRight.c[1]+vRight*vLocalRight.c[2];
+				vGlobalUp=vForward*bLocalUp.c[0]+vUp*bLocalUp.c[1]+vRight*bLocalUp.c[2];
+				
+				vTempAngles=AnglesFromVectors(vGlobalForward,vGlobalRight,vGlobalUp);
+			}			
 			m_ModelWrapper.m_piModel->GetFrameBBox(0,0,&vMins,&vMaxs);
-			piRender->RenderBBox(vPosition,vAngles,vMins,vMaxs,CVector(1,1,1),0x8888);
+			piRender->RenderBBox(vTempPos,vTempAngles,vMins,vMaxs,CVector(1,1,1),0x8888);
 			piRender->PopState();
 		}
 		else

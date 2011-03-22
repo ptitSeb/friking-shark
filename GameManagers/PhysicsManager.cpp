@@ -83,6 +83,7 @@ struct SCheckCollisionInfo
     // Se construye una caja que contenga todo el movimiento para utilizarla en la colision con las entidades 
     // con bounding box.
  
+	IEntity *piAncestor;
     CVector vTotalMins;
     CVector vTotalMaxs;
     CVector vTotalMinsOrigin;
@@ -93,6 +94,8 @@ struct SCheckCollisionInfo
     CVector     vOrigin;
     CVector     vDestination;
     CTraceInfo  traceInfo;
+	
+	SCheckCollisionInfo(){piAncestor=NULL;}
 };
 
 void EntityOperation_CheckCollision(IEntity *piOther,void *pParam1,void *pParam2)
@@ -104,6 +107,14 @@ void EntityOperation_CheckCollision(IEntity *piOther,void *pParam1,void *pParam2
 
     if(piOther==piEntity){return;}
     if(pOtherPhysicInfo->dwBoundsType==PHYSIC_BOUNDS_TYPE_NONE){return;}
+    
+    if(pInfo->piAncestor!=NULL)
+	{
+		IEntity *piParent=piEntity,*piAncestor=NULL;
+		while(piParent){piParent=piParent->GetParent();if(piParent){piAncestor=piParent;}}
+		if(piAncestor==pInfo->piAncestor){return;}
+	}
+	
 
 	if(pOtherPhysicInfo->dwBoundsType==PHYSIC_BOUNDS_TYPE_BBOX)
     {
@@ -254,17 +265,53 @@ void EntityOperation_CheckCollision(IEntity *piOther,void *pParam1,void *pParam2
     }
 }
 
+void ProcessChildren(IEntity *piParent)
+{
+	SPhysicInfo *pParentInfo=piParent->GetPhysicInfo();
+	unsigned int nChildren=piParent->GetChildren();
+	for(unsigned int x=0;x<nChildren;x++)
+	{
+		IEntity *piChild=piParent->GetChild(x);
+		SPhysicInfo *pChildInfo=piChild->GetPhysicInfo();
+		
+		CVector vPositionInParent,vAnglesInParent;
+		piParent->GetChildLocation(piChild,vPositionInParent,vAnglesInParent);
+		
+		VectorsFromAngles(pParentInfo->vAngles,&pChildInfo->vRefSysX,&pChildInfo->vRefSysZ,&pChildInfo->vRefSysY);
+		CVector vPos=pParentInfo->vPosition+pChildInfo->vRefSysX*vPositionInParent.c[0]+pChildInfo->vRefSysZ*vPositionInParent.c[2]+pChildInfo->vRefSysY*vPositionInParent.c[1];
+
+		CVector vAngles=pChildInfo->vAngles;
+		
+		if(vAnglesInParent!=Origin)
+		{
+			CVector vLocalForward,vLocalRight,bLocalUp,vGlobalForward,vGlobalRight,vGlobalUp;
+			VectorsFromAngles(vAnglesInParent,&vLocalForward,&vLocalRight,&bLocalUp);
+			
+			vGlobalForward=pChildInfo->vRefSysX*vLocalForward.c[0]+pChildInfo->vRefSysY*vLocalForward.c[1]+pChildInfo->vRefSysZ*vLocalForward.c[2];
+			vGlobalUp=pChildInfo->vRefSysX*bLocalUp.c[0]+pChildInfo->vRefSysY*bLocalUp.c[1]+pChildInfo->vRefSysZ*bLocalUp.c[2];
+			vGlobalRight=pChildInfo->vRefSysX*vLocalRight.c[0]+pChildInfo->vRefSysY*vLocalRight.c[1]+pChildInfo->vRefSysZ*vLocalRight.c[2];
+			vAngles=AnglesFromVectors(vGlobalForward,vGlobalRight,vGlobalUp);
+		}	
+		
+		pChildInfo->vPosition=vPos;
+		pChildInfo->vAngles=vAngles;
+		ProcessChildren(piChild);
+	} 
+}
+
 void EntityOperation_ProcessPhysicFrame(IEntity *piEntity,void *pParam1,void *pParam2)
 {
-    if(piEntity->IsRemoved()){return;}
-
+	IEntity *piParent=piEntity->GetParent();
+	if(piParent){return;}
+	if(piEntity->IsRemoved()){return;}
 
     double dTimeFraction=*((double *)pParam2);
     CPhysicManager *pThis=(CPhysicManager *)pParam1;
     SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();
-//	RTTRACE("%s ------ Starting : %f",piEntity->GetEntityClass()->c_str(),pPhysicInfo->vPosition.c[1]);
-   CVector vNewPos=pThis->ProcessPhysicInfo(pPhysicInfo,dTimeFraction);
-    if( (vNewPos!=pPhysicInfo->vPosition || pPhysicInfo->dwMoveType==PHYSIC_MOVE_TYPE_CUSTOM) && 
+	
+	CVector vNewPos=pThis->ProcessPhysicInfo(pPhysicInfo,dTimeFraction);
+	
+	if( (vNewPos!=pPhysicInfo->vPosition || pPhysicInfo->dwMoveType==PHYSIC_MOVE_TYPE_CUSTOM) && 
         pPhysicInfo->dwBoundsType!=PHYSIC_BOUNDS_TYPE_NONE && 
         pPhysicInfo->dwBoundsType!=PHYSIC_BOUNDS_TYPE_BSP)
     {
@@ -282,7 +329,10 @@ void EntityOperation_ProcessPhysicFrame(IEntity *piEntity,void *pParam1,void *pP
             info.vTotalMins.c[x]=min(info.vTotalMinsOrigin.c[x],info.vTotalMinsDestination.c[x]);
             info.vTotalMaxs.c[x]=max(info.vTotalMaxsOrigin.c[x],info.vTotalMaxsDestination.c[x]);
         }
-
+        info.piAncestor=NULL;
+		IEntity *piParent=piEntity;
+		while(piParent){piParent=piParent->GetParent();if(piParent){info.piAncestor=piParent;}}
+		
         pThis->m_EntityManagerWrapper.m_piEntityManager->PerformUnaryOperation(EntityOperation_CheckCollision,piEntity,&info);
         pPhysicInfo->vPosition=info.traceInfo.m_vTracePos;
     }
@@ -290,6 +340,7 @@ void EntityOperation_ProcessPhysicFrame(IEntity *piEntity,void *pParam1,void *pP
     {
         pPhysicInfo->vPosition=vNewPos;
     }
+    ProcessChildren(piEntity);
 //	RTTRACE("%s ------ Finished : %f",piEntity->GetEntityClass()->c_str(),pPhysicInfo->vPosition.c[1]);
 }
 

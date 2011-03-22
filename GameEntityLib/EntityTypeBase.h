@@ -3,6 +3,7 @@
 
 DECLARE_CUSTOM_WRAPPER1(CAnimationTypeWrapper,IAnimationType,m_piAnimationType)
 DECLARE_CUSTOM_WRAPPER1(CWeaponTypeWrapper,IWeaponType,m_piWeaponType)
+DECLARE_CUSTOM_WRAPPER1(CChildEntityTypeWrapper,IEntityType,m_piEntityType)
 
 class CEntityBase;
 
@@ -11,6 +12,19 @@ struct SEntityState
 	std::string 					sName;
 	vector<CAnimationTypeWrapper>  	vAnimations;
 };
+
+struct SChildEntityType
+{
+	CChildEntityTypeWrapper entityType;
+	CVector vPosition;
+	CVector vAngles;
+};
+
+BEGIN_STRUCT_PROPS(SChildEntityType)
+	PROP_FLAGS(entityType  ,"EntityType",MRPF_NORMAL|MRPF_OPTIONAL)
+	PROP_FLAGS(vPosition   ,"Position",MRPF_NORMAL|MRPF_OPTIONAL)
+	PROP_FLAGS(vAngles     ,"Angles",MRPF_NORMAL|MRPF_OPTIONAL)
+END_STRUCT_PROPS()
 
 #define BEGIN_ENTITY_STATE_MAP() virtual void RegisterStates(){
 #define ENTITY_STATE(index,name) if(m_vStates.size()<=index){m_vStates.resize(index+1);} m_vStates[index].sName=name;
@@ -24,6 +38,7 @@ private:
     // Propiedades Persistentes
 	map<std::string,vector<CAnimationTypeWrapper> >  m_mStateAnimations;
 	vector<CWeaponTypeWrapper>     					 m_vWeapons;
+	vector<SChildEntityType>     					 m_vChildren;
 
 	void MapStateAnimations();
 	void InitializeStates();
@@ -59,6 +74,7 @@ public:
     BEGIN_PROP_MAP(CEntityTypeBase);
         PROP(m_mStateAnimations ,"StateAnimations")
 		PROP_FLAGS(m_vWeapons   ,"Weapons",MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_FLAGS(m_vChildren  ,"Children",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_vBBoxMins  ,"BBoxMins",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_vBBoxMaxs  ,"BBoxMaxs",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_nMovementType,"MovementType",MRPF_NORMAL|MRPF_OPTIONAL)
@@ -100,6 +116,15 @@ public:
 	bool			RemoveWeapon(unsigned int nWeapon);
 	bool			GetWeapon(unsigned int nWeapon,IWeaponType **ppiWeapon);
 	unsigned int	GetWeaponCount(unsigned int nState);
+	
+	// Children management
+	
+	unsigned int	AddChild(std::string sEntity);
+	bool			RemoveChild(unsigned int nChild);
+	bool			GetChild(unsigned int nChild,IEntityType **ppiEntityType);
+	unsigned int	GetChildren();
+	void			SetChildLocation(unsigned int nChild,CVector vPosition,CVector vAngles);
+	void			GetChildLocation(unsigned int nChild,CVector &vPosition,CVector &vAngles);
 	
 	CEntityTypeBase(void);
     ~CEntityTypeBase(void);

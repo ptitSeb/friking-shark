@@ -72,9 +72,9 @@ struct SPhysicForce
 
 struct SPhysicInfo
 {
-    unsigned int					dwMoveType;
-    unsigned int					dwBoundsType;
-    unsigned int					dwCollisionType;
+    unsigned int			dwMoveType;
+    unsigned int			dwBoundsType;
+    unsigned int			dwCollisionType;
     double					dBounceFactor;
     double					dSlideFactor;
 
@@ -92,8 +92,12 @@ struct SPhysicInfo
 	double					dMaxForce;
 	bool					bOnSurface;
 	CPlane					surfacePlane;
-
-    SPhysicInfo()
+	
+	CVector	 				vRefSysX;
+	CVector	 				vRefSysY;
+	CVector	 				vRefSysZ;
+	
+	SPhysicInfo():vRefSysX(AxisPosX),vRefSysY(AxisPosY),vRefSysZ(AxisPosZ)
     {
         dwMoveType=PHYSIC_MOVE_TYPE_NORMAL;
         dwBoundsType=PHYSIC_BOUNDS_TYPE_NONE;
@@ -141,30 +145,41 @@ public:
     virtual string      *GetEntityName()=0;
     virtual SPhysicInfo *GetPhysicInfo()=0;
 
-    virtual unsigned int GetAlignment()=0;
-    virtual void  SetAlignment(unsigned int dwAlignment)=0;
-
-    virtual double GetHealth()=0;
+	virtual unsigned int GetDamageType()=0;
+	virtual unsigned int GetAlignment()=0;
+    virtual void         SetAlignment(unsigned int dwAlignment)=0;
+	
+	virtual IEntity *GetTarget()=0;
+	
+	virtual IEntity      *GetParent()=0;
+	virtual void          SetParent(IEntity *pEntity)=0;
+	virtual void          AddChild(IEntity *pEntity,CVector vPos,CVector vAngles)=0;
+	virtual void          RemoveChild(IEntity *pEntity)=0;
+	virtual void          SetChildLocation(IEntity *piEntity,CVector vPosition,CVector vAngles)=0;
+	virtual void          GetChildLocation(IEntity *piEntity,CVector &vPosition,CVector &vAngles)=0;
+	virtual unsigned int  GetChildren()=0;
+	virtual IEntity      *GetChild(unsigned int nIndex)=0;
+	
+	virtual double GetHealth()=0;
     virtual double GetMaxHealth()=0;
 
     virtual bool  IsRemoved()=0;
     virtual void  Remove()=0;
 
-    virtual void  ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)=0;
-	  virtual unsigned int GetNextProcessFrame()=0;
+	virtual void Render(IGenericRender *piRender,IGenericCamera *piCamera)=0;
+	
+	virtual void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)=0;
+    virtual void ProcessAnimations(unsigned int dwCurrentTime,double dTimeFraction,bool *pbAnimationsFinished)=0;
+    virtual unsigned int GetNextProcessFrame()=0;
 
     virtual bool OnCollision(IEntity *piOther,CVector &vCollisionPos)=0;
     virtual void OnDamage(double dDamage,IEntity *pAggresor)=0;
     virtual void OnAnimationEvent(string sEvent,string sParams)=0;
-    virtual void ProcessAnimations(unsigned int dwCurrentTime,double dTimeFraction,bool *pbAnimationsFinished)=0;
 
-    virtual void Render(IGenericRender *piRender,IGenericCamera *piCamera)=0;
 
 	virtual CTraceInfo GetTrace(const CVector &p1,const CVector &p2)=0;
 
     virtual void SetRoute(IRoute *piRoute)=0;
-    virtual IEntity *GetTarget()=0;
-		virtual unsigned int GetDamageType()=0;
 
     virtual ~IEntity(){}
 };
@@ -790,6 +805,15 @@ struct IEntityTypeDesign:virtual public ISystemUnknown
 	virtual bool			RemoveWeapon(unsigned int nWeapon)=0;
 	virtual bool			GetWeapon(unsigned int nWeapon,IWeaponType **ppiWeapon)=0;
 	virtual unsigned int	GetWeaponCount(unsigned int nState)=0;
+	
+	// Children management
+	
+	virtual unsigned int	AddChild(std::string sEntity)=0;
+	virtual bool			RemoveChild(unsigned int nChild)=0;
+	virtual bool			GetChild(unsigned int nChild,IEntityType **ppiEntityType)=0;
+	virtual unsigned int	GetChildren()=0;
+	virtual void			SetChildLocation(unsigned int nChild,CVector vPosition,CVector vAngles)=0;
+	virtual void			GetChildLocation(unsigned int nChild,CVector &vPosition,CVector &vAngles)=0;
 };
 
 #endif

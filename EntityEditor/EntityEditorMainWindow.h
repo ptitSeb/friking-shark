@@ -83,6 +83,8 @@ public:
 	CGameGUITranslationGizmo 	 m_TranslationGizmo;
 	CGameGUIBBoxGizmo 	 		 m_BBoxGizmo;
 	bool					 	 m_bMovingGizmo;
+	double						 m_dCameraSpeed;
+	
 /*	CVector 	m_vAxisPosition;
 	CVector 	m_vTranslationOrigin;
 	bool		m_bMovingGizmo;*/
@@ -101,7 +103,7 @@ public:
 	bool		m_bShowEventPanel;
 	bool		m_bShowParticleSystemPanel;
 	
-	CFakeEntity	*m_pEntity;
+	CFakeEntity					*m_pEntity;
 	
 	IGameGUILabel *m_piSTFps;
 	IGameGUILabel *m_piSTVolume;
@@ -115,6 +117,7 @@ public:
 
 	IGameGUIButton *m_piBTShowOptionsPanel;
 	IGameGUIButton *m_piBTShowFilePanel;
+	IGameGUIButton *m_piBTShowEntityProperties;
 
 	IGameGUIList   *m_piLSStates;
 	IGameGUIList   *m_piLSAnimations;
@@ -128,6 +131,8 @@ public:
 	IGameGUIButton  *m_piBTNewEvent;
 	IGameGUIButton  *m_piBTNewParticleSystem;
 	
+	IGameGUIList    *m_piLSEntities;
+	IGameGUIButton  *m_piBTNewEntity;
 	// Options
 
 	IGameGUIButton *m_piBTOptionsTextures;
@@ -162,6 +167,7 @@ public:
 	void ProcessNewEvent();
 	void ProcessNewParticleSystem();
 	void ProcessNewAnimation();
+	void ProcessNewEntity();
 	
 	void Reset();
 	
@@ -174,6 +180,7 @@ public:
 		CHILD_MAP_ENTRY_EX("Options",m_piBTShowOptionsPanel,IGameGUIButtonEvents);
 		//CHILD_MAP_ENTRY_EX("Entities",m_piBTShowEntitiesPanel,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Entity",m_piBTShowFilePanel,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("EntityProperties",m_piBTShowEntityProperties,IGameGUIButtonEvents);
 
 		CHILD_MAP_ENTRY("OptionsPanel",m_piGROptionsPanel);
 		CHILD_MAP_ENTRY_EX("OptionShowTextures",m_piBTOptionsTextures,IGameGUIButtonEvents);
@@ -189,6 +196,9 @@ public:
 		CHILD_MAP_ENTRY_EX("NewSound",m_piBTNewSound,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("NewEvent",m_piBTNewEvent,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("NewParticleSystem",m_piBTNewParticleSystem,IGameGUIButtonEvents);
+		
+		CHILD_MAP_ENTRY_EX("EntityList",m_piLSEntities,IGameGUIListEvents);
+		CHILD_MAP_ENTRY_EX("NewEntity",m_piBTNewEntity,IGameGUIButtonEvents);
 		
 		CHILD_MAP_ENTRY("EntityPanel",m_piGREntity);
 		CHILD_MAP_ENTRY_EX("EntityNew",m_piBTEntityNew,IGameGUIButtonEvents);
@@ -237,8 +247,13 @@ public:
 	void UpdateStateList();
 	void UpdateAnimationList();
 	void UpdateObjectList();
+	void UpdateEntityList();
 	void UpdateSelectedAnimation();
 	void UpdateSelectedObject();
+	void UpdateInteractiveElementsSpeedsAndSizes();
+	void UpdateGizmos();
+	void ShowPropertiesOf(ISystemObject *piObject);
+	
 	
 	void UpdateRunningAnimation();
 	
