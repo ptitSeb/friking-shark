@@ -16,7 +16,6 @@ COpenGLRender::COpenGLRender(void)
 	m_dProyectionWidth=1;
 	m_dProyectionHeight=1;
 	m_piCurrentViewport=NULL;
-	m_piCurrentGLViewport=NULL;
 	m_nViewportX=0;
 	m_nViewportY=0;
 	m_nViewportW=1;
@@ -76,7 +75,6 @@ void COpenGLRender::Destroy()
 void COpenGLRender::StartFrame(IGenericViewport *piViewport)
 {
 	m_piCurrentViewport=piViewport;
-	m_piCurrentGLViewport=dynamic_cast<IOpenGLViewport *>(piViewport);
 
 	glDisable(GL_NORMALIZE);
 	glDisable(GL_AUTO_NORMAL);
@@ -89,17 +87,11 @@ void COpenGLRender::EndFrame()
 {
 	EndStagedRendering();
 	m_piCurrentViewport=NULL;
-	m_piCurrentGLViewport=NULL;
 }
 
 IGenericViewport *COpenGLRender::GetViewPort()
 {
 	return m_piCurrentViewport;
-}
-
-IOpenGLViewport *COpenGLRender::GetOpenGLViewPort()
-{
-	return m_piCurrentGLViewport;
 }
 
 void COpenGLRender::SetOrthographicProjection(double cx,double cy)

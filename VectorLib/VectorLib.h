@@ -294,6 +294,8 @@ double		RadiansToDegrees(double dAngle);
 void		FromOpenGLMatrix(double *dMatrix,CMatrix *pMatrix);
 void		ToOpenGLMatrix(CMatrix *pMatrix,double *dMatrix);
 
+void 		ComputeReferenceSystem( CVector vRefSysPos,CVector vRefSysAngles,CVector vPosition,CVector vAngles,CVector *pvPosition,CVector *pvAngles,CVector *pvX=NULL,CVector *pvY=NULL,CVector *pvZ=NULL);
+
 extern CVector AxisPosX;
 extern CVector AxisPosY;
 extern CVector AxisPosZ;

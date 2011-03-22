@@ -607,7 +607,6 @@ void COpenGLViewport::SetCallBack(IGenericViewportCallBack *pCallBack)
 	m_piCallBack=pCallBack;
 }
 
-void COpenGLViewport::SetCurrentRenderTarget(bool bSetAsCurrent){}
 void COpenGLViewport::Render()
 {
 	glFrontFace(GL_CCW);

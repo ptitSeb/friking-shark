@@ -78,26 +78,56 @@ CVector CEntityTypeBase::GetSize()
 
 double CEntityTypeBase::DesignGetRadius()
 {
-	CAnimationTypeWrapper *pAnimation=GetStateAnimation(ENTITY_STATE_BASE,0);
-	if(pAnimation){return pAnimation->m_piAnimationType->DesignGetRadius();}
-	return 0;
+	CVector vMins,vMaxs;
+	DesignGetBBox(&vMins,&vMaxs);
+	return GetBBoxRadius(vMins,vMaxs);
 }
 
 void CEntityTypeBase::DesignRender(IGenericRender *piRender,CVector &vPosition,CVector &vAngles, bool bSelected)
 {
 	CAnimationTypeWrapper *pAnimation=GetStateAnimation(ENTITY_STATE_BASE,0);
 	if(pAnimation){pAnimation->m_piAnimationType->DesignRender(piRender,vPosition,vAngles,bSelected);}
+
+	for(unsigned int x=0;x<m_vChildren.size();x++)
+	{
+		CVector vTempPos,vTempAngles;
+		ComputeReferenceSystem(vPosition,vAngles,m_vChildren[x].vPosition,m_vChildren[x].vAngles,&vTempPos,&vTempAngles);
+		m_vChildren[x].entityType.m_piEntityType->DesignRender(piRender,vTempPos,vTempAngles,bSelected);
+	}
 }
 
 void CEntityTypeBase::DesignGetBBox( CVector *pvMins,CVector *pvMaxs )
 {
+	CVector vFakeMins(1000,1000,1000),vFakeMaxs(-1000,-1000,-1000);
+	CVector vMins(1000,1000,1000),vMaxs(-1000,-1000,-1000);
+
 	CAnimationTypeWrapper *pAnimation=GetStateAnimation(ENTITY_STATE_BASE,0);
-	if(pAnimation){pAnimation->m_piAnimationType->DesignGetBBox(pvMins,pvMaxs);}
+	if(pAnimation){pAnimation->m_piAnimationType->DesignGetBBox(&vMins,&vMaxs);}
+
+	for(unsigned int x=0;x<m_vChildren.size();x++)
+	{
+		CVector vTempMins,vTempMaxs;
+		m_vChildren[x].entityType.m_piEntityType->DesignGetBBox(&vTempMins,&vTempMaxs);
+		vTempMins+=m_vChildren[x].vPosition;
+		vTempMaxs+=m_vChildren[x].vPosition;
+		for(unsigned int c=0;c<3;c++)
+		{
+			if(vTempMins.c[c]<vMins.c[c]){vMins.c[c]=vTempMins.c[c];}
+			if(vTempMaxs.c[c]>vMaxs.c[c]){vMaxs.c[c]=vTempMaxs.c[c];}
+		}
+	}
+	if(vFakeMins!=vMins && vFakeMaxs!=vMaxs)
+	{
+		if(pvMins){*pvMins=vMins;}
+		if(pvMaxs){*pvMaxs=vMaxs;}
+	}
 }
 
 CTraceInfo CEntityTypeBase::DesignGetTrace( const CVector &vPosition,const CVector &vAngles,const CVector &p1,const CVector &p2 )
 {
 	CTraceInfo traceInfo;
+	traceInfo.m_dTraceFraction=1.0;
+	traceInfo.m_vTracePos=p2;
 	CAnimationTypeWrapper *pAnimation=GetStateAnimation(ENTITY_STATE_BASE,0);
 	if(pAnimation)
 	{
@@ -107,6 +137,17 @@ CTraceInfo CEntityTypeBase::DesignGetTrace( const CVector &vPosition,const CVect
 	{
 		traceInfo.m_dTraceFraction=1.0;
 		traceInfo.m_vTracePos=p2;
+	}
+	for(unsigned int x=0;x<m_vChildren.size();x++)
+	{
+		CVector vTempPos,vTempAngles;
+		ComputeReferenceSystem(vPosition,vAngles,m_vChildren[x].vPosition,m_vChildren[x].vAngles,&vTempPos,&vTempAngles);
+
+		CTraceInfo temp=m_vChildren[x].entityType.m_piEntityType->DesignGetTrace(vTempPos,vTempAngles,p1,p2);
+		if(temp.m_dTraceFraction<traceInfo.m_dTraceFraction)
+		{
+			traceInfo=temp;
+		}
 	}
 	return traceInfo;
 }

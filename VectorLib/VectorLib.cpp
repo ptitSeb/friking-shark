@@ -2374,6 +2374,26 @@ double GetBBoxRadius( const CVector &vMins,const CVector &vMaxs )
 	return dRadius;
 }
 
+void ComputeReferenceSystem( CVector vRefSysPos,CVector vRefSysAngles,CVector vPosition,CVector vAngles,CVector *pvPosition,CVector *pvAngles,CVector *pvX,CVector *pvY,CVector *pvZ)
+{
+	CVector vForward,vRight,vUp;
+	VectorsFromAngles(vRefSysAngles,&vForward,&vRight,&vUp);
+
+	CVector vLocalForward,vLocalRight,bLocalUp;
+	VectorsFromAngles(vAngles,&vLocalForward,&vLocalRight,&bLocalUp);
+
+	CVector vGlobalForward,vGlobalRight,vGlobalUp;
+	vGlobalForward=vForward*vLocalForward.c[0]+vUp*vLocalForward.c[1]+vRight*vLocalForward.c[2];
+	vGlobalRight=vForward*vLocalRight.c[0]+vUp*vLocalRight.c[1]+vRight*vLocalRight.c[2];
+	vGlobalUp=vForward*bLocalUp.c[0]+vUp*bLocalUp.c[1]+vRight*bLocalUp.c[2];
+
+	if(pvPosition){*pvPosition=vRefSysPos+vForward*vPosition.c[0]+vUp*vPosition.c[1]+vRight*vPosition.c[2];}
+	if(pvAngles){*pvAngles=AnglesFromVectors(vGlobalForward,vGlobalRight,vGlobalUp);}
+	if(pvX){*pvX=vGlobalForward;}
+	if(pvY){*pvY=vGlobalUp;}
+	if(pvZ){*pvZ=vGlobalRight;}
+}
+
 
 bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CVector> *pItem)
 {

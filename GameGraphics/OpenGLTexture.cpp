@@ -276,11 +276,6 @@ std::string COpenGLTexture::GetAlphaFileName(){return m_sAlphaFileName;}
 void		COpenGLTexture::GetSize(unsigned *pdwWidth,unsigned *pdwHeight){*pdwWidth=m_dwWidth;*pdwHeight=m_dwHeight;}
 bool		COpenGLTexture::HasColorKey(){return m_bColorKey;}
 CVector		COpenGLTexture::GetColorKey(){return m_vColorKey;}
-unsigned 	COpenGLTexture::GetOpenGLIndex()
-{
-	return m_nTextureIndex;
-}
-
 bool COpenGLTexture::LoadFromFile()
 {
 	int nStartTime=GetTimeStamp();
