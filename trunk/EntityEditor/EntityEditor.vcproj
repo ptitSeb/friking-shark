@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="EntityEditor"
-	ProjectGUID="{89F86DB3-2706-4A08-883F-487687DE3B62}"
+	ProjectGUID="{019680D8-CE69-42ED-8531-EF6D14663F1A}"
 	RootNamespace="EntityEditor"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGUI;..\GameGUILib;..\GameGraphics;..\PlayAreaElements;..\SoundSystems"
+				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGUI;..\GameGUILib;..\GameGraphics;..\PlayAreaElements;..\SoundSystems;..\GameEntityLib;..\AnimationSystems;..\ParticleSystems"
 				PreprocessorDefinitions="NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;SCENARIOEDITOR_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -119,7 +119,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGUI;..\GameGUILib;..\GameGraphics;..\PlayAreaElements;..\SoundSystems"
+				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGUI;..\GameGUILib;..\GameGraphics;..\PlayAreaElements;..\SoundSystems;..\GameEntityLib;..\AnimationSystems;..\ParticleSystems"
 				PreprocessorDefinitions="NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;_USRDLL;SCENARIOEDITOR_EXPORTS"
 				IgnoreStandardIncludePath="false"
 				RuntimeLibrary="2"
@@ -185,7 +185,31 @@
 				>
 			</File>
 			<File
+				RelativePath=".\EntityEditorAnimationPropertyPanel.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\EntityEditorClassSelector.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\EntityEditorEntityPropertyPanel.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\EntityEditorEventPropertyPanel.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\EntityEditorMainWindow.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\EntityEditorModelPropertyPanel.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\EntityEditorNamedObjectSelector.cpp"
 				>
 			</File>
 			<File
@@ -194,6 +218,14 @@
 			</File>
 			<File
 				RelativePath=".\EntityEditorObjectSelector.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\EntityEditorParticleSystemPropertyPanel.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\EntityEditorSoundPropertyPanel.cpp"
 				>
 			</File>
 			<File
@@ -227,7 +259,31 @@
 				>
 			</File>
 			<File
+				RelativePath=".\EntityEditorAnimationPropertyPanel.h"
+				>
+			</File>
+			<File
+				RelativePath=".\EntityEditorClassSelector.h"
+				>
+			</File>
+			<File
+				RelativePath=".\EntityEditorEntityPropertyPanel.h"
+				>
+			</File>
+			<File
+				RelativePath=".\EntityEditorEventPropertyPanel.h"
+				>
+			</File>
+			<File
 				RelativePath=".\EntityEditorMainWindow.h"
+				>
+			</File>
+			<File
+				RelativePath=".\EntityEditorModelPropertyPanel.h"
+				>
+			</File>
+			<File
+				RelativePath=".\EntityEditorNamedObjectSelector.h"
 				>
 			</File>
 			<File
@@ -236,6 +292,14 @@
 			</File>
 			<File
 				RelativePath=".\EntityEditorObjectSelector.h"
+				>
+			</File>
+			<File
+				RelativePath=".\EntityEditorParticleSystemPropertyPanel.h"
+				>
+			</File>
+			<File
+				RelativePath=".\EntityEditorSoundPropertyPanel.h"
 				>
 			</File>
 			<File

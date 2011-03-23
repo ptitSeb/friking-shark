@@ -112,6 +112,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ScenarioEditor", "..\Scenar
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FormationEditor", "..\FormationEditor\FormationEditor.vcproj", "{89F86DB3-2706-4A08-883F-487687DE3B62}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EntityEditor", "..\EntityEditor\EntityEditor.vcproj", "{019680D8-CE69-42ED-8531-EF6D14663F1A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -200,6 +202,10 @@ Global
 		{89F86DB3-2706-4A08-883F-487687DE3B62}.Debug|Win32.Build.0 = Debug|Win32
 		{89F86DB3-2706-4A08-883F-487687DE3B62}.Release|Win32.ActiveCfg = Release|Win32
 		{89F86DB3-2706-4A08-883F-487687DE3B62}.Release|Win32.Build.0 = Release|Win32
+		{019680D8-CE69-42ED-8531-EF6D14663F1A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{019680D8-CE69-42ED-8531-EF6D14663F1A}.Debug|Win32.Build.0 = Debug|Win32
+		{019680D8-CE69-42ED-8531-EF6D14663F1A}.Release|Win32.ActiveCfg = Release|Win32
+		{019680D8-CE69-42ED-8531-EF6D14663F1A}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

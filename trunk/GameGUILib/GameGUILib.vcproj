@@ -161,6 +161,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GameGUIBBoxGizmo.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GameGUIRotationGizmo.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GameGUITranslationGizmo.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\GameGUIUtil.cpp"
 				>
 			</File>
@@ -199,7 +211,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GameGUIBBoxGizmo.h"
+				>
+			</File>
+			<File
 				RelativePath=".\GameGUILib.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GameGUIRotationGizmo.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GameGUITranslationGizmo.h"
 				>
 			</File>
 			<File
