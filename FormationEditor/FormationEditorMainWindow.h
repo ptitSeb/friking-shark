@@ -52,6 +52,7 @@ public:
 	std::string 			 m_sWorldModelFile;
 	std::string 			 m_sWorldTextureFile;
 	double					 m_dAutoAlignThreshold;
+	bool					 m_bPauseOnNextFrame;
 	
 	std::vector<SEntityControls *>		m_vEntityControls;
 
