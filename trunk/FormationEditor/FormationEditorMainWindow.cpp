@@ -10,6 +10,7 @@ extern CSystemModuleHelper *g_pSystemModuleHelper;
 
 CFormationEditorMainWindow::CFormationEditorMainWindow(void)
 {
+	m_bPauseOnNextFrame=false;
 	m_d3DFontSize=0;
 	m_nFormationId=0;
 	m_bMovingRoutePoint=false;
@@ -229,6 +230,7 @@ void CFormationEditorMainWindow::OnDraw(IGenericRender *piRender)
 	m_FrameManager.m_piFrameManager->ProcessFrame();
 	ProcessInput(m_FrameManager.m_piFrameManager->GetTimeFraction(),m_FrameManager.m_piFrameManager->GetRealTimeFraction());
 	
+	if(m_bPauseOnNextFrame){m_FrameManager.m_piFrameManager->SetPauseOnNextFrame(true);m_bPauseOnNextFrame=false;}
 	m_Render.m_piRender->ActivateDepth();
 	m_Render.m_piRender->PushOptions();
 	m_Render.m_piRender->PushState();
@@ -943,6 +945,7 @@ void CFormationEditorMainWindow::OnCharacter(int nKey,bool *pbProcessed)
 	else if(nKey=='L'|| nKey=='l'){m_bSolid=!m_bSolid;*pbProcessed=true;}
 	else if(nKey=='O'|| nKey=='o'){m_bRenderWorld=!m_bRenderWorld;*pbProcessed=true;}
 	else if(nKey=='G'|| nKey=='g'){m_bAutoAlign=!m_bAutoAlign;*pbProcessed=true;}
+	else if(nKey==' '){m_FrameManager.m_piFrameManager->SetPauseOnNextFrame(false);m_bPauseOnNextFrame=true;*pbProcessed=true;}
 }
 
 void CFormationEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
