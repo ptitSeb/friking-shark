@@ -6,16 +6,18 @@ double ApproachAngle(double actual,double ideal, double ammount)
     double result;
 	double dTemp=ideal-actual;
 
-	if(dTemp<-180){dTemp+=180;}
-	if(dTemp>180){dTemp-=180;}
-
-    if(fabs(dTemp)<ammount)
+	if(dTemp<-180){dTemp=360+dTemp;}
+	if(dTemp>180){dTemp=actual-ideal;}
+	
+    if(fabs(dTemp)<fabs(ammount))
     {result=ideal;}
     else
-    {result=actual+dTemp;}
+	{result=actual+fabs(ammount)*(dTemp>0?1.0:-1.0);}
 
-    if(result<0){result=result+360;}
-    if(result>360){result=result+(-360);}
+    if(result<0){result+=360;}
+    if(result>360){result-=360;}
+    
+    //RTTRACE("ApproachAngle : act:%f ,ideal %f, dtemp %f, res %f",actual,ideal,dTemp,result);
     return result;
 }
 
