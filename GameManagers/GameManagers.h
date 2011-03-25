@@ -133,7 +133,8 @@ struct IRoute
 {
     virtual unsigned    GetPointCount()=0;
     virtual CVector     GetAbsolutePoint(unsigned nIndex)=0;
-    virtual CVector     GetDirection(unsigned nSection)=0;
+	virtual	CVector     GetEstimatedAbsolutePoint(unsigned int nIndex,double dTime)=0;
+	virtual CVector     GetDirection(unsigned nSection)=0;
     virtual unsigned    GetNextPointIndex(unsigned nIndex)=0;
     virtual void        ProcessPoint(IEntity *piEntity,unsigned int dwCurrentFrame,double dTimeFraction)=0;
 };

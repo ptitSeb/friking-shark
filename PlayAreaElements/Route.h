@@ -17,6 +17,7 @@ public:
     CRoute();
 
 	CVector     GetRelativePoint(unsigned int nIndex);
+	CVector     GetEstimatedAbsolutePoint(unsigned int nIndex,double dTime);
 	CVector     GetAbsolutePoint(unsigned nIndex);
 	unsigned    GetPointCount();
     CVector     GetDirection(unsigned nSection);
