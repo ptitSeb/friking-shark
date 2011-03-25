@@ -54,6 +54,20 @@ CVector	CRoute::GetPlayAreaElementPoint(CVector vPlayAreaElementPos,unsigned nIn
 	return GetPlayAreaElementRoutePoint(vPlayAreaElementPos,&m_vPoints[nIndex]);
 }
 
+CVector CRoute::GetEstimatedAbsolutePoint(unsigned int nIndex,double dTime)
+{
+	CVector vPoint=GetAbsolutePoint(nIndex);
+	IPlayAreaDesign *piDesign=QI(IPlayAreaDesign,g_PlayAreaManagerWrapper.m_piInterface);
+	if(piDesign)
+	{
+		SPlayAreaConfig sConfig;
+		piDesign->GetPlayAreaConfig(&sConfig);
+		vPoint.c[0]+=sConfig.dCameraSpeed*dTime;
+	}
+	REL(piDesign);
+	return vPoint;
+}
+
 CVector CRoute::GetAbsolutePoint(unsigned nIndex)
 {
     CVector vReturnPoint;
