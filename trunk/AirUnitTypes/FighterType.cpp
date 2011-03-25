@@ -1,5 +1,6 @@
 #include "./stdafx.h"
 #include "FighterType.h"
+#include "GameGraphics.h"
 
 CFighterType::CFighterType()
 {
@@ -78,19 +79,44 @@ void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
   {
     if(GetState()==eFighterState_Falling)
     {
-      ApproachAngle(m_PhysicInfo.vAngles.c[1],40,30);
+		//m_PhysicInfo.vAngles.c[1]=ApproachAngle(m_PhysicInfo.vAngles.c[1],40,30);
     }
     return;
   }
 
   m_dwNextProcessFrame=dwCurrentTime+10;
-
+  
   CVector vDest=m_piRoute->GetAbsolutePoint(m_piRoute->GetNextPointIndex(m_nRoutePoint));
   CVector vDir=vDest-m_PhysicInfo.vPosition;
-  double dDist=vDir.N();
-  if(dDist<m_PhysicInfo.dMaxVelocity/4.0)
+  double dDist=vDir.N();  
+  
+  CVector vForward,vRight;
+  VectorsFromAngles(m_PhysicInfo.vAngles,&vForward,&vRight);
+  CVector vNextDest=m_piRoute->GetAbsolutePoint(m_piRoute->GetNextPointIndex(m_piRoute->GetNextPointIndex(m_nRoutePoint)));
+  CVector vDirNext=vNextDest-m_PhysicInfo.vPosition;
+  vDirNext.N();
+  double dCosNext=vForward*vDirNext;
+  
+  double dAngleNextTarget=RadiansToDegrees(acos(dCosNext));
+  double dEstimatedTimeToHeadToNextDest=dAngleNextTarget/(m_pType->m_dMaxAngularSpeed*0.5);
+  double dEstimatedTimeToCurrentDest=dDist/m_PhysicInfo.dMaxVelocity;
+  
+  RTTRACE("p%d, %f, %f, %f",m_nRoutePoint+1,vDest.c[0],vDest.c[1],vDest.c[2]);
+  RTTRACE("p%d, %f, %f, %f",m_nRoutePoint+2,vNextDest.c[0],vNextDest.c[1],vNextDest.c[2]);
+  RTTRACE("p%d, angle to next %f, time to head next %f, time to curr dest %f",m_nRoutePoint, dAngleNextTarget,dEstimatedTimeToHeadToNextDest,dEstimatedTimeToCurrentDest);
+  
+  vDest=m_piRoute->GetEstimatedAbsolutePoint(m_piRoute->GetNextPointIndex(m_nRoutePoint),dEstimatedTimeToCurrentDest);
+  vDir=vDest-m_PhysicInfo.vPosition;
+  dDist=vDir.N();
+    
+  if((fabs(RadiansToDegrees(acos(vDir*vForward)))<5.0 && dEstimatedTimeToHeadToNextDest>dEstimatedTimeToCurrentDest) || dDist<m_PhysicInfo.dMaxVelocity*0.1)
   {
-    int nNext=m_piRoute->GetNextPointIndex(m_nRoutePoint);
+ /* }
+  
+  
+  if(dDist<m_PhysicInfo.dMaxVelocity/4.0)
+  {*/
+	int nNext=m_piRoute->GetNextPointIndex(m_nRoutePoint);
     if(nNext==m_nRoutePoint)
     {
       Remove();
@@ -103,9 +129,8 @@ void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
   }
   else
   {
-    CVector vAngles,vForward,vRight,vTempAngles=m_PhysicInfo.vAngles;
+    CVector vAngles,vTempAngles=m_PhysicInfo.vAngles;
     AnglesFromVector(vDir,&vAngles);
-    VectorsFromAngles(m_PhysicInfo.vAngles,&vForward,&vRight);
 
     if(vForward!=vDir)
     {
@@ -151,6 +176,30 @@ void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 void CFighter::Render(IGenericRender *piRender,IGenericCamera *piCamera)
 {
   CEntityBase::Render(piRender,piCamera);
+  
+  
+  // Render route
+  
+  if(m_piRoute)
+  {
+	piRender->PushState();
+	piRender->DeactivateDepth();
+	
+	CVector vPreviousPoint=m_piRoute->GetAbsolutePoint(0);
+	for(unsigned x=1;x<m_piRoute->GetPointCount();x++)
+	{
+		double dPointSize=15;
+		CVector vPointColor=CVector(0,0,0.8);
+		CVector vLineColor=CVector(0,0,0.8);
+		
+		
+		CVector vWorld=m_piRoute->GetAbsolutePoint(x);
+		piRender->RenderLine(vPreviousPoint,vWorld,vLineColor);
+		piRender->RenderPoint(vWorld,dPointSize,vPointColor,1.0);
+		vPreviousPoint=vWorld;
+	}
+	piRender->PopState();
+  }
 }
 
 IEntity *CFighter::GetTarget()
