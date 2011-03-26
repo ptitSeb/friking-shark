@@ -74,110 +74,110 @@ void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
 
-  if(!m_piRoute){return;}
-  if(m_dHealth<=0)
-  {
-    if(GetState()==eFighterState_Falling)
-    {
-		//m_PhysicInfo.vAngles.c[1]=ApproachAngle(m_PhysicInfo.vAngles.c[1],40,30);
-    }
-    return;
-  }
+	if(!m_piRoute){return;}
+	if(m_dHealth<=0)
+	{
+		if(GetState()==eFighterState_Falling)
+		{
+			//m_PhysicInfo.vAngles.c[1]=ApproachAngle(m_PhysicInfo.vAngles.c[1],40,30);
+		}
+		return;
+	}
 
-  m_dwNextProcessFrame=dwCurrentTime+10;
-  
-  CVector vDest=m_piRoute->GetAbsolutePoint(m_piRoute->GetNextPointIndex(m_nRoutePoint));
-  CVector vDir=vDest-m_PhysicInfo.vPosition;
-  double dDist=vDir.N();  
-  
-  CVector vForward,vRight;
-  VectorsFromAngles(m_PhysicInfo.vAngles,&vForward,&vRight);
-  CVector vNextDest=m_piRoute->GetAbsolutePoint(m_piRoute->GetNextPointIndex(m_piRoute->GetNextPointIndex(m_nRoutePoint)));
-  CVector vDirNext=vNextDest-m_PhysicInfo.vPosition;
-  vDirNext.N();
-  double dCosNext=vForward*vDirNext;
-  
-  double dAngleNextTarget=RadiansToDegrees(acos(dCosNext));
-  double dEstimatedTimeToHeadToNextDest=dAngleNextTarget/(m_pType->m_dMaxAngularSpeed*0.5);
-  double dEstimatedTimeToCurrentDest=dDist/m_PhysicInfo.dMaxVelocity;
-  
-  RTTRACE("p%d, %f, %f, %f",m_nRoutePoint+1,vDest.c[0],vDest.c[1],vDest.c[2]);
-  RTTRACE("p%d, %f, %f, %f",m_nRoutePoint+2,vNextDest.c[0],vNextDest.c[1],vNextDest.c[2]);
-  RTTRACE("p%d, angle to next %f, time to head next %f, time to curr dest %f",m_nRoutePoint, dAngleNextTarget,dEstimatedTimeToHeadToNextDest,dEstimatedTimeToCurrentDest);
-  
-  vDest=m_piRoute->GetEstimatedAbsolutePoint(m_piRoute->GetNextPointIndex(m_nRoutePoint),dEstimatedTimeToCurrentDest);
-  vDir=vDest-m_PhysicInfo.vPosition;
-  dDist=vDir.N();
-    
-  if((fabs(RadiansToDegrees(acos(vDir*vForward)))<5.0 && dEstimatedTimeToHeadToNextDest>dEstimatedTimeToCurrentDest) || dDist<m_PhysicInfo.dMaxVelocity*0.1)
-  {
- /* }
-  
-  
-  if(dDist<m_PhysicInfo.dMaxVelocity/4.0)
-  {*/
+	m_dwNextProcessFrame=dwCurrentTime+10;
+
+	CVector vForward,vRight,vUp;
+	VectorsFromAngles(m_PhysicInfo.vAngles.c[YAW],m_PhysicInfo.vAngles.c[PITCH],0,vForward,vRight,vUp);
+	CVector vDest=m_piRoute->GetAbsolutePoint(m_piRoute->GetNextPointIndex(m_nRoutePoint));
+	CVector vDir=vDest-m_PhysicInfo.vPosition;
+	double dDist=vDir.N();  
+	
+	bool bNext=false;
 	int nNext=m_piRoute->GetNextPointIndex(m_nRoutePoint);
-    if(nNext==m_nRoutePoint)
-    {
-      Remove();
-    }
-    else
-    {
-      m_nRoutePoint=nNext;
-    }
+	if(nNext!=m_nRoutePoint)
+	{
+		CVector vDirNext=m_piRoute->GetAbsolutePoint(m_piRoute->GetNextPointIndex(nNext))-vDest;
+		vDirNext.N();
+		
+		double dCirclePerimeter=(m_PhysicInfo.dMaxVelocity*360.0/m_pType->m_dMaxAngularSpeed);
+		double dCapableRadius=(dCirclePerimeter/(2*PI));
+		
+		CVector vPerpB=vDirNext^vUp;
+		CVector vPB1=vDest+vDirNext*dDist;
+		CPlane  vPlaneA=CPlane(vDir,m_PhysicInfo.vPosition);
+		
+		double dSide1=vPlaneA.GetSide(vPB1);
+		double dSide2=vPlaneA.GetSide(vPB1+vPerpB*10000.0);
+		double dLength=(dSide1-dSide2);
+		double dFraction=dLength?dSide1/dLength:0;
+		double dFinalRadius=fabs(10000.0*dFraction);
 
-  }
-  else
-  {
-    CVector vAngles,vTempAngles=m_PhysicInfo.vAngles;
-    AnglesFromVector(vDir,&vAngles);
+		bNext=(dFinalRadius<dCapableRadius);
+	}
+	bNext=(bNext || dDist<m_PhysicInfo.dMaxVelocity*0.1);
+	if(bNext)
+	{
+		if(nNext==m_nRoutePoint)
+		{
+			Remove();
+		}
+		else
+		{
+			m_nRoutePoint=nNext;
+		}
+	}
+	double dEstimatedTimeToCurrentDest=dDist/m_PhysicInfo.dMaxVelocity;
+	CVector vEstimatedDest=m_piRoute->GetEstimatedAbsolutePoint(nNext,dEstimatedTimeToCurrentDest);
+	CVector vEstimatedDir=vEstimatedDest-m_PhysicInfo.vPosition;
+	vEstimatedDir.N();
+	
+	if(vForward!=vEstimatedDir)
+	{
+		CPlane plane(vRight,m_PhysicInfo.vPosition);
+		if(plane.GetSide(vEstimatedDest)>0)
+		{
+			m_PhysicInfo.vAngles.c[ROLL]+=m_pType->m_dMaxRoll*dTimeFraction;
+			if(m_PhysicInfo.vAngles.c[ROLL]>m_pType->m_dMaxRoll){m_PhysicInfo.vAngles.c[ROLL]=m_pType->m_dMaxRoll;}
+		}
+		else
+		{
+			m_PhysicInfo.vAngles.c[ROLL]-=m_pType->m_dMaxRoll*dTimeFraction;
+			if(m_PhysicInfo.vAngles.c[ROLL]<-m_pType->m_dMaxRoll){m_PhysicInfo.vAngles.c[ROLL]=-m_pType->m_dMaxRoll;}
+		}
+	}
+	else
+	{
+		if(m_PhysicInfo.vAngles.c[ROLL]>0)
+		{
+			m_PhysicInfo.vAngles.c[ROLL]-=m_pType->m_dMaxAngularSpeed*dTimeFraction;
+			if(m_PhysicInfo.vAngles.c[ROLL]<0){m_PhysicInfo.vAngles.c[ROLL]=0;}
+		}
+		else
+		{
+			m_PhysicInfo.vAngles.c[ROLL]+=m_pType->m_dMaxAngularSpeed*dTimeFraction;
+			if(m_PhysicInfo.vAngles.c[ROLL]>0){m_PhysicInfo.vAngles.c[ROLL]=0;}
+		}
+	}	
 
-    if(vForward!=vDir)
-    {
-      CPlane plane(vRight,m_PhysicInfo.vPosition);
-      if(plane.GetSide(vDest)>0)
-      {
-        m_PhysicInfo.vAngles.c[ROLL]+=m_pType->m_dMaxRoll*dTimeFraction;
-        if(m_PhysicInfo.vAngles.c[ROLL]>m_pType->m_dMaxRoll){m_PhysicInfo.vAngles.c[ROLL]=m_pType->m_dMaxRoll;}
-      }
-      else
-      {
-        m_PhysicInfo.vAngles.c[ROLL]-=m_pType->m_dMaxRoll*dTimeFraction;
-        if(m_PhysicInfo.vAngles.c[ROLL]<-m_pType->m_dMaxRoll){m_PhysicInfo.vAngles.c[ROLL]=-m_pType->m_dMaxRoll;}
-      }
-    }
-    else
-    {
-      if(m_PhysicInfo.vAngles.c[ROLL]>0)
-      {
-        m_PhysicInfo.vAngles.c[ROLL]-=m_pType->m_dMaxAngularSpeed*dTimeFraction;
-        if(m_PhysicInfo.vAngles.c[ROLL]<0){m_PhysicInfo.vAngles.c[ROLL]=0;}
-      }
-      else
-      {
-        m_PhysicInfo.vAngles.c[ROLL]+=m_pType->m_dMaxAngularSpeed*dTimeFraction;
-        if(m_PhysicInfo.vAngles.c[ROLL]>0){m_PhysicInfo.vAngles.c[ROLL]=0;}
-      }
-    }
-    double dCurrentAngularSpeed=(m_PhysicInfo.vAngles.c[ROLL]/m_pType->m_dMaxRoll)*m_pType->m_dMaxAngularSpeed;
-    m_PhysicInfo.vAngles.c[YAW]=ApproachAngle(m_PhysicInfo.vAngles.c[YAW],vAngles.c[YAW],-dCurrentAngularSpeed*dTimeFraction);
-    VectorsFromAngles(m_PhysicInfo.vAngles,&m_PhysicInfo.vVelocity);
-    m_PhysicInfo.vVelocity*=m_PhysicInfo.dMaxVelocity;
-    m_dwNextProcessFrame=dwCurrentTime+10;
-  }
+	double dDesiredYaw=0,dDesiredPitch=0;
+	AnglesFromVector(vEstimatedDir,dDesiredYaw,dDesiredPitch);
+	double dCurrentAngularSpeed=m_pType->m_dMaxAngularSpeed;
+	m_PhysicInfo.vAngles.c[YAW]=ApproachAngle(m_PhysicInfo.vAngles.c[YAW],dDesiredYaw,-dCurrentAngularSpeed*dTimeFraction);
+	VectorsFromAngles(m_PhysicInfo.vAngles,&m_PhysicInfo.vVelocity);
+	m_PhysicInfo.vVelocity*=m_PhysicInfo.dMaxVelocity;
+	m_dwNextProcessFrame=dwCurrentTime+10;
 
-  if(dwCurrentTime>m_dwNextShotTime)
-  {
-    FireWeapon(0,dwCurrentTime);
-    m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeBetweenShotsMax-m_pType->m_dTimeBetweenShotsMin)+m_pType->m_dTimeBetweenShotsMin;
-  }
+	if(dwCurrentTime>m_dwNextShotTime)
+	{
+		FireWeapon(0,dwCurrentTime);
+		m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeBetweenShotsMax-m_pType->m_dTimeBetweenShotsMin)+m_pType->m_dTimeBetweenShotsMin;
+	}
 }
 
 void CFighter::Render(IGenericRender *piRender,IGenericCamera *piCamera)
 {
   CEntityBase::Render(piRender,piCamera);
-  
-  
+    
   // Render route
   
   if(m_piRoute)
@@ -197,6 +197,7 @@ void CFighter::Render(IGenericRender *piRender,IGenericCamera *piCamera)
 		piRender->RenderLine(vPreviousPoint,vWorld,vLineColor);
 		piRender->RenderPoint(vWorld,dPointSize,vPointColor,1.0);
 		vPreviousPoint=vWorld;
+	
 	}
 	piRender->PopState();
   }
