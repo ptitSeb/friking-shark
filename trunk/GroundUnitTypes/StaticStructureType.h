@@ -25,6 +25,10 @@ public:
 class CStaticStructure: public CEntityBase
 {
 	CStaticStructureType  *m_pType;
+	
+	IEntity *GetTarget();
+	void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
+	
 public:
 
 	void OnKilled();

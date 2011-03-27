@@ -277,14 +277,16 @@ void ProcessChildren(IEntity *piParent)
 		CVector vPositionInParent,vAnglesInParent;
 		piParent->GetChildLocation(piChild,vPositionInParent,vAnglesInParent);
 		
-		VectorsFromAngles(pParentInfo->vAngles,&pChildInfo->vRefSysX,&pChildInfo->vRefSysZ,&pChildInfo->vRefSysY);
-
 		CVector vPos,vAngles;
 		ComputeReferenceSystem(pParentInfo->vPosition,pParentInfo->vAngles,vPositionInParent,vAnglesInParent,&vPos,&vAngles);
-		//ComputeReferenceSystem(pParentInfo->vPosition,pParentInfo->vAngles,pChildInfo->vLocalPosition,pChildInfo->vLocalAngles,&vPos,&vAngles);
-
-		pChildInfo->vPosition=vPos;
-		pChildInfo->vAngles=vAngles;
+		
+		
+		CVector vFinalPos,vFinalAngles;
+		ComputeReferenceSystem(vPos,vAngles,pChildInfo->vLocalPosition,pChildInfo->vLocalAngles,&vFinalPos,&vFinalAngles);
+		VectorsFromAngles(vAngles,&pChildInfo->vRefSysX,&pChildInfo->vRefSysZ,&pChildInfo->vRefSysY);
+		
+		pChildInfo->vPosition=vFinalPos;
+		pChildInfo->vAngles=vFinalAngles;
 		ProcessChildren(piChild);
 	} 
 }
