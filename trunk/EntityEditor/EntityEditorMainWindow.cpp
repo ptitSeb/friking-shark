@@ -277,8 +277,11 @@ void CEntityEditorMainWindow::OnDraw(IGenericRender *piRender)
 	if(!m_bMovingGizmo && m_pEntity)
 	{
 		m_BBoxGizmo.SetPosition(m_pEntity->GetPhysicInfo()->vPosition);
+		m_BBoxGizmo.SetArrowSize((m_Camera.m_piCamera->GetPosition()-m_pEntity->GetPhysicInfo()->vPosition)/15.0);
 	}
 		
+	m_TranslationGizmo.SetSize((m_Camera.m_piCamera->GetPosition()-m_TranslationGizmo.GetPosition())/7.5);
+	m_RotationGizmo.SetRadius((m_Camera.m_piCamera->GetPosition()-m_TranslationGizmo.GetPosition())/10.0);
 	m_RotationGizmo.SetPosition(m_TranslationGizmo.GetPosition());
 	if(m_bShowTranslationGizmo){m_TranslationGizmo.Render(m_Render.m_piRender,m_Camera.m_piCamera);}
 	if(m_bShowRotationGizmo){m_RotationGizmo.Render(m_Render.m_piRender,m_Camera.m_piCamera);}
@@ -743,9 +746,11 @@ void CEntityEditorMainWindow::OnMouseMove( double x,double y )
 		m_Render.m_piRender->StartSelection(m_rRealRect,m_Camera.m_piCamera,x,y,5);
 		nCurrentId=m_TranslationGizmo.SelectionRender(nCurrentId,m_Render.m_piRender,m_Camera.m_piCamera);
 		nCurrentId=m_RotationGizmo.SelectionRender(nCurrentId,m_Render.m_piRender,m_Camera.m_piCamera);
+		nCurrentId=m_BBoxGizmo.SelectionRender(nCurrentId,m_Render.m_piRender,m_Camera.m_piCamera);
 		int nSelectionId=m_Render.m_piRender->EndSelection();
 		m_TranslationGizmo.Select(nSelectionId);
 		m_RotationGizmo.Select(nSelectionId);
+		m_BBoxGizmo.Select(nSelectionId);
 	}
 }
 
@@ -1007,10 +1012,6 @@ void CEntityEditorMainWindow::UpdateInteractiveElementsSpeedsAndSizes()
 		
 		CVector vSize=vMaxs-vMins;
 		double dMaxDimension=std::max(std::max(vSize.c[0],vSize.c[1]),vSize.c[2]);
-		
-		m_BBoxGizmo.SetArrowSize(dMaxDimension*0.2);
-		m_TranslationGizmo.SetSize(dMaxDimension*0.3);
-		m_RotationGizmo.SetRadius(dMaxDimension*0.2);
 		m_dCameraSpeed=dMaxDimension*0.5;
 
 		if(m_pEntity && m_EntityType.m_piEntityTypeDesign)
