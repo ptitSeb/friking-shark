@@ -10,6 +10,7 @@ extern CSystemModuleHelper *g_pSystemModuleHelper;
 
 CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 {
+	m_bPauseOnNextFrame=false;
 	m_bMovingObject=false;
 	m_bMovingRoutePoint=false;
 	m_bAutoGenerateBSP=true;
@@ -238,6 +239,8 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 
 	m_FrameManager.m_piFrameManager->ProcessFrame();
 	ProcessInput(m_FrameManager.m_piFrameManager->GetTimeFraction(),m_FrameManager.m_piFrameManager->GetRealTimeFraction());
+	
+	if(m_bPauseOnNextFrame){m_FrameManager.m_piFrameManager->SetPauseOnNextFrame(true);m_bPauseOnNextFrame=false;}
 	
 	m_Render.m_piRender->ActivateDepth();
 	m_Render.m_piRender->PushOptions();
@@ -2062,6 +2065,7 @@ void CScenarioEditorMainWindow::OnCharacter(int nKey,bool *pbProcessed)
 	else if(nKey=='O'|| nKey=='o'){m_bShadows=!m_bShadows;*pbProcessed=true;}
 	else if(nKey=='H'|| nKey=='h'){m_bShaders=!m_bShaders;*pbProcessed=true;}
 	else if(nKey=='B'|| nKey=='b'){m_bBlend=!m_bBlend;*pbProcessed=true;}
+	else if(nKey==' '){m_FrameManager.m_piFrameManager->SetPauseOnNextFrame(false);m_bPauseOnNextFrame=true;*pbProcessed=true;}
 }
 
 void CScenarioEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)

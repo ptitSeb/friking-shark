@@ -121,6 +121,8 @@ public:
 	bool				m_bAutoGenerateBSP;
 	bool				m_bAutoUpdateBSP;
 
+	bool				m_bPauseOnNextFrame;
+	
 
 	IGameGUILabel *m_piSTFps;
 	IGameGUILabel *m_piSTVolume;

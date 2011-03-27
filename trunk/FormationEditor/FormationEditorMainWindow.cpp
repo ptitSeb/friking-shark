@@ -389,7 +389,7 @@ void CFormationEditorMainWindow::ProcessFileNew()
 	{
 		m_sFormationName="";
 		Reset();
-		m_FormationType.Create("FormationTypes","CFormationType","__unnamed__");
+		m_FormationType.Create("FormationTypes","CFormationType","");
 		UpdateEntityControls();
 		UpdateLayerPanel();
 		UpdateCaption();
@@ -1188,8 +1188,10 @@ void CFormationEditorMainWindow::StartGameSimulation()
 	}
 	if(m_PlayAreaManagerWrapper.m_piPlayAreaManager)
 	{
+		CVector vMins,vMaxs;
 		CVector vPlayerStart,vPlayerEnd;
 		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayerRoute(&vPlayerStart,&vPlayerEnd);
+		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetVisibleAirPlayPlane(&vMins,&vMaxs);
 
 		IPlayAreaElement *piElement;
 		m_nFormationId=m_PlayAreaManagerWrapper.m_piPlayAreaDesign->AddElement("CPlayAreaFormation");
@@ -1197,7 +1199,16 @@ void CFormationEditorMainWindow::StartGameSimulation()
 		m_Formation.Attach(piElement);
 		if(m_Formation.m_piPlayAreaFormation)
 		{
-			m_Formation.m_piPlayAreaFormation->SetPosition(vPlayerStart);
+			SPlayAreaConfig sConfig;
+			m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sConfig);
+			
+			// Si la camara se mueve se pone la formacion justo en el punto en que el player 
+			// se ha presentado y empieza a moverse
+			
+			CVector vFormationPos=vPlayerStart;
+			if(sConfig.dCameraSpeed){vFormationPos+=CVector((vMaxs.c[0]-vMins.c[0])*0.5+1,0,0);}
+			
+			m_Formation.m_piPlayAreaFormation->SetPosition(vFormationPos);
 			m_Formation.m_piPlayAreaFormation->SetFormationType(m_FormationType.m_piFormationType);
 		}
 		REL(piElement);
