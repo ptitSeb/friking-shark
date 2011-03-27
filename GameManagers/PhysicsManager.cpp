@@ -281,6 +281,7 @@ void ProcessChildren(IEntity *piParent)
 
 		CVector vPos,vAngles;
 		ComputeReferenceSystem(pParentInfo->vPosition,pParentInfo->vAngles,vPositionInParent,vAnglesInParent,&vPos,&vAngles);
+		//ComputeReferenceSystem(pParentInfo->vPosition,pParentInfo->vAngles,pChildInfo->vLocalPosition,pChildInfo->vLocalAngles,&vPos,&vAngles);
 
 		pChildInfo->vPosition=vPos;
 		pChildInfo->vAngles=vAngles;

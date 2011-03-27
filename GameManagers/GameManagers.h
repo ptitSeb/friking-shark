@@ -99,7 +99,9 @@ struct SPhysicInfo
 	CVector	 				vRefSysX;
 	CVector	 				vRefSysY;
 	CVector	 				vRefSysZ;
-	
+	CVector					vLocalAngles;
+	CVector					vLocalPosition;
+		
 	SPhysicInfo():vRefSysX(AxisPosX),vRefSysY(AxisPosY),vRefSysZ(AxisPosZ)
     {
         dwMoveType=PHYSIC_MOVE_TYPE_NORMAL;
@@ -153,8 +155,9 @@ public:
 	virtual unsigned int GetAlignment()=0;
     virtual void         SetAlignment(unsigned int dwAlignment)=0;
 	
-	virtual IEntity *GetTarget()=0;
-	
+	virtual IEntity 	*GetTarget()=0;
+	virtual void	 	  SetTarget(IEntity *piTarget)=0;	
+
 	virtual IEntity      *GetParent()=0;
 	virtual void          SetParent(IEntity *pEntity)=0;
 	virtual void          AddChild(IEntity *pEntity,CVector vPos,CVector vAngles)=0;

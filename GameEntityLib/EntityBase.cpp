@@ -195,9 +195,18 @@ void CEntityBase::FireWeapon(unsigned int dwWeaponSlot,unsigned int dwCurrentTim
 }
 
 IEntityManager *CEntityBase::GetEntityManager(){return g_EntityManagerSingleton.m_piInterface;}
-IEntity *CEntityBase::GetTarget()
+IEntity *CEntityBase::GetTarget(){return m_piTarget;}
+void CEntityBase::SetTarget(IEntity *piTarget)
 {
-  return m_piTarget;
+	IEntity *piOldTarget=m_piTarget;
+	m_piTarget=piTarget;
+	if(piOldTarget!=m_piTarget)
+	{
+		for(unsigned int x=0;x<m_vChildren.size();x++)
+		{
+			m_vChildren[x].piEntity->SetTarget(m_piTarget);
+		}
+	}
 }
 
 unsigned int CEntityBase::GetDamageType(){return m_dwDamageType;}

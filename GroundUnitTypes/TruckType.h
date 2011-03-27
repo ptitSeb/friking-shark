@@ -13,6 +13,7 @@ public:
 
     double  m_dMaxAngularSpeed;
 
+
     BEGIN_PROP_MAP(CTruckType)
         PROP_CLASS_CHAIN(CEntityTypeBase)
         PROP_VALUE_FLAGS(m_dMaxAngularSpeed,"MaxAngularVelocity",60,MRPF_NORMAL|MRPF_OPTIONAL);
@@ -33,6 +34,8 @@ class CTruck: public CEntityBase
 	IEntity *m_piTarget;
     CTruckType  *m_pType;
 public:
+	IEntity *GetTarget();
+
 	void SetRoute(IRoute *piRoute);
 	void OnKilled();
 	void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);

@@ -6,9 +6,11 @@
 #include "TruckType.h"
 #include "StaticEntityType.h"
 #include "StaticStructureType.h"
+#include "TurretType.h"
 
 BEGIN_SYSTEM_MODULE()
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CTruckType,"CTruck")
+	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CTurretType,"CTurret")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CStaticEntityType,"CStaticEntity")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CStaticStructureType,"CStaticStructure")
 END_SYSTEM_MODULE()

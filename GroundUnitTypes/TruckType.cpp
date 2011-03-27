@@ -18,7 +18,6 @@ IEntity *CTruckType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime
     piEntity->SetState(eTruckState_Normal);
 	piEntity->GetPhysicInfo()->dMass=1;
 	piEntity->GetPhysicInfo()->dwCollisionType=PHYSIC_COLLISION_TYPE_SLIDE;
-	piEntity->GetPhysicInfo()->dwMoveType=PHYSIC_MOVE_TYPE_NORMAL;
     return piEntity;
 }
 
@@ -55,6 +54,7 @@ void CTruck::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
 
+	GetTarget();
 	//RTTRACE("On surface %d",m_PhysicInfo.bOnSurface);
 	VectorsFromAngles(m_PhysicInfo.vAngles,&m_PhysicInfo.vForward);
 	if(m_PhysicInfo.bOnSurface)
@@ -90,4 +90,15 @@ void CTruck::SetRoute( IRoute *piRoute )
 {
 	CEntityBase::SetRoute(piRoute);
 	m_Behaviours.FollowRoute(piRoute);
+}
+
+IEntity *CTruck::GetTarget()
+{
+	if(m_piTarget==NULL)
+	{
+		IEntityManager *piManager=GetEntityManager();
+		if(piManager){m_piTarget=piManager->FindEntity("Player");}
+	}
+	SetTarget(m_piTarget);
+	return m_piTarget;
 }

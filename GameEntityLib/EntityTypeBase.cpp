@@ -61,6 +61,8 @@ void CEntityTypeBase::InitializeEntity(CEntityBase *pEntity,unsigned int dwCurre
 	{
 		if(m_vChildren[x].entityType.m_piEntityType==NULL){continue;}
 		IEntity *piEntity=m_vChildren[x].entityType.m_piEntityType->CreateInstance(NULL,dwCurrentTime);
+		piEntity->GetPhysicInfo()->vLocalAngles=m_vChildren[x].vAngles;
+		piEntity->GetPhysicInfo()->vLocalPosition=m_vChildren[x].vPosition;
 		if(piEntity){pEntity->AddChild(piEntity,m_vChildren[x].vPosition,m_vChildren[x].vAngles);}
 	}
 }
