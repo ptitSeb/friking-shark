@@ -345,6 +345,10 @@ void CPhysicManager::ApplyForce(SPhysicInfo *pInfo,SPhysicForce *pForce,double d
 	{
 		vForceVelocity=pForce->vDir*(pForce->dConstantAccel*(dInterval));
 	}
+	else if(pForce->dwForceType==PHYSIC_FORCE_CONSTANT_VELOCITY)
+	{
+		pInfo->vPosition+=pForce->vDir*pForce->dConstantVel*dInterval;
+	}
 	else
 	{
 		double dEffectiveAccel=pForce->dForce/pInfo->dMass;

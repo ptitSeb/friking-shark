@@ -380,6 +380,7 @@ void CPlayAreaManager::EnumeratePlayAreaElements(IPlayAreaElementEnumerationCall
 }
 
 IGenericCamera *CPlayAreaManager::GetCamera(){return ADD(m_CameraWrapper.m_piCamera);}
+double          CPlayAreaManager::GetCameraSpeed(){return m_dPlayMovementSpeed;}
 
 void CPlayAreaManager::UpdatePlayCameraPosition()
 {
