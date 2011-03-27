@@ -175,7 +175,7 @@ void CFighter::Render(IGenericRender *piRender,IGenericCamera *piCamera)
   CEntityBase::Render(piRender,piCamera);
   
   // Render route
-  
+  /*
   if(m_piRoute)
   {
 	piRender->PushState();
@@ -196,7 +196,7 @@ void CFighter::Render(IGenericRender *piRender,IGenericCamera *piCamera)
 	
 	}
 	piRender->PopState();
-  }
+  }*/
 }
 
 IEntity *CFighter::GetTarget()
