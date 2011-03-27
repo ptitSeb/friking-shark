@@ -78,7 +78,9 @@ CTraceInfo CModelAnimationObjectType::DesignGetTrace( const CVector &vOrigin,con
 {
 	if(m_ModelWrapper.m_piModel)
 	{
-		return m_ModelWrapper.m_piModel->GetTrace(vOrigin,vAngles,p1,p2);
+		CVector vTempPos,vTempAngles;
+		ComputeReferenceSystem(vOrigin,vAngles,m_vPosition,m_vAngles,&vTempPos,&vTempAngles);
+		return m_ModelWrapper.m_piModel->GetTrace(vTempPos,vTempAngles,p1,p2);
 	}
 	else
 	{
