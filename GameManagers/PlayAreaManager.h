@@ -81,6 +81,7 @@ class CPlayAreaManager: virtual public CSystemObjectBase,
 	bool m_bProcessingPlayerOutroPhase1;
 	bool m_bProcessingPlayerOutroPhase2;
 	bool m_bProcessingPlayerIntroPhase1;
+	
 	double m_dNormalPlayerSpeed;
 
 
@@ -117,7 +118,8 @@ public:
     // IPlayAreaManager
 
 	IGenericCamera *GetCamera();
-
+	double          GetCameraSpeed();
+	
 	void	GetPlayAreaPlaneAt(CVector vPos,CVector *pPlayAreaMins,CVector *pPlayAreaMaxs);
     void    GetAirPlayPlane(CVector *pPlayAreaMins,CVector *pPlayAreaMaxs);
     void    GetVisibleAirPlayPlane(CVector *pVisiblePlayAreaMins,CVector *pVisiblePlayAreaMaxs);

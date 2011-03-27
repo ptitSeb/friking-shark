@@ -126,15 +126,11 @@ void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 			m_nRoutePoint=nNext;
 		}
 	}
-	double dEstimatedTimeToCurrentDest=dDist/m_PhysicInfo.dMaxVelocity;
-	CVector vEstimatedDest=m_piRoute->GetEstimatedAbsolutePoint(nNext,dEstimatedTimeToCurrentDest);
-	CVector vEstimatedDir=vEstimatedDest-m_PhysicInfo.vPosition;
-	vEstimatedDir.N();
 	
-	if(vForward!=vEstimatedDir)
+	if(vForward!=vDir)
 	{
 		CPlane plane(vRight,m_PhysicInfo.vPosition);
-		if(plane.GetSide(vEstimatedDest)>0)
+		if(plane.GetSide(vDest)>0)
 		{
 			m_PhysicInfo.vAngles.c[ROLL]+=m_pType->m_dMaxRoll*dTimeFraction;
 			if(m_PhysicInfo.vAngles.c[ROLL]>m_pType->m_dMaxRoll){m_PhysicInfo.vAngles.c[ROLL]=m_pType->m_dMaxRoll;}
@@ -160,7 +156,7 @@ void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 	}	
 
 	double dDesiredYaw=0,dDesiredPitch=0;
-	AnglesFromVector(vEstimatedDir,dDesiredYaw,dDesiredPitch);
+	AnglesFromVector(vDir,dDesiredYaw,dDesiredPitch);
 	double dCurrentAngularSpeed=m_pType->m_dMaxAngularSpeed;
 	m_PhysicInfo.vAngles.c[YAW]=ApproachAngle(m_PhysicInfo.vAngles.c[YAW],dDesiredYaw,-dCurrentAngularSpeed*dTimeFraction);
 	VectorsFromAngles(m_PhysicInfo.vAngles,&m_PhysicInfo.vVelocity);
@@ -177,7 +173,7 @@ void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 void CFighter::Render(IGenericRender *piRender,IGenericCamera *piCamera)
 {
   CEntityBase::Render(piRender,piCamera);
-    
+  
   // Render route
   
   if(m_piRoute)

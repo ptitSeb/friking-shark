@@ -7,6 +7,7 @@
 
 #define PHYSIC_FORCE_NORMAL					1 // es una fuerza normal, que se aplica y genera una aceleracion que depende de la masa del objeto
 #define PHYSIC_FORCE_CONSTANT_ACCELERATION	2 // es un fuerza que es proporcional a la masa del objeto (la gravedad), genera una aceleracion constante.
+#define PHYSIC_FORCE_CONSTANT_VELOCITY		3 // es velocidad constante aplicada a la velocidad final del objeto
 
 #define PHYSIC_MOVE_TYPE_NONE				0 // Para entidades que no se mueven
 #define PHYSIC_MOVE_TYPE_NORMAL				1
@@ -58,14 +59,16 @@ struct SPhysicForce
     unsigned int   dwForceType;
     CVector vDir;
     double  dConstantAccel;
-    double  dForce;
+	double  dConstantVel;
+	double  dForce;
     double	dMaxVelocity;
 
     SPhysicForce()
     {
         dwForceType=PHYSIC_FORCE_NORMAL;
         dConstantAccel=0.0;
-        dForce=0;
+		dConstantVel=0.0;
+		dForce=0;
         dMaxVelocity=0;
     }
 }; 
@@ -481,7 +484,7 @@ struct IPlayAreaManager:virtual public ISystemUnknown
 	virtual void	GetPlayerRoute(CVector *pvStart,CVector *pvEnd)=0;
 
 	virtual IGenericCamera *GetCamera()=0;
-
+	virtual double          GetCameraSpeed()=0;
 	virtual void EnumeratePlayAreaElements(IPlayAreaElementEnumerationCallback *piCallback)=0;
 
 	virtual void ProcessInput(IGameGUIManager *piManager)=0;
