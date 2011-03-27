@@ -18,6 +18,7 @@ SOURCES = GroundUnitTypes.cpp\
 StaticEntityType.cpp\
 StaticStructureType.cpp\
 TruckType.cpp\
+TurretType.cpp\
 stdafx.cpp
 
 

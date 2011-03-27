@@ -49,3 +49,25 @@ void CStaticStructure::OnKilled()
 	}
 	CEntityBase::OnKilledInternal(bRemove);
 }
+
+void CStaticStructure::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
+{
+	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
+
+	if(m_dwAlignment==ENTITY_ALIGNMENT_ENEMIES)
+	{
+		GetTarget();
+	}
+}
+
+IEntity *CStaticStructure::GetTarget()
+{
+	IEntity *piTarget=NULL;
+	if(m_piTarget==NULL)
+	{
+		IEntityManager *piManager=GetEntityManager();
+		if(piManager){piTarget=piManager->FindEntity("Player");}
+	}
+	SetTarget(piTarget);
+	return m_piTarget;
+}
