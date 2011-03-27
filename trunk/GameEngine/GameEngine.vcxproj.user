@@ -8,7 +8,7 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LocalDebuggerCommandArguments>-folder C:\Game\Demo\Resources\ -config EntityEditor\EntityEditor.cfg</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>-folder C:\Game\Demo\Resources\ -config FormationEditor\FormationEditor.cfg</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerWorkingDirectory>C:\Game\Demo\Bin\Debug</LocalDebuggerWorkingDirectory>
   </PropertyGroup>

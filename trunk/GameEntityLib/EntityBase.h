@@ -135,6 +135,7 @@ public:
     void SetRoute(IRoute *piRoute);
 
     IEntity *GetTarget();
+	void	 SetTarget(IEntity *piTarget);
 
            CEntityBase();
     virtual ~CEntityBase();

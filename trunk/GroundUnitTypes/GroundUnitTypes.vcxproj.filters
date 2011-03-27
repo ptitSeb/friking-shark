@@ -30,6 +30,9 @@
     <ClCompile Include="TruckType.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TurretType.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GroundUnitTypes.h">
@@ -48,6 +51,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TruckType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TurretType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
