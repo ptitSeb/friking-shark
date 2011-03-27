@@ -16,7 +16,7 @@ IEntity *CLiveBonusType::CreateInstance(IEntity *piParent,unsigned int dwCurrent
   CLiveBonus *piEntity=new CLiveBonus(this);
   SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();
   InitializeEntity(piEntity,dwCurrentTime);
-  pPhysicInfo->vPosition=piParent->GetPhysicInfo()->vPosition;
+  pPhysicInfo->vPosition=piParent?piParent->GetPhysicInfo()->vPosition:Origin;
   pPhysicInfo->vAngleVelocity.c[0]=50.0;
   pPhysicInfo->vAngleVelocity.c[1]=150.0;
   piEntity->SetState(eLiveBonusState_Normal);

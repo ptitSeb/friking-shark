@@ -18,7 +18,7 @@ IEntity *CWeaponUpgradeBonusType::CreateInstance(IEntity *piParent,unsigned int 
   CWeaponUpgradeBonus *piEntity=new CWeaponUpgradeBonus(this);
   SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();
   InitializeEntity(piEntity,dwCurrentTime);
-  pPhysicInfo->vPosition=piParent->GetPhysicInfo()->vPosition;
+  pPhysicInfo->vPosition=piParent?piParent->GetPhysicInfo()->vPosition:Origin;
   pPhysicInfo->vAngleVelocity.c[0]=50.0;
   pPhysicInfo->vAngleVelocity.c[1]=150.0;
   piEntity->SetState(eWeaponUpgradeBonusState_Normal,ANIMATION_RANDOM);
