@@ -243,6 +243,7 @@ void COpenGLRender::SetColor(const CVector &vColor,double dAlpha)
 void COpenGLRender::SelectTexture(IGenericTexture *pTexture,int nTextureLevel)
 {
 	if(!m_sRenderOptions.bEnableTextures){return;}
+	if(!m_sRenderState.bActiveTextures){return;}
 	IGenericTexture *piOldTexture=m_mTextureLevels[nTextureLevel];
 	REL(piOldTexture);
 
@@ -2009,9 +2010,8 @@ void COpenGLRender::RenderModelStages(bool bRenderingShadow,bool bShadowReceptio
 				if(!bRenderBufferPrepared)
 				{
 					bRenderBufferPrepared=true;
-					pStage->piGLModel->PrepareRenderBuffer(this,pKey->nAnimation,pKey->nFrame,nBuffer,bRenderingShadow);
-
 					SetRenderState(pKey->sRenderState,false);
+					pStage->piGLModel->PrepareRenderBuffer(this,pKey->nAnimation,pKey->nFrame,nBuffer,bRenderingShadow);
 				}
 
 				glPushMatrix();
