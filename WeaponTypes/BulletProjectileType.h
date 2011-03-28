@@ -12,7 +12,7 @@ public:
 
   double m_dDamage;
   unsigned int  m_dwDuration;
-
+  
   IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
 
   BEGIN_PROP_MAP(CBulletProjectileType)
@@ -35,10 +35,17 @@ class CBulletProjectile: public CEntityBase
 {
   CBulletProjectileType  *m_pType;
   IEntity *m_piParent;
+  unsigned int  m_dwNextTryAcquireTarget;
+
+  bool m_bTargetAcquired;
+  CVector m_vTargetPosition;
+
 public:
 
   bool OnCollision(IEntity *pOther,CVector &vCollisionPos);
   void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
+
+  static void AcquireTargetOperation(IEntity *piEntity,void *pParam1,void *pParam2);
 
   CBulletProjectile(CBulletProjectileType *pType,IEntity *piParent);
 };
