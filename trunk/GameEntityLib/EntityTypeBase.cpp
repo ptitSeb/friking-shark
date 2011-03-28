@@ -90,6 +90,8 @@ void CEntityTypeBase::DesignRender(IGenericRender *piRender,CVector &vPosition,C
 
 	for(unsigned int x=0;x<m_vChildren.size();x++)
 	{
+		if(!m_vChildren[x].entityType.m_piEntityType){continue;}
+
 		CVector vTempPos,vTempAngles;
 		ComputeReferenceSystem(vPosition,vAngles,m_vChildren[x].vPosition,m_vChildren[x].vAngles,&vTempPos,&vTempAngles);
 		m_vChildren[x].entityType.m_piEntityType->DesignRender(piRender,vTempPos,vTempAngles,bSelected);
@@ -106,6 +108,8 @@ void CEntityTypeBase::DesignGetBBox( CVector *pvMins,CVector *pvMaxs )
 
 	for(unsigned int x=0;x<m_vChildren.size();x++)
 	{
+		if(!m_vChildren[x].entityType.m_piEntityType){continue;}
+
 		CVector vTempMins,vTempMaxs;
 		m_vChildren[x].entityType.m_piEntityType->DesignGetBBox(&vTempMins,&vTempMaxs);
 		vTempMins+=m_vChildren[x].vPosition;
@@ -140,6 +144,7 @@ CTraceInfo CEntityTypeBase::DesignGetTrace( const CVector &vPosition,const CVect
 	}
 	for(unsigned int x=0;x<m_vChildren.size();x++)
 	{
+		if(!m_vChildren[x].entityType.m_piEntityType){continue;}
 		CVector vTempPos,vTempAngles;
 		ComputeReferenceSystem(vPosition,vAngles,m_vChildren[x].vPosition,m_vChildren[x].vAngles,&vTempPos,&vTempAngles);
 

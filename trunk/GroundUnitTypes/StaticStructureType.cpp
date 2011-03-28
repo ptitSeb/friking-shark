@@ -54,6 +54,8 @@ void CStaticStructure::ProcessFrame(unsigned int dwCurrentTime,double dTimeFract
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
 
+	m_dwDamageType=(m_vChildren.size()?DAMAGE_TYPE_NONE:DAMAGE_TYPE_NORMAL);
+
 	if(m_dwAlignment==ENTITY_ALIGNMENT_ENEMIES)
 	{
 		GetTarget();
