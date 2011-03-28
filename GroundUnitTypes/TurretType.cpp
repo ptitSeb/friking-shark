@@ -5,6 +5,7 @@ CTurretType::CTurretType()
 {
 	m_nDamageType=DAMAGE_TYPE_NORMAL;
 	m_nMovementType=PHYSIC_MOVE_TYPE_NONE;
+	m_dMaxAngle=0;
 }
 
 CTurretType::~CTurretType()
@@ -62,5 +63,12 @@ void CTurret::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 		vWorldDir*=m;
 		double dIdealYaw=AnglesFromVector(vWorldDir).c[YAW];
 		m_PhysicInfo.vLocalAngles.c[YAW]=ApproachAngle(m_PhysicInfo.vLocalAngles.c[YAW],dIdealYaw,180.0*dTimeFraction);
+		if(m_pType->m_dMaxAngle>0)
+		{
+			if(dIdealYaw>180){dIdealYaw=360-dIdealYaw;}
+			if(dIdealYaw>m_pType->m_dMaxAngle){dIdealYaw=m_pType->m_dMaxAngle;}
+			if(dIdealYaw<0){dIdealYaw=0;}
+			m_PhysicInfo.vLocalAngles.c[YAW]=ApproachAngle(m_PhysicInfo.vLocalAngles.c[YAW],dIdealYaw,180.0*dTimeFraction);
+		}
 	}
 }
