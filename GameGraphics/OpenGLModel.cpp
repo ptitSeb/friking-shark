@@ -65,29 +65,41 @@ bool COpenGLModel::LoadFromFile()
 		SModelFrame *pFrame=new SModelFrame;
 		pAnimation->vFrames.push_back(pFrame);
 
-		for (unsigned int m=0;m<file.m_vMaterials.size();m++)
+		for (int m=-1;m<(int)file.m_vMaterials.size();m++)
 		{
 		    // Preparacion del material
-			S3DSMaterial *p3DSMaterial=file.m_vMaterials[m];
-			SModelRenderBuffer *pBuffer=new SModelRenderBuffer;
-			pBuffer->vAmbientColor=p3DSMaterial->vAmbientColor;
-			pBuffer->vDiffuseColor=p3DSMaterial->vDiffuseColor;
-			pBuffer->vSpecularColor=p3DSMaterial->vSpecularColor;
-			pBuffer->fShininess=p3DSMaterial->fShininess;
-			pBuffer->fOpacity=(float)(1.0-p3DSMaterial->fTranparency);
-
-		    // Calculo de las matrices de transformacion de las coordenadas de textura
-			CVector vTextureCenter(0.5,0.5,0);
+			S3DSMaterial *p3DSMaterial=(m>=0)?file.m_vMaterials[m]:NULL;
+			
 			CMatrix ms,mr;
-			ms.S(p3DSMaterial->fTextureUScale,p3DSMaterial->fTextureVScale,1,vTextureCenter);
-			mr.R(CVector(0,0,1),p3DSMaterial->fTextureAngle,vTextureCenter);
+			SModelRenderBuffer *pBuffer=new SModelRenderBuffer;
+			if(p3DSMaterial)
+			{
+				pBuffer->vAmbientColor=p3DSMaterial->vAmbientColor;
+				pBuffer->vDiffuseColor=p3DSMaterial->vDiffuseColor;
+				pBuffer->vSpecularColor=p3DSMaterial->vSpecularColor;
+				pBuffer->fShininess=p3DSMaterial->fShininess;
+				pBuffer->fOpacity=(float)(1.0-p3DSMaterial->fTranparency);
+
+				// Calculo de las matrices de transformacion de las coordenadas de textura
+				CVector vTextureCenter(0.5,0.5,0);
+				ms.S(p3DSMaterial->fTextureUScale,p3DSMaterial->fTextureVScale,1,vTextureCenter);
+				mr.R(CVector(0,0,1),p3DSMaterial->fTextureAngle,vTextureCenter);
+			}
+			else
+			{
+				pBuffer->vAmbientColor=CVector(0.5,0.5,0.5);
+				pBuffer->vDiffuseColor=CVector(0.5,0.5,0.5);
+				pBuffer->vSpecularColor=CVector(0.5,0.5,0.5);
+				pBuffer->fShininess=1.0;
+				pBuffer->fOpacity=1.0;
+			}
 			
 		    // Contabilizacion de las caras de todos los objetos para este material 
 			int nMaterialFaces=0;
 			for (unsigned int o=0;o<file.m_vObjects.size();o++)
 			{
 				S3DSObject *pObject=file.m_vObjects[o];
-				if (pObject->bVisible && pObject->dwMaterialId==m)
+				if (pObject->bVisible && pObject->dwMaterialId==(unsigned int)m)
 				{
 				  nMaterialFaces+=pObject->vAnimationFrames[f]->nFaces;
 				}
@@ -108,7 +120,7 @@ bool COpenGLModel::LoadFromFile()
 			GLfloat *pTextCursor=NULL;
 			SModelTextureLevel *pTextureLevel=NULL;
 			
-			if (p3DSMaterial->sFile[0]!=0)
+			if (p3DSMaterial && p3DSMaterial->sFile[0]!=0)
 			{
 				pTextureLevel=new SModelTextureLevel;
 				pTextureLevel->pTexVertexArray=new GLfloat[nMaterialFaces*3*2];
@@ -142,9 +154,9 @@ bool COpenGLModel::LoadFromFile()
 			for (unsigned int o=0;o<file.m_vObjects.size();o++)
 			{
 				S3DSObject *pObject=file.m_vObjects[o];
-				if (!pObject->bVisible || pObject->dwMaterialId!=m) {continue;}
+				if (!pObject->bVisible || pObject->dwMaterialId!=(unsigned int)m) {continue;}
 
-				S3DSMaterial		*p3DSMaterial=file.m_vMaterials[pObject->dwMaterialId];
+				S3DSMaterial		*p3DSMaterial=(pObject->dwMaterialId!=(unsigned int)-1)?file.m_vMaterials[pObject->dwMaterialId]:NULL;
 				S3DSFrame  		   	*p3DSFrame=file.m_vObjects[o]->vAnimationFrames[f];
 
 				// Se crean arrays auxiliares de punteros a las propiedades de color y coord de textura
