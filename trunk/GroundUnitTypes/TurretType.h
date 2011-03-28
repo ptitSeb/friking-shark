@@ -9,6 +9,8 @@ enum ETurretState
 class CTurretType: public CEntityTypeBase
 {
 public:
+	double m_dMaxAngle;
+	
 	IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
 	void InitializeEntity(CEntityBase *piEntity,unsigned int dwCurrentTime);
 
@@ -16,6 +18,11 @@ public:
 		ENTITY_STATE_CHAIN(CEntityTypeBase)
 		ENTITY_STATE(eTurretState_Destroyed,"Destroyed")
 	END_ENTITY_STATE_MAP()
+	
+	BEGIN_PROP_MAP(CTurretType)
+		PROP_CLASS_CHAIN(CEntityTypeBase)
+		PROP_VALUE_FLAGS(m_dMaxAngle,"MaxAngle",0,MRPF_NORMAL|MRPF_OPTIONAL);
+	END_PROP_MAP();
 	
 	CTurretType();
 	~CTurretType();
