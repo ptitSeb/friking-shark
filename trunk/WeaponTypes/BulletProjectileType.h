@@ -39,6 +39,7 @@ class CBulletProjectile: public CEntityBase
 
   bool m_bTargetAcquired;
   CVector m_vTargetPosition;
+  CVector m_vOriginalVelocity;
 
 public:
 
@@ -48,4 +49,5 @@ public:
   static void AcquireTargetOperation(IEntity *piEntity,void *pParam1,void *pParam2);
 
   CBulletProjectile(CBulletProjectileType *pType,IEntity *piParent);
+  ~CBulletProjectile();
 };

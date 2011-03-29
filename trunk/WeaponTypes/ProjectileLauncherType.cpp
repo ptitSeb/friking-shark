@@ -119,6 +119,7 @@ void CProjectileLauncher::Fire(unsigned int dwCurrentTime)
           pProjectilePhysicInfo->vVelocity+=vForward*pProjectileInfo->vDirection.c[0]*pProjectileInfo->dVelocity;
           pProjectilePhysicInfo->vVelocity+=vUp*pProjectileInfo->vDirection.c[1]*pProjectileInfo->dVelocity;
           pProjectilePhysicInfo->vVelocity+=vRight*pProjectileInfo->vDirection.c[2]*pProjectileInfo->dVelocity;
+		  pProjectilePhysicInfo->dMaxVelocity=pProjectileInfo->dVelocity;
           AnglesFromVector(pProjectilePhysicInfo->vVelocity,&pProjectilePhysicInfo->vAngles);
         }
       }
