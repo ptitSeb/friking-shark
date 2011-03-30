@@ -27,6 +27,8 @@ void CTurretType::InitializeEntity( CEntityBase *piEntity,unsigned int dwCurrent
 
 CTurret::CTurret(CTurretType *pType)
 {
+	m_bTargetLocked=false;
+	m_dwNextShotTime=0;
 	m_sClassName="CTurret";
 	m_pType=pType;
 }
@@ -61,7 +63,8 @@ void CTurret::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 		CMatrix m;
 		m.Ref(m_PhysicInfo.vRefSysX,m_PhysicInfo.vRefSysY,m_PhysicInfo.vRefSysZ);
 		vWorldDir*=m;
-		double dIdealYaw=AnglesFromVector(vWorldDir).c[YAW];
+		CVector vLocalAngles=AnglesFromVector(vWorldDir);
+		double dIdealYaw=vLocalAngles.c[YAW];
 		m_PhysicInfo.vLocalAngles.c[YAW]=ApproachAngle(m_PhysicInfo.vLocalAngles.c[YAW],dIdealYaw,180.0*dTimeFraction);
 		if(m_pType->m_dMaxAngle>0)
 		{
@@ -70,5 +73,11 @@ void CTurret::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 			if(dIdealYaw<0){dIdealYaw=0;}
 			m_PhysicInfo.vLocalAngles.c[YAW]=ApproachAngle(m_PhysicInfo.vLocalAngles.c[YAW],dIdealYaw,180.0*dTimeFraction);
 		}
+		m_bTargetLocked=std::max(fabs(vLocalAngles.c[YAW]-m_PhysicInfo.vLocalAngles.c[YAW]),fabs(vLocalAngles.c[PITCH]-m_PhysicInfo.vLocalAngles.c[PITCH]))<5.0;
+	}
+	if(m_bTargetLocked && dwCurrentTime>m_dwNextShotTime && m_vWeapons.size())
+	{
+		FireWeapon(0,dwCurrentTime);
+		m_dwNextShotTime=dwCurrentTime+100;
 	}
 }

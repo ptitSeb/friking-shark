@@ -88,7 +88,18 @@ void CBulletProjectile::ProcessFrame(unsigned int dwCurrentTime,double dTimeFrac
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
 
-	if(!m_bTargetAcquired){m_vOriginalVelocity=m_PhysicInfo.vVelocity;}
+	if(!m_bTargetAcquired)
+	{
+		if(m_dwAlignment==ENTITY_ALIGNMENT_ENEMIES)
+		{
+			m_PhysicInfo.vVelocity.c[1]=0;
+			m_vOriginalVelocity=m_PhysicInfo.vVelocity;
+		}
+		else
+		{
+			m_vOriginalVelocity=m_PhysicInfo.vVelocity;
+		}
+	}
 
 	if((m_dwCreationTime+m_pType->m_dwDuration)<dwCurrentTime)
 	{
@@ -101,6 +112,39 @@ void CBulletProjectile::ProcessFrame(unsigned int dwCurrentTime,double dTimeFrac
 		{
 			m_dwNextTryAcquireTarget=dwCurrentTime+100;
 		}
+	}
+	else if(m_dwAlignment==ENTITY_ALIGNMENT_ENEMIES && m_dwNextTryAcquireTarget<dwCurrentTime &&  !m_bTargetAcquired)
+	{
+		m_bTargetAcquired=true;
+		/*
+		GetEntityManager()->PerformUnaryOperation(AcquireTargetOperation,this,NULL);
+		if(!m_bTargetAcquired)
+		{
+			m_dwNextTryAcquireTarget=dwCurrentTime+100;
+		}
+		*/
+	}
+
+	if(m_bTargetAcquired && m_dwAlignment==ENTITY_ALIGNMENT_ENEMIES)
+	{
+		CVector vPlayerStart,vPlayerEnd;
+		g_PlayAreaManagerWrapper.m_piInterface->GetPlayerRoute(&vPlayerStart,&vPlayerEnd);
+		double dPlayerHeight=vPlayerStart.c[1];
+		IGenericCamera *piCamera=g_PlayAreaManagerWrapper.m_piInterface->GetCamera();
+		CVector vPlanePoints[3];
+		vPlanePoints[0]=m_PhysicInfo.vPosition;
+		vPlanePoints[1]=m_PhysicInfo.vPosition+m_PhysicInfo.vVelocity;
+		vPlanePoints[2]=piCamera?piCamera->GetPosition():Origin;
+
+		CPlane plane(vPlanePoints[0],vPlanePoints[1],vPlanePoints[2]);
+
+		CVector vVel=(vPlanePoints[0]-vPlanePoints[1])^(Origin-plane);
+		double dVerticalVel=(dPlayerHeight-m_PhysicInfo.vPosition.c[1])*10.0;// 0.1 es el tiempo que tarda en subir
+		vVel.N();
+		vVel*=dVerticalVel;
+
+		m_PhysicInfo.vVelocity=m_vOriginalVelocity+vVel;
+		REL(piCamera);
 	}
 }
 

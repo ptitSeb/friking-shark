@@ -32,6 +32,9 @@ public:
 class CTurret: public CEntityBase
 {
 	CTurretType  *m_pType;
+
+	unsigned int m_dwNextShotTime;
+	bool		 m_bTargetLocked;
 	
 	void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
 
