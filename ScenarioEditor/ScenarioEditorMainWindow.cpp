@@ -256,7 +256,7 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 
 	if(m_bSimulationStarted)
 	{
-		m_PlayAreaManagerWrapper.m_piPlayAreaManager->ProcessInput(m_piGUIManager);
+		if(!m_bInspectionMode){m_PlayAreaManagerWrapper.m_piPlayAreaManager->ProcessInput(m_piGUIManager);}
 		m_GameControllerWrapper.m_piGameController->ProcessFrame(m_FrameManager.m_piFrameManager->GetCurrentTime(),m_FrameManager.m_piFrameManager->GetTimeFraction());
 		IGenericCamera *piPlayCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera();
 		IGenericCamera *piCamera=NULL;
