@@ -347,8 +347,8 @@ void CPlayAreaManager::GetPlayAreaPlaneAt(CVector vPos,CVector *pPlayAreaMins,CV
     double dViewAngle=m_CameraWrapper.m_piCamera->GetViewAngle();
     double dAspectRatio=m_CameraWrapper.m_piCamera->GetAspectRatio();
     CVector vOffset;
-    vOffset.c[0]=dCameraDistance*tan(DegreesToRadians((dViewAngle*dAspectRatio)/2.0));
-    vOffset.c[2]=dCameraDistance*tan(DegreesToRadians(dViewAngle)/2.0);
+    vOffset.c[0]=dCameraDistance*tan(DegreesToRadians((dViewAngle*dAspectRatio)))*0.5;
+    vOffset.c[2]=dCameraDistance*tan(DegreesToRadians(dViewAngle))*0.5;
     *pPlayAreaMins=vPos;
     *pPlayAreaMaxs=vPos;
     *pPlayAreaMins-=m_vPlayMovementRight*vOffset.c[0];
@@ -699,7 +699,7 @@ void CPlayAreaManager::UpdatePlayArea()
 	// en la parte inferior de la pantalla
 
 	double dCameraHeight=m_vPlayMovementPos.c[1]+m_dCameraDistanceFromPlayer;
-	double dInside=(dCameraHeight-vTerrainMins.c[1])*tan(DegreesToRadians(m_CameraWrapper.m_piCamera->GetViewAngle()/2.0));
+	double dInside=(dCameraHeight-vTerrainMins.c[1])*tan(DegreesToRadians(m_CameraWrapper.m_piCamera->GetViewAngle()))*0.5;
 	
 	// Si el terreno no es lo suficientemente grande para la camara se ajusta al minimo requerido por esta
 	// y se le añade 1.0 por cada lado para crear un vector de ruta valido.
