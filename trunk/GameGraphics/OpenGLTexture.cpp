@@ -199,7 +199,7 @@ bool LoadImageHelper(std::string sFile,unsigned int dwColorType,unsigned *pOpenG
 	}
 	else
 	{
-		if(strcasecmp(sExt,".JPG")==0)
+		if(strcasecmp(sExt,".JPG")==0 || strcasecmp(sExt,".JPEG")==0)
 		{
 			return LoadJPEGImageHelper(path,dwColorType,pOpenGLSkinWidth,pOpenGLSkinHeight,ppBuffer);
 		}
