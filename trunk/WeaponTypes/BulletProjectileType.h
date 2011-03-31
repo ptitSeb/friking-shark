@@ -38,9 +38,13 @@ class CBulletProjectile: public CEntityBase
   unsigned int  m_dwNextTryAcquireTarget;
 
   bool m_bTargetAcquired;
+  bool m_bAtPlayerHeight;
+  
   CVector m_vTargetPosition;
   CVector m_vOriginalVelocity;
-
+  
+  void Render(IGenericRender *piRender,IGenericCamera *piCamera);
+  
 public:
 
   bool OnCollision(IEntity *pOther,CVector &vCollisionPos);

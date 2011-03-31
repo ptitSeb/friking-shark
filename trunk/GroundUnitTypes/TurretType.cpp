@@ -73,7 +73,7 @@ void CTurret::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 			if(dIdealYaw<0){dIdealYaw=0;}
 			m_PhysicInfo.vLocalAngles.c[YAW]=ApproachAngle(m_PhysicInfo.vLocalAngles.c[YAW],dIdealYaw,180.0*dTimeFraction);
 		}
-		m_bTargetLocked=std::max(fabs(vLocalAngles.c[YAW]-m_PhysicInfo.vLocalAngles.c[YAW]),fabs(vLocalAngles.c[PITCH]-m_PhysicInfo.vLocalAngles.c[PITCH]))<5.0;
+		m_bTargetLocked=std::max(fabs(vLocalAngles.c[YAW]-m_PhysicInfo.vLocalAngles.c[YAW]),fabs(vLocalAngles.c[PITCH]-m_PhysicInfo.vLocalAngles.c[PITCH]))<20.0;
 	}
 	if(m_bTargetLocked && dwCurrentTime>m_dwNextShotTime && m_vWeapons.size())
 	{
