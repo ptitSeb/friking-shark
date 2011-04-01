@@ -5,6 +5,7 @@
 COpenGLRender::COpenGLRender(void)
 {
 	m_pCurrentShader=NULL;
+	m_bRestoreTextureMatrix=false;
 	m_bHardwareSupportRead=false;
 	m_bIgnoreShaderSupport=false;
 	m_bShadowVolumeFirstVertex=false;
@@ -251,10 +252,32 @@ void COpenGLRender::SelectTexture(IGenericTexture *pTexture,int nTextureLevel)
 	if(!m_bStagedRendering){pTexture->PrepareTexture(this,nTextureLevel);}
 }
 
+void COpenGLRender::SetTextureMatrix(CMatrix *pMatrix,int nTextureLevel)
+{
+	if(!m_sRenderOptions.bEnableTextures){return;}
+	if(!m_sRenderState.bActiveTextures){return;}
+	if(m_bStagedRendering){return;}
+	
+	GLdouble pdMatrix[16];
+	ToOpenGLMatrix(pMatrix,pdMatrix);
+	glActiveTexture(GL_TEXTURE0_ARB+nTextureLevel);
+	glMatrixMode(GL_TEXTURE);
+	glLoadMatrixd(pdMatrix);
+	m_bRestoreTextureMatrix=true;
+	glMatrixMode(GL_MODELVIEW);
+}
+
 void COpenGLRender::UnselectTexture(int nTextureLevel)
 {
 	if(!m_sRenderOptions.bEnableTextures){return;}
 	IGenericTexture *piTexture=m_mTextureLevels[nTextureLevel];
+	if(!m_bStagedRendering && m_bRestoreTextureMatrix)
+	{
+		glMatrixMode(GL_TEXTURE);
+		glLoadIdentity();
+		glMatrixMode(GL_MODELVIEW);
+		m_bRestoreTextureMatrix=false;
+	}
 	if(!m_bStagedRendering && piTexture){piTexture->UnprepareTexture(this,nTextureLevel);}
 	REL(piTexture);
 	m_mTextureLevels.erase(nTextureLevel);
@@ -2010,8 +2033,8 @@ void COpenGLRender::RenderModelStages(bool bRenderingShadow,bool bShadowReceptio
 				if(!bRenderBufferPrepared)
 				{
 					bRenderBufferPrepared=true;
-					SetRenderState(pKey->sRenderState,false);
 					pStage->piGLModel->PrepareRenderBuffer(this,pKey->nAnimation,pKey->nFrame,nBuffer,bRenderingShadow);
+					SetRenderState(pKey->sRenderState,false);
 				}
 
 				glPushMatrix();

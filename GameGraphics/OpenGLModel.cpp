@@ -635,6 +635,24 @@ void COpenGLModel::SetRenderBufferTexture( unsigned long nAnimation,unsigned lon
 	pTextureLevel->texture.Attach(piTexture);
 }
 
+void COpenGLModel::SetRenderBufferTextureMatrix(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,CMatrix *pMatrix)
+{
+	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation, nFrame, nBuffer);
+	if(pBuffer==NULL){return;}
+	while(nTextureLevel>=pBuffer->vTextureLevels.size()){pBuffer->vTextureLevels.push_back(new SModelTextureLevel);}
+	SModelTextureLevel *pTextureLevel= pBuffer->vTextureLevels[nTextureLevel];
+	if(pMatrix)
+	{
+		pTextureLevel->texMatrix=*pMatrix;
+		pTextureLevel->bTextMatrixIdentity=false;
+	}
+	else
+	{
+		pTextureLevel->texMatrix.I();
+		pTextureLevel->bTextMatrixIdentity=true;
+	}
+}
+
 void COpenGLModel::SetRenderBufferVertexes( unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nVertexes,float *pVertexes )
 {
 	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation, nFrame, nBuffer);
@@ -705,6 +723,17 @@ void COpenGLModel::GetRenderBufferTexture( unsigned long nAnimation,unsigned lon
 	if(nTextureLevel>=pBuffer->vTextureLevels.size()){return;}
 	if(ppiTexture){*ppiTexture=ADD(pBuffer->vTextureLevels[nTextureLevel]->texture.m_piTexture);}
 }
+
+
+void COpenGLModel::GetRenderBufferTextureMatrix(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,CMatrix *pMatrix)
+{
+	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation, nFrame, nBuffer);
+	if(pBuffer==NULL){return;}
+	while(nTextureLevel>=pBuffer->vTextureLevels.size()){pBuffer->vTextureLevels.push_back(new SModelTextureLevel);}
+	SModelTextureLevel *pTextureLevel= pBuffer->vTextureLevels[nTextureLevel];
+	*pMatrix=pTextureLevel->texMatrix;
+}
+
 
 void COpenGLModel::GetRenderBufferVertexes( unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long *pVertexes,float **ppVertexes )
 {
@@ -806,6 +835,7 @@ void COpenGLModel::PrepareRenderBuffer(IGenericRender *piRender, unsigned int nA
 			if(pBuffer->vTextureLevels[x]->texture.m_piTexture && pBuffer->vTextureLevels[x]->pTexVertexArray)
 			{
 				piRender->SelectTexture(pBuffer->vTextureLevels[x]->texture.m_piTexture,x);
+				if(!pBuffer->vTextureLevels[x]->bTextMatrixIdentity){piRender->SetTextureMatrix(&pBuffer->vTextureLevels[x]->texMatrix,x);}
 			}
 		}
 	}
@@ -949,6 +979,7 @@ CTraceInfo COpenGLModel::GetTrace( const CVector &vOrigin,const CVector &vAngles
 SModelTextureLevel::SModelTextureLevel()
 {
 	pTexVertexArray=NULL;
+	bTextMatrixIdentity=true;
 }
 
 SModelTextureLevel::~SModelTextureLevel()

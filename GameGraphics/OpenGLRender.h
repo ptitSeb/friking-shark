@@ -344,6 +344,7 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	CPlane				m_CameraRightPlane;
 	CPlane				m_CameraUpPlane;
 
+	bool				m_bRestoreTextureMatrix;
 	bool				m_bRenderingWithShader;
 	bool				m_bShadowVolumeFirstVertex;
 	CVector				m_vShadowVolumeMins;
@@ -408,6 +409,7 @@ public:
 
 	void SelectFont(const char *pFamilyName,double dSize);
 	void SelectTexture(IGenericTexture *pTexture,int nTextureLevel);
+	void SetTextureMatrix(CMatrix *pMatrix,int nTextureLevel);	
 	void UnselectTexture(int nTextureLevel);
 
 	void CalcTextSize(const char *pText,double *pdWidth,double *pdHeight);

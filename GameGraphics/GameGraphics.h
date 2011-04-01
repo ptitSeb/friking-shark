@@ -243,6 +243,7 @@ public:
 
 	virtual void		  SetRenderBufferMaterial(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,CVector vAmbientColor,CVector vDiffuseColor,CVector vSpecularColor, float fShininess, float fOpacity)=0;
 	virtual void		  SetRenderBufferTexture(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,IGenericTexture *piTexture)=0;
+	virtual void		  SetRenderBufferTextureMatrix(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,CMatrix *pMatrix)=0;
 	virtual void		  SetRenderBufferVertexes(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nVertexes,float *pVertexes)=0;
 	virtual void		  SetRenderBufferFaces(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nFaces,unsigned int *pFacesVertexes)=0;
 	virtual void		  SetRenderBufferNormals(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,float *pNormals)=0;
@@ -251,6 +252,7 @@ public:
 
 	virtual void		  GetRenderBufferMaterial(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,CVector *pvAmbientColor,CVector *pvDiffuseColor,CVector *pvSpecularColor, float *pfShininess, float *pfOpacity)=0;
 	virtual void		  GetRenderBufferTexture(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,IGenericTexture **ppiTexture)=0;
+	virtual void		  GetRenderBufferTextureMatrix(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,CMatrix *pMatrix)=0;
 	virtual void		  GetRenderBufferVertexes(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long *pVertexes,float **ppVertexes)=0;
 	virtual void		  GetRenderBufferFaces(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long *pFaces,unsigned int **ppFacesVertexes)=0;
 	virtual void		  GetRenderBufferNormals(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,float **ppNormals)=0;
@@ -369,6 +371,7 @@ public:
 	virtual void SetColor(const CVector &vColor,double dAlpha)=0;
 
 	virtual void SelectTexture(IGenericTexture *pTexture,int nTextureLevel)=0;
+	virtual void SetTextureMatrix(CMatrix *pMatrix,int nTextureLevel)=0;
 	virtual void UnselectTexture(int nTextureLevel)=0;
 
 	virtual void RenderPoint(const CVector &vPosition,double dSize,const CVector &vColor,double dAlpha)=0;
