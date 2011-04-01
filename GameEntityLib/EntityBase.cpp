@@ -56,7 +56,29 @@ void CEntityBase::OnDamage(double dDamage,IEntity *piAggresor)
 		m_dLastFrameDamage+=dDamage;
 }
 
-void         CEntityBase::OnKilledInternal(bool bRemove){NOTIFY_EVENT(IEntityEvents,OnKilled(this));if(bRemove){Remove();}}
+void CEntityBase::Kill()
+{
+	m_dHealth=0;
+	OnKilled();
+}
+
+void         CEntityBase::OnKilledInternal(bool bRemove)
+{
+	if(m_vChildren.size())
+	{
+		vector<SChildEntity> sTemp=m_vChildren;
+		for(unsigned int x=0;x<sTemp.size();x++)
+		{
+			SChildEntity *pChildEntity=&sTemp[x];
+			pChildEntity->piEntity->Kill();
+		}
+		sTemp.clear();
+	}
+	
+	NOTIFY_EVENT(IEntityEvents,OnKilled(this));
+	if(bRemove){Remove();}
+	
+}
 void         CEntityBase::OnKilled(){OnKilledInternal(true);}
 bool         CEntityBase::OnCollision(IEntity *pOther,CVector &vCollisionPos){return true;}
 void         CEntityBase::Remove()
