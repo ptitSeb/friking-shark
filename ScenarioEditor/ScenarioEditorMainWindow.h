@@ -16,6 +16,13 @@ DECLARE_CUSTOM_WRAPPER1(CScenarioEditorObjectSelectorWrapper,IScenarioEditorObje
 #define KEY_PAUSE		7
 #define KEY_PROCESS_ONE_FRAME		8
 
+enum EColorCallBack
+{
+	eColorCallBackSun,
+	eColorCallBackAmbient,
+	eColorCallBackFog
+};
+
 struct SHeightLayerControls
 {
 	CButtonWrapper						m_BTListRow;
@@ -66,7 +73,7 @@ struct SFormationControls
 	~SFormationControls(){REL(m_piPlayAreaFormation);REL(m_piFormationType);REL(m_piDesignObject);REL(m_piObject);REL(m_piBonusDesignObject);}
 };
 
-class CScenarioEditorMainWindow: public CGameWindowBase, public IGameGUIButtonEvents
+class CScenarioEditorMainWindow: virtual public CGameWindowBase, virtual public IGameGUIButtonEvents,virtual public IGameGUIColorDialogCallback
 {
 public:
 	CConfigFile				m_GUIConfigFile;
@@ -123,7 +130,8 @@ public:
 
 	bool				m_bPauseOnNextFrame;
 	
-
+	EColorCallBack		m_eColorCallBack;
+	
 	IGameGUILabel *m_piSTFps;
 	IGameGUILabel *m_piSTVolume;
 	IGameGUILabel *m_piBTDecreaseVolume;
@@ -613,6 +621,8 @@ public:
 	void OnMouseMove(double x,double y);
 	void OnMouseUp(int nButton,double x,double y);
 
+	void OnColorChanged(CVector vColor);
+	
 	void UpdateLayerPanel();
 	void UpdateTexturization();
 	void UpdateCaption();

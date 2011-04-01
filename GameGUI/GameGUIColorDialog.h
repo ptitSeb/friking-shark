@@ -18,7 +18,10 @@ class CGameGUIColorDialog: public CGameDialogBase, virtual public IGameGUIColorD
 	bool            m_bDraggingV;
 	bool            m_bDraggingSV;
 	
+	IGameGUIColorDialogCallback *m_piCallback;
+	
 	CVector     m_vColor;
+	CVector     m_vOriginalColor;
 	std::string m_sTitle;
 protected:
 
@@ -49,6 +52,7 @@ public:
 	// IGameGUIButton
 
 	bool SelectColor(IGameWindow *piParent,std::string sTitle,CVector *pvColor);
+	bool SelectColor(IGameWindow *piParent,IGameGUIColorDialogCallback *piCallback,std::string sTitle,CVector *pvColor);
 
 	CGameGUIColorDialog(void);
 	~CGameGUIColorDialog(void);

@@ -10,6 +10,7 @@ extern CSystemModuleHelper *g_pSystemModuleHelper;
 
 CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 {
+	m_eColorCallBack=eColorCallBackSun;
 	m_bPauseOnNextFrame=false;
 	m_bMovingObject=false;
 	m_bMovingRoutePoint=false;
@@ -1311,7 +1312,8 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	}
 	else if(piControl==m_piBTFogColorSample)
 	{
-		if(SelectColorDialog("Select fog color...",&sFog.vColor))
+		m_eColorCallBack=eColorCallBackFog;
+		if(SelectColorDialog("Select fog color...",this,&sFog.vColor))
 		{
 			bFogChanged=true;
 		}
@@ -1351,14 +1353,16 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 
 	if(piControl==m_piBTSunColorSample)
 	{
-		if(SelectColorDialog("Select sun color...",&sSun.vColor))
+		m_eColorCallBack=eColorCallBackSun;
+		if(SelectColorDialog("Select sun color...",this,&sSun.vColor))
 		{
 			bSunChanged=true;
 		}
 	}
 	else if(piControl==m_piBTAmbientColorSample)
 	{
-		if(SelectColorDialog("Select ambient color...",&vAmbientColor))
+		m_eColorCallBack=eColorCallBackAmbient;
+		if(SelectColorDialog("Select ambient color...",this,&vAmbientColor))
 		{
 			m_WorldManagerWrapper.m_piTerrain->SetTerrainAmbientColor(vAmbientColor);
 		}
@@ -2829,3 +2833,27 @@ void CScenarioEditorMainWindow::RenderRoute( IGenericRender * piRender, int nSel
 	piRender->PopState();
 }
 void CScenarioEditorMainWindow::OnWantFocus(bool *pbWant){*pbWant=true;}
+
+void CScenarioEditorMainWindow::OnColorChanged(CVector vColor)
+{
+	if(m_WorldManagerWrapper.m_piTerrain==NULL){return;}
+	
+	if(m_eColorCallBack==eColorCallBackFog)
+	{
+		STerrainFog sFog;
+		m_WorldManagerWrapper.m_piTerrain->GetTerrainFog(&sFog);
+		sFog.vColor=vColor;
+		m_WorldManagerWrapper.m_piTerrain->SetTerrainFog(&sFog);
+	}
+	else if(m_eColorCallBack==eColorCallBackSun)
+	{
+		STerrainSun sSun;
+		m_WorldManagerWrapper.m_piTerrain->GetTerrainSun(&sSun);
+		sSun.vColor=vColor;
+		m_WorldManagerWrapper.m_piTerrain->SetTerrainSun(&sSun);
+	}
+	else if(m_eColorCallBack==eColorCallBackAmbient)
+	{
+		m_WorldManagerWrapper.m_piTerrain->SetTerrainAmbientColor(vColor);
+	}
+}
