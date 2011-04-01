@@ -2,8 +2,11 @@
 
 struct SModelTextureLevel
 {
-	CGenericTextureWrapper texture;
-	GLfloat			*pTexVertexArray;
+	CGenericTextureWrapper   texture;
+	GLfloat					*pTexVertexArray;
+	CMatrix 				 texMatrix;
+	bool					 bTextMatrixIdentity;
+	
 
 	 SModelTextureLevel();
 	~SModelTextureLevel();
@@ -97,6 +100,7 @@ public:
 
 	void		  SetRenderBufferMaterial(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,CVector vAmbientColor,CVector vDiffuseColor,CVector vSpecularColor, float fShininess, float fOpacity);
 	void		  SetRenderBufferTexture(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,IGenericTexture *piTexture);
+	void		  SetRenderBufferTextureMatrix(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,CMatrix *pMatrix);
 	void		  SetRenderBufferVertexes(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nVertexes,float *pVertexes);
 	void		  SetRenderBufferFaces(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nFaces,unsigned int *pFacesVertexes);
 	void		  SetRenderBufferNormals(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,float *pNormals);
@@ -105,6 +109,7 @@ public:
 
 	void		  GetRenderBufferMaterial(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,CVector *pvAmbientColor,CVector *pvDiffuseColor,CVector *pvSpecularColor, float *pfShininess, float *pfOpacity);
 	void		  GetRenderBufferTexture(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,IGenericTexture **ppiTexture);
+	void		  GetRenderBufferTextureMatrix(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,CMatrix *pMatrix);
 	void		  GetRenderBufferVertexes(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long *pVertexes,float **ppVertexes);
 	void		  GetRenderBufferFaces(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long *pFaces,unsigned int **ppFacesVertexes);
 	void		  GetRenderBufferNormals(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,float **ppNormals);

@@ -133,6 +133,8 @@ class CWorldManager:virtual public CSystemObjectBase, virtual public IGameManage
 	std::vector<STerrainColorLayerData>  m_vTerrainColorLayers;
 
 	CGenericModelWrapper	m_TerrainModel;
+	
+	int m_pnWaterRenderBuffers[2];
 
 public:
 

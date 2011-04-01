@@ -7,6 +7,8 @@ CWorldManager::CWorldManager()
 {
 	m_pWorldEntity=NULL;
 	m_pTerrainBSP=NULL;
+	m_pnWaterRenderBuffers[0]=-1;
+	m_pnWaterRenderBuffers[1]=-1;
 }
 
 CWorldManager::~CWorldManager()
@@ -102,6 +104,19 @@ void CWorldManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction
 
 void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCamera)
 {
+	if(m_TerrainModel.m_piModel && m_pnWaterRenderBuffers[0]!=-1 && m_TerrainWater.m_Config.dSpeed!=0)
+	{
+		CMatrix m;
+		m.T(CVector(m_TerrainWater.m_Config.dSpeed*0.5*((double)m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime()/1000.0),0,0));
+		m_TerrainModel.m_piModel->SetRenderBufferTextureMatrix(0,0,m_pnWaterRenderBuffers[0],0,&m);
+	}
+	if(m_TerrainModel.m_piModel && m_pnWaterRenderBuffers[1]!=-1 && m_TerrainWater.m_Config.dSpeed!=0)
+	{
+		CMatrix m;
+		m.T(CVector(m_TerrainWater.m_Config.dSpeed*((double)m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime()/1000.0),0,0));
+		m_TerrainModel.m_piModel->SetRenderBufferTextureMatrix(0,0,m_pnWaterRenderBuffers[1],0,&m);
+	}
+	
 	if(m_TerrainModel.m_piModel)
 	{
 		piRender->PushState();
@@ -745,16 +760,17 @@ bool CWorldManager::UpdateTerrain()
 		m_TerrainModel.m_piModel->SetRenderBufferTextureCoords(nAnimation,nFrame,x,0,BufferFromVector(&vTempBuffers[x].vTexVertexArray));
 		m_TerrainModel.m_piModel->SetRenderBufferTextureCoords(nAnimation,nFrame,x,1,BufferFromVector(&vTempBuffers[x].vShadowTexVertexArray));
 	}
-	int nWaterRenderBuffer=0;
+	m_pnWaterRenderBuffers[0]=-1;
+	m_pnWaterRenderBuffers[1]=-1;
 	if(m_TerrainWater.m_Config.bEnabled)
 	{
 		IGenericTexture *piTextures[2]={m_TerrainWater.m_Texture1.m_piTexture,m_TerrainWater.m_Texture2.m_piTexture};
 		for(int x=0;x<2;x++)
 		{
 			if(piTextures[x]==NULL){continue;}
-			nWaterRenderBuffer=m_TerrainModel.m_piModel->AddRenderBuffer(nAnimation,nFrame);
-			m_TerrainModel.m_piModel->SetRenderBufferTexture(nAnimation,nFrame,nWaterRenderBuffer,0,piTextures[x]);
-			m_TerrainModel.m_piModel->SetRenderBufferMaterial(nAnimation,nFrame,nWaterRenderBuffer,CVector(1,1,1),CVector(1,1,1),CVector(1,1,1),0,(float)m_TerrainWater.m_Config.dOpacity);
+			m_pnWaterRenderBuffers[x]=m_TerrainModel.m_piModel->AddRenderBuffer(nAnimation,nFrame);
+			m_TerrainModel.m_piModel->SetRenderBufferTexture(nAnimation,nFrame,m_pnWaterRenderBuffers[x],0,piTextures[x]);
+			m_TerrainModel.m_piModel->SetRenderBufferMaterial(nAnimation,nFrame,m_pnWaterRenderBuffers[x],CVector(1,1,1),CVector(1,1,1),CVector(1,1,1),0,(float)m_TerrainWater.m_Config.dOpacity);
 
 			float *pWaterVertexBuffer=new GLfloat[12];
 			float *pCursor=pWaterVertexBuffer;
@@ -773,17 +789,17 @@ bool CWorldManager::UpdateTerrain()
 			*pCursor++=(float)vWaterMaxs.c[0];
 			*pCursor++=(float)dAbsWaterHeight;
 			*pCursor++=(float)vWaterMins.c[2];
-			m_TerrainModel.m_piModel->SetRenderBufferVertexes(nAnimation,nFrame,nWaterRenderBuffer,4,pWaterVertexBuffer);
+			m_TerrainModel.m_piModel->SetRenderBufferVertexes(nAnimation,nFrame,m_pnWaterRenderBuffers[x],4,pWaterVertexBuffer);
 
 			float *pWaterNormalBuffer=new GLfloat[12];
 			pCursor=pWaterNormalBuffer;
 			for(int y=0;y<4;y++){*pCursor++=0;*pCursor++=1;*pCursor++=0;}
-			m_TerrainModel.m_piModel->SetRenderBufferNormals(nAnimation,nFrame,nWaterRenderBuffer,pWaterNormalBuffer);
+			m_TerrainModel.m_piModel->SetRenderBufferNormals(nAnimation,nFrame,m_pnWaterRenderBuffers[x],pWaterNormalBuffer);
 
 			float *pWaterColorBuffer=new GLfloat[16];
 			pCursor=pWaterColorBuffer;
 			for(int y=0;y<4;y++){*pCursor++=1;*pCursor++=1;*pCursor++=1;*pCursor++=(float)m_TerrainWater.m_Config.dOpacity;}
-			m_TerrainModel.m_piModel->SetRenderBufferColors(nAnimation,nFrame,nWaterRenderBuffer,pWaterColorBuffer);
+			m_TerrainModel.m_piModel->SetRenderBufferColors(nAnimation,nFrame,m_pnWaterRenderBuffers[x],pWaterColorBuffer);
 
 			float *pWaterTexBuffer=new GLfloat[8];
 			pCursor=pWaterTexBuffer;
@@ -798,7 +814,7 @@ bool CWorldManager::UpdateTerrain()
 
 			*pCursor++=(float)m_TerrainWater.m_Config.dHorizontalResolution;
 			*pCursor++=0;
-			m_TerrainModel.m_piModel->SetRenderBufferTextureCoords(nAnimation,nFrame,nWaterRenderBuffer,0,pWaterTexBuffer);
+			m_TerrainModel.m_piModel->SetRenderBufferTextureCoords(nAnimation,nFrame,m_pnWaterRenderBuffers[x],0,pWaterTexBuffer);
 	
 			unsigned int *pWaterFaces=new unsigned int[6];
 			pWaterFaces[0]=0;
@@ -807,7 +823,7 @@ bool CWorldManager::UpdateTerrain()
 			pWaterFaces[3]=0;
 			pWaterFaces[4]=2;
 			pWaterFaces[5]=3;
-			m_TerrainModel.m_piModel->SetRenderBufferFaces(nAnimation,nFrame,nWaterRenderBuffer,2,pWaterFaces);
+			m_TerrainModel.m_piModel->SetRenderBufferFaces(nAnimation,nFrame,m_pnWaterRenderBuffers[x],2,pWaterFaces);
 		}
 	}
 
