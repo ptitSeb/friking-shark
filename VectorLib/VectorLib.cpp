@@ -2258,10 +2258,10 @@ void CalcCameraVolume(CVector vPosition,CVector vAngles, double dViewAngle, doub
 
 	VectorsFromAngles(vAngles,&vForward,&vRight,&vUp);
 
-	vNearOffset.c[0]=dNear*tan(DegreesToRadians(dViewAngle*dAspectRatio))*0.5;
-	vNearOffset.c[2]=dNear*tan(DegreesToRadians(dViewAngle))*0.5;
-	vFarOffset.c[0]=dFar*tan(DegreesToRadians(dViewAngle*dAspectRatio))*0.5;
-	vFarOffset.c[2]=dFar*tan(DegreesToRadians(dViewAngle))*0.5;
+	vNearOffset.c[0]=dNear*tan(DegreesToRadians(dViewAngle*0.5))*dAspectRatio;
+	vNearOffset.c[2]=dNear*tan(DegreesToRadians(dViewAngle*0.5));
+	vFarOffset.c[0]=dFar*tan(DegreesToRadians(dViewAngle*0.5))*dAspectRatio;
+	vFarOffset.c[2]=dFar*tan(DegreesToRadians(dViewAngle*0.5));
 
 	CVector vNearBase,vFarBase;
 	vNearBase=vPosition+vForward*dNear;
@@ -2285,10 +2285,10 @@ void CalcCameraPlanes(CVector vPosition,CVector vAngles, double dViewAngle, doub
 
 	VectorsFromAngles(vAngles,&vForward,&vRight,&vUp);
 
-	vNearOffset.c[0]=dNear*tan(DegreesToRadians(dViewAngle*dAspectRatio))*0.5;
-	vNearOffset.c[2]=dNear*tan(DegreesToRadians(dViewAngle))*0.5;
-	vFarOffset.c[0]=dFar*tan(DegreesToRadians(dViewAngle*dAspectRatio))*0.5;
-	vFarOffset.c[2]=dFar*tan(DegreesToRadians(dViewAngle))*0.5;
+	vNearOffset.c[0]=dNear*tan(DegreesToRadians(dViewAngle*0.5))*dAspectRatio;
+	vNearOffset.c[2]=dNear*tan(DegreesToRadians(dViewAngle*0.5));
+	vFarOffset.c[0]=dFar*tan(DegreesToRadians(dViewAngle*0.5))*dAspectRatio;
+	vFarOffset.c[2]=dFar*tan(DegreesToRadians(dViewAngle*0.5));
 
 	CVector vNearBase,vFarBase;
 	vFarBase=vPosition+vForward*dFar;
