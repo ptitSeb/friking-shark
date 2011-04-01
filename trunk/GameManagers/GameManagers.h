@@ -155,6 +155,8 @@ public:
 	virtual unsigned int GetAlignment()=0;
     virtual void         SetAlignment(unsigned int dwAlignment)=0;
 	
+	virtual void         Kill()=0;
+	
 	virtual IEntity 	*GetTarget()=0;
 	virtual void	 	  SetTarget(IEntity *piTarget)=0;	
 

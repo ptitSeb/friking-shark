@@ -96,9 +96,11 @@ public:
 	void          SetChildLocation(IEntity *piEntity,CVector vPosition,CVector vAngles);
 	void          GetChildLocation(IEntity *piEntity,CVector &vPosition,CVector &vAngles);
 	
-    bool        	IsRemoved();
-    void        	Remove();
-
+    bool          IsRemoved();
+    void          Remove();
+	
+	void          Kill();
+	
     // Render
     void Render(IGenericRender *piRender,IGenericCamera *piCamera);
 
