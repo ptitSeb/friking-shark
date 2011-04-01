@@ -1,0 +1,45 @@
+- AvPag/RePag en simulacion, para poder avanzar rapido en el escenario
+- Truck->GroundVehicle
+	- Cambiar el nombre a la clase
+- Movimiento de vehiculos
+	- fuerza de frenada
+	- corregir parada
+	- quitar la orientacion en funcion del vector velocidad?
+- Disparo de enemigos a posicion prevista en lugar de actual.
+	- para esto hay que establecer la velocidad actual del player.
+		- revisar si el movimiento custom aplica la velocidad.
+- Vehiculos maritimos (editor de escenarios + colisiones en plano de agua)
+- Los enemigos deben disparar solo cuando son visibles
+- Debris dependiendo del material del terreno (agua, tierra, etc)
+	- sistema de particulas dinamico
+		- textura/color dependiente del terreno (puede ser incluso la propia del terreno)
+			- mean shift
+		- cantidad en funcion de la velocidad del impacto y el tamaño de la entidad
+		- direccion en funcion de la direccion del impacto
+- Comportamiento del fighter similar al FS (desvio a la altura del player en determinadas formaciones)
+- Ampliacion de la funcionalidad del PlayAreaEntity similar a los elementos de las formaciones.
+	- delay
+	- numero
+	- intervalo
+- Presentacion/Despedida del player como en el juego original
+	- Dos puntos en el editor para cada cosa.
+- Gizmo de rotacion en el editor de escenarios.
+- Mejorar la lista de objetos (entidades y formaciones)
+	- Scroll.
+	- Nombres.
+- Movimiento del agua (matriz de textura)
+	- Informacion dentro del estado del modelo.
+	- Optimizacion para matriz identidad.
+- Efectos en el escenario (modelo del escenario)
+	- Sobre todo sistemas de particulas.
+		- p.e para efectos de agua en la orilla, arena pasando etc.
+- Division del terreno en bloques.
+- Soporte de campañas (que no se cargue un escenario fijo)
+- Arreglar GUI del juego
+	- Layout
+	- Intermission
+		- Dialogo transparente con los indicadores.
+- Callback en el editor de colores (asi se podria ver el efecto segun se cambia el color)
+	- Si cancelas se debe restaurar el color normal (si hay instalado un callback, volver a llamar con el color original)
+- Reglas de Colisiones y Daños entre unidades
+- Atributos? (maritima, terrestre, etc..)
