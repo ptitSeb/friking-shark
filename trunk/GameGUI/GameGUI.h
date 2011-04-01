@@ -294,12 +294,18 @@ public:
 	virtual bool Confirm(IGameWindow *piParent,std::string sText,std::string sTitle,EMessageDialogType eType)=0;
 };
 
+class IGameGUIColorDialogCallback
+{
+	public:
+	virtual void OnColorChanged(CVector vColor)=0;
+};
 
 class IGameGUIColorDialog: virtual public ISystemUnknown
 {
 public:
 
 	virtual bool SelectColor(IGameWindow *piParent,std::string sTitle,CVector *pvColor)=0;
+	virtual bool SelectColor(IGameWindow *piParent,IGameGUIColorDialogCallback *piCallback,std::string sTitle,CVector *pvColor)=0;
 };
 
 

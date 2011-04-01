@@ -581,6 +581,15 @@ bool CGameWindowBase::SelectColorDialog(std::string sTitle,CVector *pvColor)
 	return bOk;
 }
 
+bool CGameWindowBase::SelectColorDialog(std::string sTitle,IGameGUIColorDialogCallback *piCallBack,CVector *pvColor)
+{
+	CColorDialogWrapper dialog;
+	dialog.Attach("GameGUI","ColorDialog");
+	bool bOk=false;
+	if(dialog.m_piColorDialog){bOk=dialog.m_piColorDialog->SelectColor(this,piCallBack,sTitle,pvColor);}
+	return bOk;
+}
+
 bool CGameWindowBase::ConfirmDialog(std::string sText,std::string sTitle,EMessageDialogType eType)
 {	
 	CConfirmDialogWrapper dialog;

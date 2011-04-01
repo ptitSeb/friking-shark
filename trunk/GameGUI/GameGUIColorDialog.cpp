@@ -8,6 +8,7 @@ CGameGUIColorDialog::CGameGUIColorDialog(void)
 	m_bDraggingS=false;
 	m_bDraggingV=false;
 	m_bDraggingSV=false;
+	m_piCallback=NULL;
 
 	InitializeChildren();
 }
@@ -41,10 +42,31 @@ void CGameGUIColorDialog::OnKeyDown(int nKey,bool *pbProcessed)
 
 bool CGameGUIColorDialog::SelectColor(IGameWindow *piParent,std::string sTitle,CVector *pvColor)
 {	
-	m_vColor=RGBToHSV(*pvColor);
+	m_piCallback=NULL;
+	m_vOriginalColor=*pvColor;
+	m_vColor=RGBToHSV(m_vOriginalColor);
 	m_sTitle=sTitle;
-	if(Execute(piParent)!=DIALOG_OK){return false;}
+	if(Execute(piParent)!=DIALOG_OK)
+	{
+		return false;
+	}
 	*pvColor=HSVToRGB(m_vColor);
+	return true;
+}
+
+bool CGameGUIColorDialog::SelectColor(IGameWindow *piParent,IGameGUIColorDialogCallback *piCallback,std::string sTitle,CVector *pvColor)
+{	
+	m_piCallback=piCallback;
+	m_vOriginalColor=*pvColor;
+	m_vColor=RGBToHSV(m_vOriginalColor);
+	m_sTitle=sTitle;
+	if(Execute(piParent)!=DIALOG_OK)
+	{
+		if(m_piCallback){m_piCallback->OnColorChanged(m_vOriginalColor);}
+		return false;
+	}
+	*pvColor=HSVToRGB(m_vColor);
+	if(m_piCallback){m_piCallback->OnColorChanged(*pvColor);}
 	return true;
 }
 
@@ -74,22 +96,26 @@ void CGameGUIColorDialog::OnMouseDown(int nButton,double x,double y)
 	if(sHRect.Contains(pos))
 	{
 		m_vColor.c[0]=((pos.y-sHRect.y)/sHRect.h)*360.0;
+		if(m_piCallback){m_piCallback->OnColorChanged(HSVToRGB(m_vColor));}
 		m_bDraggingH=true;
 	}
 	if(sSRect.Contains(pos))
 	{
 		m_vColor.c[1]=((pos.y-sSRect.y)/sSRect.h);
+		if(m_piCallback){m_piCallback->OnColorChanged(HSVToRGB(m_vColor));}
 		m_bDraggingS=true;
 	}
 	if(sVRect.Contains(pos))
 	{
 		m_vColor.c[2]=((pos.y-sVRect.y)/sVRect.h);
+		if(m_piCallback){m_piCallback->OnColorChanged(HSVToRGB(m_vColor));}
 		m_bDraggingV=true;
 	}	
 	if(sSVRect.Contains(pos))
 	{
 		m_vColor.c[1]=((pos.y-sSVRect.y)/sSVRect.h);
 		m_vColor.c[2]=((pos.x-sSVRect.x)/sSVRect.w);
+		if(m_piCallback){m_piCallback->OnColorChanged(HSVToRGB(m_vColor));}
 		m_bDraggingSV=true;
 	}
 }
@@ -117,20 +143,24 @@ void CGameGUIColorDialog::OnMouseMove(double x,double y)
 	  if(m_bDraggingH && sHRect.Contains(pos))
 	  {
 		  m_vColor.c[0]=((pos.y-sHRect.y)/sHRect.h)*360.0;
+		  if(m_piCallback){m_piCallback->OnColorChanged(HSVToRGB(m_vColor));}
 	  }
 	  if(m_bDraggingS && sSRect.Contains(pos))
 	  {
 		  m_vColor.c[1]=((pos.y-sSRect.y)/sSRect.h);
+		  if(m_piCallback){m_piCallback->OnColorChanged(HSVToRGB(m_vColor));}
 	  }
 	  if(m_bDraggingV && sVRect.Contains(pos))
 	  {
 		  m_vColor.c[2]=((pos.y-sVRect.y)/sVRect.h);
+		  if(m_piCallback){m_piCallback->OnColorChanged(HSVToRGB(m_vColor));}
 	  }
 	  if(m_bDraggingSV && sSVRect.Contains(pos))
 	  {
 		  m_vColor.c[1]=((pos.y-sSVRect.y)/sSVRect.h);
 		  m_vColor.c[2]=((pos.x-sSVRect.x)/sSVRect.w);
-	  } 
+		  if(m_piCallback){m_piCallback->OnColorChanged(HSVToRGB(m_vColor));}
+	   } 
 	}
 }
 

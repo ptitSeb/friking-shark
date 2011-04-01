@@ -175,6 +175,7 @@ public:
 	 bool OpenFileDialog(std::string sTitle,const char *psFilter,std::string *psFile);
 	 bool SaveFileDialog(std::string sTitle,const char *psFilter,std::string *psFile,bool bOverWriteWarn);
 	 bool SelectColorDialog(std::string sTitle,CVector *pvColor);
+	 bool SelectColorDialog(std::string sTitle,IGameGUIColorDialogCallback *piCallBack,CVector *pvColor);
 	 bool ConfirmDialog(std::string sText,std::string sTitle,EMessageDialogType eType);
 	 void MessageDialog(std::string sText,std::string sTitle,EMessageDialogType eType);
 	 bool InputDialog(std::string *psText,std::string sTitle);
