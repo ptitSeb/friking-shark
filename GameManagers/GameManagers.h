@@ -38,6 +38,7 @@ class IGenericRender;
 class IGameGUIManager;
 
 struct IEntity;
+struct IWeapon;
 struct IEntityType;
 struct IFormationType;
 struct IPlayAreaElement;
@@ -168,6 +169,10 @@ public:
 	virtual void          GetChildLocation(IEntity *piEntity,CVector &vPosition,CVector &vAngles)=0;
 	virtual unsigned int  GetChildren()=0;
 	virtual IEntity      *GetChild(unsigned int nIndex)=0;
+
+	virtual unsigned int  AddWeapon(IWeapon *piWeapon)=0;
+	virtual unsigned int  GetWeapons()=0;
+	virtual IWeapon		 *GetWeapon(unsigned int nIndex)=0;
 	
 	virtual double GetHealth()=0;
     virtual double GetMaxHealth()=0;
@@ -505,7 +510,9 @@ struct IWeapon
 
   virtual unsigned int GetCurrentLevel()=0;
   virtual void  SetCurrentLevel(unsigned int dwLevel)=0;
-
+  
+  virtual CVector  GetIdealHeadingToTarget(CVector vTargetPosition,CVector vTargetVelocity)=0;
+  
   virtual ~IWeapon(){}
 };
 

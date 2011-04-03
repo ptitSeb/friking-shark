@@ -29,7 +29,7 @@ public:
 };
 
 
-class CTurret: public CEntityBase
+class CTurret: public CEntityBase, virtual public IEntityEvents
 {
 	CTurretType  *m_pType;
 
@@ -37,10 +37,18 @@ class CTurret: public CEntityBase
 	bool		 m_bTargetLocked;
 	
 	void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
-
+	
+	void Render(IGenericRender *piRender,IGenericCamera *piCamera);
+	
 public:
-
+	
+	void SetTarget(IEntity *piTarget);
 	void OnKilled();
+	
+	// IEntityEvents
+	
+	void OnRemoved(IEntity *piEntity);
+	void OnKilled(IEntity *piEntity);
 
 	CTurret(CTurretType *pType);
 };

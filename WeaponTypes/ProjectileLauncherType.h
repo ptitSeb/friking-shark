@@ -84,7 +84,9 @@ public:
 
   unsigned int GetCurrentLevel();
   void  SetCurrentLevel(unsigned int dwLevel);
-
+  
+  CVector  GetIdealHeadingToTarget(CVector vTargetPosition,CVector vTargetVelocity);
+  
   CProjectileLauncher(CProjectileLauncherType *pType,IEntity *piEntity,unsigned int dwCurrentTimeBase);
   ~CProjectileLauncher();
 };

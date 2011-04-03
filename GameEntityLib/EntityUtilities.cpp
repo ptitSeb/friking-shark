@@ -26,3 +26,26 @@ void ApproachAngles(CVector *pvCurrent,CVector &vIdeal, double ammount)
     pvCurrent->c[YAW]=ApproachAngle(pvCurrent->c[YAW],vIdeal.c[YAW],ammount);
     pvCurrent->c[PITCH]=ApproachAngle(pvCurrent->c[PITCH],vIdeal.c[PITCH],ammount);
 }
+
+double AngleDiff(double dAngle1,double dAngle2)
+{
+	double dDiff=(dAngle1-dAngle2);
+	if(dDiff>180){dDiff=dDiff-360;}
+	if(dDiff<-180){dDiff=360-dDiff;}
+	return dDiff;
+}
+
+CVector PredictInterceptionPosition(CVector vInterceptorPos,double dInterceptorVel,CVector vTargetPosition,CVector vTargetVelocity)
+{
+	double dCurrentDistToTarget=(vTargetPosition-vInterceptorPos);
+	CVector vTemp=vTargetPosition;
+	if(dInterceptorVel>0)
+	{
+		double dTimeToTarget=dCurrentDistToTarget/dInterceptorVel;
+		dCurrentDistToTarget=((vTargetPosition+vTargetVelocity*dTimeToTarget)-vInterceptorPos);
+		
+		dTimeToTarget=dCurrentDistToTarget/dInterceptorVel;
+		vTemp+=vTargetVelocity*dTimeToTarget;
+	}
+	return vTemp;
+}

@@ -69,7 +69,8 @@ void CProjectileLauncher::Fire(unsigned int dwCurrentTime)
     if(piTarget)
     {
       SPhysicInfo *pTargetPhysicInfo=piTarget->GetPhysicInfo();
-      AnglesFromVector(pTargetPhysicInfo->vPosition-pEntityPhysicInfo->vPosition,&vTargetAngles);
+	  CVector vTargetDirection=GetIdealHeadingToTarget(pTargetPhysicInfo->vPosition,pTargetPhysicInfo->vVelocity);
+	  AnglesFromVector(vTargetDirection,&vTargetAngles);
     }
 
     if(m_pType->m_bIgnoreRoll)
@@ -159,3 +160,23 @@ void CProjectileLauncher::SetCurrentLevel(unsigned int dwLevel)
   }
   m_pCurrentLevel=m_pType->GetLevel(m_dwCurrentLevel);
 }
+
+CVector CProjectileLauncher::GetIdealHeadingToTarget(CVector vTargetPosition,CVector vTargetVelocity)
+{
+	CVector vPosition;
+	double dFastestProjectile=0;
+	if(m_piEntity){vPosition=m_piEntity->GetPhysicInfo()->vPosition;}
+	if(!m_pCurrentLevel){return vTargetPosition-vPosition;}
+	
+	for(unsigned int nProjectile=0;nProjectile<m_pCurrentLevel->dProjectiles.size();nProjectile++)
+	{
+		SProjectileLauncherProjectile *pProjectileInfo=&m_pCurrentLevel->dProjectiles[nProjectile];
+		if(pProjectileInfo->dVelocity>dFastestProjectile){dFastestProjectile=pProjectileInfo->dVelocity;}
+	}
+	return PredictInterceptionPosition(vPosition,dFastestProjectile,vTargetPosition,vTargetVelocity)-vPosition;
+}
+
+
+
+
+

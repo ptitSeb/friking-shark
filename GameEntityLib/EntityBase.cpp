@@ -198,10 +198,24 @@ void CEntityBase::SetRoute(IRoute *piRoute)
     m_piRoute=piRoute;
 }
 
-void CEntityBase::AddWeapon(IWeapon *piWeapon)
+unsigned int CEntityBase::AddWeapon(IWeapon *piWeapon)
 {
-  m_vWeapons.push_back(piWeapon);
+	unsigned int nIndex=m_vWeapons.size();
+	m_vWeapons.push_back(piWeapon);
+	return nIndex;
 }
+
+unsigned int  CEntityBase::GetWeapons()
+{
+	return m_vWeapons.size();
+}
+
+IWeapon *CEntityBase::GetWeapon(unsigned int nIndex)
+{
+	if(nIndex>=m_vWeapons.size()){return NULL;}
+	return m_vWeapons[nIndex];
+}
+
 
 void CEntityBase::FireWeapon(unsigned int dwWeaponSlot,unsigned int dwCurrentTime)
 {
