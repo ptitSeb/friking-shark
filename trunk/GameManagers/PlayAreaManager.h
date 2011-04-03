@@ -28,7 +28,8 @@ class CPlayAreaManager: virtual public CSystemObjectBase,
                         virtual public CSystemSerializableBase,
                         virtual public IPlayAreaManager,
                         virtual public IGameManager,
-						virtual public IPlayAreaDesign
+						virtual public IPlayAreaDesign,
+						virtual public IEntityEvents
 {
 	bool m_bStarted;
 
@@ -37,7 +38,6 @@ class CPlayAreaManager: virtual public CSystemObjectBase,
 
     double m_dCameraDistanceFromPlayer;
     double m_dCameraPitch;
-	CGenericLightWrapper m_CameraLight;
 
 	double m_dPlayAreaHeight;
     C3DSVector m_vPlayMovementPos;
@@ -151,7 +151,12 @@ public:
 	void MovePlayer(unsigned long nKey);
 	void ProcessInput(IGameGUIManager *piManager);
 
-
+	
+	// IEntityEvents
+	
+	void OnRemoved(IEntity *piEntity);
+	void OnKilled(IEntity *piEntity);
+	
 	// Edition method
 
 	void	GetPlayAreaConfig(SPlayAreaConfig *pConfig);

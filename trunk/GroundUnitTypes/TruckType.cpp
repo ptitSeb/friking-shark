@@ -97,8 +97,7 @@ IEntity *CTruck::GetTarget()
 	if(m_piTarget==NULL)
 	{
 		IEntityManager *piManager=GetEntityManager();
-		if(piManager){m_piTarget=piManager->FindEntity("Player");}
+		if(piManager){SetTarget(piManager->FindEntity("Player"));}
 	}
-	SetTarget(m_piTarget);
 	return m_piTarget;
 }

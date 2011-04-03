@@ -3,11 +3,12 @@ X Callback en el editor de colores (asi se podria ver el efecto segun se cambia 
 X Movimiento del agua (matriz de textura)
 	X Matriz de textura en los render buffers (se aplica a todos los usos del modelo).
 	X Optimizacion para matriz identidad.
-- Disparo de enemigos a posicion prevista en lugar de actual.
+X Posibilidad de mover el playarea en el editor de escenarios, para poder centrar la edicion en un punto
+X Disparo de enemigos a posicion prevista en lugar de actual.
 	- para esto hay que establecer la velocidad actual del player.
-		- revisar si el movimiento custom aplica la velocidad.
-- AvPag/RePag en simulacion, para poder avanzar rapido en el escenario
+		- Se aplica el mismo targeting del juego original, que solo tiene en cuenta el movimiento del scroll, no la velocidad del player.
 - Los enemigos deben disparar solo cuando son visibles
+- Movimiento del bonus.
 - Ampliacion de la funcionalidad del PlayAreaEntity similar a los elementos de las formaciones.
 	- delay
 	- numero

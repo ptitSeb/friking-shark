@@ -64,12 +64,11 @@ void CStaticStructure::ProcessFrame(unsigned int dwCurrentTime,double dTimeFract
 
 IEntity *CStaticStructure::GetTarget()
 {
-	IEntity *piTarget=NULL;
 	if(m_piTarget==NULL)
 	{
 		IEntityManager *piManager=GetEntityManager();
-		if(piManager){piTarget=piManager->FindEntity("Player");}
+		if(piManager){SetTarget(piManager->FindEntity("Player"));}
 	}
-	SetTarget(piTarget);
+	
 	return m_piTarget;
 }

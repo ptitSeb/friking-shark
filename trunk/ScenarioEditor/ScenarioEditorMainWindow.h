@@ -111,6 +111,8 @@ public:
 	bool				m_bShowSkyPanel;
 	bool				m_bShowPlayAreaPanel;
 	bool				m_bRenderPlayArea;
+	bool				m_bMovingCameraPosition;
+	CVector 			m_vPlayMovementPosition;
 
 	int					m_nSelectedRoutePoint;
 
@@ -647,9 +649,11 @@ public:
 	void UpdateFormationControls();
 	void UpdateFormationsHeight();
 
+	void RenderRoute( IGenericRender * piRender, int nSelectedEntity, int nSelectedRoutePoint );
+	void RenderPlayArea();
+	
 	CScenarioEditorMainWindow(void);
 	~CScenarioEditorMainWindow(void);
-	void RenderRoute( IGenericRender * piRender, int nSelectedEntity, int nSelectedRoutePoint );
 };
 
 

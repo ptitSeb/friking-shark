@@ -5,6 +5,7 @@
 #include "ScenarioEditorMainWindow.h"
 
 #define SELECT_FORMATION_BASE_INDEX 0x800
+#define SELECT_ENTITY_BASE_INDEX    0x400
 
 extern CSystemModuleHelper *g_pSystemModuleHelper;
 
@@ -47,6 +48,7 @@ CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 	m_nSelectedEntityLayer=-1;
 	m_nSelectedEntity=-1;
 	m_nSelectedFormation=-1;
+	m_bMovingCameraPosition=false;
 
 	InitializeChildren();
 	m_piGameSystem=NULL;
@@ -230,6 +232,39 @@ void CScenarioEditorMainWindow::SetupRenderOptions(IGenericRender *piRender,IGen
 	piRender->SetCamera(vPosition,vAngles.c[YAW],vAngles.c[PITCH],vAngles.c[ROLL]);
 }
 
+void CScenarioEditorMainWindow::RenderPlayArea()
+{
+	m_Render.m_piRender->PushState();
+	m_Render.m_piRender->ActivateBlending();
+	CVector vPlayAreaMins,vPlayAreaMaxs;
+	SPlayAreaConfig vPlayAreaConfig;
+	m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&vPlayAreaConfig);
+	m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayAreaPlaneAt(m_vPlayMovementPosition,&vPlayAreaMins,&vPlayAreaMaxs);
+	CVector vCenter=(vPlayAreaMaxs+vPlayAreaMins)*0.5;
+	CVector vSize=(vPlayAreaMaxs-vPlayAreaMins);
+	
+	m_Render.m_piRender->ActivateSolid();
+	
+	m_Render.m_piRender->SetColor(CVector(1,1,1),0.1);
+	m_Render.m_piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2]);
+	//Left scroll
+	m_Render.m_piRender->SetColor(CVector(1,1,1),0.05);
+	m_Render.m_piRender->RenderRect(vCenter-CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
+	//Right scroll
+	m_Render.m_piRender->SetColor(CVector(1,1,1),0.05);
+	m_Render.m_piRender->RenderRect(vCenter+CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
+	
+	m_Render.m_piRender->DeactivateDepth();
+	m_Render.m_piRender->DeactivateSolid();
+	
+	m_Render.m_piRender->SetColor(CVector(1,1,1),1.0);
+	m_Render.m_piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2]);
+	m_Render.m_piRender->RenderRect(vCenter-CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
+	m_Render.m_piRender->RenderRect(vCenter+CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
+	
+	m_Render.m_piRender->PopState();
+}
+
 void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 {
 	if(!m_FrameManager.m_piFrameManager)
@@ -301,35 +336,7 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 
 	if(m_bRenderPlayArea)
 	{
-		m_Render.m_piRender->PushState();
-		m_Render.m_piRender->ActivateBlending();
-		CVector vPlayAreaMins,vPlayAreaMaxs;
-		SPlayAreaConfig vPlayAreaConfig;
-		m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&vPlayAreaConfig);
-		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetAirPlayPlane(&vPlayAreaMins,&vPlayAreaMaxs);
-		CVector vCenter=(vPlayAreaMaxs+vPlayAreaMins)*0.5;
-		CVector vSize=(vPlayAreaMaxs-vPlayAreaMins);
-
-		piRender->ActivateSolid();
-
-		piRender->SetColor(CVector(1,1,1),0.1);
-		piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2]);
-		//Left scroll
-		piRender->SetColor(CVector(1,1,1),0.05);
-		piRender->RenderRect(vCenter-CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
-		//Right scroll
-		piRender->SetColor(CVector(1,1,1),0.05);
-		piRender->RenderRect(vCenter+CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
-
-		piRender->DeactivateDepth();
-		piRender->DeactivateSolid();
-
-		piRender->SetColor(CVector(1,1,1),1.0);
-		piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2]);
-		piRender->RenderRect(vCenter-CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
-		piRender->RenderRect(vCenter+CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
-
-		m_Render.m_piRender->PopState();
+		RenderPlayArea();
 	}
 
 
@@ -362,6 +369,14 @@ void CScenarioEditorMainWindow::ProcessFileNew()
 		{		
 			m_GameControllerWrapper.m_piGameController->CreateScenario();	
 		}
+		
+		if(m_PlayAreaManagerWrapper.m_piPlayAreaManager)
+		{
+			CVector vStart,vEnd;
+			m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayerRoute(&vStart,&vEnd);
+			m_vPlayMovementPosition=vStart;
+		}
+		
 		UpdateColorLayerControls();
 		UpdateHeightLayerControls();
 		UpdateEntityLayerControls();
@@ -1497,6 +1512,17 @@ void CScenarioEditorMainWindow::UpdateTexturization()
 		m_PlayAreaManagerWrapper.m_piPlayAreaDesign->UpdateEntityLayers();
 		m_PlayAreaManagerWrapper.m_piPlayAreaDesign->UpdatePlayArea();
 	}
+	
+	if(m_PlayAreaManagerWrapper.m_piPlayAreaManager)
+	{
+		CVector vStart,vEnd;
+		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayerRoute(&vStart,&vEnd);
+		m_vPlayMovementPosition.c[1]=vStart.c[1];
+		m_vPlayMovementPosition.c[2]=vStart.c[2];
+		if(m_vPlayMovementPosition.c[0]<vStart.c[0]){m_vPlayMovementPosition.c[0]=vStart.c[0];}
+		if(m_vPlayMovementPosition.c[0]>vEnd.c[0]){m_vPlayMovementPosition.c[0]=vEnd.c[0];}
+	}
+	
 }
 
 void CScenarioEditorMainWindow::UpdateCaption()
@@ -2147,6 +2173,24 @@ void CScenarioEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 
 void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 {
+	if(m_bRenderPlayArea)
+	{
+		m_Render.m_piRender->StartSelection(m_rRealRect,m_Camera.m_piCamera,dx,dy,5);
+		m_Render.m_piRender->SetSelectionId(0);
+		RenderPlayArea();
+		if(m_Render.m_piRender->EndSelection()==0)
+		{
+			if(DetectDrag(dx,dy))
+			{
+				m_nSelectedFormation=-1;
+				m_nSelectedEntity=-1;
+				m_bMovingCameraPosition=true;
+				m_vObjectOriginalPosition=m_vPlayMovementPosition;
+				GetAirPlaneCoordinatesFromCursorPos(dx,dy,&m_vCursorOriginalPosition);
+				return;
+			}
+		}
+	}
 	if(m_nSelectedEntity!=-1)
 	{
 		if(nButton==GK_LBUTTON)
@@ -2189,7 +2233,7 @@ void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 
 	for(unsigned int x=0;x<m_vEntityControls.size();x++)
 	{
-		m_Render.m_piRender->SetSelectionId(x);
+		m_Render.m_piRender->SetSelectionId(SELECT_ENTITY_BASE_INDEX+x);
 		SEntityControls *pEntity=m_vEntityControls[x];
 		pEntity->m_piPlayAreaEntity->DesignRender(m_Render.m_piRender,false);
 	}
@@ -2204,10 +2248,11 @@ void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 	{
 		m_nSelectedFormation=-1;
 		m_nSelectedEntity=-1;
+		m_bMovingCameraPosition=false;
 	}
 	else if(nNewIndex<SELECT_FORMATION_BASE_INDEX)
 	{
-		int nNewSelection=nNewIndex;
+		int nNewSelection=nNewIndex-SELECT_ENTITY_BASE_INDEX;
 		if(m_nSelectedEntity==nNewSelection)
 		{
 			if(nNewSelection!=-1)
@@ -2371,6 +2416,15 @@ void CScenarioEditorMainWindow::OnMouseMove( double x,double y )
 		  pObject->m_piPlayAreaFormation->SetPosition(vPosition);
 		}
 	}
+	else if(m_bMovingCameraPosition)
+	{
+		CVector vTemp;
+		if(GetAirPlaneCoordinatesFromCursorPos(x,y,&vTemp))
+		{
+			m_vPlayMovementPosition=m_vObjectOriginalPosition+(vTemp-m_vCursorOriginalPosition);
+			m_PlayAreaManagerWrapper.m_piPlayAreaManager->SetPlayMovementPosition(m_vPlayMovementPosition);
+		}
+	}
 }
 
 void CScenarioEditorMainWindow::OnMouseUp( int nButton,double x,double y )
@@ -2378,6 +2432,7 @@ void CScenarioEditorMainWindow::OnMouseUp( int nButton,double x,double y )
 	if(m_piGUIManager->HasMouseCapture(this)){m_piGUIManager->ReleaseMouseCapture();}
 	m_bMovingObject=false;
 	m_bMovingRoutePoint=false;
+	m_bMovingCameraPosition=false;
 }
 
 void CScenarioEditorMainWindow::StopGameSimulation()
@@ -2396,6 +2451,11 @@ void CScenarioEditorMainWindow::StartGameSimulation()
 		StopGameSimulation();
 	}
 	m_GameControllerWrapper.m_piGameController->Start();
+	if(m_PlayAreaManagerWrapper.m_piPlayAreaManager)
+	{
+		m_PlayAreaManagerWrapper.m_piPlayAreaManager->SetPlayMovementPosition(m_vPlayMovementPosition);
+	}
+
 	m_bSimulationStarted=true;
 }
 
@@ -2803,6 +2863,14 @@ void CScenarioEditorMainWindow::OpenScenario( std::string sScenario )
 	  MessageDialog(sMessage,"Error",eMessageDialogType_Error);
 	  return;
 	}
+	
+	if(m_PlayAreaManagerWrapper.m_piPlayAreaManager)
+	{
+		CVector vStart,vEnd;
+		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayerRoute(&vStart,&vEnd);
+		m_vPlayMovementPosition=vStart;
+	}
+	
 	m_sFile=sScenario;
 	UpdateColorLayerControls();
 	UpdateHeightLayerControls();

@@ -131,8 +131,10 @@ public:
     void OnAnimationEvent(string sEvent,string sParams);
 
     // Armas
-    void AddWeapon(IWeapon *piWeapon);
-
+	unsigned int  AddWeapon(IWeapon *piWeapon);
+	unsigned int  GetWeapons();
+	IWeapon		 *GetWeapon(unsigned int nIndex);
+	
     // Rutas
     void SetRoute(IRoute *piRoute);
 

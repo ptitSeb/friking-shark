@@ -16,9 +16,9 @@ IEntity *CPlayerType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTim
 {
     CPlayer *piEntity=new CPlayer(this);
     InitializeEntity(piEntity,dwCurrentTime);
-	piEntity->SetState(ePlayerState_Normal);
+    piEntity->SetState(ePlayerState_Normal);
     piEntity->SetSpeed(m_dMaxVelocity);
-	piEntity->SetHealth(10000000);
+    piEntity->SetHealth(10000000);
     return piEntity;
 }
 
@@ -68,22 +68,26 @@ void  CPlayer::FireWeaponsOnSlot(unsigned int dwWeaponSlot,unsigned int dwCurren
 
 void CPlayer::OnKilled()
 {
+	bool bRemove=false;
 	if(m_pTypeBase->GetStateAnimations(ePlayerState_Falling))
 	{
 		if(GetState()!=ePlayerState_Falling)
 		{
 			m_PhysicInfo.vAngleVelocity.c[2]+=drand()*300.0-150.0;
-			SetState(ePlayerState_Crashed);
+			SetState(ePlayerState_Falling);
 			m_PhysicInfo.dwMoveType=PHYSIC_MOVE_TYPE_NORMAL;
+			m_dwDamageType=DAMAGE_TYPE_NONE;
 			if(m_dwLivesLeft){m_dwLivesLeft--;}
 		}
+		bRemove=false;
 	}
 	else
 	{
 		if(m_dwLivesLeft){m_dwLivesLeft--;}
 		m_PhysicInfo.dwBoundsType=PHYSIC_BOUNDS_TYPE_NONE;
-		CEntityBase::OnKilledInternal(true);
+		bRemove=true;
 	}
+	CEntityBase::OnKilledInternal(bRemove);
 }
 
 bool CPlayer::OnCollision(IEntity *piOther,CVector &vCollisionPos)

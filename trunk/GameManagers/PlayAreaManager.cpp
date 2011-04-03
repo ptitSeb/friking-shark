@@ -107,6 +107,8 @@ void CPlayAreaManager::Start()
     m_piPlayerEntity->GetPhysicInfo()->vAngles.c[PITCH]=vAngles.c[PITCH];
     m_piPlayerEntity->GetPhysicInfo()->vPosition=m_vPlayerRouteStart;
 	m_piPlayer=m_piPlayerEntity?dynamic_cast<IPlayer*>(m_piPlayerEntity):NULL;
+	SUBSCRIBE_TO_CAST(m_piPlayerEntity,IEntityEvents);
+	
 	if(m_piPlayer)
 	{
 		m_dNormalPlayerSpeed=m_piPlayer->GetSpeed();
@@ -127,6 +129,7 @@ void CPlayAreaManager::Start()
 	m_dwPlayMovementLastRollTime=0;
 	m_dPlayMovementCurrentForward=0;
 	m_dPlayMovementCurrentRight=0;
+	
 	if(m_bProcessingPlayerIntroPhase1)
 	{
 		m_dPlayMovementCurrentForward=m_dPlayMovementMinForward-(m_dPlayMovementMaxForward-m_dPlayMovementMinForward)*0.1;
@@ -135,35 +138,10 @@ void CPlayAreaManager::Start()
 	{
 		m_dPlayMovementCurrentForward=m_dPlayMovementMinForward+(m_dPlayMovementMaxForward-m_dPlayMovementMinForward)*0.1;
 	}
-
-	m_CameraLight.Create(m_piSystem,"Light","");
-	m_CameraLight.m_piLight->SetColor(CVector(1,1,1));
-	//m_CameraLight.m_piLight->SetPosition(m_CameraWrapper.m_piCamera->GetPosition());
-	//m_CameraLight.m_piLight->SetOmni(m_dCameraDistanceFromPlayer*2.0);
-	/*
-	unsigned int dLightStrength=255;
-	m_pCameraLight=new CLight("CameraLight",LIGHT_TYPE_OMNI,m_CameraWrapper.m_piCamera->GetPosition(),RGB(dLightStrength,dLightStrength,dLightStrength));
-	m_pCameraLight->m_bIsActive=true;
-	m_pCameraLight->m_vSpotDir=CVector(0,-1,0);
-	m_pCameraLight->m_fSpotAngle=40;
-	m_pCameraLight->m_fAttenuationConstant=0;
-	m_pCameraLight->m_fAttenuationLinear=(float)0.005;
-	m_RenderWrapper.m_piRender->AddLight(m_pCameraLight);
-	m_RenderWrapper.m_piRender->SetCamera(m_CameraWrapper.m_piCamera);
-	*/
-	//m_RenderWrapper.m_piRender->AddLight(m_CameraLight.m_piLight);
-//	m_RenderWrapper.m_piRender->SetCamera(m_CameraWrapper.m_piCamera);
-
 }
 
 void CPlayAreaManager::Stop()
 {
-	if(m_CameraLight.m_piLight)
-	{
-		//m_RenderWrapper.m_piRender->RemoveLight(m_CameraLight.m_piLight);
-	}
-	m_CameraLight.Destroy();
-
 	for(unsigned x=0;x<m_vElements.size();x++)
     {
         IPlayAreaElement *piElement=m_vElements[x].m_piElement;
@@ -231,64 +209,71 @@ void CPlayAreaManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFract
 			m_piPlayerEntity->GetPhysicInfo()->vPosition=m_vPlayMovementPos+m_vPlayMovementRight*m_dPlayMovementCurrentRight+m_vPlayMovementForward*m_dPlayMovementCurrentForward;
 		}
 	}
-
-	if(m_piPlayerEntity && m_bProcessingPlayerIntroPhase1)
+	
+	if(m_piPlayerEntity && (m_bProcessingPlayerIntroPhase1 || m_bProcessingPlayerOutroPhase1 || m_bProcessingPlayerOutroPhase2))
 	{
-		double dTargetForward=m_dPlayMovementMinForward+(m_dPlayMovementMaxForward-m_dPlayMovementMinForward)*0.2;
-		if(m_dPlayMovementCurrentForward<(dTargetForward-5))
+		m_PlayerKilledVelocity=Origin;
+	
+		if(m_bProcessingPlayerIntroPhase1)
 		{
+			double dTargetForward=m_dPlayMovementMinForward+(m_dPlayMovementMaxForward-m_dPlayMovementMinForward)*0.2;
+			if(m_dPlayMovementCurrentForward<(dTargetForward-5))
+			{
+				MovePlayer(KEY_FORWARD);
+			}
+			else
+			{
+				m_piPlayerEntity->GetPhysicInfo()->dwBoundsType=PHYSIC_BOUNDS_TYPE_BBOX;
+				m_piPlayer->SetSpeed(m_dNormalPlayerSpeed);
+				m_PlayerKilledVelocity=CVector(m_dPlayMovementSpeed,0,0);
+				m_bProcessingPlayerIntroPhase1=false;
+			}
+		}
+
+		if(m_bProcessingPlayerOutroPhase1)
+		{
+			bool bCentered=true;
+			double dTargetRight=0;
+			double dTargetForward=m_dPlayMovementMinForward+(m_dPlayMovementMaxForward-m_dPlayMovementMinForward)*0.1;
+
+			if(m_dPlayMovementCurrentRight>(dTargetRight+5))
+			{
+				bCentered=false;
+				MovePlayer(KEY_LEFT);
+			}
+			if(m_dPlayMovementCurrentRight<(dTargetRight-5))
+			{
+				bCentered=false;
+				MovePlayer(KEY_RIGHT);
+			}
+			if(m_dPlayMovementCurrentForward>(dTargetForward+5))
+			{
+				bCentered=false;
+				MovePlayer(KEY_BACK);
+			}
+			if(m_dPlayMovementCurrentForward<(dTargetForward-5))
+			{
+				bCentered=false;
+				MovePlayer(KEY_FORWARD);
+			}
+			if(bCentered)
+			{
+				m_bProcessingPlayerOutroPhase1=false;
+				m_bProcessingPlayerOutroPhase2=true;
+			}
+		}
+
+		if(m_bProcessingPlayerOutroPhase2)
+		{
+			double dSpeed=m_piPlayer->GetSpeed();
+			m_piPlayer->SetSpeed(dSpeed*(1.0+2*m_FrameManagerWrapper.m_piFrameManager->GetTimeFraction()));
 			MovePlayer(KEY_FORWARD);
-		}
-		else
-		{
-			m_piPlayerEntity->GetPhysicInfo()->dwBoundsType=PHYSIC_BOUNDS_TYPE_BBOX;
-			m_piPlayer->SetSpeed(m_dNormalPlayerSpeed);
-			m_bProcessingPlayerIntroPhase1=false;
-		}
-	}
 
-	if(m_piPlayerEntity && m_bProcessingPlayerOutroPhase1)
-	{
-		bool bCentered=true;
-		double dTargetRight=0;
-		double dTargetForward=m_dPlayMovementMinForward+(m_dPlayMovementMaxForward-m_dPlayMovementMinForward)*0.1;
-
-		if(m_dPlayMovementCurrentRight>(dTargetRight+5))
-		{
-			bCentered=false;
-			MovePlayer(KEY_LEFT);
-		}
-		if(m_dPlayMovementCurrentRight<(dTargetRight-5))
-		{
-			bCentered=false;
-			MovePlayer(KEY_RIGHT);
-		}
-		if(m_dPlayMovementCurrentForward>(dTargetForward+5))
-		{
-			bCentered=false;
-			MovePlayer(KEY_BACK);
-		}
-		if(m_dPlayMovementCurrentForward<(dTargetForward-5))
-		{
-			bCentered=false;
-			MovePlayer(KEY_FORWARD);
-		}
-		if(bCentered)
-		{
-			m_bProcessingPlayerOutroPhase1=false;
-			m_bProcessingPlayerOutroPhase2=true;
-		}
-	}
-
-	if(m_piPlayerEntity && m_bProcessingPlayerOutroPhase2)
-	{
-		double dSpeed=m_piPlayer->GetSpeed();
-		m_piPlayer->SetSpeed(dSpeed*(1.0+2*m_FrameManagerWrapper.m_piFrameManager->GetTimeFraction()));
-		MovePlayer(KEY_FORWARD);
-
-		if(m_dPlayMovementCurrentForward>=m_dPlayMovementMaxForward*1.3)
-		{
-			m_bProcessingPlayerOutroPhase2=false;
+			if(m_dPlayMovementCurrentForward>=m_dPlayMovementMaxForward*1.3)
+			{
+				m_bProcessingPlayerOutroPhase2=false;
+				m_piPlayer->SetSpeed(m_dNormalPlayerSpeed);
+			}
 		}
 	}
 	if(m_piPlayerEntity && !m_bProcessingPlayerIntroPhase1 && !m_bProcessingPlayerOutroPhase1 && !m_bProcessingPlayerOutroPhase2 && !m_bScenarioCompleted)
@@ -320,6 +305,10 @@ void CPlayAreaManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFract
 		IPlayAreaElement *piElement=m_vEntityLayerElements[x].m_piElement;
 		piElement->ProcessFrame(m_vPlayMovementPos,&m_PlayArea,dwCurrentTime,dTimeFraction);
 	}
+	if(m_piPlayerEntity && m_piPlayerEntity->GetHealth()>0)
+	{
+		m_piPlayerEntity->GetPhysicInfo()->vVelocity=CVector(m_dPlayMovementSpeed,0,0);
+	}
 }
 
 void CPlayAreaManager::GetPlayerRoute(CVector *pvStart,CVector *pvEnd)
@@ -328,7 +317,7 @@ void CPlayAreaManager::GetPlayerRoute(CVector *pvStart,CVector *pvEnd)
 	*pvEnd=m_vPlayerRouteEnd;
 }
 
-void CPlayAreaManager::SetPlayMovementPosition(CVector vPosition){m_vPlayMovementPos=vPosition;}
+void CPlayAreaManager::SetPlayMovementPosition(CVector vPosition){m_vPlayMovementPos=vPosition;CalculateAirPlayArea();}
 CVector CPlayAreaManager::GetPlayMovementPosition(){return m_vPlayMovementPos;}
 CVector CPlayAreaManager::GetPlayMovementForward(){return m_vPlayMovementForward;}
 CVector CPlayAreaManager::GetPlayMovementRight(){return m_vPlayMovementRight;}
@@ -399,9 +388,6 @@ void CPlayAreaManager::UpdatePlayCameraPosition()
 	m_CameraWrapper.m_piCamera->SetPosition(vCameraPosition);
 	m_CameraWrapper.m_piCamera->SetAngles(vCameraAngles);
 
-	m_CameraLight.m_piLight->SetPosition(m_vPlayMovementPos+CVector(0,m_dCameraDistanceFromPlayer,0));
-	m_CameraLight.m_piLight->SetColor(CVector(1,1,1));
-	m_CameraLight.m_piLight->SetOmni(m_dCameraDistanceFromPlayer*1.5);
 }
 
 void CPlayAreaManager::ProcessInput(IGameGUIManager *piGUIManager)
@@ -411,7 +397,7 @@ void CPlayAreaManager::ProcessInput(IGameGUIManager *piGUIManager)
 	{
 		return;
 	}
-
+	m_PlayerKilledVelocity=CVector(m_dPlayMovementSpeed,0,0);
 	if(piGUIManager->IsKeyDown(GK_UP) || piGUIManager->IsKeyDown(GK_NUMPAD8) || piGUIManager->IsKeyDown('W')){MovePlayer(KEY_FORWARD);}
 	if(piGUIManager->IsKeyDown(GK_DOWN) || piGUIManager->IsKeyDown(GK_NUMPAD2) || piGUIManager->IsKeyDown('S')){MovePlayer(KEY_BACK);}
 	if(piGUIManager->IsKeyDown(GK_LEFT) || piGUIManager->IsKeyDown(GK_NUMPAD4) || piGUIManager->IsKeyDown('A')){MovePlayer(KEY_LEFT);}
@@ -422,8 +408,6 @@ void CPlayAreaManager::ProcessInput(IGameGUIManager *piGUIManager)
 
 void CPlayAreaManager::MovePlayer(unsigned long nKey)
 {
-	m_PlayerKilledVelocity=Origin;
-
 	double dTimeFraction=m_FrameManagerWrapper.m_piFrameManager->GetTimeFraction();
 	CVector vPlayMovementForward=GetPlayMovementForward();
 	CVector vPlayMovementRight=GetPlayMovementRight();
@@ -478,11 +462,6 @@ void CPlayAreaManager::MovePlayer(unsigned long nKey)
 		}
 
 		m_PlayerKilledVelocity-=vPlayMovementForward*(m_piPlayer->GetSpeed()*0.25);
-	}
-
-	if(m_piPlayerEntity->GetHealth()>0)
-	{
-		m_piPlayerEntity->GetPhysicInfo()->vVelocity=m_PlayerKilledVelocity;
 	}
 }
 
@@ -774,4 +753,17 @@ void CPlayAreaManager::GetElement( unsigned int nIndex,IPlayAreaElement **ppiEle
 unsigned int CPlayAreaManager::GetElements()
 {
 	return m_vElements.size();
+}
+
+void CPlayAreaManager::OnRemoved(IEntity *piEntity)
+{
+	if(piEntity==m_piPlayerEntity){m_piPlayer=NULL;m_piPlayerEntity=NULL;}
+}
+
+void CPlayAreaManager::OnKilled(IEntity *piEntity)
+{
+	if(piEntity==m_piPlayerEntity)
+	{
+		m_piPlayerEntity->GetPhysicInfo()->vVelocity=m_PlayerKilledVelocity;
+	}
 }
