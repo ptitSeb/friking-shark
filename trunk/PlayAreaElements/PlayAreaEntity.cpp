@@ -6,7 +6,12 @@
 CPlayAreaEntity::CPlayAreaEntity()
 {
 	m_dRadius=0;
-    m_piEntity=NULL;
+    m_nDelay=0;
+	m_nInterval=0;
+	m_nEntityCount=1;
+	m_nActivationTime=0;
+	m_nLastEntityTime=0;
+	m_nCreatedEntities=0;
 }
 
 CPlayAreaEntity::~CPlayAreaEntity()
@@ -17,30 +22,50 @@ CPlayAreaEntity::~CPlayAreaEntity()
 bool CPlayAreaEntity::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInfo,unsigned int dwCurrentTime,double dInterval)
 {
 	if(m_EntityType.m_piEntityType && m_dRadius==0){m_dRadius=m_EntityType.m_piEntityType->DesignGetRadius();}
-
+		
 	bool bCurrentlyInPlayArea=Util_IsInPlayArea(m_vPosition,pAreaInfo);
 	bCurrentlyInPlayArea=bCurrentlyInPlayArea||Util_IsInPlayArea(m_vPosition-CVector(m_dRadius,0,0),pAreaInfo);
 	bCurrentlyInPlayArea=bCurrentlyInPlayArea||Util_IsInPlayArea(m_vPosition+CVector(m_dRadius,0,0),pAreaInfo);
 
 	if(m_bActive)
 	{
-		if(m_piEntity)
-		{
-			bool bEntityCurrentlyInPlayArea=Util_IsInPlayArea(m_piEntity->GetPhysicInfo()->vPosition,pAreaInfo);
-			bEntityCurrentlyInPlayArea=bEntityCurrentlyInPlayArea||Util_IsInPlayArea(m_piEntity->GetPhysicInfo()->vPosition-CVector(m_dRadius,0,0),pAreaInfo);
-			bEntityCurrentlyInPlayArea=bEntityCurrentlyInPlayArea||Util_IsInPlayArea(m_piEntity->GetPhysicInfo()->vPosition+CVector(m_dRadius,0,0),pAreaInfo);
-			if(!bEntityCurrentlyInPlayArea)
-			{
-				UNSUBSCRIBE_FROM_CAST(m_piEntity,IEntityEvents);
-				m_piEntity->Remove();
-				m_piEntity=NULL;
-			}		
+        if(m_EntityType.m_piEntityType!=NULL && 
+			((m_nCreatedEntities==0 && dwCurrentTime>=m_nActivationTime+m_nDelay) 
+			|| (m_nCreatedEntities<m_nEntityCount && dwCurrentTime>=(m_nLastEntityTime+m_nInterval))))
+        {
+			IEntity *piEntity=m_EntityType.m_piEntityType->CreateInstance(NULL,dwCurrentTime);
+			piEntity->GetPhysicInfo()->vPosition=m_vPosition;
+			piEntity->GetPhysicInfo()->vAngles=m_vAngles;
+			if(m_Route.GetPointCount()){piEntity->SetRoute(&m_Route);}
+			SUBSCRIBE_TO(piEntity,IEntityEvents);
+			m_sEntities.insert(piEntity);
+			m_nCreatedEntities++;
+			m_nLastEntityTime=dwCurrentTime;
 		}
-		if(!m_piEntity && !bCurrentlyInPlayArea)
+
+		if(m_Route.GetPointCount()==0)
+		{
+			set<IEntity*>::iterator i;
+			for(i=m_sEntities.begin();i!=m_sEntities.end();)
+			{
+				IEntity *piEntity=*i;
+				bool bEntityCurrentlyInPlayArea=Util_IsInPlayArea(piEntity->GetPhysicInfo()->vPosition,pAreaInfo);
+				bEntityCurrentlyInPlayArea=bEntityCurrentlyInPlayArea||Util_IsInPlayArea(piEntity->GetPhysicInfo()->vPosition-CVector(m_dRadius,0,0),pAreaInfo);
+				bEntityCurrentlyInPlayArea=bEntityCurrentlyInPlayArea||Util_IsInPlayArea(piEntity->GetPhysicInfo()->vPosition+CVector(m_dRadius,0,0),pAreaInfo);
+				if(!bEntityCurrentlyInPlayArea)
+				{
+					m_sEntities.erase(i++);
+					UNSUBSCRIBE_FROM_CAST(piEntity,IEntityEvents);
+					piEntity->Remove();
+					piEntity=NULL;
+				}
+				else{i++;}
+			}
+		}
+		if(m_sEntities.size()==0 && !bCurrentlyInPlayArea)
 		{
 			Deactivate();
 		}
-
 	}
 	else
 	{
@@ -69,51 +94,81 @@ void CPlayAreaEntity::Destroy()
 void CPlayAreaEntity::Activate(unsigned int dwCurrentTime)
 {
     CPlayAreaElementBase::Activate(dwCurrentTime);
-
-    if(m_EntityType.m_piEntityType!=NULL)
-    {
-        m_piEntity=m_EntityType.m_piEntityType->CreateInstance(NULL,dwCurrentTime);
-        m_piEntity->GetPhysicInfo()->vPosition=m_vPosition;
-        m_piEntity->GetPhysicInfo()->vAngles=m_vAngles;
-		if(m_Route.GetPointCount()){m_piEntity->SetRoute(&m_Route);}
-        SUBSCRIBE_TO(m_piEntity,IEntityEvents);
-    }
 }
 
 void CPlayAreaEntity::Deactivate()
 {
-    if(m_piEntity)
+	set<IEntity*>::iterator i;
+	for(i=m_sEntities.begin();i!=m_sEntities.end();i++)
     {
-        UNSUBSCRIBE_FROM_CAST(m_piEntity,IEntityEvents);
-        m_piEntity->Remove();
-        m_piEntity=NULL;
+		IEntity *piEntity=*i;
+        UNSUBSCRIBE_FROM_CAST(piEntity,IEntityEvents);
+        piEntity->Remove();
+        piEntity=NULL;
     }
+	m_sEntities.clear();
+	m_nCreatedEntities=0;
+	m_nLastEntityTime=0;
     CPlayAreaElementBase::Deactivate();
 }
 
-void CPlayAreaEntity::OnKilled(IEntity *pUnit)
+void CPlayAreaEntity::OnKilled(IEntity *piEntity)
 {
-    UNSUBSCRIBE_FROM_CAST(m_piEntity,IEntityEvents);
-    m_piEntity=NULL;
+	UNSUBSCRIBE_FROM_CAST(piEntity,IEntityEvents);
+	m_sEntities.erase(piEntity);
+	if(m_sEntities.size()==0 && m_nCreatedEntities==m_nEntityCount){Deactivate();}
 }
 
-void CPlayAreaEntity::OnRemoved(IEntity *pUnit)
+void CPlayAreaEntity::OnRemoved(IEntity *piEntity)
 {
-    UNSUBSCRIBE_FROM_CAST(m_piEntity,IEntityEvents);
-    m_piEntity=NULL;
+	UNSUBSCRIBE_FROM_CAST(piEntity,IEntityEvents);
+	m_sEntities.erase(piEntity);
+	if(m_sEntities.size()==0 && m_nCreatedEntities==m_nEntityCount){Deactivate();}
 }
 
-void CPlayAreaEntity::SetPosition(const CVector &vPosition){m_vPosition=vPosition;if(m_bActive){m_piEntity->GetPhysicInfo()->vPosition=m_vPosition;}}
-void CPlayAreaEntity::SetAngles(const CVector &vAngles){m_vAngles=vAngles;if(m_bActive){m_piEntity->GetPhysicInfo()->vAngles=m_vAngles;}}
+void CPlayAreaEntity::SetPosition(const CVector &vPosition)
+{
+	m_vPosition=vPosition;
+	if(m_bActive && m_Route.GetPointCount()==0)
+	{
+		set<IEntity*>::iterator i;
+		for(i=m_sEntities.begin();i!=m_sEntities.end();i++)
+	    {
+			IEntity *piEntity=*i;
+			piEntity->GetPhysicInfo()->vPosition=m_vPosition;
+		}
+	}
+}
+
+void CPlayAreaEntity::SetAngles(const CVector &vAngles)
+{
+	m_vAngles=vAngles;
+	if(m_bActive && m_Route.GetPointCount()==0)
+	{
+		set<IEntity*>::iterator i;
+		for(i=m_sEntities.begin();i!=m_sEntities.end();i++)
+	    {
+			IEntity *piEntity=*i;
+			piEntity->GetPhysicInfo()->vAngles=m_vAngles;
+		}
+	}
+}
 void CPlayAreaEntity::SetEntityType(IEntityType *piEntityType)
 {
 	m_EntityType.Attach(piEntityType);
 	if(m_EntityType.m_piEntityType){m_dRadius=m_EntityType.m_piEntityType->DesignGetRadius();}
 }
+void CPlayAreaEntity::SetCount(unsigned int nCount){m_nEntityCount=nCount;}
+void CPlayAreaEntity::SetDelay(unsigned int nDelay){m_nDelay=nDelay;}
+void CPlayAreaEntity::SetInterval(unsigned int nInterval){m_nInterval=nInterval;}
 
 CVector CPlayAreaEntity::GetPosition(){return m_vPosition;}
 CVector CPlayAreaEntity::GetAngles(){return m_vAngles;}
 void	CPlayAreaEntity::GetEntityType(IEntityType **ppiEntityType){if(ppiEntityType){*ppiEntityType=ADD(m_EntityType.m_piEntityType);}	}
+
+unsigned int CPlayAreaEntity::GetCount(){return m_nEntityCount;}
+unsigned int CPlayAreaEntity::GetDelay(){return m_nDelay;}
+unsigned int CPlayAreaEntity::GetInterval(){return m_nInterval;}
 
 void CPlayAreaEntity::DesignRender( IGenericRender *piRender,bool bSelected )
 {
@@ -142,3 +197,4 @@ bool CPlayAreaEntity::AddRoutePoint( unsigned int nIndex,const SRoutePoint &sPoi
 bool CPlayAreaEntity::SetRoutePoint( unsigned int nIndex,const SRoutePoint &sPoint ){return m_Route.SetPoint(nIndex,sPoint);}
 void CPlayAreaEntity::RemoveRoutePoint( unsigned int nIndex ){m_Route.RemovePoint(nIndex);}
 void CPlayAreaEntity::ClearRoute(){return m_Route.Clear();}
+
