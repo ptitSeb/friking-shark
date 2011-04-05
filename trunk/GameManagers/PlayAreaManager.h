@@ -135,7 +135,8 @@ public:
 	void	SetPlayMovementPosition(CVector vPosition);
 	
 	bool	IsScenarioCompleted();
-
+	bool	IsVisible(CVector vPos,double dRadius,bool bWithScroll);
+	
     // IGameManager
 
 	void CreateScenario();
