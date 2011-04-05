@@ -499,6 +499,8 @@ struct IPlayAreaManager:virtual public ISystemUnknown
 
 	virtual void ProcessInput(IGameGUIManager *piManager)=0;
 	virtual bool IsScenarioCompleted()=0;
+
+	virtual bool IsVisible(CVector vPos,double dRadius,bool bWithScroll)=0;
 };
 
 struct IWeapon

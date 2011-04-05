@@ -767,3 +767,13 @@ void CPlayAreaManager::OnKilled(IEntity *piEntity)
 		m_piPlayerEntity->GetPhysicInfo()->vVelocity=m_PlayerKilledVelocity;
 	}
 }
+
+bool CPlayAreaManager::IsVisible(CVector vPos,double dRadius,bool bWithScroll)
+{
+	double dToAdd=bWithScroll?m_dPlayMovementMaxHorzScroll:0;
+	bool bHidden=((vPos.c[0]+dRadius)<(m_vVisibleAirPlayAreaMins.c[0]-dToAdd)||
+	(vPos.c[0]-dRadius)>(m_vVisibleAirPlayAreaMaxs.c[0]+dToAdd) ||
+	(vPos.c[2]+dRadius)<(m_vVisibleAirPlayAreaMins.c[2]-dToAdd) ||
+	(vPos.c[2]-dRadius)>(m_vVisibleAirPlayAreaMaxs.c[2]+dToAdd));
+	return !bHidden;
+}
