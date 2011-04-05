@@ -447,9 +447,17 @@ struct IPlayAreaEntity:virtual public IPlayAreaElement
 	virtual void SetAngles(const CVector &vAngles)=0;
 	virtual void SetEntityType(IEntityType *piEntityType)=0;
 
+	virtual void SetCount(unsigned int nCount)=0;
+	virtual void SetDelay(unsigned int nDelay)=0;
+	virtual void SetInterval(unsigned int nInterval)=0;
+
 	virtual CVector GetPosition()=0;
 	virtual CVector GetAngles()=0;
 	virtual void	GetEntityType(IEntityType **piEntityType)=0;
+
+	virtual unsigned int 	GetCount()=0;
+	virtual unsigned int    GetDelay()=0;
+	virtual unsigned int    GetInterval()=0;
 
 	virtual unsigned int GetRoutePoints()=0;
 	virtual bool 		 GetRoutePoint(unsigned int nIndex,SRoutePoint *psPoint)=0;
