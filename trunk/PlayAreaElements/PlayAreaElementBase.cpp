@@ -4,15 +4,15 @@
 CPlayAreaElementBase::CPlayAreaElementBase()
 {
     m_bActive=false;
-    m_dwActivationTime=0;
+	m_nActivationTime=0;
 }
 
 CPlayAreaElementBase::~CPlayAreaElementBase()
 {
 }
 
-void CPlayAreaElementBase::Activate(unsigned int dwCurrentTime){m_bActive=true;m_dwActivationTime=dwCurrentTime;}
-void CPlayAreaElementBase::Deactivate(){m_bActive=false;m_dwActivationTime=0;}
+void CPlayAreaElementBase::Activate(unsigned int dwCurrentTime){m_bActive=true;m_nActivationTime=dwCurrentTime;}
+void CPlayAreaElementBase::Deactivate(){m_bActive=false;m_nActivationTime=0;}
 bool CPlayAreaElementBase::IsActive(){return m_bActive;}
 void CPlayAreaElementBase::Reset(){Deactivate();}
 bool CPlayAreaElementBase::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pPlayAreaInfo,unsigned int dwCurrentTime,double dInterval){return true;}

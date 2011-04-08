@@ -5,7 +5,7 @@ class CPlayAreaElementBase:virtual public CSystemObjectBase,virtual public IPlay
 protected:
 
 	bool	m_bActive;
-    unsigned int   m_dwActivationTime;
+    unsigned int   m_nActivationTime;
 
 public:
 
