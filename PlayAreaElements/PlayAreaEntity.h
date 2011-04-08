@@ -17,7 +17,6 @@ class CPlayAreaEntity: virtual public CPlayAreaElementBase,virtual public IPlayA
     unsigned int         m_nInterval;
 	unsigned int         m_nDelay;
 
-    unsigned int         m_nActivationTime;
 	unsigned int         m_nLastEntityTime;
 
 public:
