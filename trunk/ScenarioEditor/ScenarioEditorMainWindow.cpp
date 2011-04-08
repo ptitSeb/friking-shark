@@ -18,6 +18,7 @@ CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 	m_bAutoGenerateBSP=true;
 	m_bAutoUpdateBSP=false;
 	m_bRenderPlayArea=false;
+	m_d3DFontSize=0;
 	
 	m_bInspectionMode=false;
 	m_bShowTerrainPanel=true;
@@ -320,14 +321,45 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 		}
 		if(m_nSelectedEntity!=-1)
 		{
-			CVector vPos=m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetPosition();
-			CVector vAngles=m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetAngles();
-			m_vEntityControls[m_nSelectedEntity]->m_piDesignObject->DesignRender(piRender,vPos,vAngles,true);
+			m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->DesignRender(piRender,true);
 		}
-
+		
 		RenderRoute(piRender,m_nSelectedEntity,m_nSelectedRoutePoint);
-
+		
 		piRender->EndStagedRendering();
+
+		if(m_nSelectedEntity!=-1)
+		{
+			double dFontSize=0;
+			IGenericFont *piFont=NULL;
+			GetFont(&piFont,&dFontSize);
+			if(m_d3DFontSize>0){dFontSize=m_d3DFontSize;}
+			char sDescr[128];
+			unsigned int nDescrLen=0;
+			unsigned int nCount=m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetCount();
+			unsigned int nDelay=m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetDelay();
+			if(nCount>1)
+			{
+				nDescrLen+=sprintf(sDescr+nDescrLen,"x%d",nCount);
+				unsigned int nInterval=m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetInterval();
+				if(nInterval){nDescrLen+=sprintf(sDescr+nDescrLen," (%.02f s)",((double)nInterval)/1000.0);}		
+			}
+			if(nDelay){nDescrLen+=sprintf(sDescr+nDescrLen," + %.02f s",((double)nDelay)/1000.0);}
+			if(nDescrLen)
+			{
+				CVector vPos=m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetPosition();
+				IEntityType *piType=NULL;
+				m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetEntityType(&piType);
+				if(piType)
+				{
+					vPos+=m_Camera.m_piCamera->GetUpVector()*piType->DesignGetRadius();
+					vPos-=m_Camera.m_piCamera->GetRightVector()*piType->DesignGetRadius();
+				}
+				if(piFont){piFont->RenderText(dFontSize,vPos,sDescr);}
+				REL(piType);
+			}
+			REL(piFont);		
+		}
 	}
 
 	m_Render.m_piRender->PopOptions();
@@ -1083,10 +1115,40 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			pEntity->m_piPlayAreaEntity->SetAngles(vAngles);
 			UpdateTexturization();
 		}
-		else if(m_piBTEntityClearRoute==piControl)
+		else if(piControl==m_piBTEntityClearRoute)
 		{
 			pEntity->m_piPlayAreaEntity->ClearRoute();
 			m_nSelectedRoutePoint=-1;
+		}
+		else if(piControl==m_piBTEntityIncreaseCount)
+		{
+			int nCount=pEntity->m_piPlayAreaEntity->GetCount();
+			pEntity->m_piPlayAreaEntity->SetCount(nCount+1);
+		}
+		else if(piControl==m_piBTEntityDecreaseCount)
+		{
+			int nCount=pEntity->m_piPlayAreaEntity->GetCount();
+			if(nCount>1){pEntity->m_piPlayAreaEntity->SetCount(nCount-1);}
+		}
+		else if(piControl==m_piBTEntityIncreaseDelay)
+		{
+			int nDelay=pEntity->m_piPlayAreaEntity->GetDelay();
+			pEntity->m_piPlayAreaEntity->SetDelay(nDelay+100);
+		}
+		else if(piControl==m_piBTEntityDecreaseDelay)
+		{
+			int nDelay=pEntity->m_piPlayAreaEntity->GetDelay();
+			if(nDelay>=100){pEntity->m_piPlayAreaEntity->SetDelay(nDelay-100);}
+		}
+		else if(piControl==m_piBTEntityIncreaseInterval)
+		{
+			int nInterval=pEntity->m_piPlayAreaEntity->GetInterval();
+			pEntity->m_piPlayAreaEntity->SetInterval(nInterval+100);
+		}		
+		else if(piControl==m_piBTEntityDecreaseInterval)
+		{
+			int nInterval=pEntity->m_piPlayAreaEntity->GetInterval();
+			if(nInterval>=100){pEntity->m_piPlayAreaEntity->SetInterval(nInterval-100);}
 		}
 	}
 	if(pFormation)
@@ -1654,8 +1716,17 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 
 		CVector vAngles=m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetAngles();
 		char A[MAX_PATH];
-		sprintf(A,"Yaw      : %.02f",vAngles.c[YAW]);
+		sprintf(A,"Yaw   : %.02f",vAngles.c[YAW]);
 		m_piSTEntityYaw->SetText(A);
+		
+		sprintf(A,"Count : %d",m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetCount());
+		m_piSTEntityCount->SetText(A);
+		
+		sprintf(A,"Delay : %.02fs",((double)m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetDelay())/1000.0);
+		m_piSTEntityDelay->SetText(A);
+		
+		sprintf(A,"Inter : %.02fs",((double)m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetInterval())/1000.0);
+		m_piSTEntityInterval->SetText(A);
 	}
 	if(m_nSelectedFormation!=-1)
 	{
