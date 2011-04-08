@@ -54,7 +54,8 @@ public:
 	void    Interpose(IEntity *pTarget1,IEntity *pTarget2){m_pInterposeTarget1=pTarget1;m_pInterposeTarget2=pTarget2;}
 	void    OffsetPursue(IEntity *pTarget,CVector &vOffset){m_pOffsetPursueTarget=pTarget;m_vOffsetPursueOffset=vOffset;}
 	void    FollowRoute(IRoute *piRoute){m_piRoute=piRoute;m_nRoutePoint=0;}
-
+	bool    HasFinishedRoute(){return m_piRoute==NULL || (m_piRoute->GetNextPointIndex(m_nRoutePoint)==m_nRoutePoint);}
+	
 	CVector ProcessBehaviours(IEntity *piEntity,double dTimeFraction);
 
 	CSteeringBehaviours(void);

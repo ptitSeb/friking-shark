@@ -4,7 +4,7 @@
 
 CTruckType::CTruckType()
 {
-  m_dMaxAngularSpeed=0;
+  PersistencyInitialize();
 }
 
 CTruckType::~CTruckType()
@@ -27,6 +27,8 @@ CTruck::CTruck(CTruckType *pType)
     m_sClassName="CTruck";
     m_pType=pType;
     m_dwDamageType=DAMAGE_TYPE_NORMAL;
+	m_nRoutePoint=0;
+	m_bRouteFinished=false;
 }
 
 void CTruck::OnKilled()
@@ -50,54 +52,93 @@ void CTruck::OnKilled()
   CEntityBase::OnKilledInternal(bRemove);
 }
 
+void CTruck::AcquireTarget()
+{
+	IEntity 		*piTarget=NULL;
+	IEntityManager 	*piManager=GetEntityManager();
+	if(piManager){piTarget=piManager->FindEntity("Player");}
+	SetTarget(piTarget);
+}
+
 void CTruck::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
 
-	GetTarget();
-	//RTTRACE("On surface %d",m_PhysicInfo.bOnSurface);
-	VectorsFromAngles(m_PhysicInfo.vAngles,&m_PhysicInfo.vForward);
-	if(m_PhysicInfo.bOnSurface)
+	
+	if(m_piTarget==NULL){AcquireTarget();}
+	
+	if(m_bRouteFinished)
 	{
-		VectorsFromAngles(m_PhysicInfo.vAngles,&m_PhysicInfo.vForward);
-		CVector vForce=m_Behaviours.ProcessBehaviours(this,dTimeFraction);
-		m_PhysicInfo.fOwnForce.dForce=vForce.N();
-		m_PhysicInfo.fOwnForce.vDir=vForce;
-		m_PhysicInfo.fOwnForce.dwForceType=PHYSIC_FORCE_NORMAL;
-		m_PhysicInfo.fOwnForce.dMaxVelocity=m_PhysicInfo.dMaxVelocity;
+		double dVel=m_PhysicInfo.vVelocity.N();
+		if(dVel!=0)
+		{
+			double dNewVel=dVel-m_PhysicInfo.dMaxVelocity*2.0*dTimeFraction;
+			if(dNewVel<0){dNewVel=0;}
+			m_PhysicInfo.vVelocity*=dNewVel;
+		}
 	}
-	else
+	else if(m_piRoute)
 	{
-		m_PhysicInfo.fOwnForce.vDir=Origin;
-		m_PhysicInfo.fOwnForce.dForce=0;
-		m_PhysicInfo.fOwnForce.dMaxVelocity=0;
+		CVector vDest,vDir;
+		// Just follow the configured route
+		CVector vForward,vRight,vUp;
+		double dCurrentAngularSpeed=m_pType->m_dMaxAngularSpeed;
+		VectorsFromAngles(m_PhysicInfo.vAngles.c[YAW],m_PhysicInfo.vAngles.c[PITCH],0,vForward,vRight,vUp);
+		vDest=m_piRoute->GetAbsolutePoint(m_nRoutePoint);
+		vDir=vDest-m_PhysicInfo.vPosition;
+		double dDist=vDir.N();  
+		
+		bool bNext=false;
+		int nNext=m_piRoute->GetNextPointIndex(m_nRoutePoint);
+		if(nNext!=m_nRoutePoint)
+		{
+			CVector vDirNext=m_piRoute->GetAbsolutePoint(m_piRoute->GetNextPointIndex(nNext))-vDest;
+			vDirNext.N();
+			
+			double dCirclePerimeter=(m_PhysicInfo.dMaxVelocity*360.0/m_pType->m_dMaxAngularSpeed);
+			double dCapableRadius=(dCirclePerimeter/(2*PI));
+			
+			CVector vPerpB=vDirNext^vUp;
+			CVector vPB1=vDest+vDirNext*dDist;
+			CPlane  vPlaneA=CPlane(vDir,m_PhysicInfo.vPosition);
+			
+			double dSide1=vPlaneA.GetSide(vPB1);
+			double dSide2=vPlaneA.GetSide(vPB1+vPerpB*10000.0);
+			double dLength=(dSide1-dSide2);
+			double dFraction=dLength?dSide1/dLength:0;
+			double dFinalRadius=fabs(10000.0*dFraction);
+			
+			bNext=(dFinalRadius<dCapableRadius);
+		}
+		bNext=(bNext || dDist<m_PhysicInfo.dMaxVelocity*0.1);
+		if(bNext)
+		{
+			if(nNext==m_nRoutePoint)
+			{
+				m_bRouteFinished=true;
+			}
+			else
+			{
+				m_nRoutePoint=nNext;
+			}
+		}
+		// Head to the desired direction
+		double dDesiredYaw=0,dDesiredPitch=0;
+		AnglesFromVector(vDir,dDesiredYaw,dDesiredPitch);
+		m_PhysicInfo.vAngles.c[YAW]=ApproachAngle(m_PhysicInfo.vAngles.c[YAW],dDesiredYaw,-dCurrentAngularSpeed*dTimeFraction);
+		VectorsFromAngles(m_PhysicInfo.vAngles,&m_PhysicInfo.vVelocity);
+		m_PhysicInfo.vVelocity*=m_PhysicInfo.dMaxVelocity;
+		m_dwNextProcessFrame=dwCurrentTime+10;
 	}
-	m_PhysicInfo.vAngles=AnglesFromVector(m_PhysicInfo.vVelocity);
-}
-
-void CTruck::Render(IGenericRender *piRender,IGenericCamera *piCamera)
-{
-	CEntityBase::Render(piRender,piCamera);
-	piRender->RenderLine(m_PhysicInfo.vPosition,m_PhysicInfo.vPosition+m_PhysicInfo.fOwnForce.vDir*m_PhysicInfo.fOwnForce.dForce,CVector(1,0,0),0xFFFF);
-	piRender->RenderLine(m_PhysicInfo.vPosition,m_PhysicInfo.vPosition+m_PhysicInfo.vVelocity,CVector(0,1,0),0xFFFF);
-
-	CVector vVelocityDir=m_PhysicInfo.vVelocity;
-	vVelocityDir.N();
-	piRender->RenderLine(m_PhysicInfo.vPosition,m_PhysicInfo.vPosition+vVelocityDir*m_PhysicInfo.dMaxVelocity,CVector(0,0.5,0));
 }
 
 void CTruck::SetRoute( IRoute *piRoute )
 {
 	CEntityBase::SetRoute(piRoute);
-	m_Behaviours.FollowRoute(piRoute);
 }
 
-IEntity *CTruck::GetTarget()
+bool CTruck::HasFinishedRoute()
 {
-	if(m_piTarget==NULL)
-	{
-		IEntityManager *piManager=GetEntityManager();
-		if(piManager){SetTarget(piManager->FindEntity("Player"));}
-	}
-	return m_piTarget;
+	return m_piRoute==NULL || m_bRouteFinished;
 }
+
