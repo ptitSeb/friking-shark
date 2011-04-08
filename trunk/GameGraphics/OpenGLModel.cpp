@@ -185,7 +185,7 @@ bool COpenGLModel::LoadFromFile()
 					}
 				}
 
-				float ambient[]={(float)pBuffer->vAmbientColor.c[0],(float)pBuffer->vAmbientColor.c[1],(float)pBuffer->vAmbientColor.c[2]};
+				float ambient[]={(float)pBuffer->vDiffuseColor.c[0],(float)pBuffer->vDiffuseColor.c[1],(float)pBuffer->vDiffuseColor.c[2]};
 				float opacity=pBuffer->fOpacity;
 
 				// Procesado de la caras,se van alimentando simultaneamente el mapa
