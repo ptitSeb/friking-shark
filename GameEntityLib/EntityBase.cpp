@@ -197,6 +197,8 @@ void CEntityBase::SetRoute(IRoute *piRoute)
 {
     m_piRoute=piRoute;
 }
+bool CEntityBase::HasFinishedRoute(){return true;}
+
 
 unsigned int CEntityBase::AddWeapon(IWeapon *piWeapon)
 {

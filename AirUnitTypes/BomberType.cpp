@@ -3,14 +3,9 @@
 
 CBomberType::CBomberType()
 {
-  m_dMaxHealth=20;
-  m_dMaxVelocity=20;
-  m_dTimeFirstShotMin=0;
-  m_dTimeFirstShotMax=0;
-  m_dTimeBetweenShotsMin=0;
-  m_dTimeBetweenShotsMax=0;
   m_nDamageType=DAMAGE_TYPE_NORMAL;
   m_nMovementType=PHYSIC_MOVE_TYPE_FLY;
+  PersistencyInitialize();
 }
 
 CBomberType::~CBomberType(){}
@@ -28,8 +23,6 @@ CBomber::CBomber(CBomberType *pType,unsigned int dwCurrentTime)
   m_sClassName="CBomber";
   m_pType=pType;
   m_nRoutePoint=0;
-  m_PhysicInfo.fOwnForce.dForce=0;
-  m_PhysicInfo.fOwnForce.dMaxVelocity=m_pType->m_dMaxVelocity;
   m_dwNextProcessFrame=dwCurrentTime+100;
   m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeFirstShotMax-m_pType->m_dTimeFirstShotMin)+m_pType->m_dTimeFirstShotMin;
 }
@@ -57,8 +50,8 @@ void CBomber::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
   size_t nAnimationToSet=0;
 
-	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
-
+  CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
+  
   double dMaxHealth=GetMaxHealth();
   if(dMaxHealth)
   {
@@ -82,8 +75,8 @@ void CBomber::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
     else
     {
       m_PhysicInfo.fOwnForce.vDir=vDir;
-      m_PhysicInfo.fOwnForce.dForce=m_pType->m_dMaxVelocity;
-      m_PhysicInfo.fOwnForce.dMaxVelocity=vDir*m_pType->m_dMaxVelocity;
+	  m_PhysicInfo.fOwnForce.dForce=m_PhysicInfo.dMaxVelocity;
+	  m_PhysicInfo.fOwnForce.dMaxVelocity=m_PhysicInfo.dMaxVelocity;
       m_dwNextProcessFrame=dwCurrentTime+10;
     }
     if(dwCurrentTime>m_dwNextShotTime)
@@ -105,4 +98,20 @@ IEntity *CBomber::GetTarget()
     }
   }
   return m_piTarget;
+}
+
+bool CBomber::HasFinishedRoute()
+{
+	return m_piRoute==NULL || ((int)m_piRoute->GetNextPointIndex(m_nRoutePoint)==(int)m_nRoutePoint);
+}
+
+void CBomber::SetRoute(IRoute *piRoute)
+{
+	CEntityBase::SetRoute(piRoute);
+	if(piRoute)
+	{
+		// Si hay ruta configurara se establece la velocidad maxima en la direccion de los primeros puntos
+		// ya que el bombardero aplica fuerzas para moverse y le cuesta coger velocidad.
+		m_PhysicInfo.vVelocity=m_piRoute->GetDirection(0)*m_PhysicInfo.dMaxVelocity;
+	}
 }

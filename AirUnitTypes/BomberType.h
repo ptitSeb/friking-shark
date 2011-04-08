@@ -3,7 +3,6 @@
 class CBomberType: public CEntityTypeBase
 {
 public:
-  double  m_dMaxVelocity;
   double  m_dTimeFirstShotMin;
   double  m_dTimeFirstShotMax;
   double  m_dTimeBetweenShotsMin;
@@ -32,7 +31,9 @@ class CBomber: public CEntityBase
   CBomberType  *m_pType;
 
 public:
-
+  bool HasFinishedRoute();
+  void SetRoute(IRoute *piRoute);
+  
   bool OnCollision(IEntity *pOther,CVector &vCollisionPos);
   void OnKilled();
   void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);

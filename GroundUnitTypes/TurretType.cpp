@@ -5,7 +5,8 @@ CTurretType::CTurretType()
 {
 	m_nDamageType=DAMAGE_TYPE_NORMAL;
 	m_nMovementType=PHYSIC_MOVE_TYPE_NONE;
-	m_dMaxAngle=0;
+	
+	PersistencyInitialize();
 }
 
 CTurretType::~CTurretType()
@@ -14,7 +15,7 @@ CTurretType::~CTurretType()
 
 IEntity *CTurretType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
 {
-	CTurret *piEntity=new CTurret(this);
+	CTurret *piEntity=new CTurret(this,dwCurrentTime);
 	InitializeEntity(piEntity,dwCurrentTime);
 	return piEntity;
 }
@@ -25,12 +26,12 @@ void CTurretType::InitializeEntity( CEntityBase *piEntity,unsigned int dwCurrent
 	piEntity->SetState(eTurretState_Normal);
 }
 
-CTurret::CTurret(CTurretType *pType)
+CTurret::CTurret(CTurretType *pType,unsigned int dwCurrentTime)
 {
 	m_bTargetLocked=false;
-	m_dwNextShotTime=0;
 	m_sClassName="CTurret";
 	m_pType=pType;
+	m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeFirstShotMax-m_pType->m_dTimeFirstShotMin)+m_pType->m_dTimeFirstShotMin;
 }
 
 void CTurret::OnRemoved(IEntity *piEntity)
@@ -133,6 +134,6 @@ void CTurret::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 	if(m_piTarget && m_bTargetLocked && dwCurrentTime>m_dwNextShotTime && m_vWeapons.size())
 	{
 		FireWeapon(0,dwCurrentTime);
-		m_dwNextShotTime=dwCurrentTime+100;
+		m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeBetweenShotsMax-m_pType->m_dTimeBetweenShotsMin)+m_pType->m_dTimeBetweenShotsMin;
 	}
 }

@@ -137,7 +137,8 @@ public:
 	
     // Rutas
     void SetRoute(IRoute *piRoute);
-
+	bool HasFinishedRoute();
+	
     IEntity *GetTarget();
 	void	 SetTarget(IEntity *piTarget);
 

@@ -9,5 +9,8 @@
 #include "GameRunTimeLib.h"
 #include "VectorLib.h"
 #include "GameEntityLib.h"
+#include "SingletonWrapper.h"
+
+extern CSingletonWrapper<IPlayAreaManager> g_PlayAreaManagerWrapper;
 
 #endif
