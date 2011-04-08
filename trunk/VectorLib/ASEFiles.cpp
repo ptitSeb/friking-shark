@@ -229,6 +229,7 @@ bool CASEFileType::Open(const char *sFileName)
 	mKeyNames["*MESH_TFACE"]			=ASE_MESH_TFACE;
 	mKeyNames["*MESH_NUMCVERTEX"]		=ASE_MESH_NUMCVERTEX;
 	mKeyNames["*MESH_NUMCVFACES"]		=ASE_MESH_NUMCVFACES;
+	mKeyNames["*MESH_NUMCFACES"]		=ASE_MESH_NUMCVFACES;// For Blender ASE exporter.
 	mKeyNames["*MESH_CFACELIST"]		=ASE_MESH_CFACELIST;
 	mKeyNames["*MESH_CFACE"]			=ASE_MESH_CFACE;
 	mKeyNames["*MESH_CVERTLIST"]		=ASE_MESH_CVERTLIST;
