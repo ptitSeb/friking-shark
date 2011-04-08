@@ -90,6 +90,7 @@ public:
 	std::string							m_sFile;
 
 	unsigned long		m_dwNexControlKey;
+	double				m_d3DFontSize;
 	bool				m_bBlend;
 	bool				m_bSolid;
 	bool				m_bTextures;
@@ -237,7 +238,16 @@ public:
 	IGameGUIButton *m_piBTEntityDecreaseYaw;
 	IGameGUIButton *m_piBTEntityIncreaseYaw;
 	IGameGUIButton *m_piBTEntityClearRoute;
-
+	IGameGUILabel  *m_piSTEntityCount;
+	IGameGUIButton *m_piBTEntityDecreaseCount;
+	IGameGUIButton *m_piBTEntityIncreaseCount;
+	IGameGUILabel  *m_piSTEntityDelay;
+	IGameGUIButton *m_piBTEntityDecreaseDelay;
+	IGameGUIButton *m_piBTEntityIncreaseDelay;
+	IGameGUILabel  *m_piSTEntityInterval;
+	IGameGUIButton *m_piBTEntityDecreaseInterval;
+	IGameGUIButton *m_piBTEntityIncreaseInterval;
+	
 	// Formation
 
 	IGameGUIButton *m_piBTNewFormation;
@@ -474,10 +484,19 @@ public:
 		CHILD_MAP_ENTRY("EntityName",m_piSTEntityName);
 		CHILD_MAP_ENTRY("EntityObjectLabel",m_piSTEntityObjectLabel);
 		CHILD_MAP_ENTRY("EntityYaw",m_piSTEntityYaw);
+		CHILD_MAP_ENTRY("EntityCount",m_piSTEntityCount);
+		CHILD_MAP_ENTRY("EntityDelay",m_piSTEntityDelay);
+		CHILD_MAP_ENTRY("EntityInterval",m_piSTEntityInterval);
 		CHILD_MAP_ENTRY_EX("EntitySample",m_piBTEntitySample,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("EntityRemove",m_piBTEntityRemove,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("EntityDecreaseYaw",m_piBTEntityDecreaseYaw,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("EntityIncreaseYaw",m_piBTEntityIncreaseYaw,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("EntityDecreaseCount",m_piBTEntityDecreaseCount,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("EntityIncreaseCount",m_piBTEntityIncreaseCount,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("EntityDecreaseDelay",m_piBTEntityDecreaseDelay,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("EntityIncreaseDelay",m_piBTEntityIncreaseDelay,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("EntityDecreaseInterval",m_piBTEntityDecreaseInterval,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("EntityIncreaseInterval",m_piBTEntityIncreaseInterval,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("EntityClearRoute",m_piBTEntityClearRoute,IGameGUIButtonEvents);
 
 		CHILD_MAP_ENTRY("FormationPanel",m_piGRFormationPanel);
@@ -609,6 +628,7 @@ public:
 		PROP_VALUE_FLAGS(m_eReferenceSystem,"ReferenceSystem",eGameGUIReferenceSystem_Relative,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_bAutoGenerateBSP,"GenerateBSP",1,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_bAutoUpdateBSP,"UpdateBSP",0,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_d3DFontSize,"3DFontSize",0,MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP()
 
 	bool InitWindow(IGameWindow *piParent,bool bPopup);
