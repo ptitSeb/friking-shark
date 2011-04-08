@@ -7,19 +7,19 @@ X Posibilidad de mover el playarea en el editor de escenarios, para poder centra
 X Disparo de enemigos a posicion prevista en lugar de actual.
 	X para esto hay que establecer la velocidad actual del player.
 		X Se aplica el mismo targeting del juego original, que solo tiene en cuenta el movimiento del scroll, no la velocidad del player.
+X Ampliacion de la funcionalidad del PlayAreaEntity similar a los elementos de las formaciones.
+	X delay
+	X numero
+	X intervalo
+X Movimiento de vehiculos
+	X corregir parada
+	X quitar la orientacion en funcion del vector velocidad?
+X Comportamiento del fighter similar al FS (desvio a la altura del player en determinadas formaciones)
+X Truck->Vehicle
+	X Cambiar el nombre a la clase
 - Los enemigos deben disparar solo cuando son visibles
 - Movimiento del bonus.
-- Ampliacion de la funcionalidad del PlayAreaEntity similar a los elementos de las formaciones.
-	- delay
-	- numero
-	- intervalo
 - Gizmo de rotacion en el editor de escenarios.
-- Truck->GroundVehicle
-	- Cambiar el nombre a la clase
-- Movimiento de vehiculos
-	- fuerza de frenada
-	- corregir parada
-	- quitar la orientacion en funcion del vector velocidad?
 - Presentacion/Despedida del player como en el juego original
 	- Dos puntos en el editor para cada cosa.
 - Vehiculos maritimos (editor de escenarios + colisiones en plano de agua)
@@ -29,7 +29,6 @@ X Disparo de enemigos a posicion prevista en lugar de actual.
 			- mean shift
 		- cantidad en funcion de la velocidad del impacto y el tamaño de la entidad
 		- direccion en funcion de la direccion del impacto
-- Comportamiento del fighter similar al FS (desvio a la altura del player en determinadas formaciones)
 - Mejorar la lista de objetos (entidades y formaciones)
 	- Scroll.
 	- Nombres.

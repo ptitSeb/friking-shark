@@ -222,7 +222,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\TruckType.cpp"
+				RelativePath=".\VehicleType.cpp"
 				>
 			</File>
 		</Filter>
@@ -252,7 +252,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\TruckType.h"
+				RelativePath=".\VehicleType.h"
 				>
 			</File>
 		</Filter>

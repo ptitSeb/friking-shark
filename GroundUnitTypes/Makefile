@@ -17,7 +17,7 @@ INCLUDES = -I. \
 SOURCES = GroundUnitTypes.cpp\
 StaticEntityType.cpp\
 StaticStructureType.cpp\
-TruckType.cpp\
+VehicleType.cpp\
 TurretType.cpp\
 stdafx.cpp
 
