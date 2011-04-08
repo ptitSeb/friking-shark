@@ -1,48 +1,47 @@
 #include "./stdafx.h"
-#include "TruckType.h"
-#include "GameGraphics.h"
+#include "VehicleType.h"
 
-CTruckType::CTruckType()
+CVehicleType::CVehicleType()
 {
   PersistencyInitialize();
 }
 
-CTruckType::~CTruckType()
+CVehicleType::~CVehicleType()
 {
 }
 
-IEntity *CTruckType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
+IEntity *CVehicleType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
 {
-    CTruck *piEntity=new CTruck(this);
+    CVehicle *piEntity=new CVehicle(this);
     InitializeEntity(piEntity,dwCurrentTime);
-    piEntity->SetState(eTruckState_Normal);
+    piEntity->SetState(eVehicleState_Normal);
 	piEntity->GetPhysicInfo()->dMass=1;
 	piEntity->GetPhysicInfo()->dwCollisionType=PHYSIC_COLLISION_TYPE_SLIDE;
     return piEntity;
 }
 
-CTruck::CTruck(CTruckType *pType)
+CVehicle::CVehicle(CVehicleType *pType)
 {
 	m_piTarget=NULL;
-    m_sClassName="CTruck";
+    m_sClassName="CVehicle";
     m_pType=pType;
     m_dwDamageType=DAMAGE_TYPE_NORMAL;
 	m_nRoutePoint=0;
 	m_bRouteFinished=false;
 }
 
-void CTruck::OnKilled()
+void CVehicle::OnKilled()
 {
   bool bRemove=false;
   m_PhysicInfo.dwBoundsType=PHYSIC_BOUNDS_TYPE_NONE;
-  if(m_pTypeBase->GetStateAnimations(eTruckState_Destroyed))
+  if(m_pTypeBase->GetStateAnimations(eVehicleState_Destroyed))
   {
     m_dwDamageType=DAMAGE_TYPE_NONE;
     m_PhysicInfo.dwBoundsType=PHYSIC_BOUNDS_TYPE_NONE;
     m_PhysicInfo.dwMoveType=PHYSIC_MOVE_TYPE_NONE;
     m_PhysicInfo.dwCollisionType=PHYSIC_COLLISION_TYPE_STUCK;
 	
-	SetState(eTruckState_Destroyed);
+	SetState(eVehicleState_Destroyed);
   }
   else
   {
@@ -52,7 +51,7 @@ void CTruck::OnKilled()
   CEntityBase::OnKilledInternal(bRemove);
 }
 
-void CTruck::AcquireTarget()
+void CVehicle::AcquireTarget()
 {
 	IEntity 		*piTarget=NULL;
 	IEntityManager 	*piManager=GetEntityManager();
@@ -60,7 +59,7 @@ void CTruck::AcquireTarget()
 	SetTarget(piTarget);
 }
 
-void CTruck::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
+void CVehicle::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
 
@@ -132,12 +131,12 @@ void CTruck::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 	}
 }
 
-void CTruck::SetRoute( IRoute *piRoute )
+void CVehicle::SetRoute( IRoute *piRoute )
 {
 	CEntityBase::SetRoute(piRoute);
 }
 
-bool CTruck::HasFinishedRoute()
+bool CVehicle::HasFinishedRoute()
 {
 	return m_piRoute==NULL || m_bRouteFinished;
 }
