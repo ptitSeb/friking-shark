@@ -234,13 +234,14 @@ public:
 	bool			GetTerrainStats(double *pdVertexOverhead,double *pdFaceOverhead);
 	bool			GetTerrainHeightAt( CVector vPos ,double *pdHeight);
 	bool			GetTerrainTrace( CVector vPoint1 ,CVector vPoint2 ,CVector *pHitPos);
-
+	
 	bool UpdateTerrain();
 
 	// IWorldManager
 	void SetupRenderingEnvironment(IGenericRender *piRender);
 
-
+	CTraceInfo GetTerrainTrace( CVector vPoint1 ,CVector vPoint2);
+	
     CWorldManager();
     virtual ~CWorldManager();
 };

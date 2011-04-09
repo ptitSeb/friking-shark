@@ -885,12 +885,46 @@ bool CWorldManager::GetTerrainHeightAt( CVector vPos ,double *pdHeight)
 
 bool CWorldManager::GetTerrainTrace( CVector vPoint1 ,CVector vPoint2 ,CVector *pHitPos )
 {
-	if(pHitPos){*pHitPos=Origin;}
-	if(m_pTerrainBSP==NULL){return false;}
-	CTraceInfo info=m_pTerrainBSP->GetTrace(vPoint1,vPoint2,vPoint1,vPoint2);
+	CTraceInfo info=GetTerrainTrace(vPoint1,vPoint2);
 	if(pHitPos){*pHitPos=info.m_vTracePos;}
 	return info.m_bTraceHit;
 }
+
+CTraceInfo CWorldManager::GetTerrainTrace( CVector vPoint1 ,CVector vPoint2)
+{
+	CTraceInfo info;
+	info.m_vTracePos=vPoint2;
+	info.m_dTraceFraction=1;
+	info.m_bTraceHit=false;
+	if(m_pTerrainBSP==NULL){return info;}
+	
+	info=m_pTerrainBSP->GetTrace(vPoint1,vPoint2,vPoint1,vPoint2);
+	if(m_TerrainWater.m_Config.bEnabled && m_TerrainBaseModel.m_piModel)
+	{
+		CVector vMins,vMaxs;
+		m_TerrainBaseModel.m_piModel->GetFrameBBox(0,0,&vMins,&vMaxs);
+		double dAbsWaterHeight=(vMaxs.c[1]-vMins.c[1])*m_TerrainWater.m_Config.dHeight+vMins.c[1];
+		
+		CPlane waterPlane(CVector(0,1,0),dAbsWaterHeight);
+		double dSide1=waterPlane.GetSide(vPoint1);
+		double dSide2=waterPlane.GetSide(vPoint2);
+		if(dSide1*dSide2<=0)
+		{
+			double dLength=(dSide1-dSide2);
+			double dFraction=dLength?dSide1/dLength:0;
+			if(dFraction<info.m_dTraceFraction)
+			{
+				info.m_dTraceFraction=dFraction;
+				info.m_vTracePos=vPoint1+(vPoint2-vPoint1)*dFraction;
+				info.m_vTracePlane=waterPlane;
+				info.m_bTraceHit=true;
+				info.m_nTraceContent=CONTENT_SOLID;
+			}
+		}
+	}
+	return info;
+}
+
 
 bool CWorldManager::SetTerrainWater( STerrainWater *pWater )
 {
