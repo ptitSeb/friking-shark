@@ -30,9 +30,9 @@ void CWorldEntity::OnDamage(double dDamage,IEntity *pAggresor)
 CTraceInfo CWorldEntity::GetTrace( const CVector &p1,const CVector &p2 )
 {
 	CTraceInfo info;
-	if(m_pManager->m_pTerrainBSP)
+	if(m_pManager)
 	{
-		info=m_pManager->m_pTerrainBSP->GetTrace(p1,p2,p1,p2);
+		info=m_pManager->GetTerrainTrace(p1,p2);
 	}
 	else
 	{
