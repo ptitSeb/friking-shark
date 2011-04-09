@@ -160,7 +160,9 @@ void EntityOperation_CheckCollision(IEntity *piOther,void *pParam1,void *pParam2
             {
                 if(piEntity->OnCollision(piOther,pInfo->traceInfo.m_vTracePos))
                 {
-                    if(pPhysicInfo->dwCollisionType==PHYSIC_COLLISION_TYPE_THROUGH)
+                    if( pPhysicInfo->dwCollisionType==PHYSIC_COLLISION_TYPE_THROUGH || 
+						pOtherPhysicInfo->dwCollisionType==PHYSIC_COLLISION_TYPE_THROUGH
+					)
                     {
                       pInfo->traceInfo.m_vTracePos=pInfo->vDestination;
                     }
