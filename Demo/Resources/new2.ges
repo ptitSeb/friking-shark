@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=10000.000000
 			NearPlane=10.000000
-			Posicion=115.749251,227.965199,4.577752
+			Posicion=920.635365,227.965199,4.682201
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -20,7 +20,7 @@ AreaDeJuego
 	DistanciaCamara=140.000000
 	Elementos
 	{
-		Item0
+		Item000
 		{
 			Class=CPlayAreaCheckPoint
 			Data
@@ -30,7 +30,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item1
+		Item001
 		{
 			Class=CPlayAreaCheckPoint
 			Data
@@ -40,13 +40,16 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item10
+		Item002
 		{
 			Class=CPlayAreaEntity
 			Data
 			{
 				Angulos=0.000000,0.000000,0.000000
-				Posicion=828.059600,54.392194,53.807677
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=904.078039,28.764935,52.965399
 				Ruta
 				{
 					Ciclica=0
@@ -54,124 +57,22 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Casa01
+					Name=AMX30
 					System=EntityTypes
 				}
 			}
 			Name=""
 			System=GameSystem
 		}
-		Item11
+		Item003
 		{
 			Class=CPlayAreaEntity
 			Data
 			{
 				Angulos=0.000000,0.000000,0.000000
-				Posicion=976.009044,-2.566307,52.965399
-				Ruta
-				{
-					Ciclica=0
-					Puntos
-				}
-				Tipo
-				{
-					Name=Hangar02
-					System=EntityTypes
-				}
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item12
-		{
-			Class=CPlayAreaEntity
-			Data
-			{
-				Angulos=0.000000,0.000000,0.000000
-				Posicion=1422.534405,0.368836,52.965399
-				Ruta
-				{
-					Ciclica=0
-					Puntos
-				}
-				Tipo
-				{
-					Name=Silo1
-					System=EntityTypes
-				}
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item13
-		{
-			Class=CPlayAreaEntity
-			Data
-			{
-				Angulos=0.000000,0.000000,0.000000
-				Posicion=1237.379038,-35.794681,52.965399
-				Ruta
-				{
-					Ciclica=0
-					Puntos
-				}
-				Tipo
-				{
-					Name=Silo0
-					System=EntityTypes
-				}
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item14
-		{
-			Class=CPlayAreaEntity
-			Data
-			{
-				Angulos=0.000000,0.000000,0.000000
-				Posicion=394.765876,35.286580,54.156631
-				Ruta
-				{
-					Ciclica=0
-					Puntos
-				}
-				Tipo
-				{
-					Name=Tank
-					System=EntityTypes
-				}
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item15
-		{
-			Class=CPlayAreaEntity
-			Data
-			{
-				Angulos=0.000000,0.000000,0.000000
-				Posicion=550.711013,2.603088,54.913456
-				Ruta
-				{
-					Ciclica=0
-					Puntos
-				}
-				Tipo
-				{
-					Name=Tank
-					System=EntityTypes
-				}
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item16
-		{
-			Class=CPlayAreaEntity
-			Data
-			{
-				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
 				Posicion=780.669946,58.735196,52.951401
 				Ruta
 				{
@@ -187,91 +88,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item17
-		{
-			Class=CPlayAreaEntity
-			Data
-			{
-				Angulos=0.000000,0.000000,0.000000
-				Posicion=835.679210,-46.102670,53.807675
-				Ruta
-				{
-					Ciclica=0
-					Puntos
-				}
-				Tipo
-				{
-					Name=Tank
-					System=EntityTypes
-				}
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item18
-		{
-			Class=CPlayAreaEntity
-			Data
-			{
-				Angulos=0.000000,0.000000,0.000000
-				Posicion=835.896759,-16.947101,53.807676
-				Ruta
-				{
-					Ciclica=0
-					Puntos
-				}
-				Tipo
-				{
-					Name=Tank
-					System=EntityTypes
-				}
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item19
-		{
-			Class=CPlayAreaEntity
-			Data
-			{
-				Angulos=0.000000,0.000000,0.000000
-				Posicion=904.078039,28.764935,52.965399
-				Ruta
-				{
-					Ciclica=0
-					Puntos
-				}
-				Tipo
-				{
-					Name=Tank
-					System=EntityTypes
-				}
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item2
-		{
-			Class=CPlayAreaEntity
-			Data
-			{
-				Angulos=0.000000,0.000000,0.000000
-				Posicion=349.564788,71.559919,52.965399
-				Ruta
-				{
-					Ciclica=0
-					Puntos
-				}
-				Tipo
-				{
-					Name=Muelle0
-					System=EntityTypes
-				}
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item20
+		Item004
 		{
 			Class=CPlayAreaCheckPoint
 			Data
@@ -281,29 +98,57 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item21
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				Bonus
-				Posicion=46.535907,-4.682201,87.965199
-				Tipo
-				{
-					Name=CuñaPorDelante
-					System=FormationTypes
-				}
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item3
+		Item005
 		{
 			Class=CPlayAreaEntity
 			Data
 			{
 				Angulos=0.000000,0.000000,0.000000
-				Posicion=918.597397,-69.281156,52.965399
+				Count=3
+				Delay=0
+				Interval=1500
+				Posicion=104.906102,94.225379,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+					{
+						Item000
+						{
+							Absoluto=1
+							Posicion=101.137355,52.965399,57.518156
+						}
+						Item001
+						{
+							Absoluto=1
+							Posicion=76.133127,52.965399,83.567455
+						}
+						Item002
+						{
+							Absoluto=1
+							Posicion=-38.404869,52.965399,84.668939
+						}
+					}
+				}
+				Tipo
+				{
+					Name=AMX30
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item006
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=410.320196,-7.692440,54.159653
 				Ruta
 				{
 					Ciclica=0
@@ -311,40 +156,22 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Hangar03
+					Name=Casa01
 					System=EntityTypes
 				}
 			}
 			Name=""
 			System=GameSystem
 		}
-		Item4
+		Item007
 		{
 			Class=CPlayAreaEntity
 			Data
 			{
 				Angulos=0.000000,0.000000,0.000000
-				Posicion=753.697763,2.744797,52.924840
-				Ruta
-				{
-					Ciclica=0
-					Puntos
-				}
-				Tipo
-				{
-					Name=Muelle3
-					System=EntityTypes
-				}
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item5
-		{
-			Class=CPlayAreaEntity
-			Data
-			{
-				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
 				Posicion=1236.298759,-35.440823,60.839599
 				Ruta
 				{
@@ -360,55 +187,32 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item6
+		Item008
 		{
-			Class=CPlayAreaEntity
+			Class=CPlayAreaFormation
 			Data
 			{
-				Angulos=0.000000,0.000000,0.000000
-				Posicion=624.441831,12.873176,52.965399
-				Ruta
-				{
-					Ciclica=0
-					Puntos
-				}
+				Bonus
+				Posicion=459.372717,-4.682201,87.965199
 				Tipo
 				{
-					Name=Muelle1
-					System=EntityTypes
+					Name=CuñaPorDelante
+					System=FormationTypes
 				}
 			}
 			Name=""
 			System=GameSystem
 		}
-		Item7
+		Item009
 		{
 			Class=CPlayAreaEntity
 			Data
 			{
-				Angulos=0.000000,0.000000,0.000000
-				Posicion=-108.038964,-4.542234,52.965399
-				Ruta
-				{
-					Ciclica=0
-					Puntos
-				}
-				Tipo
-				{
-					Name=Hangar00
-					System=EntityTypes
-				}
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item8
-		{
-			Class=CPlayAreaEntity
-			Data
-			{
-				Angulos=0.000000,0.000000,0.000000
-				Posicion=616.494455,-9.900401,54.913456
+				Angulos=90.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=338.468897,-20.149411,54.159653
 				Ruta
 				{
 					Ciclica=0
@@ -423,12 +227,63 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item9
+		Item010
 		{
 			Class=CPlayAreaEntity
 			Data
 			{
 				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=918.597397,-69.281156,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=Hangar03
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item011
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=828.059600,54.392194,53.807677
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=Casa01
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item012
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
 				Posicion=301.365058,41.844068,54.155086
 				Ruta
 				{
@@ -444,10 +299,557 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
+		Item013
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=753.697763,2.744797,52.924840
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=Muelle3
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item014
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=1422.534405,0.368836,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=Silo1
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item015
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=835.896759,-16.947101,53.807676
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=AMX30
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item016
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				Bonus
+				Posicion=17.109283,-4.682201,87.965199
+				Tipo
+				{
+					Name=P51TrianguloIzquierdaInclinado
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item017
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=1237.379038,-35.794681,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=Silo0
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item018
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				Bonus
+				Posicion=270.464859,-4.682201,87.965199
+				Tipo
+				{
+					Name=Formacion3
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item019
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				Bonus
+				Posicion=92.897849,-4.682201,87.965199
+				Tipo
+				{
+					Name=P51TrianguloDerechaInclinado
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item020
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=349.564788,71.559919,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+					{
+						Item000
+						{
+							Absoluto=1
+							Posicion=566.615829,52.965399,-71.559919
+						}
+					}
+				}
+				Tipo
+				{
+					Name=Muelle0
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item021
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=180.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=1737.460570,-66.789650,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=Silo0
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item022
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=923.489019,72.042068,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=Choza00
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item023
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=180.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=322.057293,-7.324236,54.159653
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+					{
+						Item000
+						{
+							Absoluto=1
+							Posicion=303.809188,54.159653,7.513800
+						}
+					}
+				}
+				Tipo
+				{
+					Name=AMX30
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item024
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=180.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=321.969389,-21.614759,54.159653
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+					{
+						Item000
+						{
+							Absoluto=1
+							Posicion=303.671067,54.159653,21.608472
+						}
+					}
+				}
+				Tipo
+				{
+					Name=AMX30
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item025
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=90.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=1835.774948,26.298652,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=Silo1
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item026
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=711.186868,27.293676,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=Casa0
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item027
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				Bonus
+				Posicion=149.266789,-4.682201,87.965199
+				Tipo
+				{
+					Name=P51TrianguloIzquierdaInclinado
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item028
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-108.038964,-4.542234,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=Hangar00
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item029
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=624.441831,12.873176,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=Muelle1
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item030
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=835.679210,-46.102670,53.807675
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=AMX30
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item031
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=616.494455,-9.900401,54.913456
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=Casa02
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item032
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				Bonus
+				Posicion=700.970790,-4.682201,87.965199
+				Tipo
+				{
+					Name=Derecha
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item033
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=3000
+				Interval=0
+				Posicion=813.479989,-112.285961,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+					{
+						Item000
+						{
+							Absoluto=1
+							Posicion=813.449467,49.883571,-11.023394
+						}
+					}
+				}
+				Tipo
+				{
+					Name=SmallShip
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item034
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-11.957332,-15.937998,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=AMX30
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item035
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=1500
+				Interval=0
+				Posicion=798.382453,-111.013740,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+					{
+						Item000
+						{
+							Absoluto=1
+							Posicion=800.314337,49.883571,-11.469851
+						}
+					}
+				}
+				Tipo
+				{
+					Name=SmallShip
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
 	}
 	EntityLayers
 	{
-		Item0
+		Item000
 		{
 			Config
 			{
@@ -473,7 +875,7 @@ AreaDeJuego
 }
 Terrain
 {
-	AmbientColor=0.411765,0.411765,0.411765
+	AmbientColor=0.323636,0.323636,0.323636
 	BaseModel
 	{
 		Class=Model
@@ -490,7 +892,7 @@ Terrain
 	BaseModelFile=TextureTester.ase
 	ColorLayers
 	{
-		Item0
+		Item000
 		{
 			Config
 			{
@@ -516,7 +918,7 @@ Terrain
 				System=GameResources
 			}
 		}
-		Item1
+		Item001
 		{
 			Config
 			{
@@ -542,7 +944,7 @@ Terrain
 				System=GameResources
 			}
 		}
-		Item2
+		Item002
 		{
 			Config
 			{
@@ -552,7 +954,7 @@ Terrain
 				ColorValueMargin=0.000000
 				HorzResolution=3.000000
 				Texture=sandPeq.jpg
-				VertResolution=3.000000
+				VertResolution=2.500000
 			}
 			Texture
 			{
@@ -592,7 +994,7 @@ Terrain
 	}
 	HeightLayers
 	{
-		Item0
+		Item000
 		{
 			Config
 			{
@@ -617,7 +1019,7 @@ Terrain
 				System=GameResources
 			}
 		}
-		Item1
+		Item001
 		{
 			Config
 			{
@@ -642,16 +1044,16 @@ Terrain
 				System=GameResources
 			}
 		}
-		Item2
+		Item002
 		{
 			Config
 			{
 				HeightMargin=0.050000
-				HorzResolution=4.500000
+				HorzResolution=5.500000
 				MaxHeight=1.000000
 				MinHeight=0.900000
 				Texture=ArenaOscura.jpg
-				VertResolution=4.500000
+				VertResolution=5.500000
 			}
 			Texture
 			{
@@ -694,19 +1096,19 @@ Terrain
 		{
 			Enabled=1
 			Height=0.880000
-			HorzResolution=14.000000
-			Opacity=0.200000
-			Speed=0.015000
-			Texture1=rtice_1.bmp
+			HorzResolution=21.000000
+			Opacity=0.150000
+			Speed=0.170000
+			Texture1=./Textures/rtrock_1.jpg
 			Texture2=hiervsPeq.jpg
-			VertResolution=2.500000
+			VertResolution=5.500000
 		}
 		Texture1
 		{
 			Class=Texture
 			Data
 			{
-				Archivo=rtice_1.bmp
+				Archivo=./Textures/rtrock_1.jpg
 				ArchivoAlpha=""
 				ColorKey=0.000000,0.000000,0.000000
 				UsarColorKey=0

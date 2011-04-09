@@ -8,6 +8,7 @@ struct SProjectileLauncherProjectile
 {
   CVector     vOrigin;
   CVector     vDirection;
+  CVector     vAngularVelocity;
   double      dVelocity;
   CEntityTypeWrapper projectileEntityType;
   unsigned int       dwReferenceSystem;
@@ -20,6 +21,7 @@ BEGIN_STRUCT_PROPS(SProjectileLauncherProjectile)
   PROP_VALUE_FLAGS(vOrigin,"Position",Origin,MRPF_NORMAL|MRPF_OPTIONAL)
   PROP_VALUE_FLAGS(vDirection,"Heading",CVector(1,0,0),MRPF_NORMAL|MRPF_OPTIONAL)
   PROP_VALUE_FLAGS(dVelocity,"Velocity",CVector(1,0,0),MRPF_NORMAL|MRPF_OPTIONAL)
+  PROP_VALUE_FLAGS(vAngularVelocity,"AngularVelocity",CVector(0,0,0),MRPF_NORMAL|MRPF_OPTIONAL)
   PROP_VALUE_FLAGS(dwReferenceSystem,"ReferenceSystem",eProjectileLauncherReferenceSystem_Owner,MRPF_NORMAL|MRPF_OPTIONAL)
 END_STRUCT_PROPS()
 
