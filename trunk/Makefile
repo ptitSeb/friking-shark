@@ -1,5 +1,6 @@
 
-LIBS = GameRunTimeLib\
+LIBS = JPEGLibrary/jpgdlib\
+GameRunTimeLib\
 VectorLib\
 GameEntityLib\
 GameGUILib
