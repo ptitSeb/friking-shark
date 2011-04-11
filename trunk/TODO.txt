@@ -11,6 +11,7 @@ X Ampliacion de la funcionalidad del PlayAreaEntity similar a los elementos de l
 	X delay
 	X numero
 	X intervalo
+	
 X Movimiento de vehiculos
 	X corregir parada
 	X quitar la orientacion en funcion del vector velocidad?
