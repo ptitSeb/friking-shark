@@ -76,6 +76,15 @@ bool MRSaveToContainer(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<T1
 {
     if(piNode==NULL){return false;}
     piNode->Clear();
+	// To keep the order of the elements we have to write the items as Item087 when needed
+	// here we compute the number of the padding zeros needed to guarantee the ordering and make 
+	// the text files as readable as possible
+	unsigned int nDigits=0;
+	unsigned int nElems=pItem->GetValueAddress()->size();
+	while(nElems){nDigits++;nElems/=10;}
+
+	char sFormatString[200]="Item%d";
+	if(nDigits){sprintf(sFormatString,"Item%%0%dd",nDigits);}
 
     bool bOk=true,bFinalOk=true;
     if(bFinalOk)
@@ -85,7 +94,7 @@ bool MRSaveToContainer(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<T1
         for(x=0,i=pItem->GetValueAddress()->begin();i!=pItem->GetValueAddress()->end();i++,x++)
         {
 			char sItemName[200];
-			sprintf(sItemName,"Item%d",x);
+			sprintf(sItemName,sFormatString,x);
 			ISystemPersistencyNode *piChildNode=piNode->AddNode(sItemName);
             CMRPersistentSimpleReferenceT<CONTAINED_TYPE> *pRef=MRCreateReference(&(*i),sItemName);
             bOk=MRPersistencySave(piChildNode,pRef);
@@ -156,6 +165,18 @@ bool MRSaveToContainer(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<T1
 	if(piNode==NULL){return false;}
 	piNode->Clear();
 	
+	// To keep the order of the elements we have to write the items as Item087 when needed
+	// here we compute the number of the padding zeros needed to guarantee the ordering and make 
+	// the text files as readable as possible
+	// Not really necesary here. It is included to simplify debugging as it is easier to find the config node.
+
+	unsigned int nDigits=0;
+	unsigned int nElems=pItem->GetValueAddress()->size();
+	while(nElems){nDigits++;nElems/=10;}
+
+	char sFormatString[200]="Item%d";
+	if(nDigits){sprintf(sFormatString,"Item%%0%dd",nDigits);}
+
 	bool bOk=true,bFinalOk=true;
 	if(bFinalOk)
 	{
@@ -164,7 +185,7 @@ bool MRSaveToContainer(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<T1
 		for(x=0,i=pItem->GetValueAddress()->begin();i!=pItem->GetValueAddress()->end();i++,x++)
 		{
 			char sItemName[200];
-			sprintf(sItemName,"Item%d",x);
+			sprintf(sItemName,sFormatString,x);
 			ISystemPersistencyNode *piChildNode=piNode->AddNode(sItemName);
 			ISystemPersistencyNode *piChildKeyNode=piChildNode?piChildNode->AddNode("Key"):NULL;
 			ISystemPersistencyNode *piChildContentNode=piChildNode?piChildNode->AddNode("Content"):NULL;
