@@ -186,15 +186,27 @@ bool COpenGLModel::LoadFromFile()
 				}
 
 				float ambient[]={(float)pBuffer->vDiffuseColor.c[0],(float)pBuffer->vDiffuseColor.c[1],(float)pBuffer->vDiffuseColor.c[2]};
-				float opacity=pBuffer->fOpacity;
+				float opacity=pBuffer->fOpacity;	
 
 				// Procesado de la caras,se van alimentando simultaneamente el mapa
 				// de vertices y los buffers.
-				
+
 				for (int x=0;x<p3DSFrame->nFaces;x++)
 				{
 					S3DSColorFace *pColorFace=ppColorFaces[x];
 					S3DSTextureFace *pTextFace=ppTextureFaces[x];
+
+					// Si no existe informacion de normales se calcula la normal de la cara
+					CVector vFaceFlatNormal;
+					if(!p3DSFrame->pVertexNormals)
+					{
+						int nVertexes[3];
+						nVertexes[0]=p3DSFrame->pFaces[(x*3)];
+						nVertexes[1]=p3DSFrame->pFaces[(x*3)+1];
+						nVertexes[2]=p3DSFrame->pFaces[(x*3)+2];
+						CPlane plane(p3DSFrame->pVertexes[nVertexes[2]],p3DSFrame->pVertexes[nVertexes[1]],p3DSFrame->pVertexes[nVertexes[0]]);
+						vFaceFlatNormal=plane;
+					}
 
 					for (int v=0;v<3;v++)
 					{
@@ -213,7 +225,9 @@ bool COpenGLModel::LoadFromFile()
 						}
 						else
 						{
-						  key.n[0]=key.n[1]=key.n[2]=0;
+							key.n[0]=vFaceFlatNormal.c[0];
+							key.n[1]=vFaceFlatNormal.c[1];
+							key.n[2]=vFaceFlatNormal.c[2];
 						}
 
 						key.col[0]=pColorFace?p3DSFrame->pColorVertexes[pColorFace->pColorVertexes[v]].c[0]:ambient[0];
@@ -895,7 +909,7 @@ void COpenGLModel::PrepareRenderBuffer(IGenericRender *piRender, unsigned int nA
 			glEnableClientState(GL_COLOR_ARRAY);
 			glColorPointer(4,GL_FLOAT,0,pBuffer->pColorArray);
 		}
-
+		
 		if(!bRenderingShadow && piRender->AreTexturesEnabled())
 		{
 			for(unsigned int x=0;x<pBuffer->vTextureLevels.size();x++)
