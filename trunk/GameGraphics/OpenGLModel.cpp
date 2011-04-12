@@ -231,9 +231,9 @@ bool COpenGLModel::LoadFromFile()
 
 						if(p3DSFrame->pVertexNormals && p3DSFrame->pbFaceSmooth[x])
 						{
-						  key.n[0]=p3DSFrame->pVertexNormals[nSourceVertexIndex].c[0];
-						  key.n[1]=p3DSFrame->pVertexNormals[nSourceVertexIndex].c[1];
-						  key.n[2]=p3DSFrame->pVertexNormals[nSourceVertexIndex].c[2];
+						  key.n[0]=p3DSFrame->pVertexNormals[(x*3)+v].c[0];
+						  key.n[1]=p3DSFrame->pVertexNormals[(x*3)+v].c[1];
+						  key.n[2]=p3DSFrame->pVertexNormals[(x*3)+v].c[2];
 						}
 						else
 						{
