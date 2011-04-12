@@ -448,8 +448,8 @@ public:
 	void SetAmbientLight(const CVector &vColor);
 	void GetAmbientLight(CVector *pvColor);
 
-	void SetSunLight(const CVector &vPosition,const CVector &vDirection,const CVector &vColor);
-	void GetSunLight(CVector *pvPosition,CVector *pvDirection,CVector *pvColor);
+	void SetSunLight(const CVector &vPosition,const CVector &vDirection,const CVector &vAmbientColor,const CVector &vDiffuseColor,const CVector &vSpecularColor);
+	void GetSunLight(CVector *pvPosition,CVector *pvDirection,CVector *pvAmbientColor,CVector *pvDiffuseColor,CVector *pvSpecularColor);
 
 	void AddLight(IGenericLight *);
 	void RemoveLight(IGenericLight *);

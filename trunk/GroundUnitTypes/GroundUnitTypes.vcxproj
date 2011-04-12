@@ -117,8 +117,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TruckType.cpp" />
     <ClCompile Include="TurretType.cpp" />
+    <ClCompile Include="VehicleType.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GroundUnitTypes.h" />
@@ -126,8 +126,8 @@
     <ClInclude Include="StaticEntityType.h" />
     <ClInclude Include="StaticStructureType.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="TruckType.h" />
     <ClInclude Include="TurretType.h" />
+    <ClInclude Include="VehicleType.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="GroundUnitTypes.rc" />

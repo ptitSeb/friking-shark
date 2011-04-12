@@ -282,10 +282,14 @@ public:
 
 	virtual eGenericLightType GetType()=0;
 
-	virtual CVector GetColor()=0;
+	virtual CVector GetDiffuseColor()=0;
+	virtual CVector GetAmbientColor()=0;
+	virtual CVector GetSpecularColor()=0;
 	virtual CVector GetPosition()=0;
 
-	virtual void SetColor(CVector cColor)=0;
+	virtual void SetDiffuseColor(CVector cColor)=0;
+	virtual void SetAmbientColor(CVector cColor)=0;
+	virtual void SetSpecularColor(CVector cColor)=0;
 	virtual void SetPosition(CVector vPosition)=0;
 
 	virtual void SetOmni(double dRadius)=0;
@@ -409,8 +413,8 @@ public:
 	virtual void SetAmbientLight(const CVector &vColor)=0;
 	virtual void GetAmbientLight(CVector *pvColor)=0;
 
-	virtual void SetSunLight(const CVector &vPosition,const CVector &vDirection,const CVector &vColor)=0;
-	virtual void GetSunLight(CVector *pvPosition,CVector *pvDirection,CVector *pvColor)=0;
+	virtual void SetSunLight(const CVector &vPosition,const CVector &vDirection,const CVector &vAmbientColor,const CVector &vDiffuseColor,const CVector &vSpecularColor)=0;
+	virtual void GetSunLight(CVector *pvPosition,CVector *pvDirection,CVector *pvAmbientColor,CVector *pvDiffuseColor,CVector *pvSpecularColor)=0;
 
 	virtual void AddLight(IGenericLight *)=0;
 	virtual void RemoveLight(IGenericLight *)=0;

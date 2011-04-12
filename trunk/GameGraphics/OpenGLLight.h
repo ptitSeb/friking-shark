@@ -7,7 +7,10 @@ class COpenGLLight : virtual public CSystemObjectBase,virtual public IGenericLig
 
 	eGenericLightType  m_eType;
 
-	CVector m_vColor;
+	CVector m_vAmbientColor;
+	CVector m_vDiffuseColor;
+	CVector m_vSpecularColor;
+
 	CVector m_vPosition;
 
 	// only for omni sources	
@@ -29,7 +32,9 @@ public:
 	BEGIN_PROP_MAP(COpenGLLight)
 		PROP(m_eType,"Type");
 		PROP(m_vPosition,"Position");
-		PROP_VALUE(m_vColor,"Color",CVector(1,1,1));
+		PROP_VALUE(m_vAmbientColor,"Ambient",CVector(1,1,1));
+		PROP_VALUE(m_vDiffuseColor,"Diffuse",CVector(1,1,1));
+		PROP_VALUE(m_vSpecularColor,"Specular",CVector(1,1,1));
 		// only for omni sources	
 		PROP_VALUE_FLAGS(m_dOmniRadius,"OmniRadius",0,MRPF_NORMAL|MRPF_OPTIONAL);
 		// only for spot sources
@@ -46,10 +51,14 @@ public:
 	// IGenericLight
 	eGenericLightType GetType();
 
-	CVector GetColor();
+	CVector GetAmbientColor();
+	CVector GetDiffuseColor();
+	CVector GetSpecularColor();
 	CVector GetPosition();
 
-	void SetColor(CVector cColor);
+	void SetAmbientColor(CVector cColor);
+	void SetDiffuseColor(CVector cColor);
+	void SetSpecularColor(CVector cColor);
 	void SetPosition(CVector vPosition);
 
 	void SetOmni(double dRadius);
