@@ -88,7 +88,9 @@ struct S3DSFrame
 	S3DSColorFace						*pColorFaces;
 	unsigned int						*pFaceSubMaterials;// solo para archivos ASE
 	std::vector<S3DSObjectMaterial*>	 sObjectMaterials;
-
+	bool								*pbFaceSmooth;
+	CVector								*pFaceNormals;
+	
 	S3DSFrame();
 	~S3DSFrame();
 };
