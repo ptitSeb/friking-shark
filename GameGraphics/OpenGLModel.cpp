@@ -77,7 +77,11 @@ bool COpenGLModel::LoadFromFile()
 				pBuffer->vAmbientColor=p3DSMaterial->vAmbientColor;
 				pBuffer->vDiffuseColor=p3DSMaterial->vDiffuseColor;
 				pBuffer->vSpecularColor=p3DSMaterial->vSpecularColor;
-				pBuffer->fShininess=p3DSMaterial->fShininess;
+				// From http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=172040
+				//			Shininess = exp (MATERIAL_SHINE * 100.0 / 8.0 * log (2.0));
+				//			EffectiveSpecularColor = MATERIAL_SHINESTRENGTH * MATERIAL_SPECULAR + (1 - MATERIAL_SHINESTRENGTH) * MATERIAL_DIFFUSE;
+				pBuffer->vSpecularColor=(p3DSMaterial->vSpecularColor*(double)p3DSMaterial->fShininessStrength)+p3DSMaterial->vDiffuseColor*(1.0-(double)p3DSMaterial->fShininessStrength);
+				pBuffer->fShininess=(float)(exp(p3DSMaterial->fShininess * 100.0 / 8.0 * log (2.0)));
 				pBuffer->fOpacity=(float)(1.0-p3DSMaterial->fTranparency);
 
 				// Calculo de las matrices de transformacion de las coordenadas de textura
@@ -261,20 +265,20 @@ bool COpenGLModel::LoadFromFile()
 						{
 							nIndex=mVertexes.size();
 							mVertexes[key]=nIndex;
-							(*pVertexCursor++)=key.c[0];
-							(*pVertexCursor++)=key.c[1];
-							(*pVertexCursor++)=key.c[2];
-							(*pNormalCursor++)=key.n[0];
-							(*pNormalCursor++)=key.n[1];
-							(*pNormalCursor++)=key.n[2];
-							(*pColorCursor++)=key.col[0];
-							(*pColorCursor++)=key.col[1];
-							(*pColorCursor++)=key.col[2];
+							(*pVertexCursor++)=(float)key.c[0];
+							(*pVertexCursor++)=(float)key.c[1];
+							(*pVertexCursor++)=(float)key.c[2];
+							(*pNormalCursor++)=(float)key.n[0];
+							(*pNormalCursor++)=(float)key.n[1];
+							(*pNormalCursor++)=(float)key.n[2];
+							(*pColorCursor++)=(float)key.col[0];
+							(*pColorCursor++)=(float)key.col[1];
+							(*pColorCursor++)=(float)key.col[2];
 							(*pColorCursor++)=opacity;
 							if(pTextCursor)
 							{
-							  (*pTextCursor++)=key.t[0];
-							  (*pTextCursor++)=key.t[1];
+							  (*pTextCursor++)=(float)key.t[0];
+							  (*pTextCursor++)=(float)key.t[1];
 							}
 						}
 						else
@@ -873,29 +877,46 @@ void COpenGLModel::PrepareRenderBuffer(IGenericRender *piRender, unsigned int nA
 			glVertexPointer(3,GL_FLOAT,pBuffer->nVertexes*sizeof(GLfloat)*nOffset,NULL);
 			nOffset+=3;
 		}
-		if(!bRenderingShadow && pBuffer->pNormalArray)
+		if(!bRenderingShadow)
 		{
-			glEnableClientState(GL_NORMAL_ARRAY);
-			glNormalPointer(GL_FLOAT,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
-			nOffset+=3;
-		}
-		if(!bRenderingShadow && pBuffer->pColorArray)
-		{
-			glEnableClientState(GL_COLOR_ARRAY);
-			glColorPointer(4,GL_FLOAT,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
-			nOffset+=4;
-		}
-		if(!bRenderingShadow && piRender->AreTexturesEnabled())
-		{
-			for(unsigned int x=0;x<pBuffer->vTextureLevels.size();x++)
+			GLfloat  pSpecular[]={(float)pBuffer->vSpecularColor.c[0],(float)pBuffer->vSpecularColor.c[1],(float)pBuffer->vSpecularColor.c[2],pBuffer->fOpacity};
+			glMaterialfv(GL_FRONT,GL_SPECULAR,pSpecular);
+			glMaterialf(GL_FRONT,GL_SHININESS,pBuffer->fShininess);
+
+			if(pBuffer->pNormalArray)
 			{
-				SModelTextureLevel *pTextureLevel=pBuffer->vTextureLevels[x];
-				if(pTextureLevel && pTextureLevel->texture.m_piTexture && pTextureLevel->pTexVertexArray)
+				glEnableClientState(GL_NORMAL_ARRAY);
+				glNormalPointer(GL_FLOAT,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
+				nOffset+=3;
+			}
+			if(pBuffer->pColorArray)
+			{
+				glEnable(GL_COLOR_MATERIAL);
+				glColorMaterial(GL_FRONT,GL_AMBIENT_AND_DIFFUSE);
+
+				glEnableClientState(GL_COLOR_ARRAY);
+				glColorPointer(4,GL_FLOAT,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
+				nOffset+=4;
+			}
+			else
+			{
+				GLfloat  pAmbient[]={(float)pBuffer->vAmbientColor.c[0],(float)pBuffer->vAmbientColor.c[1],(float)pBuffer->vAmbientColor.c[2],pBuffer->fOpacity};
+				GLfloat  pDiffuse[]={(float)pBuffer->vDiffuseColor.c[0],(float)pBuffer->vDiffuseColor.c[1],(float)pBuffer->vDiffuseColor.c[2],pBuffer->fOpacity};
+				glMaterialfv(GL_FRONT,GL_AMBIENT,pAmbient);
+				glMaterialfv(GL_FRONT,GL_DIFFUSE,pDiffuse);
+			}
+			if(piRender->AreTexturesEnabled())
+			{
+				for(unsigned int x=0;x<pBuffer->vTextureLevels.size();x++)
 				{
-					glClientActiveTextureARB(GL_TEXTURE0_ARB+x);
-					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-					glTexCoordPointer(2,GL_FLOAT,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
-					nOffset+=2;
+					SModelTextureLevel *pTextureLevel=pBuffer->vTextureLevels[x];
+					if(pTextureLevel && pTextureLevel->texture.m_piTexture && pTextureLevel->pTexVertexArray)
+					{
+						glClientActiveTextureARB(GL_TEXTURE0_ARB+x);
+						glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+						glTexCoordPointer(2,GL_FLOAT,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
+						nOffset+=2;
+					}
 				}
 			}
 		}
@@ -907,27 +928,40 @@ void COpenGLModel::PrepareRenderBuffer(IGenericRender *piRender, unsigned int nA
 			glEnableClientState(GL_VERTEX_ARRAY);
 			glVertexPointer(3,GL_FLOAT,0,pBuffer->pVertexArray);
 		}
-		if(!bRenderingShadow && pBuffer->pNormalArray)
+		if(!bRenderingShadow)
 		{
-			glEnableClientState(GL_NORMAL_ARRAY);
-			glNormalPointer(GL_FLOAT,0,pBuffer->pNormalArray);
-		}
-		if(!bRenderingShadow && pBuffer->pColorArray)
-		{
-			glEnableClientState(GL_COLOR_ARRAY);
-			glColorPointer(4,GL_FLOAT,0,pBuffer->pColorArray);
-		}
-		
-		if(!bRenderingShadow && piRender->AreTexturesEnabled())
-		{
-			for(unsigned int x=0;x<pBuffer->vTextureLevels.size();x++)
+			if(pBuffer->pNormalArray)
 			{
-				SModelTextureLevel *pTextureLevel=pBuffer->vTextureLevels[x];
-				if(pTextureLevel && pTextureLevel->texture.m_piTexture && pTextureLevel->pTexVertexArray)
+				glEnableClientState(GL_NORMAL_ARRAY);
+				glNormalPointer(GL_FLOAT,0,pBuffer->pNormalArray);
+			}
+			if(pBuffer->pColorArray)
+			{
+				glEnableClientState(GL_COLOR_ARRAY);
+				glColorPointer(4,GL_FLOAT,0,pBuffer->pColorArray);
+
+				glEnable(GL_COLOR_MATERIAL);
+				glColorMaterial(GL_FRONT,GL_AMBIENT_AND_DIFFUSE);
+			}
+			else
+			{
+				GLfloat  pAmbient[]={(float)pBuffer->vAmbientColor.c[0],(float)pBuffer->vAmbientColor.c[1],(float)pBuffer->vAmbientColor.c[2],pBuffer->fOpacity};
+				GLfloat  pDiffuse[]={(float)pBuffer->vDiffuseColor.c[0],(float)pBuffer->vDiffuseColor.c[1],(float)pBuffer->vDiffuseColor.c[2],pBuffer->fOpacity};
+				glMaterialfv(GL_FRONT,GL_AMBIENT,pAmbient);
+				glMaterialfv(GL_FRONT,GL_DIFFUSE,pDiffuse);
+			}
+			
+			if(piRender->AreTexturesEnabled())
+			{
+				for(unsigned int x=0;x<pBuffer->vTextureLevels.size();x++)
 				{
-					glClientActiveTextureARB(GL_TEXTURE0_ARB+x);
-					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-					glTexCoordPointer(2,GL_FLOAT,0,pBuffer->vTextureLevels[x]->pTexVertexArray);
+					SModelTextureLevel *pTextureLevel=pBuffer->vTextureLevels[x];
+					if(pTextureLevel && pTextureLevel->texture.m_piTexture && pTextureLevel->pTexVertexArray)
+					{
+						glClientActiveTextureARB(GL_TEXTURE0_ARB+x);
+						glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+						glTexCoordPointer(2,GL_FLOAT,0,pBuffer->vTextureLevels[x]->pTexVertexArray);
+					}
 				}
 			}
 		}
@@ -959,7 +993,11 @@ void COpenGLModel::UnPrepareRenderBuffer(IGenericRender *piRender, unsigned int 
 
 	if(pBuffer->pVertexArray){glDisableClientState(GL_VERTEX_ARRAY);}
 	if(!bRenderingShadow && pBuffer->pNormalArray){glDisableClientState(GL_NORMAL_ARRAY);}
-	if(!bRenderingShadow && pBuffer->pColorArray){glDisableClientState(GL_COLOR_ARRAY);}
+	if(!bRenderingShadow && pBuffer->pColorArray)
+	{
+		glDisableClientState(GL_COLOR_ARRAY);
+		glDisable(GL_COLOR_MATERIAL);
+	}
 	if(!bRenderingShadow && piRender->AreTexturesEnabled())
 	{
 		for(unsigned int x=0;x<pBuffer->vTextureLevels.size();x++)

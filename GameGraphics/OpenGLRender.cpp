@@ -50,7 +50,9 @@ bool COpenGLRender::Init(std::string sClass,std::string sName,ISystem *piSystem)
 		if(m_SunLight.m_piLight)
 		{
 			m_SunLight.m_piLight->SetDirectional(CVector(0,-1,0));
-			m_SunLight.m_piLight->SetColor(CVector(0.5,0.5,0.5));
+			m_SunLight.m_piLight->SetAmbientColor(CVector(0,0,0));
+			m_SunLight.m_piLight->SetDiffuseColor(CVector(0.5,0.5,0.5));
+			m_SunLight.m_piLight->SetSpecularColor(CVector(0.5,0.5,0.5));
 		}
 
 		AddLight(m_SunLight.m_piLight);
@@ -1003,8 +1005,6 @@ void COpenGLRender::PrepareLighting()
 		glLightModeli(GL_LIGHT_MODEL_TWO_SIDE ,0);
 		glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER ,1);
 		glEnable(GL_LIGHTING);
-		glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE);
-		glEnable(GL_COLOR_MATERIAL);
 	}
 
 	std::vector<IGenericLight *>::iterator i;
@@ -1041,22 +1041,32 @@ void COpenGLRender::PrepareLighting()
 			glLightf(nlIndex,GL_SPOT_EXPONENT	,(float)dExponent);
 		}
 
-		CVector color=piLight->GetColor();
+		CVector ambient=piLight->GetAmbientColor();
+		CVector diffuse=piLight->GetDiffuseColor();
+		CVector specular=piLight->GetSpecularColor();
 		CVector position=(eType==eGenericLightType_Directional)?piLight->GetDirectionalDirection():piLight->GetPosition();
-		float vColor[4]={0},vPos[4]={0};
-		vColor[0]=(float)color.c[0];
-		vColor[1]=(float)color.c[1];
-		vColor[2]=(float)color.c[2];
-		vColor[3]=1.0;
+		float vAmbientColor[4]={0},vDiffuseColor[4]={0},vSpecularColor[4]={0},vPos[4]={0};
+		vAmbientColor[0]=(float)ambient.c[0];
+		vAmbientColor[1]=(float)ambient.c[1];
+		vAmbientColor[2]=(float)ambient.c[2];
+		vAmbientColor[3]=1.0;
+		vDiffuseColor[0]=(float)diffuse.c[0];
+		vDiffuseColor[1]=(float)diffuse.c[1];
+		vDiffuseColor[2]=(float)diffuse.c[2];
+		vDiffuseColor[3]=1.0;
+		vSpecularColor[0]=(float)specular.c[0];
+		vSpecularColor[1]=(float)specular.c[1];
+		vSpecularColor[2]=(float)specular.c[2];
+		vSpecularColor[3]=1.0;
 		vPos[0]=(float)position.c[0];
 		vPos[1]=(float)position.c[1];
 		vPos[2]=(float)position.c[2];
 		vPos[3]=(eType==eGenericLightType_Directional)?(float)0.0:(float)1.0;
 
 		glLightfv(nlIndex,GL_POSITION,vPos);
-		glLightfv(nlIndex,GL_AMBIENT,vColor);
-		glLightfv(nlIndex,GL_DIFFUSE ,vColor);
-		glLightfv(nlIndex,GL_SPECULAR,vColor);
+		glLightfv(nlIndex,GL_AMBIENT,vAmbientColor);
+		glLightfv(nlIndex,GL_DIFFUSE ,vDiffuseColor);
+		glLightfv(nlIndex,GL_SPECULAR,vSpecularColor);
 		if(!m_bRenderingWithShader){glEnable(nlIndex);}
 		nlIndex++;
 		m_nActiveLights++;
@@ -2165,23 +2175,27 @@ void COpenGLRender::RenderAllStages(bool bRenderingShadow,bool bShadowReceptionS
 void COpenGLRender::SetAmbientLight( const CVector &vColor ){m_vAmbientColor=vColor;}
 void COpenGLRender::GetAmbientLight( CVector *pvColor ){if(pvColor){*pvColor=m_vAmbientColor;}}
 
-void COpenGLRender::SetSunLight( const CVector &vPosition,const CVector &vDirection,const CVector &vColor )
+void COpenGLRender::SetSunLight( const CVector &vPosition,const CVector &vDirection,const CVector &vAmbientColor,const CVector &vDiffuseColor,const CVector &vSpecularColor)
 {
 	if(m_SunLight.m_piLight)
 	{
 		m_SunLight.m_piLight->SetPosition(vPosition);
-		m_SunLight.m_piLight->SetColor(vColor);
+		m_SunLight.m_piLight->SetAmbientColor(vAmbientColor);
+		m_SunLight.m_piLight->SetDiffuseColor(vDiffuseColor);
+		m_SunLight.m_piLight->SetSpecularColor(vSpecularColor);
 		m_SunLight.m_piLight->SetDirectional(vDirection);
 	}
 }
 
-void COpenGLRender::GetSunLight( CVector *pvPosition,CVector *pvDirection,CVector *pvColor )
+void COpenGLRender::GetSunLight( CVector *pvPosition,CVector *pvDirection,CVector *pvAmbientColor,CVector *pvDiffuseColor,CVector *pvSpecularColor )
 {
 	if(m_SunLight.m_piLight)
 	{
 		if(pvPosition){*pvPosition=m_SunLight.m_piLight->GetPosition();}
 		if(pvDirection){*pvDirection=m_SunLight.m_piLight->GetDirectionalDirection();}
-		if(pvColor){*pvColor=m_SunLight.m_piLight->GetColor();}
+		if(pvAmbientColor){*pvAmbientColor=m_SunLight.m_piLight->GetAmbientColor();}
+		if(pvDiffuseColor){*pvDiffuseColor=m_SunLight.m_piLight->GetDiffuseColor();}
+		if(pvSpecularColor){*pvSpecularColor=m_SunLight.m_piLight->GetSpecularColor();}
 	}
 
 }

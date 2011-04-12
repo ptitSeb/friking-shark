@@ -996,10 +996,11 @@ void CWorldManager::SetupRenderingEnvironment( IGenericRender *piRender )
 
 		CVector vSunAngles(m_TerrainSun.dAzimuth,m_TerrainSun.dElevation,0);
 		CVector vForward;
+		CVector vBlack;
 		VectorsFromAngles(vSunAngles,&vForward);
 		double dTerrainMaxDimension=max(max(vTerrainSize.c[0],vTerrainSize.c[1]),vTerrainSize.c[2]);
 		CVector vSunPos=(vTerrainMaxs+vTerrainMins)*0.5+vForward*(dTerrainMaxDimension*m_TerrainSun.dDistance);
-		piRender->SetSunLight(vSunPos,vForward,m_TerrainSun.vColor);
+		piRender->SetSunLight(vSunPos,vForward,vBlack,m_TerrainSun.vColor,m_TerrainSun.vColor);
 	}
 	piRender->SetAmbientLight(m_vTerrainAmbientColor);
 }

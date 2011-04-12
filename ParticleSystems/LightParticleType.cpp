@@ -44,7 +44,9 @@ void CLightParticle::CustomRender(IGenericRender *piRender,IGenericCamera *piCam
 {
     if(m_Light.m_piLight)
 	{
-		m_Light.m_piLight->SetColor(m_vColor);
+		m_Light.m_piLight->SetAmbientColor(m_vColor);
+		m_Light.m_piLight->SetDiffuseColor(m_vColor);
+		m_Light.m_piLight->SetSpecularColor(m_vColor);
 		m_Light.m_piLight->SetPosition(m_PhysicInfo.vPosition+CVector(0,2,0));
 		m_Light.m_piLight->SetOmni(m_dSize);
 	}

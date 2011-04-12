@@ -8,13 +8,15 @@ How to build:
 	libopenal-dev 
 	libalut-dev
 
-2) Run "make" In Game/ folder.
+2) Run "make".
 
 
 How to use:
 
-Change to Game/Demo/Bin/Release
+Change to Demo/Bin/Release
 
-Scenario Editor: 
-	
+	Play the game: ./GameEngine
+	Scenario Editor: ./GameEngine ScenarioEditor
+	Formation Editor: ./GameEngine FormationEditor
+	Entity Editor: ./GameEngine EntityEditor
 

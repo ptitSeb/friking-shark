@@ -373,7 +373,7 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 
 
 	CVector vSunPosition;
-	m_Render.m_piRender->GetSunLight(&vSunPosition,NULL,NULL);
+	m_Render.m_piRender->GetSunLight(&vSunPosition,NULL,NULL,NULL,NULL);
 	m_Render.m_piRender->RenderPoint(vSunPosition,10,CVector(0,0,1),1.0);
 	m_Render.m_piRender->RenderLine(vSunPosition,vSunPosition+CVector(0,-vSunPosition.c[1],0),CVector(0,0,1),0x8888);
 	

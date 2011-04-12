@@ -19,9 +19,14 @@ bool COpenGLLight::Unserialize(ISystemPersistencyNode *piNode)
 	return bResult;
 }
 
-CVector COpenGLLight::GetColor(){return m_vColor;}
+CVector COpenGLLight::GetAmbientColor(){return m_vAmbientColor;}
+CVector COpenGLLight::GetDiffuseColor(){return m_vDiffuseColor;}
+CVector COpenGLLight::GetSpecularColor(){return m_vSpecularColor;}
 CVector COpenGLLight::GetPosition(){return m_vPosition;}
-void COpenGLLight::SetColor( CVector cColor ){m_vColor=cColor;}
+
+void COpenGLLight::SetAmbientColor(CVector cColor){m_vAmbientColor=cColor;}
+void COpenGLLight::SetDiffuseColor(CVector cColor){m_vDiffuseColor=cColor;}
+void COpenGLLight::SetSpecularColor(CVector cColor){m_vSpecularColor=cColor;}
 void COpenGLLight::SetPosition( CVector vPosition ){m_vPosition=vPosition;}
 
 void COpenGLLight::SetOmni( double dRadius )
