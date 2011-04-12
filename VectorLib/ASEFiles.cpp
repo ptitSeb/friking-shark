@@ -96,6 +96,9 @@ using namespace std;
 #define	ASE_SCENE_TICKSPERFRAME		75
 #define	ASE_TIMEVALUE				76
 #define	ASE_MESH_ANIMATION			77
+#define ASE_MESH_SMOOTHING			78
+#define ASE_MESH_FACENORMAL			79
+
 
 char *FindNodeEnd(char *pBuffer)
 {
@@ -195,6 +198,8 @@ bool CASEFileType::Open(const char *sFileName)
 	mKeyNames["*MESH_TVERT"]			=ASE_MESH_TVERT;
 	mKeyNames["*MESH_FACE"]				=ASE_MESH_FACE;
 	mKeyNames["*MESH_MTLID"]			=ASE_MESH_MTLID;
+	mKeyNames["*MESH_SMOOTHING"]		=ASE_MESH_SMOOTHING;
+	mKeyNames["*MESH_FACENORMAL"]		=ASE_MESH_FACENORMAL;
 	mKeyNames["*MESH_FACE_LIST"]		=ASE_MESH_FACE_LIST;
 	mKeyNames["*MESH_VERTEX_LIST"]		=ASE_MESH_VERTEX_LIST;
 	mKeyNames["*MATERIAL"]				=ASE_MATERIAL;
@@ -386,6 +391,8 @@ bool CASEFileType::Open(const char *sFileName)
 				{
 					pFrame->nFaces = ReadDWord();
 					pFrame->pFaces=new int[pFrame->nFaces*3];
+					pFrame->pbFaceSmooth=new bool[pFrame->nFaces];
+					memset(pFrame->pbFaceSmooth,0,sizeof(bool)*pFrame->nFaces);
 					pFrame->pEdges=new bool [pFrame->nFaces*3];
 					pFrame->pFaceSubMaterials=new unsigned int[pFrame->nFaces];
 					pFrame->pEdges[0]=1;
@@ -397,6 +404,7 @@ bool CASEFileType::Open(const char *sFileName)
 			case ASE_MESH_NORMALS:	
 				{
 					SKIP_ASE_TOKEN(); /* Skip '{'*/
+					pFrame->pFaceNormals=new CVector[pFrame->nFaces];
 					pFrame->pVertexNormals = new CVector[pFrame->nVertexes];
 				}
 			break;
@@ -404,6 +412,12 @@ bool CASEFileType::Open(const char *sFileName)
 				{
 					unsigned int dwVertexIndex=ReadDWord();
 					pFrame->pVertexNormals[dwVertexIndex]=ReadVector();
+				}
+			break;
+			case ASE_MESH_FACENORMAL:
+				{
+					unsigned int dwTempFaceIndex=ReadDWord();
+					pFrame->pFaceNormals[dwTempFaceIndex]=ReadVector();
 				}
 			break;
 			case ASE_MESH_FACE_LIST:	{SKIP_ASE_TOKEN(); /* Skip '{'*/}break;
@@ -491,9 +505,21 @@ bool CASEFileType::Open(const char *sFileName)
 					pFrame->pColorFaces[dwColorFaceIndex].pColorVertexes[2]=ReadDWord();
 				}
 			break;
-
-
+			case ASE_MESH_SMOOTHING:
+				{
+					const char *pSmoothingOptionalParam=ReadString().c_str();
+					if(pSmoothingOptionalParam)
+					{
+						pFrame->pbFaceSmooth[dwFaceIndex]=atoi(pSmoothingOptionalParam);
+						if(strcmp(pSmoothingOptionalParam,"*MESH_MTLID")==0)
+						{
+							pFrame->pFaceSubMaterials[dwFaceIndex]=ReadDWord();
+						}
+					}
+				}
+			break;
 			case ASE_MESH_MTLID:{pFrame->pFaceSubMaterials[dwFaceIndex]=ReadDWord();}break;
+			
 			case ASE_WIREFRAME_COLOR:
 				{pObject->vWireframeColor=ReadVector();}break;
 
@@ -633,6 +659,7 @@ bool CASEFileType::Open(const char *sFileName)
 
 		for (y=0;y<pObject->baseFrame.nVertexes;y++){From3DSToOpenGL(&pObject->baseFrame.pVertexes[y]);}				
 		if(pObject->baseFrame.pVertexNormals){for (y=0;y<pObject->baseFrame.nVertexes;y++){From3DSToOpenGL(&pObject->baseFrame.pVertexNormals[y]);}}
+		if(pObject->baseFrame.pFaceNormals){for (y=0;y<pObject->baseFrame.nFaces;y++){From3DSToOpenGL(&pObject->baseFrame.pFaceNormals[y]);}}
 
 		// Conversion sistema de coordenadas
 		for(unsigned int f=0;f<pObject->vFrameInstances.size();f++)
@@ -640,6 +667,7 @@ bool CASEFileType::Open(const char *sFileName)
 			S3DSFrame *pFrame=pObject->vFrameInstances[f];
 			for (y=0;y<pFrame->nVertexes;y++){From3DSToOpenGL(&pFrame->pVertexes[y]);}				
 			if(pFrame->pVertexNormals){for (y=0;y<pFrame->nVertexes;y++){From3DSToOpenGL(&pFrame->pVertexNormals[y]);}}
+			if(pFrame->pFaceNormals){for (y=0;y<pFrame->nFaces;y++){From3DSToOpenGL(&pFrame->pFaceNormals[y]);}}
 		}
 	}
 	m_Scene.nFrameCount=(int)(bBuildAnimation?m_Scene.dLastFrame-m_Scene.dFirstFrame:1);

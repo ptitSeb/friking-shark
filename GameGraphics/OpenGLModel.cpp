@@ -196,16 +196,24 @@ bool COpenGLModel::LoadFromFile()
 					S3DSColorFace *pColorFace=ppColorFaces[x];
 					S3DSTextureFace *pTextFace=ppTextureFaces[x];
 
-					// Si no existe informacion de normales se calcula la normal de la cara
 					CVector vFaceFlatNormal;
-					if(!p3DSFrame->pVertexNormals)
+					//Si no hay normales para los vertices o el tipo de shadding es Flat/Solid
+					if(!p3DSFrame->pVertexNormals || !p3DSFrame->pbFaceSmooth[x])
 					{
-						int nVertexes[3];
-						nVertexes[0]=p3DSFrame->pFaces[(x*3)];
-						nVertexes[1]=p3DSFrame->pFaces[(x*3)+1];
-						nVertexes[2]=p3DSFrame->pFaces[(x*3)+2];
-						CPlane plane(p3DSFrame->pVertexes[nVertexes[2]],p3DSFrame->pVertexes[nVertexes[1]],p3DSFrame->pVertexes[nVertexes[0]]);
-						vFaceFlatNormal=plane;
+						if(p3DSFrame->pFaceNormals)
+						{
+							vFaceFlatNormal=p3DSFrame->pFaceNormals[x];
+						}
+						else
+						{
+							// Si no existe informacion de normales se calcula la normal de la cara
+							int nVertexes[3];
+							nVertexes[0]=p3DSFrame->pFaces[(x*3)];
+							nVertexes[1]=p3DSFrame->pFaces[(x*3)+1];
+							nVertexes[2]=p3DSFrame->pFaces[(x*3)+2];
+							CPlane plane(p3DSFrame->pVertexes[nVertexes[2]],p3DSFrame->pVertexes[nVertexes[1]],p3DSFrame->pVertexes[nVertexes[0]]);
+							vFaceFlatNormal=plane;
+						}
 					}
 
 					for (int v=0;v<3;v++)
@@ -217,7 +225,7 @@ bool COpenGLModel::LoadFromFile()
 						key.c[1]=p3DSFrame->pVertexes[nSourceVertexIndex].c[1];
 						key.c[2]=p3DSFrame->pVertexes[nSourceVertexIndex].c[2];
 
-						if(p3DSFrame->pVertexNormals)
+						if(p3DSFrame->pVertexNormals && p3DSFrame->pbFaceSmooth[x])
 						{
 						  key.n[0]=p3DSFrame->pVertexNormals[nSourceVertexIndex].c[0];
 						  key.n[1]=p3DSFrame->pVertexNormals[nSourceVertexIndex].c[1];
