@@ -160,9 +160,11 @@ bool CASEFileType::Open(const char *sFileName)
 	S3DSLight			*pLight=NULL;
 	S3DSCamera			*pCamera=NULL;
 	S3DSMaterial		*pMaterial=NULL;
-	char				*pToken=NULL;					
-	unsigned int				dwCurrentMaterialId=0;
-	unsigned int				dwFaceIndex=0;
+	char				*pToken=NULL;
+	unsigned int		dwCurrentMaterialId=0;
+	unsigned int		dwFaceIndex=0;
+	unsigned int		nTempNormalFaceIndex=0;
+					
 	CVector				*pCurrentOrigin=NULL;
 	CMatrix				*pTransformMatrix=NULL;
 	CVector				*pAxises=NULL;
@@ -405,19 +407,27 @@ bool CASEFileType::Open(const char *sFileName)
 				{
 					SKIP_ASE_TOKEN(); /* Skip '{'*/
 					pFrame->pFaceNormals=new CVector[pFrame->nFaces];
-					pFrame->pVertexNormals = new CVector[pFrame->nVertexes];
+					pFrame->pVertexNormals = new CVector[pFrame->nFaces*3];
 				}
 			break;
 			case ASE_MESH_VERTEXNORMAL:
 				{
 					unsigned int dwVertexIndex=ReadDWord();
-					pFrame->pVertexNormals[dwVertexIndex]=ReadVector();
+					for(int x=0;x<3;x++)
+					{
+						int nFaceVertexPos=nTempNormalFaceIndex*3+x;
+						if(dwVertexIndex==pFrame->pFaces[nFaceVertexPos])
+						{
+							pFrame->pVertexNormals[nFaceVertexPos]=ReadVector();
+							break;
+						}
+					}
 				}
 			break;
 			case ASE_MESH_FACENORMAL:
 				{
-					unsigned int dwTempFaceIndex=ReadDWord();
-					pFrame->pFaceNormals[dwTempFaceIndex]=ReadVector();
+					nTempNormalFaceIndex=ReadDWord();
+					pFrame->pFaceNormals[nTempNormalFaceIndex]=ReadVector();
 				}
 			break;
 			case ASE_MESH_FACE_LIST:	{SKIP_ASE_TOKEN(); /* Skip '{'*/}break;
@@ -510,7 +520,7 @@ bool CASEFileType::Open(const char *sFileName)
 					const char *pSmoothingOptionalParam=ReadString().c_str();
 					if(pSmoothingOptionalParam)
 					{
-						pFrame->pbFaceSmooth[dwFaceIndex]=atoi(pSmoothingOptionalParam);
+						pFrame->pbFaceSmooth[dwFaceIndex]=(atoi(pSmoothingOptionalParam)!=0);
 						if(strcmp(pSmoothingOptionalParam,"*MESH_MTLID")==0)
 						{
 							pFrame->pFaceSubMaterials[dwFaceIndex]=ReadDWord();
