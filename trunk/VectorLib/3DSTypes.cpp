@@ -23,6 +23,8 @@ S3DSFrame::S3DSFrame()
 	nTextFaces=0;
 	nColorFaces=0;
 	pFaces=NULL;
+	pbFaceSmooth=NULL;
+	pFaceNormals=NULL;
 	pFaceSubMaterials=NULL;
 	pVertexes=NULL;
 	pVertexNormals=NULL;
@@ -36,6 +38,8 @@ S3DSFrame::S3DSFrame()
 S3DSFrame::~S3DSFrame()
 {
 	if(pFaces){delete [] pFaces;pFaces=NULL;}
+	if(pFaceNormals){delete [] pFaceNormals;pFaceNormals=NULL;}
+	if(pbFaceSmooth){delete [] pbFaceSmooth;pbFaceSmooth=NULL;}
 	if(pFaceSubMaterials){delete [] pFaceSubMaterials;pFaceSubMaterials=NULL;}
 	if(pVertexNormals){delete [] pVertexNormals;pVertexNormals=NULL;}
 	if(pVertexes){delete [] pVertexes;pVertexes=NULL;}
