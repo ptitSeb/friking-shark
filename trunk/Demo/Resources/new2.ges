@@ -64,7 +64,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=AMX30
+					Name=Tank
 					System=EntityTypes
 				}
 			}
@@ -139,7 +139,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=AMX30
+					Name=Tank
 					System=EntityTypes
 				}
 			}
@@ -163,7 +163,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Casa01
+					Name=SmallCrapHouseTypeA
 					System=EntityTypes
 				}
 			}
@@ -187,7 +187,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Hangar01
+					Name=CrapHouseGroup
 					System=EntityTypes
 				}
 			}
@@ -259,7 +259,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=AMX30
+					Name=Tank
 					System=EntityTypes
 				}
 			}
@@ -275,7 +275,7 @@ AreaDeJuego
 				Posicion=17.109283,-4.682201,87.965199
 				Tipo
 				{
-					Name=P51TrianguloIzquierdaInclinado
+					Name=RookieFighterTrianguloIzquierdaInclinado
 					System=FormationTypes
 				}
 			}
@@ -291,7 +291,7 @@ AreaDeJuego
 				Posicion=92.897849,-4.682201,87.965199
 				Tipo
 				{
-					Name=P51TrianguloDerechaInclinado
+					Name=RookieFighterTrianguloDerechaInclinado
 					System=FormationTypes
 				}
 			}
@@ -377,7 +377,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=AMX30
+					Name=Tank
 					System=EntityTypes
 				}
 			}
@@ -408,7 +408,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=AMX30
+					Name=Tank
 					System=EntityTypes
 				}
 			}
@@ -424,32 +424,8 @@ AreaDeJuego
 				Posicion=149.266789,-4.682201,87.965199
 				Tipo
 				{
-					Name=P51TrianguloIzquierdaInclinado
+					Name=RookieFighterTrianguloIzquierdaInclinado
 					System=FormationTypes
-				}
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item018
-		{
-			Class=CPlayAreaEntity
-			Data
-			{
-				Angulos=0.000000,0.000000,0.000000
-				Count=1
-				Delay=0
-				Interval=0
-				Posicion=-108.038964,-4.542234,52.965399
-				Ruta
-				{
-					Ciclica=0
-					Puntos
-				}
-				Tipo
-				{
-					Name=Hangar00
-					System=EntityTypes
 				}
 			}
 			Name=""
@@ -496,7 +472,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=AMX30
+					Name=Tank
 					System=EntityTypes
 				}
 			}
@@ -520,7 +496,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Casa02
+					Name=BigCrapHouse
 					System=EntityTypes
 				}
 			}
@@ -613,7 +589,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=AMX30
+					Name=Tank
 					System=EntityTypes
 				}
 			}
@@ -877,7 +853,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Casa01
+					Name=SmallCrapHouseTypeA
 					System=EntityTypes
 				}
 			}
@@ -973,7 +949,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Hangar02
+					Name=Garage
 					System=EntityTypes
 				}
 			}
@@ -1004,7 +980,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=AMX30
+					Name=Tank
 					System=EntityTypes
 				}
 			}
@@ -1035,7 +1011,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=AMX30
+					Name=Tank
 					System=EntityTypes
 				}
 			}
@@ -1066,7 +1042,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=AMX30
+					Name=Tank
 					System=EntityTypes
 				}
 			}
@@ -1083,14 +1059,14 @@ AreaDeJuego
 				Color=0.000000,1.000000,0.000000
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.000000
-				EntityType=Palmera
+				EntityType=Palm
 				PositionJitter=3.400000
 				Separation=4.450000
 				YawJitter=240.000000
 			}
 			EntityType
 			{
-				Name=Palmera
+				Name=Palm
 				System=EntityTypes
 			}
 		}
