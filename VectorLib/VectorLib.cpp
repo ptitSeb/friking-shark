@@ -1071,7 +1071,7 @@ int BSPFindCandidate(std::vector<CPolygon*> *pPolys)
 	return nCandidate;
 }
 
-CBSPNode *BSPFromPolygonVector(CBSPNode *pParent,int nDepth,std::vector<CPolygon*> *pPolys,unsigned int dwLeafContentType,std::vector<CBSPDrawNode *> *pvDrawNodes,bool bFastGenerationSlowCheck)
+CBSPNode *BSPFromPolygonVector(CBSPNode *pParent,int nDepth,std::vector<CPolygon*> *pPolys,unsigned int dwLeafContentType,std::vector<CBSPDrawNode *> *pvDrawNodes,bool bFastGenerationSlowCheck,int nCurrentDepth)
 {
 	if(pPolys->size()==0)
 	{
@@ -1099,17 +1099,19 @@ CBSPNode *BSPFromPolygonVector(CBSPNode *pParent,int nDepth,std::vector<CPolygon
 
 		if(pPoly->m_Plane.c[0]==0 && pPoly->m_Plane.c[1]==0 && pPoly->m_Plane.c[2]==0)
 		{
+			//RTTRACE("%3d:Polygon removed: Invalid plane",nCurrentDepth);
 			continue;
 		}
-
 		if(pPoly->m_nVertexes<3)
 		{
+			//RTTRACE("%3d:Polygon removed: Vertex count",nCurrentDepth);
 			continue;
 		}
 		if((pPoly->m_pVertexes[0]-pPoly->m_pVertexes[1])<FP_PRECISION|| 
 			(pPoly->m_pVertexes[0]-pPoly->m_pVertexes[2])<FP_PRECISION|| 
 			(pPoly->m_pVertexes[1]-pPoly->m_pVertexes[2])<FP_PRECISION)
 		{
+			//RTTRACE("%3d:Polygon removed: Surface size",nCurrentDepth);
 			continue;
 		}
 		// Se eliminan los planos coplanares al plano de corte (en los subespacios que se generan no tienen sentido)
@@ -1121,14 +1123,11 @@ CBSPNode *BSPFromPolygonVector(CBSPNode *pParent,int nDepth,std::vector<CPolygon
 			int		 nPolyFirstFragmentSide=0;
 			int		 nPolyFragments=pPoly->Divide(pNode->plane,pPoly,pPolyFragments[0],pPolyFragments[1],&nPolyFirstFragmentSide);
 
-			pPolyFragments[0]->CalcPlane();
-			RTASSERT(pPolyFragments[0]->m_Plane.c[0]!=0 || pPolyFragments[0]->m_Plane.c[1]!=0 || pPolyFragments[0]->m_Plane.c[2]!=0);
-
+			pPolyFragments[0]->m_Plane=pPoly->m_Plane;
 			vSidePolys[nPolyFirstFragmentSide].push_back(pPolyFragments[0]);
 			if(nPolyFragments>1)
 			{
-				pPolyFragments[1]->CalcPlane();
-				RTASSERT(pPolyFragments[1]->m_Plane.c[0]!=0 || pPolyFragments[1]->m_Plane.c[1]!=0 || pPolyFragments[1]->m_Plane.c[2]!=0);
+				pPolyFragments[1]->m_Plane=pPoly->m_Plane;
 				vSidePolys[nPolyFirstFragmentSide^1].push_back(pPolyFragments[1]);
 			}
 			else
@@ -1137,8 +1136,9 @@ CBSPNode *BSPFromPolygonVector(CBSPNode *pParent,int nDepth,std::vector<CPolygon
 			}
 		}
 	}
-	pNode->pChild[0]=BSPFromPolygonVector(pNode,nDepth+1,&vSidePolys[0],CONTENT_EMPTY,pvDrawNodes,bFastGenerationSlowCheck);
-	pNode->pChild[1]=BSPFromPolygonVector(pNode,nDepth+1,&vSidePolys[1],CONTENT_SOLID,pvDrawNodes,bFastGenerationSlowCheck);
+	int nNextDepth=nCurrentDepth+1;
+	pNode->pChild[0]=BSPFromPolygonVector(pNode,nDepth+1,&vSidePolys[0],CONTENT_EMPTY,pvDrawNodes,bFastGenerationSlowCheck,nNextDepth);
+	pNode->pChild[1]=BSPFromPolygonVector(pNode,nDepth+1,&vSidePolys[1],CONTENT_SOLID,pvDrawNodes,bFastGenerationSlowCheck,nNextDepth);
 
 	if(pvDrawNodes)
 	{
@@ -1159,7 +1159,6 @@ CBSPNode *BSPFromPolygonVector(CBSPNode *pParent,int nDepth,std::vector<CPolygon
 	}
 	return pNode;
 }
-
 
 CMatrix::CMatrix(double pMatrix[4][4])
 {
@@ -1481,6 +1480,10 @@ bool CPlane::InSamePlaneAs(const CPlane p)
 
 bool CPlane::operator==(const CPlane p)
 {
+	if(p.c[0]*c[0]<0.0){return false;}
+	if(p.c[1]*c[1]<0.0){return false;}
+	if(p.c[2]*c[2]<0.0){return false;}
+	if(p.d*d<0){return false;}
 	if(fabs(p.c[0]-c[0])>FP_PRECISION){return false;}
 	if(fabs(p.c[1]-c[1])>FP_PRECISION){return false;}
 	if(fabs(p.c[2]-c[2])>FP_PRECISION){return false;}
