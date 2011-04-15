@@ -8,11 +8,13 @@
 CBSPDebuggerMainWindow::CBSPDebuggerMainWindow(void)
 {
 	m_d3DFontSize=0;
+	m_dNormalSize=5.0;
 	
 	m_bTracing=false;
 	m_bShowOptionsPanel=false;
 	m_bShowFilePanel=false;
 	m_bShowModel=true;
+	m_bShowNormals=false;
 	
 	m_bTextures=1;
 	m_bSolid=1;
@@ -21,8 +23,6 @@ CBSPDebuggerMainWindow::CBSPDebuggerMainWindow(void)
 	m_pBSP=NULL;
 	m_pCurrentBSPNode=NULL;
 		
-	for(unsigned int x=0;x<ePropertyPanel_Count;x++){m_ppiPropertyPanels[x]=NULL;}
-	
 	InitializeChildren();
 }
 
@@ -144,6 +144,15 @@ void CBSPDebuggerMainWindow::SetupRenderOptions(IGenericRender *piRender,IGeneri
 	piRender->SetCamera(vPosition,vAngles.c[YAW],vAngles.c[PITCH],vAngles.c[ROLL]);
 }
 
+void CBSPDebuggerMainWindow::RenderNormal(IGenericRender * piRender,CPolygon * pPolygon,CVector vColor) 
+{
+	CVector vMiddle;
+	for(unsigned int x=0;x<pPolygon->m_nVertexes;x++){vMiddle+=pPolygon->m_pVertexes[x];}
+	vMiddle/=(double)pPolygon->m_nVertexes;
+	piRender->RenderLine(vMiddle,vMiddle+pPolygon->m_Plane*m_dNormalSize,vColor,0xFFFF);
+	piRender->RenderPoint(vMiddle+pPolygon->m_Plane*m_dNormalSize,5,vColor,1);
+}
+
 void CBSPDebuggerMainWindow::OnDraw(IGenericRender *piRender)
 {
 	if(!m_FrameManager.m_piFrameManager)
@@ -157,17 +166,17 @@ void CBSPDebuggerMainWindow::OnDraw(IGenericRender *piRender)
 	
 	ProcessInput(m_FrameManager.m_piFrameManager->GetTimeFraction(),m_FrameManager.m_piFrameManager->GetRealTimeFraction());
 	
-	m_Render.m_piRender->ActivateDepth();
-	m_Render.m_piRender->PushOptions();
-	m_Render.m_piRender->PushState();
+	piRender->ActivateDepth();
+	piRender->PushOptions();
+	piRender->PushState();
 
-	m_bTextures?m_Render.m_piRender->EnableTextures():m_Render.m_piRender->DisableTextures();
-	m_bSolid?m_Render.m_piRender->EnableSolid():m_Render.m_piRender->DisableSolid();
-	m_Render.m_piRender->EnableBlending();
-	m_Render.m_piRender->EnableShadows();
-	m_Render.m_piRender->DisableLighting();
-	m_Render.m_piRender->DisableHeightFog();
-	m_Render.m_piRender->DisableShaders();
+	m_bTextures?piRender->EnableTextures():piRender->DisableTextures();
+	m_bSolid?piRender->EnableSolid():piRender->DisableSolid();
+	piRender->EnableBlending();
+	piRender->EnableShadows();
+	piRender->DisableLighting();
+	piRender->DisableHeightFog();
+	piRender->DisableShaders();
 	
 	SetupRenderOptions(piRender,m_Camera.m_piCamera);
 	
@@ -175,13 +184,50 @@ void CBSPDebuggerMainWindow::OnDraw(IGenericRender *piRender)
 	
 	if(m_pCurrentBSPNode && m_pCurrentBSPNode->m_pDrawNode)
 	{
+		int nIndex=0;
 		std::map<CPolygon	*,int>::iterator i;
-		for(i=m_pCurrentBSPNode->m_pDrawNode->m_mPolygons.begin();i!=m_pCurrentBSPNode->m_pDrawNode->m_mPolygons.end();i++)
+		for(i=m_pCurrentBSPNode->m_pDrawNode->m_mPolygons.begin();i!=m_pCurrentBSPNode->m_pDrawNode->m_mPolygons.end();i++,nIndex++)
 		{
 			CPolygon *pPolygon=i->first;
 			if(pPolygon->m_nVertexes>1)
 			{
-				piRender->RenderLineStrip(pPolygon->m_nVertexes,pPolygon->m_pVertexes,i->second?CVector(1,0,0):CVector(0,1,0),0xFFFF);
+				CVector vColor=i->second?CVector(1,0,0):CVector(0,1,0);
+				if(nIndex==m_piLSPolygons->GetSelectedElement())
+				{
+					piRender->PushState();
+					piRender->ActivateSolid();
+					piRender->SetColor(vColor,1);
+					piRender->RenderPolygon(pPolygon->m_nVertexes,pPolygon->m_pVertexes,NULL);
+					piRender->DeactivateSolid();
+					piRender->PopState();
+				}
+				else
+				{
+					piRender->RenderLineStrip(pPolygon->m_nVertexes,pPolygon->m_pVertexes,vColor,0xFFFF);
+				}
+				if(m_bShowNormals){RenderNormal(piRender,pPolygon,vColor*0.5);}
+			}
+		}
+		nIndex=0;
+		for(i=m_pCurrentBSPNode->m_pDrawNode->m_mDiscardedPolygons.begin();i!=m_pCurrentBSPNode->m_pDrawNode->m_mDiscardedPolygons.end();i++,nIndex++)
+		{
+			CPolygon *pPolygon=i->first;
+			if(pPolygon->m_nVertexes>1)
+			{
+				CVector vColor=CVector(1,0,1);
+				if(nIndex==m_piLSDiscardedPolygons->GetSelectedElement())
+				{
+					piRender->PushState();
+					piRender->ActivateSolid();
+					piRender->SetColor(vColor,1);
+					piRender->RenderPolygon(pPolygon->m_nVertexes,pPolygon->m_pVertexes,NULL);
+					piRender->DeactivateSolid();
+					piRender->PopState();
+				}
+				else
+				{
+					piRender->RenderLineStrip(pPolygon->m_nVertexes,pPolygon->m_pVertexes,vColor,0xFFFF);
+				}
 			}
 		}
 		
@@ -213,29 +259,29 @@ void CBSPDebuggerMainWindow::OnDraw(IGenericRender *piRender)
 	
 	if(m_pCurrentBSPNode && m_pCurrentBSPNode->m_pDrawNode)
 	{
-		m_Render.m_piRender->PushOptions();
-		m_Render.m_piRender->ActivateSolid();
-		m_Render.m_piRender->SetColor(CVector(0,0,1),1);
-		m_Render.m_piRender->RenderPolygon(m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_nVertexes,m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_pVertexes,NULL);
 		CVector *pInverted=new CVector[m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_nVertexes];
-		for(int y=0,x=m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_nVertexes-1;x>=0;x--,y++)
-		{
-			pInverted[y]=m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_pVertexes[x];
-		}
-		m_Render.m_piRender->RenderPolygon(m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_nVertexes,pInverted,NULL);
+		for(int y=0,x=m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_nVertexes-1;x>=0;x--,y++){pInverted[y]=m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_pVertexes[x];}
+
+		CVector vColor=CVector(0,0,1);
+		piRender->PushOptions();
+		piRender->ActivateSolid();
+		piRender->SetColor(vColor,1);
+		piRender->RenderPolygon(m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_nVertexes,m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_pVertexes,NULL);
+		piRender->RenderPolygon(m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_nVertexes,pInverted,NULL);
+		if(m_bShowNormals){RenderNormal(piRender,m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon,vColor*0.5);}
+		piRender->PopOptions();
+
 		delete [] pInverted;
-		m_Render.m_piRender->PopOptions();
 	
 	}
 	if(m_TraceInfo.m_bTraceHit)
 	{
-		m_Render.m_piRender->RenderPoint(m_TraceInfo.m_vTracePos,10,CVector(1,1,0),1);
-		m_Render.m_piRender->RenderLine(m_Trace.m_Points[0],m_TraceInfo.m_vTracePos,CVector(1,1,0),0x8888);
+		piRender->RenderPoint(m_TraceInfo.m_vTracePos,10,CVector(1,1,0),1);
+		piRender->RenderLine(m_Trace.m_Points[0],m_TraceInfo.m_vTracePos,CVector(1,1,0),0x8888);
 	}
 	
-
-	m_Render.m_piRender->PopOptions();
-	m_Render.m_piRender->PopState();
+	piRender->PopOptions();
+	piRender->PopState();
 
 	if(m_piSTFps)
 	{
@@ -295,7 +341,26 @@ void CBSPDebuggerMainWindow::ProcessFileExit()
 
 void CBSPDebuggerMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 {
-
+	if(m_piBTFileNewSession==piControl)
+	{
+		ProcessFileNewSession();
+		m_bShowFilePanel=false;
+	}
+	if(m_piBTFileOpenSession==piControl)
+	{
+		ProcessFileOpenSession();
+		m_bShowFilePanel=false;
+	}
+	if(m_piBTFileSaveSession==piControl)
+	{
+		ProcessFileSaveSession();
+		m_bShowFilePanel=false;
+	}
+	if(m_piBTFileSaveSessionAs==piControl)
+	{
+		ProcessFileSaveSessionAs();
+		m_bShowFilePanel=false;
+	}
 	if(m_piBTFileOpen==piControl)
 	{
 		ProcessFileOpen();
@@ -310,9 +375,11 @@ void CBSPDebuggerMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	if(m_piBTShowFilePanel==piControl){m_bShowFilePanel=!m_bShowFilePanel;}
 	if(m_piBTOptionsTextures==piControl){m_bTextures=!m_bTextures;}
 	if(m_piBTOptionsSolid==piControl){m_bSolid=!m_bSolid;}
-	if(m_piBTOptionsShowModel==piControl){m_bSolid=!m_bShowModel;}
-	
-	
+	if(m_piBTOptionsShowModel==piControl){m_bShowModel=!m_bShowModel;}
+	if(m_piBTOptionsShowNormals==piControl){m_bShowNormals=!m_bShowNormals;}
+	if(m_piBTRunTrace==piControl){m_pBSP->GetTrace(m_Trace.m_Points[0],m_Trace.m_Points[1],m_Trace.m_Points[0],m_Trace.m_Points[1],&m_vNodeStack);}
+	if(m_piBTRunContent==piControl){m_pBSP->GetContent(m_TraceInfo.m_vTracePos);}
+
 	UpdateVisiblePanels();
 }
 
@@ -321,6 +388,7 @@ void CBSPDebuggerMainWindow::UpdateCaption()
 	if(m_Viewport.m_piViewport)
 	{
 		std::string sCaption="BSP Debugger";
+		if(m_sSessionName!=""){sCaption+=" - "+m_sSessionName;}
 		if(m_sModelName!=""){sCaption+=" - "+m_sModelName;}
 		m_Viewport.m_piViewport->SetCaption(sCaption);
 	}
@@ -330,6 +398,7 @@ void CBSPDebuggerMainWindow::OnCharacter( int nKey,bool *pbProcessed )
 {
 	if     (nKey=='T' || nKey=='t'){m_bTextures=!m_bTextures;*pbProcessed=true;}
 	else if(nKey=='M' || nKey=='m'){m_bShowModel=!m_bShowModel;*pbProcessed=true;}
+	else if(nKey=='N' || nKey=='n'){m_bShowNormals=!m_bShowNormals;*pbProcessed=true;}
 	else if(nKey=='O' || nKey=='o'){m_bSolid=!m_bSolid;*pbProcessed=true;}
 	
 	
@@ -361,7 +430,9 @@ void CBSPDebuggerMainWindow::OnCharacter( int nKey,bool *pbProcessed )
 		{
 			m_pCurrentBSPNode=m_pCurrentBSPNode->pChild[0];
 			while((int)m_piLSNodes->GetElementCount()>nElem+1){m_piLSNodes->RemoveElement(nElem);}
-			m_piLSNodes->AddElement("Outside");
+			char sName[256];
+			sprintf(sName,"O: %d: %f,%f,%f:%f",m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_nVertexes,m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_Plane.c[0],m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_Plane.c[1],m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_Plane.c[2],m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_Plane.d);
+			m_piLSNodes->AddElement(sName);
 			m_piLSNodes->SetSelectedElement(nElem+1);
 			m_vNodeStack.push_back(m_pCurrentBSPNode);
 		}
@@ -374,26 +445,23 @@ void CBSPDebuggerMainWindow::OnCharacter( int nKey,bool *pbProcessed )
 		{
 			m_pCurrentBSPNode=m_pCurrentBSPNode->pChild[1];
 			while((int)m_piLSNodes->GetElementCount()>nElem+1){m_piLSNodes->RemoveElement(nElem);}
-			m_piLSNodes->AddElement("Inside");
+			char sName[256];
+			sprintf(sName,"I: %d: %f,%f,%f:%f",m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_nVertexes,m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_Plane.c[0],m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_Plane.c[1],m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_Plane.c[2],m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_Plane.d);
+			m_piLSNodes->AddElement(sName);
 			m_piLSNodes->SetSelectedElement(nElem+1);
 			m_vNodeStack.push_back(m_pCurrentBSPNode);
 		}
 		UpdatePolygonList();
-	}	
-//	else if(nKey=='E' || nKey=='e'){ShowPropertiesOf(m_EntityType.m_piObject);*pbProcessed=true;}
-	/*	if(nKey=='I' && m_pEntity){m_pEntity->GetPhysicInfo()->vAngles.c[PITCH]+=5;if(m_pEntity->GetPhysicInfo()->vAngles.c[PITCH]>360){m_pEntity->GetPhysicInfo()->vAngles.c[PITCH]=90;}}
-	 i f*(nKey=='K' && m_pEntity){m_pEntity->GetPhysicInfo()->vAngles.c[PITCH]-=5;if(m_pEntity->GetPhysicInfo()->vAngles.c[PITCH]<-0){m_pEntity->GetPhysicInfo()->vAngles.c[PITCH]=-0;}}
-	 if(nKey=='J' && m_pEntity){m_pEntity->GetPhysicInfo()->vAngles.c[YAW]+=5;if(m_pEntity->GetPhysicInfo()->vAngles.c[YAW]>360){m_pEntity->GetPhysicInfo()->vAngles.c[YAW]-=360;}}
-	 if(nKey=='L' && m_pEntity){m_pEntity->GetPhysicInfo()->vAngles.c[YAW]-=5;if(m_pEntity->GetPhysicInfo()->vAngles.c[YAW]<0){m_pEntity->GetPhysicInfo()->vAngles.c[YAW]+=360;}}
-	 if(nKey=='N' && m_pEntity){m_pEntity->GetPhysicInfo()->vAngles.c[ROLL]+=5;if(m_pEntity->GetPhysicInfo()->vAngles.c[ROLL]>360){m_pEntity->GetPhysicInfo()->vAngles.c[ROLL]-=360;}}
-	 if(nKey=='M' && m_pEntity){m_pEntity->GetPhysicInfo()->vAngles.c[ROLL]-=5;if(m_pEntity->GetPhysicInfo()->vAngles.c[ROLL]<0){m_pEntity->GetPhysicInfo()->vAngles.c[ROLL]+=360;}}
-	 */	
+	}
 }
 
 void CBSPDebuggerMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	
-	if(nKey==GK_F3){ProcessFileOpen();UpdateVisiblePanels();*pbProcessed=true;}
+	if(nKey==GK_F1){ProcessFileOpen();UpdateVisiblePanels();*pbProcessed=true;}
+	else if(nKey==GK_F2){ProcessFileSaveSession();UpdateVisiblePanels();*pbProcessed=true;}
+	else if(nKey==GK_F3){ProcessFileOpenSession();UpdateVisiblePanels();*pbProcessed=true;}
+	else if(nKey==GK_F5){m_pBSP->GetTrace(m_Trace.m_Points[0],m_Trace.m_Points[1],m_Trace.m_Points[0],m_Trace.m_Points[1],&m_vNodeStack);}
+	else if(nKey==GK_F6){m_pBSP->GetContent(m_TraceInfo.m_vTracePos);}
 	else if(nKey==GK_PAUSE){m_FrameManager.m_piFrameManager->TogglePauseOnNextFrame();*pbProcessed=true;}
 	else if(nKey==GK_HOME){CenterCamera();*pbProcessed=true;}
 	else if(nKey==GK_NUMPAD5){CenterCamera(eBSPDebuggerView_Top);*pbProcessed=true;}
@@ -401,14 +469,6 @@ void CBSPDebuggerMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 	else if(nKey==GK_NUMPAD8){CenterCamera(eBSPDebuggerView_Front);*pbProcessed=true;}
 	else if(nKey==GK_NUMPAD2){CenterCamera(eBSPDebuggerView_Back);*pbProcessed=true;}
 	else if(nKey==GK_NUMPAD6){CenterCamera(eBSPDebuggerView_Right);*pbProcessed=true;}
-	else if(nKey==GK_DELETE)
-	{
-		*pbProcessed=true;
-	}
-	else if(nKey==GK_INSERT)
-	{
-		*pbProcessed=true;
-	}
 	else if(nKey==GK_ESCAPE)
 	{
 		ProcessFileExit();
@@ -459,66 +519,53 @@ void CBSPDebuggerMainWindow::UpdateVisiblePanels()
 void CBSPDebuggerMainWindow::UpdateNodeList()
 {
 	if(m_piLSNodes==NULL){return;}
-
 	m_piLSNodes->Clear();
 	for(unsigned int x=0;x<m_vNodeStack.size();x++)
 	{
 		CBSPNode *pNode=m_vNodeStack[x];
 		CBSPNode *pParent=pNode->pParent;
-		if(!pParent){m_piLSNodes->AddElement("Root");}
-		else        {m_piLSNodes->AddElement(pParent->pChild[0]==pNode?"Outside":"Inside");}
+		if(!pParent)
+		{
+			m_piLSNodes->AddElement("Root");
+		}
+		else        
+		{
+			char sName[256];
+			sprintf(sName,"%s: %d: %f,%f,%f:%f",pParent->pChild[1]==pNode?"I":"O",pNode->m_pDrawNode->m_pNodePolygon->m_nVertexes,pNode->m_pDrawNode->m_pNodePolygon->m_Plane.c[0],pNode->m_pDrawNode->m_pNodePolygon->m_Plane.c[1],pNode->m_pDrawNode->m_pNodePolygon->m_Plane.c[2],pNode->m_pDrawNode->m_pNodePolygon->m_Plane.d);
+			m_piLSNodes->AddElement(sName);
+		}
 		if(pNode==m_pCurrentBSPNode){m_piLSNodes->SetSelectedElement(x);}
 	}
 	UpdatePolygonList();
 }
 
 void CBSPDebuggerMainWindow::UpdatePolygonList()
-{/*
-	if(m_piLSNodes==NULL){return;}
-	if(m_piLSPolygons==NULL){return;}
-	m_piLSPolygons->Clear();
-	m_vPolygons.clear();
-	
-	int nNode=m_piLSNodes->GetSelectedElement();
-	
-	if(nNode>=0 && m_EntityType.m_piEntityType)
-	{
-		for(unsigned int x=0;x<m_EntityType.m_piEntityTypeDesign->GetNodePolygonCount(nNode);x++)
-		{
-			IPolygonType *piPolygon=NULL;
-			m_EntityType.m_piEntityTypeDesign->GetNodePolygon(nNode,x,&piPolygon);
-			
-			CPolygonDesignTypeWrapper wrapper;
-			if(piPolygon && wrapper.Attach(piPolygon))
-			{
-				m_vPolygons.push_back(wrapper);
-				char sName[128];
-				sprintf(sName,"Polygon %d",x);
-				m_piLSPolygons->AddElement(sName);
-			}
-			REL(piPolygon);
-		}
-	}
-	if(m_piLSPolygons->GetElementCount())
-	{
-		m_piLSPolygons->SetSelectedElement(0);
-	}
-	UpdateSelectedPolygon();*/
-}
-
-void CBSPDebuggerMainWindow::ShowPropertiesOf(ISystemObject *piObject)
 {
-	for(unsigned int x=0;x<ePropertyPanel_Count;x++)
+	m_piLSPolygons->Clear();
+	m_piLSDiscardedPolygons->Clear();
+	if(m_pCurrentBSPNode==NULL){return;}
+
+	std::map<CPolygon	*,int>::iterator i;
+	for(i=m_pCurrentBSPNode->m_pDrawNode->m_mPolygons.begin();i!=m_pCurrentBSPNode->m_pDrawNode->m_mPolygons.end();i++)
 	{
-		if(m_ppiPropertyPanels[x]==NULL){continue;}
-		if(!m_ppiPropertyPanels[x]->SetObject(piObject))
-		{
-			m_ppiPropertyPanels[x]->Show(false);
-		}
-		else
-		{
-			m_ppiPropertyPanels[x]->Show(piObject!=NULL);
-		}
+		CPolygon *pPolygon=i->first;
+		char sName[256];
+		sprintf(sName,"%s: %d: %f,%f,%f:%f",i->second?"I":"O",pPolygon->m_nVertexes,pPolygon->m_Plane.c[0],pPolygon->m_Plane.c[1],pPolygon->m_Plane.c[2],pPolygon->m_Plane.d);
+		m_piLSPolygons->AddElement(sName);
+	}
+	for(i=m_pCurrentBSPNode->m_pDrawNode->m_mDiscardedPolygons.begin();i!=m_pCurrentBSPNode->m_pDrawNode->m_mDiscardedPolygons.end();i++)
+	{
+		CPolygon *pPolygon=i->first;
+		char *pDiscardCode="UNK";
+
+		if     (i->second==BSP_DISCARD_COPLANAR){pDiscardCode="COP";}
+		else if(i->second==BSP_DISCARD_INVALID_PLANE){pDiscardCode="INV";}
+		else if(i->second==BSP_DISCARD_SMALL_SURFACE){pDiscardCode="SUR";}
+		else if(i->second==BSP_DISCARD_VERTEX_COUNT){pDiscardCode="VER";}
+
+		char sName[256];
+		sprintf(sName,"%s: %d: %f,%f,%f:%f",pDiscardCode,pPolygon->m_nVertexes,pPolygon->m_Plane.c[0],pPolygon->m_Plane.c[1],pPolygon->m_Plane.c[2],pPolygon->m_Plane.d);
+		m_piLSDiscardedPolygons->AddElement(sName);
 	}
 }
 
@@ -526,6 +573,7 @@ void CBSPDebuggerMainWindow::OnSelectionChanged(IGameGUIList *piControl,int nEle
 {
 	if(piControl==m_piLSNodes)
 	{
+		m_pCurrentBSPNode=(nElement==-1)?NULL:m_vNodeStack[nElement];
 		UpdatePolygonList();
 	}
 }
@@ -616,11 +664,108 @@ void CBSPDebuggerMainWindow::CenterCamera(EBSPDebuggerView eView)
 	m_Camera.m_piCamera->SetAngles(vAngles);
 }
 
-
-void CBSPDebuggerMainWindow::OnObjectChanged(IBSPDebuggerPropertyPanel *piPanel,ISystemObject *piObject)
+void CBSPDebuggerMainWindow::ProcessFileNewSession()
 {
+	m_sSessionName="";
+	Reset();
 }
 
-void CBSPDebuggerMainWindow::OnObjectRemoved(IBSPDebuggerPropertyPanel *piPanel,ISystemObject *piObject)
+void CBSPDebuggerMainWindow::ProcessFileOpenSession()
 {
+	std::string sSessionName="./";
+	if(OpenFileDialog("Select Session...",".bspd;.BSPD",&sSessionName))
+	{
+		Reset();
+		CConfigFile file;
+		if(file.Open(sSessionName))
+		{
+			SBSPDebuggerSession sessionConfig;
+			sessionConfig.PersistencyLoad(file.GetRoot());
+			if(m_Model.Create("GameGUI","Model",sessionConfig.sModelName))
+			{
+				if(m_Model.m_piModel->Load(sessionConfig.sModelName))
+				{
+					m_sSessionName=sSessionName;
+					m_sModelName=sessionConfig.sModelName;
+					m_Trace=sessionConfig.sTrace;
+
+					std::vector<CPolygon*> vGeometry;
+					m_Model.m_piModel->GetGeometry(&vGeometry);
+					m_pBSP=BSPFromPolygonVector(NULL,1,&vGeometry,CONTENT_NODE,&m_vDrawNodes,false);
+					m_pCurrentBSPNode=m_pBSP;
+					if(m_pBSP)
+					{
+						m_TraceInfo=m_pBSP->GetTrace(m_Trace.m_Points[0],m_Trace.m_Points[1],m_Trace.m_Points[0],m_Trace.m_Points[1],&m_vNodeStack);
+					}
+
+					UpdateCaption();
+					UpdateNodeList();
+					CenterCamera();
+				}
+				else
+				{
+					Reset();
+					MessageDialog("Failed to load model","BSP Debugger",eMessageDialogType_Error);
+				}
+			}
+			else
+			{
+				MessageDialog("Failed to create model instance","BSP Debugger",eMessageDialogType_Error);
+			}
+		}
+		else
+		{
+			MessageDialog("Failed to open session file","BSP Debugger",eMessageDialogType_Error);
+		}
+	}
+}
+
+void CBSPDebuggerMainWindow::ProcessFileSaveSession()
+{
+	std::string sSessionName=m_sSessionName;
+	if(m_Model.m_piModel==NULL)
+	{
+		MessageDialog("Cannot save session without loading a model","BSP Debugger",eMessageDialogType_Error);
+		return;
+	}
+	bool bSave=true;
+	if(sSessionName.length()==0)
+	{
+		bSave=SaveFileDialog("Save session...",".bspd;.BSPD",&sSessionName,true);
+	}
+	if(bSave)
+	{
+		m_sSessionName=sSessionName;
+
+		CConfigFile file;
+		SBSPDebuggerSession sessionConfig;
+		sessionConfig.sTrace=m_Trace;
+		sessionConfig.sModelName=m_sModelName;
+		sessionConfig.PersistencySave(file.GetRoot());
+
+		file.Save(sSessionName);
+		UpdateCaption();
+	}
+}
+
+void CBSPDebuggerMainWindow::ProcessFileSaveSessionAs()
+{
+	std::string sSessionName=m_sSessionName;
+	if(m_Model.m_piModel==NULL)
+	{
+		MessageDialog("Cannot save session without loading a model","BSP Debugger",eMessageDialogType_Error);
+		return;
+	}
+
+	if(SaveFileDialog("Save session as...",".bspd;.BSPD",&sSessionName,true))
+	{
+		m_sSessionName=sSessionName;
+
+		CConfigFile file;
+		SBSPDebuggerSession sessionConfig;
+		sessionConfig.PersistencySave(file.GetRoot());
+
+		file.Save(sSessionName);
+		UpdateCaption();
+	}
 }

@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{E0E740A3-6925-4048-A06E-5B98C1FCFE9B}</ProjectGuid>
+    <ProjectGuid>{1E6974F2-E08E-409E-B111-886853AD7EEB}</ProjectGuid>
     <RootNamespace>BSPDebugger</RootNamespace>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -53,7 +53,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGUI;..\GameGUILib;..\GameGraphics;..\PlayAreaElements;..\SoundSystems;..\GamePolygonLib;..\NodeSystems;..\ParticleSystems;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGUI;..\GameGUILib;..\GameGraphics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;SCENARIOEDITOR_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -64,7 +64,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>..\GameRunTime\Debug;..\GameRunTimeLib\Debug;..\GamePolygonLib\Debug;..\GameManagers\Debug;..\VectorLib\Debug;..\GUISystemsLib\Debug;..\GameGUILib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\GameRunTime\Debug;..\GameRunTimeLib\Debug;..\GameManagers\Debug;..\VectorLib\Debug;..\GameGUILib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)BSPDebugger.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -78,7 +78,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGUI;..\GameGUILib;..\GameGraphics;..\PlayAreaElements;..\SoundSystems;..\GamePolygonLib;..\NodeSystems;..\ParticleSystems;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGUI;..\GameGUILib;..\GameGraphics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;_USRDLL;SCENARIOEDITOR_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -88,7 +88,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>..\GameRunTime\Release;..\GameRunTimeLib\Release;..\GamePolygonLib\Release;..\GameManagers\Release;..\VectorLib\Release;..\GUISystemsLib\Release;..\GameGUILib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\GameRunTime\Release;..\GameRunTimeLib\Release;..\GameManagers\Release;..\VectorLib\Release;..\GameGUILib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -101,17 +101,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BSPDebugger.cpp" />
-    <ClCompile Include="BSPDebuggerNodePropertyPanel.cpp" />
-    <ClCompile Include="BSPDebuggerClassSelector.cpp" />
-    <ClCompile Include="BSPDebuggerPolygonPropertyPanel.cpp" />
-    <ClCompile Include="BSPDebuggerEventPropertyPanel.cpp" />
     <ClCompile Include="BSPDebuggerMainWindow.cpp" />
-    <ClCompile Include="BSPDebuggerModelPropertyPanel.cpp" />
-    <ClCompile Include="BSPDebuggerNamedObjectSelector.cpp" />
-    <ClCompile Include="BSPDebuggerObjectLabel.cpp" />
-    <ClCompile Include="BSPDebuggerObjectSelector.cpp" />
-    <ClCompile Include="BSPDebuggerParticleSystemPropertyPanel.cpp" />
-    <ClCompile Include="BSPDebuggerSoundPropertyPanel.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -119,17 +109,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BSPDebugger.h" />
-    <ClInclude Include="BSPDebuggerNodePropertyPanel.h" />
-    <ClInclude Include="BSPDebuggerClassSelector.h" />
-    <ClInclude Include="BSPDebuggerPolygonPropertyPanel.h" />
-    <ClInclude Include="BSPDebuggerEventPropertyPanel.h" />
     <ClInclude Include="BSPDebuggerMainWindow.h" />
-    <ClInclude Include="BSPDebuggerModelPropertyPanel.h" />
-    <ClInclude Include="BSPDebuggerNamedObjectSelector.h" />
-    <ClInclude Include="BSPDebuggerObjectLabel.h" />
-    <ClInclude Include="BSPDebuggerObjectSelector.h" />
-    <ClInclude Include="BSPDebuggerParticleSystemPropertyPanel.h" />
-    <ClInclude Include="BSPDebuggerSoundPropertyPanel.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
