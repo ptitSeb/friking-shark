@@ -136,7 +136,7 @@ public:
 	CBSPNode *pParent;
 
 	virtual int			GetContent(const CVector &position);
-	virtual CTraceInfo	GetTrace(const CVector &p1,const CVector &p2,const CVector &realp1,const CVector &realp2);
+	virtual CTraceInfo	GetTrace(const CVector &p1,const CVector &p2,const CVector &realp1,const CVector &realp2,std::vector<CBSPNode *> *pvNodePath=NULL);
 	virtual CTraceInfo	GetObjectTrace(const CVector &p1,const CVector &p2,const CVector &vPosition,const CVector &vAngles,const CVector &vMins,const CVector &vMaxs);
 
 	CBSPNode(CBSPNode *parent,CPlane p,int c,CBSPNode *p1,CBSPNode *p2){_debugtag_='B';pParent=parent;m_pDrawNode=NULL;plane=p;content=c;pChild[0]=p1,pChild[1]=p2;}
@@ -198,11 +198,17 @@ public:
 	~CPolyhedron();
 };
 
+#define BSP_DISCARD_INVALID_PLANE 1
+#define BSP_DISCARD_VERTEX_COUNT 2
+#define BSP_DISCARD_SMALL_SURFACE 3
+#define BSP_DISCARD_COPLANAR 4
+
 class CBSPDrawNode
 {
 public:
 	int								m_nDepth;
 	std::map<CPolygon	*,int>		m_mPolygons;
+	std::map<CPolygon	*,int>		m_mDiscardedPolygons;
 	CBSPNode						*m_pBSPNode;
 	CPolygon						*m_pNodePolygon;
 
