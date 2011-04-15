@@ -264,6 +264,7 @@ public:
 	// for the render only
 	virtual void		  Render(IGenericRender *piRender,unsigned long nAnimation,unsigned long nFrame)=0;
 
+	virtual void GetGeometry(std::vector<CPolygon*> *pPolygons)=0;
 };
 
 enum eGenericLightType
