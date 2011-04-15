@@ -115,12 +115,12 @@ int CBSPNode::GetContent(const CVector &position)
 	*/
 }
 
-CTraceInfo CBSPNode::GetTrace(const CVector &p1,const CVector &p2,const CVector &realp1,const CVector &realp2)
+CTraceInfo CBSPNode::GetTrace(const CVector &p1,const CVector &p2,const CVector &realp1,const CVector &realp2,std::vector<CBSPNode *> *pvNodePath)
 {
  	CTraceInfo trace;
 	double side1=plane.GetSide(p1);
 	double side2=plane.GetSide(p2);
-
+	
 	//Nodo con contenido
 	if(content!=CONTENT_NODE)
 	{
@@ -130,19 +130,21 @@ CTraceInfo CBSPNode::GetTrace(const CVector &p1,const CVector &p2,const CVector 
 		trace.m_vTracePlane=plane;
 		return trace;
 	}
+	
 	// Si los dos lados de la recta caen en el lado exterior del plano no hay corte en el plano de este
 	// nodo y se devuelve directamente lo que hay en el lado exterior
 	if(side1>=0 && side2>=0)
 	{
+		
 		RTASSERT(pChild[0]);
-		return pChild[0]->GetTrace(p1,p2,realp1,realp2);
+		return pChild[0]->GetTrace(p1,p2,realp1,realp2,pvNodePath);
 	}
 	// Si los dos lados de la recta caen en el lado interior del plano no hay corte en el plano de este
 	// nodo y se devuelve directamente lo que hay en el lado interior
 	if(side1<=0 && side2<=0)
 	{
 		RTASSERT(pChild[1]);
-		return pChild[1]->GetTrace(p1,p2,realp1,realp2);
+		return pChild[1]->GetTrace(p1,p2,realp1,realp2,pvNodePath);
 	}
 
 	// Cada punto cae a un lado, en este plano hay corte.
@@ -167,8 +169,21 @@ CTraceInfo CBSPNode::GetTrace(const CVector &p1,const CVector &p2,const CVector 
 	// Si hay un corte en el lado donde esta el punto inicial se devuelve porque es mas cercano que el corte
 	// que provoca el plano de este nodo
 
-	CTraceInfo tempTrace=pChild[side]->GetTrace(p1,trace.m_vTracePos,realp1,realp2);
-	if(tempTrace.m_bTraceHit){return tempTrace;}
+	std::vector<CBSPNode *> vTempNodePath;
+	
+	CTraceInfo tempTrace=pChild[side]->GetTrace(p1,trace.m_vTracePos,realp1,realp2,pvNodePath?&vTempNodePath:NULL);
+	if(tempTrace.m_bTraceHit)
+	{
+		if(pvNodePath)
+		{
+			pvNodePath->push_back(this);
+			for(unsigned int x=0;x<vTempNodePath.size();x++)
+			{
+				pvNodePath->push_back(vTempNodePath[x]);
+			}
+		}
+		return tempTrace;
+	}
 
 	// Si no hay un corte en el lado donde esta el punto inicial se mira si el contenido en el punto 
 	// de corte de este nodo es solido.	Aunque sabemos que este plano corta la recta no sabemos si el 
@@ -179,24 +194,34 @@ CTraceInfo CBSPNode::GetTrace(const CVector &p1,const CVector &p2,const CVector 
 	int tempContent=pChild[side]->GetContent(trace.m_vTracePos);
 	if(tempContent==CONTENT_SOLID)
 	{
+		if(pvNodePath){pvNodePath->push_back(this);}
 		trace.m_nTraceContent=tempContent;
 		// Si el contenido en el punto de corte de este plano es solido este es el punto de corte.
 		return trace;
 	}
-	else
+
+	tempContent=pChild[otherside]->GetContent(trace.m_vTracePos);
+	if(tempContent==CONTENT_SOLID)
 	{
-		int tempContent=pChild[otherside]->GetContent(trace.m_vTracePos);
-		if(tempContent==CONTENT_SOLID)
-		{
-			trace.m_nTraceContent=tempContent;
-			// Si el contenido en el punto de corte de el otro lado del plano de corte es solido este es el punto de corte.
-			return trace;
-		}
-		// Si el contenido en el punto de corte no es solido se devuelve el corte de la parte final de la recta
-		tempTrace=pChild[otherside]->GetTrace(trace.m_vTracePos,p2,realp1,realp2);
-		return tempTrace;
+		if(pvNodePath){pvNodePath->push_back(this);}
+		trace.m_nTraceContent=tempContent;
+		// Si el contenido en el punto de corte de el otro lado del plano de corte es solido este es el punto de corte.
+		return trace;
 	}
-	return trace;
+	// Si el contenido en el punto de corte no es solido se devuelve el corte de la parte final de la recta
+	tempTrace=pChild[otherside]->GetTrace(trace.m_vTracePos,p2,realp1,realp2,pvNodePath?&vTempNodePath:NULL);
+	if(tempTrace.m_bTraceHit)
+	{
+		if(pvNodePath)
+		{
+			pvNodePath->push_back(this);
+			for(unsigned int x=0;x<vTempNodePath.size();x++)
+			{
+				pvNodePath->push_back(vTempNodePath[x]);
+			}
+		}
+	}
+	return tempTrace;
 }
 
 CBSPDrawNode::CBSPDrawNode(CBSPNode *pBSPNode)
@@ -644,7 +669,7 @@ int CPolygon::Divide(CPlane plane,CPolygon *pIn,CPolygon *pOut1,CPolygon *pOut2,
 			do
 			{
 				// Como antes, se evita introducir vertices iguales o muy muy proximos.
-				if(!(pOut2->m_pVertexes[pOut1->m_nVertexes-1]==pIn->m_pVertexes[x]))
+				if(!(pOut2->m_pVertexes[pOut2->m_nVertexes-1]==pIn->m_pVertexes[x]))
 				{
 					pOut2->m_pVertexes[pOut2->m_nVertexes]=pIn->m_pVertexes[x];
 					pOut2->m_nVertexes++;
@@ -1071,7 +1096,7 @@ int BSPFindCandidate(std::vector<CPolygon*> *pPolys)
 	return nCandidate;
 }
 
-CBSPNode *BSPFromPolygonVector(CBSPNode *pParent,int nDepth,std::vector<CPolygon*> *pPolys,unsigned int dwLeafContentType,std::vector<CBSPDrawNode *> *pvDrawNodes,bool bFastGenerationSlowCheck,int nCurrentDepth)
+CBSPNode *BSPFromPolygonVector(CBSPNode *pParent,int nDepth,std::vector<CPolygon*> *pPolys,unsigned int dwLeafContentType,std::vector<CBSPDrawNode *> *pvDrawNodes,bool bFastGenerationSlowCheck)
 {
 	if(pPolys->size()==0)
 	{
@@ -1087,6 +1112,17 @@ CBSPNode *BSPFromPolygonVector(CBSPNode *pParent,int nDepth,std::vector<CPolygon
 	int nCandidateIndex=bFastGenerationSlowCheck?0:BSPFindCandidate(pPolys);
 
 	CBSPNode *pNode=new CBSPNode(pParent,(*pPolys)[nCandidateIndex]->m_Plane,CONTENT_NODE);
+	
+	if(pvDrawNodes)
+	{
+		pNode->m_pDrawNode=new CBSPDrawNode(pNode);
+		pNode->m_pDrawNode->m_nDepth=nDepth;
+
+		CPolygon *pNodePoly=new CPolygon((*pPolys)[nCandidateIndex]->m_nVertexes,(*pPolys)[nCandidateIndex]->m_pVertexes);
+		pNode->m_pDrawNode->m_mPolygons[pNodePoly]=2;
+		pNode->m_pDrawNode->m_pNodePolygon=pNodePoly;
+		pvDrawNodes->push_back(pNode->m_pDrawNode);
+	}	
 	std::vector<CPolygon *> vSidePolys[2];
 	int nPolys=pPolys->size();
 	for(int x=0;x<nPolys;x++)
@@ -1096,22 +1132,27 @@ CBSPNode *BSPFromPolygonVector(CBSPNode *pParent,int nDepth,std::vector<CPolygon
 		CPolygon *pPoly=(*pPolys)[x];
 
 		// Evitar procesar poligonos degenerados.
-
 		if(pPoly->m_Plane.c[0]==0 && pPoly->m_Plane.c[1]==0 && pPoly->m_Plane.c[2]==0)
 		{
 			//RTTRACE("%3d:Polygon removed: Invalid plane",nCurrentDepth);
+			CPolygon *pDiscardedPoly=new CPolygon(pPoly->m_nVertexes,pPoly->m_pVertexes);
+			pNode->m_pDrawNode->m_mDiscardedPolygons[pDiscardedPoly]=BSP_DISCARD_INVALID_PLANE;
 			continue;
 		}
 		if(pPoly->m_nVertexes<3)
 		{
 			//RTTRACE("%3d:Polygon removed: Vertex count",nCurrentDepth);
+			CPolygon *pDiscardedPoly=new CPolygon(pPoly->m_nVertexes,pPoly->m_pVertexes);
+			pNode->m_pDrawNode->m_mDiscardedPolygons[pDiscardedPoly]=BSP_DISCARD_VERTEX_COUNT;
 			continue;
 		}
-		if((pPoly->m_pVertexes[0]-pPoly->m_pVertexes[1])<FP_PRECISION|| 
+		if((pPoly->m_nVertexes==3) && ((pPoly->m_pVertexes[0]-pPoly->m_pVertexes[1])<FP_PRECISION|| 
 			(pPoly->m_pVertexes[0]-pPoly->m_pVertexes[2])<FP_PRECISION|| 
-			(pPoly->m_pVertexes[1]-pPoly->m_pVertexes[2])<FP_PRECISION)
+			(pPoly->m_pVertexes[1]-pPoly->m_pVertexes[2])<FP_PRECISION))
 		{
 			//RTTRACE("%3d:Polygon removed: Surface size",nCurrentDepth);
+			CPolygon *pDiscardedPoly=new CPolygon(pPoly->m_nVertexes,pPoly->m_pVertexes);
+			pNode->m_pDrawNode->m_mDiscardedPolygons[pDiscardedPoly]=BSP_DISCARD_SMALL_SURFACE;
 			continue;
 		}
 		// Se eliminan los planos coplanares al plano de corte (en los subespacios que se generan no tienen sentido)
@@ -1135,22 +1176,23 @@ CBSPNode *BSPFromPolygonVector(CBSPNode *pParent,int nDepth,std::vector<CPolygon
 				delete pPolyFragments[1];
 			}
 		}
+		else
+		{
+			if(pvDrawNodes)
+			{
+				CPolygon *pDiscardedPoly=new CPolygon(pPoly->m_nVertexes,pPoly->m_pVertexes);
+				pNode->m_pDrawNode->m_mDiscardedPolygons[pDiscardedPoly]=BSP_DISCARD_COPLANAR;
+			}
+		}
 	}
-	int nNextDepth=nCurrentDepth+1;
-	pNode->pChild[0]=BSPFromPolygonVector(pNode,nDepth+1,&vSidePolys[0],CONTENT_EMPTY,pvDrawNodes,bFastGenerationSlowCheck,nNextDepth);
-	pNode->pChild[1]=BSPFromPolygonVector(pNode,nDepth+1,&vSidePolys[1],CONTENT_SOLID,pvDrawNodes,bFastGenerationSlowCheck,nNextDepth);
+	//int nNextDepth=nCurrentDepth+1;
+	pNode->pChild[0]=BSPFromPolygonVector(pNode,nDepth+1,&vSidePolys[0],CONTENT_EMPTY,pvDrawNodes,bFastGenerationSlowCheck);
+	pNode->pChild[1]=BSPFromPolygonVector(pNode,nDepth+1,&vSidePolys[1],CONTENT_SOLID,pvDrawNodes,bFastGenerationSlowCheck);
 
 	if(pvDrawNodes)
 	{
-		pNode->m_pDrawNode=new CBSPDrawNode(pNode);
-		pNode->m_pDrawNode->m_nDepth=nDepth;
 		for(unsigned int x=0;x<vSidePolys[0].size();x++){pNode->m_pDrawNode->m_mPolygons[vSidePolys[0][x]]=0;}
 		for(unsigned int x=0;x<vSidePolys[1].size();x++){pNode->m_pDrawNode->m_mPolygons[vSidePolys[1][x]]=1;}
-		
-		CPolygon *pNodePoly=new CPolygon((*pPolys)[0]->m_nVertexes,(*pPolys)[0]->m_pVertexes);
-		pNode->m_pDrawNode->m_mPolygons[pNodePoly]=2;
-		pNode->m_pDrawNode->m_pNodePolygon=pNodePoly;
-		pvDrawNodes->push_back(pNode->m_pDrawNode);
 	}
 	else
 	{
