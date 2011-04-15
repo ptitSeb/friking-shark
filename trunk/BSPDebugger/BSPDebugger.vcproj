@@ -185,47 +185,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\BSPDebuggerNodePropertyPanel.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\BSPDebuggerClassSelector.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\BSPDebuggerPolygonPropertyPanel.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\BSPDebuggerEventPropertyPanel.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\BSPDebuggerMainWindow.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\BSPDebuggerModelPropertyPanel.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\BSPDebuggerNamedObjectSelector.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\BSPDebuggerObjectLabel.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\BSPDebuggerObjectSelector.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\BSPDebuggerParticleSystemPropertyPanel.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\BSPDebuggerSoundPropertyPanel.cpp"
 				>
 			</File>
 			<File
@@ -259,47 +219,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\BSPDebuggerNodePropertyPanel.h"
-				>
-			</File>
-			<File
-				RelativePath=".\BSPDebuggerClassSelector.h"
-				>
-			</File>
-			<File
-				RelativePath=".\BSPDebuggerPolygonPropertyPanel.h"
-				>
-			</File>
-			<File
-				RelativePath=".\BSPDebuggerEventPropertyPanel.h"
-				>
-			</File>
-			<File
 				RelativePath=".\BSPDebuggerMainWindow.h"
-				>
-			</File>
-			<File
-				RelativePath=".\BSPDebuggerModelPropertyPanel.h"
-				>
-			</File>
-			<File
-				RelativePath=".\BSPDebuggerNamedObjectSelector.h"
-				>
-			</File>
-			<File
-				RelativePath=".\BSPDebuggerObjectLabel.h"
-				>
-			</File>
-			<File
-				RelativePath=".\BSPDebuggerObjectSelector.h"
-				>
-			</File>
-			<File
-				RelativePath=".\BSPDebuggerParticleSystemPropertyPanel.h"
-				>
-			</File>
-			<File
-				RelativePath=".\BSPDebuggerSoundPropertyPanel.h"
 				>
 			</File>
 			<File

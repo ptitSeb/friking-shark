@@ -32,7 +32,25 @@ enum EBSPDebuggerView
 	eBSPDebuggerView_Bottom
 };
 
-class CBSPDebuggerMainWindow: public CGameWindowBase, public IGameGUIButtonEvents, public IGameGUIListEvents, public IBSPDebuggerPropertyPanelEvents
+
+BEGIN_STRUCT_PROPS(CLine)
+	PROP(m_Points[0],"Point0")
+	PROP(m_Points[1],"Point1")
+END_STRUCT_PROPS()
+
+struct SBSPDebuggerSession
+{
+	std::string sModelName;
+	CLine sTrace;
+	
+	BEGIN_PROP_MAP(SBSPDebuggerSession)
+		PROP(sModelName,"Model")
+		PROP(sTrace,"Trace")
+	END_PROP_MAP()
+};
+
+
+class CBSPDebuggerMainWindow: public CGameWindowBase, public IGameGUIButtonEvents, public IGameGUIListEvents
 {
 public:
 	CConfigFile				m_GUIConfigFile;
@@ -44,14 +62,15 @@ public:
 		
 	CModelWrapper		 	 m_Model;
 	std::string				 m_sModelName;
+	std::string				 m_sSessionName;
 	
-	IBSPDebuggerPropertyPanel *m_ppiPropertyPanels[ePropertyPanel_Count];
-
 	double					 m_d3DFontSize;
 		
 	bool		m_bSolid;
 	bool		m_bTextures;
 	bool		m_bShowModel;
+	bool		m_bShowNormals;
+	double		m_dNormalSize;
 	
 	bool		m_bShowFilePanel;
 	bool		m_bShowOptionsPanel;
@@ -73,24 +92,38 @@ public:
 	IGameGUIButton *m_piBTShowOptionsPanel;
 	IGameGUIButton *m_piBTShowFilePanel;
 
+	IGameGUIButton *m_piBTRunTrace;
+	IGameGUIButton *m_piBTRunContent;
 	IGameGUIList   *m_piLSNodes;
 	IGameGUIList   *m_piLSPolygons;
+	IGameGUIList   *m_piLSDiscardedPolygons;
 	
 	// Options
 
 	IGameGUIButton *m_piBTOptionsTextures;
 	IGameGUIButton *m_piBTOptionsSolid;
 	IGameGUIButton *m_piBTOptionsShowModel;
+	IGameGUIButton *m_piBTOptionsShowNormals;
 	
 	// File
 	IGameWindow	   *m_piGRFile;
 	IGameGUIButton *m_piBTFileOpen;
+	IGameGUIButton *m_piBTFileNewSession;
+	IGameGUIButton *m_piBTFileOpenSession;
+	IGameGUIButton *m_piBTFileSaveSession;
+	IGameGUIButton *m_piBTFileSaveSessionAs;
 	IGameGUIButton *m_piBTFileExit;
+
+	void RenderNormal(IGenericRender * piRender,CPolygon * pPolygon,CVector vColor);
 
 	void ProcessInput(double dTimeFraction,double dRealTimeFraction);
 	void ProcessKey(unsigned short nKey,double dTimeFraction,double dRealTimeFraction);
 
+	void ProcessFileNewSession();
 	void ProcessFileOpen();
+	void ProcessFileOpenSession();
+	void ProcessFileSaveSession();
+	void ProcessFileSaveSessionAs();
 	void ProcessFileExit();
 	
 	void Reset();
@@ -104,12 +137,20 @@ public:
 		CHILD_MAP_ENTRY_EX("OptionShowTextures",m_piBTOptionsTextures,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("OptionSolid",m_piBTOptionsSolid,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("OptionShowModel",m_piBTOptionsShowModel,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("OptionShowNormals",m_piBTOptionsShowNormals,IGameGUIButtonEvents);
 		
+		CHILD_MAP_ENTRY_EX("RunTrace",m_piBTRunTrace,IGameGUIListEvents);
+		CHILD_MAP_ENTRY_EX("RunContent",m_piBTRunContent,IGameGUIListEvents);
 		CHILD_MAP_ENTRY_EX("NodeList",m_piLSNodes,IGameGUIListEvents);
 		CHILD_MAP_ENTRY_EX("PolygonList",m_piLSPolygons,IGameGUIListEvents);
+		CHILD_MAP_ENTRY_EX("DiscardedPolygonList",m_piLSDiscardedPolygons,IGameGUIListEvents);
 				
 		CHILD_MAP_ENTRY("FilePanel",m_piGRFile);
 		CHILD_MAP_ENTRY_EX("FileOpen",m_piBTFileOpen,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("FileNewSession",m_piBTFileNewSession,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("FileOpenSession",m_piBTFileOpenSession,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("FileSaveSession",m_piBTFileSaveSession,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("FileSaveSessionAs",m_piBTFileSaveSessionAs,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("FileExit",m_piBTFileExit,IGameGUIButtonEvents);
 	END_CHILD_MAP()
 	
@@ -134,9 +175,6 @@ public:
 	void UpdateVisiblePanels();
 	void UpdateNodeList();
 	void UpdatePolygonList();
-	void UpdateSelectedPolygon();
-	void UpdateSelectedNode();
-	void ShowPropertiesOf(ISystemObject *piObject);
 		
 	void UpdateCaption();
 	void CenterCamera(EBSPDebuggerView eView=eBSPDebuggerView_Perspective);
@@ -145,12 +183,6 @@ public:
 	void OnSelectionChanged(IGameGUIList *piControl,int nElement,std::string sElement);
 	void OnSelectionDoubleCliked(IGameGUIList *piControl,int nElement,std::string sElement);
 
-	// IBSPDebuggerPropertyPanelEvents
-	void OnObjectChanged(IBSPDebuggerPropertyPanel *piPanel,ISystemObject *piObject);
-	void OnObjectRemoved(IBSPDebuggerPropertyPanel *piPanel,ISystemObject *piObject);
-
 	CBSPDebuggerMainWindow(void);
 	~CBSPDebuggerMainWindow(void);
 };
-
-
