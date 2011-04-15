@@ -378,6 +378,7 @@ void COpenGLRender::RenderBBox(const CVector &vMins,const CVector &vMaxs,const C
 
 void COpenGLRender::RenderLineStrip(unsigned int nLines,const CVector *pPoints,const CVector &vColor,unsigned long nStipple)
 {
+	
 	if(m_bStagedRendering)
 	{
 		SLineStageKey key(m_sStagedRenderingState,nStipple);
@@ -392,7 +393,7 @@ void COpenGLRender::RenderLineStrip(unsigned int nLines,const CVector *pPoints,c
 		{
 			pStage=&iParticleStage->second;
 		}
-		for(unsigned int x=0;x<nLines*2;x+=2)
+		for(unsigned int x=0;x<nLines;x++)
 		{
 			int nBuffers=pStage->vBuffers.size();
 			SLineBuffer *pBuffer=nBuffers?pStage->vBuffers[nBuffers-1]:NULL;
@@ -408,9 +409,9 @@ void COpenGLRender::RenderLineStrip(unsigned int nLines,const CVector *pPoints,c
 			*pVertexBuffer++=(float)pPoints[x].c[1];
 			*pVertexBuffer++=(float)pPoints[x].c[2];
 			
-			*pVertexBuffer++=(float)pPoints[x+1].c[0];
-			*pVertexBuffer++=(float)pPoints[x+1].c[1];
-			*pVertexBuffer++=(float)pPoints[x+1].c[2];
+			*pVertexBuffer++=(float)pPoints[(x+1)%nLines].c[0];
+			*pVertexBuffer++=(float)pPoints[(x+1)%nLines].c[1];
+			*pVertexBuffer++=(float)pPoints[(x+1)%nLines].c[2];
 			
 			*pColorBuffer++=(float)vColor.c[0];
 			*pColorBuffer++=(float)vColor.c[1];
@@ -435,7 +436,7 @@ void COpenGLRender::RenderLineStrip(unsigned int nLines,const CVector *pPoints,c
 		glLineStipple(1,(unsigned short)nStipple);
 		
 		glBegin(GL_LINE_STRIP);
-		for(unsigned int x=0;x<nLines;x++)
+		for(unsigned int x=0;x<nLines*2;x++)
 		{
 			glVertex3d(pPoints[x].c[0],pPoints[x].c[1],pPoints[x].c[2]);
 		}
