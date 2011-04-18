@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=10000.000000
 			NearPlane=10.000000
-			Posicion=735.010094,227.965199,4.682201
+			Posicion=-42.635749,227.965199,5.928638
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -20,7 +20,7 @@ AreaDeJuego
 	DistanciaCamara=140.000000
 	Elementos
 	{
-		Item000
+		Item00
 		{
 			Class=CPlayAreaCheckPoint
 			Data
@@ -30,7 +30,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item001
+		Item01
 		{
 			Class=CPlayAreaCheckPoint
 			Data
@@ -40,7 +40,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item002
+		Item02
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -55,7 +55,7 @@ AreaDeJuego
 					Ciclica=0
 					Puntos
 					{
-						Item000
+						Item0
 						{
 							Absoluto=1
 							Posicion=861.480446,53.807677,-59.940850
@@ -71,7 +71,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item003
+		Item03
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -95,7 +95,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item004
+		Item04
 		{
 			Class=CPlayAreaCheckPoint
 			Data
@@ -105,7 +105,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item005
+		Item05
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -120,17 +120,17 @@ AreaDeJuego
 					Ciclica=0
 					Puntos
 					{
-						Item000
+						Item0
 						{
 							Absoluto=1
 							Posicion=101.137355,52.965399,57.518156
 						}
-						Item001
+						Item1
 						{
 							Absoluto=1
 							Posicion=76.133127,52.965399,83.567455
 						}
-						Item002
+						Item2
 						{
 							Absoluto=1
 							Posicion=-38.404869,52.965399,84.668939
@@ -146,7 +146,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item006
+		Item06
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -170,7 +170,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item007
+		Item07
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -194,7 +194,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item008
+		Item08
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -218,7 +218,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item009
+		Item09
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -227,7 +227,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=1411.966491,9.218379,52.965399
+				Posicion=1406.489056,20.313036,52.965399
 				Ruta
 				{
 					Ciclica=0
@@ -235,14 +235,14 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=BigBunker
+					Name=MediumBunker
 					System=EntityTypes
 				}
 			}
 			Name=""
 			System=GameSystem
 		}
-		Item010
+		Item10
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -266,7 +266,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item011
+		Item11
 		{
 			Class=CPlayAreaFormation
 			Data
@@ -282,7 +282,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item012
+		Item12
 		{
 			Class=CPlayAreaFormation
 			Data
@@ -298,7 +298,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item013
+		Item13
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -313,7 +313,7 @@ AreaDeJuego
 					Ciclica=0
 					Puntos
 					{
-						Item000
+						Item0
 						{
 							Absoluto=1
 							Posicion=566.615829,52.965399,-71.559919
@@ -329,7 +329,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item014
+		Item14
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -353,7 +353,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item015
+		Item15
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -368,7 +368,7 @@ AreaDeJuego
 					Ciclica=0
 					Puntos
 					{
-						Item000
+						Item0
 						{
 							Absoluto=1
 							Posicion=303.809188,54.159653,7.513800
@@ -384,7 +384,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item016
+		Item16
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -399,7 +399,7 @@ AreaDeJuego
 					Ciclica=0
 					Puntos
 					{
-						Item000
+						Item0
 						{
 							Absoluto=1
 							Posicion=303.671067,54.159653,21.608472
@@ -415,7 +415,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item017
+		Item17
 		{
 			Class=CPlayAreaFormation
 			Data
@@ -431,7 +431,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item019
+		Item18
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -455,7 +455,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item020
+		Item19
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -479,7 +479,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item021
+		Item20
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -503,7 +503,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item022
+		Item21
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -518,7 +518,7 @@ AreaDeJuego
 					Ciclica=0
 					Puntos
 					{
-						Item000
+						Item0
 						{
 							Absoluto=1
 							Posicion=813.449467,49.883571,-11.023394
@@ -534,7 +534,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item023
+		Item22
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -549,7 +549,7 @@ AreaDeJuego
 					Ciclica=0
 					Puntos
 					{
-						Item000
+						Item0
 						{
 							Absoluto=1
 							Posicion=800.314337,49.883571,-11.469851
@@ -565,7 +565,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item024
+		Item23
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -580,7 +580,7 @@ AreaDeJuego
 					Ciclica=0
 					Puntos
 					{
-						Item000
+						Item0
 						{
 							Absoluto=1
 							Posicion=834.917969,53.807677,-18.823529
@@ -596,7 +596,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item025
+		Item24
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -620,7 +620,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item026
+		Item25
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -644,7 +644,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item027
+		Item26
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -668,7 +668,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item028
+		Item27
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -692,7 +692,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item029
+		Item28
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -716,7 +716,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item030
+		Item29
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -740,7 +740,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item031
+		Item30
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -764,7 +764,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item032
+		Item31
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -788,7 +788,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item033
+		Item32
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -812,7 +812,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item034
+		Item33
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -821,7 +821,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=1552.974783,-25.432126,52.965399
+				Posicion=1557.101810,-14.970503,52.965399
 				Ruta
 				{
 					Ciclica=0
@@ -836,7 +836,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item035
+		Item34
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -860,7 +860,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item036
+		Item35
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -884,7 +884,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item037
+		Item36
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -908,7 +908,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item038
+		Item37
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -932,7 +932,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item039
+		Item38
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -956,7 +956,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item040
+		Item39
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -971,7 +971,7 @@ AreaDeJuego
 					Ciclica=0
 					Puntos
 					{
-						Item000
+						Item0
 						{
 							Absoluto=1
 							Posicion=896.532374,52.965399,-22.912681
@@ -987,7 +987,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item041
+		Item40
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1002,7 +1002,7 @@ AreaDeJuego
 					Ciclica=0
 					Puntos
 					{
-						Item000
+						Item0
 						{
 							Absoluto=1
 							Posicion=897.620786,52.965399,-2.395097
@@ -1018,7 +1018,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item042
+		Item41
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1033,7 +1033,7 @@ AreaDeJuego
 					Ciclica=0
 					Puntos
 					{
-						Item000
+						Item0
 						{
 							Absoluto=1
 							Posicion=896.163913,52.965399,17.443743
@@ -1049,10 +1049,394 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
+		Item42
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=1894.777924,-49.583219,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=SmallBunker
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item43
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-47.514029,3.680042,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=Level1BaseTerrain
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item44
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-95.019008,14.531078,54.932299
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=DecoBlueFighter
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item45
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=90.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-74.112279,-51.054307,54.932299
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=DecoBlueFighter
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item46
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-117.935948,-5.394835,54.932299
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=Level1BaseMainBuilding
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item47
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=90.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-84.077763,-82.714331,54.932299
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=Level1BaseSmallHangar
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item48
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=90.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-55.586762,-83.214928,54.932299
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=Level1BaseBigHangar
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item49
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=90.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-27.062357,-83.214928,54.932299
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=Level1BaseSmallHangar
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item50
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=270.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-79.496861,64.255177,54.932299
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=Level1BaseBigHangar
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item51
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=90.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-8.921880,-38.046868,54.932299
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=DecoYellowFighter
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item52
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=90.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-35.695904,-47.514918,54.932299
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=DecoYellowFighter
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item53
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=90.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-5.721507,-64.012545,54.932299
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=DecoYellowFighter
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item54
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=90.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-6.607841,-80.250055,54.932299
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=DecoYellowFighter
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item55
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-92.672860,36.223186,54.932299
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=DecoRedFighter
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item56
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-73.952772,46.475229,54.932299
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=DecoRedFighter
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item57
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-57.670098,35.600979,54.932299
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=DecoRedFighter
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
 	}
 	EntityLayers
 	{
-		Item000
+		Item0
 		{
 			Config
 			{
@@ -1074,11 +1458,11 @@ AreaDeJuego
 	InclinacionVista=0.000000
 	MaximoScrollHorz=10.000000
 	Origen=-42.635749,-4.682201,87.965199
-	VelocidadCamara=15.000000
+	VelocidadCamara=0.000000
 }
 Terrain
 {
-	AmbientColor=0.198716,0.198716,0.198716
+	AmbientColor=0.320876,0.320876,0.320876
 	BaseModel
 	{
 		Class=Model
@@ -1095,7 +1479,7 @@ Terrain
 	BaseModelFile=TextureTester.ase
 	ColorLayers
 	{
-		Item000
+		Item0
 		{
 			Config
 			{
@@ -1121,7 +1505,7 @@ Terrain
 				System=GameResources
 			}
 		}
-		Item001
+		Item1
 		{
 			Config
 			{
@@ -1147,7 +1531,7 @@ Terrain
 				System=GameResources
 			}
 		}
-		Item002
+		Item2
 		{
 			Config
 			{
@@ -1197,7 +1581,7 @@ Terrain
 	}
 	HeightLayers
 	{
-		Item000
+		Item0
 		{
 			Config
 			{
@@ -1222,7 +1606,7 @@ Terrain
 				System=GameResources
 			}
 		}
-		Item001
+		Item1
 		{
 			Config
 			{
@@ -1247,7 +1631,7 @@ Terrain
 				System=GameResources
 			}
 		}
-		Item002
+		Item2
 		{
 			Config
 			{
@@ -1289,7 +1673,7 @@ Terrain
 	Sun
 	{
 		Azimuth=45.000000
-		Color=0.338496,0.338496,0.338496
+		Color=0.519330,0.519330,0.519330
 		Distance=1.000000
 		Elevation=70.000000
 	}

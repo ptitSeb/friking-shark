@@ -1,7 +1,7 @@
 *3DSMAX_ASCIIEXPORT	200
-*COMMENT "Exported from Blender 249 - Tue Apr 12 01:35:58 2011"
+*COMMENT "Exported from Blender 249 - Wed Apr 13 22:46:58 2011"
 *SCENE {
-	*SCENE_FILENAME "RookieFighter.blend"
+	*SCENE_FILENAME "AceFighter.blend"
 	*SCENE_FIRSTFRAME 1
 	*SCENE_LASTFRAME 250
 	*SCENE_FRAMESPEED 25
@@ -31,7 +31,7 @@
 			*MAP_CLASS "Bitmap"
 			*MAP_SUBNO 1
 			*MAP_AMOUNT 1.0000
-			*BITMAP "/home/javi/workspace/Game/Demo/Resources/Textures/RookieFighter.jpg"
+			*BITMAP "/home/javi/workspace/Game/Demo/Resources/Textures/AceFighter.jpg"
 			*MAP_TYPE Screen
 			*UVW_U_OFFSET 0.0000
 			*UVW_V_OFFSET 0.0000
