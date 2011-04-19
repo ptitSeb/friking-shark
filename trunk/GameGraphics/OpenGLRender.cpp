@@ -435,8 +435,8 @@ void COpenGLRender::RenderLineStrip(unsigned int nLines,const CVector *pPoints,c
 		glEnable(GL_LINE_STIPPLE);
 		glLineStipple(1,(unsigned short)nStipple);
 		
-		glBegin(GL_LINE_STRIP);
-		for(unsigned int x=0;x<nLines*2;x++)
+		glBegin(GL_LINE_LOOP);
+		for(unsigned int x=0;x<nLines;x++)
 		{
 			glVertex3d(pPoints[x].c[0],pPoints[x].c[1],pPoints[x].c[2]);
 		}
