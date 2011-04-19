@@ -1,5 +1,6 @@
 #include "./stdafx.h"
 #include "TurretType.h"
+#include "GameGraphics.h"
 
 CTurretType::CTurretType()
 {
@@ -65,6 +66,7 @@ void CTurret::OnKilled()
 }
 void CTurret::Render(IGenericRender *piRender,IGenericCamera *piCamera)
 {
+	//piRender->RenderBBox(m_PhysicInfo.vPosition,Origin,m_PhysicInfo.vMins,m_PhysicInfo.vMaxs,CVector(1,1,1),0x8888);
 	CEntityBase::Render(piRender,piCamera);
 }
 void CTurret::SetTarget(IEntity *piTarget)
@@ -78,6 +80,16 @@ void CTurret::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
 	if(GetState()==eTurretState_Destroyed){return;}
+	if(GetState()==eTurretState_Normal)
+	{
+		size_t nAnimationToSet=0;
+		double dMaxHealth=GetMaxHealth();
+		unsigned int nAnimations=m_pTypeBase->GetStateAnimations(ENTITY_STATE_BASE);
+		nAnimationToSet=(size_t)(((dMaxHealth-m_dHealth)/dMaxHealth)*((double)nAnimations));
+		if(nAnimationToSet>nAnimations-1){nAnimationToSet=nAnimations-1;}
+		SetState(ENTITY_STATE_BASE,(int)nAnimationToSet);
+	}
+	
 	if(m_piTarget)
 	{
 		CVector vTargetVel=m_piTarget->GetPhysicInfo()->vVelocity;
