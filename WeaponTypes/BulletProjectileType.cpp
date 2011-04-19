@@ -132,6 +132,8 @@ void CBulletProjectile::ProcessFrame(unsigned int dwCurrentTime,double dTimeFrac
 }
 void CBulletProjectile::Render(IGenericRender *piRender,IGenericCamera *piCamera)
 {
+	//piRender->RenderBBox(m_PhysicInfo.vPosition,m_PhysicInfo.vAngles,m_PhysicInfo.vMins,m_PhysicInfo.vMaxs,CVector(1,1,1),0x8888);
+	
 	CEntityBase::Render(piRender,piCamera);	
 }
 
