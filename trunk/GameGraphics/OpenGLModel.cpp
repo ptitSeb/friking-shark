@@ -80,8 +80,8 @@ bool COpenGLModel::LoadFromFile()
 				// From http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=172040
 				//			Shininess = exp (MATERIAL_SHINE * 100.0 / 8.0 * log (2.0));
 				//			EffectiveSpecularColor = MATERIAL_SHINESTRENGTH * MATERIAL_SPECULAR + (1 - MATERIAL_SHINESTRENGTH) * MATERIAL_DIFFUSE;
-				pBuffer->vSpecularColor=(p3DSMaterial->vSpecularColor*(double)p3DSMaterial->fShininessStrength)+p3DSMaterial->vDiffuseColor*(1.0-(double)p3DSMaterial->fShininessStrength);
-				pBuffer->fShininess=(float)(exp(p3DSMaterial->fShininess * 100.0 / 8.0 * log (2.0)));
+				pBuffer->vSpecularColor=p3DSMaterial->vSpecularColor;
+				pBuffer->fShininess=p3DSMaterial->fShininess*64.0;
 				pBuffer->fOpacity=(float)(1.0-p3DSMaterial->fTranparency);
 
 				// Calculo de las matrices de transformacion de las coordenadas de textura
