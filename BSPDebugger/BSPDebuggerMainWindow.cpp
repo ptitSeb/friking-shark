@@ -8,7 +8,7 @@
 CBSPDebuggerMainWindow::CBSPDebuggerMainWindow(void)
 {
 	m_d3DFontSize=0;
-	m_dNormalSize=5.0;
+	m_dNormalSize=2.0;
 	
 	m_bTracing=false;
 	m_bShowOptionsPanel=false;
@@ -180,7 +180,7 @@ void CBSPDebuggerMainWindow::OnDraw(IGenericRender *piRender)
 	
 	SetupRenderOptions(piRender,m_Camera.m_piCamera);
 	
-	piRender->StartStagedRendering();
+	//piRender->StartStagedRendering();
 	
 	if(m_pCurrentBSPNode && m_pCurrentBSPNode->m_pDrawNode)
 	{
@@ -255,7 +255,7 @@ void CBSPDebuggerMainWindow::OnDraw(IGenericRender *piRender)
 	{
 		piRender->RenderModel(Origin,Origin,m_Model.m_piModel);
 	}
-	piRender->EndStagedRendering();
+	//piRender->EndStagedRendering();
 	
 	if(m_pCurrentBSPNode && m_pCurrentBSPNode->m_pDrawNode)
 	{
@@ -278,6 +278,30 @@ void CBSPDebuggerMainWindow::OnDraw(IGenericRender *piRender)
 	{
 		piRender->RenderPoint(m_TraceInfo.m_vTracePos,10,CVector(1,1,0),1);
 		piRender->RenderLine(m_Trace.m_Points[0],m_TraceInfo.m_vTracePos,CVector(1,1,0),0x8888);
+		piRender->DeactivateDepth();
+		
+		if(m_pCurrentBSPNode && m_TraceInfo.m_bTraceHit)
+		{
+			double dSide=m_pCurrentBSPNode->plane.GetSide(m_TraceInfo.m_vTracePos);
+			CVector vPlaneProj=m_TraceInfo.m_vTracePos-m_pCurrentBSPNode->plane*dSide;
+			
+			piRender->RenderPoint(vPlaneProj,10,dSide>=0?CVector(0,0,1):CVector(1,0,0),1);
+			piRender->RenderLine(vPlaneProj,m_TraceInfo.m_vTracePos,dSide>=0?CVector(0,0,1):CVector(1,0,0),0x8888);
+			
+			double dFontSize=0;
+			IGenericFont *piFont=NULL;
+			GetFont(&piFont,&dFontSize);
+			if(m_d3DFontSize>0){dFontSize=m_d3DFontSize;}
+			if(piFont && dFontSize>0)
+			{
+				char sDescr[1024];
+				sprintf(sDescr,"%s: %f",dSide>=0?"O":"I",dSide);
+				piRender->SetColor(CVector(1,1,1),1);
+				piFont->RenderText(dFontSize,vPlaneProj,sDescr);
+			}
+			REL(piFont);
+		}
+		piRender->ActivateDepth();
 	}
 	
 	piRender->PopOptions();
@@ -307,7 +331,7 @@ void CBSPDebuggerMainWindow::ProcessFileOpen()
 				m_sModelName=sBaseModel;
 				std::vector<CPolygon*> vGeometry;
 				m_Model.m_piModel->GetGeometry(&vGeometry);
-				m_pBSP=BSPFromPolygonVector(NULL,1,&vGeometry,CONTENT_NODE,&m_vDrawNodes,false);
+				m_pBSP=BSPFromPolygonVector(NULL,1,&vGeometry,CONTENT_NODE,&m_vDrawNodes,true);
 				m_pCurrentBSPNode=m_pBSP;
 				if(m_pBSP){m_vNodeStack.push_back(m_pCurrentBSPNode);}
 				
@@ -377,10 +401,23 @@ void CBSPDebuggerMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	if(m_piBTOptionsSolid==piControl){m_bSolid=!m_bSolid;}
 	if(m_piBTOptionsShowModel==piControl){m_bShowModel=!m_bShowModel;}
 	if(m_piBTOptionsShowNormals==piControl){m_bShowNormals=!m_bShowNormals;}
-	if(m_piBTRunTrace==piControl){m_pBSP->GetTrace(m_Trace.m_Points[0],m_Trace.m_Points[1],m_Trace.m_Points[0],m_Trace.m_Points[1],&m_vNodeStack);}
-	if(m_piBTRunContent==piControl){m_pBSP->GetContent(m_TraceInfo.m_vTracePos);}
-
+	if(m_piBTRunTrace==piControl){RunTrace();}
+	if(m_piBTRunContent==piControl){RunContent();}
 	UpdateVisiblePanels();
+}
+
+void CBSPDebuggerMainWindow::RunTrace()
+{
+	m_vNodeStack.clear();
+	if(m_pBSP){m_TraceInfo=m_pBSP->GetTrace(m_Trace.m_Points[0],m_Trace.m_Points[1],m_Trace.m_Points[0],m_Trace.m_Points[1],&m_vNodeStack);}
+	UpdateNodeList();
+}
+
+void CBSPDebuggerMainWindow::RunContent()
+{
+	m_vNodeStack.clear();
+	if(m_pBSP){m_pBSP->GetContent(m_TraceInfo.m_vTracePos,&m_vNodeStack);}
+	UpdateNodeList();
 }
 
 void CBSPDebuggerMainWindow::UpdateCaption()
@@ -460,8 +497,8 @@ void CBSPDebuggerMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 	if(nKey==GK_F1){ProcessFileOpen();UpdateVisiblePanels();*pbProcessed=true;}
 	else if(nKey==GK_F2){ProcessFileSaveSession();UpdateVisiblePanels();*pbProcessed=true;}
 	else if(nKey==GK_F3){ProcessFileOpenSession();UpdateVisiblePanels();*pbProcessed=true;}
-	else if(nKey==GK_F5){m_pBSP->GetTrace(m_Trace.m_Points[0],m_Trace.m_Points[1],m_Trace.m_Points[0],m_Trace.m_Points[1],&m_vNodeStack);}
-	else if(nKey==GK_F6){m_pBSP->GetContent(m_TraceInfo.m_vTracePos);}
+	else if(nKey==GK_F5){RunTrace();}
+	else if(nKey==GK_F6){RunContent();}
 	else if(nKey==GK_PAUSE){m_FrameManager.m_piFrameManager->TogglePauseOnNextFrame();*pbProcessed=true;}
 	else if(nKey==GK_HOME){CenterCamera();*pbProcessed=true;}
 	else if(nKey==GK_NUMPAD5){CenterCamera(eBSPDebuggerView_Top);*pbProcessed=true;}
@@ -478,15 +515,10 @@ void CBSPDebuggerMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 
 void CBSPDebuggerMainWindow::OnMouseDown( int nButton,double dx,double dy )
 {
-	m_Trace=GetMouseRay(dx,dy,10000.0,m_Camera.m_piCamera);
-	if(m_pBSP)
-	{
-		m_vNodeStack.clear();
-		m_TraceInfo=m_pBSP->GetTrace(m_Trace.m_Points[0],m_Trace.m_Points[1],m_Trace.m_Points[0],m_Trace.m_Points[1],&m_vNodeStack);
-		UpdateNodeList();
-	}
 	if(DetectDrag(dx,dy))
 	{
+		m_Trace=GetMouseRay(dx,dy,10000.0,m_Camera.m_piCamera);
+		RunTrace();
 		m_bTracing=true;
 	}
 }
@@ -496,12 +528,7 @@ void CBSPDebuggerMainWindow::OnMouseMove( double x,double y )
 	if(m_bTracing)
 	{
 		m_Trace=GetMouseRay(x,y,10000.0,m_Camera.m_piCamera);
-		if(m_pBSP)
-		{
-			m_vNodeStack.clear();
-			m_TraceInfo=m_pBSP->GetTrace(m_Trace.m_Points[0],m_Trace.m_Points[1],m_Trace.m_Points[0],m_Trace.m_Points[1],&m_vNodeStack);
-			UpdateNodeList();
-		}
+		RunTrace();
 	}
 }
 
@@ -526,7 +553,9 @@ void CBSPDebuggerMainWindow::UpdateNodeList()
 		CBSPNode *pParent=pNode->pParent;
 		if(!pParent)
 		{
-			m_piLSNodes->AddElement("Root");
+			char sName[256];
+			sprintf(sName,"R: %d: %f,%f,%f:%f",pNode->m_pDrawNode->m_pNodePolygon->m_nVertexes,pNode->m_pDrawNode->m_pNodePolygon->m_Plane.c[0],pNode->m_pDrawNode->m_pNodePolygon->m_Plane.c[1],pNode->m_pDrawNode->m_pNodePolygon->m_Plane.c[2],pNode->m_pDrawNode->m_pNodePolygon->m_Plane.d);
+			m_piLSNodes->AddElement(sName);
 		}
 		else        
 		{
@@ -556,7 +585,7 @@ void CBSPDebuggerMainWindow::UpdatePolygonList()
 	for(i=m_pCurrentBSPNode->m_pDrawNode->m_mDiscardedPolygons.begin();i!=m_pCurrentBSPNode->m_pDrawNode->m_mDiscardedPolygons.end();i++)
 	{
 		CPolygon *pPolygon=i->first;
-		char *pDiscardCode="UNK";
+		const char *pDiscardCode="UNK";
 
 		if     (i->second==BSP_DISCARD_COPLANAR){pDiscardCode="COP";}
 		else if(i->second==BSP_DISCARD_INVALID_PLANE){pDiscardCode="INV";}
@@ -691,7 +720,7 @@ void CBSPDebuggerMainWindow::ProcessFileOpenSession()
 
 					std::vector<CPolygon*> vGeometry;
 					m_Model.m_piModel->GetGeometry(&vGeometry);
-					m_pBSP=BSPFromPolygonVector(NULL,1,&vGeometry,CONTENT_NODE,&m_vDrawNodes,false);
+					m_pBSP=BSPFromPolygonVector(NULL,1,&vGeometry,CONTENT_NODE,&m_vDrawNodes,true);
 					m_pCurrentBSPNode=m_pBSP;
 					if(m_pBSP)
 					{

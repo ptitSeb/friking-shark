@@ -126,6 +126,10 @@ public:
 	void ProcessFileSaveSessionAs();
 	void ProcessFileExit();
 	
+	void RunTrace();
+	void RunContent();
+	
+	
 	void Reset();
 	
 	BEGIN_CHILD_MAP()
