@@ -468,7 +468,7 @@ bool CWorldManager::UpdateTerrain()
 
 		unsigned long nBuffer=m_TerrainModel.m_piModel->AddRenderBuffer(nAnimation,nFrame);
 		m_TerrainModel.m_piModel->SetRenderBufferTexture(nAnimation,nFrame,nBuffer,0,m_vTerrainHeightLayers[x].m_Texture.m_piTexture);
-		m_TerrainModel.m_piModel->SetRenderBufferMaterial(nAnimation,nFrame,nBuffer,CVector(1,1,1),CVector(1,1,1),CVector(1,1,1),0,1);
+		m_TerrainModel.m_piModel->SetRenderBufferMaterial(nAnimation,nFrame,nBuffer,CVector(1,1,1),CVector(1,1,1),CVector(0,0,0),0,1);
 	}
 
 	// Load color layers 
@@ -494,7 +494,7 @@ bool CWorldManager::UpdateTerrain()
 
 		unsigned long nBuffer=m_TerrainModel.m_piModel->AddRenderBuffer(nAnimation,nFrame);
 		m_TerrainModel.m_piModel->SetRenderBufferTexture(nAnimation,nFrame,nBuffer,0,m_vTerrainColorLayers[x].m_Texture.m_piTexture);
-		m_TerrainModel.m_piModel->SetRenderBufferMaterial(nAnimation,nFrame,nBuffer,CVector(1,1,1),CVector(1,1,1),CVector(1,1,1),0,1);
+		m_TerrainModel.m_piModel->SetRenderBufferMaterial(nAnimation,nFrame,nBuffer,CVector(1,1,1),CVector(1,1,1),CVector(0,0,0),0,1);
 	}
 
 	if(!bOk)
@@ -770,7 +770,7 @@ bool CWorldManager::UpdateTerrain()
 			if(piTextures[x]==NULL){continue;}
 			m_pnWaterRenderBuffers[x]=m_TerrainModel.m_piModel->AddRenderBuffer(nAnimation,nFrame);
 			m_TerrainModel.m_piModel->SetRenderBufferTexture(nAnimation,nFrame,m_pnWaterRenderBuffers[x],0,piTextures[x]);
-			m_TerrainModel.m_piModel->SetRenderBufferMaterial(nAnimation,nFrame,m_pnWaterRenderBuffers[x],CVector(1,1,1),CVector(1,1,1),CVector(1,1,1),0,(float)m_TerrainWater.m_Config.dOpacity);
+			m_TerrainModel.m_piModel->SetRenderBufferMaterial(nAnimation,nFrame,m_pnWaterRenderBuffers[x],CVector(1,1,1),CVector(1,1,1),CVector(1,1,1),128,(float)m_TerrainWater.m_Config.dOpacity);
 
 			float *pWaterVertexBuffer=new GLfloat[12];
 			float *pCursor=pWaterVertexBuffer;
