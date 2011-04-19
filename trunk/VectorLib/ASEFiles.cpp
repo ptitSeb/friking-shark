@@ -416,7 +416,7 @@ bool CASEFileType::Open(const char *sFileName)
 					for(int x=0;x<3;x++)
 					{
 						int nFaceVertexPos=nTempNormalFaceIndex*3+x;
-						if(dwVertexIndex==pFrame->pFaces[nFaceVertexPos])
+						if(dwVertexIndex==(unsigned int)pFrame->pFaces[nFaceVertexPos])
 						{
 							pFrame->pVertexNormals[nFaceVertexPos]=ReadVector();
 							break;
@@ -668,7 +668,7 @@ bool CASEFileType::Open(const char *sFileName)
 		pObject=m_vObjects[x];
 
 		for (y=0;y<pObject->baseFrame.nVertexes;y++){From3DSToOpenGL(&pObject->baseFrame.pVertexes[y]);}				
-		if(pObject->baseFrame.pVertexNormals){for (y=0;y<pObject->baseFrame.nVertexes;y++){From3DSToOpenGL(&pObject->baseFrame.pVertexNormals[y]);}}
+		if(pObject->baseFrame.pVertexNormals){for (y=0;y<pObject->baseFrame.nFaces*3;y++){From3DSToOpenGL(&pObject->baseFrame.pVertexNormals[y]);}}
 		if(pObject->baseFrame.pFaceNormals){for (y=0;y<pObject->baseFrame.nFaces;y++){From3DSToOpenGL(&pObject->baseFrame.pFaceNormals[y]);}}
 
 		// Conversion sistema de coordenadas
