@@ -8,6 +8,7 @@ CModelAnimationObjectType::CModelAnimationObjectType()
     m_bCastShadow=true;
     m_dFps=50.0;
     m_bLoop=false;
+	m_bLighting=true;
     m_nStartTime=0;
     m_nEndTime=0;
 }
@@ -48,7 +49,7 @@ void CModelAnimationObjectType::DesignRender( IGenericRender *piRender,CVector &
 			piRender->PushState();
 			if(!m_bCastShadow){piRender->DeactivateShadowEmission();}
 			piRender->DeactivateHeightFog();
-			piRender->ActivateLighting();
+			if(m_bLighting){piRender->ActivateLighting();}
 			if(m_ShaderWrapper.m_piShader){m_ShaderWrapper.m_piShader->Activate();}
 			piRender->RenderModel(vTempPos,vTempAngles,m_ModelWrapper.m_piModel);
 			if(m_ShaderWrapper.m_piShader){m_ShaderWrapper.m_piShader->Deactivate();}
