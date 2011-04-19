@@ -19,6 +19,7 @@ public:
     unsigned int	m_nEndTime;
     bool        	m_bLoop;
     bool        	m_bCastShadow;
+	bool			m_bLighting;
 
     IAnimationObject *CreateInstance(IAnimation *piAnimation,unsigned int dwCurrentTime);
 	std::string 	  GetAnimationObjectDescription();
@@ -39,6 +40,7 @@ public:
         PROP_VALUE_FLAGS(m_nEndTime,"EndTime",0,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_vPosition,"Position",Origin,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_vAngles,"Angles",Origin,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_bLighting,"Lighting",true,MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP();
 
    // IModelAnimationObjectTypeDesign
