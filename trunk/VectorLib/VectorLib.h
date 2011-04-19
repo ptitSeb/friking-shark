@@ -135,7 +135,7 @@ public:
 	CBSPNode *pChild[2];
 	CBSPNode *pParent;
 
-	virtual int			GetContent(const CVector &position);
+	virtual int			GetContent(const CVector &position,std::vector<CBSPNode *> *pvNodePath=NULL);
 	virtual CTraceInfo	GetTrace(const CVector &p1,const CVector &p2,const CVector &realp1,const CVector &realp2,std::vector<CBSPNode *> *pvNodePath=NULL);
 	virtual CTraceInfo	GetObjectTrace(const CVector &p1,const CVector &p2,const CVector &vPosition,const CVector &vAngles,const CVector &vMins,const CVector &vMaxs);
 
