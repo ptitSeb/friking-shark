@@ -108,13 +108,10 @@ void EntityOperation_CheckCollision(IEntity *piOther,void *pParam1,void *pParam2
     if(piOther==piEntity){return;}
     if(pOtherPhysicInfo->dwBoundsType==PHYSIC_BOUNDS_TYPE_NONE){return;}
     
-    if(pInfo->piAncestor!=NULL)
-	{
-		IEntity *piParent=piEntity,*piAncestor=NULL;
-		while(piParent){piParent=piParent->GetParent();if(piParent){piAncestor=piParent;}}
-		if(piAncestor==pInfo->piAncestor){return;}
-	}
-	
+
+	IEntity *piParent=piOther,*piAncestor=piOther;
+	while(piParent){piParent=piParent->GetParent();if(piParent){piAncestor=piParent;}}
+	if(piAncestor==pInfo->piAncestor){return;}
 
 	if(pOtherPhysicInfo->dwBoundsType==PHYSIC_BOUNDS_TYPE_BBOX)
     {
@@ -323,7 +320,7 @@ void EntityOperation_ProcessPhysicFrame(IEntity *piEntity,void *pParam1,void *pP
             info.vTotalMins.c[x]=min(info.vTotalMinsOrigin.c[x],info.vTotalMinsDestination.c[x]);
             info.vTotalMaxs.c[x]=max(info.vTotalMaxsOrigin.c[x],info.vTotalMaxsDestination.c[x]);
         }
-        info.piAncestor=NULL;
+        info.piAncestor=piEntity;
 		IEntity *piParent=piEntity;
 		while(piParent){piParent=piParent->GetParent();if(piParent){info.piAncestor=piParent;}}
 		
