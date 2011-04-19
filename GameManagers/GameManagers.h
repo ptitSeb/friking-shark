@@ -344,7 +344,7 @@ struct SEntityLayer
 		dPositionJitter=0;
 		dYawJitter=0;
 		dColorSaturationMargin=1;
-		dColorValueMargin=0;
+		dColorValueMargin=0.01;
 	}
 };
 
@@ -662,7 +662,7 @@ struct STerrainColorLayer
 	STerrainColorLayer()
 	{
 		dColorSaturationMargin=1.0;
-		dColorValueMargin=0;
+		dColorValueMargin=0.01;
 		dHorizontalResolution=1;
 		dVerticalResolution=1;
 		bAbruptEnd=false;
