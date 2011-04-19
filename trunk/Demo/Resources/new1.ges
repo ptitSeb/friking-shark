@@ -22,70 +22,6 @@ AreaDeJuego
 	{
 		Item0
 		{
-			Class=CPlayAreaEntity
-			Data
-			{
-				Angulos=0.000000,0.000000,0.000000
-				Posicion=-86.000000,-28.918899,61.922785
-				Tipo
-				{
-					Name=Tank
-					System=EntityTypes
-				}
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item1
-		{
-			Class=CPlayAreaEntity
-			Data
-			{
-				Angulos=0.000000,0.000000,0.000000
-				Posicion=-86.000000,13.973855,58.628011
-				Tipo
-				{
-					Name=P51
-					System=EntityTypes
-				}
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item2
-		{
-			Class=CPlayAreaEntity
-			Data
-			{
-				Angulos=0.000000,0.000000,0.000000
-				Posicion=-59.500000,-68.640954,57.804220
-				Tipo
-				{
-					Name=Tank
-					System=EntityTypes
-				}
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item3
-		{
-			Class=CPlayAreaEntity
-			Data
-			{
-				Angulos=0.000000,0.000000,0.000000
-				Posicion=-86.500000,-62.253453,51.416718
-				Tipo
-				{
-					Name=Tank
-					System=EntityTypes
-				}
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item4
-		{
 			Class=CPlayAreaCheckPoint
 			Data
 			{
@@ -94,7 +30,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item5
+		Item1
 		{
 			Class=CPlayAreaCheckPoint
 			Data
@@ -104,7 +40,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item6
+		Item2
 		{
 			Class=CPlayAreaCheckPoint
 			Data
@@ -114,7 +50,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item7
+		Item3
 		{
 			Class=CPlayAreaFormation
 			Data
@@ -134,30 +70,56 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-	}
-	EntityLayers
-	{
-		Item0
+		Item4
 		{
-			Config
+			Class=CPlayAreaEntity
+			Data
 			{
-				CastShadows=1
-				Color=0.000000,0.000000,0.000000
-				ColorSaturationMargin=1.000000
-				ColorValueMargin=0.000000
-				EntityType=Tank
-				PositionJitter=0.000000
-				Separation=1.300000
-				ShadowLevel=1
-				YawJitter=0.000000
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-75.636316,64.267316,55.716279
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=NormalTest
+					System=EntityTypes
+				}
 			}
-			EntityType
+			Name=""
+			System=GameSystem
+		}
+		Item5
+		{
+			Class=CPlayAreaEntity
+			Data
 			{
-				Name=Tank
-				System=EntityTypes
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-94.963819,9.317336,59.042392
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=Tank
+					System=EntityTypes
+				}
 			}
+			Name=""
+			System=GameSystem
 		}
 	}
+	EntityLayers
 	InclinacionVista=0.000000
 	MaximoScrollHorz=0.000000
 	Origen=-28.500923,1.768066,89.758377
@@ -165,12 +127,13 @@ AreaDeJuego
 }
 Terrain
 {
+	AmbientColor=0.000000,0.000000,0.000000
 	BaseModel
 	{
 		Class=Model
 		Data
 		{
-			Archivo="terreno2.ASE"
+			Archivo=terreno2.ASE
 			AutoGenerateBSP=0
 			AutoUpdateBSP=0
 			LoadBSP=0
@@ -178,14 +141,14 @@ Terrain
 		Name=""
 		System=GameResources
 	}
-	BaseModelFile="terreno2.ASE"
+	BaseModelFile=terreno2.ASE
 	ColorLayers
 	ColorMap
 	{
 		Class=Texture
 		Data
 		{
-			Archivo="ColorMap.bmp"
+			Archivo=ColorMap.bmp
 			ArchivoAlpha=""
 			ColorKey=0.000000,0.000000,0.000000
 			UsarColorKey=0
@@ -193,7 +156,14 @@ Terrain
 		Name=""
 		System=GameResources
 	}
-	ColorMapFile="ColorMap.bmp"
+	ColorMapFile=ColorMap.bmp
+	Fog
+	{
+		Color=1.000000,1.000000,1.000000
+		Enabled=0
+		End=1000.000000
+		Start=100.000000
+	}
 	HeightLayers
 	{
 		Item0
@@ -204,7 +174,7 @@ Terrain
 				HorzResolution=2.500000
 				MaxHeight=0.300000
 				MinHeight=0.000000
-				Texture="hiervsPeq.jpg"
+				Texture=hiervsPeq.jpg
 				VertResolution=2.500000
 			}
 			Texture
@@ -212,7 +182,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo="hiervsPeq.jpg"
+					Archivo=hiervsPeq.jpg
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -229,7 +199,7 @@ Terrain
 				HorzResolution=2.500000
 				MaxHeight=1.000000
 				MinHeight=0.240000
-				Texture="LechoInferior.jpg"
+				Texture=LechoInferior.jpg
 				VertResolution=2.500000
 			}
 			Texture
@@ -237,7 +207,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo="LechoInferior.jpg"
+					Archivo=LechoInferior.jpg
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -254,7 +224,7 @@ Terrain
 				HorzResolution=2.500000
 				MaxHeight=1.000000
 				MinHeight=0.800000
-				Texture="LechoSuperior.jpg"
+				Texture=LechoSuperior.jpg
 				VertResolution=2.500000
 			}
 			Texture
@@ -262,7 +232,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo="LechoSuperior.jpg"
+					Archivo=LechoSuperior.jpg
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -285,6 +255,13 @@ Terrain
 		}
 		Texture
 	}
+	Sun
+	{
+		Azimuth=345.000000
+		Color=0.690909,0.690909,0.690909
+		Distance=1.000000
+		Elevation=10.000000
+	}
 	Water
 	{
 		Config
@@ -294,8 +271,8 @@ Terrain
 			HorzResolution=4.000000
 			Opacity=0.200000
 			Speed=0.000000
-			Texture1="rtice_1.bmp"
-			Texture2="hiervsPeq.jpg"
+			Texture1=rtice_1.bmp
+			Texture2=hiervsPeq.jpg
 			VertResolution=3.000000
 		}
 		Texture1
@@ -303,7 +280,7 @@ Terrain
 			Class=Texture
 			Data
 			{
-				Archivo="rtice_1.bmp"
+				Archivo=rtice_1.bmp
 				ArchivoAlpha=""
 				ColorKey=0.000000,0.000000,0.000000
 				UsarColorKey=0
@@ -316,7 +293,7 @@ Terrain
 			Class=Texture
 			Data
 			{
-				Archivo="hiervsPeq.jpg"
+				Archivo=hiervsPeq.jpg
 				ArchivoAlpha=""
 				ColorKey=0.000000,0.000000,0.000000
 				UsarColorKey=0

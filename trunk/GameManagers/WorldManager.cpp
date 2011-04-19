@@ -628,6 +628,8 @@ bool CWorldManager::UpdateTerrain()
 				}
 			}
 
+			bool bOpaqueVertexes[3]={0};
+			
 			for (int nDestBuf=0;nDestBuf<nDestBufs;nDestBuf++)
 			{
 				int nDestinationBuffer=pnDestBuf[nDestBuf];
@@ -680,7 +682,7 @@ bool CWorldManager::UpdateTerrain()
 							{
 								dColorAlpha[nVertex]=1.0;
 							}
-							if( fabs(vYUVDiffence.c[1])<=pDestBuffer->dColorSaturationMargin&& 
+							else if( fabs(vYUVDiffence.c[1])<=pDestBuffer->dColorSaturationMargin&& 
 								fabs(vYUVDiffence.c[0])<=pDestBuffer->dColorValueMargin)
 							{
 								dColorAlpha[nVertex]=1.0-(pDestBuffer->dColorSaturationMargin?fabs(vYUVDiffence.c[1])/pDestBuffer->dColorSaturationMargin:0);
@@ -692,8 +694,22 @@ bool CWorldManager::UpdateTerrain()
 						}
 					}
 				}
+				// Se deduce si todos los vertices de la cara on opacos.
+				// si lo son se dejaran de procesar el resto de capas.
+				for(unsigned long nVertex=0;nVertex<3;nVertex++)
+				{
+					if(dColorAlpha[nVertex]>=1.0){bOpaqueVertexes[nVertex]=true;}
+				}
+				bool bAllOpaque=bOpaqueVertexes[0] && bOpaqueVertexes[1] && bOpaqueVertexes[2];
+				
+				// La ultima textura por orden de prioridad (es decir la inferior o textura base)
+				// siempre se pinta opaca para evitar problemas de partes semi transparentes
+				
+				bool bLastTexture=(bAllOpaque || nDestBuf==nDestBufs-1);
+				if(bLastTexture){dColorAlpha[0]=1;dColorAlpha[1]=1;dColorAlpha[2]=1;}
+				
 				// Inserccion en los  buffer de destino.
-
+				
 				for(unsigned long nVertex=0;nVertex<3;nVertex++)
 				{
 					SVertexKey key;
@@ -733,12 +749,8 @@ bool CWorldManager::UpdateTerrain()
 					}
 					pDestBuffer->vTriangleVertexes.push_back(nVertexIndex);
 				}
-
-				if(dColorAlpha[0]==1.0 && dColorAlpha[1]==1.0 && dColorAlpha[2]==1.0)
-				{
-					break;
-				}
-
+				// Si todos los vertices son totalmente opacos no tiene sentido seguir procesando capas.
+				if(bAllOpaque){break;}
 			}
 		}
 	}
@@ -752,7 +764,7 @@ bool CWorldManager::UpdateTerrain()
 	{
 		unsigned long nFaces=vTempBuffers[x].vTriangleVertexes.size()/3;
 		unsigned long nVertexes=vTempBuffers[x].vVertexArray.size()/3;
-
+			
 		m_TerrainModel.m_piModel->SetRenderBufferVertexes(nAnimation,nFrame,x,nVertexes,BufferFromVector(&vTempBuffers[x].vVertexArray));
 		m_TerrainModel.m_piModel->SetRenderBufferFaces(nAnimation,nFrame,x,nFaces,BufferFromVector(&vTempBuffers[x].vTriangleVertexes));
 		m_TerrainModel.m_piModel->SetRenderBufferColors(nAnimation,nFrame,x,BufferFromVector(&vTempBuffers[x].vColorArray));

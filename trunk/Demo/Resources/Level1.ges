@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=10000.000000
 			NearPlane=10.000000
-			Posicion=-42.635749,227.965199,5.928638
+			Posicion=-42.635749,227.965199,9.227793
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -605,7 +605,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=890.553873,60.000251,52.965399
+				Posicion=893.120345,58.122360,52.965399
 				Ruta
 				{
 					Ciclica=0
@@ -941,7 +941,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=971.500025,3.072623,52.965399
+				Posicion=961.532492,-1.948189,52.965399
 				Ruta
 				{
 					Ciclica=0
@@ -1433,6 +1433,102 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
+		Item58
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=90.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=31.629444,-61.871481,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=BlueCrapHouse
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item59
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=180.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=0.660203,70.338647,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=BlueCrapHouse
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item60
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-38.673832,64.986733,52.965399
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=SmallBlueCrapHouse
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item61
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=379.511103,-13.200978,54.159653
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=AdobeBuilding
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
 	}
 	EntityLayers
 	{
@@ -1442,9 +1538,27 @@ AreaDeJuego
 			{
 				Color=0.000000,1.000000,0.000000
 				ColorSaturationMargin=1.000000
-				ColorValueMargin=0.000000
+				ColorValueMargin=0.010000
 				EntityType=Palm
 				PositionJitter=3.400000
+				Separation=4.450000
+				YawJitter=240.000000
+			}
+			EntityType
+			{
+				Name=Palm
+				System=EntityTypes
+			}
+		}
+		Item1
+		{
+			Config
+			{
+				Color=0.972549,0.172549,0.945098
+				ColorSaturationMargin=1.000000
+				ColorValueMargin=0.010000
+				EntityType=Palm
+				PositionJitter=3.600000
 				Separation=4.450000
 				YawJitter=240.000000
 			}
@@ -1486,7 +1600,7 @@ Terrain
 				AbrupEnd=0
 				Color=0.000000,1.000000,0.000000
 				ColorSaturationMargin=1.000000
-				ColorValueMargin=0.000000
+				ColorValueMargin=0.010000
 				HorzResolution=4.000000
 				Texture=hiervsPeq.jpg
 				VertResolution=4.000000
@@ -1512,7 +1626,7 @@ Terrain
 				AbrupEnd=0
 				Color=0.000000,1.000000,1.000000
 				ColorSaturationMargin=1.000000
-				ColorValueMargin=0.000000
+				ColorValueMargin=0.010000
 				HorzResolution=4.000000
 				Texture=Azulejos.jpg
 				VertResolution=4.000000
@@ -1538,7 +1652,7 @@ Terrain
 				AbrupEnd=0
 				Color=1.000000,1.000000,0.000000
 				ColorSaturationMargin=1.000000
-				ColorValueMargin=0.000000
+				ColorValueMargin=0.010000
 				HorzResolution=3.000000
 				Texture=sandPeq.jpg
 				VertResolution=2.500000
@@ -1549,6 +1663,32 @@ Terrain
 				Data
 				{
 					Archivo=sandPeq.jpg
+					ArchivoAlpha=""
+					ColorKey=0.000000,0.000000,0.000000
+					UsarColorKey=0
+				}
+				Name=""
+				System=GameResources
+			}
+		}
+		Item3
+		{
+			Config
+			{
+				AbrupEnd=0
+				Color=0.972549,0.172549,0.945098
+				ColorSaturationMargin=1.000000
+				ColorValueMargin=0.010000
+				HorzResolution=4.000000
+				Texture=./Textures/Azulejos.jpg
+				VertResolution=4.000000
+			}
+			Texture
+			{
+				Class=Texture
+				Data
+				{
+					Archivo=./Textures/Azulejos.jpg
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
