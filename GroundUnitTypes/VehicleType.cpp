@@ -1,5 +1,6 @@
 #include "./stdafx.h"
 #include "VehicleType.h"
+#include "GameGraphics.h"
 
 CVehicleType::CVehicleType()
 {
@@ -28,6 +29,13 @@ CVehicle::CVehicle(CVehicleType *pType)
     m_dwDamageType=DAMAGE_TYPE_NORMAL;
 	m_nRoutePoint=0;
 	m_bRouteFinished=false;
+}
+
+void CVehicle::Render(IGenericRender *piRender,IGenericCamera *piCamera)
+{
+	//piRender->RenderBBox(m_PhysicInfo.vPosition,Origin,m_PhysicInfo.vMins,m_PhysicInfo.vMaxs,CVector(1,1,1),0x8888);
+	
+	CEntityBase::Render(piRender,piCamera);	
 }
 
 void CVehicle::OnKilled()
@@ -63,6 +71,7 @@ void CVehicle::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
 
+	m_dwDamageType=(m_vChildren.size()?DAMAGE_TYPE_NONE:DAMAGE_TYPE_NORMAL);
 	
 	if(m_piTarget==NULL){AcquireTarget();}
 	

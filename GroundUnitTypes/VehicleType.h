@@ -37,6 +37,9 @@ class CVehicle: public CEntityBase
 	unsigned int m_dwNextShotTime;
 	
 	void AcquireTarget();
+	
+	void Render(IGenericRender *piRender,IGenericCamera *piCamera);
+	
 public:
 
 	bool HasFinishedRoute();
