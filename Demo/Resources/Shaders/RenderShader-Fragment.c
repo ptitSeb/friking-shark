@@ -10,11 +10,15 @@ uniform sampler2D Texture1;
 uniform sampler2D Texture2;
 uniform sampler2DShadow ShadowMap;
 
+#define LIGHTING_SATURATION 1.5
+
 #ifdef ENABLE_LIGHTING
 varying vec4 g_amb;
 varying vec4 g_diff;
+varying vec4 g_spec;
 varying vec4 g_sunamb;
 varying vec4 g_sundiff;
+varying vec4 g_sunspec;
 #endif
 
 #ifdef ENABLE_FOG
@@ -39,10 +43,9 @@ void main (void)
 #endif
   
   #ifdef ENABLE_LIGHTING
-	  vec4 amb=vec4(1);
-	  vec4 diff=vec4(1);
-	  amb=g_amb;
-	  diff=g_diff;
+	  vec4 amb=g_amb;
+	  vec4 diff=g_diff;
+	  vec4 spec=g_spec;
   #endif
   
   #ifdef ENABLE_SHADOWS
@@ -50,8 +53,9 @@ void main (void)
   #endif
   #ifdef ENABLE_LIGHTING
 	  amb+=g_sunamb*fShadowFactor;
-	  diff=g_sundiff*fShadowFactor;
-	  finalcolor=gl_LightModel.ambient*texcolor+(amb*texcolor)+(diff*texcolor);
+	  diff+=g_sundiff*fShadowFactor;
+	  spec+=g_sunspec*fShadowFactor;
+	  finalcolor=(clamp(gl_LightModel.ambient+amb+diff,0.0,LIGHTING_SATURATION)*texcolor)+(spec*gl_FrontMaterial.specular*texcolor);
 	  finalcolor.a=texcolor.a;
   #else
 	finalcolor=texcolor*fShadowFactor;

@@ -344,6 +344,8 @@ struct IGenericShader:virtual public ISystemUnknown
 
 	virtual bool Activate()=0;
 	virtual void Deactivate()=0;
+
+	virtual bool Compile()=0;
 };
 
 class IGenericRender:virtual public ISystemUnknown
