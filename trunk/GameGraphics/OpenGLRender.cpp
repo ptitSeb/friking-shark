@@ -37,6 +37,7 @@ COpenGLRender::COpenGLRender(void)
 	m_dStagedRenderingMinZ=0;
 	m_dStagedRenderingMaxZ=0;
 	m_dMinDistanceToLight=10000;
+	m_bPrecompileShaders=true;
 }
 
 COpenGLRender::~COpenGLRender(void)
@@ -1580,6 +1581,7 @@ void COpenGLRender::EndStagedRendering()
 				if(m_ShadowShader.Create(m_piSystem,"Shader",""))
 				{
 					m_ShadowShader.m_piShader->Load("Shaders/ShadowBufferShader-Vertex.c","Shaders/ShadowBufferShader-Fragment.c","");
+					if(m_bPrecompileShaders){m_ShadowShader.m_piShader->Compile();}
 				}
 			}
 		}
@@ -1612,9 +1614,7 @@ void COpenGLRender::EndStagedRendering()
 	{
 		if(iShader->first.bHeightFog)
 		{
-			iShader->second.m_piShader->Activate();
 			iShader->second.m_piShader->AddUniform("CameraModelViewInverse",(double*)invertedCameraMatrix.e);
-			iShader->second.m_piShader->Deactivate();
 		}
 	}
 
@@ -2318,14 +2318,11 @@ void COpenGLRender::AddShader( const SShaderKey &key )
 	if(wrapper.Create(m_piSystem,"Shader",""))
 	{
 		wrapper.m_piShader->Load("Shaders/RenderShader-Vertex.c","Shaders/RenderShader-Fragment.c",sPreprocessor);
-		wrapper.m_piShader->Activate();
+		if(m_bPrecompileShaders){wrapper.m_piShader->Compile();}
 		if(key.nTextureUnits>=1){wrapper.m_piShader->AddUniform("Texture0",(int)0);}
 		if(key.nTextureUnits>=2){wrapper.m_piShader->AddUniform("Texture1",(int)1);}
 		if(key.nTextureUnits>=3){wrapper.m_piShader->AddUniform("Texture2",(int)2);}
 		if(key.bShadows){wrapper.m_piShader->AddUniform("ShadowMap",(int)3);}
-		wrapper.m_piShader->Deactivate();
-
-
 		m_mShaders[key]=wrapper;
 	}
 }

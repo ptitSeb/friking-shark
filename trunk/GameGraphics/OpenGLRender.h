@@ -330,6 +330,8 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	CVector      m_pvLastShadowVolume[8];
 	double 		 m_dShadowAntiFlickeringMargin;
 	
+	bool		 m_bPrecompileShaders;
+	
 	
 	unsigned long m_nActiveLights;
 	bool m_bLightingPrepared;
@@ -532,6 +534,7 @@ public:
 	BEGIN_PROP_MAP(COpenGLRender)
 	PROP_VALUE_FLAGS(m_bIgnoreShaderSupport,"IgnoreShaderSupport",false,MRPF_NORMAL|MRPF_OPTIONAL)
 	PROP_VALUE_FLAGS(m_dShadowAntiFlickeringMargin,"ShadowAntiFlickeringMargin",10,MRPF_NORMAL|MRPF_OPTIONAL)
+	PROP_VALUE_FLAGS(m_bPrecompileShaders,"PrecompileShaders",true,MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP();
 	
 	COpenGLRender(void);
