@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="BSPDebugger"
-	ProjectGUID="{019680D8-CE69-42ED-8531-EF6D14663F1A}"
+	ProjectGUID="{D630122E-C436-4FC6-B4D3-B1EA90B8FCEC}"
 	RootNamespace="BSPDebugger"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
