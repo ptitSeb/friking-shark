@@ -324,7 +324,13 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	double		 m_dHeightFogStart;
 	double		 m_dHeightFogEnd;
 	CVector		 m_vHeightFogColor;
-
+	
+	CVector      m_vLastShadowCameraTarget;
+	CVector      m_vLastShadowCameraPosition;
+	CVector      m_pvLastShadowVolume[8];
+	double 		 m_dShadowAntiFlickeringMargin;
+	
+	
 	unsigned long m_nActiveLights;
 	bool m_bLightingPrepared;
 
@@ -525,6 +531,7 @@ public:
 
 	BEGIN_PROP_MAP(COpenGLRender)
 	PROP_VALUE_FLAGS(m_bIgnoreShaderSupport,"IgnoreShaderSupport",false,MRPF_NORMAL|MRPF_OPTIONAL)
+	PROP_VALUE_FLAGS(m_dShadowAntiFlickeringMargin,"ShadowAntiFlickeringMargin",10,MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP();
 	
 	COpenGLRender(void);
