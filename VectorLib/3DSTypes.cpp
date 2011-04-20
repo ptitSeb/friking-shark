@@ -83,6 +83,7 @@ S3DSMaterial::S3DSMaterial()
 
 S3DSObjectMaterial::S3DSObjectMaterial()
 {
+	dwSubMaterialId=0;
 	sName[0]=0;
 	nFaces=0;
 	pFaces=NULL;
