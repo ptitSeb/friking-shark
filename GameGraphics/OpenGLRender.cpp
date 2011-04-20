@@ -11,7 +11,8 @@ COpenGLRender::COpenGLRender(void)
 	m_bShadowVolumeFirstVertex=false;
 	m_bRenderingWithShader=false;
 	m_bRenderingShadowReception=false;
-
+	m_dShadowAntiFlickeringMargin=10;
+	
 	m_vAmbientColor=CVector(0.5,0.5,0.5);
 	m_bStagedRendering=false;
 	m_dProyectionWidth=1;
@@ -1634,15 +1635,32 @@ void COpenGLRender::EndStagedRendering()
 		CalcCameraVolume(vPreviousCameraPosition,vPreviousCameraAngles,dPreviousViewAngle,dPreviousViewAspect,m_dStagedRenderingMinZ,m_dStagedRenderingMaxZ,pvCameraVolume);
 		CalcBBoxVolume(Origin,Origin,m_vShadowVolumeMins,m_vShadowVolumeMaxs,pvShadowVolume);
 
-		CVector *pVolumeToUse=pvShadowVolume;
-		for(int x=0;x<8;x++){vVolumeMidPoint+=pVolumeToUse[x];}
+		for(int x=0;x<8;x++){vVolumeMidPoint+=pvShadowVolume[x];}
 		vVolumeMidPoint/=8.0;
 		CVector vLightRight,vLightUp;
-
-		vLightForward=vVolumeMidPoint-m_SunLight.m_piLight->GetPosition();
+		vLightPosition=m_SunLight.m_piLight->GetPosition()+m_vCameraPos;//vVolumeMidPoint-vLightForward*500.0;
+		
+		CVector *pVolumeToUse=pvShadowVolume;
+		if(fabs(m_vLastShadowCameraTarget.c[0]-vVolumeMidPoint.c[0])>m_dShadowAntiFlickeringMargin ||
+			fabs(m_vLastShadowCameraTarget.c[1]-vVolumeMidPoint.c[1])>m_dShadowAntiFlickeringMargin ||
+			fabs(m_vLastShadowCameraTarget.c[2]-vVolumeMidPoint.c[2])>m_dShadowAntiFlickeringMargin ||
+			fabs(m_vLastShadowCameraPosition.c[0]-vLightPosition.c[0])>m_dShadowAntiFlickeringMargin ||
+			fabs(m_vLastShadowCameraPosition.c[1]-vLightPosition.c[1])>m_dShadowAntiFlickeringMargin ||
+			fabs(m_vLastShadowCameraPosition.c[2]-vLightPosition.c[2])>m_dShadowAntiFlickeringMargin)
+		{
+			m_vLastShadowCameraTarget=vVolumeMidPoint;
+			m_vLastShadowCameraPosition=vLightPosition;
+			for(int x=0;x<8;x++){m_pvLastShadowVolume[x]=pvShadowVolume[x];}
+		}
+		else
+		{
+			vVolumeMidPoint=m_vLastShadowCameraTarget;
+			vLightPosition=m_vLastShadowCameraPosition;
+			for(int x=0;x<8;x++){pvShadowVolume[x]=m_pvLastShadowVolume[x];}
+		}
+		vLightForward=m_vLastShadowCameraTarget-vLightPosition;
 		vLightForward.N();
 		vLightAngles=AnglesFromVector(vLightForward);
-		vLightPosition=m_SunLight.m_piLight->GetPosition();//vVolumeMidPoint-vLightForward*500.0;
 		VectorsFromAngles(vLightAngles,NULL,&vLightRight,&vLightUp);
 
 		double dLightMinRigthAngle=0,dLightMaxRigthAngle=0;
@@ -1655,8 +1673,8 @@ void COpenGLRender::EndStagedRendering()
 		for(int x=0;x<8;x++)
 		{
 			double dDistance=forwardPlane.GetSide(pVolumeToUse[x]);
-			double dRight=rightPlane.GetSide(pVolumeToUse[x]);
-			double dUp=upPlane.GetSide(pVolumeToUse[x]);
+			double dRight=rightPlane.GetSide(pVolumeToUse[x])+m_dShadowAntiFlickeringMargin;
+			double dUp=upPlane.GetSide(pVolumeToUse[x])+m_dShadowAntiFlickeringMargin;
 			dLightNear=std::min(dLightNear,dDistance);
 			dLightFar=std::max(dLightFar,dDistance);
 
