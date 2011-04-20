@@ -35,6 +35,7 @@ class CVehicle: public CEntityBase
 	int m_nRoutePoint;
 	bool m_bRouteFinished;
 	unsigned int m_dwNextShotTime;
+	unsigned int m_nConfiguredDamageType;
 	
 	void AcquireTarget();
 	

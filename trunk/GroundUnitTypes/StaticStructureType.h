@@ -25,6 +25,7 @@ public:
 class CStaticStructure: public CEntityBase
 {
 	CStaticStructureType  *m_pType;
+	unsigned int m_nConfiguredDamageType;
 	
 	IEntity *GetTarget();
 	void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
