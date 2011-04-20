@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=10000.000000
 			NearPlane=10.000000
-			Posicion=-42.635749,227.965199,9.227793
+			Posicion=-35.645749,227.965199,4.682201
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -1572,7 +1572,7 @@ AreaDeJuego
 	InclinacionVista=0.000000
 	MaximoScrollHorz=10.000000
 	Origen=-42.635749,-4.682201,87.965199
-	VelocidadCamara=0.000000
+	VelocidadCamara=15.000000
 }
 Terrain
 {
