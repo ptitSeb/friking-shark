@@ -394,9 +394,12 @@ bool CASEFileType::Open(const char *sFileName)
 					pFrame->nFaces = ReadDWord();
 					pFrame->pFaces=new int[pFrame->nFaces*3];
 					pFrame->pbFaceSmooth=new bool[pFrame->nFaces];
-					memset(pFrame->pbFaceSmooth,0,sizeof(bool)*pFrame->nFaces);
 					pFrame->pEdges=new bool [pFrame->nFaces*3];
 					pFrame->pFaceSubMaterials=new unsigned int[pFrame->nFaces];
+					memset(pFrame->pbFaceSmooth,0,sizeof(bool)*pFrame->nFaces);
+					memset(pFrame->pFaces,0,sizeof(int)*pFrame->nFaces*3);
+					memset(pFrame->pEdges,0,sizeof(bool)*pFrame->nFaces*3);
+					memset(pFrame->pFaceSubMaterials,0,sizeof(unsigned int)*pFrame->nFaces);
 					pFrame->pEdges[0]=1;
 					pFrame->pEdges[1]=1;
 					pFrame->pEdges[2]=1;
@@ -517,7 +520,7 @@ bool CASEFileType::Open(const char *sFileName)
 			break;
 			case ASE_MESH_SMOOTHING:
 				{
-					const char *pSmoothingOptionalParam=ReadString().c_str();
+					const char *pSmoothingOptionalParam=strtok(NULL,ASE_FILE_DELIMITER);
 					if(pSmoothingOptionalParam)
 					{
 						pFrame->pbFaceSmooth[dwFaceIndex]=(atoi(pSmoothingOptionalParam)!=0);
@@ -528,7 +531,11 @@ bool CASEFileType::Open(const char *sFileName)
 					}
 				}
 			break;
-			case ASE_MESH_MTLID:{pFrame->pFaceSubMaterials[dwFaceIndex]=ReadDWord();}break;
+			case ASE_MESH_MTLID:
+			{
+				pFrame->pFaceSubMaterials[dwFaceIndex]=ReadDWord();
+			}
+			break;
 			
 			case ASE_WIREFRAME_COLOR:
 				{pObject->vWireframeColor=ReadVector();}break;
@@ -776,6 +783,7 @@ void CASEFileType::ProcessObjectFrameSubMaterials(S3DSObject *pObject,S3DSFrame 
 			{
 				S3DSObjectMaterial *pFrameMaterial=new S3DSObjectMaterial;
 				strcpy(pFrameMaterial->sName,pMaterial->sName);
+				pFrameMaterial->dwSubMaterialId=pMaterial->dwSubMaterialId;
 				pFrameMaterial->nFaces=nFacesWithSubMaterial;
 				pFrameMaterial->pFaces=new int [nFacesWithSubMaterial];
 

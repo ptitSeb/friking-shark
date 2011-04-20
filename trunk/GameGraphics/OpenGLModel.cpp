@@ -103,9 +103,28 @@ bool COpenGLModel::LoadFromFile()
 			for (unsigned int o=0;o<file.m_vObjects.size();o++)
 			{
 				S3DSObject *pObject=file.m_vObjects[o];
-				if (pObject->bVisible && pObject->dwMaterialId==(unsigned int)m)
+				if (pObject->bVisible && p3DSMaterial && pObject->dwMaterialId==p3DSMaterial->dwMaterialId)
 				{
-				  nMaterialFaces+=pObject->vAnimationFrames[f]->nFaces;
+					if(p3DSMaterial->bSubMaterial)
+					{
+						S3DSFrame  *p3DSFrame=file.m_vObjects[o]->vAnimationFrames[f];
+						for(unsigned int s=0;s<p3DSFrame->sObjectMaterials.size();s++)
+						{
+							if(p3DSFrame->sObjectMaterials[s]->dwSubMaterialId==p3DSMaterial->dwSubMaterialId)
+							{
+								nMaterialFaces+=p3DSFrame->sObjectMaterials[s]->nFaces;
+								break;
+							}
+						}
+					}
+					else
+					{
+						nMaterialFaces+=pObject->vAnimationFrames[f]->nFaces;
+					}
+				}
+				else if(!p3DSMaterial)
+				{
+					nMaterialFaces+=pObject->vAnimationFrames[f]->nFaces;
 				}
 			}
 			
@@ -158,9 +177,9 @@ bool COpenGLModel::LoadFromFile()
 			for (unsigned int o=0;o<file.m_vObjects.size();o++)
 			{
 				S3DSObject *pObject=file.m_vObjects[o];
-				if (!pObject->bVisible || pObject->dwMaterialId!=(unsigned int)m) {continue;}
+				if (!pObject->bVisible || p3DSMaterial==NULL || pObject->dwMaterialId!=p3DSMaterial->dwMaterialId) {continue;}
 
-				S3DSMaterial		*p3DSMaterial=(pObject->dwMaterialId!=(unsigned int)-1)?file.m_vMaterials[pObject->dwMaterialId]:NULL;
+//				S3DSMaterial		*p3DSMaterial=(pObject->dwMaterialId!=(unsigned int)-1)?file.m_vMaterials[pObject->dwMaterialId]:NULL;
 				S3DSFrame  		   	*p3DSFrame=file.m_vObjects[o]->vAnimationFrames[f];
 
 				// Se crean arrays auxiliares de punteros a las propiedades de color y coord de textura
@@ -195,26 +214,37 @@ bool COpenGLModel::LoadFromFile()
 				// Procesado de la caras,se van alimentando simultaneamente el mapa
 				// de vertices y los buffers.
 
-				for (int x=0;x<p3DSFrame->nFaces;x++)
+				S3DSObjectMaterial *pObjectMaterial=NULL;
+				for(unsigned int s=0;s<p3DSFrame->sObjectMaterials.size();s++)
 				{
-					S3DSColorFace *pColorFace=ppColorFaces[x];
-					S3DSTextureFace *pTextFace=ppTextureFaces[x];
+					if(p3DSFrame->sObjectMaterials[s]->dwSubMaterialId==p3DSMaterial->dwSubMaterialId)
+					{
+						pObjectMaterial=p3DSFrame->sObjectMaterials[s];
+						break;
+					}
+				}
+				
+				for (int x=0;pObjectMaterial && x<pObjectMaterial->nFaces;x++)
+				{
+					int nFaceIndex=pObjectMaterial->pFaces[x];
+					S3DSColorFace *pColorFace=ppColorFaces[nFaceIndex];
+					S3DSTextureFace *pTextFace=ppTextureFaces[nFaceIndex];
 
 					CVector vFaceFlatNormal;
 					//Si no hay normales para los vertices o el tipo de shadding es Flat/Solid
-					if(!p3DSFrame->pVertexNormals || !p3DSFrame->pbFaceSmooth[x])
+					if(!p3DSFrame->pVertexNormals || !p3DSFrame->pbFaceSmooth[nFaceIndex])
 					{
 						if(p3DSFrame->pFaceNormals)
 						{
-							vFaceFlatNormal=p3DSFrame->pFaceNormals[x];
+							vFaceFlatNormal=p3DSFrame->pFaceNormals[nFaceIndex];
 						}
 						else
 						{
 							// Si no existe informacion de normales se calcula la normal de la cara
 							int nVertexes[3];
-							nVertexes[0]=p3DSFrame->pFaces[(x*3)];
-							nVertexes[1]=p3DSFrame->pFaces[(x*3)+1];
-							nVertexes[2]=p3DSFrame->pFaces[(x*3)+2];
+							nVertexes[0]=p3DSFrame->pFaces[(nFaceIndex*3)];
+							nVertexes[1]=p3DSFrame->pFaces[(nFaceIndex*3)+1];
+							nVertexes[2]=p3DSFrame->pFaces[(nFaceIndex*3)+2];
 							CPlane plane(p3DSFrame->pVertexes[nVertexes[2]],p3DSFrame->pVertexes[nVertexes[1]],p3DSFrame->pVertexes[nVertexes[0]]);
 							vFaceFlatNormal=plane;
 						}
@@ -222,7 +252,7 @@ bool COpenGLModel::LoadFromFile()
 
 					for (int v=0;v<3;v++)
 					{
-						int nSourceVertexIndex=p3DSFrame->pFaces[(x*3)+v];
+						int nSourceVertexIndex=p3DSFrame->pFaces[(nFaceIndex*3)+v];
 
 						COpenGLModelVertexKey key;
 						key.c[0]=p3DSFrame->pVertexes[nSourceVertexIndex].c[0];
@@ -231,9 +261,9 @@ bool COpenGLModel::LoadFromFile()
 
 						if(p3DSFrame->pVertexNormals && p3DSFrame->pbFaceSmooth[x])
 						{
-						  key.n[0]=p3DSFrame->pVertexNormals[(x*3)+v].c[0];
-						  key.n[1]=p3DSFrame->pVertexNormals[(x*3)+v].c[1];
-						  key.n[2]=p3DSFrame->pVertexNormals[(x*3)+v].c[2];
+							key.n[0]=p3DSFrame->pVertexNormals[(nFaceIndex*3)+v].c[0];
+							key.n[1]=p3DSFrame->pVertexNormals[(nFaceIndex*3)+v].c[1];
+							key.n[2]=p3DSFrame->pVertexNormals[(nFaceIndex*3)+v].c[2];
 						}
 						else
 						{

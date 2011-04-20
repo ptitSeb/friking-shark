@@ -41,6 +41,7 @@ struct S3DSObjectMaterial
 	char		sName[MAX_PATH];
 	int			nFaces;
 	int			*pFaces;
+	unsigned int dwSubMaterialId;
 
 	S3DSObjectMaterial();
 	~S3DSObjectMaterial();
