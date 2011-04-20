@@ -10,26 +10,58 @@ uniform sampler2D Texture1;
 uniform sampler2D Texture2;
 uniform sampler2DShadow ShadowMap;
 
+#ifdef ENABLE_LIGHTING
+varying vec4 g_amb;
+varying vec4 g_diff;
+varying vec4 g_sunamb;
+varying vec4 g_sundiff;
+#endif
+
+#ifdef ENABLE_FOG
+varying float g_fFogFactor;
+#endif 
+
 void main (void) 
 {
-  vec4 color;
+  vec4 texcolor=gl_Color;
+  vec4 finalcolor;
+  float fShadowFactor=1.0;
+  
+  
 #ifdef ENABLE_TEXTURES
-	  color = texture2D(Texture0, gl_TexCoord[0].xy)*gl_Color;
+      texcolor*= texture2D(Texture0, gl_TexCoord[0].xy);
 	#if TEXTURE_UNITS > 1
-	  color*= texture2D(Texture0, gl_TexCoord[1].xy);
+      texcolor*= texture2D(Texture0, gl_TexCoord[1].xy);
 	#endif
 	#if TEXTURE_UNITS > 2
-	  color*= texture2D(Texture1, gl_TexCoord[2].xy);
+      texcolor*= texture2D(Texture1, gl_TexCoord[2].xy);
 	#endif
-	 // color.a = gl_Color.a;
-#else
-  color = gl_Color;
 #endif
+  
+  #ifdef ENABLE_LIGHTING
+	  vec4 amb=vec4(1);
+	  vec4 diff=vec4(1);
+	  amb=g_amb;
+	  diff=g_diff;
+  #endif
+  
+  #ifdef ENABLE_SHADOWS
+	  fShadowFactor=shadow2DProj(ShadowMap, gl_TexCoord[3]).r;
+  #endif
+  #ifdef ENABLE_LIGHTING
+	  amb+=g_sunamb*fShadowFactor;
+	  diff=g_sundiff*fShadowFactor;
+	  finalcolor=gl_LightModel.ambient*texcolor+(amb*texcolor)+(diff*texcolor);
+	  finalcolor.a=texcolor.a;
+  #else
+	finalcolor=texcolor*fShadowFactor;
+  #endif
+	
+  
+  #ifdef ENABLE_FOG
+	finalcolor= vec4(clamp(finalcolor.rgb, 0.0, 1.0),finalcolor.a);
+	finalcolor.rgb=mix(gl_Fog.color.rgb,finalcolor.rgb,g_fFogFactor);
+  #endif
 
-#ifdef ENABLE_SHADOWS
-  float fColor=shadow2DProj(ShadowMap, gl_TexCoord[3]).r;
-  color.rgb=mix(color.rgb,color.rgb*gl_LightModel.ambient.rgb,1.0-fColor);
-#endif
-
-  gl_FragColor=color;
+	gl_FragColor=finalcolor;
 }
