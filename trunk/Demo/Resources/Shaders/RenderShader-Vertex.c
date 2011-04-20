@@ -1,4 +1,14 @@
 uniform mat4 CameraModelViewInverse;
+#ifdef ENABLE_LIGHTING
+varying vec4 g_amb;
+varying vec4 g_diff;
+varying vec4 g_sunamb;
+varying vec4 g_sundiff;
+#endif
+#ifdef ENABLE_FOG
+varying float g_fFogFactor;
+#endif 
+
 
 void DirectionalLight(const in int  i,
 					  const in vec3 normal,
@@ -41,56 +51,45 @@ void main (void)
 	vec4 LocalVertexPos=gl_Vertex;
 	vec4 EyeVertexPos=gl_ModelViewMatrix * LocalVertexPos;
 	vec4 WorldVertexPos=CameraModelViewInverse * EyeVertexPos;
-	vec4 color;
 
     gl_Position = ftransform();
-
 #ifdef ENABLE_LIGHTING
-	// Clear the light intensity accumulators
-	vec4 amb =  vec4(0.0);
-	vec4 diff = vec4(0.0);
-
-	DirectionalLight(0, normal, amb, diff);
+	g_amb=vec4(0);
+	g_diff=vec4(0);
+	g_sunamb=vec4(0);
+	g_sundiff=vec4(0);
+	DirectionalLight(0, normal, g_sunamb, g_sundiff);
 #if ENABLED_LIGHTS > 1
-	PointLight(1, EyeVertexPos.xyz, normal, amb, diff);
+	PointLight(1, EyeVertexPos.xyz, normal, g_amb, g_diff);
 #endif
 #if ENABLED_LIGHTS > 2
-	PointLight(2, EyeVertexPos.xyz, normal, amb, diff);
+	PointLight(2, EyeVertexPos.xyz, normal, g_amb, g_diff);
 #endif
 #if ENABLED_LIGHTS > 3
-	PointLight(3, EyeVertexPos.xyz, normal, amb, diff);
+	PointLight(3, EyeVertexPos.xyz, normal, g_amb, g_diff);
 #endif
 #if ENABLED_LIGHTS > 4
-	PointLight(4, EyeVertexPos.xyz, normal, amb, diff);
+	PointLight(4, EyeVertexPos.xyz, normal, g_amb, g_diff);
 #endif
 #if ENABLED_LIGHTS > 5
-	PointLight(5, EyeVertexPos.xyz, normal, amb, diff);
+	PointLight(5, EyeVertexPos.xyz, normal, g_amb, g_diff);
 #endif
 #if ENABLED_LIGHTS > 6
-	PointLight(6, EyeVertexPos.xyz, normal, amb, diff);
+	PointLight(6, EyeVertexPos.xyz, normal, g_amb, g_diff);
 #endif
 #if ENABLED_LIGHTS > 7
-	PointLight(7, EyeVertexPos.xyz, normal, amb, diff);
+	PointLight(7, EyeVertexPos.xyz, normal, g_amb, g_diff);
 #endif
-	color=gl_LightModel.ambient*gl_Color+(amb*gl_Color)+(diff*gl_Color);
-	color.a=gl_Color.a;
-#else
-	color=gl_Color;
 #endif
 
 #ifdef ENABLE_FOG
-
-	gl_FrontColor = vec4(clamp(color.rgb, 0.0, 1.0),gl_Color.a);
-
 	float fFogSize=gl_Fog.end-gl_Fog.start;
 	float fFogDist=WorldVertexPos.y-gl_Fog.start;
-	float fFogFactor=fFogDist/fFogSize;
-	fFogFactor=clamp(fFogFactor,0.0,1.0);
-	gl_FrontColor.rgb=mix(gl_Fog.color.rgb,gl_FrontColor.rgb,fFogFactor);
-
-#else
-	gl_FrontColor=color;
+	g_fFogFactor=fFogDist/fFogSize;
+	g_fFogFactor=clamp(g_fFogFactor,0.0,1.0);
 #endif
+	
+	gl_FrontColor=gl_Color;
 	
 #ifdef ENABLE_TEXTURES
 	gl_TexCoord[0]=gl_TextureMatrix[0]*gl_MultiTexCoord0;
