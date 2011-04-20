@@ -114,6 +114,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FormationEditor", "..\Forma
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EntityEditor", "..\EntityEditor\EntityEditor.vcproj", "{019680D8-CE69-42ED-8531-EF6D14663F1A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BSPDebugger", "..\BSPDebugger\BSPDebugger.vcproj", "{D630122E-C436-4FC6-B4D3-B1EA90B8FCEC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -206,6 +208,10 @@ Global
 		{019680D8-CE69-42ED-8531-EF6D14663F1A}.Debug|Win32.Build.0 = Debug|Win32
 		{019680D8-CE69-42ED-8531-EF6D14663F1A}.Release|Win32.ActiveCfg = Release|Win32
 		{019680D8-CE69-42ED-8531-EF6D14663F1A}.Release|Win32.Build.0 = Release|Win32
+		{D630122E-C436-4FC6-B4D3-B1EA90B8FCEC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D630122E-C436-4FC6-B4D3-B1EA90B8FCEC}.Debug|Win32.Build.0 = Debug|Win32
+		{D630122E-C436-4FC6-B4D3-B1EA90B8FCEC}.Release|Win32.ActiveCfg = Release|Win32
+		{D630122E-C436-4FC6-B4D3-B1EA90B8FCEC}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
