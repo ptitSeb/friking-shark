@@ -29,6 +29,9 @@ CVehicle::CVehicle(CVehicleType *pType)
     m_dwDamageType=DAMAGE_TYPE_NORMAL;
 	m_nRoutePoint=0;
 	m_bRouteFinished=false;
+	SEntityTypeConfig sconfig;
+	m_pType->GetEntityTypeConfig(&sconfig);
+	m_nConfiguredDamageType=sconfig.nDamageType;
 }
 
 void CVehicle::Render(IGenericRender *piRender,IGenericCamera *piCamera)
@@ -71,7 +74,7 @@ void CVehicle::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
 
-	m_dwDamageType=(m_vChildren.size()?DAMAGE_TYPE_NONE:DAMAGE_TYPE_NORMAL);
+	m_dwDamageType=(m_vChildren.size()?DAMAGE_TYPE_NONE:m_nConfiguredDamageType);
 	
 	if(m_piTarget==NULL){AcquireTarget();}
 	

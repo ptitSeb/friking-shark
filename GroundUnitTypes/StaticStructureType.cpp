@@ -5,6 +5,7 @@ CStaticStructureType::CStaticStructureType()
 {
 	m_nDamageType=DAMAGE_TYPE_NORMAL;
 	m_nMovementType=PHYSIC_MOVE_TYPE_NONE;
+	
 }
 
 CStaticStructureType::~CStaticStructureType()
@@ -28,6 +29,10 @@ CStaticStructure::CStaticStructure(CStaticStructureType *pType)
 {
 	m_sClassName="CStaticStructure";
 	m_pType=pType;
+	
+	SEntityTypeConfig sconfig;
+	m_pType->GetEntityTypeConfig(&sconfig);
+	m_nConfiguredDamageType=sconfig.nDamageType;
 }
 
 void CStaticStructure::OnKilled()
@@ -54,7 +59,7 @@ void CStaticStructure::ProcessFrame(unsigned int dwCurrentTime,double dTimeFract
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
 
-	m_dwDamageType=(m_vChildren.size()?DAMAGE_TYPE_NONE:DAMAGE_TYPE_NORMAL);
+	m_dwDamageType=(m_vChildren.size()?DAMAGE_TYPE_NONE:m_nConfiguredDamageType);
 
 	if(m_dwAlignment==ENTITY_ALIGNMENT_ENEMIES)
 	{
