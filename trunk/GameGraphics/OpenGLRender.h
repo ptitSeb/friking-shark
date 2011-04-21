@@ -11,6 +11,7 @@ struct SRenderState
 	bool bActiveLighting;
 	bool bActiveSolid;
 	bool bActiveShadowEmission;
+	bool bActiveWater;
 	bool bActiveShadowReception;
 
 	bool bActiveDepth;
@@ -19,6 +20,7 @@ struct SRenderState
 	bool bActiveBlending;
 	unsigned int nBlendOperator1;
 	unsigned int nBlendOperator2;
+	unsigned int nBlendingLayer;
 
 	bool bActiveHeightFog;
 	double dHeightFogStart;
@@ -45,6 +47,8 @@ struct SRenderState
 
 		if(bActiveBlending<otherState.bActiveBlending){return -1;}
 		if(bActiveBlending>otherState.bActiveBlending){return 1;}
+		if(nBlendingLayer<otherState.nBlendingLayer){return -1;}
+		if(nBlendingLayer>otherState.nBlendingLayer){return 1;}
 		if(nBlendOperator1<otherState.nBlendOperator1){return -1;}
 		if(nBlendOperator1>otherState.nBlendOperator1){return 1;}
 		if(nBlendOperator2<otherState.nBlendOperator2){return -1;}
@@ -60,6 +64,8 @@ struct SRenderState
 		if(bActiveShadowEmission>otherState.bActiveShadowEmission){return 1;}
 		if(bActiveShadowReception<otherState.bActiveShadowReception){return -1;}
 		if(bActiveShadowReception>otherState.bActiveShadowReception){return 1;}
+		if(bActiveWater<otherState.bActiveWater){return -1;}
+		if(bActiveWater>otherState.bActiveWater){return 1;}
 		return 0;
 	}
 
@@ -77,10 +83,12 @@ struct SRenderState
 		bActiveBlending=false;
 		nBlendOperator1=GL_SRC_ALPHA;
 		nBlendOperator2=GL_ONE_MINUS_SRC_ALPHA;
-
+		nBlendingLayer=0;
+		
 		bActiveHeightFog=false;
 		dHeightFogStart=0;
 		dHeightFogEnd=0;
+		bActiveWater=false;
 	}
 };
 
@@ -269,7 +277,8 @@ struct SShaderKey
 	bool bShadows;
 	int  nTextureUnits;
 	int  nActiveLighs;
-
+	int  bWater;
+	
 	bool operator <(const SShaderKey &otherKey) const
 	{
 		if(bHeightFog<otherKey.bHeightFog){return true;}
@@ -280,11 +289,13 @@ struct SShaderKey
 		if(nTextureUnits>otherKey.nTextureUnits){return false;}
 		if(nActiveLighs<otherKey.nActiveLighs){return true;}
 		if(nActiveLighs>otherKey.nActiveLighs){return false;}
+		if(bWater<otherKey.bWater){return true;}
+		if(bWater>otherKey.bWater){return false;}
 		return false;
 	}
 
-	SShaderKey(){bHeightFog=false;bShadows=false;nTextureUnits=0;nActiveLighs=0;}
-	SShaderKey(bool heightFog,bool shadows,int textureUnits,int activeLighs){bHeightFog=heightFog;bShadows=shadows;nTextureUnits=textureUnits;nActiveLighs=activeLighs;}
+	SShaderKey(){bHeightFog=false;bShadows=false;nTextureUnits=0;nActiveLighs=0;bWater=false;}
+	SShaderKey(bool heightFog,bool shadows,int textureUnits,int activeLighs,int water){bHeightFog=heightFog;bShadows=shadows;nTextureUnits=textureUnits;nActiveLighs=activeLighs;bWater=water;}
 };
 
 class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRender
@@ -332,6 +343,7 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	
 	bool		 m_bPrecompileShaders;
 	
+	unsigned int m_nFirstTimeStamp;
 	
 	unsigned long m_nActiveLights;
 	bool m_bLightingPrepared;
@@ -452,7 +464,11 @@ public:
 	void ActivateLighting();
 	void DeactivateLighting();
 	bool IsLightingActive();
-
+	
+	void ActivateWater();
+	void SetWaterMappingSize(double dMaxU,double dMaxV);
+	void DeactivateWater();
+	
 	void SetAmbientLight(const CVector &vColor);
 	void GetAmbientLight(CVector *pvColor);
 
@@ -470,7 +486,8 @@ public:
 	void DeactivateBlending();
 	bool IsBlendingActive();
 	void SetBlendingFunction(unsigned int nOperator1,unsigned int nOperator2);
-
+	void SetBlendingLayer(unsigned int nLayer);
+	
 	void ActivateDepth();
 	void DeactivateDepth();
 	void SetDepthFunction(unsigned int nDepthFunc);

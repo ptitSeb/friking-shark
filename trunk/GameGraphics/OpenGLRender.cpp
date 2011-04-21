@@ -38,6 +38,8 @@ COpenGLRender::COpenGLRender(void)
 	m_dStagedRenderingMaxZ=0;
 	m_dMinDistanceToLight=10000;
 	m_bPrecompileShaders=true;
+	
+	m_nFirstTimeStamp=GetTimeStamp();
 }
 
 COpenGLRender::~COpenGLRender(void)
@@ -171,8 +173,10 @@ void COpenGLRender::SetCamera(const CVector &vPosition,double dYaw, double dPitc
 					{
 						for(int nLighs=0;nLighs<=m_sHardwareSupport.nMaxLights;nLighs++)
 						{
-							SShaderKey key(bHeightFog!=0,bShadows!=0,nTextures,nLighs);
-							AddShader(key);
+							SShaderKey keywater(bHeightFog!=0,bShadows!=0,nTextures,nLighs,true);
+							SShaderKey keynowater(bHeightFog!=0,bShadows!=0,nTextures,nLighs,false);
+							AddShader(keywater);
+							AddShader(keynowater);
 						}
 					}
 				}
@@ -815,6 +819,31 @@ void COpenGLRender::ActivateHeightFog(double dMinHeight,double dMaxHeight,const 
 	}
 }
 
+void COpenGLRender::ActivateWater()
+{
+	//if(!m_sRenderOptions.bEnableShader){return;}
+	SRenderState *pState=m_bStagedRendering?&m_sStagedRenderingState:&m_sRenderState;
+	pState->bActiveWater=true;
+}
+
+void COpenGLRender::SetWaterMappingSize(double dMaxU,double dMaxV)
+{
+	std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader;
+	for(iShader=m_mShaders.begin();iShader!=m_mShaders.end();iShader++)
+	{
+		if(iShader->first.bWater)
+		{
+			iShader->second.m_piShader->AddUniform("WaterMappingSize",CVector(dMaxU,dMaxV,0));
+		}
+	}
+}
+
+void COpenGLRender::DeactivateWater()
+{
+	SRenderState *pState=m_bStagedRendering?&m_sStagedRenderingState:&m_sRenderState;
+	pState->bActiveWater=false;
+}
+
 void COpenGLRender::DeactivateHeightFog()
 {
 	SRenderState *pState=m_bStagedRendering?&m_sStagedRenderingState:&m_sRenderState;
@@ -927,6 +956,13 @@ void COpenGLRender::ActivateBlending()
 		glEnable(GL_BLEND);
 		glBlendFunc(m_sRenderState.nBlendOperator1, m_sRenderState.nBlendOperator2);
 	}
+}
+
+void COpenGLRender::SetBlendingLayer(unsigned int nLayer)
+{
+	if(!m_sRenderOptions.bEnableBlending){return;}
+	SRenderState *pState=m_bStagedRendering?&m_sStagedRenderingState:&m_sRenderState;
+	pState->nBlendingLayer=nLayer;
 }
 
 void COpenGLRender::SetBlendingFunction(unsigned int nOperator1,unsigned int nOperator2)
@@ -1609,6 +1645,7 @@ void COpenGLRender::EndStagedRendering()
 	CMatrix invertedCameraMatrix=cameraModelViewMatrix;
 	invertedCameraMatrix.Inverse();
 
+	float nCurrentTime=((double)(GetTimeStamp()-m_nFirstTimeStamp))*0.001;
 	std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader;
 	for(iShader=m_mShaders.begin();iShader!=m_mShaders.end();iShader++)
 	{
@@ -1616,6 +1653,7 @@ void COpenGLRender::EndStagedRendering()
 		{
 			iShader->second.m_piShader->AddUniform("CameraModelViewInverse",(double*)invertedCameraMatrix.e);
 		}
+		iShader->second.m_piShader->AddUniform("CurrentRealTime",nCurrentTime);
 	}
 
 	double dPreviousNear=m_dPerspectiveNearPlane;
@@ -1959,7 +1997,8 @@ void COpenGLRender::SetRenderState( const SRenderState &sNewState,bool bForce)
 {
 	m_sRenderState.bActiveShadowEmission=sNewState.bActiveShadowEmission;
 	m_sRenderState.bActiveShadowReception=sNewState.bActiveShadowReception;
-
+	m_sRenderState.bActiveWater=sNewState.bActiveWater;
+	
 	if(bForce || m_sRenderState.bActiveTextures!=sNewState.bActiveTextures)
 	{
 		sNewState.bActiveTextures?ActivateTextures():DeactivateTextures();
@@ -1995,7 +2034,7 @@ void COpenGLRender::SetRenderState( const SRenderState &sNewState,bool bForce)
 	}
 	if(m_bRenderingWithShader)
 	{
-		SShaderKey key(sNewState.bActiveHeightFog,m_sRenderOptions.bEnableShadows && m_bRenderingShadowReception,sNewState.bActiveTextures && m_sRenderOptions.bEnableTextures?m_mTextureLevels.size():0,m_nActiveLights);
+		SShaderKey key(sNewState.bActiveHeightFog,m_sRenderOptions.bEnableShadows && m_bRenderingShadowReception,sNewState.bActiveTextures && m_sRenderOptions.bEnableTextures?m_mTextureLevels.size():0,m_nActiveLights,sNewState.bActiveWater);
 		std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader=m_mShaders.find(key);
 		CGenericShaderWrapper *pNewShader=(iShader==m_mShaders.end())?NULL:&iShader->second;
 		if(m_pCurrentShader && m_pCurrentShader!=pNewShader)
@@ -2300,6 +2339,7 @@ void COpenGLRender::AddShader( const SShaderKey &key )
 	std::string sPreprocessor;
 	if(key.bHeightFog){sPreprocessor+="#define ENABLE_FOG\n";}
 	if(key.bShadows){sPreprocessor+="#define ENABLE_SHADOWS\n";}
+	if(key.bWater){sPreprocessor+="#define ENABLE_WATER\n";}
 	if(key.nTextureUnits)
 	{
 		sPreprocessor+="#define ENABLE_TEXTURES\n";
