@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=10000.000000
 			NearPlane=10.000000
-			Posicion=-35.645749,227.965199,4.682201
+			Posicion=403.464251,227.965199,6.317527
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -1576,7 +1576,7 @@ AreaDeJuego
 }
 Terrain
 {
-	AmbientColor=0.320876,0.320876,0.320876
+	AmbientColor=0.320930,0.320930,0.320930
 	BaseModel
 	{
 		Class=Model
@@ -1714,10 +1714,10 @@ Terrain
 	ColorMapFile=ColorMap.bmp
 	Fog
 	{
-		Color=0.117647,0.243137,0.074510
+		Color=0.061294,0.131579,0.037134
 		Enabled=1
-		End=46.801543
-		Start=27.283300
+		End=49.883371
+		Start=23.283300
 	}
 	HeightLayers
 	{
@@ -1813,7 +1813,7 @@ Terrain
 	Sun
 	{
 		Azimuth=45.000000
-		Color=0.519330,0.519330,0.519330
+		Color=0.548837,0.548837,0.548837
 		Distance=1.000000
 		Elevation=70.000000
 	}
@@ -1824,8 +1824,8 @@ Terrain
 			Enabled=1
 			Height=0.880000
 			HorzResolution=21.000000
-			Opacity=0.250000
-			Speed=0.170000
+			Opacity=0.200000
+			Speed=0.110000
 			Texture1=./Textures/rtrock_1.jpg
 			Texture2=hiervsPeq.jpg
 			VertResolution=5.500000

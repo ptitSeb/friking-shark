@@ -1,4 +1,11 @@
+//
+// Fixed pipeline implementation is based on:
+//    3Dlabs GLSL ShaderGen code (http://developer.3dlabs.com)
+//    OpenGLShading Language Third Edition
+//
+
 uniform mat4 CameraModelViewInverse;
+varying vec3 g_WorldVertexPos;
 #ifdef ENABLE_LIGHTING
 varying vec4 g_amb;
 varying vec4 g_diff;
@@ -66,6 +73,7 @@ void main (void)
 	vec4 LocalVertexPos=gl_Vertex;
 	vec4 EyeVertexPos=gl_ModelViewMatrix * LocalVertexPos;
 	vec4 WorldVertexPos=CameraModelViewInverse * EyeVertexPos;
+	g_WorldVertexPos=WorldVertexPos.xyz;
 
     gl_Position = ftransform();
 #ifdef ENABLE_LIGHTING

@@ -47,6 +47,7 @@ void CWorldManager::CreateScenario()
 	CloseScenario();
 	m_pTerrainBSP=NULL;
 	m_TerrainModel.Create("GameResources","Model","");
+	m_WaterModel.Create("GameResources","Model","");
 	UpdateTerrain();
 }
 
@@ -54,6 +55,7 @@ void CWorldManager::LoadScenario(ISystemPersistencyNode *piNode)
 {
 	CloseScenario();
 	m_TerrainModel.Create("GameResources","Model","");
+	m_WaterModel.Create("GameResources","Model","");
 	PersistencyLoad(piNode->GetNode("Terrain"),"Terrain");
 	UpdateTerrain();
 }
@@ -70,6 +72,7 @@ void CWorldManager::CloseScenario()
 	m_vTerrainHeightLayers.clear();
 	m_vTerrainColorLayers.clear();
 	m_TerrainModel.Destroy();
+	m_WaterModel.Destroy();
 	m_TerrainWater.m_Texture1.Destroy();
 	m_TerrainWater.m_Texture2.Destroy();
 	m_TerrainSky.m_Texture.Destroy();
@@ -104,17 +107,17 @@ void CWorldManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction
 
 void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCamera)
 {
-	if(m_TerrainModel.m_piModel && m_pnWaterRenderBuffers[0]!=-1 && m_TerrainWater.m_Config.dSpeed!=0)
+	if(m_WaterModel.m_piModel && m_pnWaterRenderBuffers[0]!=-1 && m_TerrainWater.m_Config.dSpeed!=0)
 	{
 		CMatrix m;
 		m.T(CVector(m_TerrainWater.m_Config.dSpeed*0.5*((double)m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime()/1000.0),0,0));
-		m_TerrainModel.m_piModel->SetRenderBufferTextureMatrix(0,0,m_pnWaterRenderBuffers[0],0,&m);
+		m_WaterModel.m_piModel->SetRenderBufferTextureMatrix(0,0,m_pnWaterRenderBuffers[0],0,&m);
 	}
-	if(m_TerrainModel.m_piModel && m_pnWaterRenderBuffers[1]!=-1 && m_TerrainWater.m_Config.dSpeed!=0)
+	if(m_WaterModel.m_piModel && m_pnWaterRenderBuffers[1]!=-1 && m_TerrainWater.m_Config.dSpeed!=0)
 	{
 		CMatrix m;
 		m.T(CVector(m_TerrainWater.m_Config.dSpeed*((double)m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime()/1000.0),0,0));
-		m_TerrainModel.m_piModel->SetRenderBufferTextureMatrix(0,0,m_pnWaterRenderBuffers[1],0,&m);
+		m_WaterModel.m_piModel->SetRenderBufferTextureMatrix(0,0,m_pnWaterRenderBuffers[1],0,&m);
 	}
 	
 	if(m_TerrainModel.m_piModel)
@@ -129,11 +132,25 @@ void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCam
 		piRender->RenderModel(Origin,Origin,bUseBaseFrame?m_TerrainBaseModel.m_piModel:m_TerrainModel.m_piModel);
 		piRender->PopState();
 	}
+	
+	if(m_WaterModel.m_piModel)
+	{
+		piRender->PushState();
+		piRender->SetWaterMappingSize(m_TerrainWater.m_Config.dHorizontalResolution,m_TerrainWater.m_Config.dVerticalResolution);
+		piRender->DeactivateShadowEmission();
+		piRender->ActivateLighting();
+		piRender->ActivateBlending();
+		piRender->ActivateWater();
+		piRender->SetDepthFunction(GL_LEQUAL);
+		piRender->SetBlendingLayer(1);
+		piRender->RenderModel(Origin,Origin,m_WaterModel.m_piModel);
+		piRender->PopState();
+	}
 }
 
 void CWorldManager::DesignRender(IGenericRender *piRender)
 {
-	if(m_TerrainModel.m_piModel)
+	if(m_TerrainModel.m_piModel || m_WaterModel.m_piModel)
 	{
 		Render(piRender,NULL);
 	}
@@ -772,71 +789,79 @@ bool CWorldManager::UpdateTerrain()
 		m_TerrainModel.m_piModel->SetRenderBufferTextureCoords(nAnimation,nFrame,x,0,BufferFromVector(&vTempBuffers[x].vTexVertexArray));
 		m_TerrainModel.m_piModel->SetRenderBufferTextureCoords(nAnimation,nFrame,x,1,BufferFromVector(&vTempBuffers[x].vShadowTexVertexArray));
 	}
-	m_pnWaterRenderBuffers[0]=-1;
-	m_pnWaterRenderBuffers[1]=-1;
-	if(m_TerrainWater.m_Config.bEnabled)
+	if(m_WaterModel.m_piModel)
 	{
-		IGenericTexture *piTextures[2]={m_TerrainWater.m_Texture1.m_piTexture,m_TerrainWater.m_Texture2.m_piTexture};
-		for(int x=0;x<2;x++)
-		{
-			if(piTextures[x]==NULL){continue;}
-			m_pnWaterRenderBuffers[x]=m_TerrainModel.m_piModel->AddRenderBuffer(nAnimation,nFrame);
-			m_TerrainModel.m_piModel->SetRenderBufferTexture(nAnimation,nFrame,m_pnWaterRenderBuffers[x],0,piTextures[x]);
-			m_TerrainModel.m_piModel->SetRenderBufferMaterial(nAnimation,nFrame,m_pnWaterRenderBuffers[x],CVector(1,1,1),CVector(1,1,1),CVector(1,1,1),128,(float)m_TerrainWater.m_Config.dOpacity);
-
-			float *pWaterVertexBuffer=new GLfloat[12];
-			float *pCursor=pWaterVertexBuffer;
-			*pCursor++=(float)vWaterMins.c[0];
-			*pCursor++=(float)dAbsWaterHeight;
-			*pCursor++=(float)vWaterMins.c[2];
-
-			*pCursor++=(float)vWaterMins.c[0];
-			*pCursor++=(float)dAbsWaterHeight;
-			*pCursor++=(float)vWaterMaxs.c[2];
-
-			*pCursor++=(float)vWaterMaxs.c[0];
-			*pCursor++=(float)dAbsWaterHeight;
-			*pCursor++=(float)vWaterMaxs.c[2];
-
-			*pCursor++=(float)vWaterMaxs.c[0];
-			*pCursor++=(float)dAbsWaterHeight;
-			*pCursor++=(float)vWaterMins.c[2];
-			m_TerrainModel.m_piModel->SetRenderBufferVertexes(nAnimation,nFrame,m_pnWaterRenderBuffers[x],4,pWaterVertexBuffer);
-
-			float *pWaterNormalBuffer=new GLfloat[12];
-			pCursor=pWaterNormalBuffer;
-			for(int y=0;y<4;y++){*pCursor++=0;*pCursor++=1;*pCursor++=0;}
-			m_TerrainModel.m_piModel->SetRenderBufferNormals(nAnimation,nFrame,m_pnWaterRenderBuffers[x],pWaterNormalBuffer);
-
-			float *pWaterColorBuffer=new GLfloat[16];
-			pCursor=pWaterColorBuffer;
-			for(int y=0;y<4;y++){*pCursor++=1;*pCursor++=1;*pCursor++=1;*pCursor++=(float)m_TerrainWater.m_Config.dOpacity;}
-			m_TerrainModel.m_piModel->SetRenderBufferColors(nAnimation,nFrame,m_pnWaterRenderBuffers[x],pWaterColorBuffer);
-
-			float *pWaterTexBuffer=new GLfloat[8];
-			pCursor=pWaterTexBuffer;
-			*pCursor++=0;
-			*pCursor++=0;
-
-			*pCursor++=0;
-			*pCursor++=(float)m_TerrainWater.m_Config.dVerticalResolution;
-
-			*pCursor++=(float)m_TerrainWater.m_Config.dHorizontalResolution;
-			*pCursor++=(float)m_TerrainWater.m_Config.dVerticalResolution;
-
-			*pCursor++=(float)m_TerrainWater.m_Config.dHorizontalResolution;
-			*pCursor++=0;
-			m_TerrainModel.m_piModel->SetRenderBufferTextureCoords(nAnimation,nFrame,m_pnWaterRenderBuffers[x],0,pWaterTexBuffer);
+		m_WaterModel.m_piModel->RemoveAnimations();
+		int nWaterAnimation=m_WaterModel.m_piModel->AddAnimation();
+		int nWaterFrame=m_WaterModel.m_piModel->AddAnimationFrame(nWaterAnimation);
 	
-			unsigned int *pWaterFaces=new unsigned int[6];
-			pWaterFaces[0]=0;
-			pWaterFaces[1]=1;
-			pWaterFaces[2]=2;
-			pWaterFaces[3]=0;
-			pWaterFaces[4]=2;
-			pWaterFaces[5]=3;
-			m_TerrainModel.m_piModel->SetRenderBufferFaces(nAnimation,nFrame,m_pnWaterRenderBuffers[x],2,pWaterFaces);
+		m_pnWaterRenderBuffers[0]=-1;
+		m_pnWaterRenderBuffers[1]=-1;
+		if(m_TerrainWater.m_Config.bEnabled)
+		{
+			IGenericTexture *piTextures[2]={m_TerrainWater.m_Texture1.m_piTexture,m_TerrainWater.m_Texture2.m_piTexture};
+			for(int x=0;x<2;x++)
+			{
+				if(piTextures[x]==NULL){continue;}
+				m_pnWaterRenderBuffers[x]=m_WaterModel.m_piModel->AddRenderBuffer(nWaterAnimation,nWaterFrame);
+				m_WaterModel.m_piModel->SetRenderBufferTexture(nWaterAnimation,nWaterFrame,m_pnWaterRenderBuffers[x],0,piTextures[x]);
+				m_WaterModel.m_piModel->SetRenderBufferMaterial(nWaterAnimation,nWaterFrame,m_pnWaterRenderBuffers[x],CVector(1,1,1),CVector(1,1,1),CVector(1,1,1),128,(float)m_TerrainWater.m_Config.dOpacity);
+
+				float *pWaterVertexBuffer=new GLfloat[12];
+				float *pCursor=pWaterVertexBuffer;
+				*pCursor++=(float)vWaterMins.c[0];
+				*pCursor++=(float)dAbsWaterHeight;
+				*pCursor++=(float)vWaterMins.c[2];
+
+				*pCursor++=(float)vWaterMins.c[0];
+				*pCursor++=(float)dAbsWaterHeight;
+				*pCursor++=(float)vWaterMaxs.c[2];
+
+				*pCursor++=(float)vWaterMaxs.c[0];
+				*pCursor++=(float)dAbsWaterHeight;
+				*pCursor++=(float)vWaterMaxs.c[2];
+
+				*pCursor++=(float)vWaterMaxs.c[0];
+				*pCursor++=(float)dAbsWaterHeight;
+				*pCursor++=(float)vWaterMins.c[2];
+				m_WaterModel.m_piModel->SetRenderBufferVertexes(nWaterAnimation,nWaterFrame,m_pnWaterRenderBuffers[x],4,pWaterVertexBuffer);
+
+				float *pWaterNormalBuffer=new GLfloat[12];
+				pCursor=pWaterNormalBuffer;
+				for(int y=0;y<4;y++){*pCursor++=0;*pCursor++=1;*pCursor++=0;}
+				m_WaterModel.m_piModel->SetRenderBufferNormals(nWaterAnimation,nWaterFrame,m_pnWaterRenderBuffers[x],pWaterNormalBuffer);
+
+				float *pWaterColorBuffer=new GLfloat[16];
+				pCursor=pWaterColorBuffer;
+				for(int y=0;y<4;y++){*pCursor++=1;*pCursor++=1;*pCursor++=1;*pCursor++=(float)m_TerrainWater.m_Config.dOpacity;}
+				m_WaterModel.m_piModel->SetRenderBufferColors(nWaterAnimation,nWaterFrame,m_pnWaterRenderBuffers[x],pWaterColorBuffer);
+
+				float *pWaterTexBuffer=new GLfloat[8];
+				pCursor=pWaterTexBuffer;
+				*pCursor++=0;
+				*pCursor++=0;
+
+				*pCursor++=0;
+				*pCursor++=(float)m_TerrainWater.m_Config.dVerticalResolution;
+
+				*pCursor++=(float)m_TerrainWater.m_Config.dHorizontalResolution;
+				*pCursor++=(float)m_TerrainWater.m_Config.dVerticalResolution;
+
+				*pCursor++=(float)m_TerrainWater.m_Config.dHorizontalResolution;
+				*pCursor++=0;
+				m_WaterModel.m_piModel->SetRenderBufferTextureCoords(nWaterAnimation,nWaterFrame,m_pnWaterRenderBuffers[x],0,pWaterTexBuffer);
+		
+				unsigned int *pWaterFaces=new unsigned int[6];
+				pWaterFaces[0]=0;
+				pWaterFaces[1]=1;
+				pWaterFaces[2]=2;
+				pWaterFaces[3]=0;
+				pWaterFaces[4]=2;
+				pWaterFaces[5]=3;
+				m_WaterModel.m_piModel->SetRenderBufferFaces(nWaterAnimation,nWaterFrame,m_pnWaterRenderBuffers[x],2,pWaterFaces);
+			}
 		}
+		m_WaterModel.m_piModel->UpdateFrameBuffers();
 	}
 
 	m_TerrainModel.m_piModel->UpdateFrameBuffers();

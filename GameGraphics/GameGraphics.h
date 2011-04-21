@@ -430,7 +430,8 @@ public:
 	virtual void DeactivateBlending()=0;
 	virtual bool IsBlendingActive()=0;
 	virtual void SetBlendingFunction(unsigned int nOperator1,unsigned int nOperator2)=0;
-
+	virtual void SetBlendingLayer(unsigned int nLayer)=0;
+	
 	virtual void ActivateDepth()=0;
 	virtual void DeactivateDepth()=0;
 	virtual void SetDepthFunction(unsigned int nDepthFunc)=0;
@@ -445,7 +446,11 @@ public:
 
 	virtual void PushState()=0;
 	virtual void PopState()=0;
-
+	
+	virtual void ActivateWater()=0;
+	virtual void SetWaterMappingSize(double dMaxU,double dMaxV)=0;
+	virtual void DeactivateWater()=0;
+	
 	// Render options
 
 	virtual void EnableShaders()=0;
