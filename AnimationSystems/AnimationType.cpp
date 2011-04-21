@@ -194,7 +194,7 @@ bool CAnimation::ProcessFrame(IPhysicManager *piPhysicManager,unsigned int dwCur
             bAllObjectsFinished=false;
         }
     }
-    m_bFinished=!m_bActive && bAllObjectsFinished;
+    m_bFinished=/*!m_bActive && */bAllObjectsFinished;
     return !m_bFinished;
 }
 

@@ -60,6 +60,8 @@ void CVehicle::OnKilled()
   }
   
   CEntityBase::OnKilledInternal(bRemove);
+
+  for(unsigned int x=0;x<m_vChildren.size();x++){m_vChildren[x].piEntity->Remove();}
 }
 
 void CVehicle::AcquireTarget()
@@ -73,8 +75,17 @@ void CVehicle::AcquireTarget()
 void CVehicle::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
+	
+	if(GetState()==eVehicleState_Destroyed)
+	{
+		if(m_vActiveAnimations.size()==0){Remove();}
+		return;
+	}
+	
+	bool bAllChildDead=true;
+	for(unsigned int x=0;x<m_vChildren.size();x++){if(m_vChildren[x].piEntity->GetHealth()!=0){bAllChildDead=false;}}
+	m_dwDamageType=(bAllChildDead?m_nConfiguredDamageType:DAMAGE_TYPE_NONE);
 
-	m_dwDamageType=(m_vChildren.size()?DAMAGE_TYPE_NONE:m_nConfiguredDamageType);
 	
 	if(m_piTarget==NULL){AcquireTarget();}
 	
@@ -150,6 +161,6 @@ void CVehicle::SetRoute( IRoute *piRoute )
 
 bool CVehicle::HasFinishedRoute()
 {
-	return m_piRoute==NULL || m_bRouteFinished;
+	return m_piRoute==NULL || m_bRouteFinished || m_dHealth==0;
 }
 
