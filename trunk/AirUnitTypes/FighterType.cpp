@@ -306,7 +306,7 @@ void CFighter::Render(IGenericRender *piRender,IGenericCamera *piCamera)
 
 bool CFighter::HasFinishedRoute()
 {
-	return m_piRoute==NULL || ((int)m_piRoute->GetNextPointIndex(m_nRoutePoint)==m_nRoutePoint);
+	return m_piRoute==NULL || ((int)m_piRoute->GetNextPointIndex(m_nRoutePoint)==m_nRoutePoint) || m_dHealth==0;
 }
 
 IEntity *CFighter::GetTarget()

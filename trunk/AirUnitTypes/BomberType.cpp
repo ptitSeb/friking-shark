@@ -102,7 +102,7 @@ IEntity *CBomber::GetTarget()
 
 bool CBomber::HasFinishedRoute()
 {
-	return m_piRoute==NULL || ((int)m_piRoute->GetNextPointIndex(m_nRoutePoint)==(int)m_nRoutePoint);
+	return m_piRoute==NULL || ((int)m_piRoute->GetNextPointIndex(m_nRoutePoint)==(int)m_nRoutePoint) || m_dHealth==0;
 }
 
 void CBomber::SetRoute(IRoute *piRoute)

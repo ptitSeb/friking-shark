@@ -20,8 +20,8 @@ bool CSoundSystemManager::Init(std::string sClass,std::string sName,ISystem *piS
   bool bOk=CSystemObjectBase::Init(sClass,sName,piSystem);;
   if(bOk) {m_pDevice=alcOpenDevice(NULL);bOk=(m_pDevice!=NULL);}
   if(bOk) {m_pContext=alcCreateContext(m_pDevice,NULL);bOk=(m_pContext!=NULL);}
-  if(bOk) {alcMakeContextCurrent(m_pContext);}
-  if(bOk) {alutInitWithoutContext(NULL,NULL);}
+  if(bOk) {bOk=alcMakeContextCurrent(m_pContext);}
+  if(bOk) {bOk=alutInitWithoutContext(NULL,NULL);}
   if(!bOk)
   {
 	  RTTRACE("CSoundSystemManager::Init -> Failed to create sound context %d",alGetError());
