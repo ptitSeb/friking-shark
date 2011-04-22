@@ -105,7 +105,7 @@ BEGIN_STRUCT_PROPS(STerrainSkyData)
 	PROP(m_Config,"Config")
 END_STRUCT_PROPS()
 
-class CWorldManager:virtual public CSystemObjectBase, virtual public IGameManager, virtual public IWorldManager,virtual public ITerrainDesign
+class CWorldManager:virtual public CSystemObjectBase, virtual public IGameManager, virtual public IWorldManager,virtual public ITerrainDesign, virtual public IEntityEvents
 {
  
     CWorldEntity            *m_pWorldEntity;
@@ -242,6 +242,11 @@ public:
 	void SetupRenderingEnvironment(IGenericRender *piRender);
 
 	CTraceInfo GetTerrainTrace( CVector vPoint1 ,CVector vPoint2);
+
+	// IEntityEvents
+	
+	void OnRemoved(IEntity *piEntity);
+	void OnKilled(IEntity *piEntity);
 	
     CWorldManager();
     virtual ~CWorldManager();

@@ -22,7 +22,7 @@ bool CPhysicManager::Init(std::string sClass,std::string sName,ISystem *piSystem
     bool bOk=CSystemObjectBase::Init(sClass,sName,piSystem);
     if(bOk){bOk=m_EntityManagerWrapper.Attach("GameSystem","EntityManager");}
     if(bOk){bOk=m_GameControllerWrapper.Attach("GameSystem","GameController");}
-    if(bOk){m_GameControllerWrapper.m_piGameController->RegisterManager(100,this);}
+    if(bOk){m_GameControllerWrapper.m_piGameController->RegisterManager(300,this);}
     return bOk;
 }
 
