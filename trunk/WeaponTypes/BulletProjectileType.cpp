@@ -2,6 +2,14 @@
 #include "BulletProjectileType.h"
 #include "../GameGraphics/GameGraphics.h"
 
+struct SBulletTargetingData
+{
+	CPlane  forwardPlane;
+	CPlane  velPlane;
+	CPlane  fallPlane;
+	CVector vFallDirection;
+};
+
 CBulletProjectileType::CBulletProjectileType()
 {
   m_dDamage=1.0;
@@ -42,51 +50,56 @@ CBulletProjectile::~CBulletProjectile()
 
 void CBulletProjectile::AcquireTargetOperation(IEntity *piEntity,void *pParam1,void *pParam2)
 {
+	SBulletTargetingData *pTargetingData=(SBulletTargetingData *)pParam2;
 	CBulletProjectile *pThis=(CBulletProjectile *)pParam1;
+	
 	if(pThis->m_piParent==NULL){return;}
 	if(piEntity->IsRemoved()){return;}
 	if(piEntity->GetAlignment()==pThis->m_dwAlignment){return;}
 	if(piEntity->GetAlignment()==ENTITY_ALIGNMENT_NEUTRAL ){return;}
-	if(piEntity->GetPhysicInfo()->vPosition.c[0]<pThis->m_PhysicInfo.vPosition.c[0]){return;}
+	if(piEntity->GetDamageType()==DAMAGE_TYPE_NONE){return;}
+	if(piEntity->GetHealth()<=0.0){return;}
 	
-	
-	if(piEntity->GetDamageType()!=DAMAGE_TYPE_NONE && piEntity->GetHealth()>0.0)
+	if(pTargetingData->forwardPlane.GetSide(piEntity->GetPhysicInfo()->vPosition)<0)
 	{
-		SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();
-		
-		CVector pVolumePoints[8];
-		CalcBBoxVolume(pPhysicInfo->vPosition,pPhysicInfo->vAngles,pPhysicInfo->vMins,pPhysicInfo->vMaxs,pVolumePoints);
+		return;
+	}	
+	
+	SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();
+	CVector pVolumePoints[8];
+	CalcBBoxVolume(pPhysicInfo->vPosition,pPhysicInfo->vAngles,pPhysicInfo->vMins,pPhysicInfo->vMaxs,pVolumePoints);
 
-		IGenericCamera *piCamera=g_PlayAreaManagerWrapper.m_piInterface->GetCamera();
-		CVector vPlanePoints[3];
-		vPlanePoints[0]=pThis->m_PhysicInfo.vPosition;
-		vPlanePoints[1]=pThis->m_PhysicInfo.vPosition+pThis->m_PhysicInfo.vVelocity;
-		vPlanePoints[2]=piCamera?piCamera->GetPosition():Origin;
-		REL(piCamera);
-
-		CPlane plane(vPlanePoints[0],vPlanePoints[1],vPlanePoints[2]);
-
-		int nPointsIn=0,nPointsOut=0;
-		for(unsigned int x=0;x<8;x++){if(plane.GetSide(pVolumePoints[x])>=0){nPointsOut++;}else{nPointsIn++;}}
-		if(nPointsOut && nPointsIn)
+	int nPointsIn=0,nPointsOut=0;
+	for(unsigned int x=0;x<8;x++){if(pTargetingData->fallPlane.GetSide(pVolumePoints[x])>=0){nPointsOut++;}else{nPointsIn++;}}
+	if(nPointsOut && nPointsIn)
+	{
+		double dTargetDistance=pThis->m_PhysicInfo.vPosition-pPhysicInfo->vPosition;
+		if(pThis->m_bTargetAcquired==false || dTargetDistance<(pThis->m_PhysicInfo.vPosition-pThis->m_vTargetPosition))
 		{
-			double dTargetDistance=pThis->m_PhysicInfo.vPosition-pPhysicInfo->vPosition;
-			if(pThis->m_bTargetAcquired==false || dTargetDistance<(pThis->m_PhysicInfo.vPosition-pThis->m_vTargetPosition))
+			CVector vTargetPos=piEntity->GetPhysicInfo()->vPosition;
+			CVector vTargetDif=vTargetPos-pThis->m_PhysicInfo.vPosition;
+			vTargetDif.c[1]=0;
+			double dTimeToTarget=(vTargetDif)/pThis->m_PhysicInfo.dMaxVelocity;
+			if(dTimeToTarget<=0.2)
 			{
-				pThis->m_vTargetPosition=piEntity->GetPhysicInfo()->vPosition;
-				CVector vTargetDif=pThis->m_vTargetPosition-pThis->m_PhysicInfo.vPosition;
-				vTargetDif.c[1]=0;
-				double dTimeToTarget=(vTargetDif)/pThis->m_PhysicInfo.dMaxVelocity;
-				double dVerticalVel=(pThis->m_vTargetPosition.c[1]-pThis->m_PhysicInfo.vPosition.c[1])/dTimeToTarget;
-				CVector vVel=(vPlanePoints[1]-vPlanePoints[0])^plane;
-				vVel.N();
-				vVel*=dVerticalVel;
-				pThis->m_PhysicInfo.vVelocity=pThis->m_vOriginalVelocity+vVel;
+				double dVerticalVel=(vTargetPos.c[1]-pThis->m_PhysicInfo.vPosition.c[1])/dTimeToTarget;
+				CVector vVel=pTargetingData->vFallDirection*dVerticalVel;
+				// Dada la perspectiva puede que las ballas tengan que ir hacia atras,
+				if(pTargetingData->velPlane.GetSide(pPhysicInfo->vPosition)<0)
+				{
+					pThis->m_PhysicInfo.vVelocity=(Origin-pThis->m_vOriginalVelocity)+vVel;
+				}
+				else
+				{
+					pThis->m_PhysicInfo.vVelocity=pThis->m_vOriginalVelocity+vVel;
+				}
+				pThis->m_vTargetPosition=vTargetPos;
 				pThis->m_bTargetAcquired=true;
 			}
 		}
 	}
 }
+
 void CBulletProjectile::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
@@ -101,7 +114,21 @@ void CBulletProjectile::ProcessFrame(unsigned int dwCurrentTime,double dTimeFrac
 	{
 		if(m_dwAlignment==ENTITY_ALIGNMENT_PLAYER)
 		{
-			GetEntityManager()->PerformUnaryOperation(AcquireTargetOperation,this,NULL);
+			IGenericCamera *piCamera=g_PlayAreaManagerWrapper.m_piInterface->GetCamera();
+			CVector vCameraPos=piCamera?piCamera->GetPosition():Origin;
+			REL(piCamera);
+			
+			CVector vRight,vNormalizedVelocity=m_vOriginalVelocity;
+			vNormalizedVelocity.N();
+			VectorsFromAngles(m_PhysicInfo.vAngles,NULL,&vRight,NULL);
+
+			SBulletTargetingData data;
+			data.velPlane=CPlane(vNormalizedVelocity,m_PhysicInfo.vPosition);
+			data.fallPlane=CPlane(m_PhysicInfo.vPosition,m_PhysicInfo.vPosition+m_vOriginalVelocity,vCameraPos);
+			data.forwardPlane=CPlane(m_PhysicInfo.vPosition,m_PhysicInfo.vPosition+vRight*10.0,vCameraPos);
+			data.vFallDirection=(vNormalizedVelocity)^data.fallPlane;
+			
+			GetEntityManager()->PerformUnaryOperation(AcquireTargetOperation,this,&data);
 			if(!m_bTargetAcquired)
 			{
 				m_dwNextTryAcquireTarget=dwCurrentTime+100;
