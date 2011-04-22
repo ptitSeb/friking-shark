@@ -833,11 +833,22 @@ void COpenGLRender::SetWaterMappingSize(double dMaxU,double dMaxV)
 	{
 		if(iShader->first.bWater)
 		{
-			iShader->second.m_piShader->AddUniform("WaterMappingSize",CVector(dMaxU,dMaxV,0));
+			iShader->second.m_piShader->AddUniform("WaterMappingSize",dMaxU,dMaxV);
 		}
 	}
 }
 
+void COpenGLRender::SetWaterMappingOffset(double dMaxU,double dMaxV)
+{
+	std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader;
+	for(iShader=m_mShaders.begin();iShader!=m_mShaders.end();iShader++)
+	{
+		if(iShader->first.bWater)
+		{
+			iShader->second.m_piShader->AddUniform("WaterMappingOffset",dMaxU,dMaxV);
+		}
+	}
+}
 void COpenGLRender::DeactivateWater()
 {
 	SRenderState *pState=m_bStagedRendering?&m_sStagedRenderingState:&m_sRenderState;
