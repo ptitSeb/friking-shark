@@ -45,7 +45,7 @@ bool CPlayAreaManager::Init(std::string sClass,std::string sName,ISystem *piSyst
 {
     bool bOk=CSystemObjectBase::Init(sClass,sName,piSystem);
     if(bOk){bOk=m_GameControllerWrapper.Attach("GameSystem","GameController");}
-    if(bOk){m_GameControllerWrapper.m_piGameController->RegisterManager(400,this);}
+    if(bOk){m_GameControllerWrapper.m_piGameController->RegisterManager(200,this);}
 	if(bOk){bOk=m_FrameManagerWrapper.Attach("GameSystem","FrameManager");}
 	return bOk;
 }

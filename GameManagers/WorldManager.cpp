@@ -23,7 +23,7 @@ bool CWorldManager::Init(std::string sClass,std::string sName,ISystem *piSystem)
 	if(bOk){bOk=m_RenderWrapper.Attach("GameSystem","GameRender");}
 	if(bOk){bOk=m_PlayAreaManagerWrapper.Attach("GameSystem","PlayAreaManager");}
 	if(bOk){bOk=m_FrameManagerWrapper.Attach("GameSystem","FrameManager");}
-	if(bOk){m_GameControllerWrapper.m_piGameController->RegisterManager(300,this);}
+	if(bOk){m_GameControllerWrapper.m_piGameController->RegisterManager(100,this);}
 	return bOk;
 }
 
@@ -89,6 +89,7 @@ void CWorldManager::CloseScenario()
 void CWorldManager::Start()
 {
 	m_pWorldEntity=new CWorldEntity(this);
+	SUBSCRIBE_TO_CAST(m_pWorldEntity,IEntityEvents);
 }
 
 void CWorldManager::Stop()
@@ -99,6 +100,8 @@ void CWorldManager::Stop()
 		m_pWorldEntity=NULL;
 	}
 }
+void CWorldManager::OnRemoved(IEntity *piEntity){if(m_pWorldEntity==piEntity){m_pWorldEntity=NULL;}}
+void CWorldManager::OnKilled(IEntity *piEntity){}
 
 void CWorldManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
@@ -107,16 +110,13 @@ void CWorldManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction
 
 void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCamera)
 {
-	if(m_WaterModel.m_piModel && m_pnWaterRenderBuffers[0]!=-1 && m_TerrainWater.m_Config.dSpeed!=0)
+	double dWaterOffset=0;
+	if(m_WaterModel.m_piModel && m_pnWaterRenderBuffers[0]!=-1  && m_pnWaterRenderBuffers[1]!=-1 && m_TerrainWater.m_Config.dSpeed!=0)
 	{
 		CMatrix m;
-		m.T(CVector(m_TerrainWater.m_Config.dSpeed*0.5*((double)m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime()/1000.0),0,0));
+		dWaterOffset=m_TerrainWater.m_Config.dSpeed*((double)m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime()/1000.0);
+		m.T(CVector(dWaterOffset,0,0));
 		m_WaterModel.m_piModel->SetRenderBufferTextureMatrix(0,0,m_pnWaterRenderBuffers[0],0,&m);
-	}
-	if(m_WaterModel.m_piModel && m_pnWaterRenderBuffers[1]!=-1 && m_TerrainWater.m_Config.dSpeed!=0)
-	{
-		CMatrix m;
-		m.T(CVector(m_TerrainWater.m_Config.dSpeed*((double)m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime()/1000.0),0,0));
 		m_WaterModel.m_piModel->SetRenderBufferTextureMatrix(0,0,m_pnWaterRenderBuffers[1],0,&m);
 	}
 	
@@ -137,6 +137,7 @@ void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCam
 	{
 		piRender->PushState();
 		piRender->SetWaterMappingSize(m_TerrainWater.m_Config.dHorizontalResolution,m_TerrainWater.m_Config.dVerticalResolution);
+		piRender->SetWaterMappingOffset(dWaterOffset,0);
 		piRender->DeactivateShadowEmission();
 		piRender->ActivateLighting();
 		piRender->ActivateBlending();

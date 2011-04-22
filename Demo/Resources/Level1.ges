@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=10000.000000
 			NearPlane=10.000000
-			Posicion=1960.125665,228.678936,5.718685
+			Posicion=2089.591578,228.678936,5.657446
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -1590,7 +1590,7 @@ AreaDeJuego
 				Count=1
 				Delay=2500
 				Interval=0
-				Posicion=604.318886,79.516312,52.965402
+				Posicion=606.338608,96.147513,52.764660
 				Ruta
 				{
 					Ciclica=0
@@ -1622,11 +1622,11 @@ AreaDeJuego
 			Class=CPlayAreaEntity
 			Data
 			{
-				Angulos=180.000000,0.000000,0.000000
+				Angulos=0.000000,0.000000,0.000000
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=2112.640741,-12.085848,52.965402
+				Posicion=2116.304403,-15.867204,52.965402
 				Ruta
 				{
 					Ciclica=0
@@ -1634,7 +1634,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Level1BaseTerrain
+					Name=Level2BaseTerrain
 					System=EntityTypes
 				}
 			}
@@ -1650,7 +1650,7 @@ AreaDeJuego
 				Count=3
 				Delay=500
 				Interval=2500
-				Posicion=707.830839,76.501041,52.965402
+				Posicion=715.354867,96.568261,52.965402
 				Ruta
 				{
 					Ciclica=0
@@ -2525,9 +2525,9 @@ Terrain
 				Color=1.000000,1.000000,0.000000
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
-				HorzResolution=3.000000
+				HorzResolution=3.500000
 				Texture=sandPeq.jpg
-				VertResolution=2.500000
+				VertResolution=3.500000
 			}
 			Texture
 			{

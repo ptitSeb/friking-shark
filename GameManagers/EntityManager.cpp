@@ -14,7 +14,7 @@ bool CEntityManager::Init(std::string sClass,std::string sName,ISystem *piSystem
 {
     bool bOk=CSystemObjectBase::Init(sClass,sName,piSystem);
     if(bOk){bOk=m_GameControllerWrapper.Attach("GameSystem","GameController");}
-    if(bOk){m_GameControllerWrapper.m_piGameController->RegisterManager(200,this);}
+    if(bOk){m_GameControllerWrapper.m_piGameController->RegisterManager(400,this);}
     return bOk;
 }
 
@@ -62,6 +62,8 @@ void CEntityManager::RemoveAllEntities()
     for(i=m_lEntities.begin();i!=m_lEntities.end();i++)
     {
         IEntity *piEntity=*i;
+		// Se llama a remove principalemente para que se notifique a los suscriptores la eliminacion de la entidad
+		piEntity->Remove(); 
         delete piEntity;
     }
     m_lEntities.clear();
