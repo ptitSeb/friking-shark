@@ -21,13 +21,25 @@ CPlayAreaEntity::~CPlayAreaEntity()
 bool CPlayAreaEntity::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInfo,unsigned int dwCurrentTime,double dInterval)
 {
 	if(m_EntityType.m_piEntityType && m_dRadius==0){m_dRadius=m_EntityType.m_piEntityType->DesignGetRadius();}
+	
+	if(!m_bActive)
+	{
+		bool bCurrentlyInPlayArea=Util_IsInPlayArea(m_vPosition,pAreaInfo);
+		bCurrentlyInPlayArea=bCurrentlyInPlayArea||Util_IsInPlayArea(m_vPosition-CVector(m_dRadius,0,0),pAreaInfo);
+		bCurrentlyInPlayArea=bCurrentlyInPlayArea||Util_IsInPlayArea(m_vPosition+CVector(m_dRadius,0,0),pAreaInfo);
 		
+		if(bCurrentlyInPlayArea)
+		{
+			Activate(dwCurrentTime);
+		}
+	}
+	// Comprobar si la entidad esta activa otra vez para procesar el frame en caso de que se acabe de activar,
 	if(m_bActive)
 	{
-        if(m_EntityType.m_piEntityType!=NULL && 
+		if(m_EntityType.m_piEntityType!=NULL && 
 			((m_nCreatedEntities==0 && dwCurrentTime>=m_nActivationTime+m_nDelay) 
 			|| (m_nCreatedEntities>0 && m_nCreatedEntities<m_nEntityCount && dwCurrentTime>=(m_nLastEntityTime+m_nInterval))))
-        {
+		{
 			IEntity *piEntity=m_EntityType.m_piEntityType->CreateInstance(NULL,dwCurrentTime);
 			piEntity->GetPhysicInfo()->vPosition=m_vPosition;
 			piEntity->GetPhysicInfo()->vAngles=m_vAngles;
@@ -41,7 +53,7 @@ bool CPlayAreaEntity::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInf
 			m_nCreatedEntities++;
 			m_nLastEntityTime=dwCurrentTime;
 		}
-
+		
 		set<IEntity*>::iterator i;
 		for(i=m_sEntities.begin();i!=m_sEntities.end();)
 		{
@@ -65,17 +77,6 @@ bool CPlayAreaEntity::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInf
 			bCurrentlyInPlayArea=bCurrentlyInPlayArea||Util_IsInPlayArea(m_vPosition+CVector(m_dRadius,0,0),pAreaInfo);
 			
 			if(!bCurrentlyInPlayArea){Deactivate();}
-		}
-	}
-	else
-	{
-		bool bCurrentlyInPlayArea=Util_IsInPlayArea(m_vPosition,pAreaInfo);
-		bCurrentlyInPlayArea=bCurrentlyInPlayArea||Util_IsInPlayArea(m_vPosition-CVector(m_dRadius,0,0),pAreaInfo);
-		bCurrentlyInPlayArea=bCurrentlyInPlayArea||Util_IsInPlayArea(m_vPosition+CVector(m_dRadius,0,0),pAreaInfo);
-		
-		if(bCurrentlyInPlayArea)
-		{
-			Activate(dwCurrentTime);
 		}
 	}
 	return m_bActive;
