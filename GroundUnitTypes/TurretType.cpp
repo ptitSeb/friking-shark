@@ -24,7 +24,7 @@ IEntity *CTurretType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTim
 void CTurretType::InitializeEntity( CEntityBase *piEntity,unsigned int dwCurrentTime )
 {
 	CEntityTypeBase::InitializeEntity(piEntity,dwCurrentTime);
-	piEntity->SetState(eTurretState_Normal);
+	piEntity->SetState(eTurretState_Normal,0);
 }
 
 CTurret::CTurret(CTurretType *pType,unsigned int dwCurrentTime)
