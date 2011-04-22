@@ -48,7 +48,7 @@ bool CGameInterface::InitWindow(IGameWindow *piParent,bool bPopup)
 	if(m_piSTObjectCount){m_piSTObjectCount->Show(m_bShowPerformanceIndicators);}
 	if(m_piSTEntityCount){m_piSTEntityCount->Show(m_bShowPerformanceIndicators);}
 
-	LoadScenario("/home/javi/workspace/Game/Demo/Resources/new2.ges");
+	LoadScenario("Level1.ges");
 	StartGame();
 	return bResult;
 }
