@@ -22,6 +22,7 @@ SoundAnimationObjectType.cpp\
 AnimationObjectBase.cpp\
 EventAnimationObjectType.cpp\
 ParticleSystemAnimationObjectType.cpp\
+EntityAnimationObjectType.cpp\
 stdafx.cpp
 
 

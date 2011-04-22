@@ -22,12 +22,13 @@ DECLARE_CUSTOM_WRAPPER1(CEntityEditorClassSelectorWrapper,IEntityEditorClassSele
 enum EPropertyPanel
 {
 	ePropertyPanel_None,
-	ePropertyPanel_Entity,
+	ePropertyPanel_General,
 	ePropertyPanel_Animation,
 	ePropertyPanel_Sound,
 	ePropertyPanel_Model,
 	ePropertyPanel_Event,
 	ePropertyPanel_ParticleSystem,
+	ePropertyPanel_Entity,
 	ePropertyPanel_Count
 };
 
@@ -84,19 +85,13 @@ public:
 	CGameGUIBBoxGizmo 	 		 m_BBoxGizmo;
 	bool					 	 m_bMovingGizmo;
 	double						 m_dCameraSpeed;
-	
-/*	CVector 	m_vAxisPosition;
-	CVector 	m_vTranslationOrigin;
-	bool		m_bMovingGizmo;*/
+	unsigned int				 m_nAnimationActivationTime;
 	
 	bool		m_bSolid;
 	bool		m_bTextures;
 	
 	bool		m_bShowFilePanel;
-	bool		m_bShowEntitiesPanel;
-	bool		m_bShowEntityPanel;
 	bool		m_bShowOptionsPanel;
-	bool		m_bShowPlayAreaPanel;
 	
 	bool		m_bShowModelPanel;
 	bool		m_bShowSoundPanel;
@@ -130,9 +125,10 @@ public:
 	IGameGUIButton  *m_piBTNewSound;
 	IGameGUIButton  *m_piBTNewEvent;
 	IGameGUIButton  *m_piBTNewParticleSystem;
-	
-	IGameGUIList    *m_piLSEntities;
 	IGameGUIButton  *m_piBTNewEntity;
+	
+	IGameGUIList    *m_piLSChildren;
+	IGameGUIButton  *m_piBTNewChild;
 	// Options
 
 	IGameGUIButton *m_piBTOptionsTextures;
@@ -168,6 +164,7 @@ public:
 	void ProcessNewParticleSystem();
 	void ProcessNewAnimation();
 	void ProcessNewEntity();
+	void ProcessNewChild();
 	
 	void Reset();
 	
@@ -196,9 +193,10 @@ public:
 		CHILD_MAP_ENTRY_EX("NewSound",m_piBTNewSound,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("NewEvent",m_piBTNewEvent,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("NewParticleSystem",m_piBTNewParticleSystem,IGameGUIButtonEvents);
-		
-		CHILD_MAP_ENTRY_EX("EntityList",m_piLSEntities,IGameGUIListEvents);
 		CHILD_MAP_ENTRY_EX("NewEntity",m_piBTNewEntity,IGameGUIButtonEvents);
+		
+		CHILD_MAP_ENTRY_EX("ChildrenList",m_piLSChildren,IGameGUIListEvents);
+		CHILD_MAP_ENTRY_EX("NewChild",m_piBTNewChild,IGameGUIButtonEvents);
 		
 		CHILD_MAP_ENTRY("EntityPanel",m_piGREntity);
 		CHILD_MAP_ENTRY_EX("EntityNew",m_piBTEntityNew,IGameGUIButtonEvents);
@@ -208,13 +206,14 @@ public:
 		CHILD_MAP_ENTRY_EX("EntityRemove",m_piBTEntityRemove,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("EntityExit",m_piBTEntityExit,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY("EntityPanel",m_piGREntity);
-		CHILD_MAP_ENTRY_EX("EntityPropertyPanel",m_ppiPropertyPanels[ePropertyPanel_Entity],IEntityEditorPropertyPanelEvents);
+		CHILD_MAP_ENTRY_EX("GeneralPropertyPanel",m_ppiPropertyPanels[ePropertyPanel_General],IEntityEditorPropertyPanelEvents);
 		CHILD_MAP_ENTRY_EX("AnimationPropertyPanel",m_ppiPropertyPanels[ePropertyPanel_Animation],IEntityEditorPropertyPanelEvents);
 		CHILD_MAP_ENTRY_EX("ModelPropertyPanel",m_ppiPropertyPanels[ePropertyPanel_Model],IEntityEditorPropertyPanelEvents);
 		CHILD_MAP_ENTRY_EX("EventPropertyPanel",m_ppiPropertyPanels[ePropertyPanel_Event],IEntityEditorPropertyPanelEvents);
 		CHILD_MAP_ENTRY_EX("SoundPropertyPanel",m_ppiPropertyPanels[ePropertyPanel_Sound],IEntityEditorPropertyPanelEvents);
 		CHILD_MAP_ENTRY_EX("ParticleSystemPropertyPanel",m_ppiPropertyPanels[ePropertyPanel_ParticleSystem],IEntityEditorPropertyPanelEvents);
-		
+		CHILD_MAP_ENTRY_EX("EntityPropertyPanel",m_ppiPropertyPanels[ePropertyPanel_Entity],IEntityEditorPropertyPanelEvents);
+	
 	END_CHILD_MAP()
 	
 	BEGIN_PROP_MAP(CEntityEditorMainWindow)
@@ -247,7 +246,7 @@ public:
 	void UpdateStateList();
 	void UpdateAnimationList();
 	void UpdateObjectList();
-	void UpdateEntityList();
+	void UpdateChildrenList();
 	void UpdateSelectedAnimation();
 	void UpdateSelectedObject();
 	void UpdateInteractiveElementsSpeedsAndSizes();

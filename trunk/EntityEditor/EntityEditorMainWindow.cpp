@@ -17,10 +17,7 @@ CEntityEditorMainWindow::CEntityEditorMainWindow(void)
 	m_piAnimation=NULL;
 	
 	m_bShowOptionsPanel=false;
-	m_bShowEntitiesPanel=false;
-	m_bShowEntityPanel=false;
 	m_bShowFilePanel=false;
-	m_bShowPlayAreaPanel=false;
 	
 	m_bShowModelPanel=false;
 	m_bShowSoundPanel=false;
@@ -37,6 +34,7 @@ CEntityEditorMainWindow::CEntityEditorMainWindow(void)
 	InitializeChildren();
 	m_piGameSystem=NULL;
 	m_bSimulationStarted=false;
+	m_nAnimationActivationTime=0;
 
 	UpdateInteractiveElementsSpeedsAndSizes();
 
@@ -123,9 +121,6 @@ void CEntityEditorMainWindow::Reset()
 	m_EntityType.Detach();
 
 	m_bShowFilePanel=false;
-	m_bShowEntitiesPanel=false;
-	m_bShowEntityPanel=false;
-	m_bShowPlayAreaPanel=false;
 	m_bShowOptionsPanel=false;
 	m_bSimulationStarted=false;
 	m_bInspectionMode=false;
@@ -210,7 +205,11 @@ void CEntityEditorMainWindow::OnDraw(IGenericRender *piRender)
 	if(m_piAnimation)
 	{
 		m_piAnimation->ProcessFrame(m_PhysicManagerWrapper.m_piPhysicManager,m_FrameManager.m_piFrameManager->GetCurrentRealTime(),m_FrameManager.m_piFrameManager->GetRealTimeFraction());
-		if(m_piAnimation->HasFinished()){m_piAnimation->Activate(m_FrameManager.m_piFrameManager->GetCurrentRealTime());}
+		if(m_piAnimation->HasFinished())
+		{
+			m_nAnimationActivationTime=m_FrameManager.m_piFrameManager->GetCurrentRealTime();
+			m_piAnimation->Activate(m_nAnimationActivationTime);		
+		}
 		
 		CVector vUpdate=Origin;
 		if(m_pEntity)
@@ -238,6 +237,7 @@ void CEntityEditorMainWindow::OnDraw(IGenericRender *piRender)
 	
 	piRender->StartStagedRendering();
 	if(m_piAnimation){m_piAnimation->CustomRender(m_Render.m_piRender,m_Camera.m_piCamera);}
+	// Pintado de las entidades hijas
 	if(m_pEntity && m_EntityType.m_piEntityTypeDesign)
 	{
 		for(unsigned int x=0;x<m_EntityType.m_piEntityTypeDesign->GetChildren();x++)
@@ -248,8 +248,35 @@ void CEntityEditorMainWindow::OnDraw(IGenericRender *piRender)
 			m_EntityType.m_piEntityTypeDesign->GetChildLocation(x,vPosition,vAngles);
 			vPosition+=m_pEntity->GetPhysicInfo()->vPosition;
 			if(piType){piType->DesignRender(piRender,vPosition,vAngles,false);}
-			if(m_piLSEntities && m_piLSEntities->GetSelectedElement()==(int)x){piType->DesignRender(piRender,vPosition,vAngles,true);}
+			if(m_piLSChildren && m_piLSChildren->GetSelectedElement()==(int)x){piType->DesignRender(piRender,vPosition,vAngles,true);}
 			REL(piType);
+		}
+	}
+	// Pintado de las entidades generadas. Es necesario hacer un pintado ad-hoc porque no
+	// tenemos entity manager ni playareamanager, y por lo tanto no se generan entidades.
+	
+	int nAnimation=m_piLSAnimations->GetSelectedElement();
+	if(m_pEntity && nAnimation!=-1)
+	{
+		IAnimationTypeDesign *piAnimation=m_vAnimations[nAnimation].m_piAnimationTypeDesign;
+		for(unsigned int x=0;x<piAnimation->GetObjectCount();x++)
+		{
+			IAnimationObjectType *piAnimationObject=NULL;
+			piAnimation->GetObject(x,&piAnimationObject);
+			
+			CAnimationEntityTypeWrapper wrapper;
+			wrapper.Attach(piAnimationObject);
+			if(wrapper.m_piDesign)
+			{
+				SEntityAnimationObjectTypeConfig config;
+				wrapper.m_piDesign->GetConfig(&config);
+				
+				if((m_nAnimationActivationTime+config.nTime)<m_FrameManager.m_piFrameManager->GetCurrentRealTime())
+				{
+					wrapper.m_piDesign->DesignRender(piRender,m_pEntity->GetPhysicInfo()->vPosition,m_pEntity->GetPhysicInfo()->vAngles,false);
+				}
+			}
+			REL(piAnimationObject);
 		}
 	}
 	piRender->EndStagedRendering();
@@ -262,9 +289,9 @@ void CEntityEditorMainWindow::OnDraw(IGenericRender *piRender)
 		}
 		else
 		{
-			if(m_piLSEntities && m_EntityType.m_piEntityTypeDesign)
+			if(m_piLSChildren && m_EntityType.m_piEntityTypeDesign)
 			{
-				int nSelectedEntity=m_piLSEntities->GetSelectedElement();
+				int nSelectedEntity=m_piLSChildren->GetSelectedElement();
 				if(nSelectedEntity!=-1)
 				{
 					CVector vPosition,vAngles;
@@ -560,6 +587,7 @@ void CEntityEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	if(m_piBTNewEvent==piControl){ProcessNewEvent();}
 	if(m_piBTNewParticleSystem==piControl){ProcessNewParticleSystem();}
 	if(m_piBTNewAnimation==piControl){ProcessNewAnimation();}
+	if(m_piBTNewChild==piControl){ProcessNewChild();}
 	if(m_piBTNewEntity==piControl){ProcessNewEntity();}
 	if(m_piBTShowEntityProperties==piControl){ShowPropertiesOf(m_EntityType.m_piObject);}
 	
@@ -654,13 +682,34 @@ void CEntityEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 		int nSelectedAnimation=m_piLSAnimations?m_piLSAnimations->GetSelectedElement():-1;
 		if(!m_bMovingGizmo && m_pEntity && nSelectedAnimation!=-1)
 		{
+			unsigned long nTime=m_FrameManager.m_piFrameManager->GetCurrentRealTime()-m_nAnimationActivationTime;
+			
 			m_Render.m_piRender->StartSelection(m_rRealRect,m_Camera.m_piCamera,dx,dy,5);
 			unsigned int nObjects=m_vAnimations[nSelectedAnimation].m_piAnimationTypeDesign->GetObjectCount();
 			for(unsigned int x=0;x<nObjects;x++)
 			{
 				IAnimationObjectType *piObject=NULL;
 				m_vAnimations[nSelectedAnimation].m_piAnimationTypeDesign->GetObject(x,&piObject);
-				if(piObject)
+				
+				CAnimationModelTypeWrapper modelWrapper;
+				CAnimationEntityTypeWrapper entityWrapper;
+				
+				bool bInTimeFrame=true;
+				modelWrapper.Attach(piObject);
+				entityWrapper.Attach(piObject);
+				if(modelWrapper.m_piDesign)
+				{
+					SModelAnimationObjectTypeConfig config;
+					modelWrapper.m_piDesign->GetConfig(&config);
+					bInTimeFrame=(nTime>=config.nStartTime && (config.nEndTime==0 || nTime<config.nEndTime));
+				}
+				if(entityWrapper.m_piDesign)
+				{
+					SEntityAnimationObjectTypeConfig config;
+					entityWrapper.m_piDesign->GetConfig(&config);
+					bInTimeFrame=(nTime>=config.nTime);
+				}
+				if(bInTimeFrame &&piObject)
 				{
 					m_Render.m_piRender->SetSelectionId(x);
 					piObject->DesignRender(m_Render.m_piRender,m_pEntity->GetPhysicInfo()->vPosition,m_pEntity->GetPhysicInfo()->vAngles,false);
@@ -687,17 +736,17 @@ void CEntityEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 			if(nSelectionId==-1)
 			{
 				if(m_piLSObjects){m_piLSObjects->SetSelectedElement(-1);}
-				if(m_piLSEntities){m_piLSEntities->SetSelectedElement(-1);}
+				if(m_piLSChildren){m_piLSChildren->SetSelectedElement(-1);}
 			}
 			else if(nSelectionId<(int)nObjects)
 			{
 				if(m_piLSObjects){m_piLSObjects->SetSelectedElement(nSelectionId);}
-				if(m_piLSEntities){m_piLSEntities->SetSelectedElement(-1);}
+				if(m_piLSChildren){m_piLSChildren->SetSelectedElement(-1);}
 			}
 			else
 			{
 				if(m_piLSObjects){m_piLSObjects->SetSelectedElement(-1);}
-				if(m_piLSEntities){m_piLSEntities->SetSelectedElement(nSelectionId-nObjects);}
+				if(m_piLSChildren){m_piLSChildren->SetSelectedElement(nSelectionId-nObjects);}
 			}
 			UpdateSelectedObject();
 		}
@@ -722,9 +771,9 @@ void CEntityEditorMainWindow::OnMouseMove( double x,double y )
 		{
 			m_OrientationWrapper.m_piDesign->SetAngles(m_RotationGizmo.GetAngles());
 		}
-		if(m_piLSEntities && m_EntityType.m_piEntityTypeDesign)
+		if(m_piLSChildren && m_EntityType.m_piEntityTypeDesign)
 		{
-			int nSelectedEntity=m_piLSEntities->GetSelectedElement();
+			int nSelectedEntity=m_piLSChildren->GetSelectedElement();
 			if(nSelectedEntity!=-1)
 			{
 				m_EntityType.m_piEntityTypeDesign->SetChildLocation(nSelectedEntity,m_TranslationGizmo.GetPosition()-m_pEntity->GetPhysicInfo()->vPosition,m_RotationGizmo.GetAngles());
@@ -851,7 +900,7 @@ void CEntityEditorMainWindow::UpdateAnimationList()
 void CEntityEditorMainWindow::UpdateSelectedAnimation()
 {
 	UpdateObjectList();
-	UpdateEntityList();
+	UpdateChildrenList();
 	UpdateRunningAnimation();	
 }
 
@@ -878,10 +927,10 @@ void CEntityEditorMainWindow::UpdateObjectList()
 	UpdateSelectedObject();
 }
 
-void CEntityEditorMainWindow::UpdateEntityList()
+void CEntityEditorMainWindow::UpdateChildrenList()
 {
-	if(m_piLSEntities==NULL){return;}
-	m_piLSEntities->Clear();
+	if(m_piLSChildren==NULL){return;}
+	m_piLSChildren->Clear();
 	
 	if(m_EntityType.m_piEntityTypeDesign)
 	{
@@ -893,7 +942,7 @@ void CEntityEditorMainWindow::UpdateEntityList()
 			wrapper.Attach(piType);
 			if(wrapper.m_piObject)
 			{
-				m_piLSEntities->AddElement(wrapper.m_piObject->GetName());
+				m_piLSChildren->AddElement(wrapper.m_piObject->GetName());
 			}
 			REL(piType);
 		}
@@ -927,9 +976,9 @@ void CEntityEditorMainWindow::UpdateGizmos()
 	if(m_PositionWrapper.m_piDesign){m_bShowTranslationGizmo=true;m_TranslationGizmo.SetPosition(m_PositionWrapper.m_piDesign->GetPosition());}
 	if(m_OrientationWrapper.m_piDesign){m_bShowRotationGizmo=true;m_RotationGizmo.SetAngles(m_OrientationWrapper.m_piDesign->GetAngles());}
 
-	if(!m_bShowTranslationGizmo && !m_bShowRotationGizmo && m_piLSEntities && m_EntityType.m_piEntityTypeDesign)
+	if(!m_bShowTranslationGizmo && !m_bShowRotationGizmo && m_piLSChildren && m_EntityType.m_piEntityTypeDesign)
 	{
-		int nSelectedEntity=m_piLSEntities->GetSelectedElement();
+		int nSelectedEntity=m_piLSChildren->GetSelectedElement();
 		if(nSelectedEntity!=-1)
 		{
 			m_bShowRotationGizmo=true;
@@ -943,7 +992,7 @@ void CEntityEditorMainWindow::UpdateGizmos()
 		}
 	}
 
-	m_bShowBBoxGizmo=(m_ppiPropertyPanels[ePropertyPanel_Entity] && m_ppiPropertyPanels[ePropertyPanel_Entity]->IsVisible());
+	m_bShowBBoxGizmo=(m_ppiPropertyPanels[ePropertyPanel_General] && m_ppiPropertyPanels[ePropertyPanel_General]->IsVisible());
 }
 
 void CEntityEditorMainWindow::UpdateSelectedObject()
@@ -998,7 +1047,11 @@ void CEntityEditorMainWindow::UpdateRunningAnimation()
 	if(nSelected==-1){return;}	
 	
 	m_piAnimation=m_vAnimations[nSelected].m_piAnimationType->CreateInstance(m_pEntity,m_FrameManager.m_piFrameManager->GetCurrentRealTime());
-	if(m_piAnimation){m_piAnimation->Activate(m_FrameManager.m_piFrameManager->GetCurrentRealTime());}
+	if(m_piAnimation)
+	{
+		m_nAnimationActivationTime=m_FrameManager.m_piFrameManager->GetCurrentRealTime();
+		m_piAnimation->Activate(m_nAnimationActivationTime);		
+	}
 	
 	UpdateInteractiveElementsSpeedsAndSizes();
 }
@@ -1043,10 +1096,10 @@ void CEntityEditorMainWindow::OnSelectionChanged(IGameGUIList *piControl,int nEl
 	if(piControl==m_piLSObjects)
 	{
 		// Deselect entity
-		if(nElement!=-1 &&m_piLSEntities){m_piLSEntities->SetSelectedElement(-1);}
+		if(nElement!=-1 &&m_piLSChildren){m_piLSChildren->SetSelectedElement(-1);}
 		UpdateSelectedObject();
 	}
-	if(piControl==m_piLSEntities)
+	if(piControl==m_piLSChildren)
 	{
 		// Deselect animation object
 		if(nElement!=-1 && m_piLSObjects){m_piLSObjects->SetSelectedElement(-1);UpdateSelectedObject();}
@@ -1395,9 +1448,9 @@ void CEntityEditorMainWindow::ProcessNewParticleSystem()
 	}
 }
 
-void CEntityEditorMainWindow::ProcessNewEntity()
+void CEntityEditorMainWindow::ProcessNewChild()
 {
-	if(m_piLSEntities==NULL){return;}
+	if(m_piLSChildren==NULL){return;}
 	if(m_piLSObjects==NULL){return;}
 	if(m_EntityType.m_piEntityType==NULL)
 	{
@@ -1409,7 +1462,7 @@ void CEntityEditorMainWindow::ProcessNewEntity()
 	std::vector<IDesignObject *> vEntityTypes;
 	GetSystemObjects("EntityTypes",&vEntityTypes);
 
-	if(m_ObjectSelector.m_piObjectSelector->SelectObject("New Entity...",this,&vEntityTypes,&nSelectedEntityType,96.0,96.0))
+	if(m_ObjectSelector.m_piObjectSelector->SelectObject("New Child...",this,&vEntityTypes,&nSelectedEntityType,96.0,96.0))
 	{
 		ISystemObject *piObject=QI(ISystemObject,vEntityTypes[nSelectedEntityType]);
 		if(piObject)
@@ -1421,12 +1474,52 @@ void CEntityEditorMainWindow::ProcessNewEntity()
 			else
 			{
 				unsigned int nElement=m_EntityType.m_piEntityTypeDesign->AddChild(piObject->GetName());
-				UpdateEntityList();
-				m_piLSEntities->SetSelectedElement(nElement);
+				UpdateChildrenList();
+				m_piLSChildren->SetSelectedElement(nElement);
 				if(m_piLSObjects){m_piLSObjects->SetSelectedElement(-1);UpdateSelectedObject();}
 			}
 		}
 		REL(piObject);
+	}
+	for(unsigned long x=0;x<vEntityTypes.size();x++){IDesignObject *piEntityType=vEntityTypes[x];REL(piEntityType);}	
+}
+
+void CEntityEditorMainWindow::ProcessNewEntity()
+{
+	if(m_NamedObjectSelector.m_piObjectSelector==NULL){return;}
+	if(m_piLSAnimations==NULL){return;}
+	int nSelected=(m_piLSAnimations->GetSelectedElement());
+	if(nSelected==-1)
+	{
+		MessageDialog("No animation selected.","Entity Editor",eMessageDialogType_Error);
+		return;
+	}
+	
+	unsigned long nSelectedEntityType=0;
+	std::vector<IDesignObject *> vEntityTypes;
+	GetSystemObjects("EntityTypes",&vEntityTypes);
+	
+	if(m_ObjectSelector.m_piObjectSelector->SelectObject("New Entity...",this,&vEntityTypes,&nSelectedEntityType,96.0,96.0))
+	{
+		CEntityTypeWrapper entityTypeWrapper;
+		entityTypeWrapper.Attach(vEntityTypes[nSelectedEntityType]);
+		
+		if(entityTypeWrapper.m_piEntityType)
+		{
+			IAnimationObjectType *piAnimationObject=NULL;
+			CAnimationEntityTypeWrapper animationObject;
+			unsigned int nIndex=m_vAnimations[nSelected].m_piAnimationTypeDesign->AddObject("EntityAnimationObjectType");
+			m_vAnimations[nSelected].m_piAnimationTypeDesign->GetObject(nIndex,&piAnimationObject);
+			if(animationObject.Attach(piAnimationObject))
+			{
+				SEntityAnimationObjectTypeConfig config;
+				animationObject.m_piDesign->SetConfig(&config);
+				animationObject.m_piDesign->SetEntityType(entityTypeWrapper.m_piEntityType);
+			}
+			REL(piAnimationObject);
+		}
+			
+		UpdateSelectedAnimation();
 	}
 	for(unsigned long x=0;x<vEntityTypes.size();x++){IDesignObject *piEntityType=vEntityTypes[x];REL(piEntityType);}	
 }

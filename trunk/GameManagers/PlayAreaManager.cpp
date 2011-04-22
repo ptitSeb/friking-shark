@@ -83,6 +83,7 @@ void CPlayAreaManager::SaveScenario(ISystemPersistencyNode *piNode)
 void CPlayAreaManager::CloseScenario()
 {
 	m_vEntityLayerElements.clear();
+	m_vDynamicElements.clear();
 	m_vEntityLayers.clear();
     m_vElements.clear();
 	m_CameraWrapper.Destroy();
@@ -152,7 +153,8 @@ void CPlayAreaManager::Stop()
 		IPlayAreaElement *piElement=m_vEntityLayerElements[x].m_piElement;
 		piElement->Reset();
 	}    
-
+	m_vDynamicElements.clear();
+	
 	if(m_piPlayerEntity){m_piPlayerEntity->Remove();m_piPlayerEntity=NULL;}
 	m_piPlayer=NULL;
 
@@ -303,6 +305,11 @@ void CPlayAreaManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFract
 	for(x=0;x<m_vEntityLayerElements.size();x++)
 	{
 		IPlayAreaElement *piElement=m_vEntityLayerElements[x].m_piElement;
+		piElement->ProcessFrame(m_vPlayMovementPos,&m_PlayArea,dwCurrentTime,dTimeFraction);
+	}
+	for(x=0;x<m_vDynamicElements.size();x++)
+	{
+		IPlayAreaElement *piElement=m_vDynamicElements[x].m_piElement;
 		piElement->ProcessFrame(m_vPlayMovementPos,&m_PlayArea,dwCurrentTime,dTimeFraction);
 	}
 	if(m_piPlayerEntity && m_piPlayerEntity->GetHealth()>0)
@@ -533,7 +540,7 @@ struct SEntityGenerationPositionKey
 bool CPlayAreaManager::UpdateEntityLayers()
 {
 	m_vEntityLayerElements.clear();
-
+	
 	CWorldManagerWrapper worldManager;
 	worldManager.Attach("GameSystem","WorldManager");
 
@@ -776,4 +783,21 @@ bool CPlayAreaManager::IsVisible(CVector vPos,double dRadius,bool bWithScroll)
 	(vPos.c[2]+dRadius)<(m_vVisibleAirPlayAreaMins.c[2]-dToAdd) ||
 	(vPos.c[2]-dRadius)>(m_vVisibleAirPlayAreaMaxs.c[2]+dToAdd));
 	return !bHidden;
+}
+
+void CPlayAreaManager::CreateDynamicEntityElement(IEntityType *piEntityType,CVector vPosition,CVector vAngles,IPlayAreaEntity **ppiElement)
+{
+	if(m_bStarted)
+	{
+		CPlayAreaEntityWrapper wrapper;
+		wrapper.Create(m_piSystem,"CPlayAreaEntity","");
+		if(wrapper.m_piElement)
+		{
+			wrapper.m_piElement->SetEntityType(piEntityType);
+			wrapper.m_piElement->SetPosition(vPosition);
+			wrapper.m_piElement->SetAngles(vAngles);
+			m_vDynamicElements.push_back(wrapper);
+		}
+		if(ppiElement){*ppiElement=ADD(wrapper.m_piElement);}
+	}
 }
