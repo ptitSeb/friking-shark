@@ -338,6 +338,7 @@ struct IGenericShader:virtual public ISystemUnknown
 	
 	virtual void AddUniform( std::string sUniformName,int bValue )=0;
 	virtual void AddUniform( std::string sUniformName,float fValue )=0;
+	virtual void AddUniform( std::string sUniformName,float fValue1,float fValue2)=0;
 	virtual void AddUniform( std::string sUniformName,const CVector &vVector )=0;
 	virtual void AddUniform( std::string sUniformName,const CVector &vColor, float fAlpha )=0;
 	virtual void AddUniform( std::string sUniformName,double *pMatrix)=0;
@@ -449,6 +450,7 @@ public:
 	
 	virtual void ActivateWater()=0;
 	virtual void SetWaterMappingSize(double dMaxU,double dMaxV)=0;
+	virtual void SetWaterMappingOffset(double dMaxU,double dMaxV)=0;
 	virtual void DeactivateWater()=0;
 	
 	// Render options

@@ -5,7 +5,8 @@ enum EUniformType
 	eUniformType_None,
 	eUniformType_Int,
 	eUniformType_Float,
-	eUniformType_Vector,
+	eUniformType_Vector2,
+	eUniformType_Vector3,
 	eUniformType_Color,
 	eUniformType_Matrix
 };
@@ -56,6 +57,7 @@ public:
 	
 	void AddUniform( std::string sUniformName,int bValue );
 	void AddUniform( std::string sUniformName,float fValue );
+	void AddUniform( std::string sUniformName,float fValue1,float fValue2);
 	void AddUniform( std::string sUniformName,const CVector &vVector );
 	void AddUniform( std::string sUniformName,const CVector &vColor, float fAlpha );
 	void AddUniform( std::string sUniformName,double *pMatrix);

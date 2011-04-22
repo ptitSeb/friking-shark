@@ -174,9 +174,12 @@ bool COpenGLShader::Activate()
 			case eUniformType_Float:
 				glUniform1fARB(pData->nLocation, pData->fValue);
 			break;
-			case eUniformType_Vector:
-				glUniform3fARB(pData->nLocation, (float)pData->vVector.c[0],(float)pData->vVector.c[1],(float)pData->vVector.c[2]);
+			case eUniformType_Vector2:
+				glUniform2fARB(pData->nLocation, (float)pData->vVector.c[0],(float)pData->vVector.c[1]);
 			break;
+			case eUniformType_Vector3:
+				glUniform3fARB(pData->nLocation, (float)pData->vVector.c[0],(float)pData->vVector.c[1],(float)pData->vVector.c[2]);
+				break;
 			case eUniformType_Color:
 				glUniform4fARB(pData->nLocation, (float)pData->vColor.c[0],(float)pData->vColor.c[1],(float)pData->vColor.c[2],(float)pData->fAlpha);
 			break;
@@ -224,6 +227,23 @@ void COpenGLShader::AddUniform( std::string sUniformName,int nValue )
 	  pData->bModified=true;
   }
   
+  void COpenGLShader::AddUniform( std::string sUniformName,float fValue1,float fValue2)
+  {
+	  std::map<std::string,SUniformData>::iterator i;
+	  i=m_mUniforms.find(sUniformName);
+	  if(i==m_mUniforms.end())
+	  {
+		  SUniformData data;
+		  i=m_mUniforms.insert(std::pair<std::string,SUniformData>(sUniformName,data)).first;
+	  }
+	  
+	  SUniformData *pData=&i->second;
+	  pData->eType=eUniformType_Vector2;
+	  pData->vVector.c[0]=fValue1;
+	  pData->vVector.c[1]=fValue2;
+	  pData->bModified=true;
+  }
+  
   void COpenGLShader::AddUniform( std::string sUniformName,const CVector &vVector )
   {
 	  std::map<std::string,SUniformData>::iterator i;
@@ -235,7 +255,7 @@ void COpenGLShader::AddUniform( std::string sUniformName,int nValue )
 	  }
 	  
 	  SUniformData *pData=&i->second;
-	  pData->eType=eUniformType_Vector;
+	  pData->eType=eUniformType_Vector3;
 	  pData->vVector=vVector;
 	  pData->bModified=true;
 	  

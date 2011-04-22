@@ -32,25 +32,27 @@ varying float g_fFogFactor;
 #endif 
 
 #ifdef ENABLE_WATER
-uniform vec3 WaterMappingSize;
+uniform vec2 WaterMappingSize;
+uniform vec2 WaterMappingOffset;
 
 void ApplyWaterEffect(in sampler2D sampler,in vec2 vCoords, out vec3 color)
 {
 	// Ripple effect, based on JeGX's post at http://www.geeks3d.com/20110316/shader-library-simple-2d-effects-sphere-and-ripple-in-glsl/
 	// and Adrian Boeing's post at http://adrianboeing.blogspot.com/2011/02/ripple-effect-in-webgl.html
 	
-	vec2 tc = gl_TexCoord[0].xy;
-	vec2 tc2= vec2(WaterMappingSize.x-tc.x,tc.y);
+	vec2 tc = vec2((WaterMappingOffset.x-WaterMappingSize.x)-gl_TexCoord[0].x,WaterMappingSize.y*4.0-gl_TexCoord[0].y);
+	vec2 tc2= vec2((WaterMappingOffset.x-WaterMappingSize.x*0.5)-gl_TexCoord[0].x,-gl_TexCoord[0].y);
 	vec2 p = -1.0 + 2.0*tc;
 	vec2 p2= -1.0 + 2.0*tc2;
 	
 	float len = length(p);
 	float len2 = length(p2);
-	float ripplesize=cos((len*3.0+CurrentRealTime*0.5)*4.0);
-	float ripplesize2=cos((len2*3.0+CurrentRealTime*0.2)*4.0);
+	float ripplesize=cos((len*3.0+CurrentRealTime)*4.0);
+	float ripplesize2=cos((len2*3.0+CurrentRealTime*1.5)*4.0);
 	vec2 uv=tc;
 	uv+=(p/len)*ripplesize*0.03;
 	uv+=(p2/len)*ripplesize2*0.03;
+	uv-=WaterMappingOffset;
 	
 	vec3 texcolor=texture2D(sampler, uv).xyz;
 	color.rgb = texcolor;

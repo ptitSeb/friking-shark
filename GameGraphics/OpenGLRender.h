@@ -467,6 +467,7 @@ public:
 	
 	void ActivateWater();
 	void SetWaterMappingSize(double dMaxU,double dMaxV);
+	void SetWaterMappingOffset(double dU,double dV);
 	void DeactivateWater();
 	
 	void SetAmbientLight(const CVector &vColor);
