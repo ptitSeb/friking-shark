@@ -35,7 +35,8 @@ class CPlayAreaManager: virtual public CSystemObjectBase,
 
     vector<CPlayAreaElementWrapper>	m_vElements;
 	vector<CPlayAreaEntityWrapper>	m_vEntityLayerElements;
-
+	vector<CPlayAreaEntityWrapper>	m_vDynamicElements;
+	
     double m_dCameraDistanceFromPlayer;
     double m_dCameraPitch;
 
@@ -137,6 +138,8 @@ public:
 	bool	IsScenarioCompleted();
 	bool	IsVisible(CVector vPos,double dRadius,bool bWithScroll);
 	
+	void 	CreateDynamicEntityElement(IEntityType *piEntityType,CVector vPosition,CVector vAngles,IPlayAreaEntity **ppiElement);
+		
     // IGameManager
 
 	void CreateScenario();

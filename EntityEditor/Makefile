@@ -22,12 +22,13 @@ EntityEditorNamedObjectSelector.cpp\
 EntityEditorObjectSelector.cpp\
 EntityEditorObjectLabel.cpp\
 EntityEditorClassSelector.cpp\
-EntityEditorEntityPropertyPanel.cpp\
+EntityEditorGeneralPropertyPanel.cpp\
 EntityEditorAnimationPropertyPanel.cpp\
 EntityEditorModelPropertyPanel.cpp\
 EntityEditorSoundPropertyPanel.cpp\
 EntityEditorEventPropertyPanel.cpp\
 EntityEditorParticleSystemPropertyPanel.cpp\
+EntityEditorEntityPropertyPanel.cpp\
 stdafx.cpp
 
 

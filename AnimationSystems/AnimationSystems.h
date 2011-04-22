@@ -28,6 +28,13 @@ struct SEventAnimationObjectTypeConfig
 	SEventAnimationObjectTypeConfig(){nTime=0;}
 };
 
+struct SEntityAnimationObjectTypeConfig
+{
+	unsigned int    nTime;
+	
+	SEntityAnimationObjectTypeConfig(){nTime=0;}
+};
+
 struct SModelAnimationObjectTypeConfig
 {
 	unsigned int nStartTime;
@@ -142,6 +149,7 @@ struct IEventAnimationObjectTypeDesign:virtual public IAnimationObjectType
 	virtual void		 SetConfig(SEventAnimationObjectTypeConfig *pConfig)=0;
 };
 
+
 struct IModelAnimationObjectTypeDesign:virtual public IAnimationObjectType
 {
 	virtual void		 GetConfig(SModelAnimationObjectTypeConfig *pConfig)=0;
@@ -156,6 +164,14 @@ struct IParticleSystemAnimationObjectTypeDesign:virtual public IAnimationObjectT
 	virtual void		 SetConfig(SParticleSystemAnimationObjectTypeConfig *pConfig)=0;
 	virtual void		 SetParticleSystemType(IParticleSystemType *piParticleSystemType)=0;
 	virtual void		 GetParticleSystemType(IParticleSystemType **ppiParticleSystemType)=0;
+};
+
+struct IEntityAnimationObjectTypeDesign:virtual public IAnimationObjectType
+{
+	virtual void		 GetConfig(SEntityAnimationObjectTypeConfig *pConfig)=0;
+	virtual void		 SetConfig(SEntityAnimationObjectTypeConfig *pConfig)=0;
+	virtual void		 SetEntityType(IEntityType *piEntityType)=0;
+	virtual void		 GetEntityType(IEntityType **ppiEntityType)=0;
 };
 
 struct ISoundAnimationObjectTypeDesign:virtual public IAnimationObjectType
