@@ -124,7 +124,8 @@ public:
 	void	GetPlayAreaPlaneAt(CVector vPos,CVector *pPlayAreaMins,CVector *pPlayAreaMaxs);
     void    GetAirPlayPlane(CVector *pPlayAreaMins,CVector *pPlayAreaMaxs);
     void    GetVisibleAirPlayPlane(CVector *pVisiblePlayAreaMins,CVector *pVisiblePlayAreaMaxs);
-
+	void    GetCurrentVisibleArea(CVector *pVisiblePlayAreaMins,CVector *pVisiblePlayAreaMaxs);
+	
     CVector GetPlayMovementPosition();
     CVector GetPlayMovementForward();
     CVector GetPlayMovementRight();
