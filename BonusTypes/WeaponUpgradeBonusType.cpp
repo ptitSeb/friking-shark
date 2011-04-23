@@ -24,7 +24,26 @@ IEntity *CWeaponUpgradeBonusType::CreateInstance(IEntity *piParent,unsigned int 
   CWeaponUpgradeBonus *piEntity=new CWeaponUpgradeBonus(this);
   SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();
   InitializeEntity(piEntity,dwCurrentTime);
-  pPhysicInfo->vPosition=piParent?piParent->GetPhysicInfo()->vPosition:Origin;
+  
+  // Se posiciona el bonus en el plano aereo, en el juego no hay bonus de armas entregados por unidades
+  // de tierra, pero just in case
+  CVector vPosition=pPhysicInfo->vPosition=piParent?piParent->GetPhysicInfo()->vPosition:Origin;
+  CVector vStart,vEnd;
+  CVector vCameraPos;
+  if(m_PlayAreaManager.m_piPlayAreaManager)
+  {
+	m_PlayAreaManager.m_piPlayAreaManager->GetPlayerRoute(&vStart,&vEnd);
+	IGenericCamera *piCamera=m_PlayAreaManager.m_piPlayAreaManager->GetCamera();
+	if(piCamera){vCameraPos=piCamera->GetPosition();}
+	REL(piCamera);	
+  }
+  CPlane playAreaPlane=CPlane(AxisPosY,vStart);
+  CVector vCut;
+  if(playAreaPlane.Cut(vPosition,vCameraPos,&vCut))
+  {
+	  pPhysicInfo->vPosition=vCut;
+  }
+  
   piEntity->SetState(eWeaponUpgradeBonusState_Normal,ANIMATION_RANDOM);
   piEntity->SetInitialVelocity();
   return piEntity;

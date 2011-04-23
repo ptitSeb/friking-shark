@@ -17,7 +17,7 @@ INCLUDES = -I. \
 SOURCES = BonusTypes.cpp\
 LiveBonusType.cpp\
 PointBonusType.cpp\
-SpeedUpgradeBonusType.cpp\
+BombBonusType.cpp\
 WeaponUpgradeBonusType.cpp\
 stdafx.cpp
 
