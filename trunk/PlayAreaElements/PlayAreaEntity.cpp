@@ -11,6 +11,7 @@ CPlayAreaEntity::CPlayAreaEntity()
 	m_nEntityCount=1;
 	m_nLastEntityTime=0;
 	m_nCreatedEntities=0;
+	m_nKilledEntities=0;
 }
 
 CPlayAreaEntity::~CPlayAreaEntity()
@@ -114,13 +115,17 @@ void CPlayAreaEntity::Deactivate()
 	m_sEntities.clear();
 	m_nCreatedEntities=0;
 	m_nLastEntityTime=0;
+	m_nKilledEntities=0;
     CPlayAreaElementBase::Deactivate();
 }
 
 void CPlayAreaEntity::OnKilled(IEntity *piEntity)
 {
-/*	UNSUBSCRIBE_FROM_CAST(piEntity,IEntityEvents);
-	m_sEntities.erase(piEntity);*/
+	m_nKilledEntities++;
+	if(m_nKilledEntities==m_nEntityCount)
+	{
+		m_BonusType.m_piEntityType->CreateInstance(piEntity,g_FrameManagerSingleton.m_piInterface->GetCurrentTime());
+	}
 }
 
 void CPlayAreaEntity::OnRemoved(IEntity *piEntity)
@@ -207,4 +212,5 @@ bool CPlayAreaEntity::AddRoutePoint( unsigned int nIndex,const SRoutePoint &sPoi
 bool CPlayAreaEntity::SetRoutePoint( unsigned int nIndex,const SRoutePoint &sPoint ){return m_Route.SetPoint(nIndex,sPoint);}
 void CPlayAreaEntity::RemoveRoutePoint( unsigned int nIndex ){m_Route.RemovePoint(nIndex);}
 void CPlayAreaEntity::ClearRoute(){return m_Route.Clear();}
-
+void CPlayAreaEntity::SetBonusType(IEntityType *piBonusType){m_BonusType.Attach(piBonusType);}
+void CPlayAreaEntity::GetBonusType(IEntityType **ppiBonusType){if(ppiBonusType){*ppiBonusType=ADD(m_BonusType.m_piEntityType);}}

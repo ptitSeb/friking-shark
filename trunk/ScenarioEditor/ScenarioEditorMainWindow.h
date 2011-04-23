@@ -52,10 +52,11 @@ struct SEntityControls
 	IPlayAreaEntity					*m_piPlayAreaEntity;
 	IEntityType						*m_piEntityType;
 	IDesignObject					*m_piDesignObject;
+	IDesignObject					*m_piBonusDesignObject;
 	ISystemObject					*m_piObject;
 	
-	SEntityControls(){m_piPlayAreaEntity=NULL;m_piEntityType=NULL;m_piDesignObject=NULL;m_piObject=NULL;m_nPlayAreaElementId=0;}
-	~SEntityControls(){REL(m_piPlayAreaEntity);REL(m_piEntityType);REL(m_piDesignObject);REL(m_piObject);}
+	SEntityControls(){m_piBonusDesignObject=NULL;m_piPlayAreaEntity=NULL;m_piEntityType=NULL;m_piDesignObject=NULL;m_piObject=NULL;m_nPlayAreaElementId=0;}
+	~SEntityControls(){REL(m_piBonusDesignObject);REL(m_piPlayAreaEntity);REL(m_piEntityType);REL(m_piDesignObject);REL(m_piObject);}
 };
 
 struct SFormationControls
@@ -233,6 +234,8 @@ public:
 	IGameGUILabel  *m_piSTEntityName;
 	IScenarioEditorObjectLabel *m_piSTEntityObjectLabel;
 	IGameGUIButton *m_piBTEntitySample;
+	IScenarioEditorObjectLabel *m_piSTEntityBonusObjectLabel;
+	IGameGUIButton *m_piBTEntityBonusSample;
 	IGameGUIButton *m_piBTEntityRemove;
 	IGameGUILabel  *m_piSTEntityYaw;
 	IGameGUIButton *m_piBTEntityDecreaseYaw;
@@ -469,6 +472,8 @@ public:
 		CHILD_MAP_ENTRY("EntityLayerSeparation",m_piSTEntityLayerSeparation);
 		CHILD_MAP_ENTRY("EntityLayerPositionJitter",m_piSTEntityLayerPositionJitter);
 		CHILD_MAP_ENTRY("EntityLayerYawJitter",m_piSTEntityLayerYawJitter);
+		CHILD_MAP_ENTRY("EntityBonusObjectLabel",m_piSTEntityBonusObjectLabel);
+		CHILD_MAP_ENTRY_EX("EntityBonusSample",m_piBTEntityBonusSample,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("EntityLayerModelSample",m_piBTEntityLayerSample,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("EntityLayerColorSample",m_piBTEntityLayerColorSample,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("EntityLayerRemove",m_piBTEntityLayerRemove,IGameGUIButtonEvents);
