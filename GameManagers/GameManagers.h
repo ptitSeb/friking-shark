@@ -451,7 +451,8 @@ struct IPlayAreaEntity:virtual public IPlayAreaElement
 	virtual void SetPosition(const CVector &vPosition)=0;
 	virtual void SetAngles(const CVector &vAngles)=0;
 	virtual void SetEntityType(IEntityType *piEntityType)=0;
-
+	virtual void SetBonusType(IEntityType *piEntityType)=0;
+	
 	virtual unsigned int GetCount()=0;
 	virtual unsigned int GetDelay()=0;
 	virtual unsigned int GetInterval()=0;
@@ -459,7 +460,8 @@ struct IPlayAreaEntity:virtual public IPlayAreaElement
 	virtual CVector GetPosition()=0;
 	virtual CVector GetAngles()=0;
 	virtual void	GetEntityType(IEntityType **piEntityType)=0;
-
+	virtual void 	GetBonusType(IEntityType **piEntityType)=0;
+	
 	virtual unsigned int GetRoutePoints()=0;
 	virtual bool 		 GetRoutePoint(unsigned int nIndex,SRoutePoint *psPoint)=0;
 	virtual bool 		 AddRoutePoint(unsigned int nIndex,const SRoutePoint &sPoint)=0;

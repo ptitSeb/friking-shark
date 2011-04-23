@@ -6,6 +6,7 @@
 
 #define SELECT_FORMATION_BASE_INDEX 0x800
 #define SELECT_ENTITY_BASE_INDEX    0x400
+#include "../GameManagers/GameManagers.h"
 
 extern CSystemModuleHelper *g_pSystemModuleHelper;
 
@@ -85,6 +86,7 @@ bool CScenarioEditorMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 
 	m_piSTEntityLayerObjectLabel->Activate(false);
 	m_piSTEntityObjectLabel->Activate(false);
+	m_piSTEntityBonusObjectLabel->Activate(false);
 	m_piSTFormationObjectLabel->Activate(false);
 	m_piSTFormationBonusObjectLabel->Activate(false);
 
@@ -139,6 +141,7 @@ void CScenarioEditorMainWindow::Reset()
 	if(m_GameControllerWrapper.m_piGameController){m_GameControllerWrapper.m_piGameController->CloseScenario();}
 	if(m_piSTEntityLayerObjectLabel){m_piSTEntityLayerObjectLabel->SetObject(NULL);}
 	if(m_piSTEntityObjectLabel){m_piSTEntityObjectLabel->SetObject(NULL);}
+	if(m_piSTEntityBonusObjectLabel){m_piSTEntityBonusObjectLabel->SetObject(NULL);}
 	if(m_piSTFormationObjectLabel){m_piSTFormationObjectLabel->SetObject(NULL);}
 	if(m_piSTFormationBonusObjectLabel){m_piSTFormationBonusObjectLabel->SetObject(NULL);}
 	UpdateColorLayerControls();
@@ -1099,6 +1102,21 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			}
 			for(unsigned long x=0;x<vEntityTypes.size();x++){IDesignObject *piEntityType=vEntityTypes[x];REL(piEntityType);}
 		}
+		else if(piControl==m_piBTEntityBonusSample)
+		{
+			unsigned long nSelectedEntityType=0;
+			std::vector<IDesignObject *> vEntityTypes;
+			GetSystemObjects("EntityTypes",&vEntityTypes);
+			if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vEntityTypes,&nSelectedEntityType))
+			{
+				IEntityType *piEntityType=QI(IEntityType,vEntityTypes[nSelectedEntityType]);
+				pEntity->m_piPlayAreaEntity->SetBonusType(piEntityType);
+				REL(piEntityType);
+				
+				UpdateEntityControls();
+			}
+			for(unsigned long x=0;x<vEntityTypes.size();x++){IDesignObject *piEntityType=vEntityTypes[x];REL(piEntityType);}
+		}		
 		else if(piControl==m_piBTEntityIncreaseYaw)
 		{
 			CVector vAngles=pEntity->m_piPlayAreaEntity->GetAngles();
@@ -1712,6 +1730,7 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 	{
 		m_piSTEntityName->SetText(m_vEntityControls[m_nSelectedEntity]->m_piObject->GetName());
 		m_piSTEntityObjectLabel->SetObject(m_vEntityControls[m_nSelectedEntity]->m_piDesignObject);
+		m_piSTEntityBonusObjectLabel->SetObject(m_vEntityControls[m_nSelectedEntity]->m_piBonusDesignObject);
 		m_piGREntityPanel->Show(m_bShowEntitiesPanel);
 
 		CVector vAngles=m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetAngles();
@@ -2621,15 +2640,20 @@ void CScenarioEditorMainWindow::UpdateEntityControls()
 			m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetElement(x,&piElement);
 			IPlayAreaEntity  *piEntity=QI(IPlayAreaEntity,piElement);
 			IEntityType		 *piEntityType=NULL;
+			IEntityType		 *piBonusType=NULL;
 			if(piEntity){piEntity->GetEntityType(&piEntityType);}			
+			if(piEntity){piEntity->GetBonusType(&piBonusType);}			
 			IDesignObject *piDesignObject=QI(IDesignObject,piEntityType);
+			IDesignObject *piBonusDesignObject=QI(IDesignObject,piBonusType);
 			ISystemObject *piObject=QI(ISystemObject,piDesignObject);
 			if(!piObject)
 			{
 				REL(piEntityType);
+				REL(piDesignObject);
+				REL(piBonusType);
 				REL(piEntity);
 				REL(piElement);
-				REL(piDesignObject);
+				REL(piBonusDesignObject);
 				continue;
 			}
 
@@ -2637,6 +2661,7 @@ void CScenarioEditorMainWindow::UpdateEntityControls()
 			pControls->m_nPlayAreaElementId=x;
 			pControls->m_BTListRow.Create(m_piSystem,"CGameGUIButton","");
 			pControls->m_piEntityType=ADD(piEntityType);
+			pControls->m_piBonusDesignObject=ADD(piBonusDesignObject);
 			pControls->m_piDesignObject=ADD(piDesignObject);
 			pControls->m_piPlayAreaEntity=ADD(piEntity);
 			pControls->m_piObject=QI(ISystemObject,piEntityType);
@@ -2662,6 +2687,8 @@ void CScenarioEditorMainWindow::UpdateEntityControls()
 			}
 			REL(piEntityType);
 			REL(piDesignObject);
+			REL(piBonusType);
+			REL(piBonusDesignObject);
 			REL(piElement);
 			REL(piEntity);
 			REL(piObject);
