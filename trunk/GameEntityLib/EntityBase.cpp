@@ -53,7 +53,15 @@ CEntityBase::~CEntityBase()
 void CEntityBase::OnDamage(double dDamage,IEntity *piAggresor)
 {
     if(m_dwDamageType==DAMAGE_TYPE_NONE){return;}
-		m_dLastFrameDamage+=dDamage;
+    if(m_dHealth<=0){return;}
+	
+	m_dHealth-=dDamage;
+	if(m_dHealth<=0)
+	{
+		OnKilled();
+		m_dHealth=0;
+	}
+	m_dLastFrameDamage+=dDamage;
 }
 
 void CEntityBase::Kill()
@@ -103,13 +111,7 @@ void         CEntityBase::Remove()
 bool         CEntityBase::IsRemoved(){return m_bRemoved;}
 void         CEntityBase::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
-	if(m_dwDamageType!=DAMAGE_TYPE_NONE)
-	{
-		m_dHealth-=m_dLastFrameDamage;
-		m_dLastFrameDamage=0;
-
-		if(m_dHealth<=0){OnKilled();}
-	}
+	m_dLastFrameDamage=0;
 }
 
 SPhysicInfo *CEntityBase::GetPhysicInfo(){return &m_PhysicInfo;}
