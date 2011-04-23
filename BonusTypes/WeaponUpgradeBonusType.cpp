@@ -1,11 +1,17 @@
 #include "./stdafx.h"
 #include "WeaponUpgradeBonusType.h"
+#include "GameGraphics.h"
 
 CWeaponUpgradeBonusType::CWeaponUpgradeBonusType()
 {
+	m_PlayAreaManager.Attach("GameSystem","PlayAreaManager");
+	
 	m_dwLevels=0;
 	m_dwSlot=0;
-	m_nMovementType=PHYSIC_MOVE_TYPE_NONE;
+	m_dAngularVelocity=60;
+	m_dForwardVelocity=20;
+	m_dExitVelocity=20;
+	m_nMovementType=PHYSIC_MOVE_TYPE_FLY;
 	m_nCollisionType=PHYSIC_COLLISION_TYPE_THROUGH;
 }
 
@@ -19,9 +25,8 @@ IEntity *CWeaponUpgradeBonusType::CreateInstance(IEntity *piParent,unsigned int 
   SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();
   InitializeEntity(piEntity,dwCurrentTime);
   pPhysicInfo->vPosition=piParent?piParent->GetPhysicInfo()->vPosition:Origin;
-  pPhysicInfo->vAngleVelocity.c[0]=50.0;
-  pPhysicInfo->vAngleVelocity.c[1]=150.0;
   piEntity->SetState(eWeaponUpgradeBonusState_Normal,ANIMATION_RANDOM);
+  piEntity->SetInitialVelocity();
   return piEntity;
 }
 
@@ -31,6 +36,7 @@ CWeaponUpgradeBonus::CWeaponUpgradeBonus(CWeaponUpgradeBonusType *pType)
   m_sName="WeaponUpgradeBonus";
   m_pType=pType;
   m_dwDamageType=DAMAGE_TYPE_NONE;
+  m_dCurrentAngularVelocity=0;
 }
 
 bool CWeaponUpgradeBonus::OnCollision(IEntity *pOther,CVector &vCollisionPos)
@@ -50,3 +56,69 @@ bool CWeaponUpgradeBonus::OnCollision(IEntity *pOther,CVector &vCollisionPos)
   }
   return false;
 }
+
+void CWeaponUpgradeBonus::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
+{
+	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
+	if(m_pType->m_PlayAreaManager.m_piPlayAreaManager==NULL){return;}
+
+	CVector vMins,vMaxs;
+	m_pType->m_PlayAreaManager.m_piPlayAreaManager->GetCurrentVisibleArea(&vMins,&vMaxs);
+	
+	if(m_PhysicInfo.vPosition.c[0]+m_PhysicInfo.vMaxs.c[0]<vMins.c[0])
+	{
+		Remove();
+		return;
+	}
+	
+	if(m_PhysicInfo.vPosition.c[2]+m_PhysicInfo.vMins.c[2]<vMins.c[2] && m_vCurrentForwardDirection.c[2]<0)
+	{
+		CMatrix m;
+		double dInitialAngle=drand()*(-25.0)-20.0;
+		m.R(AxisPosY,DegreesToRadians(dInitialAngle));		
+		m_dCurrentAngularVelocity=0-m_pType->m_dAngularVelocity;
+		m_vCurrentForwardDirection=AxisPosX;
+		m_vCurrentForwardDirection*=m;
+	}
+	if(m_PhysicInfo.vPosition.c[2]+m_PhysicInfo.vMaxs.c[2]>vMaxs.c[2] && m_vCurrentForwardDirection.c[2]>0)
+	{
+		CMatrix m;
+		double dInitialAngle=drand()*25.0+20.0;
+		m.R(AxisPosY,DegreesToRadians(dInitialAngle));		
+		m_dCurrentAngularVelocity=m_pType->m_dAngularVelocity;
+		m_vCurrentForwardDirection=AxisPosX;
+		m_vCurrentForwardDirection*=m;
+	}
+	
+	CMatrix m;
+	m.R(AxisPosY,DegreesToRadians(m_dCurrentAngularVelocity*dTimeFraction));
+	m_vCurrentForwardDirection*=m;
+	m_vCurrentForwardDirection.N();
+	
+	double dCameraFollow=(m_pType->m_PlayAreaManager.m_piPlayAreaManager->GetCameraSpeed()-m_pType->m_dExitVelocity);
+	m_PhysicInfo.vVelocity=m_vCurrentForwardDirection*m_pType->m_dForwardVelocity+AxisPosX*dCameraFollow;
+}
+
+void CWeaponUpgradeBonus::SetInitialVelocity()
+{
+	if(m_pType->m_PlayAreaManager.m_piPlayAreaManager==NULL){return;}
+	
+	CMatrix m;
+	double dInitialAngle=45.0-drand()*90.0;
+	m_dCurrentAngularVelocity=dInitialAngle>0?m_pType->m_dAngularVelocity:0-m_pType->m_dAngularVelocity;
+	m.R(AxisPosY,DegreesToRadians(dInitialAngle));
+	m_vCurrentForwardDirection=AxisPosX;
+	m_vCurrentForwardDirection*=m;	
+}
+
+
+
+
+
+
+
+
+
+
+
+
