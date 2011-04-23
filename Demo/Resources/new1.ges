@@ -1,6 +1,6 @@
 AreaDeJuego
 {
-	AlturaJuego=20.000000
+	AlturaJuego=35.000000
 	Camara
 	{
 		Class=Camera
@@ -8,16 +8,16 @@ AreaDeJuego
 		{
 			AnguloVisualizacion=60.000000
 			Angulos=-0.000000,-90.000000,0.000000
-			AspectRatio=0.700000
+			AspectRatio=0.500000
 			FarPlane=10000.000000
 			NearPlane=10.000000
-			Posicion=-1.000000,217.965199,4.682201
+			Posicion=-42.635749,227.965199,4.682201
 		}
 		Name=PlayCamera
 		System=GameSystem
 	}
-	Destino=1877.434779,-4.682201,72.965199
-	DistanciaCamara=145.000000
+	Destino=1871.661277,-4.682201,87.965199
+	DistanciaCamara=140.000000
 	Elementos
 	{
 		Item0
@@ -52,23 +52,19 @@ AreaDeJuego
 		}
 		Item3
 		{
-			Class=CPlayAreaEntity
+			Class=CPlayAreaFormation
 			Data
 			{
-				Angulos=0.000000,0.000000,0.000000
-				Count=1
-				Delay=0
-				Interval=0
-				Posicion=-4.032426,-0.941028,52.965399
-				Ruta
+				Bonus
 				{
-					Ciclica=0
-					Puntos
+					Name=Bonus:Upgrade_Slot0
+					System=EntityTypes
 				}
+				Posicion=11.712056,-4.682201,87.965199
 				Tipo
 				{
-					Name=SmallShip
-					System=EntityTypes
+					Name=temp1
+					System=FormationTypes
 				}
 			}
 			Name=""
@@ -77,8 +73,8 @@ AreaDeJuego
 	}
 	EntityLayers
 	InclinacionVista=0.000000
-	MaximoScrollHorz=15.000000
-	Origen=-48.409251,-4.682201,72.965199
+	MaximoScrollHorz=0.000000
+	Origen=-42.635749,-4.682201,87.965199
 	VelocidadCamara=0.000000
 }
 Terrain

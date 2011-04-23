@@ -530,6 +530,11 @@ struct IWeapon
   
   virtual CVector  GetIdealHeadingToTarget(CVector vTargetPosition,CVector vTargetVelocity)=0;
   
+  virtual bool         UsesAmmo()=0;
+  virtual void         SetAmmo(unsigned int nAmmo)=0;
+  virtual void         AddAmmo(unsigned int nAmmo)=0;
+  virtual unsigned int GetAmmo()=0;
+  
   virtual ~IWeapon(){}
 };
 
