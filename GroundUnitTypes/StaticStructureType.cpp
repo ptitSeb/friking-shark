@@ -60,7 +60,7 @@ void CStaticStructure::ProcessFrame(unsigned int dwCurrentTime,double dTimeFract
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
 
 	bool bAllChildDead=true;
-	for(unsigned int x=0;x<m_vChildren.size();x++){if(m_vChildren[x].piEntity->GetHealth()!=0){bAllChildDead=false;}}
+	for(unsigned int x=0;x<m_vChildren.size();x++){if(m_vChildren[x].piEntity->GetHealth()>0){bAllChildDead=false;}}
 	m_dwDamageType=(bAllChildDead?m_nConfiguredDamageType:DAMAGE_TYPE_NONE);
 	
 	if(m_dwAlignment==ENTITY_ALIGNMENT_ENEMIES)
