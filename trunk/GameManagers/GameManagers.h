@@ -494,7 +494,8 @@ struct IPlayAreaManager:virtual public ISystemUnknown
     virtual void GetAirPlayPlane(CVector *pPlayAreaMins,CVector *pPlayAreaMaxs)=0;
     virtual void GetVisibleAirPlayPlane(CVector *pVisiblePlayAreaMins,CVector *pVisiblePlayAreaMaxs)=0;
 	virtual void GetPlayAreaPlaneAt(CVector vPos,CVector *pPlayAreaMins,CVector *pPlayAreaMaxs)=0;
-
+	virtual void GetCurrentVisibleArea(CVector *pVisiblePlayAreaMins,CVector *pVisiblePlayAreaMaxs)=0;
+	
 	virtual void	SetPlayMovementPosition(CVector vPosition)=0;
     virtual CVector GetPlayMovementPosition()=0;
     virtual CVector GetPlayMovementForward()=0;

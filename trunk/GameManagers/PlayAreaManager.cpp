@@ -336,6 +336,14 @@ bool  CPlayAreaManager::IsScenarioCompleted()
 
 void CPlayAreaManager::GetAirPlayPlane(CVector *pPlayAreaMins,CVector *pPlayAreaMaxs){*pPlayAreaMins=m_vAirPlayAreaMins,*pPlayAreaMaxs=m_vAirPlayAreaMaxs;}
 void CPlayAreaManager::GetVisibleAirPlayPlane(CVector *pVisiblePlayAreaMins,CVector *pVisiblePlayAreaMaxs){*pVisiblePlayAreaMins=m_vVisibleAirPlayAreaMins;*pVisiblePlayAreaMaxs=m_vVisibleAirPlayAreaMaxs;}
+void CPlayAreaManager::GetCurrentVisibleArea(CVector *pVisiblePlayAreaMins,CVector *pVisiblePlayAreaMaxs)
+{
+	*pVisiblePlayAreaMins=m_vVisibleAirPlayAreaMins;
+	*pVisiblePlayAreaMaxs=m_vVisibleAirPlayAreaMaxs;
+	CVector vCameraPos=m_CameraWrapper.m_piCamera?m_CameraWrapper.m_piCamera->GetPosition():Origin;
+	pVisiblePlayAreaMins->c[2]+=vCameraPos.c[2]-m_vPlayerRouteStart.c[2];
+	pVisiblePlayAreaMaxs->c[2]+=vCameraPos.c[2]-m_vPlayerRouteStart.c[2];
+}
 
 void CPlayAreaManager::GetPlayAreaPlaneAt(CVector vPos,CVector *pPlayAreaMins,CVector *pPlayAreaMaxs)
 {
