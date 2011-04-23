@@ -1,7 +1,5 @@
 #pragma once
 
-DECLARE_CUSTOM_WRAPPER1(CPlayAreaManagerWrapper,IPlayAreaManager,m_piPlayAreaManager)
-
 enum EWeaponUpgradeBonusState
 {
 	eWeaponUpgradeBonusState_Normal=ENTITY_STATE_BASE,

@@ -9,4 +9,6 @@
 #include "VectorLib.h"
 #include "GameEntityLib.h"
 
+DECLARE_CUSTOM_WRAPPER1(CPlayAreaManagerWrapper,IPlayAreaManager,m_piPlayAreaManager)
+
 #endif
