@@ -30,6 +30,7 @@ CFighter::CFighter(CFighterType *pType,unsigned int dwCurrentTime)
   m_dFleeAngle=0;
   m_bFleeing=false;
   m_pType=pType;
+  m_nCurrentTime=dwCurrentTime;
   m_nRoutePoint=0;
   m_dwNextProcessFrame=dwCurrentTime+10;
   m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeFirstShotMax-m_pType->m_dTimeFirstShotMin)+m_pType->m_dTimeFirstShotMin;
@@ -78,6 +79,7 @@ void CFighter::OnKilled()
     {
       m_PhysicInfo.vAngleVelocity.c[2]+=drand()*300.0-150.0;
 	  SetState(eFighterState_Falling);
+	  m_nFallStartTime=m_nCurrentTime;
       m_PhysicInfo.dwMoveType=PHYSIC_MOVE_TYPE_NORMAL;
     }
   }
@@ -91,7 +93,7 @@ void CFighter::OnKilled()
 
 bool CFighter::OnCollision(IEntity *piOther,CVector &vCollisionPos)
 {
-	if(GetState()==eFighterState_Falling && piOther->GetAlignment()!=ENTITY_ALIGNMENT_PLAYER)
+	if(GetState()==eFighterState_Falling && (m_nCurrentTime-m_nFallStartTime)>1000)
 	{
 		if(GetState()!=eFighterState_Crashed && m_pTypeBase->GetStateAnimations(eFighterState_Crashed))
 		{
@@ -109,6 +111,8 @@ bool CFighter::OnCollision(IEntity *piOther,CVector &vCollisionPos)
 void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
+	
+	m_nCurrentTime=dwCurrentTime;
 	
 	if(m_dHealth<=0){return;}
 	
