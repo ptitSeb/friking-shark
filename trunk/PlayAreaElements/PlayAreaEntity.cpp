@@ -122,7 +122,7 @@ void CPlayAreaEntity::Deactivate()
 void CPlayAreaEntity::OnKilled(IEntity *piEntity)
 {
 	m_nKilledEntities++;
-	if(m_nKilledEntities==m_nEntityCount)
+	if(m_nKilledEntities==m_nEntityCount && m_BonusType.m_piEntityType)
 	{
 		m_BonusType.m_piEntityType->CreateInstance(piEntity,g_FrameManagerSingleton.m_piInterface->GetCurrentTime());
 	}
