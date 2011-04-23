@@ -37,6 +37,7 @@ protected:
     CVector                     m_vRight;
     CVector                     m_vUp;
     bool                        m_bAnglesDirty;
+    bool                        m_bAllEmittersDeactivated;
 
 public:
 

@@ -39,7 +39,9 @@ CParticleSystem::CParticleSystem(CParticleSystemType *pType)
 {
     m_bAnglesDirty=true;
     m_pType=pType;
+	m_bAllEmittersDeactivated=false;
 }
+
 CParticleSystem::~CParticleSystem()
 {
     unsigned x;
@@ -64,27 +66,8 @@ IParticleEmitter *CParticleSystem::GetEmitter(string sName)
 
 void CParticleSystem::DeactivateAllEmitters()
 {
-  // Si se desactivan todos los emisores tambien hay que desactivar las particulas sin tiempo de vida
-  // es decir con tiempo de vida=0, ya que de otra forma las particulas nunca terminan.
-
-  list<IParticle*>::iterator i;
-  for(i=m_lParticles.begin();i!=m_lParticles.end();)
-  {
-    IParticle *pParticle=*i;
-    if(pParticle->m_dwEndTime==0)
-    {
-      pParticle->m_bActive=false;
-    }
-    if(!pParticle->m_bActive)
-    {   
-      delete pParticle;
-      i=m_lParticles.erase(i);
-    }
-    else
-    {
-      i++;
-    }
-  }
+  m_bAllEmittersDeactivated=true;
+ 
   for(unsigned x=0;x<m_dEmitters.size();x++)
   {
     m_dEmitters[x]->Deactivate();
@@ -107,6 +90,12 @@ bool CParticleSystem::ProcessFrame(IPhysicManager *piPhysicManager,unsigned int 
     for(i=m_lParticles.begin();i!=m_lParticles.end();)
     {
         IParticle *pParticle=*i;
+		if(m_bAllEmittersDeactivated && pParticle->m_dwEndTime==0)
+		{
+			// Si se desactivan todos los emisores tambien hay que desactivar las particulas sin tiempo de vida
+			// es decir con tiempo de vida=0, ya que de otra forma las particulas nunca terminan.
+			pParticle->m_bActive=false;
+		}
         if(pParticle->m_dwEndTime)
         {
             pParticle->m_dLifeSpent=((double)dwCurrentTime-(double)pParticle->m_dwStartTime)/((double)pParticle->m_dwEndTime-(double)pParticle->m_dwStartTime);
