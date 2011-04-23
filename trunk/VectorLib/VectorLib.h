@@ -92,6 +92,7 @@ public:
 	{
 		return ((c[0]*v.c[0] + c[1]*v.c[1] + c[2]*v.c[2])-d);
 	}
+	bool Cut(CVector p1,CVector p2, CVector *pCut);
 
 	bool InSamePlaneAs(const CPlane p);
 	bool operator==(const CPlane p);
