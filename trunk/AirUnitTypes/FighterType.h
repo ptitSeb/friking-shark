@@ -65,7 +65,10 @@ class CFighter: public CEntityBase
 	bool   m_bWasVisible;
 	
     double m_dwNextShotTime;
-
+	
+	unsigned int m_nFallStartTime;
+	unsigned int m_nCurrentTime;
+	
 public:
 
 	void AcquireTarget();
