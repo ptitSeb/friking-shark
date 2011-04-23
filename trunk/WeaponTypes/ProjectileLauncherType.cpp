@@ -7,6 +7,9 @@ CProjectileLauncherType::CProjectileLauncherType(void)
   m_bProjectileEntityTypesResolved=false;
   m_dwWeaponSlot=0;
   m_bIgnoreRoll=true;
+  m_bUsesAmmo=false;
+  m_nInitialAmmo=0;
+  m_nAmmoPerRound=1;
 }
 
 CProjectileLauncherType::~CProjectileLauncherType(void)
@@ -30,6 +33,9 @@ unsigned int CProjectileLauncherType::GetMaxLevel()
   unsigned int dwMaxLevel=(unsigned int)m_dLevels.size();
   return dwMaxLevel-1;
 }
+bool CProjectileLauncherType::UsesAmmo(){return m_bUsesAmmo;}
+unsigned int CProjectileLauncherType::GetInitialAmmo(){return m_nInitialAmmo;}
+unsigned int CProjectileLauncherType::GetAmmoPerRound(){return m_nAmmoPerRound;}
 
 SProjectileLauncherLevel *CProjectileLauncherType::GetLevel(unsigned int dwLevel)
 {
@@ -49,83 +55,103 @@ CProjectileLauncher::CProjectileLauncher(CProjectileLauncherType *pType,IEntity 
   m_dwLastFireTime=0;
   m_dwCurrentLevel=0;
   m_pCurrentLevel=m_pType->GetLevel(m_dwCurrentLevel);
+  m_nAmmo=m_pType->GetInitialAmmo();  
 }
 
 CProjectileLauncher::~CProjectileLauncher()
 {
 }
 
+bool         CProjectileLauncher::UsesAmmo(){return m_pType->UsesAmmo();}
+void 		 CProjectileLauncher::SetAmmo(unsigned int nAmmo){m_nAmmo=nAmmo;}
+void 		 CProjectileLauncher::AddAmmo(unsigned int nAmmo){m_nAmmo+=nAmmo;}
+unsigned int CProjectileLauncher::GetAmmo(){return m_nAmmo;}
+
 void CProjectileLauncher::Fire(unsigned int dwCurrentTime)
 {
-  if(IsReady(dwCurrentTime))
-  {
-    size_t nProjectile;
-    SPhysicInfo *pEntityPhysicInfo=m_piEntity->GetPhysicInfo();
-    CVector vOwnerAngles=pEntityPhysicInfo->vAngles,vOwnerForward,vOwnerRight,vOwnerUp;
-    CVector vTargetAngles,vTargetForward,vTargetRight,vTargetUp;
-    IEntity *piTarget=m_piEntity->GetTarget();
-  
+	bool bFire=IsReady(dwCurrentTime);
+	if(bFire && m_pType->UsesAmmo())
+	{
+		unsigned int nAmmoPerRound=m_pType->GetAmmoPerRound();
+		if(m_nAmmo<nAmmoPerRound)
+		{
+			bFire=false;
+		}
+		else
+		{
+			bFire=true;
+			m_nAmmo-=nAmmoPerRound;
+		}
+	}
+	if(bFire)
+	{
+		size_t nProjectile;
+		SPhysicInfo *pEntityPhysicInfo=m_piEntity->GetPhysicInfo();
+		CVector vOwnerAngles=pEntityPhysicInfo->vAngles,vOwnerForward,vOwnerRight,vOwnerUp;
+		CVector vTargetAngles,vTargetForward,vTargetRight,vTargetUp;
+		IEntity *piTarget=m_piEntity->GetTarget();
+	
 
-    if(piTarget)
-    {
-      SPhysicInfo *pTargetPhysicInfo=piTarget->GetPhysicInfo();
-	  CVector vTargetDirection=GetIdealHeadingToTarget(pTargetPhysicInfo->vPosition,pTargetPhysicInfo->vVelocity);
-	  AnglesFromVector(vTargetDirection,&vTargetAngles);
-    }
+		if(piTarget)
+		{
+		SPhysicInfo *pTargetPhysicInfo=piTarget->GetPhysicInfo();
+		CVector vTargetDirection=GetIdealHeadingToTarget(pTargetPhysicInfo->vPosition,pTargetPhysicInfo->vVelocity);
+		AnglesFromVector(vTargetDirection,&vTargetAngles);
+		}
 
-    if(m_pType->m_bIgnoreRoll)
-    {
-      vOwnerAngles.c[ROLL]=0;
-      vTargetAngles.c[ROLL]=0;
-    }
+		if(m_pType->m_bIgnoreRoll)
+		{
+		vOwnerAngles.c[ROLL]=0;
+		vTargetAngles.c[ROLL]=0;
+		}
 
-    VectorsFromAngles(vOwnerAngles,&vOwnerForward,&vOwnerRight,&vOwnerUp);
-    VectorsFromAngles(vTargetAngles,&vTargetForward,&vTargetRight,&vTargetUp);
+		VectorsFromAngles(vOwnerAngles,&vOwnerForward,&vOwnerRight,&vOwnerUp);
+		VectorsFromAngles(vTargetAngles,&vTargetForward,&vTargetRight,&vTargetUp);
 
-    for(nProjectile=0;nProjectile<m_pCurrentLevel->dProjectiles.size();nProjectile++)
-    {
-      SProjectileLauncherProjectile *pProjectileInfo=&m_pCurrentLevel->dProjectiles[nProjectile];
-      if(pProjectileInfo->projectileEntityType.m_piEntityType)
-      {
-        CVector vAngles,vForward,vRight,vUp;
+		for(nProjectile=0;nProjectile<m_pCurrentLevel->dProjectiles.size();nProjectile++)
+		{
+		SProjectileLauncherProjectile *pProjectileInfo=&m_pCurrentLevel->dProjectiles[nProjectile];
+		if(pProjectileInfo->projectileEntityType.m_piEntityType)
+		{
+			CVector vAngles,vForward,vRight,vUp;
 
-        if(pProjectileInfo->dwReferenceSystem==eProjectileLauncherReferenceSystem_Owner)
-        {
-          vAngles=vOwnerAngles;
-          vForward=vOwnerForward;
-          vRight=vOwnerRight;
-          vUp=vOwnerUp;
-        }
-        else if(pProjectileInfo->dwReferenceSystem==eProjectileLauncherReferenceSystem_Target)
-        {
-          if(piTarget==NULL){continue;}
-          vAngles=vTargetAngles;
-          vForward=vTargetForward;
-          vRight=vTargetRight;
-          vUp=vTargetUp;
-        }
-        else
-        {
-          continue;
-        }
+			if(pProjectileInfo->dwReferenceSystem==eProjectileLauncherReferenceSystem_Owner)
+			{
+			vAngles=vOwnerAngles;
+			vForward=vOwnerForward;
+			vRight=vOwnerRight;
+			vUp=vOwnerUp;
+			}
+			else if(pProjectileInfo->dwReferenceSystem==eProjectileLauncherReferenceSystem_Target)
+			{
+			if(piTarget==NULL){continue;}
+			vAngles=vTargetAngles;
+			vForward=vTargetForward;
+			vRight=vTargetRight;
+			vUp=vTargetUp;
+			}
+			else
+			{
+			continue;
+			}
 
-        IEntity *piProjectile=pProjectileInfo->projectileEntityType.m_piEntityType->CreateInstance(m_piEntity,dwCurrentTime);
-        if(piProjectile)
-        {
-          SPhysicInfo *pProjectilePhysicInfo=piProjectile->GetPhysicInfo();
-          pProjectilePhysicInfo->vPosition=pEntityPhysicInfo->vPosition;
-          pProjectilePhysicInfo->vPosition+=vForward*pProjectileInfo->vOrigin.c[0];
-          pProjectilePhysicInfo->vPosition+=vUp*pProjectileInfo->vOrigin.c[1];
-          pProjectilePhysicInfo->vPosition+=vRight*pProjectileInfo->vOrigin.c[2];
-          pProjectilePhysicInfo->vVelocity+=vForward*pProjectileInfo->vDirection.c[0]*pProjectileInfo->dVelocity;
-          pProjectilePhysicInfo->vVelocity+=vUp*pProjectileInfo->vDirection.c[1]*pProjectileInfo->dVelocity;
-          pProjectilePhysicInfo->vVelocity+=vRight*pProjectileInfo->vDirection.c[2]*pProjectileInfo->dVelocity;
-          pProjectilePhysicInfo->vAngleVelocity=pProjectileInfo->vAngularVelocity;
-          pProjectilePhysicInfo->dMaxVelocity=pProjectileInfo->dVelocity;
-          AnglesFromVector(pProjectilePhysicInfo->vVelocity,&pProjectilePhysicInfo->vAngles);
-        }
-      }
-    }
+			IEntity *piProjectile=pProjectileInfo->projectileEntityType.m_piEntityType->CreateInstance(m_piEntity,dwCurrentTime);
+			if(piProjectile)
+			{
+			SPhysicInfo *pProjectilePhysicInfo=piProjectile->GetPhysicInfo();
+			pProjectilePhysicInfo->vPosition=pEntityPhysicInfo->vPosition;
+			pProjectilePhysicInfo->vPosition+=vForward*pProjectileInfo->vOrigin.c[0];
+			pProjectilePhysicInfo->vPosition+=vUp*pProjectileInfo->vOrigin.c[1];
+			pProjectilePhysicInfo->vPosition+=vRight*pProjectileInfo->vOrigin.c[2];
+			pProjectilePhysicInfo->vVelocity+=vForward*pProjectileInfo->vDirection.c[0]*pProjectileInfo->dVelocity;
+			pProjectilePhysicInfo->vVelocity+=vUp*pProjectileInfo->vDirection.c[1]*pProjectileInfo->dVelocity;
+			pProjectilePhysicInfo->vVelocity+=vRight*pProjectileInfo->vDirection.c[2]*pProjectileInfo->dVelocity;
+			pProjectilePhysicInfo->vAngleVelocity=pProjectileInfo->vAngularVelocity;
+			pProjectilePhysicInfo->dMaxVelocity=pProjectileInfo->dVelocity;
+			AnglesFromVector(pProjectilePhysicInfo->vVelocity,&pProjectilePhysicInfo->vAngles);
+			}
+		}
+	}
     m_dwLastFireTime=dwCurrentTime;
   }
 }
