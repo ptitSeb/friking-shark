@@ -19,6 +19,7 @@ public:
     unsigned int	m_nEndTime;
     bool        	m_bLoop;
     bool        	m_bCastShadow;
+	bool        	m_bReceiveShadows;
 	bool			m_bLighting;
 
     IAnimationObject *CreateInstance(IAnimation *piAnimation,unsigned int dwCurrentTime);
@@ -33,6 +34,7 @@ public:
         PROP_CLASS_CHAIN(CAnimationObjectTypeBase)
         PROP(m_ModelWrapper,"Model")
         PROP_FLAGS(m_ShaderWrapper,"Shader",MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_bReceiveShadows,"ShadowReception",true,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_bCastShadow,"ShadowEmitter",true,MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_VALUE_FLAGS(m_dFps,"Fps",50.0,MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_VALUE_FLAGS(m_bLoop,"Loop",false,MRPF_NORMAL|MRPF_OPTIONAL)

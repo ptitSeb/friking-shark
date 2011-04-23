@@ -8,6 +8,7 @@ CModelAnimationObjectType::CModelAnimationObjectType()
     m_bCastShadow=true;
     m_dFps=50.0;
     m_bLoop=false;
+	m_bReceiveShadows=true;
 	m_bLighting=true;
     m_nStartTime=0;
     m_nEndTime=0;
@@ -48,6 +49,7 @@ void CModelAnimationObjectType::DesignRender( IGenericRender *piRender,CVector &
 
 			piRender->PushState();
 			if(!m_bCastShadow){piRender->DeactivateShadowEmission();}
+			if(!m_bReceiveShadows){piRender->DeactivateShadowReception();}
 			piRender->DeactivateHeightFog();
 			if(m_bLighting){piRender->ActivateLighting();}
 			if(m_ShaderWrapper.m_piShader){m_ShaderWrapper.m_piShader->Activate();}
@@ -97,6 +99,7 @@ void CModelAnimationObjectType::GetConfig(SModelAnimationObjectTypeConfig *pConf
 	pConfig->nStartTime=m_nStartTime;
 	pConfig->nEndTime=m_nEndTime;
 	pConfig->bCastShadow=m_bCastShadow;
+	pConfig->bReceiveShadows=m_bReceiveShadows;
 	pConfig->bLoop=m_bLoop;
 	pConfig->dFps=m_dFps;
 }
@@ -105,6 +108,7 @@ void CModelAnimationObjectType::SetConfig(SModelAnimationObjectTypeConfig *pConf
 	m_nStartTime=pConfig->nStartTime;
 	m_nEndTime=pConfig->nEndTime;
 	m_bCastShadow=pConfig->bCastShadow;
+	m_bReceiveShadows=pConfig->bReceiveShadows;
 	m_bLoop=pConfig->bLoop;
 	m_dFps=pConfig->dFps;
 }

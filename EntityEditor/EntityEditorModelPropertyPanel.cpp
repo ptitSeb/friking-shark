@@ -30,7 +30,8 @@ void CEntityEditorModelPropertyPanel::UpdateData()
 	if(m_piSTStartTime){sprintf(A,"Start: %.02f s",((double)sConfig.nStartTime)/1000.0);m_piSTStartTime->SetText(A);}
 	if(m_piSTEndTime)  {sprintf(A,"End  : %.02f s",((double)sConfig.nEndTime)/1000.0);m_piSTEndTime->SetText(A);}
 	if(m_piBTLoop){m_piBTLoop->SetText(sConfig.bLoop?"Loop : On":"Loop : Off");}
-	if(m_piBTCastShadow){m_piBTCastShadow->SetText(sConfig.bCastShadow?"Shadow: On":"Shadow: Off");}
+	if(m_piBTCastShadow){m_piBTCastShadow->SetText(sConfig.bCastShadow?"Shadow Emission : On":"Shadow Emission : Off");}
+	if(m_piBTReceiveShadows){m_piBTReceiveShadows->SetText(sConfig.bReceiveShadows?"Shadow Reception: On":"Shadow Reception: Off");}
 }
 
 void CEntityEditorModelPropertyPanel::OnButtonClicked(IGameGUIButton *piControl)
@@ -41,6 +42,7 @@ void CEntityEditorModelPropertyPanel::OnButtonClicked(IGameGUIButton *piControl)
 	m_Object.m_piDesign->GetConfig(&sConfig);
 
 	if(m_piBTCastShadow==piControl){bUpdateConfig=true;sConfig.bCastShadow=!sConfig.bCastShadow;}
+	if(m_piBTReceiveShadows==piControl){bUpdateConfig=true;sConfig.bReceiveShadows=!sConfig.bReceiveShadows;}
 	if(m_piBTLoop==piControl){bUpdateConfig=true;sConfig.bLoop=!sConfig.bLoop;}
 	if(m_piBTIncreaseFps==piControl){bUpdateConfig=true;sConfig.dFps+=5.0;}
 	if(m_piBTDecreaseFps==piControl){bUpdateConfig=true;sConfig.dFps-=5.0;if(sConfig.dFps<5.0){sConfig.dFps=5.0;}}
