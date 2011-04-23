@@ -42,8 +42,9 @@ struct SModelAnimationObjectTypeConfig
 	float 		 dFps;
 	bool 		 bLoop;
 	bool 		 bCastShadow;
-
-	SModelAnimationObjectTypeConfig(){dFps=50.0;nStartTime=0;nEndTime=0;bLoop=false;bCastShadow=true;}
+	bool 		 bReceiveShadows;
+	
+	SModelAnimationObjectTypeConfig(){dFps=50.0;nStartTime=0;nEndTime=0;bLoop=false;bCastShadow=true;bReceiveShadows=true;}
 };
 
 struct SParticleSystemAnimationObjectTypeConfig

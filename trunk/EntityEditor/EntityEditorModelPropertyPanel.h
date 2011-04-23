@@ -9,7 +9,8 @@ class CEntityEditorModelPropertyPanel: public CGameWindowBase, virtual public IE
 
 	IGameGUIButton *m_piBTLoop;
 	IGameGUIButton *m_piBTCastShadow;
-
+	IGameGUIButton *m_piBTReceiveShadows;
+	
 	IGameGUILabel *m_piSTStartTime;
 	IGameGUIButton *m_piBTDecreaseStartTime;
 	IGameGUIButton *m_piBTIncreaseStartTime;
@@ -29,6 +30,7 @@ protected:
 	BEGIN_CHILD_MAP()
 		CHILD_MAP_ENTRY_EX("ModelLoop",m_piBTLoop,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("ModelShadow",m_piBTCastShadow,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("ModelShadowReception",m_piBTReceiveShadows,IGameGUIButtonEvents);
 
 		CHILD_MAP_ENTRY("ModelStartTime",m_piSTStartTime);
 		CHILD_MAP_ENTRY_EX("ModelDecreaseStartTime",m_piBTDecreaseStartTime,IGameGUIButtonEvents);
