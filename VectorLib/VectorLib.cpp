@@ -1536,6 +1536,16 @@ CPlane::CPlane(CVector vNormal,CVector vPoint)
 	d=vNormal*vPoint;
 }
 
+bool CPlane::Cut(CVector p1,CVector p2, CVector *pCut)
+{
+	double d1=GetSide(p1),d2=GetSide(p2);
+	if(d1*d2>=0){return false;}
+	double length=d1-d2;
+	double dFraction=d1/length;
+	*pCut=p1+(p2-p1)*dFraction;
+	return true;
+}
+
 bool CPlane::InSamePlaneAs(const CPlane p)
 {
 	if(	fabs(p.c[0]-c[0])<FP_PRECISION &&
