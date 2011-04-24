@@ -113,6 +113,7 @@
     <ClCompile Include="AnimationObjectBase.cpp" />
     <ClCompile Include="AnimationSystems.cpp" />
     <ClCompile Include="AnimationType.cpp" />
+    <ClCompile Include="EntityAnimationObjectType.cpp" />
     <ClCompile Include="EventAnimationObjectType.cpp" />
     <ClCompile Include="ModelAnimationObjectType.cpp" />
     <ClCompile Include="ParticleSystemAnimationObjectType.cpp" />
@@ -126,6 +127,7 @@
     <ClInclude Include="AnimationObjectBase.h" />
     <ClInclude Include="AnimationSystems.h" />
     <ClInclude Include="AnimationType.h" />
+    <ClInclude Include="EntityAnimationObjectType.h" />
     <ClInclude Include="EventAnimationObjectType.h" />
     <ClInclude Include="ModelAnimationObjectType.h" />
     <ClInclude Include="ParticleSystemAnimationObjectType.h" />

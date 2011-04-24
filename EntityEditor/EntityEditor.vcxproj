@@ -105,6 +105,7 @@
     <ClCompile Include="EntityEditorClassSelector.cpp" />
     <ClCompile Include="EntityEditorEntityPropertyPanel.cpp" />
     <ClCompile Include="EntityEditorEventPropertyPanel.cpp" />
+    <ClCompile Include="EntityEditorGeneralPropertyPanel.cpp" />
     <ClCompile Include="EntityEditorMainWindow.cpp" />
     <ClCompile Include="EntityEditorModelPropertyPanel.cpp" />
     <ClCompile Include="EntityEditorNamedObjectSelector.cpp" />
@@ -123,6 +124,7 @@
     <ClInclude Include="EntityEditorClassSelector.h" />
     <ClInclude Include="EntityEditorEntityPropertyPanel.h" />
     <ClInclude Include="EntityEditorEventPropertyPanel.h" />
+    <ClInclude Include="EntityEditorGeneralPropertyPanel.h" />
     <ClInclude Include="EntityEditorMainWindow.h" />
     <ClInclude Include="EntityEditorModelPropertyPanel.h" />
     <ClInclude Include="EntityEditorNamedObjectSelector.h" />
