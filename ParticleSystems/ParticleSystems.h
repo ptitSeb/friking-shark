@@ -6,6 +6,7 @@
 
 struct IParticle;
 struct IParticleEmitter;
+struct IParticleEmitterModifier;
 struct IParticleModifier;
 struct IParticleSystem;
 
@@ -24,6 +25,13 @@ struct IParticleEmitterType:virtual public ISystemUnknown
     virtual IParticleEmitter *CreateInstance(unsigned int dwCurrentTime)=0;
 };
 
+struct IParticleEmitterModifierType:virtual public ISystemUnknown
+{
+	virtual IParticleEmitterModifier *CreateInstance(unsigned int dwCurrentTime)=0;
+	virtual unsigned           GetEmitterNameCount()=0;
+	virtual string             GetEmitterName(unsigned index)=0;
+};
+
 struct IParticleModifierType:virtual public ISystemUnknown
 {
     virtual IParticleModifier *CreateInstance(unsigned int dwCurrentTime)=0;
@@ -34,6 +42,7 @@ struct IParticleModifierType:virtual public ISystemUnknown
 struct IParticle
 {
     SPhysicInfo m_PhysicInfo;
+	CVector     m_vWhirlPoolVelocity;
 
     unsigned int       m_dwStartTime;
     unsigned int       m_dwEndTime;
@@ -73,7 +82,8 @@ struct IParticleSystem
 
     virtual void AddEmitter(IParticleEmitter    *pParticleEmitter)=0;
     virtual void AddModifier(IParticleModifier  *pParticleModifier)=0;
-    virtual void AddParticle(IParticle          *pParticle)=0;
+	virtual void AddEmitterModifier(IParticleEmitterModifier    *pParticleEmitterModifier)=0;
+	virtual void AddParticle(IParticle          *pParticle)=0;
     virtual void DeactivateAllEmitters()=0;
 
     virtual bool ProcessFrame(IPhysicManager *pPhysicManager,unsigned int dwCurrentTime,double dInterval)=0;
@@ -88,7 +98,10 @@ struct IParticleEmitter
     virtual bool    IsActive()=0;
     virtual void    Deactivate()=0;
     virtual void    ProcessFrame(IParticleSystem *pSystem,unsigned int dwCurrentTime,double dInterval)=0;
-
+	
+	virtual CVector GetPosition()=0;
+	virtual void    SetPosition(CVector vPosition)=0;
+	
     virtual ~IParticleEmitter(){}
 };
 
@@ -98,6 +111,14 @@ struct IParticleModifier
     virtual void ProcessParticle(IParticle *pParticle,IParticleSystem *pSystem,unsigned int dwCurrentTime,double dInterval)=0;
  
     virtual ~IParticleModifier(){}
+};
+
+struct IParticleEmitterModifier
+{
+	virtual void AddEmitter(IParticleEmitter *piEmitter)=0;
+	virtual void ProcessEmitter(IParticleEmitter *pParticleEmitter,IParticleSystem *pSystem,unsigned int dwCurrentTime,double dInterval)=0;
+	
+	virtual ~IParticleEmitterModifier(){}
 };
 
 #endif

@@ -14,6 +14,8 @@ public:
     double      m_dStartRate;            // numero de particulas por segundo en el inicio
     double      m_dEndRate;            // numero de particulas por segundo en el final
 
+    CVector     m_vPosition;
+	
     CVector     m_vMinPosition;
     CVector     m_vMaxPosition;
 
@@ -47,6 +49,7 @@ public:
         PROP_VALUE_FLAGS(m_dStartRate,"RitmoInicial",0,MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_VALUE_FLAGS(m_dEndRate,"RitmoFinal",m_dStartRate,MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_VALUE_FLAGS(m_dwParticleCount,"NumeroParticulas",0,MRPF_NORMAL|MRPF_OPTIONAL)
+        PROP_VALUE_FLAGS(m_vPosition,"Position",Origin,MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_VALUE_FLAGS(m_vMinPosition,"PositionInicialMinima",Origin,MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_VALUE_FLAGS(m_vMaxPosition,"PositionInicialMaxima",Origin,MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_VALUE_FLAGS(m_vMinDirection,"DireccionMinima",Origin,MRPF_NORMAL|MRPF_OPTIONAL)
@@ -61,7 +64,6 @@ public:
         PROP_VALUE_FLAGS(m_dwMovementType,"TipoMovimiento",PHYSIC_MOVE_TYPE_NORMAL,MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_VALUE_FLAGS(m_bFixedPositionOnParent,"PosicionFijaEnPadre",false,MRPF_NORMAL|MRPF_OPTIONAL) 
     END_PROP_MAP();
-
     CParticleEmitterType();
     ~CParticleEmitterType();
 };
@@ -75,9 +77,12 @@ class CParticleEmitter:public IParticleEmitter
     unsigned int       m_dwEmitEndTime;    // igual que el del tipo pero con tiempo absoluto en lugar de relativo
     CParticleEmitterType *m_pType;
     unsigned int       m_dwParticlesEmitted;
+	CVector            m_vPosition;
 
 public:
-
+	CVector GetPosition();
+	void    SetPosition(CVector vPosition);
+	
     string GetName();
 
     bool IsActive();

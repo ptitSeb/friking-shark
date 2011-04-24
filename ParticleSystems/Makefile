@@ -20,6 +20,8 @@ ParticleSizeModifierType.cpp \
 ParticleSystemType.cpp \
 ParticleColorModifierType.cpp \
 ParticleModifierType.cpp \
+ParticleEmitterModifierType.cpp \
+ParticleWhirlpoolModifierType.cpp \
 LightParticleType.cpp \
 PointParticleType.cpp \
 TextureParticleType.cpp \
