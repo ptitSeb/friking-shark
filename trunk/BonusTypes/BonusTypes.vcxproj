@@ -53,7 +53,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\GameRunTimeLib;..\GameRunTime;..\ParticleSystems;..\AnimationSystems;..\GameEntityLib;..\VectorLib;..\GameManagers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\GameRunTimeLib;..\GameRunTime;..\ParticleSystems;..\AnimationSystems;..\GameEntityLib;..\VectorLib;..\GameManagers;..\GameGraphics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;BonusTYPES_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -83,7 +83,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>..\GameRunTimeLib;..\GameRunTime;..\ParticleSystems;..\AnimationSystems;..\GameEntityLib;..\VectorLib;..\GameManagers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\GameRunTimeLib;..\GameRunTime;..\ParticleSystems;..\AnimationSystems;..\GameEntityLib;..\VectorLib;..\GameManagers;..\GameGraphics;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;_USRDLL;BonusTYPES_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -110,10 +110,10 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BombBonusType.cpp" />
     <ClCompile Include="BonusTypes.cpp" />
     <ClCompile Include="LiveBonusType.cpp" />
     <ClCompile Include="PointBonusType.cpp" />
-    <ClCompile Include="SpeedUpgradeBonusType.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -121,11 +121,11 @@
     <ClCompile Include="WeaponUpgradeBonusType.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BombBonusType.h" />
     <ClInclude Include="BonusTypes.h" />
     <ClInclude Include="LiveBonusType.h" />
     <ClInclude Include="PointBonusType.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="SpeedUpgradeBonusType.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="WeaponUpgradeBonusType.h" />
   </ItemGroup>

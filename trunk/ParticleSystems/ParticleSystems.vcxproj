@@ -112,11 +112,13 @@
   <ItemGroup>
     <ClCompile Include="LightParticleType.cpp" />
     <ClCompile Include="ParticleColorModifierType.cpp" />
+    <ClCompile Include="ParticleEmitterModifierType.cpp" />
     <ClCompile Include="ParticleEmitterType.cpp" />
     <ClCompile Include="ParticleModifierType.cpp" />
     <ClCompile Include="ParticleSizeModifierType.cpp" />
     <ClCompile Include="ParticleSystems.cpp" />
     <ClCompile Include="ParticleSystemType.cpp" />
+    <ClCompile Include="ParticleWhirlpoolModifierType.cpp" />
     <ClCompile Include="PointParticleType.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -127,11 +129,13 @@
   <ItemGroup>
     <ClInclude Include="LightParticleType.h" />
     <ClInclude Include="ParticleColorModifierType.h" />
+    <ClInclude Include="ParticleEmitterModifierType.h" />
     <ClInclude Include="ParticleEmitterType.h" />
     <ClInclude Include="ParticleModifierType.h" />
     <ClInclude Include="ParticleSizeModifierType.h" />
     <ClInclude Include="ParticleSystems.h" />
     <ClInclude Include="ParticleSystemType.h" />
+    <ClInclude Include="ParticleWhirlpoolModifierType.h" />
     <ClInclude Include="PointParticleType.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />

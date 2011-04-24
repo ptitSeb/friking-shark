@@ -24,13 +24,13 @@
     <ClCompile Include="PointBonusType.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SpeedUpgradeBonusType.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WeaponUpgradeBonusType.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BombBonusType.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,13 +47,13 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SpeedUpgradeBonusType.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WeaponUpgradeBonusType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BombBonusType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
