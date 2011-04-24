@@ -10,8 +10,6 @@ CParticleEmitterType::CParticleEmitterType()
     m_dStartRate=1;
     m_dEndRate=1;
     m_dwMovementType=PHYSIC_MOVE_TYPE_FLY;
-    m_vMinDirection=Origin;
-    m_vMaxDirection=Origin;
     m_dMinVelocity=0;
     m_dMaxVelocity=0;
     m_dMinAngularVelocity=0;
@@ -29,6 +27,7 @@ CParticleEmitterType::~CParticleEmitterType(void)
 IParticleEmitter *CParticleEmitterType::CreateInstance(unsigned int dwCurrentTime)
 {
     CParticleEmitter *pEmitter=new CParticleEmitter(this,dwCurrentTime);
+	pEmitter->SetPosition(m_vPosition);
     return pEmitter;
 }
 
@@ -110,6 +109,7 @@ void CParticleEmitter::ProcessFrame(IParticleSystem *piSystem,unsigned int dwCur
 			pParticle->m_PhysicInfo.dwMoveType=m_pType->m_dwMovementType;
 			pParticle->m_PhysicInfo.dwBoundsType=PHYSIC_BOUNDS_TYPE_NONE;
 			pParticle->m_PhysicInfo.vPosition=piSystem->GetPosition();
+			pParticle->m_PhysicInfo.vPosition+=m_vPosition;
 			pParticle->m_PhysicInfo.vPosition+=vForward*pParticle->m_vPositionOnParent.c[0];
 			pParticle->m_PhysicInfo.vPosition+=vUp*pParticle->m_vPositionOnParent.c[1];
 			pParticle->m_PhysicInfo.vPosition+=vRight*pParticle->m_vPositionOnParent.c[2];
@@ -120,6 +120,7 @@ void CParticleEmitter::ProcessFrame(IParticleSystem *piSystem,unsigned int dwCur
 			}
 
 			pParticle->m_PhysicInfo.vVelocity*=(m_pType->m_dMinVelocity+(m_pType->m_dMaxVelocity-m_pType->m_dMinVelocity)*drand());
+			pParticle->m_vWhirlPoolVelocity=pParticle->m_PhysicInfo.vVelocity;
 			pParticle->m_PhysicInfo.vAngleVelocity.c[ROLL]=(m_pType->m_dMinAngularVelocity+(m_pType->m_dMaxAngularVelocity-m_pType->m_dMinAngularVelocity)*drand());
 			pParticle->m_PhysicInfo.vAngles.c[ROLL]=(m_pType->m_dMinAngle+(m_pType->m_dMaxAngle-m_pType->m_dMinAngle)*drand());
 			piSystem->AddParticle(pParticle);
@@ -133,4 +134,7 @@ void CParticleEmitter::Deactivate()
   if(m_pType->m_dwParticleCount!=0 && m_dwParticlesEmitted<m_pType->m_dwParticleCount){return;}
   m_bActive=false;
 }
+
+CVector CParticleEmitter::GetPosition(){return m_vPosition;}
+void    CParticleEmitter::SetPosition(CVector vPosition){m_vPosition=vPosition;}
 

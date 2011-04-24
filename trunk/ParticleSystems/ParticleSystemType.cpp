@@ -32,6 +32,22 @@ IParticleSystem *CParticleSystemType::CreateInstance(unsigned int dwCurrentTime)
         }
     }
 
+    for(x=0;x<m_dEmitterModifiers.size();x++)
+    {
+        IParticleEmitterModifierType *piEmitterModifierType=m_dEmitterModifiers[x].m_piEmitterModifierType;
+        IParticleEmitterModifier     *piEmitterModifier=m_dEmitterModifiers[x].m_piEmitterModifierType->CreateInstance(dwCurrentTime);
+        if(piEmitterModifier)
+        {
+            pSystem->AddEmitterModifier(piEmitterModifier);
+
+            for(unsigned y=0;y<piEmitterModifierType->GetEmitterNameCount();y++)
+            {
+                string sEmitterName=piEmitterModifierType->GetEmitterName(y);
+                IParticleEmitter *piEmitter=pSystem->GetEmitter(sEmitterName);
+                if(piEmitter){piEmitterModifier->AddEmitter(piEmitter);}
+            }
+        }
+    }
     return pSystem;
 }
 
@@ -49,10 +65,12 @@ CParticleSystem::~CParticleSystem()
     for(i=m_lParticles.begin();i!=m_lParticles.end();i++){delete *i;}
     for(x=0;x<m_dEmitters.size();x++){delete m_dEmitters[x];}
     for(x=0;x<m_dModifiers.size();x++){delete m_dModifiers[x];}
+    for(x=0;x<m_dEmitterModifiers.size();x++){delete m_dEmitterModifiers[x];}
 }
 
 void CParticleSystem::AddEmitter(IParticleEmitter *piParticleEmitter){m_dEmitters.push_back(piParticleEmitter);}
 void CParticleSystem::AddModifier(IParticleModifier *piParticleModifier){m_dModifiers.push_back(piParticleModifier);}
+void CParticleSystem::AddEmitterModifier(IParticleEmitterModifier *piParticleEmitterModifier){m_dEmitterModifiers.push_back(piParticleEmitterModifier);}
 void CParticleSystem::AddParticle(IParticle *pParticle){m_lParticles.push_back(pParticle);}
 
 IParticleEmitter *CParticleSystem::GetEmitter(string sName)
@@ -85,6 +103,10 @@ bool CParticleSystem::ProcessFrame(IPhysicManager *piPhysicManager,unsigned int 
         {
             bAllEmittersInactive=false;
         }
+        for(unsigned y=0;y<m_dEmitterModifiers.size();y++)
+		{
+			m_dEmitterModifiers[y]->ProcessEmitter(m_dEmitters[x],this,dwCurrentTime,dInterval);
+		}
     }
     list<IParticle*>::iterator i;
     for(i=m_lParticles.begin();i!=m_lParticles.end();)

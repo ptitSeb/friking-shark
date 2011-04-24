@@ -10,13 +10,23 @@ class CBombProjectileType: public CEntityTypeBase
 {
 public:
 
-  double m_dDamage;
-
+	unsigned int m_nTimeToExplode;
+	double m_dDamagePerSecond;
+	double m_dDamageStartRadius;
+	double m_dDamageEndRadius;
+	unsigned int m_nDamageStartTime;
+	unsigned int m_nDamageEndTime;
+	
   IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
 
   BEGIN_PROP_MAP(CBombProjectileType)
-    PROP_VALUE_FLAGS(m_dDamage,"Damage",1.0,MRPF_NORMAL|MRPF_OPTIONAL)
-    PROP_CLASS_CHAIN(CEntityTypeBase)
+	PROP_CLASS_CHAIN(CEntityTypeBase)
+	PROP_VALUE_FLAGS(m_nTimeToExplode,"TimeToExplode",400,MRPF_NORMAL|MRPF_OPTIONAL)
+	PROP_VALUE_FLAGS(m_dDamagePerSecond,"DamagePerSecond",0,MRPF_NORMAL|MRPF_OPTIONAL)
+	PROP_VALUE_FLAGS(m_dDamageStartRadius,"DamageStartRadius",0,MRPF_NORMAL|MRPF_OPTIONAL)
+	PROP_VALUE_FLAGS(m_dDamageEndRadius,"DamageEndRadius",0,MRPF_NORMAL|MRPF_OPTIONAL)
+	PROP_VALUE_FLAGS(m_nDamageStartTime,"DamageStartTime",0,MRPF_NORMAL|MRPF_OPTIONAL)
+	PROP_VALUE_FLAGS(m_nDamageEndTime,"DamageEndTime",0,MRPF_NORMAL|MRPF_OPTIONAL)
   END_PROP_MAP();
   
   BEGIN_ENTITY_STATE_MAP()
@@ -33,9 +43,15 @@ class CBombProjectile: public CEntityBase
 {
   CBombProjectileType  *m_pType;
   IEntity *m_piParent;
+  unsigned int m_nCurrentTime;
 public:
-
-  bool OnCollision(IEntity *pOther,CVector &vCollisionPos);
+	
+  static void ApplyDamageOperation(IEntity *piEntity,void *pParam1,void *pParam2);
+  
+  void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
 
   CBombProjectile(CBombProjectileType *pType,IEntity *piParent);
+  ~CBombProjectile();
 };
+
+
