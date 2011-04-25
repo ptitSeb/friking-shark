@@ -22,7 +22,8 @@ SoundSystems\
 WeaponTypes\
 ScenarioEditor\
 FormationEditor\
-EntityEditor
+EntityEditor\
+BSPDebugger
 
 all:
 	for dir in $(LIBS) $(MODULES); do \
