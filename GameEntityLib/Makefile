@@ -14,6 +14,7 @@ SOURCES = GameEntityLib.cpp\
 EntityBase.cpp\
 EntityTypeBase.cpp\
 EntityUtilities.cpp\
+Route.cpp\
 SteeringBehaviours.cpp\
 stdafx.cpp
 

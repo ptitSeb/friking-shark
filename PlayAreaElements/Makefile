@@ -21,14 +21,13 @@ PlayAreaCheckPoint.cpp \
 PlayAreaElementBase.cpp \
 PlayAreaEntity.cpp \
 PlayAreaFormation.cpp \
-Route.cpp \
 stdafx.cpp
 
 CFLAGS += -DNDEBUG -pedantic -pedantic-errors -fPIC -Wall -Werror  -D_REENTRANT -O3 -MMD -g
 CFLAGS_DEBUG += -DDEBUG  -pedantic -pedantic-errors -fPIC -Wall -Werror  -D_REENTRANT -MMD -g
 
-LIBS = ../GameRunTimeLib/lib/GameRuntimeLib.a  ../VectorLib/lib/VectorLib.a
-LIBS_DEBUG =  ../GameRunTimeLib/lib/GameRuntimeLibd.a  ../VectorLib/lib/VectorLibd.a
+LIBS = ../GameEntityLib/lib/GameEntityLib.a ../GameRunTimeLib/lib/GameRuntimeLib.a  ../VectorLib/lib/VectorLib.a
+LIBS_DEBUG = ../GameEntityLib/lib/GameEntityLibd.a ../GameRunTimeLib/lib/GameRuntimeLibd.a  ../VectorLib/lib/VectorLibd.a
 
 INTERMEDIATE_DIR = ./.intermediate
 OUT_SOURCES=$(addprefix $(INTERMEDIATE_DIR)/,$(SOURCES))

@@ -1,5 +1,8 @@
 #include "./stdafx.h"
 #include "Route.h"
+#include "SingletonWrapper.h"
+
+CSingletonWrapper<IPlayAreaManager> g_PlayAreaManagerWrapper("GameSystem","PlayAreaManager");
 
 CRoute::CRoute()
 {
