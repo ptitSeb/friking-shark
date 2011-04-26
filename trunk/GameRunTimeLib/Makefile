@@ -18,8 +18,8 @@ SystemLoaderHelper.cpp\
 SystemObjectBase.cpp\
 SystemUnknownBase.cpp
 
-CFLAGS += -DNDEBUG -pedantic -pedantic-errors -Wno-unused-function -Wall -Werror  -D_REENTRANT -O3 -MMD -g
-CFLAGS_DEBUG += -DDEBUG  -pedantic -pedantic-errors -Wno-unused-function -Wall -Werror  -D_REENTRANT -MMD -g
+CFLAGS += -DNDEBUG -pedantic -pedantic-errors -fPIC -Wno-unused-function -Wall -Werror  -D_REENTRANT -O3 -MMD -g
+CFLAGS_DEBUG += -DDEBUG  -pedantic -pedantic-errors -fPIC -Wno-unused-function -Wall -Werror  -D_REENTRANT -MMD -g
 
 INTERMEDIATE_DIR = ./.intermediate
 OUT_SOURCES=$(addprefix $(INTERMEDIATE_DIR)/,$(SOURCES))
