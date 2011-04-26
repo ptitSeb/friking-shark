@@ -56,7 +56,8 @@ CVector CPhysicManager::ProcessPhysicInfo(SPhysicInfo *pInfo,double dInterval)
         if(pInfo->vAngles.c[c]<-360){pInfo->vAngles.c[c]+=360;}
     }
 
-    if(pInfo->dwMoveType==PHYSIC_MOVE_TYPE_NONE){return pInfo->vPosition;}
+	if(pInfo->dwMoveType==PHYSIC_MOVE_TYPE_NONE){return pInfo->vPosition;}
+	if(pInfo->dwMoveType==PHYSIC_MOVE_TYPE_CUSTOM){return pInfo->vPosition;}
 
     // Se aplican las fuerzas globales
     if(pInfo->dwMoveType==PHYSIC_MOVE_TYPE_NORMAL)
@@ -323,13 +324,13 @@ void EntityOperation_ProcessPhysicFrame(IEntity *piEntity,void *pParam1,void *pP
         info.piAncestor=piEntity;
 		IEntity *piParent=piEntity;
 		while(piParent){piParent=piParent->GetParent();if(piParent){info.piAncestor=piParent;}}
-		
-        pThis->m_EntityManagerWrapper.m_piEntityManager->PerformUnaryOperation(EntityOperation_CheckCollision,piEntity,&info);
-        pPhysicInfo->vPosition=info.traceInfo.m_vTracePos;
+
+		pThis->m_EntityManagerWrapper.m_piEntityManager->PerformUnaryOperation(EntityOperation_CheckCollision,piEntity,&info);
+		pPhysicInfo->vPosition=info.traceInfo.m_vTracePos;
     }
     else
     {
-        pPhysicInfo->vPosition=vNewPos;
+		pPhysicInfo->vPosition=vNewPos;
     }
     ProcessChildren(piEntity);
 //	RTTRACE("%s ------ Finished : %f",piEntity->GetEntityClass()->c_str(),pPhysicInfo->vPosition.c[1]);
