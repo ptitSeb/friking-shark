@@ -6,5 +6,4 @@
 #pragma comment (lib, "GameRuntimeLib.lib")
 #endif
 
-CSingletonWrapper<IPlayAreaManager> g_PlayAreaManagerWrapper("GameSystem","PlayAreaManager");
-CSingletonWrapper<IFrameManager>  g_FrameManagerSingleton("GameSystem","FrameManager");
+

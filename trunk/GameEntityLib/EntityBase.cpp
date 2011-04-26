@@ -195,10 +195,8 @@ void CEntityBase::OnAnimationEvent(string sEvent,string sParams)
 {
 }
 
-void CEntityBase::SetRoute(IRoute *piRoute)
-{
-    m_piRoute=piRoute;
-}
+void CEntityBase::SetRoute(IRoute *piRoute){m_piRoute=piRoute;}
+IRoute *CEntityBase::GetRoute(){return m_piRoute;}
 bool CEntityBase::HasFinishedRoute(){return true;}
 
 
