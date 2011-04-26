@@ -77,7 +77,8 @@ void main (void)
   #endif
 	#if TEXTURE_UNITS > 1
 		#ifdef ENABLE_WATER
-			ApplyWaterEffect(Texture1,gl_TexCoord[1].xy,temptexunit1.xyz);
+			vec3 temptexunit1;
+			ApplyWaterEffect(Texture1,gl_TexCoord[1].xy,temptexunit1);
 			texcolor.rgb*=temptexunit1;
 		#else
 		texcolor*= texture2D(Texture1, gl_TexCoord[1].xy);
@@ -85,7 +86,8 @@ void main (void)
 	#endif
 	#if TEXTURE_UNITS > 2
 		#ifdef ENABLE_WATER
-			ApplyWaterEffect(Texture2,gl_TexCoord[2].xy,temptexunit2.xyz);
+			vec3 temptexunit2;
+			ApplyWaterEffect(Texture2,gl_TexCoord[2].xy,temptexunit2);
 			texcolor.rgb*=temptexunit2;
 		#else
 			texcolor*= texture2D(Texture2, gl_TexCoord[2].xy);
