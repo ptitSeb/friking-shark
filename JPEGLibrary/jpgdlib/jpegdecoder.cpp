@@ -23,6 +23,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //------------------------------------------------------------------------------
 #include "jpegdecoder.h"
+#include "stdint.h"
 //------------------------------------------------------------------------------
 // Coefficients are stored in this sequence in the data stream.
 static int ZAG[64] =
@@ -105,7 +106,7 @@ void *jpeg_decoder::alloc(int n)
   blocks[i] = q;
 
   // Round to qword boundry, to avoid misaligned accesses with MMX code
-  return ((void *)(((uint)q + 7) & ~7));
+  return ((void *)(((int64_t)q + 7) & ~7));
 }
 //------------------------------------------------------------------------------
 // Clear buffer to word values.
@@ -1875,7 +1876,7 @@ void jpeg_decoder::init_frame(void)
   q = (uchar *)alloc(max_blocks_per_row * 64 * sizeof(BLOCK_TYPE) + 8);
 
   // Align to 8-byte boundry, for MMX code
-  q = (uchar *)(((uint)q + 7) & ~7);
+  q = (uchar *)(((int64_t)q + 7) & ~7);
 
   // The block_seg[] array's name dates back to the
   // 16-bit assembler implementation. "seg" stood for "segment".
@@ -1885,7 +1886,7 @@ void jpeg_decoder::init_frame(void)
   for (i = 0; i < max_blocks_per_row; i++)
     block_max_zag_set[i] = 64;
 
-  Psample_buf = (uchar *)(((uint)alloc(max_blocks_per_row * 64 + 8) + 7) & ~7);
+  Psample_buf = (uchar *)(((int64_t)alloc(max_blocks_per_row * 64 + 8) + 7) & ~7);
 
   total_lines_left = image_y_size;
 
