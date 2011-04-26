@@ -52,6 +52,9 @@ public:
 	
 	bool        bAbsolutePoint; // si es falso son valores de 0 a 1 relativos al plano de juego aereo
 	CVector     vPosition;
+	
+	SRoutePoint(){bAbsolutePoint=true;}
+	SRoutePoint(bool absolutePoint,CVector position){vPosition=position;bAbsolutePoint=absolutePoint;}
 };
 
 
@@ -193,9 +196,10 @@ public:
 
 	virtual CTraceInfo GetTrace(const CVector &p1,const CVector &p2)=0;
 
-    virtual void SetRoute(IRoute *piRoute)=0;
-	virtual bool HasFinishedRoute()=0;
-
+	virtual void    SetRoute(IRoute *piRoute)=0;
+	virtual bool    HasFinishedRoute()=0;
+	virtual IRoute *GetRoute()=0;
+	
     virtual ~IEntity(){}
 };
 
@@ -322,8 +326,12 @@ struct SPlayAreaConfig
 	double dCameraSpeed;
 	double dCameraViewAngle;
 	double dAirPlaneHeight;
-
-	SPlayAreaConfig(){dCameraScroll=0;dCameraDistance=0;dCameraAspectRatio=0;dCameraSpeed=0;dCameraViewAngle=0;dAirPlaneHeight=0;}
+	bool   bPlayerLandingEnabled;
+	bool   bPlayerTakeOffEnabled;
+	CVector pvPlayerTakeOffPoints[4];
+	CVector pvPlayerLandingPoints[4];
+	
+	SPlayAreaConfig(){bPlayerLandingEnabled=false;bPlayerTakeOffEnabled=false;dCameraScroll=0;dCameraDistance=0;dCameraAspectRatio=0;dCameraSpeed=0;dCameraViewAngle=0;dAirPlaneHeight=0;}
 };
 
 struct SEntityLayer

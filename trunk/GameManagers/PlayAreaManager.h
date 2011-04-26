@@ -1,4 +1,5 @@
 #pragma once
+#include "Route.h"
 
 DECLARE_CUSTOM_WRAPPER1(CPlayAreaElementWrapper,IPlayAreaElement,m_piElement)
 DECLARE_CUSTOM_WRAPPER1(CPlayAreaEntityWrapper,IPlayAreaEntity,m_piElement)
@@ -42,9 +43,6 @@ class CPlayAreaManager: virtual public CSystemObjectBase,
 
 	double m_dPlayAreaHeight;
     C3DSVector m_vPlayMovementPos;
-    CVector m_vPlayMovementRight;
-    CVector m_vPlayMovementUp;
-    CVector m_vPlayMovementForward;
     double  m_dPlayMovementSpeed;
 	double  m_dPlayMovementMaxHorzScroll;
 
@@ -79,12 +77,11 @@ class CPlayAreaManager: virtual public CSystemObjectBase,
 	unsigned int	m_dwPlayMovementLastRollTime;
 
 	CVector m_PlayerKilledVelocity;
-	bool m_bProcessingPlayerOutroPhase1;
-	bool m_bProcessingPlayerOutroPhase2;
-	bool m_bProcessingPlayerIntroPhase1;
+	bool   m_bPlayerLandingEnabled;
+	bool   m_bPlayerTakeOffEnabled;
+	CRoute m_PlayerLandingRoute;
+	CRoute m_PlayerTakeOffRoute;
 	
-	double m_dNormalPlayerSpeed;
-
 
 	std::vector<SEntityLayerData>  m_vEntityLayers;
 
@@ -174,14 +171,18 @@ public:
           PROP(m_vElements,             "Elementos");
           PROP(m_vPlayerRouteStart,     "Origen");
           PROP(m_vPlayerRouteEnd,       "Destino");
-          PROP_VALUE(m_dCameraDistanceFromPlayer,"DistanciaCamara",115);
+		  PROP_FLAGS(m_PlayerTakeOffRoute,"TakeOffRoute",MRPF_NORMAL|MRPF_OPTIONAL);
+		  PROP_FLAGS(m_PlayerLandingRoute,"LandingRoute",MRPF_NORMAL|MRPF_OPTIONAL);
+		  PROP_VALUE_FLAGS(m_bPlayerLandingEnabled,"LandingEnabled",false,MRPF_NORMAL|MRPF_OPTIONAL);
+		  PROP_VALUE_FLAGS(m_bPlayerTakeOffEnabled,"TakeOffEnabled",false,MRPF_NORMAL|MRPF_OPTIONAL);
+		  PROP_VALUE(m_dCameraDistanceFromPlayer,"DistanciaCamara",115);
           PROP_VALUE(m_dPlayMovementSpeed,"VelocidadCamara",5);
 		  PROP_VALUE(m_dCameraPitch,      "InclinacionVista",0);
 		  PROP_VALUE(m_dPlayMovementMaxHorzScroll,    "MaximoScrollHorz",0);
 		  PROP_VALUE_FLAGS(m_dPlayAreaHeight,    "AlturaJuego",20,MRPF_NORMAL|MRPF_OPTIONAL);
 		  PROP_FLAGS(m_vEntityLayers,"EntityLayers",MRPF_NORMAL|MRPF_OPTIONAL)
         END_PROP_SUBMAP("ScenarioProps")
-   END_PROP_MAP();
+	END_PROP_MAP();
 
     CPlayAreaManager(void);
     ~CPlayAreaManager(void);

@@ -1,10 +1,12 @@
 #include "./stdafx.h"
 #include "PlayerType.h"
+#include "GameGraphics.h"
 
 CPlayerType::CPlayerType()
 {
 	m_nDamageType=DAMAGE_TYPE_NORMAL;
 	m_nMovementType=PHYSIC_MOVE_TYPE_CUSTOM;
+	m_dMaxAngularSpeed=false;
 }
 
 CPlayerType::~CPlayerType()
@@ -30,6 +32,8 @@ CPlayer::CPlayer(CPlayerType *pType)
   m_sClassName="CPlayer";
   m_sName="Player";
   m_pType=pType;
+  m_bRouteFinished=false;
+  m_nRoutePoint=0;
 }
 
 unsigned int CPlayer::GetPoints(){return m_dwPoints;}
@@ -105,4 +109,101 @@ bool CPlayer::OnCollision(IEntity *piOther,CVector &vCollisionPos)
 		piOther->OnDamage(m_dHealth,this);
 	}
 	return false;
+}
+
+void CPlayer::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
+{
+	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
+	
+	if(m_piRoute)
+	{
+		CVector vDest,vDir;
+		vDest=m_piRoute->GetAbsolutePoint(m_nRoutePoint);
+		vDir=vDest-m_PhysicInfo.vPosition;
+		double dDist=vDir.N();  
+		
+		if(m_nRoutePoint==0 && dDist>m_PhysicInfo.dMaxVelocity*0.1)
+		{
+			m_PhysicInfo.vVelocity=vDir*m_PhysicInfo.dMaxVelocity;
+		}
+		else
+		{
+			// Just follow the configured route
+			CVector vForward,vRight,vUp;
+			double dCurrentAngularSpeed=m_pType->m_dMaxAngularSpeed;
+			VectorsFromAngles(m_PhysicInfo.vAngles.c[YAW],m_PhysicInfo.vAngles.c[PITCH],0,vForward,vRight,vUp);
+			
+			bool bNext=false;
+			int nNext=m_piRoute->GetNextPointIndex(m_nRoutePoint);
+			if(nNext!=m_nRoutePoint)
+			{
+				CVector vDirNext=m_piRoute->GetAbsolutePoint(nNext)-vDest;
+				vDirNext.N();
+				
+				double dCirclePerimeter=(m_PhysicInfo.dMaxVelocity*360.0/m_pType->m_dMaxAngularSpeed);
+				double dCapableRadius=(dCirclePerimeter/(2*PI));
+				
+				CVector vPerpB=vDirNext^vRight;
+				CVector vPB1=vDest+vDirNext*dDist;
+				CPlane  vPlaneA=CPlane(vDir,m_PhysicInfo.vPosition);
+				
+				double dSide1=vPlaneA.GetSide(vPB1);
+				double dSide2=vPlaneA.GetSide(vPB1+vPerpB*10000.0);
+				double dLength=(dSide1-dSide2);
+				double dFraction=dLength?dSide1/dLength:0;
+				double dFinalRadius=fabs(10000.0*dFraction);
+				
+				bNext=(dFinalRadius<dCapableRadius);
+			}
+			bNext=bNext || dDist<m_PhysicInfo.dMaxVelocity*0.1;
+			if(bNext)
+			{
+				if(nNext==m_nRoutePoint)
+				{
+					m_bRouteFinished=true;
+				}
+				else
+				{
+					m_nRoutePoint=nNext;
+				}
+			}
+			// Head to the desired direction
+			double dDesiredYaw=0,dDesiredPitch=0;
+			AnglesFromVector(vDir,dDesiredYaw,dDesiredPitch);
+			m_PhysicInfo.vAngles.c[PITCH]=ApproachAngle(m_PhysicInfo.vAngles.c[PITCH],dDesiredPitch,-dCurrentAngularSpeed*dTimeFraction);
+			VectorsFromAngles(m_PhysicInfo.vAngles,&m_PhysicInfo.vVelocity);
+			m_PhysicInfo.vVelocity*=m_PhysicInfo.dMaxVelocity;
+			m_dwNextProcessFrame=dwCurrentTime+10;
+			
+			if(m_bRouteFinished)
+			{
+				m_PhysicInfo.vAngles.c[YAW]=0;
+				m_PhysicInfo.vAngles.c[PITCH]=0;
+				m_PhysicInfo.vVelocity=Origin;
+				SetRoute(NULL);
+			}
+		}
+	}
+}
+void CPlayer::Render(IGenericRender *piRender,IGenericCamera *piCamera)
+{
+	CEntityBase::Render(piRender,piCamera);	
+}
+
+void CPlayer::SetRoute( IRoute *piRoute )
+{
+	SEntityTypeConfig sConfig;
+	m_pType->GetEntityTypeConfig(&sConfig);
+	m_dwDamageType=piRoute?DAMAGE_TYPE_NONE:sConfig.nDamageType;
+	m_PhysicInfo.dwMoveType=piRoute?PHYSIC_MOVE_TYPE_FLY:sConfig.nMovementType;
+	m_PhysicInfo.dwBoundsType=piRoute?PHYSIC_BOUNDS_TYPE_NONE:sConfig.nBoundsType;
+	
+	m_nRoutePoint=0;
+	m_bRouteFinished=false;
+	CEntityBase::SetRoute(piRoute);
+}
+
+bool CPlayer::HasFinishedRoute()
+{
+	return m_piRoute==NULL || m_bRouteFinished || m_dHealth==0;
 }
