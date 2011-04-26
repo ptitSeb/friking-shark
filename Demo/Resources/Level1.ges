@@ -7,11 +7,11 @@ AreaDeJuego
 		Data
 		{
 			AnguloVisualizacion=60.000000
-			Angulos=-0.000000,-90.000000,0.000000
+			Angulos=0.000000,-90.000000,0.000000
 			AspectRatio=0.700000
 			FarPlane=10000.000000
 			NearPlane=10.000000
-			Posicion=2089.591578,228.678936,5.657446
+			Posicion=1985.337456,228.678936,4.859726
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -1144,7 +1144,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-178.277739,10.371826,52.965402
+				Posicion=-157.440769,3.982405,52.965402
 				Ruta
 				{
 					Ciclica=0
@@ -1169,7 +1169,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-104.602974,-65.526842,52.965402
+				Posicion=-82.191996,-62.824625,52.965402
 				Ruta
 				{
 					Ciclica=0
@@ -1194,7 +1194,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-127.872413,66.390667,52.965402
+				Posicion=-102.487290,66.390667,52.965402
 				Ruta
 				{
 					Ciclica=0
@@ -1219,7 +1219,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-166.084398,62.085698,52.965402
+				Posicion=-145.075343,58.366493,50.998502
 				Ruta
 				{
 					Ciclica=0
@@ -1683,7 +1683,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=2116.304403,-15.867204,52.965402
+				Posicion=2161.516717,-16.049648,52.965402
 				Ruta
 				{
 					Ciclica=0
@@ -2542,8 +2542,64 @@ AreaDeJuego
 		}
 	}
 	InclinacionVista=0.000000
+	LandingEnabled=1
+	LandingRoute
+	{
+		Ciclica=0
+		Puntos
+		{
+			Item0
+			{
+				Absoluto=1
+				Posicion=2010.751295,88.678936,4.859726
+			}
+			Item1
+			{
+				Absoluto=1
+				Posicion=2041.883558,88.678936,4.859726
+			}
+			Item2
+			{
+				Absoluto=1
+				Posicion=2098.459475,56.455661,4.859726
+			}
+			Item3
+			{
+				Absoluto=1
+				Posicion=2149.538414,55.965402,4.859726
+			}
+		}
+	}
 	MaximoScrollHorz=10.000000
 	Origen=-156.897180,-4.859726,88.678936
+	TakeOffEnabled=1
+	TakeOffRoute
+	{
+		Ciclica=0
+		Puntos
+		{
+			Item0
+			{
+				Absoluto=1
+				Posicion=-238.310960,57.932302,4.859726
+			}
+			Item1
+			{
+				Absoluto=1
+				Posicion=-192.752508,57.932302,4.859726
+			}
+			Item2
+			{
+				Absoluto=1
+				Posicion=-146.641870,88.678936,4.859726
+			}
+			Item3
+			{
+				Absoluto=1
+				Posicion=-110.440776,88.678936,4.859726
+			}
+		}
+	}
 	VelocidadCamara=15.000000
 }
 Terrain

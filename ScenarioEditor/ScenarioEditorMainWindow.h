@@ -117,9 +117,12 @@ public:
 	CVector 			m_vPlayMovementPosition;
 
 	int					m_nSelectedRoutePoint;
-
+	int					m_nSelectedLandingRoutePoint;
+	int					m_nSelectedTakeOffRoutePoint;
+	
 	bool				m_bMovingObject;
 	bool				m_bMovingRoutePoint;
+	bool				m_bMovingPlayerRoutePoint;
 	CVector				m_vObjectOriginalPosition;
 	CVector				m_vCursorOriginalPosition;
 
@@ -378,7 +381,9 @@ public:
 	IGameGUIButton *m_piBTPlayAreaDecreaseScroll;
 	IGameGUIButton *m_piBTPlayAreaIncreaseScroll;
 	IGameGUIButton *m_piBTPlayAreaEnable;
-
+	IGameGUIButton *m_piBTPlayAreaAutoTakeOff;
+	IGameGUIButton *m_piBTPlayAreaAutoLanding;
+	
 	ISystem					*m_piGameSystem;
 	CGameControllerWrapper   m_GameControllerWrapper;
 	CPlayAreaManagerWrapper  m_PlayAreaManagerWrapper;
@@ -617,6 +622,8 @@ public:
 		CHILD_MAP_ENTRY_EX("PlayAreaIncreaseAirPlane",m_piBTPlayAreaIncreaseAirPlane,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("PlayAreaDecreaseScroll",m_piBTPlayAreaDecreaseScroll,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("PlayAreaIncreaseScroll",m_piBTPlayAreaIncreaseScroll,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("PlayAreaAutoTakeOff",m_piBTPlayAreaAutoTakeOff,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("PlayAreaAutoLanding",m_piBTPlayAreaAutoLanding,IGameGUIButtonEvents);
 	END_CHILD_MAP()
 
 public:
@@ -660,6 +667,7 @@ public:
 
 	void SetupRenderOptions(IGenericRender *piRender,IGenericCamera *piCamera);
 
+	bool GetTerrainCoordinatesFromLine(CLine line,bool bIgnoreTerrainObjects, CVector *pTerrainPos);
 	bool GetTerrainCoordinatesFromCursorPos(double x,double y,bool bIgnoreTerrainObjects, CVector *pTerrainPos);
 	bool GetAirPlaneCoordinatesFromCursorPos(double x,double y,CVector *pAirPlanePos);
 
@@ -675,7 +683,8 @@ public:
 	void UpdateFormationsHeight();
 
 	void RenderRoute( IGenericRender * piRender, int nSelectedEntity, int nSelectedRoutePoint );
-	void RenderPlayArea();
+	void RenderPlayArea(bool bSelectionRender);
+	void RenderPlayerRoutes(bool bSelectionRender);
 	
 	CScenarioEditorMainWindow(void);
 	~CScenarioEditorMainWindow(void);
