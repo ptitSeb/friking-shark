@@ -155,3 +155,13 @@ IEntity *CEntityManager::FindEntity(string sName)
     }
     return NULL;
 }
+
+void CEntityManager::RenderEntities(IGenericRender *piRender,IGenericCamera *piCamera)
+{
+	list<IEntity *>::iterator i;
+	for(i=m_lEntities.begin();i!=m_lEntities.end();i++)
+	{
+		IEntity *piEntity=*i;
+		piEntity->Render(piRender,piCamera);
+	}
+}

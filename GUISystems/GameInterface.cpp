@@ -5,12 +5,9 @@
 #include "GameInterface.h"
 #include "PlayAreaElements.h"
 
-#define MOVEMENT_TYPE_UNKNOWN	0
-#define MOVEMENT_TYPE_INSPECT	1
-#define MOVEMENT_TYPE_PLAY		2
-
 CGameInterface::CGameInterface(void)
 {
+	m_bActive=false;
 	m_bCompleted=false;
 	m_piSystemManager   =NULL;
 	m_piGameSystem			=NULL;
@@ -18,8 +15,6 @@ CGameInterface::CGameInterface(void)
 	m_piPlayer=NULL;
 	m_dwNextAcceptedControlKeyTime=0;
 	m_dwNextAcceptedPauseKeyTime=0;
-	m_dwMovementType=MOVEMENT_TYPE_PLAY;
-	m_dMovementInspectionSpeed=300;
 	m_bFrozen=false;
 	m_bResumeAfterFreeze=false;
 	m_bShowPerformanceIndicators=false;
@@ -29,10 +24,8 @@ CGameInterface::CGameInterface(void)
 	m_piSTGameTime=NULL;
 	m_piSTObjectCount=NULL;
 	m_piSTEntityCount=NULL;
-	m_piGamePlayWindow=NULL;
 
 	m_bGameStarted=false;
-	m_bPauseOnNextFrame=false;
 }
 
 CGameInterface::~CGameInterface(void)
@@ -72,17 +65,10 @@ bool CGameInterface::LoadScenario(std::string sScenario)
 	m_GameControllerWrapper.m_piGameController->SetupGame();
 	m_GameControllerWrapper.m_piGameController->LoadScenario(sScenario);
 
-	m_RenderWrapper.Attach("GameSystem","GameRender");
 	m_FrameManagerWrapper.Attach("GameSystem","FrameManager");
 	m_PlayAreaManagerWrapper.Attach("GameSystem","PlayAreaManager");
 	m_EntityManagerWrapper.Attach("GameSystem","EntityManager");
-	m_PlayCamera.Attach("GameSystem","PlayCamera");
-
-	m_InspectionCamera.Create("GameSystem","Camera","InspectionCamera");
-	m_InspectionCamera.m_piCamera->SetAngles(m_PlayCamera.m_piCamera->GetAngles());
-	m_InspectionCamera.m_piCamera->SetPosition(m_PlayCamera.m_piCamera->GetPosition());
-	m_InspectionCamera.m_piCamera->SetViewAngle(m_PlayCamera.m_piCamera->GetViewAngle());
-
+	m_WorldManagerWrapper.Attach("GameSystem","WorldManager");
 	m_bCompleted=false;
 	return bResult;
 }
@@ -174,11 +160,7 @@ void CGameInterface::CloseScenario()
 	m_EntityManagerWrapper.Detach();
 	m_PlayAreaManagerWrapper.Detach();
 	m_GameControllerWrapper.Detach();
-	m_RenderWrapper.Detach();
-
-	m_InspectionCamera.Destroy();
-	m_PlayCamera.Detach();
-
+	
 	if(m_piGameSystem){m_piGameSystem->DestroyAllObjects();}
 	if(m_piGameSystem){m_piGameSystem->Destroy();}
 	REL(m_piGameSystem);
@@ -242,19 +224,8 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 	
 
 	m_FrameManagerWrapper.m_piFrameManager->ProcessFrame();
-	if(m_bPauseOnNextFrame)
-	{
-		m_bPauseOnNextFrame=false;
-		m_FrameManagerWrapper.m_piFrameManager->SetPauseOnNextFrame(true);
-	}
-
 	ProcessInput();
-	
-	if((m_dwMovementType==MOVEMENT_TYPE_PLAY)||
-		(m_dwMovementType==MOVEMENT_TYPE_INSPECT && m_piGUIManager->IsKeyDown(GK_LSHIFT)))
-	{
-		m_PlayAreaManagerWrapper.m_piPlayAreaManager->ProcessInput(m_piGUIManager);
-	}
+	m_PlayAreaManagerWrapper.m_piPlayAreaManager->ProcessInput(m_piGUIManager);
 
 	if(!m_FrameManagerWrapper.m_piFrameManager->IsPaused())
 	{
@@ -268,6 +239,46 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 			NOTIFY_EVENT(IGameInterfaceWindowEvents,OnScenarioFinished(eScenarioFinishedReason_Completed));
 		}
 	}
+
+	// Actual rendering:
+	IGenericCamera *piCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera();
+	if(piCamera)
+	{
+		double dPlayAreaAspectRatio=piCamera->GetAspectRatio();
+		double cx=m_rRealRect.h*dPlayAreaAspectRatio;
+		double dx=(m_rRealRect.w-cx)*0.5;
+
+		double dNearPlane=0,dFarPlane=0;
+		double dViewAngle=piCamera->GetViewAngle();
+		CVector vAngles,vPosition;
+
+		piCamera->GetClippingPlanes(dNearPlane,dFarPlane);
+		vAngles=piCamera->GetAngles();
+		vPosition=piCamera->GetPosition();
+
+		piRender->SetViewport(m_rRealRect.x+dx,m_rRealRect.y,cx,m_rRealRect.h);
+		piRender->SetPerspectiveProjection(dViewAngle,dNearPlane,100000);
+		piRender->SetCamera(vPosition,vAngles.c[YAW],vAngles.c[PITCH],vAngles.c[ROLL]);
+
+		piRender->PushOptions();
+		piRender->PushState();
+		piRender->ActivateDepth();
+		piRender->EnableTextures();
+		piRender->EnableSolid();
+		piRender->EnableBlending();
+		piRender->EnableLighting();	
+		piRender->EnableShadows();
+		piRender->EnableShaders();
+		piRender->EnableHeightFog();
+		piRender->StartStagedRendering();
+		m_WorldManagerWrapper.m_piWorldManager->SetupRenderingEnvironment(piRender);
+		m_EntityManagerWrapper.m_piEntityManager->RenderEntities(piRender,piCamera);
+		piRender->EndStagedRendering();
+		piRender->PopState();
+		piRender->PopOptions();
+	}
+	REL(piCamera);
+
 }
 
 void CGameInterface::ProcessInput()
@@ -280,26 +291,6 @@ void CGameInterface::ProcessInput()
 	}
 	if(m_dwNextAcceptedControlKeyTime<m_FrameManagerWrapper.m_piFrameManager->GetCurrentRealTime())
 	{
-		if(m_piGUIManager->IsKeyDown('I'))
-		{
-			ResetGame(false);
-			m_dwNextAcceptedControlKeyTime=m_FrameManagerWrapper.m_piFrameManager->GetCurrentRealTime()+300;
-			return;
-		}
-		if(m_piGUIManager->IsKeyDown('C'))
-		{
-			ResetGame(true);
-			m_dwNextAcceptedControlKeyTime=m_FrameManagerWrapper.m_piFrameManager->GetCurrentRealTime()+300;
-			return;
-		}
-
-		if(m_piGUIManager->IsKeyDown(GK_F1))
-		{
-			bControlKeyPressed=true;
-			SetMovementType(m_dwMovementType == MOVEMENT_TYPE_INSPECT ? MOVEMENT_TYPE_PLAY : MOVEMENT_TYPE_INSPECT);
-		}
-		if(m_piGUIManager->IsKeyDown(GK_F2)){bControlKeyPressed=true;m_RenderWrapper.m_piRender->ToggleFlag(RENDER_SHOW_BBOXES);}
-		if(m_piGUIManager->IsKeyDown(GK_F3)){bControlKeyPressed=true;m_RenderWrapper.m_piRender->ToggleFlag(RENDER_ENABLE_TEXTURES|RENDER_ENABLE_SOLID);}
 		if(m_piGUIManager->IsKeyDown(GK_F4))
 		{
 			bControlKeyPressed=true;
@@ -314,32 +305,7 @@ void CGameInterface::ProcessInput()
 			m_dwNextAcceptedControlKeyTime=m_FrameManagerWrapper.m_piFrameManager->GetCurrentRealTime()+300;
 		}
 	}
-
 	if(m_piGUIManager->IsKeyDown(GK_PAUSE)){ProcessKey(KEY_PAUSE);}
-	if(m_piGUIManager->IsKeyDown('P')){ProcessKey(KEY_PROCESS_ONE_FRAME);}
-
-	if(m_dwMovementType==MOVEMENT_TYPE_INSPECT || 
-		(m_dwMovementType==MOVEMENT_TYPE_PLAY && !m_FrameManagerWrapper.m_piFrameManager->IsPaused()))
-	{
-		if(m_piGUIManager->IsKeyDown(GK_UP) || m_piGUIManager->IsKeyDown(GK_NUMPAD8) || m_piGUIManager->IsKeyDown('W')){ProcessKey(KEY_FORWARD);}
-		if(m_piGUIManager->IsKeyDown(GK_DOWN) || m_piGUIManager->IsKeyDown(GK_NUMPAD2) || m_piGUIManager->IsKeyDown('S')){ProcessKey(KEY_BACK);}
-		if(m_piGUIManager->IsKeyDown(GK_LEFT) || m_piGUIManager->IsKeyDown(GK_NUMPAD4) || m_piGUIManager->IsKeyDown('A')){ProcessKey(KEY_LEFT);bSideMovement=true;}
-		if(m_piGUIManager->IsKeyDown(GK_RIGHT) || m_piGUIManager->IsKeyDown(GK_NUMPAD6) || m_piGUIManager->IsKeyDown('D')){ProcessKey(KEY_RIGHT);bSideMovement=true;}
-		if(m_piGUIManager->IsKeyDown(GK_NUMPAD9) || m_piGUIManager->IsKeyDown('R')){ProcessKey(KEY_UP);}
-		if(m_piGUIManager->IsKeyDown(GK_NUMPAD3) || m_piGUIManager->IsKeyDown('F')){ProcessKey(KEY_DOWN);}
-	}
-}
-
-void CGameInterface::MoveInspection(unsigned short nKey)
-{
-	double dForwardSpeed=m_dMovementInspectionSpeed*m_FrameManagerWrapper.m_piFrameManager->GetRealTimeFraction();
-	if(m_piGUIManager->IsKeyDown(GK_LSHIFT)){dForwardSpeed*=3.0;}
-	if(nKey==KEY_FORWARD)	{CVector vCameraPos=m_InspectionCamera.m_piCamera->GetPosition()+m_InspectionCamera.m_piCamera->GetForwardVector()*(dForwardSpeed);m_InspectionCamera.m_piCamera->SetPosition(vCameraPos);}
-	else if(nKey==KEY_BACK)	{CVector vCameraPos=m_InspectionCamera.m_piCamera->GetPosition()-m_InspectionCamera.m_piCamera->GetForwardVector()*(dForwardSpeed);m_InspectionCamera.m_piCamera->SetPosition(vCameraPos);}
-	else if(nKey==KEY_LEFT)	{CVector vCameraPos=m_InspectionCamera.m_piCamera->GetPosition()-m_InspectionCamera.m_piCamera->GetRightVector()*(dForwardSpeed);m_InspectionCamera.m_piCamera->SetPosition(vCameraPos);}
-	else if(nKey==KEY_RIGHT){CVector vCameraPos=m_InspectionCamera.m_piCamera->GetPosition()+m_InspectionCamera.m_piCamera->GetRightVector()*(dForwardSpeed);m_InspectionCamera.m_piCamera->SetPosition(vCameraPos);}
-	else if(nKey==KEY_UP)	{CVector vCameraPos=m_InspectionCamera.m_piCamera->GetPosition()+m_InspectionCamera.m_piCamera->GetUpVector()*(dForwardSpeed);m_InspectionCamera.m_piCamera->SetPosition(vCameraPos);}
-	else if(nKey==KEY_DOWN)	{CVector vCameraPos=m_InspectionCamera.m_piCamera->GetPosition()-m_InspectionCamera.m_piCamera->GetUpVector()*(dForwardSpeed);m_InspectionCamera.m_piCamera->SetPosition(vCameraPos);}
 }
 
 void CGameInterface::ProcessKey(unsigned short nKey)
@@ -347,7 +313,7 @@ void CGameInterface::ProcessKey(unsigned short nKey)
 	// en modo de inspeccion todos los movimientos se calculan en tiempo realm no en el tiempo
 	// del sistema de entidades.
 
-	if(nKey==KEY_PAUSE && !m_bPauseOnNextFrame)
+	if(nKey==KEY_PAUSE)
 	{
 		if(m_FrameManagerWrapper.m_piFrameManager->GetCurrentRealTime()>m_dwNextAcceptedPauseKeyTime)
 		{
@@ -355,21 +321,8 @@ void CGameInterface::ProcessKey(unsigned short nKey)
 			m_FrameManagerWrapper.m_piFrameManager->TogglePauseOnNextFrame();
 		}
 	}
-	if(nKey==KEY_PROCESS_ONE_FRAME && !m_bPauseOnNextFrame)
-	{
-		if(m_FrameManagerWrapper.m_piFrameManager->GetCurrentRealTime()>m_dwNextAcceptedPauseKeyTime)
-		{
-			m_dwNextAcceptedPauseKeyTime=m_FrameManagerWrapper.m_piFrameManager->GetCurrentRealTime()+30;
-			m_FrameManagerWrapper.m_piFrameManager->SetPauseOnNextFrame(false);
-			m_bPauseOnNextFrame=true;
-		}
-	}
-
-	if(m_dwMovementType==MOVEMENT_TYPE_INSPECT && (m_piGUIManager->IsKeyDown(GK_LSHIFT))==0)
-	{
-		MoveInspection(nKey);
-	}
 }
+
 void	CGameInterface::Freeze(bool bFreeze)
 {
 	if(m_bFrozen==bFreeze){return;}
@@ -378,10 +331,6 @@ void	CGameInterface::Freeze(bool bFreeze)
 	{
 		m_bResumeAfterFreeze=!m_FrameManagerWrapper.m_piFrameManager->IsPaused();
 		m_FrameManagerWrapper.m_piFrameManager->SetPauseOnNextFrame(true);
-		if(m_dwMovementType==MOVEMENT_TYPE_INSPECT)
-		{
-			SetMovementType(MOVEMENT_TYPE_PLAY);
-		}
 	}
 	else
 	{
@@ -403,48 +352,46 @@ void CGameInterface::OnKilled(IEntity *piEntity)
 	}
 }
 
-void CGameInterface::OnMouseMove(double x,double y)
+void CGameInterface::RenderEntity(IEntity *piEntity,void *pParam1,void *pParam2)
 {
-	if(m_bFrozen){return;}
-
-	if(m_dwMovementType==MOVEMENT_TYPE_INSPECT && m_piGUIManager->HasMouseCapture(this) && m_rRealRect.w && m_rRealRect.h)
-	{
-		if(m_InspectionMovementStartPoint.x!=x || m_InspectionMovementStartPoint.y!=y)
-		{
-			CVector vMove(x-m_InspectionMovementStartPoint.x,-1*(y-m_InspectionMovementStartPoint.y),0);
-
-			double dAmmount1=-vMove.c[0]/2.0;
-			double dAmmount2=vMove.c[1]/2.0;
-			CVector vAngles=m_InspectionCamera.m_piCamera->GetAngles();
-			vAngles.c[YAW]+=dAmmount1;
-			vAngles.c[PITCH]+=dAmmount2;
-			m_InspectionCamera.m_piCamera->SetAngles(vAngles);
-			m_piGUIManager->SetMousePosition(this,m_InspectionMovementStartPoint);
-		}
-	}
-	return CGameWindowBase::OnMouseMove(x,y);
+	piEntity->Render((IGenericRender*)pParam1,(IGenericCamera*)pParam2);
 }
 
-void CGameInterface::SetMovementType(unsigned long nType)
+void CGameInterface::UpdateGUI()
 {
-	if(nType==m_dwMovementType){return;}
+	int nPoints=0;
+	int nLivesLeft=0;
+	int nBombsLeft=0;
 
-	if(nType==MOVEMENT_TYPE_PLAY)
+	IEntity	*piPlayerEntity=NULL;
+	IPlayer *piPlayer=NULL;
+
+	if(m_EntityManagerWrapper.m_piEntityManager!=NULL)
 	{
-#pragma message ("CGameInterface::SetMovementType -> como se ha quitado la camara del render hay que dar otra forma para hacer el cambio a inspeccion")
-		m_dwMovementType=nType;
-		//m_RenderWrapper.m_piRender->SetCamera(m_PlayCamera.m_piCamera);
-		if(m_piGUIManager->HasMouseCapture(this))
-		{
-			m_piGUIManager->ReleaseMouseCapture();
-		}
+		piPlayerEntity=m_EntityManagerWrapper.m_piEntityManager->FindEntity("Player");
+		if(piPlayerEntity){piPlayer=dynamic_cast<IPlayer*>(piPlayerEntity);}
 	}
-	else if(nType==MOVEMENT_TYPE_INSPECT)
-	{
-		m_dwMovementType=nType;
-		//m_RenderWrapper.m_piRender->SetCamera(m_InspectionCamera.m_piCamera);
 
-		m_piGUIManager->SetMouseCapture(this);
-		m_piGUIManager->GetMousePosition(this,&m_InspectionMovementStartPoint);
+	if(piPlayer)
+	{
+		IWeapon *piBombWeapon=piPlayerEntity->GetWeapon(0);
+		nPoints=piPlayer->GetPoints();
+		nLivesLeft=piPlayer->GetLivesLeft();
+		nBombsLeft=piBombWeapon?piBombWeapon->GetAmmo():0;
+	}
+	if(m_piSTPoints)
+	{
+		char sTemp[200]={0};
+		sprintf(sTemp,"%d",nPoints);
+		m_piSTPoints->SetText(sTemp);
+	}
+
+	for(int x=0;x<MAX_LIVES_TO_DISPLAY;x++)
+	{
+		if(m_piSTLives[x]){m_piSTLives[x]->Show(x<(nLivesLeft-1));}
+	}
+	for(int x=0;x<MAX_BOMBS_TO_DISPLAY;x++)
+	{
+		if(m_piSTBombs[x]){m_piSTBombs[x]->Show(x<(nBombsLeft-1));}
 	}
 }

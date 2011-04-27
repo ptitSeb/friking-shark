@@ -127,17 +127,6 @@ public:
     virtual CVector ProcessPhysicInfo(SPhysicInfo *pInfo,double dInterval)=0;
 };
 
-struct IGameRender:virtual public ISystemUnknown
-{
-    virtual unsigned int	EnableFlags(unsigned int dwFlag)=0;
-    virtual unsigned int	DisableFlags(unsigned int dwFlag)=0;
-    virtual unsigned int	GetFlag(unsigned int dwFlag)=0;
-    virtual unsigned int	ToggleFlag(unsigned int dwFlag)=0;
-
-	virtual void    Render(IGenericRender *piRender,IGenericCamera *piCamera)=0;
-};
-
-
 struct IRoute
 {
     virtual unsigned    GetPointCount()=0;
@@ -221,6 +210,8 @@ public:
 	virtual void AddEntity(IEntity *pEntity)=0; 
 	virtual void RemoveAllEntities()=0;
 	virtual unsigned long GetEntityCount()=0;
+
+	virtual void RenderEntities(IGenericRender *piRender,IGenericCamera *piCamera)=0;
 
     virtual void PerformUnaryOperation(EntityUnaryOperation pFunc,void *pParam1,void *pParam2)=0;
     virtual void PerformBinaryOperation(EntityBinaryOperation pFunc,void *pParam1,void *pParam2)=0;

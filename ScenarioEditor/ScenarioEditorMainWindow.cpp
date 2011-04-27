@@ -107,10 +107,10 @@ bool CScenarioEditorMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 	  m_GameControllerWrapper.m_piGameController->CreateScenario();
 	}
 
-	m_GameRenderWrapper.Attach("GameSystem","GameRender");
 	m_PlayAreaManagerWrapper.Attach("GameSystem","PlayAreaManager");
 	m_FrameManager.Attach("GameSystem","FrameManager");
 	m_WorldManagerWrapper.Attach("GameSystem","WorldManager");
+	m_EntityManagerWrapper.Attach("GameSystem","EntityManager");
 	m_SoundManagerWrapper.Attach("GameSystem","SoundManager");
 	
 	//OpenScenario("/home/javi/workspace/Game/Demo/Resources/new21.ges");
@@ -125,7 +125,6 @@ void CScenarioEditorMainWindow::DestroyWindow()
 	m_SoundManagerWrapper.Detach();
 	m_PlayAreaManagerWrapper.Detach();
 	m_GameControllerWrapper.Detach();
-	m_GameRenderWrapper.Detach();
 	m_WorldManagerWrapper.Detach();
 
 	m_FrameManager.Detach();
@@ -352,7 +351,10 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 		if(piCamera)
 		{
 			SetupRenderOptions(piRender,piCamera);
-			m_GameRenderWrapper.m_piRender->Render(piRender,piCamera);
+			piRender->StartStagedRendering();
+			m_WorldManagerWrapper.m_piWorldManager->SetupRenderingEnvironment(piRender);
+			m_EntityManagerWrapper.m_piEntityManager->RenderEntities(piRender,piCamera);
+			piRender->EndStagedRendering();
 		}
 		REL(piCamera);
 		REL(piPlayCamera);

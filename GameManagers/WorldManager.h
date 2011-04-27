@@ -112,7 +112,6 @@ class CWorldManager:virtual public CSystemObjectBase, virtual public IGameManage
    
 	CEntityManagerWrapper   m_EntityManagerWrapper;
 	CGameControllerWrapper  m_GameControllerWrapper;
-	CGameRenderWrapper      m_RenderWrapper;
 	CPlayAreaManagerWrapper m_PlayAreaManagerWrapper;
 	CFrameManagerWrapper    m_FrameManagerWrapper;
 

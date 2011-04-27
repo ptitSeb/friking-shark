@@ -17,11 +17,12 @@ class CMainWindow: virtual public CGameWindowBase,virtual public IGameInterfaceW
 
 	CConfigFile m_GUIConfigFile;
 
-	CViewportWrapper   m_Viewport;
+	IGameGUILabel        *m_piSTBackground;
+	IGameInterfaceWindow *m_piGameInterface;
+
 	CGameWindowWrapper m_BackgroundWindow;
 	CGameDialogWrapper m_GameOverDialog;
 	CGameDialogWrapper m_CongratulationsDialog;
-	CGameInterfaceWrapper m_GameInterfaceWindow;
 	CGameDialogWrapper m_MainMenuDialog;
 	CGameDialogWrapper m_GameMenuDialog;
 	CGameDialogWrapper m_ConfirmationDialog;
@@ -34,7 +35,10 @@ public:
 		PROP_VALUE_FLAGS(m_eReferenceSystem,"ReferenceSystem",eGameGUIReferenceSystem_Relative,MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP()
 
-	bool Init(std::string sClass,std::string sName,ISystem *piSystem);
+	BEGIN_CHILD_MAP()
+		CHILD_MAP_ENTRY("Background",m_piSTBackground);
+		CHILD_MAP_ENTRY_EX("GameInterface",m_piGameInterface,IGameInterfaceWindowEvents);
+	END_CHILD_MAP()
 
 	bool InitWindow(IGameWindow *piParent,bool bPopup);
 	void OnKeyDown(int nKey,bool *pbProcessed);

@@ -387,10 +387,12 @@ public:
 	ISystem					*m_piGameSystem;
 	CGameControllerWrapper   m_GameControllerWrapper;
 	CPlayAreaManagerWrapper  m_PlayAreaManagerWrapper;
-	CGameRenderWrapper		 m_GameRenderWrapper;
 	CWorldManagerWrapper	 m_WorldManagerWrapper;
+	CEntityManagerWrapper	 m_EntityManagerWrapper;
 	CSoundManagerWrapper	 m_SoundManagerWrapper;
 
+	static void RenderEntity(IEntity *piEntity,void *pParam1,void *pParam2);
+	
 	void ProcessInput(double dTimeFraction,double dRealTimeFraction);
 	void ProcessKey(unsigned short nKey,double dTimeFraction,double dRealTimeFraction);
 
