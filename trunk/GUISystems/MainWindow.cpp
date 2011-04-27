@@ -17,28 +17,15 @@ CMainWindow::CMainWindow(void)
 CMainWindow::~CMainWindow(void)
 {
 }
-bool CMainWindow::Init(std::string sClass,std::string sName,ISystem *piSystem)
-{
-	bool bOk=CSystemObjectBase::Init(sClass,sName,piSystem);
-	if(bOk)
-	{
-		CGameGUIManagerWrapper guiManager;
-		guiManager.Attach("GameGUI","GUIManager");
-		IGameWindow *piMainWindow=guiManager.m_piInterface->GetMainWindow();
-		InitWindow(piMainWindow,false);
-		Show(true);
-		REL(piMainWindow);
-	}
-	return bOk;
-}
-	
+
 bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 {
 	bool bResult=CGameWindowBase::InitWindow(piParent,bPopup);
 	if(bResult)
 	{
-		m_Viewport.Attach("GameGUI","Viewport");
-		m_Viewport.m_piViewport->SetCaption("Friking Shark");
+		CViewportWrapper viewport;
+		viewport.Attach("GameGUI","Viewport");
+		if(viewport.m_piViewport){viewport.m_piViewport->SetCaption("Friking Shark");}
 
 		SGameRect sRect;
 		sRect.x=0;
@@ -52,32 +39,27 @@ bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 
 		if(bResult)
 		{
-			m_BackgroundWindow.Create("GameGUI","CBackgroundWindow","Background");
 			m_MainMenuDialog.Create("GameGUI","CMainMenu","MainMenu");
 			m_GameMenuDialog.Create("GameGUI","CGameMenu","GameMenu");
 			m_ConfirmationDialog.Create("GameGUI","CConfirmationDialog","ConfirmationDialog");
-			m_GameInterfaceWindow.Create("GameGUI","CGameInterface","GameInterface");
 			m_GameOverDialog.Create("GameGUI","CGameSimpleDialog","GameOverDialog");
 			m_CongratulationsDialog.Create("GameGUI","CGameSimpleDialog","CongratulationsDialog");
 
-			m_BackgroundWindow.m_piSerializable->Unserialize(m_GUIConfigFile.GetNode("GameDialogs\\BackgroundWindow"));
 			m_MainMenuDialog.m_piSerializable->Unserialize(m_GUIConfigFile.GetNode("GameDialogs\\MainMenu"));
 			m_GameMenuDialog.m_piSerializable->Unserialize(m_GUIConfigFile.GetNode("GameDialogs\\GameMenu"));
-			m_GameInterfaceWindow.m_piSerializable->Unserialize(m_GUIConfigFile.GetNode("GameDialogs\\GameInterface"));
+			m_ConfirmationDialog.m_piSerializable->Unserialize(m_GUIConfigFile.GetNode("GameDialogs\\ConfirmationDialog"));
 			m_GameOverDialog.m_piSerializable->Unserialize(m_GUIConfigFile.GetNode("GameDialogs\\GameOverDialog"));
 			m_CongratulationsDialog.m_piSerializable->Unserialize(m_GUIConfigFile.GetNode("GameDialogs\\CongratulationsDialog"));
-
-			SUBSCRIBE_TO_CAST(m_GameInterfaceWindow.m_piObject,IGameInterfaceWindowEvents);
 		}
 
 		if(bResult)
 		{
-			m_BackgroundWindow.m_piWindow->InitWindow(this,false);
-			m_BackgroundWindow.m_piWindow->Show(true);
-			m_BackgroundWindow.m_piWindow->Activate(false);
+			m_piGameInterface->Show(false);
+			m_piSTBackground->Show(true);
 		}
 		m_piGUIManager->SetFocus(this);
 	}
+
 	return bResult;
 }
 
@@ -99,23 +81,21 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 				m_eStage=eInterfaceStage_Playing;
 
 				m_piGUIManager->ShowMouseCursor(false);
-				m_BackgroundWindow.m_piWindow->Show(false);
-				m_GameInterfaceWindow.m_piInterfaceWindow->InitWindow(this,false);
-				m_GameInterfaceWindow.m_piInterfaceWindow->Show(true);
-				m_GameInterfaceWindow.m_piInterfaceWindow->Activate(false);
+				m_piSTBackground->Show(false);
+				m_piGameInterface->Show(true);
 			}
 			m_piGUIManager->SetFocus(this);
 		}
 		else if(m_eStage==eInterfaceStage_Playing)
 		{
 			m_piGUIManager->ShowMouseCursor(true);
-			m_GameInterfaceWindow.m_piInterfaceWindow->Freeze(true);
+			m_piGameInterface->Freeze(true);
 			int result=m_GameMenuDialog.m_piDialog->Execute(this);
-			m_GameInterfaceWindow.m_piInterfaceWindow->Freeze(false);
+			m_piGameInterface->Freeze(false);
 			if(result==eGameMenuAction_EndGame)
 			{
-				m_GameInterfaceWindow.m_piInterfaceWindow->DestroyWindow();
-				m_BackgroundWindow.m_piWindow->Show(true);
+				m_piGameInterface->Show(false);
+				m_piSTBackground->Show(true);
 				m_eStage=eInterfaceStage_MainMenu;
 			}
 			else
@@ -130,7 +110,7 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 void CMainWindow::OnScenarioFinished(eScenarioFinishedReason eReason)
 {
 	m_piGUIManager->ShowMouseCursor(true);
-	m_GameInterfaceWindow.m_piInterfaceWindow->Freeze(true);
+	m_piGameInterface->Freeze(true);
 	if(eReason==eScenarioFinishedReason_Completed)
 	{
 		m_CongratulationsDialog.m_piDialog->Execute(this);
@@ -139,9 +119,9 @@ void CMainWindow::OnScenarioFinished(eScenarioFinishedReason eReason)
 	{
 		m_GameOverDialog.m_piDialog->Execute(this);
 	}
-	m_GameInterfaceWindow.m_piInterfaceWindow->Freeze(false);
-	m_GameInterfaceWindow.m_piInterfaceWindow->DestroyWindow();
-	m_BackgroundWindow.m_piWindow->Show(true);
+	m_piGameInterface->Freeze(false);
+	m_piGameInterface->Show(false);
+	m_piSTBackground->Show(true);
 	m_eStage=eInterfaceStage_MainMenu;
 }
 

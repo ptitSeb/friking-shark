@@ -29,6 +29,8 @@ public:
     void RemoveAllEntities();
 	unsigned long GetEntityCount();
 
+	void RenderEntities(IGenericRender *piRender,IGenericCamera *piCamera);
+
     void PerformUnaryOperation(EntityUnaryOperation pFunc,void *pParam1,void *pParam2);
     void PerformBinaryOperation(EntityBinaryOperation pFunc,void *pParam1,void *pParam2);
 

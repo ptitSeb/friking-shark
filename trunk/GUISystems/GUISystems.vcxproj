@@ -111,38 +111,28 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BackgroundWindow.cpp" />
     <ClCompile Include="ConfirmationDialog.cpp" />
     <ClCompile Include="GameInterface.cpp" />
     <ClCompile Include="GameMenu.cpp" />
-    <ClCompile Include="GamePlayWindow.cpp" />
-    <ClCompile Include="GameRender.cpp" />
-    <ClCompile Include="GameSidePanel.cpp" />
     <ClCompile Include="GameSimpleDialog.cpp" />
     <ClCompile Include="GUISystems.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="MainWindow.cpp" />
-    <ClCompile Include="ScenarioProgressBar.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BackgroundWindow.h" />
     <ClInclude Include="ConfirmationDialog.h" />
     <ClInclude Include="GameInterface.h" />
     <ClInclude Include="GameMenu.h" />
-    <ClInclude Include="GamePlayWindow.h" />
-    <ClInclude Include="GameRender.h" />
-    <ClInclude Include="GameSidePanel.h" />
     <ClInclude Include="GameSimpleDialog.h" />
     <ClInclude Include="GUIDefs.h" />
     <ClInclude Include="GUISystems.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="MainWindow.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="ScenarioProgressBar.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>

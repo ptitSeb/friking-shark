@@ -39,7 +39,7 @@ public:
 	ISystem					*m_piGameSystem;
 	CGameControllerWrapper   m_GameControllerWrapper;
 	CPlayAreaManagerWrapper  m_PlayAreaManagerWrapper;
-	CGameRenderWrapper		 m_GameRenderWrapper;
+	CEntityManagerWrapper    m_EntityManagerWrapper;
 	CSoundManagerWrapper	 m_SoundManagerWrapper;
 	CWorldManagerWrapper	 m_WorldManagerWrapper;
 	

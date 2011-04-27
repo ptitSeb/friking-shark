@@ -20,7 +20,6 @@ bool CWorldManager::Init(std::string sClass,std::string sName,ISystem *piSystem)
 	bool bOk=CSystemObjectBase::Init(sClass,sName,piSystem);
 	if(bOk){bOk=m_EntityManagerWrapper.Attach("GameSystem","EntityManager");}
 	if(bOk){bOk=m_GameControllerWrapper.Attach("GameSystem","GameController");}
-	if(bOk){bOk=m_RenderWrapper.Attach("GameSystem","GameRender");}
 	if(bOk){bOk=m_PlayAreaManagerWrapper.Attach("GameSystem","PlayAreaManager");}
 	if(bOk){bOk=m_FrameManagerWrapper.Attach("GameSystem","FrameManager");}
 	if(bOk){m_GameControllerWrapper.m_piGameController->RegisterManager(100,this);}
@@ -36,7 +35,6 @@ void CWorldManager::Destroy()
 		m_GameControllerWrapper.m_piGameController->UnregisterManager(this);
 	}
 	m_GameControllerWrapper.Detach();
-	m_RenderWrapper.Detach();
 	m_PlayAreaManagerWrapper.Detach();
 	m_EntityManagerWrapper.Detach();
 	CSystemObjectBase::Destroy();
