@@ -87,6 +87,7 @@
     <ClCompile Include="EntityTypeBase.cpp" />
     <ClCompile Include="EntityUtilities.cpp" />
     <ClCompile Include="GameEntityLib.cpp" />
+    <ClCompile Include="Route.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -98,6 +99,7 @@
     <ClInclude Include="EntityTypeBase.h" />
     <ClInclude Include="EntityUtilities.h" />
     <ClInclude Include="GameEntityLib.h" />
+    <ClInclude Include="Route.h" />
     <ClInclude Include="SingletonWrapper.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SteeringBehaviours.h" />

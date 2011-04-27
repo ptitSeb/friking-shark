@@ -116,7 +116,6 @@
     <ClCompile Include="PlayAreaElements.cpp" />
     <ClCompile Include="PlayAreaEntity.cpp" />
     <ClCompile Include="PlayAreaFormation.cpp" />
-    <ClCompile Include="Route.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -130,7 +129,6 @@
     <ClInclude Include="PlayAreaEntity.h" />
     <ClInclude Include="PlayAreaFormation.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Route.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
