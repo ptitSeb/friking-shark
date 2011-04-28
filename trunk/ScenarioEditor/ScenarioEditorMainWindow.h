@@ -67,11 +67,13 @@ struct SFormationControls
 	IPlayAreaFormation				*m_piPlayAreaFormation;
 	IFormationType					*m_piFormationType;
 	IDesignObject					*m_piDesignObject;
+	IDesignObject					*m_piAlternativeDesignObject;
 	ISystemObject					*m_piObject;
 	IDesignObject					*m_piBonusDesignObject;
+	IDesignObject					*m_piAlternativeBonusDesignObject;
 
-	SFormationControls(){m_piPlayAreaFormation=NULL;m_piFormationType=NULL;m_piDesignObject=NULL;m_piObject=NULL;m_piBonusDesignObject=NULL;m_nPlayAreaElementId=0;}
-	~SFormationControls(){REL(m_piPlayAreaFormation);REL(m_piFormationType);REL(m_piDesignObject);REL(m_piObject);REL(m_piBonusDesignObject);}
+	SFormationControls(){m_piAlternativeDesignObject=NULL;m_piAlternativeBonusDesignObject=NULL;m_piPlayAreaFormation=NULL;m_piFormationType=NULL;m_piDesignObject=NULL;m_piObject=NULL;m_piBonusDesignObject=NULL;m_nPlayAreaElementId=0;}
+	~SFormationControls(){REL(m_piAlternativeDesignObject);REL(m_piAlternativeBonusDesignObject);REL(m_piPlayAreaFormation);REL(m_piFormationType);REL(m_piDesignObject);REL(m_piObject);REL(m_piBonusDesignObject);}
 };
 
 class CScenarioEditorMainWindow: virtual public CGameWindowBase, virtual public IGameGUIButtonEvents,virtual public IGameGUIColorDialogCallback
@@ -262,6 +264,14 @@ public:
 	IGameGUIButton *m_piBTFormationBonusSample;
 	IScenarioEditorObjectLabel *m_piSTFormationObjectLabel;
 	IScenarioEditorObjectLabel *m_piSTFormationBonusObjectLabel;
+	IGameGUILabel  *m_piSTFormationAlternativeName;
+	IGameGUIButton *m_piBTFormationAlternativeSample;
+	IGameGUIButton *m_piBTFormationAlternativeBonusSample;
+	IScenarioEditorObjectLabel *m_piSTFormationAlternativeObjectLabel;
+	IScenarioEditorObjectLabel *m_piSTFormationAlternativeBonusObjectLabel;
+	IGameGUILabel  *m_piSTFormationCondition;
+	IGameGUIButton *m_piBTFormationDecreaseCondition;
+	IGameGUIButton *m_piBTFormationIncreaseCondition;
 	IGameGUIButton *m_piBTFormationRemove;
 
 	// Entity Layers
@@ -517,6 +527,15 @@ public:
 		CHILD_MAP_ENTRY("FormationBonusObjectLabel",m_piSTFormationBonusObjectLabel);
 		CHILD_MAP_ENTRY_EX("FormationSample",m_piBTFormationSample,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("FormationBonusSample",m_piBTFormationBonusSample,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY("FormationAlternativeName",m_piSTFormationAlternativeName);
+		CHILD_MAP_ENTRY("FormationAlternativeObjectLabel",m_piSTFormationAlternativeObjectLabel);
+		CHILD_MAP_ENTRY("FormationAlternativeBonusObjectLabel",m_piSTFormationAlternativeBonusObjectLabel);
+		CHILD_MAP_ENTRY_EX("FormationAlternativeSample",m_piBTFormationAlternativeSample,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("FormationAlternativeBonusSample",m_piBTFormationAlternativeBonusSample,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY("FormationCondition",m_piSTFormationCondition);
+		CHILD_MAP_ENTRY_EX("FormationDecreaseCondition",m_piBTFormationDecreaseCondition,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("FormationIncreaseCondition",m_piBTFormationIncreaseCondition,IGameGUIButtonEvents);
+
 		CHILD_MAP_ENTRY_EX("FormationRemove",m_piBTFormationRemove,IGameGUIButtonEvents);
 
 		CHILD_MAP_ENTRY("OptionsPanel",m_piGROptionsPanel);

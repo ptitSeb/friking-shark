@@ -1,6 +1,6 @@
 #include "./stdafx.h"
 #include "PlayerType.h"
-#include "GameGraphics.h"
+//#include "GameGraphics.h"
 
 CPlayerType::CPlayerType()
 {

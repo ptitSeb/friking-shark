@@ -95,6 +95,8 @@ bool CScenarioEditorMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 	m_piSTEntityBonusObjectLabel->Activate(false);
 	m_piSTFormationObjectLabel->Activate(false);
 	m_piSTFormationBonusObjectLabel->Activate(false);
+	m_piSTFormationAlternativeObjectLabel->Activate(false);
+	m_piSTFormationAlternativeBonusObjectLabel->Activate(false);
 
 	UpdateLayerPanel();
 
@@ -149,6 +151,8 @@ void CScenarioEditorMainWindow::Reset()
 	if(m_piSTEntityBonusObjectLabel){m_piSTEntityBonusObjectLabel->SetObject(NULL);}
 	if(m_piSTFormationObjectLabel){m_piSTFormationObjectLabel->SetObject(NULL);}
 	if(m_piSTFormationBonusObjectLabel){m_piSTFormationBonusObjectLabel->SetObject(NULL);}
+	if(m_piSTFormationAlternativeObjectLabel){m_piSTFormationAlternativeObjectLabel->SetObject(NULL);}
+	if(m_piSTFormationAlternativeBonusObjectLabel){m_piSTFormationAlternativeBonusObjectLabel->SetObject(NULL);}
 	UpdateColorLayerControls();
 	UpdateHeightLayerControls();
 	UpdateEntityLayerControls();
@@ -1257,6 +1261,51 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			}
 			for(unsigned long x=0;x<vEntityTypes.size();x++){IDesignObject *piEntityType=vEntityTypes[x];REL(piEntityType);}
 		}
+		else if(piControl==m_piBTFormationAlternativeSample)
+		{
+			unsigned long nSelectedFormationType=0;
+			std::vector<IDesignObject *> vFormationTypes;
+			GetSystemObjects("FormationTypes",&vFormationTypes);
+			if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vFormationTypes,&nSelectedFormationType))
+			{
+				IFormationType *piFormationType=QI(IFormationType,vFormationTypes[nSelectedFormationType]);
+				pFormation->m_piPlayAreaFormation->SetAlternativeFormationType(piFormationType);
+				REL(piFormationType);
+
+				UpdateFormationControls();
+			}
+			for(unsigned long x=0;x<vFormationTypes.size();x++){IDesignObject *piFormationType=vFormationTypes[x];REL(piFormationType);}
+		}
+		else if(piControl==m_piBTFormationAlternativeBonusSample)
+		{
+			unsigned long nSelectedEntityType=0;
+			std::vector<IDesignObject *> vEntityTypes;
+			GetSystemObjects("EntityTypes",&vEntityTypes);
+			if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vEntityTypes,&nSelectedEntityType))
+			{
+				IEntityType *piEntityType=QI(IEntityType,vEntityTypes[nSelectedEntityType]);
+				pFormation->m_piPlayAreaFormation->SetAlternativeBonusType(piEntityType);
+				REL(piEntityType);
+
+				UpdateFormationControls();
+			}
+			for(unsigned long x=0;x<vEntityTypes.size();x++){IDesignObject *piEntityType=vEntityTypes[x];REL(piEntityType);}
+		}
+		else if(m_piBTFormationIncreaseCondition==piControl)
+		{
+			unsigned int nValue=0;
+			pFormation->m_piPlayAreaFormation->GetCondition(NULL,&nValue);
+			nValue++;
+			pFormation->m_piPlayAreaFormation->SetCondition(nValue?ePlayerStateCondition_MaxPrimaryWeaponLevel:ePlayerStateCondition_None,nValue);
+		}
+		else if(m_piBTFormationDecreaseCondition==piControl)
+		{
+			unsigned int nValue=0;
+			pFormation->m_piPlayAreaFormation->GetCondition(NULL,&nValue);
+			if(nValue>0){nValue--;}
+			pFormation->m_piPlayAreaFormation->SetCondition(nValue?ePlayerStateCondition_MaxPrimaryWeaponLevel:ePlayerStateCondition_None,nValue);
+		}
+
 	}
 	bool bWaterChanged=false;
 	STerrainWater sWater;
@@ -1850,9 +1899,21 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 	}
 	if(m_nSelectedFormation!=-1)
 	{
+		char A[MAX_PATH];
+		unsigned int nConditionValue=0;
+		m_vFormationControls[m_nSelectedFormation]->m_piPlayAreaFormation->GetCondition(NULL,&nConditionValue);
+		
+		if(nConditionValue)
+		{sprintf(A,"Weapon <= %d",nConditionValue);}
+		else
+		{sprintf(A,"Never");}
+
+		m_piSTFormationCondition->SetText(A);
 		m_piSTFormationName->SetText(m_vFormationControls[m_nSelectedFormation]->m_piObject->GetName());
 		m_piSTFormationObjectLabel->SetObject(m_vFormationControls[m_nSelectedFormation]->m_piDesignObject);
 		m_piSTFormationBonusObjectLabel->SetObject(m_vFormationControls[m_nSelectedFormation]->m_piBonusDesignObject);
+		m_piSTFormationAlternativeObjectLabel->SetObject(m_vFormationControls[m_nSelectedFormation]->m_piAlternativeDesignObject);
+		m_piSTFormationAlternativeBonusObjectLabel->SetObject(m_vFormationControls[m_nSelectedFormation]->m_piAlternativeBonusDesignObject);
 		m_piGRFormationPanel->Show(m_bShowFormationsPanel);
 	}
 	STerrainWater sWater;
@@ -2946,12 +3007,16 @@ void CScenarioEditorMainWindow::UpdateFormationControls()
 			IPlayAreaElement *piElement=NULL;
 			m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetElement(x,&piElement);
 			IPlayAreaFormation  *piFormation=QI(IPlayAreaFormation,piElement);
-			IFormationType		*piFormationType=NULL;
-			IEntityType			*piBonusType=NULL;
+			IFormationType		*piFormationType=NULL,*piAlternativeFormationType=NULL;
+			IEntityType			*piBonusType=NULL,*piAlternativeBonusType=NULL;
 			if(piFormation){piFormation->GetFormationType(&piFormationType);}			
+			if(piFormation){piFormation->GetAlternativeFormationType(&piAlternativeFormationType);}			
 			if(piFormation){piFormation->GetBonusType(&piBonusType);}			
+			if(piFormation){piFormation->GetAlternativeBonusType(&piAlternativeBonusType);}			
 			IDesignObject *piBonusDesignObject=QI(IDesignObject,piBonusType);
 			IDesignObject *piDesignObject=QI(IDesignObject,piFormationType);
+			IDesignObject *piAlternativeBonusDesignObject=QI(IDesignObject,piAlternativeBonusType);
+			IDesignObject *piAlternativeDesignObject=QI(IDesignObject,piAlternativeFormationType);
 			ISystemObject *piObject=QI(ISystemObject,piDesignObject);
 			if(!piObject)
 			{
@@ -2961,6 +3026,10 @@ void CScenarioEditorMainWindow::UpdateFormationControls()
 				REL(piFormation);
 				REL(piElement);
 				REL(piDesignObject);
+				REL(piAlternativeBonusType);
+				REL(piAlternativeBonusDesignObject);
+				REL(piAlternativeFormationType);
+				REL(piAlternativeDesignObject);
 				continue;
 			}
 
@@ -2969,9 +3038,11 @@ void CScenarioEditorMainWindow::UpdateFormationControls()
 			pControls->m_BTListRow.Create(m_piSystem,"CGameGUIButton","");
 			pControls->m_piFormationType=ADD(piFormationType);
 			pControls->m_piDesignObject=ADD(piDesignObject);
+			pControls->m_piAlternativeDesignObject=ADD(piAlternativeDesignObject);
 			pControls->m_piPlayAreaFormation=ADD(piFormation);
 			pControls->m_piObject=QI(ISystemObject,piFormationType);
 			pControls->m_piBonusDesignObject=ADD(piBonusDesignObject);
+			pControls->m_piAlternativeBonusDesignObject=ADD(piAlternativeBonusDesignObject);
 			if(pControls->m_BTListRow.m_piButton)
 			{
 				pControls->m_BTListRow.m_piButton->InitWindow(m_piGRFormationsPanel,false);
@@ -2999,6 +3070,11 @@ void CScenarioEditorMainWindow::UpdateFormationControls()
 			REL(piElement);
 			REL(piFormation);
 			REL(piObject);
+			REL(piAlternativeBonusType);
+			REL(piAlternativeBonusDesignObject);
+			REL(piAlternativeFormationType);
+			REL(piAlternativeDesignObject);
+
 			m_vFormationControls.push_back(pControls);
 		}
 	}
