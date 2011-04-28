@@ -303,6 +303,8 @@ void CPlayAreaManager::GetCurrentVisibleArea(CVector *pVisiblePlayAreaMins,CVect
 
 void CPlayAreaManager::GetPlayAreaPlaneAt(CVector vPos,CVector *pPlayAreaMins,CVector *pPlayAreaMaxs)
 {
+	if(m_CameraWrapper.m_piCamera==NULL){return;}
+	
     double dCameraDistance=(m_vPlayerRouteStart.c[1]+m_dCameraDistanceFromPlayer)-vPos.c[1];
     double dViewAngle=m_CameraWrapper.m_piCamera->GetViewAngle();
     double dAspectRatio=m_CameraWrapper.m_piCamera->GetAspectRatio();
@@ -344,6 +346,8 @@ double          CPlayAreaManager::GetCameraSpeed(){return m_dPlayMovementSpeed;}
 
 void CPlayAreaManager::UpdatePlayCameraPosition()
 {
+	if(m_CameraWrapper.m_piCamera==NULL){return;}
+	
 	CVector vCameraAngles;
 	CVector vCameraPosition;
 
@@ -649,6 +653,8 @@ void CPlayAreaManager::SetPlayAreaConfig( SPlayAreaConfig *pConfig )
 
 void CPlayAreaManager::UpdatePlayArea()
 {
+	if(m_CameraWrapper.m_piCamera==NULL){return;}
+	
 	CWorldManagerWrapper worldManager;
 	worldManager.Attach("GameSystem","WorldManager");
 
