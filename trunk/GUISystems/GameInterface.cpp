@@ -40,18 +40,14 @@ bool CGameInterface::InitWindow(IGameWindow *piParent,bool bPopup)
 	if(m_piSTFrameRate){m_piSTFrameRate->Show(m_bShowPerformanceIndicators);}
 	if(m_piSTObjectCount){m_piSTObjectCount->Show(m_bShowPerformanceIndicators);}
 	if(m_piSTEntityCount){m_piSTEntityCount->Show(m_bShowPerformanceIndicators);}
-
-	LoadScenario("Level1.ges");
-	StartGame();
 	return bResult;
 }
 
 void CGameInterface::DestroyWindow()
 {
-	CGameWindowBase::DestroyWindow();
-
 	StopGame();
-	CloseScenario();
+	CloseScenario();	
+	CGameWindowBase::DestroyWindow();
 }
 
 bool CGameInterface::LoadScenario(std::string sScenario)
@@ -160,6 +156,7 @@ void CGameInterface::CloseScenario()
 	m_EntityManagerWrapper.Detach();
 	m_PlayAreaManagerWrapper.Detach();
 	m_GameControllerWrapper.Detach();
+	m_WorldManagerWrapper.Detach();
 	
 	if(m_piGameSystem){m_piGameSystem->DestroyAllObjects();}
 	if(m_piGameSystem){m_piGameSystem->Destroy();}
@@ -244,9 +241,19 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 	IGenericCamera *piCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera();
 	if(piCamera)
 	{
+		SGameRect sParentRect;
+		SGameRect sRect;
+		
+		m_piParent->GetRealRect(&sParentRect);
 		double dPlayAreaAspectRatio=piCamera->GetAspectRatio();
-		double cx=m_rRealRect.h*dPlayAreaAspectRatio;
-		double dx=(m_rRealRect.w-cx)*0.5;
+		sRect.y=0;
+		sRect.w=sParentRect.h*dPlayAreaAspectRatio;
+		sRect.x=(sParentRect.w-sRect.w)*0.5;
+		sRect.h=sParentRect.h;
+		
+		SetReferenceSystem(eGameGUIReferenceSystem_Absolute);
+		SetRect(&sRect);
+		
 
 		double dNearPlane=0,dFarPlane=0;
 		double dViewAngle=piCamera->GetViewAngle();
@@ -256,7 +263,7 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 		vAngles=piCamera->GetAngles();
 		vPosition=piCamera->GetPosition();
 
-		piRender->SetViewport(m_rRealRect.x+dx,m_rRealRect.y,cx,m_rRealRect.h);
+		piRender->SetViewport(sRect.x,sRect.y,sRect.w,sRect.h);
 		piRender->SetPerspectiveProjection(dViewAngle,dNearPlane,100000);
 		piRender->SetCamera(vPosition,vAngles.c[YAW],vAngles.c[PITCH],vAngles.c[ROLL]);
 
@@ -274,16 +281,17 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 		m_WorldManagerWrapper.m_piWorldManager->SetupRenderingEnvironment(piRender);
 		m_EntityManagerWrapper.m_piEntityManager->RenderEntities(piRender,piCamera);
 		piRender->EndStagedRendering();
+		piRender->DeactivateDepth();
 		piRender->PopState();
-		piRender->PopOptions();
+		piRender->PopOptions();	
 	}
 	REL(piCamera);
 
+	UpdateGUI();
 }
 
 void CGameInterface::ProcessInput()
 {
-	bool bSideMovement=false;
 	bool bControlKeyPressed=false;
 	if(m_bFrozen)
 	{
@@ -374,7 +382,7 @@ void CGameInterface::UpdateGUI()
 
 	if(piPlayer)
 	{
-		IWeapon *piBombWeapon=piPlayerEntity->GetWeapon(0);
+		IWeapon *piBombWeapon=piPlayerEntity->GetWeapon(1);
 		nPoints=piPlayer->GetPoints();
 		nLivesLeft=piPlayer->GetLivesLeft();
 		nBombsLeft=piBombWeapon?piBombWeapon->GetAmmo():0;
@@ -392,6 +400,6 @@ void CGameInterface::UpdateGUI()
 	}
 	for(int x=0;x<MAX_BOMBS_TO_DISPLAY;x++)
 	{
-		if(m_piSTBombs[x]){m_piSTBombs[x]->Show(x<(nBombsLeft-1));}
+		if(m_piSTBombs[x]){m_piSTBombs[x]->Show(x<nBombsLeft);}
 	}
 }
