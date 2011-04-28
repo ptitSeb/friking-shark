@@ -7,6 +7,12 @@ class IGameInterfaceWindow: virtual public IGameWindow
 {	
 public:
 
+	virtual void StartGame()=0;
+	virtual void StopGame()=0;
+	
+	virtual bool LoadScenario(std::string sFileName)=0;
+	virtual void CloseScenario()=0;
+	
 	virtual void	Freeze(bool bFreeze)=0;
 	virtual bool	IsFrozen()=0;
 

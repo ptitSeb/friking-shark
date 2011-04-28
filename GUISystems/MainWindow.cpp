@@ -27,14 +27,6 @@ bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 		viewport.Attach("GameGUI","Viewport");
 		if(viewport.m_piViewport){viewport.m_piViewport->SetCaption("Friking Shark");}
 
-		SGameRect sRect;
-		sRect.x=0;
-		sRect.y=0;
-		sRect.w=1;
-		sRect.h=1;
-		m_eReferenceSystem=eGameGUIReferenceSystem_Relative;
-		SetRect(&sRect);
-
 		bResult=m_GUIConfigFile.Open("Scripts/GameGUI.cfg");
 
 		if(bResult)
@@ -79,9 +71,10 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 			else if(result==eMainMenuAction_NewGame)
 			{
 				m_eStage=eInterfaceStage_Playing;
-
 				m_piGUIManager->ShowMouseCursor(false);
 				m_piSTBackground->Show(false);
+				m_piGameInterface->LoadScenario("Level1.ges");
+				m_piGameInterface->StartGame();
 				m_piGameInterface->Show(true);
 			}
 			m_piGUIManager->SetFocus(this);
@@ -94,6 +87,8 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 			m_piGameInterface->Freeze(false);
 			if(result==eGameMenuAction_EndGame)
 			{
+				m_piGameInterface->StopGame();
+				m_piGameInterface->CloseScenario();
 				m_piGameInterface->Show(false);
 				m_piSTBackground->Show(true);
 				m_eStage=eInterfaceStage_MainMenu;

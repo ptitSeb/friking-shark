@@ -16,13 +16,11 @@ INCLUDES = -I. \
 
 SOURCES = GUISystems.cpp \
 GameInterface.cpp \
-BackgroundWindow.cpp \
 MainWindow.cpp \
 ConfirmationDialog.cpp \
 GameMenu.cpp \
 GameSimpleDialog.cpp \
 MainMenu.cpp \
-ScenarioProgressBar.cpp \
 stdafx.cpp
 
 
