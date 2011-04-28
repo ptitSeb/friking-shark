@@ -244,6 +244,7 @@ void COpenGLFont::RenderText(double dFontHeight,double x,double y,const char *pT
 		double dSizeFactor=dFontHeight/(double)m_dwTextureHeight;
 
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
+		glActiveTexture(GL_TEXTURE0_ARB);
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_BLEND);
 		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
