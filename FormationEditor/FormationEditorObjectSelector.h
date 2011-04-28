@@ -1,6 +1,6 @@
 #pragma once
 
-#define DEFAULT_OBJECT_SELECTOR_BUTTON_SIZE		128.0
+#define DEFAULT_OBJECT_SELECTOR_BUTTON_SIZE		64.0
 
 class IFormationEditorObjectSelector: virtual public ISystemUnknown
 {

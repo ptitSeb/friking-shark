@@ -92,6 +92,12 @@ public:
 	IGameGUIButton *m_piBTShowFilePanel;
 	IGameGUIButton *m_piBTShowPlayAreaProperties;
 
+	// Tools
+	IGameGUIButton *m_piBTFlipV;
+	IGameGUIButton *m_piBTFlipH;
+	IGameGUIButton *m_piBTRotateRight;
+	IGameGUIButton *m_piBTRotateLeft;
+	
 	// Entity
 
 	IGameGUIButton *m_piBTNewEntity;
@@ -181,7 +187,13 @@ public:
 		CHILD_MAP_ENTRY_EX("Options",m_piBTShowOptionsPanel,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Entities",m_piBTShowEntitiesPanel,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Formation",m_piBTShowFilePanel,IGameGUIButtonEvents);
-
+		
+		
+		CHILD_MAP_ENTRY_EX("FlipV",m_piBTFlipV,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("FlipH",m_piBTFlipH,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("RotateRight",m_piBTRotateRight,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("RotateLeft",m_piBTRotateLeft,IGameGUIButtonEvents);
+		
 		CHILD_MAP_ENTRY("EntitiesPanel",m_piGREntitiesPanel);
 		CHILD_MAP_ENTRY("EntityList",m_piGREntityList);
 		CHILD_MAP_ENTRY_EX("NewEntity",m_piBTNewEntity,IGameGUIButtonEvents);
