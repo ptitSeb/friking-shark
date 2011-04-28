@@ -392,7 +392,8 @@ SOpenGLSystemFont *COpenGLFont::GetSystemFontForHeight(unsigned int nHeight)
 		if(m_pXDisplay!=NULL)
 		{
 			char sFontName[1024];
-			sprintf(sFontName,"-*-%s-%s-r-normal--%d-*-*-*-*-*-*-*",m_sSystemFontName.c_str(),m_sSystemFontWeight.c_str(),nHeight);
+			int nLen=sprintf(sFontName,"-*-%s-%s-r-normal--%d-*-*-*-*-*-*-*",m_sSystemFontName.c_str(),m_sSystemFontWeight.c_str(),nHeight);
+			for(int x=0;x<nLen;x++){if(sFontName[x]>='A' && sFontName[x]<='Z'){sFontName[x]+='a'-'A';}
 			pFont->pDisplay=m_pXDisplay;
 			pFont->pFontStruct=XLoadQueryFont(m_pXDisplay,sFontName);
 			if(pFont->pFontStruct)
