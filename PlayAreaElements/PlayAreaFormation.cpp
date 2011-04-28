@@ -7,12 +7,17 @@ CPlayAreaFormation::CPlayAreaFormation()
 {
 	m_piFormation=NULL;
 	m_bAlreadyOverPoint=false;
+	m_bUsingAlternative=false;
+	m_eConditionType=ePlayerStateCondition_None;
+	m_nConditionValue=0;
 	g_FrameManagerSingleton.AddRef();
+	g_EntityManagerWrapper.AddRef();
 }
 
 CPlayAreaFormation::~CPlayAreaFormation()
 {
 	g_FrameManagerSingleton.Release();
+	g_EntityManagerWrapper.Release();
 }
 
 bool CPlayAreaFormation::Init(std::string sClass,std::string sName,ISystem *piSystem)
@@ -51,11 +56,27 @@ bool CPlayAreaFormation::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pArea
 void CPlayAreaFormation::Activate(unsigned int dwCurrentTime)
 {
 	CPlayAreaElementBase::Activate(dwCurrentTime);
-	if(m_FormationType.m_piFormationType)
+	m_bUsingAlternative=false;
+	if(m_eConditionType==ePlayerStateCondition_MaxPrimaryWeaponLevel)
+	{
+		IEntity *piPlayerEntity=NULL;
+		IWeapon *piWeapon=NULL;
+		if(g_EntityManagerWrapper.m_piInterface){piPlayerEntity=g_EntityManagerWrapper.m_piInterface->FindEntity("Player");}
+		if(piPlayerEntity){piWeapon=piPlayerEntity->GetWeapon(0);}
+		if(piWeapon){m_bUsingAlternative=piWeapon->GetCurrentLevel()<=m_nConditionValue;}
+	}
+
+	if(m_bUsingAlternative && m_AlternativeFormationType.m_piFormationType)
+	{
+		m_piFormation=m_AlternativeFormationType.m_piFormationType->CreateInstance(m_vPosition,dwCurrentTime);
+		SUBSCRIBE_TO_CAST(m_piFormation,IFormationEvents);
+	}
+	else if(m_FormationType.m_piFormationType)
 	{
 		m_piFormation=m_FormationType.m_piFormationType->CreateInstance(m_vPosition,dwCurrentTime);
 		SUBSCRIBE_TO_CAST(m_piFormation,IFormationEvents);
 	}
+
 }
 
 void CPlayAreaFormation::Deactivate()
@@ -73,10 +94,15 @@ void CPlayAreaFormation::Reset()
 
 void CPlayAreaFormation::OnFormationKilled(ISystemObject *piFormation,IEntity *piLastEntity)
 {
-	if(m_BonusType.m_piEntityType)
+	if(m_bUsingAlternative && m_AlternativeBonusType.m_piEntityType)
+	{
+		m_AlternativeBonusType.m_piEntityType->CreateInstance(piLastEntity,g_FrameManagerSingleton.m_piInterface->GetCurrentTime());
+	}
+	else if(m_BonusType.m_piEntityType)
 	{
 		m_BonusType.m_piEntityType->CreateInstance(piLastEntity,g_FrameManagerSingleton.m_piInterface->GetCurrentTime());
 	}
+
 	Deactivate();
 }
 
@@ -103,6 +129,12 @@ CTraceInfo CPlayAreaFormation::DesignGetTrace( const CVector &p1,const CVector &
 void CPlayAreaFormation::SetPosition(CVector &vPosition){m_vPosition=vPosition;}
 void CPlayAreaFormation::SetFormationType(IFormationType *piFormationType){m_FormationType.Attach(piFormationType);}
 void CPlayAreaFormation::SetBonusType(IEntityType *piBonusType){m_BonusType.Attach(piBonusType);}
+void CPlayAreaFormation::SetAlternativeFormationType(IFormationType *piFormationType){m_AlternativeFormationType.Attach(piFormationType);}
+void CPlayAreaFormation::SetAlternativeBonusType(IEntityType *piBonusType){m_AlternativeBonusType.Attach(piBonusType);}
+void CPlayAreaFormation::SetCondition(EPlayerStateCondition eConditionType,unsigned int nValue){m_eConditionType=eConditionType;m_nConditionValue=nValue;}
 CVector CPlayAreaFormation::GetPosition(){return m_vPosition;}
 void	CPlayAreaFormation::GetFormationType(IFormationType **ppiFormationType){if(ppiFormationType){*ppiFormationType=ADD(m_FormationType.m_piFormationType);}}
 void	CPlayAreaFormation::GetBonusType(IEntityType **ppiBonusType){if(ppiBonusType){*ppiBonusType=ADD(m_BonusType.m_piEntityType);}}
+void	CPlayAreaFormation::GetAlternativeFormationType(IFormationType **ppiFormationType){if(ppiFormationType){*ppiFormationType=ADD(m_AlternativeFormationType.m_piFormationType);}}
+void	CPlayAreaFormation::GetAlternativeBonusType(IEntityType **ppiBonusType){if(ppiBonusType){*ppiBonusType=ADD(m_AlternativeBonusType.m_piEntityType);}}
+void    CPlayAreaFormation::GetCondition(EPlayerStateCondition *peConditionType,unsigned int *pnValue){if(peConditionType){*peConditionType=m_eConditionType;}if(pnValue){*pnValue=m_nConditionValue;}}

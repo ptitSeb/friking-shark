@@ -470,15 +470,30 @@ struct IPlayAreaEntity:virtual public IPlayAreaElement
 };
 	
 
+enum EPlayerStateCondition
+{
+	ePlayerStateCondition_None,
+	ePlayerStateCondition_MaxPrimaryWeaponLevel,
+	ePlayerStateCondition_Count,
+};
+
+DECLARE_SERIALIZABLE_ENUMERATION(EPlayerStateCondition);
+
 struct IPlayAreaFormation:virtual public IPlayAreaElement
 {
 	virtual void SetPosition(CVector &vPosition)=0;
 	virtual void SetFormationType(IFormationType *piFormationType)=0;
 	virtual void SetBonusType(IEntityType *piEntityType)=0;
+	virtual void SetAlternativeFormationType(IFormationType *piFormationType)=0;
+	virtual void SetAlternativeBonusType(IEntityType *piEntityType)=0;
+	virtual void SetCondition(EPlayerStateCondition eConditionType,unsigned int nValue)=0;
 
 	virtual CVector GetPosition()=0;
 	virtual void	GetFormationType(IFormationType **piFormationType)=0;
 	virtual void	GetBonusType(IEntityType **ppiEntityType)=0;
+	virtual void	GetAlternativeFormationType(IFormationType **piFormationType)=0;
+	virtual void	GetAlternativeBonusType(IEntityType **ppiEntityType)=0;
+	virtual void    GetCondition(EPlayerStateCondition *peConditionType,unsigned int *pnValue)=0;
 };
 
 
@@ -788,8 +803,9 @@ struct SEntityTypeConfig
 	unsigned int 	nAlignment;
 	double			dMaxHealth;
 	double			dMaxVelocity;
+	unsigned int    nPoints;
 
-	SEntityTypeConfig(){dMaxHealth=1;dMaxVelocity=0;nDamageType=DAMAGE_TYPE_NONE;nMovementType=PHYSIC_MOVE_TYPE_NONE;nCollisionType=PHYSIC_COLLISION_TYPE_STUCK;nBoundsType=PHYSIC_BOUNDS_TYPE_NONE;nAlignment=ENTITY_ALIGNMENT_NEUTRAL;}
+	SEntityTypeConfig(){nPoints=0;dMaxHealth=1;dMaxVelocity=0;nDamageType=DAMAGE_TYPE_NONE;nMovementType=PHYSIC_MOVE_TYPE_NONE;nCollisionType=PHYSIC_COLLISION_TYPE_STUCK;nBoundsType=PHYSIC_BOUNDS_TYPE_NONE;nAlignment=ENTITY_ALIGNMENT_NEUTRAL;}
 };
 
 struct IAttributeManagement:virtual public ISystemUnknown

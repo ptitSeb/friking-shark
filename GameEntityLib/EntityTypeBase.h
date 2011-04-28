@@ -54,7 +54,9 @@ protected:
 	unsigned int m_nAlignment;
 	double		 m_dMaxHealth;
 	double		 m_dMaxVelocity;
-	
+	unsigned int	m_nPoints;
+
+
 	vector<SEntityState> m_vStates;
 	
     virtual void	InitializeEntity(CEntityBase *piEntity,unsigned int dwCurrentTime);
@@ -84,6 +86,7 @@ public:
 		PROP_FLAGS(m_nAlignment ,"Alignment",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_dMaxHealth ,"MaxHealth",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_dMaxVelocity,"MaxVelocity",MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_FLAGS(m_nPoints,"Points",MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP();
 
 	BEGIN_ENTITY_STATE_MAP()

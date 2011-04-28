@@ -33,7 +33,7 @@ protected:
 
     // Miembros para el control de tiempos
 
-    unsigned int	m_dwCreationTime;
+	unsigned int	m_dwCreationTime;
     unsigned int	m_dwNextProcessFrame;
 
     // Miembros para la aplicacion de daños
@@ -69,7 +69,7 @@ protected:
     IRoute  *m_piRoute;
 
     IEntity *m_piTarget;
-
+	
     void FireWeapon(unsigned int dwWeaponSlot,unsigned int dwCurrentTime);
     void OnKilledInternal(bool bRemove);
 	
@@ -142,6 +142,8 @@ public:
 	
     IEntity *GetTarget();
 	void	 SetTarget(IEntity *piTarget);
+
+	void GivePoints(unsigned int nPoints);
 
            CEntityBase();
     virtual ~CEntityBase();

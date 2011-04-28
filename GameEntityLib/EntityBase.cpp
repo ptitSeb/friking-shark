@@ -13,7 +13,7 @@ CEntityBase::CEntityBase()
     g_PhysicManagerSingleton.AddRef();
     g_FrameManagerSingleton.AddRef();
 
-    m_dwCreationTime=g_FrameManagerSingleton.m_piInterface->GetCurrentTime();
+	m_dwCreationTime=g_FrameManagerSingleton.m_piInterface->GetCurrentTime();
     m_dwNextProcessFrame=0;
     m_bRemoved=false;
     m_dwDamageType=DAMAGE_TYPE_NONE;
@@ -72,6 +72,10 @@ void CEntityBase::Kill()
 
 void         CEntityBase::OnKilledInternal(bool bRemove)
 {
+	SEntityTypeConfig config;
+	m_pTypeBase->GetEntityTypeConfig(&config);
+	if(config.nPoints){GivePoints(config.nPoints);}
+
 	if(m_vChildren.size())
 	{
 		vector<SChildEntity> sTemp=m_vChildren;
@@ -349,4 +353,14 @@ void CEntityBase::GetChildLocation(IEntity *piEntity,CVector &vPosition,CVector 
 			break;
 		}
 	}
+}
+
+void CEntityBase::GivePoints( unsigned int nPoints )
+{
+	IPlayer *piPlayer=NULL;
+	IEntity *piPlayerEntity=NULL;
+	IEntityManager *piManager=GetEntityManager();
+	if(piManager){piPlayerEntity=piManager->FindEntity("Player");}
+	if(piPlayerEntity){piPlayer=dynamic_cast<IPlayer*>(piPlayerEntity);}
+	if(piPlayer){piPlayer->AddPoints(nPoints);}
 }

@@ -7,4 +7,4 @@
 #pragma comment (lib, "GameEntityLib.lib")
 #endif
 
-
+CSingletonWrapper<IEntityManager> g_EntityManagerWrapper("GameSystem","EntityManager");
