@@ -51,10 +51,10 @@ Puede mostrar dos tipos de fuentes:
 
 class COpenGLFont : virtual public CSystemObjectBase,virtual public IGenericFont
 {
-	unsigned 	 m_dwTextureWidth;
-	unsigned 	 m_dwTextureHeight;
-	unsigned char		*m_pTextureBuffer;
-	unsigned 	 m_nTextureIndex;
+	CGenericTextureWrapper m_Texture;
+	
+	unsigned 	 		m_dwTextureWidth;
+	unsigned 	 		m_dwTextureHeight;
 
 	SOpenGLTextureFontCharacterData m_vTextureFontCharacters[256];
 	std::map<unsigned int,SOpenGLSystemFont*> m_mSystemFontHeights;
@@ -62,6 +62,7 @@ class COpenGLFont : virtual public CSystemObjectBase,virtual public IGenericFont
 	eGenericFontType m_eFontType;
 
 	std::string		m_sTextureFontFileName;
+	std::string		m_sTextureFontAlphaFileName;
 	std::string		m_sTextureFontCharacterSet;
 	double			m_dTextureFontCharacterSeparation;
 	double			m_dTextureFontSpaceSize;
@@ -83,6 +84,7 @@ public:
 	BEGIN_PROP_MAP(COpenGLFont)
 		PROP_FLAGS(m_eFontType,"Tipo",MRPF_NORMAL)
 		PROP_FLAGS(m_sTextureFontFileName,"Archivo",MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_FLAGS(m_sTextureFontAlphaFileName,"ArchivoAlpha",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_sTextureFontCharacterSet,"JuegoDeCaracteres",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_dTextureFontCharacterSeparation,"SeparacionCaracteres",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_dTextureFontSpaceSize,"TamanoEspacio",MRPF_NORMAL|MRPF_OPTIONAL)
@@ -98,9 +100,9 @@ public:
 	void Destroy();
 
 	void CalcTextSize(double dFontHeight,const char *pText,double *pdWidth,double *pdHeight);
-	void RenderText(double dFontHeight,double x,double y,const char *pText);
-	void RenderText(double dFontHeight,CVector vPosition,const char *pText);
-	void RenderTextEx(double dFontHeight,double x,double y,double w,double h,const char *pText,eTextAlignment dwHorzAlign,eTextAlignment dwVertAlign);
+	void RenderText(IGenericRender *piRender,double dFontHeight,double x,double y,const char *pText);
+	void RenderText(IGenericRender *piRender,double dFontHeight,CVector vPosition,const char *pText);
+	void RenderTextEx(IGenericRender *piRender,double dFontHeight,double x,double y,double w,double h,const char *pText,eTextAlignment dwHorzAlign,eTextAlignment dwVertAlign);
 
 	COpenGLFont(void);
 	~COpenGLFont(void);

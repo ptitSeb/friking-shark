@@ -149,6 +149,10 @@ void COpenGLRender::UpdateProjectionMatrix()
 	}	
 	glMatrixMode(GL_MODELVIEW);
 }
+CVector COpenGLRender::GetCameraPosition(){return m_vCameraPos;}
+CVector COpenGLRender::GetCameraForward(){return m_vCameraForward;}
+CVector COpenGLRender::GetCameraRight(){return m_vCameraRight;}
+CVector COpenGLRender::GetCameraUp(){return m_vCameraUp;}
 
 void COpenGLRender::SetCamera(const CVector &vPosition,double dYaw, double dPitch, double dRoll)
 {
@@ -1498,7 +1502,7 @@ void COpenGLRender::RenderModel(const CVector &vOrigin,const CVector &vOrientati
 	}
 }
 
-void COpenGLRender::RenderParticle(IGenericTexture *piTexture,const CVector &vOrigin,double dAngle,double s1,double s2,const CVector &vColor,double dAlpha)
+void COpenGLRender::RenderParticle(IGenericTexture *piTexture,const CVector &vOrigin,double dAngle,double s1,double s2,const CVector &vColor,double dAlpha,double dTextX,double dTextY,double dTextW,double dTextH)
 {
 	if(m_bStagedRendering)
 	{
@@ -1549,10 +1553,10 @@ void COpenGLRender::RenderParticle(IGenericTexture *piTexture,const CVector &vOr
 			*pColorBuffer++=(float)vColor.c[2];
 			*pColorBuffer++=(float)dAlpha;
 		}
-		*pTexBuffer++=1;*pTexBuffer++=0;
-		*pTexBuffer++=0;*pTexBuffer++=0;
-		*pTexBuffer++=0;*pTexBuffer++=1;
-		*pTexBuffer++=1;*pTexBuffer++=1;
+		*pTexBuffer++=dTextX+dTextW;*pTexBuffer++=dTextY+dTextH;
+		*pTexBuffer++=dTextX;*pTexBuffer++=dTextY+dTextH;
+		*pTexBuffer++=dTextX;*pTexBuffer++=dTextY;
+		*pTexBuffer++=dTextX+dTextW;*pTexBuffer++=dTextY;
 		pBuffer->nUsedElements++;
 	}
 	else
@@ -1568,13 +1572,13 @@ void COpenGLRender::RenderParticle(IGenericTexture *piTexture,const CVector &vOr
 		CVector vAxis1=m_vCameraRight;
 		CVector vAxis2=m_vCameraUp;
 		glBegin(GL_QUADS);
-		glTexCoord2f(1,0);
+		glTexCoord2f(dTextX+dTextW,dTextY+dTextH);
 		glVertex3dv((Origin+vAxis1*(s1/2.0)+vAxis2*(s2/2.0)).c);
-		glTexCoord2f(0,0);
+		glTexCoord2f(dTextX,dTextY+dTextH);
 		glVertex3dv((Origin-vAxis1*(s1/2.0)+vAxis2*(s2/2.0)).c);
-		glTexCoord2f(0,1);
+		glTexCoord2f(dTextX,dTextY);
 		glVertex3dv((Origin-vAxis1*(s1/2.0)-vAxis2*(s2/2.0)).c);
-		glTexCoord2f(1,1);
+		glTexCoord2f(dTextX+dTextW,dTextY);
 		glVertex3dv((Origin+vAxis1*(s1/2.0)-vAxis2*(s2/2.0)).c);
 		glEnd();
 		glPopMatrix();

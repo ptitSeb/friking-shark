@@ -9,6 +9,7 @@ struct IAnimationObject;
 struct IAnimationObjectType;
 struct IParticleSystemType;
 struct ISoundType;
+struct IGenericFont;
 
 #define OBJECT_INVALID (unsigned int)(-1)
 
@@ -64,6 +65,16 @@ struct SSoundAnimationObjectTypeConfig
 	unsigned int nVolume;
 
 	SSoundAnimationObjectTypeConfig(){nStartTime=0;nEndTime=0;nVolume=100;bLoop=false;}
+};
+
+struct STextAnimationObjectTypeConfig
+{
+	unsigned int nStartTime;
+	unsigned int nEndTime;
+	std::string  sText;
+	double       dFontSize;
+	
+	STextAnimationObjectTypeConfig(){nStartTime=0;nEndTime=0;dFontSize=0;}
 };
 
 struct IAnimationType:virtual public ISystemUnknown,virtual public IDesignObject
@@ -181,6 +192,14 @@ struct ISoundAnimationObjectTypeDesign:virtual public IAnimationObjectType
 	virtual void		 SetConfig(SSoundAnimationObjectTypeConfig *pConfig)=0;
 	virtual void		 SetSound(ISoundType *piSoundType)=0;
 	virtual void		 GetSound(ISoundType **ppiSoundType)=0;
+};
+
+struct ITextAnimationObjectTypeDesign:virtual public IAnimationObjectType
+{
+	virtual void		 GetConfig(STextAnimationObjectTypeConfig *pConfig)=0;
+	virtual void		 SetConfig(STextAnimationObjectTypeConfig *pConfig)=0;
+	virtual void		 SetFont(IGenericFont *piFont)=0;
+	virtual void		 GetFont(IGenericFont **ppiFont)=0;
 };
 
 #endif

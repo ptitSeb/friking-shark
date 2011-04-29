@@ -198,7 +198,8 @@ public:
 	virtual CVector		GetColorKey()=0;
 
 	virtual CVector		GetPixelColor(unsigned long x, unsigned long y)=0;
-
+	virtual double		GetPixelAlpha(unsigned long x, unsigned long y)=0;
+	
 	virtual bool		Load(std::string sFileName,CVector *pColorKey=NULL,std::string *pAlphaFile=NULL,float fOpacity=1.0)=0;
 	virtual bool		Create( unsigned nWidth,unsigned nHeight )=0;
 	virtual bool		CreateDepth( unsigned nWidth,unsigned nHeight )=0;
@@ -326,9 +327,9 @@ public:
 	virtual eGenericFontType GetType()=0;
 
 	virtual void CalcTextSize(double dFontHeight,const char *pText,double *pdWidth,double *pdHeight)=0;
-	virtual void RenderText(double dFontHeight,double x,double y,const char *pText)=0;
-	virtual void RenderText(double dFontHeight,CVector vPosition,const char *pText)=0;
-	virtual void RenderTextEx(double dFontHeight,double x,double y,double w,double h,const char *pText,eTextAlignment dwHorzAlign,eTextAlignment dwVertAlign)=0;
+	virtual void RenderText(IGenericRender *piRender,double dFontHeight,double x,double y,const char *pText)=0;
+	virtual void RenderText(IGenericRender *piRender,double dFontHeight,CVector vPosition,const char *pText)=0;
+	virtual void RenderTextEx(IGenericRender *piRender,double dFontHeight,double x,double y,double w,double h,const char *pText,eTextAlignment dwHorzAlign,eTextAlignment dwVertAlign)=0;
 };
 
 struct IGenericShader:virtual public ISystemUnknown
@@ -371,6 +372,11 @@ public:
 	virtual void SetPerspectiveProjection(double dViewAngle,double dNearPlane,double dFarPlane)=0;
 	virtual void SetViewport(double x,double y,double cx, double cy)=0;
 	virtual void SetCamera(const CVector &vPosition,double dYaw, double dPitch, double dRoll)=0;
+        virtual CVector GetCameraPosition()=0;
+        virtual CVector GetCameraForward()=0;
+        virtual CVector GetCameraRight()=0;
+        virtual CVector GetCameraUp()=0;
+
 
 	virtual void ActivateClipping(bool bActivate)=0;
 	virtual void SetClipRect(double x,double y,double cx, double cy)=0;
@@ -384,7 +390,7 @@ public:
 
 	virtual void RenderPoint(const CVector &vPosition,double dSize,const CVector &vColor,double dAlpha)=0;
 	virtual void RenderTexture(const CVector &vOrigin,double s1,double s2)=0;
-	virtual void RenderParticle(IGenericTexture *piTexture,const CVector &vOrigin,double dAngle,double s1,double s2,const CVector &vColor,double dAlpha)=0;
+	virtual void RenderParticle(IGenericTexture *piTexture,const CVector &vOrigin,double dAngle,double s1,double s2,const CVector &vColor,double dAlpha,double dTextX,double dTextY,double dTextW,double dTextH)=0;
 	virtual void RenderTextureRect(double dPosx,double dPosy,double dWidth,double dHeight,double dTexturex,double dTexturey,double dTextureWidth,double dTextureHeight)=0;
 	virtual void RenderModel(const CVector &vOrigin,const CVector &vOrientation,IGenericModel *piModel,unsigned int nAnimation=0,unsigned int nFrame=0)=0;
 	virtual void RenderBBox(const CVector &vMins,const CVector &vMaxs,const CVector &vColor,unsigned long nStipple=0x8888)=0;

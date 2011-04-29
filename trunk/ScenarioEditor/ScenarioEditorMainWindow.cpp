@@ -412,7 +412,7 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 					vPos+=m_Camera.m_piCamera->GetUpVector()*piType->DesignGetRadius();
 					vPos-=m_Camera.m_piCamera->GetRightVector()*piType->DesignGetRadius();
 				}
-				if(piFont){piFont->RenderText(dFontSize,vPos,sDescr);}
+				if(piFont){piFont->RenderText(piRender,dFontSize,vPos,sDescr);}
 				REL(piType);
 			}
 			REL(piFont);		
@@ -721,9 +721,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		unsigned long nSelectedFormationType=0;
 		std::vector<IDesignObject *> vFormationTypes;
 		GetSystemObjects("FormationTypes",&vFormationTypes);
-		SPlayAreaConfig sPlayAreaConfig;
-		m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sPlayAreaConfig);
-		if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vFormationTypes,&nSelectedFormationType,96.0,(96.0)/sPlayAreaConfig.dCameraAspectRatio))
+		if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vFormationTypes,&nSelectedFormationType,96.0,96.0))
 		{
 			ISystemObject *piObject=QI(ISystemObject,vFormationTypes[nSelectedFormationType]);
 			IFormationType *piFormationType=QI(IFormationType,vFormationTypes[nSelectedFormationType]);
@@ -1233,10 +1231,13 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		}
 		else if(piControl==m_piBTFormationSample)
 		{
+			SPlayAreaConfig sPlayAreaConfig;
+			m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sPlayAreaConfig);
+			
 			unsigned long nSelectedFormationType=0;
 			std::vector<IDesignObject *> vFormationTypes;
 			GetSystemObjects("FormationTypes",&vFormationTypes);
-			if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vFormationTypes,&nSelectedFormationType))
+			if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vFormationTypes,&nSelectedFormationType,96.0,96.0))
 			{
 				IFormationType *piFormationType=QI(IFormationType,vFormationTypes[nSelectedFormationType]);
 				pFormation->m_piPlayAreaFormation->SetFormationType(piFormationType);
@@ -1266,7 +1267,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			unsigned long nSelectedFormationType=0;
 			std::vector<IDesignObject *> vFormationTypes;
 			GetSystemObjects("FormationTypes",&vFormationTypes);
-			if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vFormationTypes,&nSelectedFormationType))
+			if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vFormationTypes,&nSelectedFormationType,96.0,96.0))
 			{
 				IFormationType *piFormationType=QI(IFormationType,vFormationTypes[nSelectedFormationType]);
 				pFormation->m_piPlayAreaFormation->SetAlternativeFormationType(piFormationType);
@@ -1904,12 +1905,11 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 		m_vFormationControls[m_nSelectedFormation]->m_piPlayAreaFormation->GetCondition(NULL,&nConditionValue);
 		
 		if(nConditionValue)
-		{sprintf(A,"Weapon <= %d",nConditionValue);}
+		{sprintf(A,"Max.Weapon = %d",nConditionValue+1);}
 		else
-		{sprintf(A,"Never");}
+		{sprintf(A,"No condition");}
 
 		m_piSTFormationCondition->SetText(A);
-		m_piSTFormationName->SetText(m_vFormationControls[m_nSelectedFormation]->m_piObject->GetName());
 		m_piSTFormationObjectLabel->SetObject(m_vFormationControls[m_nSelectedFormation]->m_piDesignObject);
 		m_piSTFormationBonusObjectLabel->SetObject(m_vFormationControls[m_nSelectedFormation]->m_piBonusDesignObject);
 		m_piSTFormationAlternativeObjectLabel->SetObject(m_vFormationControls[m_nSelectedFormation]->m_piAlternativeDesignObject);

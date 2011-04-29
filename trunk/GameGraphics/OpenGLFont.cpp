@@ -31,8 +31,6 @@ COpenGLFont::COpenGLFont(void)
 {
 	m_dwTextureWidth=0;
 	m_dwTextureHeight=0;
-	m_pTextureBuffer=NULL;
-	m_nTextureIndex=0;
 
 	m_eFontType=eGenericFontType_UNKNOWN;
 	m_dTextureFontCharacterSeparation=0;
@@ -46,11 +44,6 @@ COpenGLFont::COpenGLFont(void)
 
 COpenGLFont::~COpenGLFont(void)
 {
-	if(m_pTextureBuffer)
-	{
-		delete [] m_pTextureBuffer;
-		m_pTextureBuffer=NULL;
-	}
 }
 eGenericFontType COpenGLFont::GetType(){return m_eFontType;}
 
@@ -84,34 +77,16 @@ void COpenGLFont::Destroy()
 
 bool COpenGLFont::LoadTextureFont()
 {
-	unsigned char *pBuffer=NULL;
 	unsigned dwWidth=0,dwHeight=0;
 	bool bResult=true;
 
-	if(LoadImageHelper(m_sTextureFontFileName,GL_RGB,&dwWidth,&dwHeight,&pBuffer))
+	bResult=m_Texture.Create(m_piSystem->GetName(),"Texture","");
+	if(bResult){bResult=m_Texture.m_piTexture->Load(m_sTextureFontFileName,NULL,&m_sTextureFontAlphaFileName,1.0);}
+	if(bResult){m_Texture.m_piTexture->GetSize(&dwWidth,&dwHeight);}
+	if(bResult)
 	{
 		m_dwTextureWidth=dwWidth;
-		m_dwTextureHeight=dwHeight/2;
-		m_pTextureBuffer=new unsigned char[m_dwTextureWidth*m_dwTextureHeight*4];
-
-		// Se monta la textura final con la mascara alpha de la mitad inferior aplicado a la mitad superior.
-
-		unsigned char *pTempFinal=m_pTextureBuffer;
-		unsigned char *pTempBuffer=pBuffer+(dwWidth*(dwHeight/2))*3; // mitad superior de la textura
-		unsigned char *pTempAlpha=pBuffer; // mitad inferior de la textura
-
-		unsigned x,y;
-		for(y=0;y<m_dwTextureHeight;y++)
-		{
-			for(x=0;x<m_dwTextureWidth;x++,pTempBuffer+=3,pTempAlpha+=3,pTempFinal+=4)
-			{
-				pTempFinal[0]=pTempBuffer[0];
-				pTempFinal[1]=pTempBuffer[1];
-				pTempFinal[2]=pTempBuffer[2];
-				pTempFinal[3] = (unsigned char)((((unsigned int)pTempAlpha[0])+((unsigned int)pTempAlpha[1])+((unsigned int)pTempAlpha[2]))/3);
-			}
-		}
-
+		m_dwTextureHeight=dwHeight;
 		// Se parsean los caracteres de la textura basandonos en el valor del alpha.
 
 		unsigned  nCharacterIndex=0;
@@ -120,13 +95,12 @@ bool COpenGLFont::LoadTextureFont()
 
 		bool bLookingForCharacterStart=true; // si es false se esta buscando el final del caracter.
 
-		for(x=0;x<m_dwTextureWidth;x++)
+		for(unsigned int x=0;x<m_dwTextureWidth;x++)
 		{
 			bool bPixelFound=false;
-			for(y=0;y<m_dwTextureHeight;y++)
+			for(unsigned int y=0;y<m_dwTextureHeight;y++)
 			{
-				int nPos=(x+y*m_dwTextureWidth)*4;
-				if(m_pTextureBuffer[nPos+3]>m_dTextureFontAlphaTolerance)
+				if(m_Texture.m_piTexture->GetPixelAlpha(x,y)>m_dTextureFontAlphaTolerance)
 				{
 					bPixelFound=true;
 					break;
@@ -164,23 +138,6 @@ bool COpenGLFont::LoadTextureFont()
 	m_vTextureFontCharacters[' '].dPixelH=m_dwTextureHeight;
 	m_vTextureFontCharacters[' '].bPresent=true;
 
-	if(pBuffer){delete [] pBuffer;pBuffer=NULL;}
-
-	if(bResult)
-	{
-		glGenTextures(1,&m_nTextureIndex);
-
-		if(m_nTextureIndex)
-		{
-			glBindTexture(GL_TEXTURE_2D,m_nTextureIndex);
-			glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			gluBuild2DMipmaps(GL_TEXTURE_2D,4,m_dwTextureWidth,m_dwTextureHeight,GL_RGBA,GL_UNSIGNED_BYTE,m_pTextureBuffer);
-		}
-	}
 	if(!bResult){RTTRACE("COpenGLFont::Unserialize -> Failed to create texture font from file '%s'",m_sTextureFontFileName.c_str());}
 	return bResult;
 }
@@ -237,50 +194,35 @@ void COpenGLFont::CalcTextSize(double dFontHeight,const char *pText,double *pdWi
 		}
 	}
 }
-void COpenGLFont::RenderText(double dFontHeight,double x,double y,const char *pText)
+void COpenGLFont::RenderText(IGenericRender *piRender,double dFontHeight,double x,double y,const char *pText)
 {
 	if(m_eFontType==eGenericFontType_Texture)
 	{
 		double dSizeFactor=dFontHeight/(double)m_dwTextureHeight;
 
-		glPushAttrib(GL_ALL_ATTRIB_BITS);
-		glActiveTexture(GL_TEXTURE0_ARB);
-		glEnable(GL_TEXTURE_2D);
-		glEnable(GL_BLEND);
-		glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glBindTexture(GL_TEXTURE_2D,m_nTextureIndex);
-
+		piRender->PushState();
+		piRender->ActivateBlending();
 		CVector vOrigin(x,y+dFontHeight,0);
-		CVector vOrientation(CVector(1,0,0));
-
-		glBegin(GL_QUADS);
+		
+		
 		int x=0;
 		while(pText[x]!=0)
 		{
-			CVector vAxis2=vOrientation^AxisPosZ;
 			SOpenGLTextureFontCharacterData *pCharacterData=&m_vTextureFontCharacters[(int)pText[x]];
 
 			if(pText[x]!=' ')
 			{
 				double s1=pCharacterData->dPixelW*dSizeFactor,s2=pCharacterData->dPixelH*dSizeFactor;
-
-				glTexCoord2d(pCharacterData->dTextCoordX+pCharacterData->dTextCoordW,pCharacterData->dTextCoordY+pCharacterData->dTextCoordH);
-				glVertex3dv((vOrigin+vOrientation*s1).c);
-				glTexCoord2d(pCharacterData->dTextCoordX,pCharacterData->dTextCoordY+pCharacterData->dTextCoordH);
-				glVertex3dv(vOrigin.c);
-				glTexCoord2d(pCharacterData->dTextCoordX,pCharacterData->dTextCoordY);
-				glVertex3dv((vOrigin+vAxis2*s2).c);
-				glTexCoord2d(pCharacterData->dTextCoordX+pCharacterData->dTextCoordW,pCharacterData->dTextCoordY);
-				glVertex3dv((vOrigin+vOrientation*s1+vAxis2*s2).c);
+                CVector vCharCenter=vOrigin+piRender->GetCameraRight()*s1*0.5-piRender->GetCameraUp()*s2*0.5;      
+				piRender->RenderParticle(m_Texture.m_piTexture,vCharCenter,0,s1,s2,CVector(1,1,1),1.0,pCharacterData->dTextCoordX,pCharacterData->dTextCoordY,pCharacterData->dTextCoordW,pCharacterData->dTextCoordH);
 			}
 
-			vOrigin.c[0]+=(pCharacterData->dPixelW+m_dTextureFontCharacterSeparation)*dSizeFactor;
+			vOrigin+=piRender->GetCameraRight()*((pCharacterData->dPixelW+m_dTextureFontCharacterSeparation)*dSizeFactor);
 			x++;
 		}
-		glEnd();
-
-		glDisable(GL_TEXTURE_2D);
-		glPopAttrib();
+		
+		piRender->PopState();
+		
 	}
 	else
 	{
@@ -300,7 +242,7 @@ void COpenGLFont::RenderText(double dFontHeight,double x,double y,const char *pT
 	}
 }
 
-void COpenGLFont::RenderText(double dFontHeight,CVector vPosition,const char *pText)
+void COpenGLFont::RenderText(IGenericRender *piRender,double dFontHeight,CVector vPosition,const char *pText)
 {
 	if(m_eFontType==eGenericFontType_System)
 	{
@@ -315,9 +257,40 @@ void COpenGLFont::RenderText(double dFontHeight,CVector vPosition,const char *pT
 			}
 		}
 	}
+	else if(m_eFontType==eGenericFontType_Texture)
+	{
+		double dSizeFactor=dFontHeight/(double)m_dwTextureHeight;
+		
+		piRender->PushState();
+		piRender->ActivateBlending();
+		piRender->DeactivateShadowEmission();
+		piRender->DeactivateShadowReception();
+		
+		CVector vOrigin=vPosition;
+		
+		
+		int x=0;
+		while(pText[x]!=0)
+		{
+			SOpenGLTextureFontCharacterData *pCharacterData=&m_vTextureFontCharacters[(int)pText[x]];
+			
+			if(pText[x]!=' ')
+			{
+				double s1=pCharacterData->dPixelW*dSizeFactor,s2=pCharacterData->dPixelH*dSizeFactor;
+				CVector vCharCenter=vOrigin+piRender->GetCameraRight()*s1*0.5+piRender->GetCameraUp()*s2*0.5;
+				piRender->RenderParticle(m_Texture.m_piTexture,vCharCenter,0,s1,s2,CVector(1,1,1),1.0,pCharacterData->dTextCoordX,pCharacterData->dTextCoordY,pCharacterData->dTextCoordW,pCharacterData->dTextCoordH);
+			}
+			
+			vOrigin+=piRender->GetCameraRight()*((pCharacterData->dPixelW+m_dTextureFontCharacterSeparation)*dSizeFactor);
+			x++;
+		}
+		
+		piRender->PopState();
+		
+	}
 }
 
-void COpenGLFont::RenderTextEx(double dFontHeight,double x,double y,double w,double h,const char *pText,eTextAlignment dwHorzAlign,eTextAlignment dwVertAlign)
+void COpenGLFont::RenderTextEx(IGenericRender *piRender,double dFontHeight,double x,double y,double w,double h,const char *pText,eTextAlignment dwHorzAlign,eTextAlignment dwVertAlign)
 {
 	double dTextW=0,dTextH=0;
 	double dPosX=0,dPosY=0;
@@ -350,7 +323,7 @@ void COpenGLFont::RenderTextEx(double dFontHeight,double x,double y,double w,dou
 		dPosY=y+(h*0.5)-(dTextH*0.5);
 		break;
 	}
-	RenderText(dFontHeight,dPosX,dPosY,pText);
+	RenderText(piRender,dFontHeight,dPosX,dPosY,pText);
 	//RTTRACE("COpenGLFonts::RenderTextEx -> '%s': Box(%d,%d - %d,%d): H%d,V%d, pos %d,%d",pText,(int)x,(int)y,(int)w,(int)h,dwHorzAlign,dwVertAlign,(int)dPosX,(int)dPosY);
 	//RTTRACE("COpenGLFonts::RenderTextEx -> T: %d x %d",(int)dTextW,(int)dTextH);
 	//RTTRACE("COpenGLFonts::RenderTextEx -> P: %d x %d",(int)dPosX,(int)dPosY);
@@ -393,7 +366,7 @@ SOpenGLSystemFont *COpenGLFont::GetSystemFontForHeight(unsigned int nHeight)
 		{
 			char sFontName[1024];
 			int nLen=sprintf(sFontName,"-*-%s-%s-r-normal--%d-*-*-*-*-*-*-*",m_sSystemFontName.c_str(),m_sSystemFontWeight.c_str(),nHeight);
-			for(int x=0;x<nLen;x++){if(sFontName[x]>='A' && sFontName[x]<='Z'){sFontName[x]+='a'-'A';}
+			for(int x=0;x<nLen;x++){if(sFontName[x]>='A' && sFontName[x]<='Z'){sFontName[x]+='a'-'A';}}
 			pFont->pDisplay=m_pXDisplay;
 			pFont->pFontStruct=XLoadQueryFont(m_pXDisplay,sFontName);
 			if(pFont->pFontStruct)

@@ -59,6 +59,10 @@ bool CBombBonus::OnCollision(IEntity *pOther,CVector &vCollisionPos)
   IPlayer *piPlayer=dynamic_cast<IPlayer*>(pOther);
   if(piPlayer)
   {
+	SEntityTypeConfig sConfig;
+	m_pType->GetEntityTypeConfig(&sConfig);
+	if(sConfig.nPoints){piPlayer->AddPoints(sConfig.nPoints);}
+	
     vector<IWeapon*> vWeapons;
     piPlayer->GetWeaponsOnSlot(1,&vWeapons);
     for(size_t x=0;x<vWeapons.size();x++)

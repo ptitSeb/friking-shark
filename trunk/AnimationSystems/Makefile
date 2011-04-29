@@ -23,6 +23,7 @@ AnimationObjectBase.cpp\
 EventAnimationObjectType.cpp\
 ParticleSystemAnimationObjectType.cpp\
 EntityAnimationObjectType.cpp\
+TextAnimationObjectType.cpp\
 stdafx.cpp
 
 

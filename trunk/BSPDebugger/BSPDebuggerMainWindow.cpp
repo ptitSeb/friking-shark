@@ -297,7 +297,7 @@ void CBSPDebuggerMainWindow::OnDraw(IGenericRender *piRender)
 				char sDescr[1024];
 				sprintf(sDescr,"%s: %f",dSide>=0?"O":"I",dSide);
 				piRender->SetColor(CVector(1,1,1),1);
-				piFont->RenderText(dFontSize,vPlaneProj,sDescr);
+				piFont->RenderText(piRender,dFontSize,vPlaneProj,sDescr);
 			}
 			REL(piFont);
 		}

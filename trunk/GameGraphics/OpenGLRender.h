@@ -421,6 +421,11 @@ public:
 	void SetViewport(double x,double y,double cx, double cy);
 	void SetCamera(const CVector &vPosition,double dYaw, double dPitch, double dRoll);
 
+	CVector GetCameraPosition();
+	CVector GetCameraForward();
+	CVector GetCameraRight();
+	CVector GetCameraUp();
+
 	void ActivateClipping(bool bActivate);
 	void SetClipRect(double x,double y,double cx, double cy);
 
@@ -437,7 +442,7 @@ public:
 	void RenderText(double x,double y,const char *pText);
 	void RenderTextEx(double x,double y,double w,double h,const char *pText,eTextAlignment dwHorzAlign,eTextAlignment dwVertAlign);
 	void RenderTexture(const CVector &vOrigin,double s1,double s2);
-	void RenderParticle(IGenericTexture *piTexture,const CVector &vOrigin,double dAngle,double s1,double s2,const CVector &vColor,double dAlpha);
+	void RenderParticle(IGenericTexture *piTexture,const CVector &vOrigin,double dAngle,double s1,double s2,const CVector &vColor,double dAlpha,double dTextX,double dTextY,double dTextW,double dTextH);
 	void RenderModel(const CVector &vOrigin,const CVector &vOrientation,IGenericModel *piModel,unsigned int nAnimation,unsigned int nFrame);
 	void RenderTextureRect(double dPosx,double dPosy,double dWidth,double dHeight,double dTexturex,double dTexturey,double dTextureWidth,double dTextureHeight);
 
