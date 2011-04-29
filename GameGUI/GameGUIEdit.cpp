@@ -64,7 +64,7 @@ void CGameGUIEdit::DrawText(IGenericRender *piRender,CVector &vColor,double dAlp
 				dFontSize=m_rRealRect.h-EDITOR_TOTAL_MARGIN*2.0;
 			}
 			piRender->SetColor(vColor,dAlpha);
-			piFont->RenderTextEx(dFontSize,EDITOR_TOTAL_MARGIN,EDITOR_TOTAL_MARGIN,m_rRealRect.w-EDITOR_TOTAL_MARGIN*2.0,m_rRealRect.h-EDITOR_TOTAL_MARGIN*2.0,m_sText.c_str(),m_eHorizontalAlignment,m_eVerticalAlignment);
+			piFont->RenderTextEx(piRender,dFontSize,EDITOR_TOTAL_MARGIN,EDITOR_TOTAL_MARGIN,m_rRealRect.w-EDITOR_TOTAL_MARGIN*2.0,m_rRealRect.h-EDITOR_TOTAL_MARGIN*2.0,m_sText.c_str(),m_eHorizontalAlignment,m_eVerticalAlignment);
 		}
 		REL(piFont);
 	}
@@ -104,7 +104,7 @@ void CGameGUIEdit::OnDraw(IGenericRender *piRender)
 			  {
 				piRender->SetColor(m_vTextColor,m_dTextAlpha);
 				piFont->CalcTextSize(dFontSize,sPre.c_str(),&dTextWidth,&dTextHeight);
-				piFont->RenderTextEx(dFontSize,dx,dy,dw,dh,sPre.c_str(),m_eHorizontalAlignment,m_eVerticalAlignment);
+				piFont->RenderTextEx(piRender,dFontSize,dx,dy,dw,dh,sPre.c_str(),m_eHorizontalAlignment,m_eVerticalAlignment);
 				dx+=dTextWidth;
 				dw-=dTextWidth;
 			  }
@@ -114,20 +114,20 @@ void CGameGUIEdit::OnDraw(IGenericRender *piRender)
 				piRender->SetColor(m_vSelectedBackgroundColor,m_dTextAlpha);
 				piRender->RenderRect(dx,dy,std::min(dTextWidth,dw),dh);
 				piRender->SetColor(m_vSelectedTextColor,m_dTextAlpha);
-				piFont->RenderTextEx(dFontSize,dx,dy,dw,dh,sSel.c_str(),m_eHorizontalAlignment,m_eVerticalAlignment);
+				piFont->RenderTextEx(piRender,dFontSize,dx,dy,dw,dh,sSel.c_str(),m_eHorizontalAlignment,m_eVerticalAlignment);
 				dx+=dTextWidth;
 				dw-=dTextWidth;
 			  }
 			  if(sPost.length())
 			  {
 				piRender->SetColor(m_vTextColor,m_dTextAlpha);
-				piFont->RenderTextEx(dFontSize,dx,dy,dw,dh,sPost.c_str(),m_eHorizontalAlignment,m_eVerticalAlignment);
+				piFont->RenderTextEx(piRender,dFontSize,dx,dy,dw,dh,sPost.c_str(),m_eHorizontalAlignment,m_eVerticalAlignment);
 			  }
 			}
 			else
 			{
 			  piRender->SetColor(m_vTextColor,m_dTextAlpha);
-			  piFont->RenderTextEx(dFontSize,EDITOR_TOTAL_MARGIN,EDITOR_TOTAL_MARGIN,m_rRealRect.w-EDITOR_TOTAL_MARGIN*2.0,m_rRealRect.h-EDITOR_TOTAL_MARGIN*2.0,m_sText.c_str(),m_eHorizontalAlignment,m_eVerticalAlignment);
+			  piFont->RenderTextEx(piRender,dFontSize,EDITOR_TOTAL_MARGIN,EDITOR_TOTAL_MARGIN,m_rRealRect.w-EDITOR_TOTAL_MARGIN*2.0,m_rRealRect.h-EDITOR_TOTAL_MARGIN*2.0,m_sText.c_str(),m_eHorizontalAlignment,m_eVerticalAlignment);
 			}
 			piFont->CalcTextSize(dFontSize,m_sText.substr(0,m_nEditionPos).c_str(),&dTextWidth,&dTextHeight);
 		}

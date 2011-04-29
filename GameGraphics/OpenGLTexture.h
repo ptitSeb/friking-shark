@@ -69,7 +69,8 @@ public:
 	void		  *GetByteBuffer();
 
 	CVector		GetPixelColor(unsigned long x, unsigned long y);
-
+	double		GetPixelAlpha(unsigned long x, unsigned long y);
+	
 	virtual bool Load(std::string sFileName,CVector *pColorKey,std::string *pAlphaFile,float fOpacity);
 	virtual bool Create( unsigned nWidth,unsigned nHeight );
 	virtual bool CreateDepth( unsigned nWidth,unsigned nHeight );

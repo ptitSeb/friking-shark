@@ -63,6 +63,10 @@ bool CWeaponUpgradeBonus::OnCollision(IEntity *pOther,CVector &vCollisionPos)
   IPlayer *piPlayer=dynamic_cast<IPlayer*>(pOther);
   if(piPlayer)
   {
+	SEntityTypeConfig sConfig;
+	m_pType->GetEntityTypeConfig(&sConfig);
+	if(sConfig.nPoints){piPlayer->AddPoints(sConfig.nPoints);}
+	
     vector<IWeapon*> vWeapons;
     piPlayer->GetWeaponsOnSlot(m_pType->m_dwSlot,&vWeapons);
     for(size_t x=0;x<vWeapons.size();x++)

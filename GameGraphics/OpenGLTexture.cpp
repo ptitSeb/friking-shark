@@ -423,6 +423,19 @@ CVector COpenGLTexture::GetPixelColor( unsigned long x, unsigned long y )
 	return vResult;
 }
 
+double COpenGLTexture::GetPixelAlpha( unsigned long x, unsigned long y )
+{
+	if(!HasAlphaChannel()){return m_fOpacity;}
+	if(x<m_dwWidth && y<m_dwHeight)
+	{
+		unsigned long nPixel=x+(y*m_dwWidth);
+		unsigned long nPixelSize=4;
+		unsigned char *pPixel=m_pBuffer+(nPixel*nPixelSize);
+		return ((double)pPixel[3])/255.0;
+	}
+	return m_fOpacity;
+}
+
 bool COpenGLTexture::CreateFrameBuffer(bool bDepth)
 {
 	// FrameBuffer Implementation

@@ -36,7 +36,10 @@ bool CLiveBonus::OnCollision(IEntity *pOther,CVector &vCollisionPos)
   IPlayer *piPlayer=dynamic_cast<IPlayer*>(pOther);
   if(piPlayer)
   {
-    piPlayer->AddLivesLeft(1);
+	SEntityTypeConfig sConfig;
+	m_pType->GetEntityTypeConfig(&sConfig);
+	if(sConfig.nPoints){piPlayer->AddPoints(sConfig.nPoints);}
+	piPlayer->AddLivesLeft(1);
 	SetState(eLiveBonusState_Taken);
     Remove();
   }

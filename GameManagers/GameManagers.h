@@ -474,10 +474,10 @@ enum EPlayerStateCondition
 {
 	ePlayerStateCondition_None,
 	ePlayerStateCondition_MaxPrimaryWeaponLevel,
-	ePlayerStateCondition_Count,
+	ePlayerStateCondition_Count
 };
 
-DECLARE_SERIALIZABLE_ENUMERATION(EPlayerStateCondition);
+DECLARE_SERIALIZABLE_ENUMERATION(EPlayerStateCondition)
 
 struct IPlayAreaFormation:virtual public IPlayAreaElement
 {

@@ -30,7 +30,7 @@ void CTextureParticle::CustomRender(IGenericRender *piRender,IGenericCamera *piC
 	piRender->DeactivateShadowReception();
 	piRender->ActivateBlending();
 	piRender->SetBlendingFunction(m_pType->m_dwBlendOp1,m_pType->m_dwBlendOp2);
-	piRender->RenderParticle(m_pType->m_Texture.m_piTexture,m_PhysicInfo.vPosition,m_PhysicInfo.vAngles,m_dSize,m_dSize,m_vColor,m_dAlpha);
+	piRender->RenderParticle(m_pType->m_Texture.m_piTexture,m_PhysicInfo.vPosition,m_PhysicInfo.vAngles,m_dSize,m_dSize,m_vColor,m_dAlpha,0,0,1,1);
 	piRender->SetBlendingFunction(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	piRender->DeactivateBlending();
 	piRender->ActivateShadowReception();

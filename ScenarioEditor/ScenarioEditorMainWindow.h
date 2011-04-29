@@ -259,12 +259,10 @@ public:
 	// Formation
 
 	IGameGUIButton *m_piBTNewFormation;
-	IGameGUILabel  *m_piSTFormationName;
 	IGameGUIButton *m_piBTFormationSample;
 	IGameGUIButton *m_piBTFormationBonusSample;
 	IScenarioEditorObjectLabel *m_piSTFormationObjectLabel;
 	IScenarioEditorObjectLabel *m_piSTFormationBonusObjectLabel;
-	IGameGUILabel  *m_piSTFormationAlternativeName;
 	IGameGUIButton *m_piBTFormationAlternativeSample;
 	IGameGUIButton *m_piBTFormationAlternativeBonusSample;
 	IScenarioEditorObjectLabel *m_piSTFormationAlternativeObjectLabel;
@@ -522,12 +520,10 @@ public:
 		CHILD_MAP_ENTRY_EX("EntityClearRoute",m_piBTEntityClearRoute,IGameGUIButtonEvents);
 
 		CHILD_MAP_ENTRY("FormationPanel",m_piGRFormationPanel);
-		CHILD_MAP_ENTRY("FormationName",m_piSTFormationName);
 		CHILD_MAP_ENTRY("FormationObjectLabel",m_piSTFormationObjectLabel);
 		CHILD_MAP_ENTRY("FormationBonusObjectLabel",m_piSTFormationBonusObjectLabel);
 		CHILD_MAP_ENTRY_EX("FormationSample",m_piBTFormationSample,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("FormationBonusSample",m_piBTFormationBonusSample,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY("FormationAlternativeName",m_piSTFormationAlternativeName);
 		CHILD_MAP_ENTRY("FormationAlternativeObjectLabel",m_piSTFormationAlternativeObjectLabel);
 		CHILD_MAP_ENTRY("FormationAlternativeBonusObjectLabel",m_piSTFormationAlternativeBonusObjectLabel);
 		CHILD_MAP_ENTRY_EX("FormationAlternativeSample",m_piBTFormationAlternativeSample,IGameGUIButtonEvents);

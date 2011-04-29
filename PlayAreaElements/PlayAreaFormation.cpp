@@ -63,7 +63,7 @@ void CPlayAreaFormation::Activate(unsigned int dwCurrentTime)
 		IWeapon *piWeapon=NULL;
 		if(g_EntityManagerWrapper.m_piInterface){piPlayerEntity=g_EntityManagerWrapper.m_piInterface->FindEntity("Player");}
 		if(piPlayerEntity){piWeapon=piPlayerEntity->GetWeapon(0);}
-		if(piWeapon){m_bUsingAlternative=piWeapon->GetCurrentLevel()<=m_nConditionValue;}
+		if(piWeapon){m_bUsingAlternative=piWeapon->GetCurrentLevel()>=m_nConditionValue;}
 	}
 
 	if(m_bUsingAlternative && m_AlternativeFormationType.m_piFormationType)
@@ -71,7 +71,7 @@ void CPlayAreaFormation::Activate(unsigned int dwCurrentTime)
 		m_piFormation=m_AlternativeFormationType.m_piFormationType->CreateInstance(m_vPosition,dwCurrentTime);
 		SUBSCRIBE_TO_CAST(m_piFormation,IFormationEvents);
 	}
-	else if(m_FormationType.m_piFormationType)
+	else if(!m_bUsingAlternative && m_FormationType.m_piFormationType)
 	{
 		m_piFormation=m_FormationType.m_piFormationType->CreateInstance(m_vPosition,dwCurrentTime);
 		SUBSCRIBE_TO_CAST(m_piFormation,IFormationEvents);
@@ -98,7 +98,7 @@ void CPlayAreaFormation::OnFormationKilled(ISystemObject *piFormation,IEntity *p
 	{
 		m_AlternativeBonusType.m_piEntityType->CreateInstance(piLastEntity,g_FrameManagerSingleton.m_piInterface->GetCurrentTime());
 	}
-	else if(m_BonusType.m_piEntityType)
+	else if(!m_bUsingAlternative && m_BonusType.m_piEntityType)
 	{
 		m_BonusType.m_piEntityType->CreateInstance(piLastEntity,g_FrameManagerSingleton.m_piInterface->GetCurrentTime());
 	}

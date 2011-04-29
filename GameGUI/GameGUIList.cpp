@@ -120,7 +120,7 @@ void CGameGUIList::OnDraw(IGenericRender *piRender)
 	{
 	  piRender->SetColor(m_vTextColor,m_dTextAlpha);
 	}
-	piFont->RenderTextEx(dFontSize,1,y,dElementWidth,m_dFontPixelHeight,m_vElements[x].c_str(),eTextAlignment_Left,eTextAlignment_Center);
+	piFont->RenderTextEx(piRender,dFontSize,1,y,dElementWidth,m_dFontPixelHeight,m_vElements[x].c_str(),eTextAlignment_Left,eTextAlignment_Center);
   }
   
   REL(piFont);

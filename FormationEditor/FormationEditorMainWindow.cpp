@@ -327,7 +327,7 @@ void CFormationEditorMainWindow::OnDraw(IGenericRender *piRender)
 						vPos+=m_Camera.m_piCamera->GetUpVector()*piType->DesignGetRadius();
 						vPos-=m_Camera.m_piCamera->GetRightVector()*piType->DesignGetRadius();
 					}
-					piFont->RenderText(dFontSize,vPos,sDescr);
+					piFont->RenderText(piRender,dFontSize,vPos,sDescr);
 					REL(piType);
 				}
 			}
@@ -418,9 +418,7 @@ void CFormationEditorMainWindow::ProcessFileOpen()
 		if(piTemp==m_FormationType.m_piFormationType){REL(piTemp);vFormationTypes.erase(i);break;}
 	}
 
-	SPlayAreaConfig sPlayAreaConfig;
-	m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sPlayAreaConfig);
-	if(m_ObjectSelector.m_piObjectSelector->SelectObject("Open Formation...",this,&vFormationTypes,&nSelectedFormationType,96.0,(96.0)/sPlayAreaConfig.dCameraAspectRatio))
+	if(m_ObjectSelector.m_piObjectSelector->SelectObject("Open Formation...",this,&vFormationTypes,&nSelectedFormationType,96.0,96.0))
 	{
 		Reset();
 		CConfigFile cfg;
@@ -495,9 +493,7 @@ void CFormationEditorMainWindow::ProcessFileRemove()
 	std::vector<IDesignObject *> vFormationTypes;
 	GetSystemObjects("FormationTypes",&vFormationTypes);
 	
-	SPlayAreaConfig sPlayAreaConfig;
-	m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sPlayAreaConfig);
-	if(m_ObjectSelector.m_piObjectSelector->SelectObject("Remove Formation...",this,&vFormationTypes,&nSelectedFormationType,96.0,(96.0)/sPlayAreaConfig.dCameraAspectRatio))
+	if(m_ObjectSelector.m_piObjectSelector->SelectObject("Remove Formation...",this,&vFormationTypes,&nSelectedFormationType,96.0,96.0))
 	{
 		CFormationTypeWrapper existingWrapper;
 		bool bOk=existingWrapper.Attach(vFormationTypes[nSelectedFormationType]);

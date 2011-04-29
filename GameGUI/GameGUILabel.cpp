@@ -54,7 +54,7 @@ void CGameGUILabel::DrawText(IGenericRender *piRender,CVector &vColor,double dAl
 				dFontSize=m_rRealRect.h;
 			}
 			piRender->SetColor(vColor,dAlpha);
-			piFont->RenderTextEx(dFontSize,0,0,m_rRealRect.w,m_rRealRect.h,m_sText.c_str(),m_eHorizontalAlignment,m_eVerticalAlignment);
+			piFont->RenderTextEx(piRender,dFontSize,0,0,m_rRealRect.w,m_rRealRect.h,m_sText.c_str(),m_eHorizontalAlignment,m_eVerticalAlignment);
 		}
 		REL(piFont);
 	}
