@@ -291,7 +291,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=25.704894,-4.682201,88.678936
 				Tipo
 				{
@@ -307,7 +311,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=78.778067,-4.682201,88.678936
 				Tipo
 				{
@@ -444,7 +452,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=114.430629,-4.682201,88.678936
 				Tipo
 				{
@@ -2490,11 +2502,23 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				{
+					Name=PointsBonus
+					System=EntityTypes
+				}
+				AlternativeType
+				{
+					Name=POINTS-LEFT-CIRCLE
+					System=FormationTypes
+				}
 				Bonus
 				{
 					Name=WeaponBonus
 					System=EntityTypes
 				}
+				ConditionType=0
+				ConditionValue=0
 				Posicion=308.905826,-4.859726,88.678936
 				Tipo
 				{
@@ -2510,7 +2534,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=140.092038,-4.859726,88.678936
 				Tipo
 				{
@@ -2526,7 +2554,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=186.545727,-4.859726,88.678936
 				Tipo
 				{
@@ -2542,7 +2574,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=222.568931,-4.859726,88.678936
 				Tipo
 				{
@@ -2558,7 +2594,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=287.486578,-4.859726,88.678936
 				Tipo
 				{
@@ -2574,7 +2614,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=346.338171,-4.859726,88.678936
 				Tipo
 				{
@@ -2590,7 +2634,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=387.377654,-4.859726,88.678936
 				Tipo
 				{
@@ -2606,7 +2654,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=468.426926,-4.859726,88.678936
 				Tipo
 				{
@@ -2622,7 +2674,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=495.414158,-4.859726,88.678936
 				Tipo
 				{
@@ -2638,7 +2694,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=543.260725,-4.859726,88.678936
 				Tipo
 				{
@@ -2654,11 +2714,27 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				{
+					Name=PointsBonus
+					System=EntityTypes
+				}
+				AlternativeType
+				{
+					Name=Formacion6
+					System=FormationTypes
+				}
 				Bonus
+				{
+					Name=WeaponBonus
+					System=EntityTypes
+				}
+				ConditionType=1
+				ConditionValue=1
 				Posicion=567.246312,-4.859726,88.678936
 				Tipo
 				{
-					Name=Formacion6
+					Name=Formacion7
 					System=FormationTypes
 				}
 			}
@@ -2670,7 +2746,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=581.466997,-4.859726,88.678936
 				Tipo
 				{
@@ -2686,7 +2766,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=617.052526,-4.859726,88.678936
 				Tipo
 				{
@@ -2702,7 +2786,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=647.238923,-4.859726,88.678936
 				Tipo
 				{
@@ -2718,7 +2806,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=686.389179,-4.859726,88.678936
 				Tipo
 				{
@@ -2734,7 +2826,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=714.013573,-4.859726,88.678936
 				Tipo
 				{
@@ -2750,7 +2846,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=739.047657,-4.859726,88.678936
 				Tipo
 				{
@@ -2766,7 +2866,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=782.572217,-4.859726,88.678936
 				Tipo
 				{
@@ -2782,11 +2886,23 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				{
+					Name=PointsBonus
+					System=EntityTypes
+				}
+				AlternativeType
+				{
+					Name=POINTS-RIGHT-CIRCLE
+					System=FormationTypes
+				}
 				Bonus
 				{
 					Name=WeaponBonus
 					System=EntityTypes
 				}
+				ConditionType=1
+				ConditionValue=1
 				Posicion=799.395500,-4.859726,88.678936
 				Tipo
 				{
@@ -2802,7 +2918,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=822.093544,-4.859726,88.678936
 				Tipo
 				{
@@ -2818,7 +2938,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=874.285177,-4.859726,88.678936
 				Tipo
 				{
@@ -2834,7 +2958,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=923.340741,-4.859726,88.678936
 				Tipo
 				{
@@ -2850,7 +2978,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=1
+				ConditionValue=1
 				Posicion=966.826462,-4.859726,88.678936
 				Tipo
 				{
@@ -2866,11 +2998,23 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				{
+					Name=PointsBonus
+					System=EntityTypes
+				}
+				AlternativeType
+				{
+					Name=POINTS-RIGHT-CIRCLE1
+					System=FormationTypes
+				}
 				Bonus
 				{
 					Name=WeaponBonus
 					System=EntityTypes
 				}
+				ConditionType=1
+				ConditionValue=2
 				Posicion=1004.757988,-4.859726,88.678936
 				Tipo
 				{
@@ -2886,7 +3030,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=1058.138549,-4.859726,88.678936
 				Tipo
 				{
@@ -2902,7 +3050,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=1095.915858,-4.859726,88.678936
 				Tipo
 				{
@@ -2918,7 +3070,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=1148.162133,-4.859726,88.678936
 				Tipo
 				{
@@ -2934,7 +3090,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=1187.382810,-4.859726,88.678936
 				Tipo
 				{
@@ -2950,7 +3110,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=1229.867837,-4.859726,88.678936
 				Tipo
 				{
@@ -2966,7 +3130,23 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				{
+					Name=PointsBonus
+					System=EntityTypes
+				}
+				AlternativeType
+				{
+					Name=POINTS-LEFT-CIRCLE-DOWN
+					System=FormationTypes
+				}
 				Bonus
+				{
+					Name=WeaponBonus
+					System=EntityTypes
+				}
+				ConditionType=1
+				ConditionValue=2
 				Posicion=1309.278080,-4.859726,88.678936
 				Tipo
 				{
@@ -2982,7 +3162,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=1312.842399,-4.859726,88.678936
 				Tipo
 				{
@@ -2998,7 +3182,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=1346.789888,-4.859726,88.678936
 				Tipo
 				{
@@ -3014,7 +3202,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=1374.651751,-4.859726,88.678936
 				Tipo
 				{
@@ -3030,7 +3222,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=1402.355409,-4.859726,88.678936
 				Tipo
 				{
@@ -3046,7 +3242,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=1448.386626,-4.859726,88.678936
 				Tipo
 				{
@@ -3062,7 +3262,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=1490.986550,-4.859726,88.678936
 				Tipo
 				{
@@ -3078,7 +3282,11 @@ AreaDeJuego
 			Class=CPlayAreaFormation
 			Data
 			{
+				AlternativeBonus
+				AlternativeType
 				Bonus
+				ConditionType=0
+				ConditionValue=0
 				Posicion=1537.296683,-4.859726,88.678936
 				Tipo
 				{
