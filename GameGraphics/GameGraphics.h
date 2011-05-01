@@ -488,7 +488,11 @@ public:
 	virtual void EnableShadows()=0;
 	virtual void DisableShadows()=0;
 	virtual bool AreShadowsEnabled()=0;
-
+	
+	virtual void EnableAutoShadowVolume()=0;
+	virtual void DisableAutoShadowVolume()=0;
+	virtual bool IsAutoShadowVolumeEnabled()=0;
+	
 	virtual void PushOptions()=0;
 	virtual void PopOptions()=0;
 };

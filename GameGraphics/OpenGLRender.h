@@ -99,6 +99,7 @@ struct SRenderOptions
 	bool bEnableLighting;
 	bool bEnableSolid;
 	bool bEnableShadows;
+	bool bEnableAutoShadowVolume;
 	bool bEnableBlending;
 	bool bEnableHeightFog;
 	bool bEnableShader;
@@ -112,6 +113,7 @@ struct SRenderOptions
 		bEnableShadows=true;
 		bEnableSolid=true;
 		bEnableBlending=true;
+		bEnableAutoShadowVolume=true;
 	}
 };
 
@@ -538,7 +540,11 @@ public:
 	void EnableShadows();
 	void DisableShadows();
 	bool AreShadowsEnabled();
-
+	
+	void EnableAutoShadowVolume();
+	void DisableAutoShadowVolume();
+	bool IsAutoShadowVolumeEnabled();
+	
 	void PushOptions();
 	void PopOptions();
 

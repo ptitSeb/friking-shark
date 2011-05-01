@@ -1247,7 +1247,7 @@ void COpenGLRender::RenderModel(const CVector &vOrigin,const CVector &vOrientati
 				}
 			}
 			bInsideByRadius=(nInsideByRadius==4);
-			if(bInsideByRadius)
+			if(bInsideByRadius && m_sRenderOptions.bEnableAutoShadowVolume)
 			{
 				CalcBBoxVolume(vOrigin,vOrientation,vMins,vMaxs,vBBoxVolume);
 				for(int x=0;x<8;x++)
@@ -1255,7 +1255,7 @@ void COpenGLRender::RenderModel(const CVector &vOrigin,const CVector &vOrientati
 					ProcessCameraVertex(vBBoxVolume[x]);
 				}
 			}
-			else
+			if(!bInsideByRadius)
 			{
 				if(!bSkip)
 				{
@@ -1315,7 +1315,7 @@ void COpenGLRender::RenderModel(const CVector &vOrigin,const CVector &vOrientati
 						}
 					}				
 				}
-				if(!bSkip)
+				if(m_sRenderOptions.bEnableAutoShadowVolume && !bSkip)
 				{
 					// Si todos los puntos estan dentro de los 4 planos el objeto esta completamente dentro de la camara
 					// por lo que se toman sus puntos para calcular e volumnen de las sombras y las zetas de camara optimas
@@ -1605,6 +1605,17 @@ void COpenGLRender::StartStagedRendering()
 	m_dMinDistanceToLight=10000;
 
 	m_bShadowVolumeFirstVertex=true;
+	
+	
+	if(!m_sRenderOptions.bEnableAutoShadowVolume)
+	{		
+		CVector pVolume[8];
+		CalcCameraVolume(m_vCameraPos,m_vCameraAngles, m_dPerspectiveViewAngle,dCameraAspect,m_dPerspectiveNearPlane, m_dPerspectiveFarPlane,pVolume);
+		for(int x=0;x<8;x++)
+		{
+			ProcessCameraVertex(pVolume[x]);
+		}
+	}
 }
 
 void COpenGLRender::EndStagedRendering()
@@ -2088,6 +2099,10 @@ bool COpenGLRender::IsBlendingEnabled(){return m_sRenderOptions.bEnableBlending;
 void COpenGLRender::EnableShadows(){m_sRenderOptions.bEnableShadows=true;}
 void COpenGLRender::DisableShadows(){m_sRenderOptions.bEnableShadows=false;}
 bool COpenGLRender::AreShadowsEnabled(){return m_sRenderOptions.bEnableShadows;}
+
+void COpenGLRender::EnableAutoShadowVolume(){m_sRenderOptions.bEnableAutoShadowVolume=true;}
+void COpenGLRender::DisableAutoShadowVolume(){m_sRenderOptions.bEnableAutoShadowVolume=false;}
+bool COpenGLRender::IsAutoShadowVolumeEnabled(){return m_sRenderOptions.bEnableAutoShadowVolume;}
 
 void COpenGLRender::RenderModelStages(bool bRenderingShadow,bool bShadowReceptionState)
 {
