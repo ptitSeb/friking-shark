@@ -53,11 +53,13 @@ void CBombProjectile::ApplyDamageOperation(IEntity *piEntity,void *pParam1,void 
 	CBombProjectile *pThis=(CBombProjectile *)pParam1;
 	SBombDamageData *pDamageData=((SBombDamageData*)pParam2);
 	
+	bool bProjectile=(*piEntity->GetEntityClass())=="CBulletProjectile";
+	
 	if(pThis->m_piParent==NULL){return;}
 	if(piEntity->IsRemoved()){return;}
 	if(piEntity->GetAlignment()==pThis->m_dwAlignment){return;}
 	if(piEntity->GetAlignment()==ENTITY_ALIGNMENT_NEUTRAL ){return;}
-	if(piEntity->GetDamageType()==DAMAGE_TYPE_NONE){return;}
+	if(piEntity->GetDamageType()==DAMAGE_TYPE_NONE && !bProjectile){return;}
 	if(piEntity->GetHealth()<=0.0){return;}
 	
 	CVector vTemp=piEntity->GetPhysicInfo()->vPosition;
@@ -66,7 +68,14 @@ void CBombProjectile::ApplyDamageOperation(IEntity *piEntity,void *pParam1,void 
 	double dDist=vDist;
 	if(dDist<pDamageData->dRadius)
 	{
-		piEntity->OnDamage(pDamageData->dDamage,pThis);
+		if(bProjectile)
+		{
+			piEntity->Remove();
+		}
+		else
+		{
+			piEntity->OnDamage(pDamageData->dDamage,pThis);
+		}
 	}
 }
 
