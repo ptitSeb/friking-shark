@@ -25,7 +25,7 @@ AreaDeJuego
 			Class=CPlayAreaCheckPoint
 			Data
 			{
-				Posicion=0.000000,-2.547510,81.671682
+				Posicion=0.000000,-4.859726,88.678936
 			}
 			Name=""
 			System=GameSystem
@@ -35,7 +35,7 @@ AreaDeJuego
 			Class=CPlayAreaCheckPoint
 			Data
 			{
-				Posicion=70.000000,-2.547510,81.671682
+				Posicion=70.000000,-4.859726,88.678936
 			}
 			Name=""
 			System=GameSystem
@@ -102,7 +102,7 @@ AreaDeJuego
 			Class=CPlayAreaCheckPoint
 			Data
 			{
-				Posicion=140.000000,-2.547510,81.671682
+				Posicion=140.000000,-4.859726,88.678936
 			}
 			Name=""
 			System=GameSystem
