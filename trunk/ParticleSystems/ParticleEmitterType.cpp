@@ -62,7 +62,11 @@ void CParticleEmitter::ProcessFrame(IParticleSystem *piSystem,unsigned int dwCur
 
     CVector vForward,vRight,vUp;
     piSystem->GetVectors(vForward,vRight,vUp);
-
+	
+	CVector vCurrentWorldPosition=piSystem->GetPosition();
+	vCurrentWorldPosition+=m_vPosition;
+	if(m_dwParticlesEmitted==0){m_vLastWorldPosition=vCurrentWorldPosition;}
+	
     unsigned int dwParticlesToEmit=0;
     if(m_pType->m_dwParticleCount!=0)
     {
@@ -86,18 +90,21 @@ void CParticleEmitter::ProcessFrame(IParticleSystem *piSystem,unsigned int dwCur
         {
             dCurrentRate=m_pType->m_dStartRate+(m_pType->m_dEndRate-m_pType->m_dStartRate)*dLifeSpent;
         }
-        dwParticlesToEmit=(unsigned int)(dCurrentRate*dInterval);
         if(m_dwLastEmitTime==0){m_dwLastEmitTime=dwCurrentTime;}
-        if(dwParticlesToEmit==0 && m_dwLastEmitTime!=0)
-        {
-            dwParticlesToEmit=(unsigned int)(((double)(dwCurrentTime-m_dwLastEmitTime)/1000.0)*dCurrentRate);
-        }
-    }
-    for(unsigned int x=0;x<dwParticlesToEmit;x++)
+		dwParticlesToEmit=(unsigned int)(((double)(dwCurrentTime-m_dwLastEmitTime)/1000.0)*dCurrentRate);
+	}
+    CVector vEmitterPositionIncrement=vCurrentWorldPosition-m_vLastWorldPosition;
+	if(dwParticlesToEmit)
+	{
+		vEmitterPositionIncrement/=(double)dwParticlesToEmit;
+		m_vLastWorldPosition=vCurrentWorldPosition;
+		m_dwLastEmitTime=dwCurrentTime;
+	}
+	
+	CVector vParticleOffset=vEmitterPositionIncrement;
+	for(unsigned int x=0;x<dwParticlesToEmit;x++)
     {
-        m_dwLastEmitTime=dwCurrentTime;
-
-		IParticle *pParticle=m_pType->m_ParticleType.m_piParticleType->CreateInstance(this,dwCurrentTime);
+  		IParticle *pParticle=m_pType->m_ParticleType.m_piParticleType->CreateInstance(this,dwCurrentTime);
 		if(pParticle)
 		{
 			pParticle->m_dwStartTime=dwCurrentTime;
@@ -108,11 +115,13 @@ void CParticleEmitter::ProcessFrame(IParticleSystem *piSystem,unsigned int dwCur
 			pParticle->m_bFixedPositionOnParent=m_pType->m_bFixedPositionOnParent;
 			pParticle->m_PhysicInfo.dwMoveType=m_pType->m_dwMovementType;
 			pParticle->m_PhysicInfo.dwBoundsType=PHYSIC_BOUNDS_TYPE_NONE;
-			pParticle->m_PhysicInfo.vPosition=piSystem->GetPosition();
-			pParticle->m_PhysicInfo.vPosition+=m_vPosition;
+			pParticle->m_PhysicInfo.vPosition=vCurrentWorldPosition;
+			pParticle->m_PhysicInfo.vPosition+=vParticleOffset;
 			pParticle->m_PhysicInfo.vPosition+=vForward*pParticle->m_vPositionOnParent.c[0];
 			pParticle->m_PhysicInfo.vPosition+=vUp*pParticle->m_vPositionOnParent.c[1];
 			pParticle->m_PhysicInfo.vPosition+=vRight*pParticle->m_vPositionOnParent.c[2];
+			vParticleOffset+=vEmitterPositionIncrement;
+			
 			int c;
 			for(c=0;c<3;c++)
 			{
@@ -126,7 +135,7 @@ void CParticleEmitter::ProcessFrame(IParticleSystem *piSystem,unsigned int dwCur
 			piSystem->AddParticle(pParticle);
 		}
 	}
-    m_dwParticlesEmitted+=dwParticlesToEmit;
+	m_dwParticlesEmitted+=dwParticlesToEmit;
 }
 void CParticleEmitter::Deactivate()
 {

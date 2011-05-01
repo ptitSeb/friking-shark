@@ -78,7 +78,8 @@ class CParticleEmitter:public IParticleEmitter
     CParticleEmitterType *m_pType;
     unsigned int       m_dwParticlesEmitted;
 	CVector            m_vPosition;
-
+	CVector            m_vLastWorldPosition;
+	
 public:
 	CVector GetPosition();
 	void    SetPosition(CVector vPosition);
