@@ -34,6 +34,7 @@ CFighter::CFighter(CFighterType *pType,unsigned int dwCurrentTime)
   m_nRoutePoint=0;
   m_dwNextProcessFrame=dwCurrentTime+10;
   m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeFirstShotMax-m_pType->m_dTimeFirstShotMin)+m_pType->m_dTimeFirstShotMin;
+  m_dRadius=m_pType->DesignGetRadius();
 }
 
 void CFighter::AcquireTarget()
@@ -42,29 +43,33 @@ void CFighter::AcquireTarget()
 	IEntityManager 	*piManager=GetEntityManager();
 	if(piManager){piTarget=piManager->FindEntity("Player");}
 
-	// Check if this entity will follow the player and flee instead of blindly follow the configured route
-	if(piTarget && m_pType->m_bHeadToTarget)
+	if(piTarget)
 	{
-		double dYaw=0,dPitch=0;
-		CVector vDir=piTarget->GetPhysicInfo()->vPosition-m_PhysicInfo.vPosition;
-		vDir.N();
-		AnglesFromVector(vDir,dYaw,dPitch);
-		m_PhysicInfo.vAngles.c[YAW]=dYaw;
+		
 		SetTarget(piTarget);
 		
+		// Check if this entity will follow the player and flee instead of blindly follow the configured route
+		if(m_pType->m_bHeadToTarget)
+		{
+			double dYaw=0,dPitch=0;
+			CVector vDir=piTarget->GetPhysicInfo()->vPosition-m_PhysicInfo.vPosition;
+			vDir.N();
+			AnglesFromVector(vDir,dYaw,dPitch);
+			m_PhysicInfo.vAngles.c[YAW]=dYaw;
+		}
 		// Check flee configuration and assign flee flag and angle
 		if(m_pType->m_bFleeOnSameX || m_pType->m_bFleeOnSameZ)
 		{
 			CVector vTargetPos=m_piTarget->GetPhysicInfo()->vPosition;
 			// Do not flee if the player appears just ahead
 			if((m_PhysicInfo.vPosition.c[2]+m_PhysicInfo.vMins.c[2])<=vTargetPos.c[2] &&
-			   (m_PhysicInfo.vPosition.c[2]+m_PhysicInfo.vMaxs.c[2])>=vTargetPos.c[2])
+				(m_PhysicInfo.vPosition.c[2]+m_PhysicInfo.vMaxs.c[2])>=vTargetPos.c[2])
 			{
 				m_bFleeEnabled=false;
 			}
 			else
 			{
-				m_bFleeEnabled=true;//drand()>0.3;
+				m_bFleeEnabled=drand()<m_pType->m_dFleeProbability;
 			}			
 		}
 	}
@@ -100,12 +105,8 @@ bool CFighter::OnCollision(IEntity *piOther,CVector &vCollisionPos)
 			SetState(eFighterState_Crashed);
 		}
 		Remove();
-	} 
-	else if(m_dHealth>0 && piOther->GetAlignment()!=m_dwAlignment)
-	{
-		piOther->OnDamage(m_dHealth,this);
 	}
-  return false;
+	return false;
 }
 
 void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
@@ -118,14 +119,13 @@ void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 	
 	if(m_piTarget==NULL){AcquireTarget();}
 	
-	// When the entity is configured to head to the target, the only way to
+	// When the entity is configured to head to the target or is feeing, the only way to
 	// know if it has to be removed is to check if the plane is no longer in
 	// the visible play area (including scroll)
 
-	if(m_pType->m_bHeadToTarget && g_PlayAreaManagerWrapper.m_piInterface)
+	if((m_pType->m_bHeadToTarget || m_bFleeing) && g_PlayAreaManagerWrapper.m_piInterface)
 	{
-		double dRadius=((IEntityType*)m_pType)->DesignGetRadius();//GetBBoxRadius(m_PhysicInfo.vMins,m_PhysicInfo.vMaxs);
-		bool bVisible=g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,dRadius,true);
+		bool bVisible=g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,m_dRadius,true);
 		if(m_bWasVisible && !bVisible)
 		{
 			Remove();
@@ -156,6 +156,7 @@ void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 				m_dFleeAngle=(vTargetPos.c[2]-m_PhysicInfo.vPosition.c[2])>0?90.0+dTempAngle:270-dTempAngle;
 				
 				m_bFleeing=true;
+				m_nFleeStartTime=dwCurrentTime;
 			}
 			
 			if(m_pType->m_bFleeOnSameX &&
@@ -170,7 +171,7 @@ void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 		}
 	}
 	
-	if(m_bFleeing)
+	if(m_bFleeing && m_nFleeStartTime+m_pType->m_nFleeDelay<=dwCurrentTime)
 	{
 		// If fleeing, just ensure we have the right heading
 		CVector vFleeAngles=m_PhysicInfo.vAngles;
@@ -315,6 +316,6 @@ bool CFighter::HasFinishedRoute()
 
 IEntity *CFighter::GetTarget()
 {
-  return m_piTarget;
+	return m_piTarget;
 }
  
