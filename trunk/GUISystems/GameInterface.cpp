@@ -7,6 +7,7 @@
 
 CGameInterface::CGameInterface(void)
 {
+	m_eState=eGameInterfaceState_Idle;
 	m_bActive=false;
 	m_bCompleted=false;
 	m_piSystemManager   =NULL;
@@ -26,6 +27,13 @@ CGameInterface::CGameInterface(void)
 	m_piSTEntityCount=NULL;
 
 	m_bGameStarted=false;
+	m_nHighScore=0;
+	m_nScore=0;	
+	m_bCourtainOpen=false;
+	m_bCourtainClosed=true;
+	m_bCourtainOpening=false;
+	m_bCourtainClosing=false;
+	m_nCourtainStartTime=0;
 }
 
 CGameInterface::~CGameInterface(void)
@@ -88,6 +96,10 @@ void CGameInterface::StartGame()
 		m_piPlayer->SetLivesLeft(3);
 	}
 	m_bGameStarted=true;
+	m_eState=eGameInterfaceState_StartCourtain;
+	unsigned int nCurrentTime=m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime();
+	OpenCourtain(nCurrentTime);
+	m_nLastCountTime=nCurrentTime;
 }
 
 void CGameInterface::StopGame()
@@ -102,6 +114,7 @@ void CGameInterface::StopGame()
 	m_piPlayer=NULL;
 	m_bGameStarted=false;
 	m_bPlayerKilledOnPreviousFrame=false;
+	m_eState=eGameInterfaceState_Idle;
 }
 
 void CGameInterface::ResetGame(bool bGoToLastCheckPoint)
@@ -165,60 +178,81 @@ void CGameInterface::CloseScenario()
 	m_bCompleted=false;
 }
 
+void CGameInterface::RenderCourtain(IGenericRender *piRender,unsigned int dwCurrentTime)
+{
+	double dCourtainPosition=0;
+	
+	if(m_bCourtainOpen){return;}
+	if(m_bCourtainClosing)
+	{
+		double dCourtainProgress=((double)(dwCurrentTime-m_nCourtainStartTime))/350.0;
+		if(dCourtainProgress>1.0){dCourtainProgress=1.0;m_bCourtainClosing=false;m_bCourtainClosed=true;}
+		dCourtainPosition=dCourtainProgress;
+	}
+	else if(m_bCourtainOpening)
+	{
+		double dCourtainProgress=((double)(dwCurrentTime-m_nCourtainStartTime))/350.0;
+		if(dCourtainProgress>1.0){dCourtainProgress=1.0;m_bCourtainOpening=false;m_bCourtainOpen=true;}
+		dCourtainPosition=1.0-dCourtainProgress;
+	}
+
+	piRender->PushState();
+	piRender->SetOrthographicProjection(m_rRealRect.w,m_rRealRect.h);
+	piRender->SetViewport(m_rRealRect.x,m_rRealRect.y,m_rRealRect.w,m_rRealRect.h);
+	piRender->SetCamera(CVector(m_rRealRect.w*0.5,m_rRealRect.h*0.5,200),90,0,0);
+
+	piRender->DeactivateDepth();
+	piRender->ActivateSolid();
+	piRender->SetColor(CVector(0,0,0),0);
+	
+	if(m_bCourtainClosed)
+	{
+		piRender->RenderRect(0,0,m_rRealRect.w,m_rRealRect.h);
+	}
+	else
+	{
+		double cx=m_rRealRect.w*0.5*dCourtainPosition;
+		double cy=m_rRealRect.h*0.5*dCourtainPosition;
+		piRender->RenderRect(0,0,cx,cy);
+		piRender->RenderRect(m_rRealRect.w-cx,0,cx,cy);
+		piRender->RenderRect(0,m_rRealRect.h-cy,cx,cy);
+		piRender->RenderRect(m_rRealRect.w-cx,m_rRealRect.h-cy,cx,cy);
+	}
+	piRender->PopState();
+}
+	
 void CGameInterface::OnDraw(IGenericRender *piRender)
 {
-	char sTempText[512]={0};
+	unsigned int dwCurrentTime=m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime();
+	
+//	unsigned int nFrameStart=GetTimeStamp();
+
 
 	if(!m_piPlayerEntity){return;}
-
-
 	if(m_bPlayerKilledOnPreviousFrame)
 	{
-		m_bPlayerKilledOnPreviousFrame=false;
-		if(m_piPlayer->GetLivesLeft()==0)
+		if(m_bCourtainClosed)
 		{
-			NOTIFY_EVENT(IGameInterfaceWindowEvents,OnScenarioFinished(eScenarioFinishedReason_GameOver));
+			m_bPlayerKilledOnPreviousFrame=false;
+			if(m_piPlayer->GetLivesLeft()==0)
+			{
+				NOTIFY_EVENT(IGameInterfaceWindowEvents,OnScenarioFinished(eScenarioFinishedReason_GameOver));
+			}
+			else
+			{
+				unsigned long nLivesLeft=m_piPlayer->GetLivesLeft();
+				unsigned long nPoints=m_piPlayer->GetPoints();
+				ResetGame(true);
+				m_piPlayer->SetLivesLeft(nLivesLeft);
+				m_piPlayer->SetPoints(nPoints);
+			}
+			return;
 		}
-		else
+		else if(!m_bCourtainClosing)
 		{
-			unsigned long nLivesLeft=m_piPlayer->GetLivesLeft();
-			unsigned long nPoints=m_piPlayer->GetPoints();
-			ResetGame(true);
-			m_piPlayer->SetLivesLeft(nLivesLeft);
-			m_piPlayer->SetPoints(nPoints);
+			CloseCourtain(dwCurrentTime);
 		}
-		return;
-	}
-	if(m_EntityManagerWrapper.m_piEntityManager)
-	{
-		sprintf(sTempText,"%u entities",(unsigned int)m_EntityManagerWrapper.m_piEntityManager->GetEntityCount());
-		if(m_piSTEntityCount){m_piSTEntityCount->SetText(sTempText);}
-	}
-	if(m_EntityManagerWrapper.m_piEntityManager)
-	{
-		ISystemManager *piSystemManager=GetSystemManager();
-		sprintf(sTempText,"%u objects",(unsigned int)piSystemManager->DebugGetRegisteredObjectCount());
-		if(m_piSTObjectCount){m_piSTObjectCount->SetText(sTempText);}
-		REL(piSystemManager);
-	}
-	if(m_FrameManagerWrapper.m_piFrameManager)
-	{
-		sprintf(sTempText,"%f fps",m_FrameManagerWrapper.m_piFrameManager->GetCurrentFps());
-		if(m_piSTFrameRate){m_piSTFrameRate->SetText(sTempText);}
-
-		if(m_piSTGameTime)
-		{
-			unsigned int dwCurrentTime=m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime();
-			unsigned int dwMinutes=0,dwSeconds=0,dwMilliseconds=0;
-			dwCurrentTime=m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime();
-			dwMinutes=dwCurrentTime/(1000*60);
-			dwSeconds=dwCurrentTime/1000-dwMinutes*60;
-			dwMilliseconds=dwCurrentTime-(dwSeconds*1000+dwMinutes*60*1000);
-			sprintf(sTempText,"%02d:%02d.%03d %s",dwMinutes,dwSeconds,dwMilliseconds,m_FrameManagerWrapper.m_piFrameManager->IsPaused()?"  <PAUSED>":"");
-			m_piSTGameTime->SetText(sTempText);
-		}
-	}
-	
+	}	
 
 	m_FrameManagerWrapper.m_piFrameManager->ProcessFrame();
 	ProcessInput();
@@ -228,66 +262,157 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 	{
 		m_GameControllerWrapper.m_piGameController->ProcessFrame(m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime(),m_FrameManagerWrapper.m_piFrameManager->GetTimeFraction());
 	}
-	if(!m_bCompleted && m_PlayAreaManagerWrapper.m_piPlayAreaManager)
+	
+	if(m_eState==eGameInterfaceState_StartCourtain)
+	{
+		if(!m_bCourtainOpening)
+		{
+			m_eState=eGameInterfaceState_Playing;
+			m_nLastCountTime=dwCurrentTime;
+		}
+	}
+	
+	if(m_eState==eGameInterfaceState_Playing && m_PlayAreaManagerWrapper.m_piPlayAreaManager)
 	{
 		if(m_PlayAreaManagerWrapper.m_piPlayAreaManager->IsScenarioCompleted())
 		{
-			m_bCompleted=true;
-			NOTIFY_EVENT(IGameInterfaceWindowEvents,OnScenarioFinished(eScenarioFinishedReason_Completed));
+			m_eState=eGameInterfaceState_CountintWait;
+			m_nEndBombs=0;
+			m_nEndPoints=0;
+			m_nLastCountTime=dwCurrentTime;
 		}
 	}
-
-	// Actual rendering:
-	IGenericCamera *piCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera();
-	if(piCamera)
+	
+	if(m_eState==eGameInterfaceState_CountintWait)
 	{
-		SGameRect sParentRect;
-		SGameRect sRect;
-		
-		m_piParent->GetRealRect(&sParentRect);
-		double dPlayAreaAspectRatio=piCamera->GetAspectRatio();
-		sRect.y=0;
-		sRect.w=sParentRect.h*dPlayAreaAspectRatio;
-		sRect.x=(sParentRect.w-sRect.w)*0.5;
-		sRect.h=sParentRect.h;
-		
-		SetReferenceSystem(eGameGUIReferenceSystem_Absolute);
-		SetRect(&sRect);
-		
-
-		double dNearPlane=0,dFarPlane=0;
-		double dViewAngle=piCamera->GetViewAngle();
-		CVector vAngles,vPosition;
-
-		piCamera->GetClippingPlanes(dNearPlane,dFarPlane);
-		vAngles=piCamera->GetAngles();
-		vPosition=piCamera->GetPosition();
-
-		piRender->SetViewport(sRect.x,sRect.y,sRect.w,sRect.h);
-		piRender->SetPerspectiveProjection(dViewAngle,dNearPlane,100000);
-		piRender->SetCamera(vPosition,vAngles.c[YAW],vAngles.c[PITCH],vAngles.c[ROLL]);
-
-		piRender->PushOptions();
-		piRender->PushState();
-		piRender->ActivateDepth();
-		piRender->EnableTextures();
-		piRender->EnableSolid();
-		piRender->EnableBlending();
-		piRender->EnableLighting();	
-		piRender->EnableShadows();
-		piRender->EnableShaders();
-		piRender->EnableHeightFog();
-		piRender->StartStagedRendering();
-		m_WorldManagerWrapper.m_piWorldManager->SetupRenderingEnvironment(piRender);
-		m_EntityManagerWrapper.m_piEntityManager->RenderEntities(piRender,piCamera);
-		piRender->EndStagedRendering();
-		piRender->DeactivateDepth();
-		piRender->PopState();
-		piRender->PopOptions();	
+		if(m_nLastCountTime+1000<dwCurrentTime)
+		{
+			m_eState=eGameInterfaceState_CountingBombs;
+			m_nLastCountTime=dwCurrentTime;
+		}
 	}
-	REL(piCamera);
+	
+	if(m_eState==eGameInterfaceState_CountingBombs)
+	{
+		if(m_nLastCountTime+500<dwCurrentTime)
+		{
+			IWeapon *piWeapon=m_piPlayerEntity?m_piPlayerEntity->GetWeapon(1):NULL;
+			unsigned int nBombsLeft=piWeapon?piWeapon->GetAmmo():0;
+			if(nBombsLeft)
+			{
+				if(piWeapon){piWeapon->SetAmmo(nBombsLeft-1);}
+				m_nEndBombs++;
+				m_nEndPoints+=3000;
+			}
+			else
+			{
+				m_eState=eGameInterfaceState_CountingPoints;
+			}
+			m_nLastCountTime=dwCurrentTime;
+		}
+	}
+	
+	if(m_eState==eGameInterfaceState_CountingPoints)
+	{
+		if(m_nLastCountTime+10<dwCurrentTime)
+		{
+			if(m_nEndPoints)
+			{
+				if(m_piPlayer){m_piPlayer->AddPoints(50);}
+				m_nEndPoints-=50;
+			}
+			else
+			{
+				m_eState=eGameInterfaceState_EndWait;
+			}
+			m_nLastCountTime=dwCurrentTime;
+		}
+	}
+	
+	if(m_eState==eGameInterfaceState_EndWait)
+	{
+		if(m_nLastCountTime+2000<dwCurrentTime)
+		{
+			m_eState=eGameInterfaceState_EndCourtain;
+			m_nLastCountTime=dwCurrentTime;
+			CloseCourtain(dwCurrentTime);
+		}
+	}
+	
+	if(m_eState==eGameInterfaceState_EndCourtain)
+	{
+		if(!m_bCourtainClosing)
+		{
+			m_eState=eGameInterfaceState_Idle;
+			m_bCompleted=true;
+			NOTIFY_EVENT(IGameInterfaceWindowEvents,OnScenarioFinished(eScenarioFinishedReason_Completed));
+			m_nLastCountTime=dwCurrentTime;
+			return;
+		}
+	}
+	
+	if(m_PlayAreaManagerWrapper.m_piPlayAreaManager)
+	{
+		// Actual rendering:
+		IGenericCamera *piCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera();
+		if(piCamera)
+		{
+			SGameRect sParentRect;
+			SGameRect sRect;
+			
+			m_piParent->GetRealRect(&sParentRect);
+			double dPlayAreaAspectRatio=piCamera->GetAspectRatio();
+			sRect.y=0;
+			sRect.w=sParentRect.h*dPlayAreaAspectRatio;
+			sRect.x=(sParentRect.w-sRect.w)*0.5;
+			sRect.h=sParentRect.h;
+			
+			SetReferenceSystem(eGameGUIReferenceSystem_Absolute);
+			SetRect(&sRect);
+			
 
-	UpdateGUI();
+			double dNearPlane=0,dFarPlane=0;
+			double dViewAngle=piCamera->GetViewAngle();
+			CVector vAngles,vPosition;
+
+			piCamera->GetClippingPlanes(dNearPlane,dFarPlane);
+			vAngles=piCamera->GetAngles();
+			vPosition=piCamera->GetPosition();
+
+			piRender->SetViewport(sRect.x,sRect.y,sRect.w,sRect.h);
+			piRender->SetPerspectiveProjection(dViewAngle,dNearPlane,dFarPlane);
+			piRender->SetCamera(vPosition,vAngles.c[YAW],vAngles.c[PITCH],vAngles.c[ROLL]);
+
+			piRender->PushOptions();
+			piRender->PushState();
+			piRender->ActivateDepth();
+			piRender->EnableTextures();
+			piRender->EnableSolid();
+			piRender->EnableBlending();
+			piRender->EnableLighting();	
+			piRender->EnableShadows();
+			piRender->EnableShaders();
+			piRender->EnableHeightFog();
+			piRender->DisableAutoShadowVolume();
+			
+			piRender->StartStagedRendering();
+			m_WorldManagerWrapper.m_piWorldManager->SetupRenderingEnvironment(piRender);
+			m_EntityManagerWrapper.m_piEntityManager->RenderEntities(piRender,piCamera);
+	//unsigned int nRenderStart=GetTimeStamp();
+			piRender->EndStagedRendering();
+	//unsigned int nRenderEnd=GetTimeStamp();
+
+			//RTTRACE("FrameTime %dms, render %d",nRenderEnd-nRenderStart,nRenderStart-nFrameStart);
+			piRender->DeactivateDepth();
+			piRender->PopState();
+			piRender->PopOptions();	
+		}
+		REL(piCamera);
+	}
+
+	RenderCourtain(piRender,dwCurrentTime);
+	
+	UpdateGUI(dwCurrentTime);
 }
 
 void CGameInterface::ProcessInput()
@@ -351,8 +476,7 @@ bool	CGameInterface::IsFrozen()
 {
 	return m_bFrozen;
 }
-
-void CGameInterface::OnKilled(IEntity *piEntity)
+void CGameInterface::OnRemoved(IEntity *piEntity)
 {
 	if(piEntity==m_piPlayerEntity)
 	{
@@ -360,38 +484,99 @@ void CGameInterface::OnKilled(IEntity *piEntity)
 	}
 }
 
+void CGameInterface::OnKilled(IEntity *piEntity){}
+
 void CGameInterface::RenderEntity(IEntity *piEntity,void *pParam1,void *pParam2)
 {
 	piEntity->Render((IGenericRender*)pParam1,(IGenericCamera*)pParam2);
 }
 
-void CGameInterface::UpdateGUI()
+void CGameInterface::UpdateGUI(unsigned int dwCurrentTime)
 {
-	int nPoints=0;
+	if(m_FrameManagerWrapper.m_piFrameManager==NULL){return;}
+	if(m_EntityManagerWrapper.m_piEntityManager==NULL){return;}
+	
+	char sTempText[512]={0};
+	
 	int nLivesLeft=0;
 	int nBombsLeft=0;
 
 	IEntity	*piPlayerEntity=NULL;
 	IPlayer *piPlayer=NULL;
-
+	
+	m_piSTCentralPanel->Show(m_eState==eGameInterfaceState_CountingBombs || 
+							 m_eState==eGameInterfaceState_CountingPoints || 
+							 m_eState==eGameInterfaceState_EndWait);
+	if(m_piSTCentralPanel)
+	{
+		if(m_piSTEndPoints)
+		{
+			char sTemp[200]={0};
+			sprintf(sTemp,"%d",m_nEndPoints);
+			m_piSTEndPoints->SetText(sTemp);
+		}
+		for(unsigned int x=0;x<MAX_BOMBS_TO_DISPLAY;x++)
+		{
+			if(m_piSTEndBombs[x]){m_piSTEndBombs[x]->Show(x<m_nEndBombs);}
+		}
+	}
 	if(m_EntityManagerWrapper.m_piEntityManager!=NULL)
 	{
 		piPlayerEntity=m_EntityManagerWrapper.m_piEntityManager->FindEntity("Player");
 		if(piPlayerEntity){piPlayer=dynamic_cast<IPlayer*>(piPlayerEntity);}
 	}
-
+	
+	if(m_EntityManagerWrapper.m_piEntityManager)
+	{
+		sprintf(sTempText,"%u entities",(unsigned int)m_EntityManagerWrapper.m_piEntityManager->GetEntityCount());
+		if(m_piSTEntityCount){m_piSTEntityCount->SetText(sTempText);}
+	}
+	if(m_EntityManagerWrapper.m_piEntityManager)
+	{
+		ISystemManager *piSystemManager=GetSystemManager();
+		sprintf(sTempText,"%u objects",(unsigned int)piSystemManager->DebugGetRegisteredObjectCount());
+		if(m_piSTObjectCount){m_piSTObjectCount->SetText(sTempText);}
+		REL(piSystemManager);
+	}
+	if(m_FrameManagerWrapper.m_piFrameManager)
+	{
+		sprintf(sTempText,"%f fps",m_FrameManagerWrapper.m_piFrameManager->GetCurrentFps());
+		if(m_piSTFrameRate){m_piSTFrameRate->SetText(sTempText);}
+		
+		if(m_piSTGameTime)
+		{
+			unsigned int dwMinutes=0,dwSeconds=0,dwMilliseconds=0;
+			dwMinutes=dwCurrentTime/(1000*60);
+			dwSeconds=dwCurrentTime/1000-dwMinutes*60;
+			dwMilliseconds=dwCurrentTime-(dwSeconds*1000+dwMinutes*60*1000);
+			sprintf(sTempText,"%02d:%02d.%03d %s",dwMinutes,dwSeconds,dwMilliseconds,m_FrameManagerWrapper.m_piFrameManager->IsPaused()?"  <PAUSED>":"");
+			m_piSTGameTime->SetText(sTempText);
+		}
+	}
+	
 	if(piPlayer)
 	{
 		IWeapon *piBombWeapon=piPlayerEntity->GetWeapon(1);
-		nPoints=piPlayer->GetPoints();
+		m_nScore=piPlayer->GetPoints();
 		nLivesLeft=piPlayer->GetLivesLeft();
 		nBombsLeft=piBombWeapon?piBombWeapon->GetAmmo():0;
+	}
+	else
+	{
+		m_nScore=0;
 	}
 	if(m_piSTPoints)
 	{
 		char sTemp[200]={0};
-		sprintf(sTemp,"%d",nPoints);
+		sprintf(sTemp,"%d",m_nScore);
 		m_piSTPoints->SetText(sTemp);
+	}
+	
+	if(m_piSTHighScore)
+	{
+		char sTemp[200]={0};
+		sprintf(sTemp,"%d",m_nScore>m_nHighScore?m_nScore:m_nHighScore);
+		m_piSTHighScore->SetText(sTemp);
 	}
 
 	for(int x=0;x<MAX_LIVES_TO_DISPLAY;x++)
@@ -402,4 +587,25 @@ void CGameInterface::UpdateGUI()
 	{
 		if(m_piSTBombs[x]){m_piSTBombs[x]->Show(x<nBombsLeft);}
 	}
+}
+
+void CGameInterface::SetHighScore(unsigned int nScore){m_nHighScore=nScore;}
+unsigned int CGameInterface::GetScore(){return m_nScore;}
+
+void CGameInterface::OpenCourtain(unsigned int nCurrentTime)
+{
+	m_bCourtainOpen=false;
+	m_bCourtainClosed=false;
+	m_bCourtainOpening=true;
+	m_bCourtainClosing=false;
+	m_nCourtainStartTime=nCurrentTime;
+}
+
+void CGameInterface::CloseCourtain(unsigned int nCurrentTime)
+{
+	m_bCourtainOpen=false;
+	m_bCourtainClosed=false;
+	m_bCourtainOpening=false;
+	m_bCourtainClosing=true;
+	m_nCourtainStartTime=nCurrentTime;
 }

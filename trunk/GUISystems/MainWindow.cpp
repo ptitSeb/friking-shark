@@ -55,6 +55,17 @@ bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 	return bResult;
 }
 
+void CMainWindow::OnDraw(IGenericRender *piRender)
+{
+	CGameWindowBase::OnDraw(piRender);
+	
+	if(m_eStage==eInterfaceStage_MainMenu && !m_MainMenuDialog.m_piDialog->IsVisible())
+	{
+		bool bProcessed=false;
+		OnKeyDown(GK_ESCAPE,&bProcessed);
+	}
+}
+
 void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 {
 	if(nKey==GK_ESCAPE)
@@ -106,16 +117,14 @@ void CMainWindow::OnScenarioFinished(eScenarioFinishedReason eReason)
 {
 	m_piGUIManager->ShowMouseCursor(true);
 	m_piGameInterface->Freeze(true);
-	if(eReason==eScenarioFinishedReason_Completed)
-	{
-		m_CongratulationsDialog.m_piDialog->Execute(this);
-	}
-	else
+	if(eReason!=eScenarioFinishedReason_Completed)
 	{
 		m_GameOverDialog.m_piDialog->Execute(this);
 	}
 	m_piGameInterface->Freeze(false);
 	m_piGameInterface->Show(false);
+	m_piGameInterface->StopGame();
+	m_piGameInterface->CloseScenario();
 	m_piSTBackground->Show(true);
 	m_eStage=eInterfaceStage_MainMenu;
 }

@@ -10,6 +10,9 @@ public:
 	virtual void StartGame()=0;
 	virtual void StopGame()=0;
 	
+	virtual void SetHighScore(unsigned int nScore)=0;
+	virtual unsigned int GetScore()=0;
+	
 	virtual bool LoadScenario(std::string sFileName)=0;
 	virtual void CloseScenario()=0;
 	
