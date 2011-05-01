@@ -19,12 +19,14 @@ public:
     double  m_dTimeBetweenShotsMax;
 
     // Behaviour parameterers
-	bool    m_bHeadToTarget; // false: folow the route, true, head directly to the target
-    bool    m_bFleeOnSameX;
-    bool    m_bFleeOnSameZ;
-    double  m_dMinFleeAngle; // Min angle to flee, centered on 90 and 270 depending on the target position
-    double  m_dMaxFleeAngle; // Max angle to flee, centered on 90 and 270 depending on the target position
-    double  m_dMaxHeadingCorrection;// Max angle per sec to correct to head the target
+	bool         m_bHeadToTarget; // false: folow the route, true, head directly to the target
+	bool         m_bFleeOnSameX;
+	bool         m_bFleeOnSameZ;
+	unsigned int m_nFleeDelay;
+	double       m_dFleeProbability;
+	double       m_dMinFleeAngle; // Min angle to flee, centered on 90 and 270 depending on the target position
+	double       m_dMaxFleeAngle; // Max angle to flee, centered on 90 and 270 depending on the target position
+	double       m_dMaxHeadingCorrection;// Max angle per sec to correct to head the target
 
     BEGIN_PROP_MAP(CFighterType)
         PROP_CLASS_CHAIN(CEntityTypeBase)
@@ -36,6 +38,8 @@ public:
 		PROP_VALUE_FLAGS(m_dTimeBetweenShotsMax,"TimeBetweenShotsMax",2000,MRPF_NORMAL|MRPF_OPTIONAL);
 		
         PROP_VALUE_FLAGS(m_bHeadToTarget,"HeadToTarget",false,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_VALUE_FLAGS(m_dFleeProbability,"FleeProbability",1,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_VALUE_FLAGS(m_nFleeDelay,"FleeDelay",0,MRPF_NORMAL|MRPF_OPTIONAL);
         PROP_VALUE_FLAGS(m_bFleeOnSameX,"FleeOnSameX",false,MRPF_NORMAL|MRPF_OPTIONAL);
         PROP_VALUE_FLAGS(m_bFleeOnSameZ,"FleeOnSameZ",false,MRPF_NORMAL|MRPF_OPTIONAL);
         PROP_VALUE_FLAGS(m_dMinFleeAngle,"MinFleeAngle",20,MRPF_NORMAL|MRPF_OPTIONAL);
@@ -63,12 +67,13 @@ class CFighter: public CEntityBase
 	bool   m_bFleeing;
 	double m_dFleeAngle;
 	bool   m_bWasVisible;
+	double m_dRadius;
 	
     double m_dwNextShotTime;
 	
 	unsigned int m_nFallStartTime;
+	unsigned int m_nFleeStartTime;
 	unsigned int m_nCurrentTime;
-	
 public:
 
 	void AcquireTarget();
