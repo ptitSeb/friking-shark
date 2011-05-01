@@ -575,6 +575,11 @@ struct IPlayer
   virtual void  GetWeaponsOnSlot(unsigned int dwWeaponSlot,vector<IWeapon*> *pWeapons)=0;
   virtual void  FireWeaponsOnSlot(unsigned int dwWeaponSlot,unsigned int dwCurrentTime)=0;
 
+  virtual void         SetDifficultyLevel(unsigned int nLevel)=0;
+  virtual unsigned int GetDifficultyLevel()=0;
+  
+  virtual void         SetGodMode(bool bGod)=0;
+  
   virtual ~IPlayer(){}
 };
 struct STerrainWater

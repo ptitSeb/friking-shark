@@ -2829,6 +2829,11 @@ void CScenarioEditorMainWindow::StartGameSimulation()
 	if(m_PlayAreaManagerWrapper.m_piPlayAreaManager)
 	{
 		m_PlayAreaManagerWrapper.m_piPlayAreaManager->SetPlayMovementPosition(m_vPlayMovementPosition);
+		IEntity *piPlayerEntity=m_EntityManagerWrapper.m_piEntityManager->FindEntity("Player");
+		IWeapon *piBombWeapon=piPlayerEntity?piPlayerEntity->GetWeapon(1):NULL;
+		IPlayer *piPlayer=dynamic_cast<IPlayer*>(piPlayerEntity);
+		if(piPlayer){piPlayer->SetGodMode(true);}
+		if(piBombWeapon){piBombWeapon->SetAmmo(10000);}
 	}
 
 	m_bSimulationStarted=true;
