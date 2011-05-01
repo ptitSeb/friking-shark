@@ -20,7 +20,7 @@ IEntity *CPlayerType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTim
     InitializeEntity(piEntity,dwCurrentTime);
     piEntity->SetState(ePlayerState_Normal);
     piEntity->SetSpeed(m_dMaxVelocity);
-    piEntity->SetHealth(10000000);
+    piEntity->SetHealth(1);
     return piEntity;
 }
 
@@ -34,6 +34,10 @@ CPlayer::CPlayer(CPlayerType *pType)
   m_pType=pType;
   m_bRouteFinished=false;
   m_nRoutePoint=0;
+  m_bGodMode=false;
+  m_nDifficultyLevel=1;
+  m_nFallStartTime=0;
+  m_nCurrentTime=0;
 }
 
 unsigned int CPlayer::GetPoints(){return m_dwPoints;}
@@ -46,6 +50,10 @@ void  CPlayer::AddLivesLeft(unsigned int dwLivesLeft){m_dwLivesLeft+=dwLivesLeft
 
 double CPlayer::GetSpeed(){return m_dSpeed;}
 void   CPlayer::SetSpeed(double dSpeed){m_dSpeed=dSpeed;}
+
+void         CPlayer::SetDifficultyLevel(unsigned int nLevel){m_nDifficultyLevel=nLevel;}
+unsigned int CPlayer::GetDifficultyLevel(){return m_nDifficultyLevel;}
+void         CPlayer::SetGodMode(bool bGod){m_bGodMode=bGod;}
 
 void  CPlayer::GetWeaponsOnSlot(unsigned int dwWeaponSlot,vector<IWeapon*> *pWeapons)
 {
@@ -77,6 +85,7 @@ void CPlayer::OnKilled()
 	{
 		if(GetState()!=ePlayerState_Falling)
 		{
+			m_nFallStartTime=m_nCurrentTime;
 			m_PhysicInfo.vAngleVelocity.c[2]+=drand()*300.0-150.0;
 			SetState(ePlayerState_Falling);
 			m_PhysicInfo.dwMoveType=PHYSIC_MOVE_TYPE_NORMAL;
@@ -96,17 +105,19 @@ void CPlayer::OnKilled()
 
 bool CPlayer::OnCollision(IEntity *piOther,CVector &vCollisionPos)
 {
-	if(m_dHealth<=0 && *piOther->GetEntityClass()=="CWorldEntity")
+	if(GetState()==ePlayerState_Falling && (m_nCurrentTime-m_nFallStartTime)>1000)
 	{
 		if(GetState()!=ePlayerState_Crashed && m_pTypeBase->GetStateAnimations(ePlayerState_Crashed))
 		{
 			SetState(ePlayerState_Crashed);
 		}
-		CEntityBase::OnKilledInternal(true);
+		Remove();
 	}
-	if(m_dHealth>0 && *piOther->GetEntityClass()!="CWorldEntity" && piOther->GetAlignment()!=m_dwAlignment)
+	if(m_dHealth>0 && piOther->GetAlignment()==ENTITY_ALIGNMENT_ENEMIES)
 	{
+		double dMyDamage=piOther->GetHealth();
 		piOther->OnDamage(m_dHealth,this);
+		OnDamage(dMyDamage,piOther);
 	}
 	return false;
 }
@@ -114,6 +125,8 @@ bool CPlayer::OnCollision(IEntity *piOther,CVector &vCollisionPos)
 void CPlayer::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
+	
+	m_nCurrentTime=dwCurrentTime;
 	
 	if(m_piRoute)
 	{
@@ -206,4 +219,10 @@ void CPlayer::SetRoute( IRoute *piRoute )
 bool CPlayer::HasFinishedRoute()
 {
 	return m_piRoute==NULL || m_bRouteFinished || m_dHealth==0;
+}
+
+void CPlayer::OnDamage(double dDamage,IEntity *pAggresor)
+{
+	if(m_bGodMode){return;}
+	CEntityBase::OnDamage(dDamage,pAggresor);
 }
