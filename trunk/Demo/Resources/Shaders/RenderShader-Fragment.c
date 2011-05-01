@@ -19,12 +19,8 @@ uniform sampler2DShadow ShadowMap;
 
 varying vec3 g_WorldVertexPos;
 #ifdef ENABLE_LIGHTING
-varying vec4 g_amb;
-varying vec4 g_diff;
-varying vec4 g_spec;
-varying vec4 g_sunamb;
-varying vec4 g_sundiff;
-varying vec4 g_sunspec;
+varying vec4 g_ambdiffspec;
+varying vec4 g_sunambdiffspec;
 #endif
 
 #ifdef ENABLE_FOG
@@ -95,21 +91,13 @@ void main (void)
 	#endif
 #endif
   
-  #ifdef ENABLE_LIGHTING
-	  vec4 amb=g_amb;
-	  vec4 diff=g_diff;
-	  vec4 spec=g_spec;
-  #endif
-  
   #ifdef ENABLE_SHADOWS
 	  
 	  fShadowFactor=shadow2DProj(ShadowMap, gl_TexCoord[3]).r;
   #endif
   #ifdef ENABLE_LIGHTING
-	  amb+=g_sunamb*fShadowFactor;
-	  diff+=g_sundiff*fShadowFactor;
-	  spec+=g_sunspec*fShadowFactor;
-	  finalcolor=(clamp(gl_LightModel.ambient+amb+diff,0.0,LIGHTING_SATURATION)*texcolor)+(spec*gl_FrontMaterial.specular*texcolor);
+	  finalcolor.rgb=clamp(g_ambdiffspec.rgb+g_sunambdiffspec.rgb*fShadowFactor,0.0,LIGHTING_SATURATION);
+	  finalcolor.rgb*=texcolor.rgb;
 	  finalcolor.a=texcolor.a;
   #else
 	finalcolor=texcolor*fShadowFactor;

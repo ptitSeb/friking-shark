@@ -7,12 +7,8 @@
 uniform mat4 CameraModelViewInverse;
 varying vec3 g_WorldVertexPos;
 #ifdef ENABLE_LIGHTING
-varying vec4 g_amb;
-varying vec4 g_diff;
-varying vec4 g_spec;
-varying vec4 g_sunamb;
-varying vec4 g_sundiff;
-varying vec4 g_sunspec;
+varying vec4 g_ambdiffspec;
+varying vec4 g_sunambdiffspec;
 #endif
 #ifdef ENABLE_FOG
 varying float g_fFogFactor;
@@ -77,34 +73,38 @@ void main (void)
 
     gl_Position = ftransform();
 #ifdef ENABLE_LIGHTING
-	g_amb=vec4(0);
-	g_diff=vec4(0);
-	g_spec=vec4(0);
-	g_sunamb=vec4(0);
-	g_sundiff=vec4(0);
-	g_sunspec=vec4(0);
-	DirectionalLight(0, normal, g_sunamb, g_sundiff,g_sunspec);
+	vec4 amb=vec4(0);
+	vec4 diff=vec4(0);
+	vec4 sunamb=vec4(0);
+	vec4 sundiff=vec4(0);
+	vec4 spec=vec4(0);
+	vec4 sunspec=vec4(0);
+	
+	DirectionalLight(0, normal, sunamb, sundiff,sunspec);
 #if ENABLED_LIGHTS > 1
-	PointLight(1, EyeVertexPos.xyz, normal, g_amb, g_diff, g_spec);
+	PointLight(1, EyeVertexPos.xyz, normal, amb, diff, spec);
 #endif
 #if ENABLED_LIGHTS > 2
-	PointLight(2, EyeVertexPos.xyz, normal, g_amb, g_diff, g_spec);
+	PointLight(2, EyeVertexPos.xyz, normal, amb, diff, spec);
 #endif
 #if ENABLED_LIGHTS > 3
-	PointLight(3, EyeVertexPos.xyz, normal, g_amb, g_diff, g_spec);
+	PointLight(3, EyeVertexPos.xyz, normal, amb, diff, spec);
 #endif
 #if ENABLED_LIGHTS > 4
-	PointLight(4, EyeVertexPos.xyz, normal, g_amb, g_diff, g_spec);
+	PointLight(4, EyeVertexPos.xyz, normal, amb, diff, spec);
 #endif
 #if ENABLED_LIGHTS > 5
-	PointLight(5, EyeVertexPos.xyz, normal, g_amb, g_diff, g_spec);
+	PointLight(5, EyeVertexPos.xyz, normal, amb, diff, spec);
 #endif
 #if ENABLED_LIGHTS > 6
-	PointLight(6, EyeVertexPos.xyz, normal, g_amb, g_diff, g_spec);
+	PointLight(6, EyeVertexPos.xyz, normal, amb, diff, spec);
 #endif
 #if ENABLED_LIGHTS > 7
-	PointLight(7, EyeVertexPos.xyz, normal, g_amb, g_diff, g_spec);
+	PointLight(7, EyeVertexPos.xyz, normal, amb, diff, spec);
 #endif
+	g_ambdiffspec=gl_LightModel.ambient+amb+diff+spec*gl_FrontMaterial.specular;
+	g_sunambdiffspec=sunamb+sundiff+sunspec*gl_FrontMaterial.specular;	
+	
 #endif
 
 #ifdef ENABLE_FOG
