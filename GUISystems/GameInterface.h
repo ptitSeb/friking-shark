@@ -3,11 +3,28 @@
 #define MAX_LIVES_TO_DISPLAY 6
 #define MAX_BOMBS_TO_DISPLAY 6
 
+enum EGameInterfaceState
+{
+	eGameInterfaceState_Idle,
+	eGameInterfaceState_StartCourtain,
+	eGameInterfaceState_Playing,
+	eGameInterfaceState_CountintWait,
+	eGameInterfaceState_CountingBombs,
+	eGameInterfaceState_CountingPoints,
+	eGameInterfaceState_EndWait,
+	eGameInterfaceState_EndCourtain
+};
+
 class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterfaceWindow,virtual public IPlayAreaElementEnumerationCallback,virtual public IEntityEvents
 {
 	ISystemManager			*m_piSystemManager;
 	ISystem					*m_piGameSystem;
-
+	
+	EGameInterfaceState      m_eState;
+	unsigned int             m_nEndBombs;
+	unsigned int             m_nEndPoints;
+	unsigned int             m_nLastCountTime;
+	
 	CGameControllerWrapper   m_GameControllerWrapper;
 	CPlayAreaManagerWrapper  m_PlayAreaManagerWrapper;
 	CEntityManagerWrapper	 m_EntityManagerWrapper;
@@ -16,6 +33,12 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	IPlayer					*m_piPlayer;
 	IEntity					*m_piPlayerEntity;
 
+	bool         m_bCourtainOpen;
+	bool         m_bCourtainClosed;
+	bool         m_bCourtainOpening;
+	bool         m_bCourtainClosing;
+	unsigned int m_nCourtainStartTime;
+	
 	bool m_bPlayerKilledOnPreviousFrame;
 
 	IGameGUILabel *m_piSTFrameRate;
@@ -30,23 +53,39 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	unsigned int		m_dwNextAcceptedControlKeyTime;
 	unsigned int		m_dwNextAcceptedPauseKeyTime;
 	unsigned int		m_dwMovementType;
-
+	
+	unsigned int m_nHighScore;
+	unsigned int m_nScore;
+	
 	bool m_bGameStarted;
 	CVector m_vLastCheckPointPosition;
 	bool m_bShowPerformanceIndicators;
 
 	SGamePos m_InspectionMovementStartPoint;
 
+	IGameWindow		*m_piSTCentralPanel;
 	IGameGUILabel   *m_piSTPoints;
+	IGameGUILabel   *m_piSTEndPoints;
+	IGameGUILabel   *m_piSTHighScore;
 	IGameWindow		*m_piSTLives[MAX_LIVES_TO_DISPLAY];
 	IGameWindow		*m_piSTBombs[MAX_BOMBS_TO_DISPLAY];
+	IGameWindow		*m_piSTEndBombs[MAX_BOMBS_TO_DISPLAY];
 	
 	BEGIN_CHILD_MAP()
 		CHILD_MAP_ENTRY_FLAGS("FrameRateLabel",m_piSTFrameRate,CMEF_OPTIONAL);
 		CHILD_MAP_ENTRY_FLAGS("GameTimeLabel",m_piSTGameTime,CMEF_OPTIONAL);
 		CHILD_MAP_ENTRY_FLAGS("EntityCountLabel",m_piSTEntityCount,CMEF_OPTIONAL);
 		CHILD_MAP_ENTRY_FLAGS("ObjectCountLabel",m_piSTObjectCount,CMEF_OPTIONAL);
+		CHILD_MAP_ENTRY("CentralPanel",m_piSTCentralPanel);
+		CHILD_MAP_ENTRY("LevelEndPoints",m_piSTEndPoints);
+		CHILD_MAP_ENTRY("LevelEndBomb0",m_piSTEndBombs[0]);
+		CHILD_MAP_ENTRY("LevelEndBomb1",m_piSTEndBombs[1]);
+		CHILD_MAP_ENTRY("LevelEndBomb2",m_piSTEndBombs[2]);
+		CHILD_MAP_ENTRY("LevelEndBomb3",m_piSTEndBombs[3]);
+		CHILD_MAP_ENTRY("LevelEndBomb4",m_piSTEndBombs[4]);
+		CHILD_MAP_ENTRY("LevelEndBomb5",m_piSTEndBombs[5]);
 		CHILD_MAP_ENTRY("PlayerPoints",m_piSTPoints);
+		CHILD_MAP_ENTRY("HighScore",m_piSTHighScore);
 		CHILD_MAP_ENTRY("PlayerLive0",m_piSTLives[0]);
 		CHILD_MAP_ENTRY("PlayerLive1",m_piSTLives[1]);
 		CHILD_MAP_ENTRY("PlayerLive2",m_piSTLives[2]);
@@ -60,7 +99,8 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 		CHILD_MAP_ENTRY("PlayerBomb4",m_piSTBombs[4]);
 		CHILD_MAP_ENTRY("PlayerBomb5",m_piSTBombs[5]);
 	END_CHILD_MAP()
-
+	
+	void RenderCourtain(IGenericRender *piRender,unsigned int nCurrentTime);
 
 	void StartGame();
 	void StopGame();
@@ -69,7 +109,7 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	bool LoadScenario(std::string sFileName);
 	void CloseScenario();
 
-	void UpdateGUI();
+	void UpdateGUI(unsigned int dwCurrentTime);
 	void UpdatePlayCameraPosition();
 	void ProcessInput();
 	void ProcessKey(unsigned short nKey);
@@ -80,15 +120,22 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 
 	// IGameInterfaceWindow
 
-	void	Freeze(bool bFreeze);
-	bool	IsFrozen();
-
+	void Freeze(bool bFreeze);
+	bool IsFrozen();
+	
+	void SetHighScore(unsigned int nScore);
+	unsigned int GetScore();
+	
 	// IEntityEvents
 
+	void OnRemoved(IEntity *piEntity);
 	void OnKilled(IEntity *piEntity);
 
 	static void RenderEntity(IEntity *piEntity,void *pParam1,void *pParam2);
 
+	void OpenCourtain(unsigned int nCurrentTime);
+	void CloseCourtain(unsigned int nCurrentTime);
+	
 public:
 
 	bool InitWindow(IGameWindow *piParent,bool bPopup);
