@@ -706,6 +706,10 @@ void CPlayAreaManager::UpdatePlayArea()
 
 	m_dPlayMovementMaxForward=m_dCameraDistanceFromPlayer*sin(DegreesToRadians(m_CameraWrapper.m_piCamera->GetViewAngle()/2.0));
 	m_dPlayMovementMinForward=-m_dPlayMovementMaxForward;
+	
+	double dNear=m_dCameraDistanceFromPlayer-10;
+	double dFar=m_dCameraDistanceFromPlayer+vTerrainSize.c[1]+m_dPlayAreaHeight+1.0;
+	m_CameraWrapper.m_piCamera->SetClippingPlanes(dNear,dFar);
 
 	CalculateAirPlayArea();
 }

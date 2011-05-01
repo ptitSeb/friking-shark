@@ -42,7 +42,7 @@ class CPlayAreaManager: virtual public CSystemObjectBase,
     double m_dCameraPitch;
 
 	double m_dPlayAreaHeight;
-    C3DSVector m_vPlayMovementPos;
+    CVector m_vPlayMovementPos;
     double  m_dPlayMovementSpeed;
 	double  m_dPlayMovementMaxHorzScroll;
 
