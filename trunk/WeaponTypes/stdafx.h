@@ -6,13 +6,13 @@
 #include <stdio.h>
 #include <string.h>
 
-using namespace std;
-
 #include "GameRunTimeLib.h"
 #include "VectorLib.h"
-#include "SingletonWrapper.h"
 #include "GameEntityLib.h"
 
+using namespace std;
+
+#include "SingletonWrapper.h"
 
 DECLARE_CUSTOM_WRAPPER1(CEntityTypeWrapper,IEntityType,m_piEntityType)
 

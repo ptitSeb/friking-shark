@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\ParticleSystems;..\VectorLib;..\GameManagers;..\SoundSystems;..\GameGraphics"
-				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;AnimationSYSTEMS_EXPORTS"
+				PreprocessorDefinitions="NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;AnimationSYSTEMS_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -125,7 +125,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				AdditionalIncludeDirectories="..\GameRunTimeLib;..\GameRunTime;..\ParticleSystems;..\VectorLib;..\GameManagers;..\SoundSystems;..\GameGraphics"
-				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;_USRDLL;AnimationSYSTEMS_EXPORTS"
+				PreprocessorDefinitions="NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;_USRDLL;AnimationSYSTEMS_EXPORTS"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="2"
@@ -202,6 +202,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\EntityAnimationObjectType.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\EventAnimationObjectType.cpp"
 				>
 			</File>
@@ -237,6 +241,10 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\TextAnimationObjectType.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -253,6 +261,10 @@
 			</File>
 			<File
 				RelativePath=".\AnimationType.h"
+				>
+			</File>
+			<File
+				RelativePath=".\EntityAnimationObjectType.h"
 				>
 			</File>
 			<File
@@ -277,6 +289,10 @@
 			</File>
 			<File
 				RelativePath=".\stdafx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TextAnimationObjectType.h"
 				>
 			</File>
 		</Filter>

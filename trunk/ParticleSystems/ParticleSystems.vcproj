@@ -198,6 +198,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ParticleEmitterModifierType.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ParticleEmitterType.cpp"
 				>
 			</File>
@@ -215,6 +219,10 @@
 			</File>
 			<File
 				RelativePath=".\ParticleSystemType.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ParticleWhirlpoolModifierType.cpp"
 				>
 			</File>
 			<File
@@ -260,6 +268,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ParticleEmitterModifierType.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ParticleEmitterType.h"
 				>
 			</File>
@@ -277,6 +289,10 @@
 			</File>
 			<File
 				RelativePath=".\ParticleSystemType.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ParticleWhirlpoolModifierType.h"
 				>
 			</File>
 			<File

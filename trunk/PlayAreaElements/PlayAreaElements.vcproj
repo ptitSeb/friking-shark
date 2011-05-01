@@ -214,10 +214,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Route.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -269,10 +265,6 @@
 			</File>
 			<File
 				RelativePath=".\resource.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Route.h"
 				>
 			</File>
 			<File

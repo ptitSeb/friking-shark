@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\GameRunTimeLib;..\GameRunTime;..\ParticleSystems;..\AnimationSystems;..\GameEntityLib;..\VectorLib;..\GameManagers"
+				AdditionalIncludeDirectories="..\GameRunTimeLib;..\GameRunTime;..\ParticleSystems;..\AnimationSystems;..\GameEntityLib;..\VectorLib;..\GameManagers;..\GameGraphics"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;BonusTYPES_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -124,7 +124,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="..\GameRunTimeLib;..\GameRunTime;..\ParticleSystems;..\AnimationSystems;..\GameEntityLib;..\VectorLib;..\GameManagers"
+				AdditionalIncludeDirectories="..\GameRunTimeLib;..\GameRunTime;..\ParticleSystems;..\AnimationSystems;..\GameEntityLib;..\VectorLib;..\GameManagers;..\GameGraphics"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;_USRDLL;BonusTYPES_EXPORTS"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="true"
@@ -190,6 +190,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\BombBonusType.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\BonusTypes.cpp"
 				>
 			</File>
@@ -199,10 +203,6 @@
 			</File>
 			<File
 				RelativePath=".\PointBonusType.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\SpeedUpgradeBonusType.cpp"
 				>
 			</File>
 			<File
@@ -236,6 +236,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\BombBonusType.h"
+				>
+			</File>
+			<File
 				RelativePath=".\BonusTypes.h"
 				>
 			</File>
@@ -249,10 +253,6 @@
 			</File>
 			<File
 				RelativePath=".\resource.h"
-				>
-			</File>
-			<File
-				RelativePath=".\SpeedUpgradeBonusType.h"
 				>
 			</File>
 			<File
