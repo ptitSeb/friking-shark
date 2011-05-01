@@ -43,6 +43,7 @@ class CTurret: public CEntityBase, virtual public IEntityEvents
 
 	unsigned int m_dwNextShotTime;
 	bool		 m_bTargetLocked;
+	double       m_dRadius;
 	
 	void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
 	

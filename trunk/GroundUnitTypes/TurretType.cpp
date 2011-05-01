@@ -4,6 +4,7 @@
 
 CTurretType::CTurretType()
 {
+	g_PlayAreaManagerWrapper.AddRef();
 	m_nDamageType=DAMAGE_TYPE_NORMAL;
 	m_nMovementType=PHYSIC_MOVE_TYPE_NONE;
 	
@@ -12,6 +13,7 @@ CTurretType::CTurretType()
 
 CTurretType::~CTurretType()
 {
+	g_PlayAreaManagerWrapper.Release();
 }
 
 IEntity *CTurretType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
@@ -33,6 +35,7 @@ CTurret::CTurret(CTurretType *pType,unsigned int dwCurrentTime)
 	m_sClassName="CTurret";
 	m_pType=pType;
 	m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeFirstShotMax-m_pType->m_dTimeFirstShotMin)+m_pType->m_dTimeFirstShotMin;
+	m_dRadius=m_pType->DesignGetRadius();
 }
 
 void CTurret::OnRemoved(IEntity *piEntity)
@@ -145,7 +148,11 @@ void CTurret::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 	}
 	if(m_piTarget && m_bTargetLocked && dwCurrentTime>m_dwNextShotTime && m_vWeapons.size())
 	{
-		FireWeapon(0,dwCurrentTime);
-		m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeBetweenShotsMax-m_pType->m_dTimeBetweenShotsMin)+m_pType->m_dTimeBetweenShotsMin;
+		bool bVisible=g_PlayAreaManagerWrapper.m_piInterface && g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,m_dRadius,true);
+		if(bVisible)
+		{
+			FireWeapon(0,dwCurrentTime);
+			m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeBetweenShotsMax-m_pType->m_dTimeBetweenShotsMin)+m_pType->m_dTimeBetweenShotsMin;
+		}
 	}
 }
