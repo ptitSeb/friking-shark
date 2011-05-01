@@ -190,10 +190,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\BackgroundWindow.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\ConfirmationDialog.cpp"
 				>
 			</File>
@@ -203,18 +199,6 @@
 			</File>
 			<File
 				RelativePath=".\GameMenu.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\GamePlayWindow.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\GameRender.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\GameSidePanel.cpp"
 				>
 			</File>
 			<File
@@ -231,10 +215,6 @@
 			</File>
 			<File
 				RelativePath=".\MainWindow.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\ScenarioProgressBar.cpp"
 				>
 			</File>
 			<File
@@ -264,10 +244,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\BackgroundWindow.h"
-				>
-			</File>
-			<File
 				RelativePath=".\ConfirmationDialog.h"
 				>
 			</File>
@@ -277,18 +253,6 @@
 			</File>
 			<File
 				RelativePath=".\GameMenu.h"
-				>
-			</File>
-			<File
-				RelativePath=".\GamePlayWindow.h"
-				>
-			</File>
-			<File
-				RelativePath=".\GameRender.h"
-				>
-			</File>
-			<File
-				RelativePath=".\GameSidePanel.h"
 				>
 			</File>
 			<File
@@ -313,10 +277,6 @@
 			</File>
 			<File
 				RelativePath=".\resource.h"
-				>
-			</File>
-			<File
-				RelativePath=".\ScenarioProgressBar.h"
 				>
 			</File>
 			<File

@@ -173,6 +173,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Route.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -216,6 +220,10 @@
 			</File>
 			<File
 				RelativePath=".\GameEntityLib.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Route.h"
 				>
 			</File>
 			<File

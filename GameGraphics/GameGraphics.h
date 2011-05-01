@@ -320,7 +320,7 @@ enum eGenericFontType
 
 DECLARE_SERIALIZABLE_ENUMERATION(eGenericFontType)
 
-class IGenericFont:virtual public ISystemUnknown
+struct IGenericFont:virtual public ISystemUnknown
 {	
 public:
 

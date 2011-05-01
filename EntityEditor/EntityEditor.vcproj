@@ -201,6 +201,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\EntityEditorGeneralPropertyPanel.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\EntityEditorMainWindow.cpp"
 				>
 			</File>
@@ -272,6 +276,10 @@
 			</File>
 			<File
 				RelativePath=".\EntityEditorEventPropertyPanel.h"
+				>
+			</File>
+			<File
+				RelativePath=".\EntityEditorGeneralPropertyPanel.h"
 				>
 			</File>
 			<File
