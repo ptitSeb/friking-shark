@@ -63,13 +63,14 @@ protected:
 
 	virtual void	GetBBox(CVector *pvMins,CVector *pvMaxs);
 	virtual CVector	GetSize();
-	virtual void	DesignRender(IGenericRender *piRender,CVector &vPosition,CVector &vAngles,bool bSelected);
-	virtual void    DesignGetBBox(CVector *pvMins,CVector *pvMaxs);
-	virtual double  DesignGetRadius();
-	virtual CTraceInfo DesignGetTrace(const CVector &vPosition,const CVector &vAngles,const CVector &p1,const CVector &p2 );
 
 public:
-
+	
+	virtual void	DesignRender(IGenericRender *piRender,CVector &vPosition,CVector &vAngles,bool bSelected);
+	virtual void    DesignGetBBox(CVector *pvMins,CVector *pvMaxs);
+	virtual CTraceInfo DesignGetTrace(const CVector &vPosition,const CVector &vAngles,const CVector &p1,const CVector &p2 );
+	virtual double  DesignGetRadius();
+	
 	bool Init(std::string sClass,std::string sName,ISystem *piSystem);
 	bool Unserialize(ISystemPersistencyNode *piNode);
 
