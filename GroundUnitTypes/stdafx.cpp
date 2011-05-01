@@ -6,3 +6,5 @@
 #pragma comment (lib, "GameRuntimeLib.lib")
 #pragma comment (lib, "GameEntityLib.lib")
 #endif
+
+CSingletonWrapper<IPlayAreaManager> g_PlayAreaManagerWrapper("GameSystem","PlayAreaManager");
