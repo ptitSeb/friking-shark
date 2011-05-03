@@ -15,6 +15,7 @@ INCLUDES = -I. \
 -I../VectorLib \
 
 SOURCES = GroundUnitTypes.cpp\
+GroundBossType.cpp\
 StaticEntityType.cpp\
 StaticStructureType.cpp\
 VehicleType.cpp\
