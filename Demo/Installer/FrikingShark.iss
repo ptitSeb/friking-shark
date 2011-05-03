@@ -3,17 +3,17 @@
 
 [Setup]
 AppName=Friking Shark 3D
-AppVerName=Friking Shark 3D v0.6.0.0
-AppPublisher=Satanas y los demas
-AppPublisherURL=http://groups.google.es/group/frikingshark3d?lnk=li&hl=es
-AppSupportURL=http://groups.google.es/group/frikingshark3d?lnk=li&hl=es
-AppUpdatesURL=http://groups.google.es/group/frikingshark3d?lnk=li&hl=es
+AppVerName=Friking Shark 3D v0.9.0.0
+AppPublisher=Javier Martin Garcia
+AppPublisherURL=http://kyanaprime.blogspot.com/
+AppSupportURL=http://kyanaprime.blogspot.com/
+AppUpdatesURL=http://kyanaprime.blogspot.com/
 DefaultDirName={pf}\Friking Shark 3D
 DefaultGroupName=Friking Shark 3D
-InfoAfterFile=D:\Desarrollo\Game\Demo\Docs\Readme.txt
-OutputDir=D:\Desarrollo\Game\Demo\Installer\Output
-OutputBaseFilename=FrikingShark_Setup
-SetupIconFile=D:\Desarrollo\Game\GameEngine\res\GameEngine.ico
+InfoAfterFile=..\Docs\Readme.txt
+OutputDir=..\Installer\Output
+OutputBaseFilename=FrikingSharkSetup
+SetupIconFile=..\..\GameEngine\res\GameEngine.ico
 Compression=lzma
 SolidCompression=true
 WindowVisible=false
@@ -26,19 +26,34 @@ Name: spanish; MessagesFile: compiler:Languages\Spanish.isl
 Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
 
 [Files]
-Source: D:\Desarrollo\Game\Demo\Bin\Release\GameEngine.exe; DestDir: {app}; Flags: ignoreversion
-Source: D:\Desarrollo\Game\Demo\Resources\*; DestDir: {app}\Resources; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: ..\Bin\Release\*; DestDir: {app}; Flags: ignoreversion
-; NOTE: Don't use "Flags: ignoreversion" on any shared system files
-Source: D:\Desarrollo\Game\Demo\config.ini; DestDir: {app}
-Source: ..\Bin\Redistributable\msvcp71.dll; DestDir: {sys}; Flags: comparetimestamp onlyifdoesntexist 32bit
-Source: ..\Bin\Redistributable\msvcr71.dll; DestDir: {app}; Flags: onlyifdoesntexist 32bit comparetimestamp
+Source: ..\Bin\Release\GameEngine.exe; DestDir: {app}\Bin\Release; Flags: ignoreversion; 
+Source: ..\Bin\Release\*.dll; DestDir: {app}\Bin\Release; Flags: ignoreversion; 
+Source: ..\Resources\GUI\*.jpg; DestDir: {app}\Resources\GUI; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\Resources\ScenarioEditor\*; DestDir: {app}\Resources\ScenarioEditor; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\Resources\FormationEditor\*; DestDir: {app}\Resources\FormationEditor; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\Resources\EntityEditor\*; DestDir: {app}\Resources\EntityEditor; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\Resources\Scripts\*.cfg; DestDir: {app}\Resources\Scripts; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\Resources\Shaders\*.txt; DestDir: {app}\Resources\Shaders; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\Resources\Sounds\*; DestDir: {app}\Resources\Sounds; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\Resources\Textures\*.jpg; DestDir: {app}\Resources\Textures; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\Resources\Textures\*.bmp; DestDir: {app}\Resources\Textures; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\Resources\Models\*.ase; DestDir: {app}\Resources\Models; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\Resources\Models\*.gbs; DestDir: {app}\Resources\Models; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\Resources\Level*.ges; DestDir: {app}\Resources; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: .\Redistributables\Windows\alut.dll; DestDir: {app}\Bin\Release; Flags: ignoreversion recursesubdirs createallsubdirs; 
+Source: .\Redistributables\Windows\oalinst.exe; DestDir: {app}\Redistributables; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: .\Redistributables\Windows\msvcp100.dll; DestDir: {sys}; Flags: comparetimestamp onlyifdoesntexist 32bit
+Source: .\Redistributables\Windows\msvcr100.dll; DestDir: {sys}; Flags: comparetimestamp onlyifdoesntexist 32bit
 
 [Icons]
-Name: {group}\Friking Shark 3D; Filename: {app}\GameEngine.exe; WorkingDir: {app}; IconIndex: 0
-Name: {userdesktop}\Friking Shark 3D; Filename: {app}\GameEngine.exe; Tasks: desktopicon; WorkingDir: {app}; IconIndex: 0
-Name: {group}\Visitar Grupo de Google; Filename: http://groups.google.es/group/frikingshark3d?hl=es
+Name: {group}\Friking Shark 3D; Filename: {app}\Bin\Release\GameEngine.exe; WorkingDir: {app}; IconIndex: 0
+Name: "{group}\Scenario Editor"; Filename: {app}\Bin\Release\GameEngine.exe; WorkingDir: {app}; Parameters: ScenarioEditor; 
+Name: "{group}\Formation Editor"; Filename: {app}\Bin\Release\GameEngine.exe; WorkingDir: {app}; Parameters: FormationEditor; 
+Name: "{group}\Entity Editor"; Filename: {app}\Bin\Release\GameEngine.exe; WorkingDir: {app}; Parameters: EntityEditor; 
+Name: {userdesktop}\Friking Shark 3D; Filename: {app}\Bin\Release\GameEngine.exe; Tasks: desktopicon; WorkingDir: {app}; IconIndex: 0
+Name: {group}\Home Page; Filename: ttp://kyanaprime.blogspot.com/
 
 [Run]
-Filename: {app}\GameEngine.exe; Description: {cm:LaunchProgram,Friking Shark 3D}; Flags: nowait postinstall skipifsilent
+Filename: {app}\Redistributables\oalinst.exe; Description: "{cm:LaunchProgram,OpenAL Redistributables}"; 
+Filename: {app}\Bin\Release\GameEngine.exe; Description: "{cm:LaunchProgram,Friking Shark 3D}"; Flags: nowait postinstall skipifsilent; 
 
