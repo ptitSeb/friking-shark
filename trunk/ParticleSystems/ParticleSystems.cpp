@@ -9,6 +9,7 @@
 #include "ParticleSizeModifierType.h"
 #include "ParticleWhirlpoolModifierType.h"
 #include "ParticleEmitterType.h"
+#include "ParticleSphereEmitterType.h"
 #include "ParticleSystemType.h"
 #include "TextureParticleType.h"
 #include "LightParticleType.h"
@@ -17,7 +18,8 @@
 BEGIN_SYSTEM_MODULE()
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CParticleSystemType,"ParticleSystemType")
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CParticleEmitterType,"ParticleEmitterType")
-    SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CParticleSizeModifierType,"ParticleSizeModifierType")
+	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CParticleSphereEmitterType,"ParticleSphereEmitter")
+	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CParticleSizeModifierType,"ParticleSizeModifierType")
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CParticleColorModifierType,"ParticleColorModifierType")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CParticleWhirlpoolModifierType,"ParticleWhirlpoolModifierType")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CTextureParticleType,"TextureParticleType")
