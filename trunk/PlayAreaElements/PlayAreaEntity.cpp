@@ -12,6 +12,9 @@ CPlayAreaEntity::CPlayAreaEntity()
 	m_nLastEntityTime=0;
 	m_nCreatedEntities=0;
 	m_nKilledEntities=0;
+	m_bFirstFrame=true;
+	m_bDoNotActivate=false;
+	m_bDynamic=false;
 }
 
 CPlayAreaEntity::~CPlayAreaEntity()
@@ -23,7 +26,20 @@ bool CPlayAreaEntity::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInf
 {
 	if(m_EntityType.m_piEntityType && m_dRadius==0){m_dRadius=m_EntityType.m_piEntityType->DesignGetRadius();}
 	
-	if(!m_bActive)
+	if(m_bFirstFrame)
+	{
+		m_bFirstFrame=false;
+		if(!m_bDynamic && Util_IsInPlayArea(m_vPosition,pAreaInfo))
+		{
+			SEntityTypeConfig sConfig;
+			IEntityTypeDesign *piDesign=QI(IEntityTypeDesign,m_EntityType.m_piEntityType);
+			if(piDesign){piDesign->GetEntityTypeConfig(&sConfig);}
+			REL(piDesign);
+			m_bDoNotActivate=(sConfig.nAlignment==ENTITY_ALIGNMENT_ENEMIES);
+		}
+	}
+	   
+	if(!m_bActive && !m_bDoNotActivate)
 	{
 		bool bCurrentlyInPlayArea=Util_IsInPlayArea(m_vPosition,pAreaInfo);
 		bCurrentlyInPlayArea=bCurrentlyInPlayArea||Util_IsInPlayArea(m_vPosition-CVector(m_dRadius,0,0),pAreaInfo);
@@ -102,6 +118,13 @@ void CPlayAreaEntity::Activate(unsigned int dwCurrentTime)
     CPlayAreaElementBase::Activate(dwCurrentTime);
 }
 
+void CPlayAreaEntity::Reset()
+{
+	CPlayAreaElementBase::Reset();
+	m_bFirstFrame=true;
+	m_bDoNotActivate=false;
+}
+
 void CPlayAreaEntity::Deactivate()
 {
 	set<IEntity*>::iterator i;
@@ -169,6 +192,7 @@ void CPlayAreaEntity::SetEntityType(IEntityType *piEntityType)
 void CPlayAreaEntity::SetCount(unsigned int nCount){m_nEntityCount=nCount;}
 void CPlayAreaEntity::SetDelay(unsigned int nDelay){m_nDelay=nDelay;}
 void CPlayAreaEntity::SetInterval(unsigned int nInterval){m_nInterval=nInterval;}
+void CPlayAreaEntity::SetDynamic(bool bDynamic){m_bDynamic=bDynamic;}
 
 CVector CPlayAreaEntity::GetPosition(){return m_vPosition;}
 CVector CPlayAreaEntity::GetAngles(){return m_vAngles;}

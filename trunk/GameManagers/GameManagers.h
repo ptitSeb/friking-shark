@@ -50,11 +50,12 @@ struct SRoutePoint
 {
 public:
 	
-	bool        bAbsolutePoint; // si es falso son valores de 0 a 1 relativos al plano de juego aereo
-	CVector     vPosition;
+	bool         bAbsolutePoint; // si es falso son valores de 0 a 1 relativos al plano de juego aereo
+	unsigned int nPause;
+	CVector      vPosition;
 	
-	SRoutePoint(){bAbsolutePoint=true;}
-	SRoutePoint(bool absolutePoint,CVector position){vPosition=position;bAbsolutePoint=absolutePoint;}
+	SRoutePoint(){nPause=0;bAbsolutePoint=true;}
+	SRoutePoint(bool absolutePoint,CVector position,unsigned int pause=0){vPosition=position;bAbsolutePoint=absolutePoint;nPause=pause;}
 };
 
 
@@ -135,6 +136,12 @@ struct IRoute
 	virtual CVector     GetDirection(unsigned nSection)=0;
     virtual unsigned    GetNextPointIndex(unsigned nIndex)=0;
     virtual void        ProcessPoint(IEntity *piEntity,unsigned int dwCurrentFrame,double dTimeFraction)=0;
+	
+	virtual bool 		 GetPoint(unsigned int nIndex,SRoutePoint *psPoint)=0;
+	virtual bool 		 AddPoint(unsigned int nIndex,const SRoutePoint &sPoint)=0;
+	virtual bool 		 SetPoint(unsigned int nIndex,const SRoutePoint &sPoint)=0;
+	virtual void		 RemovePoint(unsigned int nIndex)=0;
+	virtual void 		 Clear()=0;	
 };
 
 struct IEntity:virtual public IPublisher
@@ -446,6 +453,7 @@ struct IPlayAreaEntity:virtual public IPlayAreaElement
 	virtual void SetCount(unsigned int nCount)=0;
 	virtual void SetDelay(unsigned int nDelay)=0;
 	virtual void SetInterval(unsigned int nInterval)=0;
+	virtual void SetDynamic(bool bDynamic)=0;
 	
 	virtual void SetPosition(const CVector &vPosition)=0;
 	virtual void SetAngles(const CVector &vAngles)=0;

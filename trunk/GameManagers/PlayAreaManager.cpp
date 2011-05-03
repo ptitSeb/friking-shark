@@ -784,6 +784,7 @@ void CPlayAreaManager::CreateDynamicEntityElement(IEntityType *piEntityType,CVec
 			wrapper.m_piElement->SetEntityType(piEntityType);
 			wrapper.m_piElement->SetPosition(vPosition);
 			wrapper.m_piElement->SetAngles(vAngles);
+			wrapper.m_piElement->SetDynamic(true);
 			m_vDynamicElements.push_back(wrapper);
 		}
 		if(ppiElement){*ppiElement=ADD(wrapper.m_piElement);}

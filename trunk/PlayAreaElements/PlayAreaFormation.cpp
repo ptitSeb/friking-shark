@@ -5,6 +5,7 @@
 
 CPlayAreaFormation::CPlayAreaFormation()
 {
+	m_bFirstFrame=true;
 	m_piFormation=NULL;
 	m_bAlreadyOverPoint=false;
 	m_bUsingAlternative=false;
@@ -37,6 +38,12 @@ void CPlayAreaFormation::Destroy()
 bool CPlayAreaFormation::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInfo,unsigned int dwCurrentTime,double dInterval)
 {
 	bool bOverPoint=Util_IsInPlayArea(m_vPosition,pAreaInfo);
+	
+	if(m_bFirstFrame)
+	{
+		m_bFirstFrame=false;
+		m_bAlreadyOverPoint=bOverPoint;
+	}
 	if(!m_bActive)
 	{ 
 		if(!m_bAlreadyOverPoint)
@@ -90,6 +97,7 @@ void CPlayAreaFormation::Reset()
 {
 	CPlayAreaElementBase::Reset();
 	m_bAlreadyOverPoint=false;
+	m_bFirstFrame=true;
 }
 
 void CPlayAreaFormation::OnFormationKilled(ISystemObject *piFormation,IEntity *piLastEntity)
