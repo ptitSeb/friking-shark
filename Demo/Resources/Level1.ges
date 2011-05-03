@@ -9,9 +9,9 @@ AreaDeJuego
 			AnguloVisualizacion=60.000000
 			Angulos=0.000000,-90.000000,0.000000
 			AspectRatio=0.700000
-			FarPlane=10000.000000
-			NearPlane=10.000000
-			Posicion=1056.966375,228.678936,4.859726
+			FarPlane=202.395636
+			NearPlane=130.000000
+			Posicion=1688.777979,228.678936,3.554870
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -59,6 +59,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=863.057683,52.324294,-59.444868
 						}
 					}
@@ -126,16 +127,19 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=94.826496,52.965402,67.823858
 						}
 						Item1
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=65.357482,52.965402,82.784798
 						}
 						Item2
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=-38.404869,52.965399,84.668939
 						}
 					}
@@ -268,11 +272,13 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=836.130304,52.324292,67.905906
 						}
 						Item1
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=835.973126,52.324293,14.619465
 						}
 					}
@@ -341,13 +347,6 @@ AreaDeJuego
 				{
 					Ciclica=0
 					Puntos
-					{
-						Item0
-						{
-							Absoluto=1
-							Posicion=566.615829,52.965399,-71.559919
-						}
-					}
 				}
 				Tipo
 				{
@@ -402,6 +401,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=303.809188,54.159653,7.513800
 						}
 					}
@@ -434,6 +434,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=303.671067,54.159653,21.608472
 						}
 					}
@@ -511,11 +512,13 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=836.131336,52.324292,68.095137
 						}
 						Item1
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=835.905502,52.324292,45.900035
 						}
 					}
@@ -573,6 +576,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=813.449467,49.883571,-11.023394
 						}
 					}
@@ -605,6 +609,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=800.314337,49.883571,-11.469851
 						}
 					}
@@ -637,6 +642,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=834.781944,52.324294,-20.217695
 						}
 					}
@@ -1044,6 +1050,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=896.532374,52.965399,-22.912681
 						}
 					}
@@ -1076,6 +1083,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=897.620786,52.965399,-2.395097
 						}
 					}
@@ -1108,6 +1116,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=896.163913,52.965399,17.443743
 						}
 					}
@@ -1290,31 +1299,37 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=280.564705,52.965402,59.700284
 						}
 						Item1
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=293.807389,52.958504,39.772826
 						}
 						Item2
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=337.194804,52.965402,38.215656
 						}
 						Item3
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=354.693650,52.965402,60.799738
 						}
 						Item4
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=362.169550,52.965402,75.933874
 						}
 						Item5
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=363.424070,52.965402,102.062360
 						}
 					}
@@ -1347,6 +1362,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=443.970434,52.931361,-59.035349
 						}
 					}
@@ -1379,6 +1395,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=374.126252,54.159653,-11.670052
 						}
 					}
@@ -1411,6 +1428,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=374.889305,54.156099,-40.776998
 						}
 					}
@@ -1443,11 +1461,13 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=371.547082,54.159651,-55.528810
 						}
 						Item1
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=395.380049,54.155086,-56.086952
 						}
 					}
@@ -1480,11 +1500,13 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=468.538705,54.913456,-60.974699
 						}
 						Item1
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=467.502200,52.965402,-95.149639
 						}
 					}
@@ -1517,31 +1539,37 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=553.658558,54.913456,-6.522199
 						}
 						Item1
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=551.723412,54.913456,-41.099347
 						}
 						Item2
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=556.657011,54.913456,-59.454244
 						}
 						Item3
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=524.138052,54.913456,-61.318309
 						}
 						Item4
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=464.988983,54.913456,-61.318309
 						}
 						Item5
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=460.754002,52.965402,-97.545525
 						}
 					}
@@ -1574,31 +1602,37 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=552.798834,54.913456,-5.871487
 						}
 						Item1
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=551.390076,54.913456,-41.176191
 						}
 						Item2
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=557.300595,54.913456,-61.872928
 						}
 						Item3
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=523.926346,54.913456,-60.876264
 						}
 						Item4
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=462.851142,54.913456,-60.876264
 						}
 						Item5
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=460.484797,52.965402,-95.546795
 						}
 					}
@@ -1635,6 +1669,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=578.009186,54.913456,6.223618
 						}
 					}
@@ -1667,11 +1702,13 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=601.741276,52.965402,-55.261294
 						}
 						Item1
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=577.484042,52.965402,-37.352258
 						}
 					}
@@ -1729,26 +1766,31 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=700.608190,52.965402,-30.183094
 						}
 						Item1
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=673.899084,52.965402,-20.741011
 						}
 						Item2
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=604.681597,52.965402,-22.727581
 						}
 						Item3
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=599.301538,52.965402,-40.706548
 						}
 						Item4
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=605.046316,52.922830,-84.720492
 						}
 					}
@@ -1781,16 +1823,19 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=603.375687,52.965402,-22.057034
 						}
 						Item1
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=596.290003,52.965402,-42.107689
 						}
 						Item2
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=610.281865,52.742172,-101.196266
 						}
 					}
@@ -1823,16 +1868,19 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=600.685343,52.965402,-22.533041
 						}
 						Item1
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=594.483661,52.965402,-38.356208
 						}
 						Item2
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=606.952748,52.837924,-90.419519
 						}
 					}
@@ -1865,6 +1913,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=774.801710,52.965402,-60.397294
 						}
 					}
@@ -1897,6 +1946,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=916.231125,52.965402,-40.402772
 						}
 					}
@@ -1929,6 +1979,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=924.004416,52.965402,-13.744506
 						}
 					}
@@ -1961,6 +2012,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=923.897448,52.965402,7.805161
 						}
 					}
@@ -1993,6 +2045,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=965.615103,52.965402,-65.111608
 						}
 					}
@@ -2025,6 +2078,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=965.545611,52.965402,-47.493567
 						}
 					}
@@ -2057,6 +2111,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=1032.471371,52.965402,18.944214
 						}
 					}
@@ -2089,21 +2144,25 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=1021.852477,52.965402,1.883925
 						}
 						Item1
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=1017.720019,52.965402,31.995491
 						}
 						Item2
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=1011.761885,52.965402,68.302447
 						}
 						Item3
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=1000.722622,52.965402,100.121137
 						}
 					}
@@ -2215,6 +2274,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=1161.164836,52.965402,5.877400
 						}
 					}
@@ -2247,6 +2307,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=1206.505447,52.965402,23.814573
 						}
 					}
@@ -2279,6 +2340,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=1407.042741,52.965402,39.441065
 						}
 					}
@@ -2311,6 +2373,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=1559.290281,52.965402,70.449286
 						}
 					}
@@ -2343,6 +2406,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=1560.108894,52.965402,-32.771062
 						}
 					}
@@ -2375,6 +2439,7 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=1506.837251,52.965402,17.755741
 						}
 					}
@@ -2407,16 +2472,19 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=1680.945273,52.965402,-49.874433
 						}
 						Item1
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=1753.301529,52.965402,-46.941296
 						}
 						Item2
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=1789.423466,52.965402,-92.794590
 						}
 					}
@@ -2449,16 +2517,19 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=1837.692489,52.965402,27.762564
 						}
 						Item1
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=1760.319559,52.965402,29.092658
 						}
 						Item2
 						{
 							Absoluto=1
+							Pause=0
 							Posicion=1722.100636,52.965402,100.697180
 						}
 					}
@@ -3297,6 +3368,81 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
+		Item119
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Bonus
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=1679.383735,0.000000,52.965402
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+					{
+						Item0
+						{
+							Absoluto=1
+							Pause=0
+							Posicion=1645.527653,52.965402,0.000000
+						}
+						Item1
+						{
+							Absoluto=1
+							Pause=1500
+							Posicion=1672.139799,52.965402,0.000000
+						}
+						Item2
+						{
+							Absoluto=1
+							Pause=1000
+							Posicion=1781.738489,52.965402,0.000000
+						}
+						Item3
+						{
+							Absoluto=1
+							Pause=0
+							Posicion=1732.665029,52.965402,0.000000
+						}
+						Item4
+						{
+							Absoluto=1
+							Pause=0
+							Posicion=1822.889699,52.965402,0.000000
+						}
+						Item5
+						{
+							Absoluto=1
+							Pause=1000
+							Posicion=1853.880585,52.965402,0.000000
+						}
+						Item6
+						{
+							Absoluto=1
+							Pause=1000
+							Posicion=1829.824468,52.965402,0.000000
+						}
+						Item7
+						{
+							Absoluto=1
+							Pause=0
+							Posicion=1700.767714,52.965402,0.000000
+						}
+					}
+				}
+				Tipo
+				{
+					Name=Level1Boss
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
 	}
 	EntityLayers
 	{
@@ -3347,21 +3493,25 @@ AreaDeJuego
 			Item0
 			{
 				Absoluto=1
+				Pause=0
 				Posicion=2010.751295,88.678936,4.859726
 			}
 			Item1
 			{
 				Absoluto=1
+				Pause=0
 				Posicion=2041.883558,88.678936,4.859726
 			}
 			Item2
 			{
 				Absoluto=1
+				Pause=0
 				Posicion=2098.459475,56.455661,4.859726
 			}
 			Item3
 			{
 				Absoluto=1
+				Pause=0
 				Posicion=2149.538414,55.965402,4.859726
 			}
 		}
@@ -3377,21 +3527,25 @@ AreaDeJuego
 			Item0
 			{
 				Absoluto=1
+				Pause=0
 				Posicion=-238.310960,57.932302,4.859726
 			}
 			Item1
 			{
 				Absoluto=1
+				Pause=0
 				Posicion=-192.752508,57.932302,4.859726
 			}
 			Item2
 			{
 				Absoluto=1
+				Pause=0
 				Posicion=-146.641870,88.678936,4.859726
 			}
 			Item3
 			{
 				Absoluto=1
+				Pause=0
 				Posicion=-110.440776,88.678936,4.859726
 			}
 		}
