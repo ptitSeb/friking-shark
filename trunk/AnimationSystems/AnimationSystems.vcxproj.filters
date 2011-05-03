@@ -42,6 +42,9 @@
     <ClCompile Include="EntityAnimationObjectType.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TextAnimationObjectType.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationObjectBase.h">
@@ -72,6 +75,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EntityAnimationObjectType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TextAnimationObjectType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
