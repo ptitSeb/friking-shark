@@ -12,6 +12,7 @@ class CPlayAreaFormation: virtual public CPlayAreaElementBase,virtual public IPl
     IFormation              *m_piFormation;
     bool                     m_bAlreadyOverPoint;
 	bool 					 m_bUsingAlternative;
+	bool                     m_bFirstFrame;
 
 public:
     

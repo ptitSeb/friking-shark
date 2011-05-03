@@ -20,7 +20,11 @@ class CPlayAreaEntity: virtual public CPlayAreaElementBase,virtual public IPlayA
 	unsigned int         m_nDelay;
 
 	unsigned int         m_nLastEntityTime;
-
+	bool                 m_bFirstFrame;
+	bool				 m_bDoNotActivate;
+	bool                 m_bDynamic;
+	
+	void 				 Reset();
 public:
     
     BEGIN_PROP_MAP(CPlayAreaEntity)
@@ -54,6 +58,7 @@ public:
 	void SetAngles(const CVector &vAngles);
 	void SetEntityType(IEntityType *piEntityType);
 	void SetBonusType(IEntityType *piEntityType);
+	void SetDynamic(bool bDynamic);
 	
 	void SetCount(unsigned int nCount);
 	void SetDelay(unsigned int nDelay);
