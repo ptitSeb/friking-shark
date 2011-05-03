@@ -9,7 +9,10 @@ enum ETurretState
 class CTurretType: public CEntityTypeBase
 {
 public:
+	double m_dMinAngle;
 	double m_dMaxAngle;
+	double m_dTargetLockYawDiff;
+	double m_dTargetLockPitchDiff;
 	double m_dTimeFirstShotMin;
 	double m_dTimeFirstShotMax;
 	double m_dTimeBetweenShotsMin;
@@ -25,7 +28,10 @@ public:
 	
 	BEGIN_PROP_MAP(CTurretType)
 		PROP_CLASS_CHAIN(CEntityTypeBase)
+		PROP_VALUE_FLAGS(m_dMinAngle,"MinAngle",0,MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_VALUE_FLAGS(m_dMaxAngle,"MaxAngle",0,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_VALUE_FLAGS(m_dTargetLockYawDiff,"TargetLockYawDiff",20,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_VALUE_FLAGS(m_dTargetLockPitchDiff,"TargetLockPitchDiff",20,MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_VALUE_FLAGS(m_dTimeFirstShotMin,"TimeFirstShotMin",500,MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_VALUE_FLAGS(m_dTimeFirstShotMax,"TimeFirstShotMax",5000,MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_VALUE_FLAGS(m_dTimeBetweenShotsMin,"TimeBetweenShotsMin",2000,MRPF_NORMAL|MRPF_OPTIONAL);

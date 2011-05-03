@@ -131,15 +131,24 @@ void CTurret::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 		m_PhysicInfo.vLocalAngles.c[YAW]=ApproachAngle(m_PhysicInfo.vLocalAngles.c[YAW],dIdealYaw,180.0*dTimeFraction);
 		if(m_pType->m_dMaxAngle>0)
 		{
-			if(dIdealYaw>180){dIdealYaw=360-dIdealYaw;}
-			if(dIdealYaw>m_pType->m_dMaxAngle){dIdealYaw=m_pType->m_dMaxAngle;}
-			if(dIdealYaw<0){dIdealYaw=0;}
+			if(dIdealYaw>180)
+			{
+				dIdealYaw=dIdealYaw-360;
+				if(dIdealYaw<m_pType->m_dMinAngle){dIdealYaw=m_pType->m_dMinAngle;}
+			}
+			else
+			{
+				if(dIdealYaw>m_pType->m_dMaxAngle){dIdealYaw=m_pType->m_dMaxAngle;}
+			}
+			
+			
 			m_PhysicInfo.vLocalAngles.c[YAW]=ApproachAngle(m_PhysicInfo.vLocalAngles.c[YAW],dIdealYaw,180.0*dTimeFraction);
 		}
 		double dYawDiff,dPitchDiff;
 		dYawDiff=fabs(AngleDiff(vLocalAngles.c[YAW],m_PhysicInfo.vLocalAngles.c[YAW]));
 		dPitchDiff=fabs(AngleDiff(vLocalAngles.c[PITCH]	,m_PhysicInfo.vLocalAngles.c[PITCH]));
-		m_bTargetLocked=std::max(dYawDiff,dPitchDiff)<20.0;
+		
+		m_bTargetLocked=dYawDiff<m_pType->m_dTargetLockYawDiff && dPitchDiff<m_pType->m_dTargetLockPitchDiff;
 	}
 	else
 	{
