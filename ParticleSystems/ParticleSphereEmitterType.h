@@ -1,11 +1,12 @@
 #pragma once
 
-class CParticleEmitterType: virtual public CSystemObjectBase,virtual public IParticleEmitterType
+class CParticleSphereEmitterType: virtual public CSystemObjectBase,virtual public IParticleEmitterType
 {
 public:
 
     // Propiedades Persistentes.
 
+	bool		m_bSpheric;
     string      m_sName;
     unsigned int       m_dwEmitStartTime;  // si es cero se empieza inmediatamente a emitir, tiempo relativo
     unsigned int       m_dwEmitEndTime;    // si es cero, emite siempre si no es el momento en el que deja de emitir, tiempo relativo
@@ -34,14 +35,29 @@ public:
     bool        m_bFixedPositionOnParent; // Mantiene la posicion inicial en el sistema de referencia del padre, pensado para fuentes de luz y efectos estaticos respecto a la entidad
 
     CParticleTypeWrapper m_ParticleType;
-
+	
+	double m_dSphereMinPitch;
+	double m_dSphereMaxPitch;
+	double m_dSphereMinRadius;
+	double m_dSphereMaxRadius;
+	double m_dSphereDensity;
+	double m_dSphereMinExitVelocity;
+	double m_dSphereMaxExitVelocity;
+	
     // Propiedades RunTime
 
     IParticleEmitter *CreateInstance(unsigned int dwCurrentTime);
 
-    BEGIN_PROP_MAP(CParticleEmitterType);
-        PROP_FLAGS(m_ParticleType,"TipoParticulas",MRPF_NORMAL|MRPF_OPTIONAL);
-        PROP_VALUE_FLAGS(m_sName,"Nombre","",MRPF_NORMAL|MRPF_OPTIONAL);
+    BEGIN_PROP_MAP(CParticleSphereEmitterType);
+		PROP_VALUE_FLAGS(m_dSphereMinPitch,"SphereMinPitch",0,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_dSphereMaxPitch,"SphereMaxPitch",90,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_dSphereMinRadius,"SphereMinRadius",20,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_dSphereMaxRadius,"SphereMaxRadius",20,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_dSphereDensity,"SphereDensity",20,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_dSphereMinExitVelocity,"SphereMinExitVelocity",10,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_dSphereMaxExitVelocity,"SphereMaxExitVelocity",10,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_FLAGS(m_ParticleType,"TipoParticulas",MRPF_NORMAL|MRPF_OPTIONAL)
+        PROP_VALUE_FLAGS(m_sName,"Nombre","",MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_VALUE_FLAGS(m_dwEmitStartTime,"TiempoInicio",0,MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_VALUE_FLAGS(m_dwEmitEndTime,"TiempoFin",0,MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_VALUE_FLAGS(m_dStartRate,"RitmoInicial",0,MRPF_NORMAL|MRPF_OPTIONAL)
@@ -62,19 +78,19 @@ public:
         PROP_VALUE_FLAGS(m_dwMovementType,"TipoMovimiento",PHYSIC_MOVE_TYPE_NORMAL,MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_VALUE_FLAGS(m_bFixedPositionOnParent,"PosicionFijaEnPadre",false,MRPF_NORMAL|MRPF_OPTIONAL) 
     END_PROP_MAP();
-    CParticleEmitterType();
-    ~CParticleEmitterType();
+    CParticleSphereEmitterType();
+    ~CParticleSphereEmitterType();
 };
 
 
-class CParticleEmitter:public IParticleEmitter
+class CParticleSphereEmitter:public IParticleEmitter
 {
     bool        m_bActive;  // a 1 hasta que llega EmitEndTime
     unsigned int       m_dwLastEmitTime;
     unsigned int       m_dwEmitStartTime;  // igual que el del tipo pero con tiempo absoluto en lugar de relativo
     unsigned int       m_dwEmitEndTime;    // igual que el del tipo pero con tiempo absoluto en lugar de relativo
-    CParticleEmitterType *m_pType;
-    unsigned int       m_dwParticlesEmitted;
+    CParticleSphereEmitterType *m_pType;
+	unsigned int       m_dwEmittedCycles;
 	CVector            m_vPosition;
 	CVector            m_vLastWorldPosition;
 	
@@ -89,5 +105,5 @@ public:
 
     void ProcessFrame(IParticleSystem *pSystem,unsigned int dwCurrentTime,double dInterval);
 
-    CParticleEmitter(CParticleEmitterType *pType,unsigned int dwCurrentTime);
+    CParticleSphereEmitter(CParticleSphereEmitterType *pType,unsigned int dwCurrentTime);
 };

@@ -16,6 +16,7 @@ INCLUDES = -I. \
 
 SOURCES = ParticleSystems.cpp \
 ParticleEmitterType.cpp \
+ParticleSphereEmitterType.cpp \
 ParticleSizeModifierType.cpp \
 ParticleSystemType.cpp \
 ParticleColorModifierType.cpp \
