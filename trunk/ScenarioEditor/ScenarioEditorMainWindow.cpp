@@ -2791,7 +2791,7 @@ void CScenarioEditorMainWindow::OnMouseMove( double x,double y )
 		CVector vTemp;
 		if(GetTerrainCoordinatesFromCursorPos(x,y,false,&vTemp))
 		{
-			pObject->m_piPlayAreaEntity->SetPosition(vTemp-m_vCursorOriginalPosition+m_vObjectOriginalPosition);
+			pObject->m_piPlayAreaEntity->SetPosition(vTemp);
 		}
 	}
 	else if(m_bMovingObject && m_nSelectedFormation!=-1)
