@@ -214,6 +214,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ParticleSphereEmitterType.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ParticleSystems.cpp"
 				>
 			</File>
@@ -281,6 +285,10 @@
 			</File>
 			<File
 				RelativePath=".\ParticleSizeModifierType.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ParticleSphereEmitterType.h"
 				>
 			</File>
 			<File
