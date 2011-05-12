@@ -32,6 +32,7 @@ public:
 
 	CVector 		m_vPosition;
 	CVector 		m_vAngles;	
+	CVector			m_vAngularVelocity;
     float       	m_dFps;
     unsigned int	m_nStartTime;
     unsigned int	m_nEndTime;
@@ -60,6 +61,7 @@ public:
         PROP_VALUE_FLAGS(m_nEndTime,"EndTime",0,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_vPosition,"Position",Origin,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_vAngles,"Angles",Origin,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_vAngularVelocity,"AngularVelocity",Origin,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_bLighting,"Lighting",true,MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP();
 
@@ -90,6 +92,7 @@ class CModelAnimationObject: public CAnimationObjectBase
     CModelAnimationObjectType  *m_pType;
     unsigned int                m_nCurrentFrame;    
     bool                        m_bVisible;
+	CVector                     m_vAngles;
 
     void Activate(unsigned int dwCurrentTime);
     void UpdateVisibility(unsigned int dwCurrentTime);
