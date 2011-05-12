@@ -30,12 +30,14 @@ struct SProjectileLauncherProjectile
   double      dVelocity;
   CEntityTypeWrapper projectileEntityType;
   
-  unsigned int       dwReferenceSystem;
-
+  unsigned int       dwPositionReferenceSystem;
+  unsigned int       dwVelocityReferenceSystem;
+  
   
   SProjectileLauncherProjectile()
   {
-	 dwReferenceSystem=eProjectileLauncherReferenceSystem_Owner;
+	 dwPositionReferenceSystem=eProjectileLauncherReferenceSystem_Owner;
+	 dwVelocityReferenceSystem=eProjectileLauncherReferenceSystem_Owner;
 	 dVelocity=1;
   }
 };
@@ -46,7 +48,8 @@ BEGIN_STRUCT_PROPS(SProjectileLauncherProjectile)
   PROP_VALUE_FLAGS(vDirection,"Heading",CVector(1,0,0),MRPF_NORMAL|MRPF_OPTIONAL)
   PROP_VALUE_FLAGS(dVelocity,"Velocity",1,MRPF_NORMAL|MRPF_OPTIONAL)
   PROP_VALUE_FLAGS(vAngularVelocity,"AngularVelocity",CVector(0,0,0),MRPF_NORMAL|MRPF_OPTIONAL)
-  PROP_VALUE_FLAGS(dwReferenceSystem,"ReferenceSystem",eProjectileLauncherReferenceSystem_Owner,MRPF_NORMAL|MRPF_OPTIONAL)
+  PROP_VALUE_FLAGS(dwPositionReferenceSystem,"PositionReferenceSystem",eProjectileLauncherReferenceSystem_Owner,MRPF_NORMAL|MRPF_OPTIONAL)
+  PROP_VALUE_FLAGS(dwVelocityReferenceSystem,"VelocityReferenceSystem",eProjectileLauncherReferenceSystem_Owner,MRPF_NORMAL|MRPF_OPTIONAL)
 END_STRUCT_PROPS()
 
 struct SProjectileLauncherLevel

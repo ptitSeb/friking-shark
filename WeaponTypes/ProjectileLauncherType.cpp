@@ -128,50 +128,55 @@ void CProjectileLauncher::Fire(unsigned int dwCurrentTime)
 
 		for(nProjectile=0;nProjectile<m_pCurrentLevel->dProjectiles.size();nProjectile++)
 		{
-		SProjectileLauncherProjectile *pProjectileInfo=&m_pCurrentLevel->dProjectiles[nProjectile];
-		if(pProjectileInfo->projectileEntityType.m_piEntityType)
-		{
-			CVector vAngles,vForward,vRight,vUp;
-
-			if(pProjectileInfo->dwReferenceSystem==eProjectileLauncherReferenceSystem_Owner)
+			SProjectileLauncherProjectile *pProjectileInfo=&m_pCurrentLevel->dProjectiles[nProjectile];
+			if(pProjectileInfo->projectileEntityType.m_piEntityType)
 			{
-			vAngles=vOwnerAngles;
-			vForward=vOwnerForward;
-			vRight=vOwnerRight;
-			vUp=vOwnerUp;
-			}
-			else if(pProjectileInfo->dwReferenceSystem==eProjectileLauncherReferenceSystem_Target)
-			{
-			if(piTarget==NULL){continue;}
-			vAngles=vTargetAngles;
-			vForward=vTargetForward;
-			vRight=vTargetRight;
-			vUp=vTargetUp;
-			}
-			else
-			{
-			continue;
-			}
-
-			IEntity *piProjectile=pProjectileInfo->projectileEntityType.m_piEntityType->CreateInstance(m_piEntity,dwCurrentTime);
-			if(piProjectile)
-			{
-			SPhysicInfo *pProjectilePhysicInfo=piProjectile->GetPhysicInfo();
-			pProjectilePhysicInfo->vPosition=pEntityPhysicInfo->vPosition;
-			pProjectilePhysicInfo->vPosition+=vForward*pProjectileInfo->vOrigin.c[0];
-			pProjectilePhysicInfo->vPosition+=vUp*pProjectileInfo->vOrigin.c[1];
-			pProjectilePhysicInfo->vPosition+=vRight*pProjectileInfo->vOrigin.c[2];
-			pProjectilePhysicInfo->vVelocity+=vForward*pProjectileInfo->vDirection.c[0]*pProjectileInfo->dVelocity;
-			pProjectilePhysicInfo->vVelocity+=vUp*pProjectileInfo->vDirection.c[1]*pProjectileInfo->dVelocity;
-			pProjectilePhysicInfo->vVelocity+=vRight*pProjectileInfo->vDirection.c[2]*pProjectileInfo->dVelocity;
-			pProjectilePhysicInfo->vAngleVelocity=pProjectileInfo->vAngularVelocity;
-			pProjectilePhysicInfo->dMaxVelocity=pProjectileInfo->dVelocity;
-			AnglesFromVector(pProjectilePhysicInfo->vVelocity,&pProjectilePhysicInfo->vAngles);
+				CVector vVelAngles,vVelForward,vVelRight,vVelUp;
+				CVector vPosAngles,vPosForward,vPosRight,vPosUp;
+				
+				vVelAngles=vOwnerAngles;
+				vVelForward=vOwnerForward;
+				vVelRight=vOwnerRight;
+				vVelUp=vOwnerUp;
+				vPosAngles=vOwnerAngles;
+				vPosForward=vOwnerForward;
+				vPosRight=vOwnerRight;
+				vPosUp=vOwnerUp;			
+				
+				if(pProjectileInfo->dwPositionReferenceSystem==eProjectileLauncherReferenceSystem_Target && piTarget)
+				{
+					vPosAngles=vTargetAngles;
+					vPosForward=vTargetForward;
+					vPosRight=vTargetRight;
+					vPosUp=vTargetUp;
+				}
+				if(pProjectileInfo->dwVelocityReferenceSystem==eProjectileLauncherReferenceSystem_Target && piTarget)
+				{
+					vVelAngles=vTargetAngles;
+					vVelForward=vTargetForward;
+					vVelRight=vTargetRight;
+					vVelUp=vTargetUp;
+				}
+				
+				IEntity *piProjectile=pProjectileInfo->projectileEntityType.m_piEntityType->CreateInstance(m_piEntity,dwCurrentTime);
+				if(piProjectile)
+				{
+					SPhysicInfo *pProjectilePhysicInfo=piProjectile->GetPhysicInfo();
+					pProjectilePhysicInfo->vPosition=pEntityPhysicInfo->vPosition;
+					pProjectilePhysicInfo->vPosition+=vPosForward*pProjectileInfo->vOrigin.c[0];
+					pProjectilePhysicInfo->vPosition+=vPosUp*pProjectileInfo->vOrigin.c[1];
+					pProjectilePhysicInfo->vPosition+=vPosRight*pProjectileInfo->vOrigin.c[2];
+					pProjectilePhysicInfo->vVelocity+=vVelForward*pProjectileInfo->vDirection.c[0]*pProjectileInfo->dVelocity;
+					pProjectilePhysicInfo->vVelocity+=vVelUp*pProjectileInfo->vDirection.c[1]*pProjectileInfo->dVelocity;
+					pProjectilePhysicInfo->vVelocity+=vVelRight*pProjectileInfo->vDirection.c[2]*pProjectileInfo->dVelocity;
+					pProjectilePhysicInfo->vAngleVelocity=pProjectileInfo->vAngularVelocity;
+					pProjectilePhysicInfo->dMaxVelocity=pProjectileInfo->dVelocity;
+					AnglesFromVector(pProjectilePhysicInfo->vVelocity,&pProjectilePhysicInfo->vAngles);
+				}
 			}
 		}
+		m_dwLastFireTime=dwCurrentTime;
 	}
-    m_dwLastFireTime=dwCurrentTime;
-  }
 }
 
 bool CProjectileLauncher::IsReady(unsigned int dwCurrentTime)
