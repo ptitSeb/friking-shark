@@ -27,6 +27,12 @@ enum EStaticStructureState
 class CStaticStructureType: public CEntityTypeBase
 {
 public:
+	
+	double m_dTimeFirstShotMin;
+	double m_dTimeFirstShotMax;
+	double m_dTimeBetweenShotsMin;
+	double m_dTimeBetweenShotsMax;
+	
 	IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
 	void InitializeEntity(CEntityBase *piEntity,unsigned int dwCurrentTime);
 
@@ -35,6 +41,13 @@ public:
 		ENTITY_STATE(eStaticStructureState_Destroyed,"Destroyed")
 	END_ENTITY_STATE_MAP()
 	
+	BEGIN_PROP_MAP(CStaticStructureType)
+	PROP_CLASS_CHAIN(CEntityTypeBase)
+		PROP_VALUE_FLAGS(m_dTimeFirstShotMin,"TimeFirstShotMin",500,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_VALUE_FLAGS(m_dTimeFirstShotMax,"TimeFirstShotMax",5000,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_VALUE_FLAGS(m_dTimeBetweenShotsMin,"TimeBetweenShotsMin",2000,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_VALUE_FLAGS(m_dTimeBetweenShotsMax,"TimeBetweenShotsMax",5000,MRPF_NORMAL|MRPF_OPTIONAL);
+	END_PROP_MAP();	
 	CStaticStructureType();
 	~CStaticStructureType();
 };
@@ -44,6 +57,8 @@ class CStaticStructure: public CEntityBase
 {
 	CStaticStructureType  *m_pType;
 	unsigned int m_nConfiguredDamageType;
+	unsigned int m_dwNextShotTime;
+	double m_dRadius;
 	
 	IEntity *GetTarget();
 	void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
@@ -52,5 +67,5 @@ public:
 
 	void OnKilled();
 
-	CStaticStructure(CStaticStructureType *pType);
+	CStaticStructure(CStaticStructureType *pType,unsigned int dwCurrentTime);
 };
