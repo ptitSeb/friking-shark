@@ -33,7 +33,7 @@ Source: ..\Resources\ScenarioEditor\*; DestDir: {app}\Resources\ScenarioEditor; 
 Source: ..\Resources\FormationEditor\*; DestDir: {app}\Resources\FormationEditor; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: ..\Resources\EntityEditor\*; DestDir: {app}\Resources\EntityEditor; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: ..\Resources\Scripts\*.cfg; DestDir: {app}\Resources\Scripts; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: ..\Resources\Shaders\*.txt; DestDir: {app}\Resources\Shaders; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\Resources\Shaders\*.c; DestDir: {app}\Resources\Shaders; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: ..\Resources\Sounds\*; DestDir: {app}\Resources\Sounds; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: ..\Resources\Textures\*.jpg; DestDir: {app}\Resources\Textures; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: ..\Resources\Textures\*.bmp; DestDir: {app}\Resources\Textures; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -42,8 +42,8 @@ Source: ..\Resources\Models\*.gbs; DestDir: {app}\Resources\Models; Flags: ignor
 Source: ..\Resources\Level*.ges; DestDir: {app}\Resources; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: .\Redistributables\Windows\alut.dll; DestDir: {app}\Bin\Release; Flags: ignoreversion recursesubdirs createallsubdirs; 
 Source: .\Redistributables\Windows\oalinst.exe; DestDir: {app}\Redistributables; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: .\Redistributables\Windows\msvcp100.dll; DestDir: {sys}; Flags: comparetimestamp onlyifdoesntexist 32bit
-Source: .\Redistributables\Windows\msvcr100.dll; DestDir: {sys}; Flags: comparetimestamp onlyifdoesntexist 32bit
+Source: .\Redistributables\Windows\msvcp90.dll; DestDir: {sys}; Flags: comparetimestamp onlyifdoesntexist 32bit
+Source: .\Redistributables\Windows\msvcr90.dll; DestDir: {sys}; Flags: comparetimestamp onlyifdoesntexist 32bit
 
 [Icons]
 Name: {group}\Friking Shark 3D; Filename: {app}\Bin\Release\GameEngine.exe; WorkingDir: {app}; IconIndex: 0
