@@ -64,7 +64,7 @@ void CModelAnimationObjectType::DesignRender( IGenericRender *piRender,CVector &
 		{
 			CVector vTempPos,vTempAngles;
 			ComputeReferenceSystem(vPosition,vAngles,m_vPosition,m_vAngles,&vTempPos,&vTempAngles);
-
+			
 			piRender->PushState();
 			if(!m_bCastShadow){piRender->DeactivateShadowEmission();}
 			if(!m_bReceiveShadows){piRender->DeactivateShadowReception();}
@@ -167,8 +167,21 @@ void CModelAnimationObject::Render(IGenericRender *piRender,IGenericCamera *piCa
 		SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();
 		vPosition=pPhysicInfo->vPosition;
 		vAngles=pPhysicInfo->vAngles;
+		
 	}
-	if(m_pType){m_pType->DesignRender(piRender,vPosition,vAngles,false);}
+	
+	CVector vTempPos,vTempAngles;
+	ComputeReferenceSystem(vPosition,vAngles,m_pType->m_vPosition,m_vAngles,&vTempPos,&vTempAngles);
+	
+	piRender->PushState();
+	if(!m_pType->m_bCastShadow){piRender->DeactivateShadowEmission();}
+	if(!m_pType->m_bReceiveShadows){piRender->DeactivateShadowReception();}
+	piRender->DeactivateHeightFog();
+	if(m_pType->m_bLighting){piRender->ActivateLighting();}
+	if(m_pType->m_ShaderWrapper.m_piShader){m_pType->m_ShaderWrapper.m_piShader->Activate();}
+	piRender->RenderModel(vTempPos,vTempAngles,m_pType->m_ModelWrapper.m_piModel);
+	if(m_pType->m_ShaderWrapper.m_piShader){m_pType->m_ShaderWrapper.m_piShader->Deactivate();}
+	piRender->PopState();
 }
 void CModelAnimationObject::CustomRender(IGenericRender *piRender,IGenericCamera *piCamera)
 {
@@ -190,6 +203,15 @@ bool CModelAnimationObject::ProcessFrame(IPhysicManager *pPhysicManager,unsigned
 
 	unsigned long nFrames=m_pType->m_ModelWrapper.m_piModel?m_pType->m_ModelWrapper.m_piModel->GetAnimationFrames(0):0;
 
+	if(m_pType->m_vAngularVelocity.c[0]==0 && m_pType->m_vAngularVelocity.c[1]==0 && m_pType->m_vAngularVelocity.c[2]==0)
+	{
+		m_vAngles=m_pType->m_vAngles;
+	}
+	else
+	{
+		m_vAngles+=m_pType->m_vAngularVelocity*dInterval;
+	}
+	
     if(nFrames) 
     {
         unsigned int dwRelativeTime=dwCurrentTime-m_piAnimation->GetCurrentTimeBase()-m_pType->m_nStartTime;
