@@ -24,6 +24,7 @@ CStaticStructureType::CStaticStructureType()
 	m_nDamageType=DAMAGE_TYPE_NORMAL;
 	m_nMovementType=PHYSIC_MOVE_TYPE_NONE;
 	
+	PersistencyInitialize();
 }
 
 CStaticStructureType::~CStaticStructureType()
@@ -32,7 +33,7 @@ CStaticStructureType::~CStaticStructureType()
 
 IEntity *CStaticStructureType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
 {
-	CStaticStructure *piEntity=new CStaticStructure(this);
+	CStaticStructure *piEntity=new CStaticStructure(this,dwCurrentTime);
 	InitializeEntity(piEntity,dwCurrentTime);
 	return piEntity;
 }
@@ -43,7 +44,7 @@ void CStaticStructureType::InitializeEntity( CEntityBase *piEntity,unsigned int 
 	piEntity->SetState(eStaticStructureState_Normal);
 }
 
-CStaticStructure::CStaticStructure(CStaticStructureType *pType)
+CStaticStructure::CStaticStructure(CStaticStructureType *pType,unsigned int dwCurrentTime)
 {
 	m_sClassName="CStaticStructure";
 	m_pType=pType;
@@ -51,6 +52,8 @@ CStaticStructure::CStaticStructure(CStaticStructureType *pType)
 	SEntityTypeConfig sconfig;
 	m_pType->GetEntityTypeConfig(&sconfig);
 	m_nConfiguredDamageType=sconfig.nDamageType;
+	m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeFirstShotMax-m_pType->m_dTimeFirstShotMin)+m_pType->m_dTimeFirstShotMin;
+	m_dRadius=m_pType->DesignGetRadius();
 }
 
 void CStaticStructure::OnKilled()
@@ -76,7 +79,17 @@ void CStaticStructure::OnKilled()
 void CStaticStructure::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
-
+	if(GetState()==eStaticStructureState_Destroyed){return;}
+	if(GetState()==eStaticStructureState_Normal)
+	{
+		size_t nAnimationToSet=0;
+		double dMaxHealth=GetMaxHealth();
+		unsigned int nAnimations=m_pTypeBase->GetStateAnimations(ENTITY_STATE_BASE);
+		nAnimationToSet=(size_t)(((dMaxHealth-m_dHealth)/dMaxHealth)*((double)nAnimations));
+		if(nAnimationToSet>nAnimations-1){nAnimationToSet=nAnimations-1;}
+		SetState(ENTITY_STATE_BASE,(int)nAnimationToSet);
+	}
+	
 	bool bAllChildDead=true;
 	for(unsigned int x=0;x<m_vChildren.size();x++){if(m_vChildren[x].piEntity->GetHealth()>0){bAllChildDead=false;}}
 	m_dwDamageType=(bAllChildDead?m_nConfiguredDamageType:DAMAGE_TYPE_NONE);
@@ -84,6 +97,16 @@ void CStaticStructure::ProcessFrame(unsigned int dwCurrentTime,double dTimeFract
 	if(m_dwAlignment==ENTITY_ALIGNMENT_ENEMIES)
 	{
 		GetTarget();
+	}
+	
+	if(m_piTarget && dwCurrentTime>m_dwNextShotTime && m_vWeapons.size())
+	{
+		bool bVisible=g_PlayAreaManagerWrapper.m_piInterface && g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,m_dRadius,true);
+		if(bVisible)
+		{
+			FireWeapon(0,dwCurrentTime);
+			m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeBetweenShotsMax-m_pType->m_dTimeBetweenShotsMin)+m_pType->m_dTimeBetweenShotsMin;
+		}
 	}
 }
 
