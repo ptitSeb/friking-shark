@@ -51,7 +51,8 @@ Name: "{group}\Scenario Editor"; Filename: {app}\Bin\Release\GameEngine.exe; Wor
 Name: "{group}\Formation Editor"; Filename: {app}\Bin\Release\GameEngine.exe; WorkingDir: {app}; Parameters: FormationEditor; 
 Name: "{group}\Entity Editor"; Filename: {app}\Bin\Release\GameEngine.exe; WorkingDir: {app}; Parameters: EntityEditor; 
 Name: {userdesktop}\Friking Shark 3D; Filename: {app}\Bin\Release\GameEngine.exe; Tasks: desktopicon; WorkingDir: {app}; IconIndex: 0
-Name: {group}\Home Page; Filename: ttp://kyanaprime.blogspot.com/
+Name: {group}\Blog; Filename: http://kyanaprime.blogspot.com/
+Name: "{group}\Source Code"; Filename: http://code.google.com/p/friking-shark/
 
 [Run]
 Filename: {app}\Redistributables\oalinst.exe; Description: "{cm:LaunchProgram,OpenAL Redistributables}"; 
