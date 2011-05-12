@@ -701,11 +701,6 @@ void CEntityEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 		if(!m_bMovingGizmo && m_pEntity && nSelectedAnimation!=-1)
 		{
 			unsigned long nTime=m_FrameManager.m_piFrameManager->GetCurrentRealTime()-m_nAnimationActivationTime;
-			m_Render.m_piRender->PushOptions();
-			m_Render.m_piRender->PushState();
-			
-			m_bTextures?m_Render.m_piRender->EnableTextures():m_Render.m_piRender->DisableTextures();
-			m_bSolid?m_Render.m_piRender->EnableSolid():m_Render.m_piRender->DisableSolid();
 			
 			m_Render.m_piRender->StartSelection(m_rRealRect,m_Camera.m_piCamera,dx,dy,5);
 			unsigned int nObjects=m_vAnimations[nSelectedAnimation].m_piAnimationTypeDesign->GetObjectCount();
@@ -771,9 +766,6 @@ void CEntityEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 				if(m_piLSObjects){m_piLSObjects->SetSelectedElement(-1);}
 				if(m_piLSChildren){m_piLSChildren->SetSelectedElement(nSelectionId-nObjects);}
 			}
-			m_Render.m_piRender->PopOptions();
-			m_Render.m_piRender->PopState();
-			
 			UpdateSelectedObject();
 		}
 	}
