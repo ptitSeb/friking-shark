@@ -16,6 +16,7 @@ INCLUDES = -I. \
 
 SOURCES = GroundUnitTypes.cpp\
 GroundBossType.cpp\
+GroundBossHatchType.cpp\
 StaticEntityType.cpp\
 StaticStructureType.cpp\
 VehicleType.cpp\
