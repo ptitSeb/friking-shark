@@ -54,6 +54,13 @@ struct SEntityAnimationObjectTypeConfig
 	SEntityAnimationObjectTypeConfig(){nTime=0;}
 };
 
+struct SModelAnimationKeyFrame
+{
+	unsigned int nTime;
+	CVector vAngles;
+	CVector vPosition;
+};
+
 struct SModelAnimationObjectTypeConfig
 {
 	unsigned int nStartTime;
@@ -62,6 +69,7 @@ struct SModelAnimationObjectTypeConfig
 	bool 		 bLoop;
 	bool 		 bCastShadow;
 	bool 		 bReceiveShadows;
+	std::vector<SModelAnimationKeyFrame> vKeyFrames;
 	
 	SModelAnimationObjectTypeConfig(){dFps=50.0;nStartTime=0;nEndTime=0;bLoop=false;bCastShadow=true;bReceiveShadows=true;}
 };

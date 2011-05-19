@@ -120,6 +120,7 @@ void CModelAnimationObjectType::GetConfig(SModelAnimationObjectTypeConfig *pConf
 	pConfig->bReceiveShadows=m_bReceiveShadows;
 	pConfig->bLoop=m_bLoop;
 	pConfig->dFps=m_dFps;
+	pConfig->vKeyFrames=m_vKeyFrames;
 }
 void CModelAnimationObjectType::SetConfig(SModelAnimationObjectTypeConfig *pConfig)
 {
@@ -129,6 +130,7 @@ void CModelAnimationObjectType::SetConfig(SModelAnimationObjectTypeConfig *pConf
 	m_bReceiveShadows=pConfig->bReceiveShadows;
 	m_bLoop=pConfig->bLoop;
 	m_dFps=pConfig->dFps;
+	m_vKeyFrames=pConfig->vKeyFrames;	
 }
 
 void CModelAnimationObjectType::SetModel(IGenericModel *piModel){m_ModelWrapper.Attach(piModel);}
@@ -171,7 +173,7 @@ void CModelAnimationObject::Render(IGenericRender *piRender,IGenericCamera *piCa
 	}
 	
 	CVector vTempPos,vTempAngles;
-	ComputeReferenceSystem(vPosition,vAngles,m_pType->m_vPosition,m_vAngles,&vTempPos,&vTempAngles);
+	ComputeReferenceSystem(vPosition,vAngles,m_vPosition,m_vAngles,&vTempPos,&vTempAngles);
 	
 	piRender->PushState();
 	if(!m_pType->m_bCastShadow){piRender->DeactivateShadowEmission();}
@@ -211,6 +213,35 @@ bool CModelAnimationObject::ProcessFrame(IPhysicManager *pPhysicManager,unsigned
 	{
 		m_vAngles+=m_pType->m_vAngularVelocity*dInterval;
 	}
+	
+	if(m_pType->m_vKeyFrames.size())
+	{
+		unsigned int dwTime=dwCurrentTime-m_piAnimation->GetCurrentTimeBase();
+		
+		int nNextKeyFrame=-1;
+		for(unsigned int x=0;x<m_pType->m_vKeyFrames.size();x++)
+		{
+			nNextKeyFrame=(int)x;
+			if(m_pType->m_vKeyFrames[x].nTime>dwTime){break;}
+		}
+		if(nNextKeyFrame!=-1)
+		{
+			unsigned int dwPrevTime=(nNextKeyFrame==0)?0:m_pType->m_vKeyFrames[nNextKeyFrame-1].nTime;
+			CVector vPrevAngles=(nNextKeyFrame==0)?m_pType->m_vAngles:m_pType->m_vKeyFrames[nNextKeyFrame-1].vAngles;
+			CVector vPrevPosition=(nNextKeyFrame==0)?m_pType->m_vPosition:m_pType->m_vKeyFrames[nNextKeyFrame-1].vPosition;
+			double dKeyFraction=((double)(dwTime-dwPrevTime))/((double)(m_pType->m_vKeyFrames[nNextKeyFrame].nTime-dwPrevTime));
+			if(dKeyFraction>1.0){dKeyFraction=1.0;}
+			m_vAngles=vPrevAngles+(m_pType->m_vKeyFrames[nNextKeyFrame].vAngles-vPrevAngles)*dKeyFraction;
+			m_vPosition=vPrevPosition+(m_pType->m_vKeyFrames[nNextKeyFrame].vPosition-vPrevPosition)*dKeyFraction;
+		}
+			
+	}
+	else
+	{
+		m_vPosition=m_pType->m_vPosition;
+	}
+	
+	
 	
     if(nFrames) 
     {
