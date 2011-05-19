@@ -20,6 +20,12 @@
 
 #include "GameGraphics.h"
 
+BEGIN_STRUCT_PROPS(SModelAnimationKeyFrame)
+	PROP_VALUE_FLAGS(vPosition,"Position",Origin,MRPF_NORMAL|MRPF_OPTIONAL)
+	PROP_VALUE_FLAGS(vAngles,"Angles",Origin,MRPF_NORMAL|MRPF_OPTIONAL)
+	PROP_VALUE_FLAGS(nTime,"Time",0,MRPF_NORMAL|MRPF_OPTIONAL)
+END_STRUCT_PROPS()
+
 class CModelAnimationObjectType: public CAnimationObjectTypeBase,
 virtual public IModelAnimationObjectTypeDesign,
 virtual public IAnimationObjectTypePositionDesign,
@@ -41,6 +47,8 @@ public:
 	bool        	m_bReceiveShadows;
 	bool			m_bLighting;
 
+	std::vector<SModelAnimationKeyFrame> m_vKeyFrames;
+	
     IAnimationObject *CreateInstance(IAnimation *piAnimation,unsigned int dwCurrentTime);
 	std::string 	  GetAnimationObjectDescription();
 	
@@ -63,6 +71,7 @@ public:
 		PROP_VALUE_FLAGS(m_vAngles,"Angles",Origin,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_vAngularVelocity,"AngularVelocity",Origin,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_bLighting,"Lighting",true,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_FLAGS(m_vKeyFrames,"KeyFrames",MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP();
 
    // IModelAnimationObjectTypeDesign
@@ -93,7 +102,8 @@ class CModelAnimationObject: public CAnimationObjectBase
     unsigned int                m_nCurrentFrame;    
     bool                        m_bVisible;
 	CVector                     m_vAngles;
-
+	CVector                     m_vPosition;
+	
     void Activate(unsigned int dwCurrentTime);
     void UpdateVisibility(unsigned int dwCurrentTime);
     void Render(IGenericRender *piRender,IGenericCamera *piCamera);
