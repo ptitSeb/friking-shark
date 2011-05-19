@@ -25,7 +25,8 @@
 struct SProjectileLauncherProjectile
 {
   CVector     vOrigin;
-  CVector     vDirection;
+  CVector     vHeading;
+  CVector     vHeadingJitter;
   CVector     vAngularVelocity;
   double      dVelocity;
   CEntityTypeWrapper projectileEntityType;
@@ -45,7 +46,8 @@ struct SProjectileLauncherProjectile
 BEGIN_STRUCT_PROPS(SProjectileLauncherProjectile)
   PROP(projectileEntityType,"Entity")
   PROP_VALUE_FLAGS(vOrigin,"Position",Origin,MRPF_NORMAL|MRPF_OPTIONAL)
-  PROP_VALUE_FLAGS(vDirection,"Heading",CVector(1,0,0),MRPF_NORMAL|MRPF_OPTIONAL)
+  PROP_VALUE_FLAGS(vHeading,"Heading",CVector(1,0,0),MRPF_NORMAL|MRPF_OPTIONAL)
+  PROP_VALUE_FLAGS(vHeadingJitter,"HeadingJitter",CVector(0,0,0),MRPF_NORMAL|MRPF_OPTIONAL)
   PROP_VALUE_FLAGS(dVelocity,"Velocity",1,MRPF_NORMAL|MRPF_OPTIONAL)
   PROP_VALUE_FLAGS(vAngularVelocity,"AngularVelocity",CVector(0,0,0),MRPF_NORMAL|MRPF_OPTIONAL)
   PROP_VALUE_FLAGS(dwPositionReferenceSystem,"PositionReferenceSystem",eProjectileLauncherReferenceSystem_Owner,MRPF_NORMAL|MRPF_OPTIONAL)
@@ -77,7 +79,7 @@ class CProjectileLauncherType: virtual public CSystemObjectBase,virtual public I
   bool               m_bUsesAmmo;
   unsigned int       m_nInitialAmmo;
   unsigned int       m_nAmmoPerRound;
-
+  
 public:
 
   bool m_bIgnoreRoll;

@@ -162,13 +162,22 @@ void CProjectileLauncher::Fire(unsigned int dwCurrentTime)
 				if(piProjectile)
 				{
 					SPhysicInfo *pProjectilePhysicInfo=piProjectile->GetPhysicInfo();
+					
+					CVector vDirection;
+					CVector vFinalHeading=pProjectileInfo->vHeading;
+					vFinalHeading.c[0]+=pProjectileInfo->vHeadingJitter.c[0]*drand()-pProjectileInfo->vHeadingJitter.c[0]*0.5;
+					vFinalHeading.c[1]+=pProjectileInfo->vHeadingJitter.c[1]*drand()-pProjectileInfo->vHeadingJitter.c[1]*0.5;
+					vFinalHeading.c[2]+=pProjectileInfo->vHeadingJitter.c[2]*drand()-pProjectileInfo->vHeadingJitter.c[2]*0.5;
+					
+					VectorsFromAngles(vFinalHeading,&vDirection);
+					
 					pProjectilePhysicInfo->vPosition=pEntityPhysicInfo->vPosition;
 					pProjectilePhysicInfo->vPosition+=vPosForward*pProjectileInfo->vOrigin.c[0];
 					pProjectilePhysicInfo->vPosition+=vPosUp*pProjectileInfo->vOrigin.c[1];
 					pProjectilePhysicInfo->vPosition+=vPosRight*pProjectileInfo->vOrigin.c[2];
-					pProjectilePhysicInfo->vVelocity+=vVelForward*pProjectileInfo->vDirection.c[0]*pProjectileInfo->dVelocity;
-					pProjectilePhysicInfo->vVelocity+=vVelUp*pProjectileInfo->vDirection.c[1]*pProjectileInfo->dVelocity;
-					pProjectilePhysicInfo->vVelocity+=vVelRight*pProjectileInfo->vDirection.c[2]*pProjectileInfo->dVelocity;
+					pProjectilePhysicInfo->vVelocity+=vVelForward*vDirection.c[0]*pProjectileInfo->dVelocity;
+					pProjectilePhysicInfo->vVelocity+=vVelUp*vDirection.c[1]*pProjectileInfo->dVelocity;
+					pProjectilePhysicInfo->vVelocity+=vVelRight*vDirection.c[2]*pProjectileInfo->dVelocity;
 					pProjectilePhysicInfo->vAngleVelocity=pProjectileInfo->vAngularVelocity;
 					pProjectilePhysicInfo->dMaxVelocity=pProjectileInfo->dVelocity;
 					AnglesFromVector(pProjectilePhysicInfo->vVelocity,&pProjectilePhysicInfo->vAngles);
@@ -225,8 +234,4 @@ CVector CProjectileLauncher::GetIdealHeadingToTarget(CVector vTargetPosition,CVe
 	}
 	return PredictInterceptionPosition(vPosition,dFastestProjectile,vTargetPosition,vTargetVelocity)-vPosition;
 }
-
-
-
-
 
