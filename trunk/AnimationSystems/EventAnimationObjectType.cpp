@@ -66,7 +66,7 @@ bool CEventAnimationObject::ProcessFrame(IPhysicManager *pPhysicManager,unsigned
 {
     if(!m_bActive){return false;}
     if(m_bFired){return false;}
-    if(dwCurrentTime>m_pType->m_nTime)
+    if(dwCurrentTime-m_piAnimation->GetCurrentTimeBase()>m_pType->m_nTime)
     {
         IEntity *piEntity=m_piAnimation->GetEntity();
         if(piEntity){piEntity->OnAnimationEvent(m_pType->m_sEvent,m_pType->m_sParams);}

@@ -54,6 +54,6 @@ class CEventAnimationObject: public CAnimationObjectBase
 public:
 
     bool ProcessFrame(IPhysicManager *pPhysicManager,unsigned int dwCurrentTime,double dInterval);
-
+	
     CEventAnimationObject(CEventAnimationObjectType *pType,IAnimation *piAnimation);
 };
