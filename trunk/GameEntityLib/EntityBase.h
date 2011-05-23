@@ -85,6 +85,8 @@ protected:
 
     // Miembors de Rutas
     IRoute  *m_piRoute;
+	unsigned int m_nRouteDelay;
+	
 
     IEntity *m_piTarget;
 	
@@ -155,6 +157,8 @@ public:
 	
     // Rutas
     void SetRoute(IRoute *piRoute);
+	void SetRouteDelay(unsigned int nDelay);
+	
 	IRoute *GetRoute();
 	bool HasFinishedRoute();
 	

@@ -36,7 +36,8 @@ class CPlayAreaEntity: virtual public CPlayAreaElementBase,virtual public IPlayA
 	unsigned int         m_nEntityCount;
     unsigned int         m_nInterval;
 	unsigned int         m_nDelay;
-
+	unsigned int         m_nRouteDelay;
+	
 	unsigned int         m_nLastEntityTime;
 	bool                 m_bFirstFrame;
 	bool				 m_bDoNotActivate;
@@ -53,6 +54,7 @@ public:
 		PROP_VALUE_FLAGS(m_nEntityCount,"Count",1,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_nInterval,"Interval",0,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_nDelay,"Delay",0,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_nRouteDelay,"RouteDelay",0,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_BonusType,"Bonus",MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP()
 
@@ -80,6 +82,7 @@ public:
 	
 	void SetCount(unsigned int nCount);
 	void SetDelay(unsigned int nDelay);
+	void SetRouteDelay(unsigned int nDelay);
 	void SetInterval(unsigned int nInterval);
 
 	CVector GetPosition();
@@ -89,6 +92,7 @@ public:
 	
 	unsigned int GetCount();
 	unsigned int GetDelay();
+	unsigned int GetRouteDelay();
 	unsigned int GetInterval();
 
 

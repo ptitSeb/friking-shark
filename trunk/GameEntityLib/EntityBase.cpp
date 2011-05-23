@@ -43,6 +43,7 @@ CEntityBase::CEntityBase()
 	
     g_EntityManagerSingleton.m_piInterface->AddEntity(this);
     m_piRoute=NULL;
+	m_nRouteDelay=0;
     m_dwAlignment=ENTITY_ALIGNMENT_NEUTRAL;
     m_piTarget=NULL;
 	m_piParent=NULL;
@@ -218,6 +219,7 @@ void CEntityBase::OnAnimationEvent(string sEvent,string sParams)
 }
 
 void CEntityBase::SetRoute(IRoute *piRoute){m_piRoute=piRoute;}
+void CEntityBase::SetRouteDelay(unsigned int nDelay){m_nRouteDelay=nDelay;}
 IRoute *CEntityBase::GetRoute(){return m_piRoute;}
 bool CEntityBase::HasFinishedRoute(){return true;}
 

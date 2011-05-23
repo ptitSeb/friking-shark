@@ -25,6 +25,7 @@ CPlayAreaEntity::CPlayAreaEntity()
 {
 	m_dRadius=0;
     m_nDelay=0;
+	m_nRouteDelay=0;
 	m_nInterval=0;
 	m_nEntityCount=1;
 	m_nLastEntityTime=0;
@@ -81,6 +82,7 @@ bool CPlayAreaEntity::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInf
 			if(m_Route.GetPointCount())
 			{
 				piEntity->SetRoute(&m_Route);
+				piEntity->SetRouteDelay(m_nRouteDelay);
 				piEntity->GetPhysicInfo()->vAngles=AnglesFromVector(m_Route.GetAbsolutePoint(0)-m_vPosition);
 			}
 			SUBSCRIBE_TO(piEntity,IEntityEvents);
@@ -209,6 +211,7 @@ void CPlayAreaEntity::SetEntityType(IEntityType *piEntityType)
 }
 void CPlayAreaEntity::SetCount(unsigned int nCount){m_nEntityCount=nCount;}
 void CPlayAreaEntity::SetDelay(unsigned int nDelay){m_nDelay=nDelay;}
+void CPlayAreaEntity::SetRouteDelay(unsigned int nDelay){m_nRouteDelay=nDelay;}
 void CPlayAreaEntity::SetInterval(unsigned int nInterval){m_nInterval=nInterval;}
 void CPlayAreaEntity::SetDynamic(bool bDynamic){m_bDynamic=bDynamic;}
 
@@ -218,6 +221,7 @@ void	CPlayAreaEntity::GetEntityType(IEntityType **ppiEntityType){if(ppiEntityTyp
 
 unsigned int CPlayAreaEntity::GetCount(){return m_nEntityCount;}
 unsigned int CPlayAreaEntity::GetDelay(){return m_nDelay;}
+unsigned int CPlayAreaEntity::GetRouteDelay(){return m_nRouteDelay;}
 unsigned int CPlayAreaEntity::GetInterval(){return m_nInterval;}
 
 void CPlayAreaEntity::DesignRender( IGenericRender *piRender,bool bSelected )

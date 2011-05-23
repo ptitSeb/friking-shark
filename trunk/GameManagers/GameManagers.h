@@ -210,6 +210,7 @@ public:
 
 	virtual CTraceInfo GetTrace(const CVector &p1,const CVector &p2)=0;
 
+	virtual void 	SetRouteDelay(unsigned int nDelay)=0;
 	virtual void    SetRoute(IRoute *piRoute)=0;
 	virtual bool    HasFinishedRoute()=0;
 	virtual IRoute *GetRoute()=0;
@@ -470,6 +471,7 @@ struct IPlayAreaEntity:virtual public IPlayAreaElement
 {
 	virtual void SetCount(unsigned int nCount)=0;
 	virtual void SetDelay(unsigned int nDelay)=0;
+	virtual void SetRouteDelay(unsigned int nDelay)=0;
 	virtual void SetInterval(unsigned int nInterval)=0;
 	virtual void SetDynamic(bool bDynamic)=0;
 	
@@ -480,6 +482,7 @@ struct IPlayAreaEntity:virtual public IPlayAreaElement
 	
 	virtual unsigned int GetCount()=0;
 	virtual unsigned int GetDelay()=0;
+	virtual unsigned int GetRouteDelay()=0;
 	virtual unsigned int GetInterval()=0;
 	
 	virtual CVector GetPosition()=0;
