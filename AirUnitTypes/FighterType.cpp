@@ -50,6 +50,7 @@ CFighter::CFighter(CFighterType *pType,unsigned int dwCurrentTime)
   m_pType=pType;
   m_nCurrentTime=dwCurrentTime;
   m_nRoutePoint=0;
+  m_nFallStartTime=0;
   m_dwNextProcessFrame=dwCurrentTime+10;
   m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeFirstShotMax-m_pType->m_dTimeFirstShotMin)+m_pType->m_dTimeFirstShotMin;
   m_dRadius=m_pType->DesignGetRadius();
@@ -197,7 +198,7 @@ void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 		VectorsFromAngles(vFleeAngles,&vDir);
 		vDest=m_PhysicInfo.vPosition+vDir*100.0;
 	}
-	else if(m_pType->m_bHeadToTarget)
+	else if(m_pType->m_bHeadToTarget && (m_dwCreationTime+m_pType->m_nHeadToTargetDelay)<=dwCurrentTime)
 	{
 		// If head to target is enabled and we have a head correction angle, try to head to the target at the configured angular speed 
 
