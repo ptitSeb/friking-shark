@@ -38,6 +38,7 @@ public:
 
     // Behaviour parameterers
 	bool         m_bHeadToTarget; // false: folow the route, true, head directly to the target
+	unsigned int m_nHeadToTargetDelay;
 	bool         m_bFleeOnSameX;
 	bool         m_bFleeOnSameZ;
 	unsigned int m_nFleeDelay;
@@ -56,6 +57,7 @@ public:
 		PROP_VALUE_FLAGS(m_dTimeBetweenShotsMax,"TimeBetweenShotsMax",2000,MRPF_NORMAL|MRPF_OPTIONAL);
 		
         PROP_VALUE_FLAGS(m_bHeadToTarget,"HeadToTarget",false,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_VALUE_FLAGS(m_nHeadToTargetDelay,"HeadToTargetDelay",0,MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_VALUE_FLAGS(m_dFleeProbability,"FleeProbability",1,MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_VALUE_FLAGS(m_nFleeDelay,"FleeDelay",0,MRPF_NORMAL|MRPF_OPTIONAL);
         PROP_VALUE_FLAGS(m_bFleeOnSameX,"FleeOnSameX",false,MRPF_NORMAL|MRPF_OPTIONAL);
