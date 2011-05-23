@@ -19,6 +19,7 @@
 #include "./stdafx.h"
 #include "WeaponTypes.h"
 #include "ProjectileLauncherType.h"
+#include "../GameGraphics/GameGraphics.h"
 
 CProjectileLauncherType::CProjectileLauncherType(void)
 {
@@ -28,10 +29,12 @@ CProjectileLauncherType::CProjectileLauncherType(void)
   m_bUsesAmmo=false;
   m_nInitialAmmo=0;
   m_nAmmoPerRound=1;
+  g_PlayAreaManagerWrapper.AddRef();
 }
 
 CProjectileLauncherType::~CProjectileLauncherType(void)
 {
+	g_PlayAreaManagerWrapper.Release();
 }
 
 IWeapon *CProjectileLauncherType::CreateInstance(IEntity *piEntity,unsigned int dwCurrentTime)
@@ -108,29 +111,27 @@ void CProjectileLauncher::Fire(unsigned int dwCurrentTime)
 		CVector vOwnerAngles=pEntityPhysicInfo->vAngles,vOwnerForward,vOwnerRight,vOwnerUp;
 		CVector vTargetAngles,vTargetForward,vTargetRight,vTargetUp;
 		IEntity *piTarget=m_piEntity->GetTarget();
-	
-
+		CVector vLaunchPosition=m_piEntity->GetPhysicInfo()->vPosition;
+		
 		if(piTarget)
 		{
-		SPhysicInfo *pTargetPhysicInfo=piTarget->GetPhysicInfo();
-		CVector vTargetDirection=GetIdealHeadingToTarget(pTargetPhysicInfo->vPosition,pTargetPhysicInfo->vVelocity);
-		AnglesFromVector(vTargetDirection,&vTargetAngles);
+			SPhysicInfo *pTargetPhysicInfo=piTarget->GetPhysicInfo();
+			if(m_piEntity->GetAlignment()==ENTITY_ALIGNMENT_ENEMIES){vLaunchPosition=ProjectToAirPlane(m_piEntity->GetPhysicInfo()->vPosition);}
+			CVector vTargetDirection=GetIdealHeadingToTarget(vLaunchPosition,pTargetPhysicInfo->vPosition,pTargetPhysicInfo->vVelocity);
+			AnglesFromVector(vTargetDirection,&vTargetAngles);
 		}
-
-		if(m_pType->m_bIgnoreRoll)
-		{
-		vOwnerAngles.c[ROLL]=0;
-		vTargetAngles.c[ROLL]=0;
-		}
-
+		
+		if(m_pType->m_bIgnoreRoll){vTargetAngles.c[ROLL]=0;}
+		if(m_pType->m_bIgnoreRoll){vOwnerAngles.c[ROLL]=0;}
 		VectorsFromAngles(vOwnerAngles,&vOwnerForward,&vOwnerRight,&vOwnerUp);
 		VectorsFromAngles(vTargetAngles,&vTargetForward,&vTargetRight,&vTargetUp);
-
+		
 		for(nProjectile=0;nProjectile<m_pCurrentLevel->dProjectiles.size();nProjectile++)
 		{
 			SProjectileLauncherProjectile *pProjectileInfo=&m_pCurrentLevel->dProjectiles[nProjectile];
 			if(pProjectileInfo->projectileEntityType.m_piEntityType)
 			{
+			
 				CVector vVelAngles,vVelForward,vVelRight,vVelUp;
 				CVector vPosAngles,vPosForward,vPosRight,vPosUp;
 				
@@ -175,17 +176,39 @@ void CProjectileLauncher::Fire(unsigned int dwCurrentTime)
 					pProjectilePhysicInfo->vPosition+=vPosForward*pProjectileInfo->vOrigin.c[0];
 					pProjectilePhysicInfo->vPosition+=vPosUp*pProjectileInfo->vOrigin.c[1];
 					pProjectilePhysicInfo->vPosition+=vPosRight*pProjectileInfo->vOrigin.c[2];
+					
+					if(m_piEntity->GetAlignment()==ENTITY_ALIGNMENT_ENEMIES)
+					{
+						pProjectilePhysicInfo->vPosition=ProjectToAirPlane(pProjectilePhysicInfo->vPosition);
+					}
 					pProjectilePhysicInfo->vVelocity+=vVelForward*vDirection.c[0]*pProjectileInfo->dVelocity;
 					pProjectilePhysicInfo->vVelocity+=vVelUp*vDirection.c[1]*pProjectileInfo->dVelocity;
 					pProjectilePhysicInfo->vVelocity+=vVelRight*vDirection.c[2]*pProjectileInfo->dVelocity;
 					pProjectilePhysicInfo->vAngleVelocity=pProjectileInfo->vAngularVelocity;
 					pProjectilePhysicInfo->dMaxVelocity=pProjectileInfo->dVelocity;
+					
 					AnglesFromVector(pProjectilePhysicInfo->vVelocity,&pProjectilePhysicInfo->vAngles);
 				}
 			}
 		}
 		m_dwLastFireTime=dwCurrentTime;
 	}
+}
+
+CVector CProjectileLauncher::ProjectToAirPlane(CVector vPos)
+{
+	CVector vPlayerStart,vPlayerEnd;
+	g_PlayAreaManagerWrapper.m_piInterface->GetPlayerRoute(&vPlayerStart,&vPlayerEnd);
+	IGenericCamera *piCamera=g_PlayAreaManagerWrapper.m_piInterface->GetCamera();
+	CVector vCameraPos=piCamera?piCamera->GetPosition():Origin;
+
+	CVector cut;
+	CPlane plane(AxisPosY,vPlayerStart.c[1]);
+	if(plane.Cut(vPos,vCameraPos,&cut))
+	{
+		vPos=cut;
+	}
+	return vPos;
 }
 
 bool CProjectileLauncher::IsReady(unsigned int dwCurrentTime)
@@ -220,18 +243,23 @@ void CProjectileLauncher::SetCurrentLevel(unsigned int dwLevel)
   m_pCurrentLevel=m_pType->GetLevel(m_dwCurrentLevel);
 }
 
-CVector CProjectileLauncher::GetIdealHeadingToTarget(CVector vTargetPosition,CVector vTargetVelocity)
+CVector CProjectileLauncher::GetIdealHeadingToTarget(CVector vLaunchPosition,CVector vTargetPosition,CVector vTargetVelocity)
 {
-	CVector vPosition;
 	double dFastestProjectile=0;
-	if(m_piEntity){vPosition=m_piEntity->GetPhysicInfo()->vPosition;}
-	if(!m_pCurrentLevel){return vTargetPosition-vPosition;}
+	if(!m_pCurrentLevel){return vTargetPosition-vLaunchPosition;}
 	
 	for(unsigned int nProjectile=0;nProjectile<m_pCurrentLevel->dProjectiles.size();nProjectile++)
 	{
 		SProjectileLauncherProjectile *pProjectileInfo=&m_pCurrentLevel->dProjectiles[nProjectile];
 		if(pProjectileInfo->dVelocity>dFastestProjectile){dFastestProjectile=pProjectileInfo->dVelocity;}
 	}
-	return PredictInterceptionPosition(vPosition,dFastestProjectile,vTargetPosition,vTargetVelocity)-vPosition;
+	return PredictInterceptionPosition(vLaunchPosition,dFastestProjectile,vTargetPosition,vTargetVelocity)-vLaunchPosition;
+}
+
+CVector CProjectileLauncher::GetIdealHeadingToTarget(CVector vTargetPosition,CVector vTargetVelocity)
+{
+	CVector vPosition;
+	if(m_piEntity){vPosition=m_piEntity->GetPhysicInfo()->vPosition;}
+	return GetIdealHeadingToTarget(vPosition,vTargetPosition,vTargetVelocity);
 }
 

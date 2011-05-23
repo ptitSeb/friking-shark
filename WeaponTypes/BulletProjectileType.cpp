@@ -56,7 +56,7 @@ CBulletProjectile::CBulletProjectile(CBulletProjectileType *pType,IEntity *piPar
 	m_pType=pType;
 	m_piParent=piParent;
 	m_bTargetAcquired=false;
-	m_bAtPlayerHeight=false;
+	m_dRadius=pType->DesignGetRadius();
 
 	g_PlayAreaManagerWrapper.AddRef();
 }
@@ -91,10 +91,10 @@ void CBulletProjectile::AcquireTargetOperation(IEntity *piEntity,void *pParam1,v
 	for(unsigned int x=0;x<8;x++){if(pTargetingData->fallPlane.GetSide(pVolumePoints[x])>=0){nPointsOut++;}else{nPointsIn++;}}
 	if(nPointsOut && nPointsIn)
 	{
-		double dTargetDistance=pThis->m_PhysicInfo.vPosition-pPhysicInfo->vPosition;
+		CVector vTargetPos=pPhysicInfo->vPosition-(pTargetingData->fallPlane)*pTargetingData->fallPlane.GetSide(pPhysicInfo->vPosition);
+		double dTargetDistance=pThis->m_PhysicInfo.vPosition-vTargetPos;
 		if(pThis->m_bTargetAcquired==false || dTargetDistance<(pThis->m_PhysicInfo.vPosition-pThis->m_vTargetPosition))
 		{
-			CVector vTargetPos=piEntity->GetPhysicInfo()->vPosition;
 			CVector vTargetDif=vTargetPos-pThis->m_PhysicInfo.vPosition;
 			vTargetDif.c[1]=0;
 			double dTimeToTarget=(vTargetDif)/pThis->m_PhysicInfo.dMaxVelocity;
@@ -124,7 +124,9 @@ void CBulletProjectile::ProcessFrame(unsigned int dwCurrentTime,double dTimeFrac
 
 	if(!m_bTargetAcquired){m_vOriginalVelocity=m_PhysicInfo.vVelocity;}
 
-	if((m_dwCreationTime+m_pType->m_dwDuration)<dwCurrentTime)
+	bool bVisible=g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,m_dRadius,true);
+
+	if((m_dwCreationTime+m_pType->m_dwDuration)<dwCurrentTime || !bVisible)
 	{
 		Remove();
 	}
@@ -149,7 +151,7 @@ void CBulletProjectile::ProcessFrame(unsigned int dwCurrentTime,double dTimeFrac
 			GetEntityManager()->PerformUnaryOperation(AcquireTargetOperation,this,&data);
 			if(!m_bTargetAcquired)
 			{
-				m_dwNextTryAcquireTarget=dwCurrentTime+100;
+				m_dwNextTryAcquireTarget=dwCurrentTime+20;
 			}
 		}
 		else
@@ -157,28 +159,9 @@ void CBulletProjectile::ProcessFrame(unsigned int dwCurrentTime,double dTimeFrac
 			m_bTargetAcquired=true;
 		}
 	}
-	
-	if(m_dwAlignment==ENTITY_ALIGNMENT_ENEMIES && !m_bAtPlayerHeight)
-	{
-		CVector vPlayerStart,vPlayerEnd;
-		g_PlayAreaManagerWrapper.m_piInterface->GetPlayerRoute(&vPlayerStart,&vPlayerEnd);
-		IGenericCamera *piCamera=g_PlayAreaManagerWrapper.m_piInterface->GetCamera();
-
-		CVector vCameraPos=piCamera?piCamera->GetPosition():Origin;
-		double dPlayerHeight=vPlayerStart.c[1];
-		CVector vVel=(vCameraPos-m_PhysicInfo.vPosition);
-		vVel.N();
-		vVel*=(dPlayerHeight-m_PhysicInfo.vPosition.c[1])*10.0-m_vOriginalVelocity.c[1]; // 0.1 segundos en subir
-		REL(piCamera);
-		m_PhysicInfo.vVelocity=m_vOriginalVelocity+vVel;
-		
-		if(m_PhysicInfo.vPosition.c[1]==dPlayerHeight){m_PhysicInfo.vVelocity.c[1]=0;m_bAtPlayerHeight=true;}
-	}
 }
 void CBulletProjectile::Render(IGenericRender *piRender,IGenericCamera *piCamera)
 {
-	//piRender->RenderBBox(m_PhysicInfo.vPosition,m_PhysicInfo.vAngles,m_PhysicInfo.vMins,m_PhysicInfo.vMaxs,CVector(1,1,1),0x8888);
-	
 	CEntityBase::Render(piRender,piCamera);	
 }
 

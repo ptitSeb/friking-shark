@@ -115,6 +115,8 @@ class CProjectileLauncher:public IWeapon
   unsigned int              m_dwLastFireTime;
   unsigned int              m_dwCurrentLevel;
   unsigned int              m_nAmmo;
+  
+  CVector ProjectToAirPlane(CVector vPos);
     
 public:
   
@@ -134,6 +136,7 @@ public:
   void  SetCurrentLevel(unsigned int dwLevel);
   
   CVector  GetIdealHeadingToTarget(CVector vTargetPosition,CVector vTargetVelocity);
+  CVector  GetIdealHeadingToTarget(CVector vLaunchPosition,CVector vTargetPosition,CVector vTargetVelocity);
   
   CProjectileLauncher(CProjectileLauncherType *pType,IEntity *piEntity,unsigned int dwCurrentTimeBase);
   ~CProjectileLauncher();

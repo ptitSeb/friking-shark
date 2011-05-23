@@ -56,10 +56,9 @@ class CBulletProjectile: public CEntityBase
   unsigned int  m_dwNextTryAcquireTarget;
 
   bool m_bTargetAcquired;
-  bool m_bAtPlayerHeight;
-  
   CVector m_vTargetPosition;
   CVector m_vOriginalVelocity;
+  double m_dRadius;
   
   void Render(IGenericRender *piRender,IGenericCamera *piCamera);
   
