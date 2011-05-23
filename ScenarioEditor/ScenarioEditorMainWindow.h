@@ -157,12 +157,17 @@ public:
 
 	bool				m_bPauseOnNextFrame;
 	
+	double 				m_dMouseTraceDistance;
+	
 	EColorCallBack		m_eColorCallBack;
 	
 	IGameGUILabel *m_piSTFps;
 	IGameGUILabel *m_piSTVolume;
 	IGameGUILabel *m_piBTDecreaseVolume;
 	IGameGUILabel *m_piBTIncreaseVolume;
+	IGameGUILabel *m_piSTMouseTraceDistance;
+	IGameGUILabel *m_piBTDecreaseMouseTraceDistance;
+	IGameGUILabel *m_piBTIncreaseMouseTraceDistance;
 
 	IGameWindow	  *m_piGRHeightLayerPanel;
 	IGameWindow	  *m_piGRColorLayerPanel;
@@ -437,7 +442,10 @@ public:
 		CHILD_MAP_ENTRY("Volume",m_piSTVolume);
 		CHILD_MAP_ENTRY_EX("DecreaseVolume",m_piBTDecreaseVolume,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("IncreaseVolume",m_piBTIncreaseVolume,IGameGUIButtonEvents);
-
+		CHILD_MAP_ENTRY("MouseTraceDistance",m_piSTMouseTraceDistance);
+		CHILD_MAP_ENTRY_EX("DecreaseMouseTraceDistance",m_piBTDecreaseMouseTraceDistance,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("IncreaseMouseTraceDistance",m_piBTIncreaseMouseTraceDistance,IGameGUIButtonEvents);
+		
 		CHILD_MAP_ENTRY_EX("Options",m_piBTShowOptionsPanel,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Terrain",m_piBTShowTerrainPanel,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Entities",m_piBTShowEntitiesPanel,IGameGUIButtonEvents);

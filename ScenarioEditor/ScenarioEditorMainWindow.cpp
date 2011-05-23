@@ -42,6 +42,7 @@ CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 	m_bAutoUpdateBSP=false;
 	m_bRenderPlayArea=false;
 	m_d3DFontSize=0;
+	m_dMouseTraceDistance=0;
 	
 	m_bInspectionMode=false;
 	m_bShowTerrainPanel=true;
@@ -465,7 +466,12 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 		sprintf(A,"Vol: %d%%",m_SoundManagerWrapper.m_piSoundManager->GetMasterVolume());
 		m_piSTVolume->SetText(A);
 	}
-
+	if(m_piSTMouseTraceDistance)
+	{
+		char A[200];
+		sprintf(A,"Dist: %.f",m_dMouseTraceDistance);
+		m_piSTMouseTraceDistance->SetText(A);
+	}
 	UpdateLayerPanel();
 }
 void CScenarioEditorMainWindow::ProcessFileNew()
@@ -548,7 +554,6 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	  volume+=5;
 	  m_SoundManagerWrapper.m_piSoundManager->SetMasterVolume(volume);
 	}
-
 	if(m_piBTDecreaseVolume==piControl && m_SoundManagerWrapper.m_piSoundManager)
 	{
 	  int volume=m_SoundManagerWrapper.m_piSoundManager->GetMasterVolume();
@@ -556,7 +561,17 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	  if(volume<0){volume=0;}
 	  m_SoundManagerWrapper.m_piSoundManager->SetMasterVolume(volume);
 	}
-
+	
+	if(m_piBTIncreaseMouseTraceDistance==piControl)
+	{
+		m_dMouseTraceDistance++;
+	}
+	if(m_piBTDecreaseMouseTraceDistance==piControl && m_dMouseTraceDistance>0)
+	{
+		m_dMouseTraceDistance--;
+		if(m_dMouseTraceDistance<0){m_dMouseTraceDistance=0;}
+	}
+	
 	if(m_piBTFileNew==piControl)
 	{
 		ProcessFileNew();
@@ -2691,17 +2706,20 @@ bool CScenarioEditorMainWindow::GetTerrainCoordinatesFromLine(CLine line,bool bI
 	if(m_WorldManagerWrapper.m_piTerrain)
 	{
 		bool bHit=m_WorldManagerWrapper.m_piTerrain->GetTerrainTrace(line.m_Points[0],line.m_Points[1],pTerrainPos);
-		for(unsigned int x=0;x<m_vEntityControls.size();x++)
+		if(!bIgnoreTerrainObjects)
 		{
-			if((int)x==m_nSelectedEntity){continue;}
-			CVector vPos=m_vEntityControls[x]->m_piPlayAreaEntity->GetPosition();
-			CVector vAngles=m_vEntityControls[x]->m_piPlayAreaEntity->GetAngles();
-			CTraceInfo info=m_vEntityControls[x]->m_piDesignObject->DesignGetTrace(vPos,vAngles,line.m_Points[0],line.m_Points[1]);
-			if(info.m_bTraceHit)
+			for(unsigned int x=0;x<m_vEntityControls.size();x++)
 			{
-				if((info.m_vTracePos-line.m_Points[0])<(*pTerrainPos-line.m_Points[0]))
+				if((int)x==m_nSelectedEntity){continue;}
+				CVector vPos=m_vEntityControls[x]->m_piPlayAreaEntity->GetPosition();
+				CVector vAngles=m_vEntityControls[x]->m_piPlayAreaEntity->GetAngles();
+				CTraceInfo info=m_vEntityControls[x]->m_piDesignObject->DesignGetTrace(vPos,vAngles,line.m_Points[0],line.m_Points[1]);
+				if(info.m_bTraceHit)
 				{
-					*pTerrainPos=info.m_vTracePos;
+					if((info.m_vTracePos-line.m_Points[0])<(*pTerrainPos-line.m_Points[0]))
+					{
+						*pTerrainPos=info.m_vTracePos;
+					}
 				}
 			}
 		}
@@ -2714,6 +2732,17 @@ bool CScenarioEditorMainWindow::GetTerrainCoordinatesFromLine(CLine line,bool bI
 bool CScenarioEditorMainWindow::GetTerrainCoordinatesFromCursorPos(double x,double y,bool bIgnoreTerrainObjects, CVector *pTerrainPos)
 {
 	CLine mouseRay=GetMouseRay(x,y,10000.0,m_Camera.m_piCamera);
+	if(m_dMouseTraceDistance>0)
+	{
+		CVector vTerrainRef;
+		if(GetTerrainCoordinatesFromLine(mouseRay,true,&vTerrainRef))
+		{
+			CVector vDir=mouseRay.m_Points[1]-mouseRay.m_Points[0];
+			vDir.N();
+			CVector vNewOrigin=vTerrainRef-vDir*m_dMouseTraceDistance;
+			mouseRay.m_Points[0]=vNewOrigin;
+		}
+	}
 	return GetTerrainCoordinatesFromLine(mouseRay,bIgnoreTerrainObjects,pTerrainPos);
 }
 
@@ -2725,9 +2754,30 @@ void CScenarioEditorMainWindow::OnMouseMove( double x,double y )
 		CVector vTemp;
 		if(GetTerrainCoordinatesFromCursorPos(x,y,false,&vTemp))
 		{
+			// Auto adjust route point
+			
+			CVector vAdjustRef=pObject->m_piPlayAreaEntity->GetPosition();
+			for(int c=0;c<3;c++)
+			{
+				if(fabs(vAdjustRef.c[c]-vTemp.c[c])<2.0){vTemp.c[c]=vAdjustRef.c[c];}
+			}
+			
+			for(unsigned int x=0;x<pObject->m_piPlayAreaEntity->GetRoutePoints();x++)
+			{
+				if(x==(unsigned int)m_nSelectedRoutePoint){continue;}
+				
+				SRoutePoint refpoint;
+				pObject->m_piPlayAreaEntity->GetRoutePoint(x,&refpoint);
+				for(int c=0;c<3;c++)
+				{
+					if(fabs(refpoint.vPosition.c[c]-vTemp.c[c])<2.0){vTemp.c[c]=refpoint.vPosition.c[c];}
+				}
+			}
+			
 			SRoutePoint point;
 			point.vPosition=vTemp;
 			point.bAbsolutePoint=true;
+			
 			pObject->m_piPlayAreaEntity->SetRoutePoint(m_nSelectedRoutePoint,point);
 		}
 	}
