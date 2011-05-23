@@ -35,73 +35,113 @@ IEntity *CBomberType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTim
   piEntity->SetState(ENTITY_STATE_BASE,0);
   return piEntity;
 }
+void	CBomberType::DesignRender(IGenericRender *piRender,CVector &vPosition,CVector &vAngles,bool bSelected)
+{
+	CEntityTypeBase::DesignRender(piRender,vPosition,m_bUseFixedAngles?m_vFixedAngles:vAngles,bSelected);
+}
+	
+CTraceInfo CBomberType::DesignGetTrace(const CVector &vPosition,const CVector &vAngles,const CVector &p1,const CVector &p2 )
+{
+	return CEntityTypeBase::DesignGetTrace(vPosition,m_bUseFixedAngles?m_vFixedAngles:vAngles,p1,p2);
+}
 
 CBomber::CBomber(CBomberType *pType,unsigned int dwCurrentTime)
 {
   m_sClassName="CBomber";
   m_pType=pType;
-  m_nRoutePoint=0;
   m_dwNextProcessFrame=dwCurrentTime+100;
   m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeFirstShotMax-m_pType->m_dTimeFirstShotMin)+m_pType->m_dTimeFirstShotMin;
+  m_nRoutePoint=0;
+  m_bRouteFinished=false;
+  m_nPauseEnd=0;
+  m_dRadius=m_pType->DesignGetRadius();
+  
 }
 
 void CBomber::OnKilled()
 {
-  m_PhysicInfo.dwMoveType=PHYSIC_MOVE_TYPE_NORMAL;
-  CEntityBase::OnKilledInternal(false);
-}
-
-bool CBomber::OnCollision(IEntity *piOther,CVector &vCollisionPos)
-{
-  if(*piOther->GetEntityClass()=="CWorldEntity")
+	bool bRemove=false;
+	
+	if(m_pTypeBase->GetStateAnimations(eBomberState_Destroyed))
 	{
-		Remove();
+		if(GetState()!=eBomberState_Destroyed)
+		{
+			SetState(eBomberState_Destroyed);
+		}
 	}
-	else if(m_dHealth>0 && piOther->GetAlignment()!=m_dwAlignment)
+	else
 	{
-		piOther->OnDamage(m_dHealth,this);
+		bRemove=true;
 	}
-	return false;
-}
+	m_PhysicInfo.dwBoundsType=PHYSIC_BOUNDS_TYPE_NONE;
 
+	CEntityBase::OnKilledInternal(bRemove);
+}
 void CBomber::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
-  size_t nAnimationToSet=0;
-
   CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
+ 
+  if(m_dHealth<=0){return;}
+  if(m_piTarget==NULL){GetTarget();}
   
+  size_t nAnimationToSet=0;
   double dMaxHealth=GetMaxHealth();
   if(dMaxHealth)
   {
-	unsigned int nAnimations=m_pTypeBase->GetStateAnimations(ENTITY_STATE_BASE);
-	nAnimationToSet=(size_t)(((dMaxHealth-m_dHealth)/dMaxHealth)*((double)nAnimations));
-	if(nAnimationToSet>nAnimations-1){nAnimationToSet=nAnimations-1;}
-    SetState(ENTITY_STATE_BASE,(int)nAnimationToSet);
+	  unsigned int nAnimations=m_pTypeBase->GetStateAnimations(ENTITY_STATE_BASE);
+	  nAnimationToSet=(size_t)(((dMaxHealth-m_dHealth)/dMaxHealth)*((double)nAnimations));
+	  if(nAnimationToSet>nAnimations-1){nAnimationToSet=nAnimations-1;}
+	  SetState(ENTITY_STATE_BASE,(int)nAnimationToSet);
   }
-  if(m_dHealth>0)
+  
+  if(m_bRouteFinished){Remove();return;}
+  if(dwCurrentTime<m_nPauseEnd)
   {
-    if(!m_piRoute){return;}
-    if(m_nRoutePoint>=m_piRoute->GetPointCount()-1){return;}
-
-    CVector vDir=m_piRoute->GetAbsolutePoint(m_nRoutePoint+1)-m_PhysicInfo.vPosition;
-    double dDist=vDir.N();
-    if(dDist/2.0<m_PhysicInfo.vVelocity)
-    {
-      if(m_nRoutePoint==m_piRoute->GetPointCount()-2){Remove();}
-      m_nRoutePoint++;
-    }
-    else
-    {
-      m_PhysicInfo.fOwnForce.vDir=vDir;
-	  m_PhysicInfo.fOwnForce.dForce=m_PhysicInfo.dMaxVelocity;
-	  m_PhysicInfo.fOwnForce.dMaxVelocity=m_PhysicInfo.dMaxVelocity;
-      m_dwNextProcessFrame=dwCurrentTime+10;
-    }
-    if(dwCurrentTime>m_dwNextShotTime)
-    {
-      FireWeapon(0,dwCurrentTime);
-      m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeBetweenShotsMax-m_pType->m_dTimeBetweenShotsMin)+m_pType->m_dTimeBetweenShotsMin;
-    }
+	  double dVel=m_PhysicInfo.vVelocity.N();
+	  if(dVel!=0)
+	  {
+		  double dNewVel=dVel-m_PhysicInfo.dMaxVelocity*2.0*dTimeFraction;
+		  if(dNewVel<0){dNewVel=0;}
+		  m_PhysicInfo.vVelocity*=dNewVel;
+	  }
+  }
+  else if(m_piRoute)
+  {
+	  CVector vDest,vDir;
+	  // Just follow the configured route
+	  vDest=m_piRoute->GetAbsolutePoint(m_nRoutePoint);
+	  vDir=vDest-m_PhysicInfo.vPosition;
+	  double dDist=vDir.N();
+	  
+	  bool bNext=false;
+	  int nNext=m_piRoute->GetNextPointIndex(m_nRoutePoint);
+	  bNext=(dDist<m_PhysicInfo.dMaxVelocity*0.1);
+	  if(bNext)
+	  {
+		  if(nNext==m_nRoutePoint)
+		  {
+			  m_bRouteFinished=true;
+		  }
+		  else
+		  {
+			  SRoutePoint sPoint;
+			  m_piRoute->GetPoint(nNext,&sPoint);
+			  m_nPauseEnd=sPoint.nPause?dwCurrentTime+sPoint.nPause:0;
+			  m_nRoutePoint=nNext;
+		  }
+	  }
+	  
+	  m_PhysicInfo.vVelocity=vDir;
+	  m_PhysicInfo.vVelocity*=m_PhysicInfo.dMaxVelocity;
+	  if(m_pType->m_bUseFixedAngles){m_PhysicInfo.vAngles=m_pType->m_vFixedAngles;}
+	  m_dwNextProcessFrame=dwCurrentTime+10;
+  }
+  
+  if(m_piTarget && m_vWeapons.size() && dwCurrentTime>m_dwNextShotTime)
+  {
+	  bool bVisible=g_PlayAreaManagerWrapper.m_piInterface && g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,m_dRadius,true);
+	  if(bVisible){FireWeapon(0,dwCurrentTime);}
+	  m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeBetweenShotsMax-m_pType->m_dTimeBetweenShotsMin)+m_pType->m_dTimeBetweenShotsMin;
   }
 }
 
@@ -120,7 +160,7 @@ IEntity *CBomber::GetTarget()
 
 bool CBomber::HasFinishedRoute()
 {
-	return m_piRoute==NULL || ((int)m_piRoute->GetNextPointIndex(m_nRoutePoint)==(int)m_nRoutePoint) || m_dHealth==0;
+	return m_piRoute==NULL || m_bRouteFinished || m_dHealth==0;
 }
 
 void CBomber::SetRoute(IRoute *piRoute)
