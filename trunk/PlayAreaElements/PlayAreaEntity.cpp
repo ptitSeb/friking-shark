@@ -54,7 +54,7 @@ bool CPlayAreaEntity::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInf
 			IEntityTypeDesign *piDesign=QI(IEntityTypeDesign,m_EntityType.m_piEntityType);
 			if(piDesign){piDesign->GetEntityTypeConfig(&sConfig);}
 			REL(piDesign);
-			m_bDoNotActivate=(sConfig.nAlignment==ENTITY_ALIGNMENT_ENEMIES);
+			m_bDoNotActivate=(sConfig.nAlignment==ENTITY_ALIGNMENT_ENEMIES && m_Route.GetPointCount()>0);
 		}
 	}
 	   
