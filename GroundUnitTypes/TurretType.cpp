@@ -54,16 +54,32 @@ CTurret::CTurret(CTurretType *pType,unsigned int dwCurrentTime)
 	m_pType=pType;
 	m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeFirstShotMax-m_pType->m_dTimeFirstShotMin)+m_pType->m_dTimeFirstShotMin;
 	m_dRadius=m_pType->DesignGetRadius();
+	m_piContainerBuilding=NULL;
+	m_bFirstFrame=true;
+	
+	SEntityTypeConfig sconfig;
+	m_pType->GetEntityTypeConfig(&sconfig);
+	m_nConfiguredDamageType=sconfig.nDamageType;
 }
 
 void CTurret::OnRemoved(IEntity *piEntity)
 {
 	if(piEntity==m_piTarget){SetTarget(NULL);}
+	if(piEntity==m_piContainerBuilding)
+	{
+		UNSUBSCRIBE_FROM_CAST(m_piContainerBuilding,IEntityEvents);
+		m_piContainerBuilding=NULL;
+	}
 }
 
 void CTurret::OnKilled(IEntity *piEntity)
 {
 	if(piEntity==m_piTarget){SetTarget(NULL);}
+	if(piEntity==m_piContainerBuilding)
+	{
+		UNSUBSCRIBE_FROM_CAST(m_piContainerBuilding,IEntityEvents);
+		m_piContainerBuilding=NULL;
+	}
 }
 
 void CTurret::OnKilled()
@@ -97,9 +113,53 @@ void CTurret::SetTarget(IEntity *piTarget)
 	if(m_piTarget){SUBSCRIBE_TO_CAST(m_piTarget,IEntityEvents);}
 }
 
+bool CTurret::IsInsideBuilding(IEntity *piEntity)
+{
+	CVector vFake1,vFake2;
+	CVector vForward,vRight,vUp;
+	ComputeReferenceSystem(piEntity->GetPhysicInfo()->vPosition,piEntity->GetPhysicInfo()->vAngles,Origin,Origin,&vFake1,&vFake2,&vForward,&vUp,&vRight);
+	
+	CVector vMyCenter=m_PhysicInfo.vPosition;
+	vMyCenter+=(m_PhysicInfo.vMins+m_PhysicInfo.vMaxs)*0.5;
+	vMyCenter-=piEntity->GetPhysicInfo()->vPosition;
+	CMatrix m;
+	m.Ref(vForward,vUp,vRight);
+	vMyCenter*=m;
+	
+	bool bInside=true;
+	for(int c=0;c<3;c++)
+	{
+		if(vMyCenter.c[c]<piEntity->GetPhysicInfo()->vMins.c[c]){bInside=false;break;}
+		if(vMyCenter.c[c]>piEntity->GetPhysicInfo()->vMaxs.c[c]){bInside=false;break;}
+	}
+	return bInside;
+}
+
+void CTurret::FindBuilding(IEntity *piEntity,void *pParam1,void *pParam2)
+{
+	CTurret *pThis=(CTurret *)pParam1;
+	if(pThis->m_piContainerBuilding){return;}
+	if(piEntity->IsRemoved()){return;}
+	if(piEntity->GetHealth()<=0){return;}
+	if(*piEntity->GetEntityClass()!="CStaticStructure"){return;}
+	
+	bool bInside=pThis->IsInsideBuilding(piEntity);
+	if(bInside){pThis->m_piContainerBuilding=piEntity;}
+}
+
+
 void CTurret::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
+	
+	if(m_bFirstFrame)
+	{
+		m_piContainerBuilding=NULL;
+		GetEntityManager()->PerformUnaryOperation(FindBuilding,this,0);
+		if(m_piContainerBuilding){SUBSCRIBE_TO_CAST(m_piContainerBuilding,IEntityEvents);}
+	}
+	m_bFirstFrame=false;
+	
 	if(GetState()==eTurretState_Destroyed){return;}
 	if(GetState()==eTurretState_Normal)
 	{
@@ -110,8 +170,21 @@ void CTurret::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 		if(nAnimationToSet>nAnimations-1){nAnimationToSet=nAnimations-1;}
 		SetState(ENTITY_STATE_BASE,(int)nAnimationToSet);
 	}
-	
-	if(m_piTarget)
+	if(m_piContainerBuilding)
+	{
+		m_dwDamageType=DAMAGE_TYPE_NONE;
+		if(!IsInsideBuilding(m_piContainerBuilding))
+		{
+			UNSUBSCRIBE_FROM_CAST(m_piContainerBuilding,IEntityEvents);
+			m_piContainerBuilding=NULL;			
+		}
+	}
+	else
+	{
+		m_dwDamageType=m_nConfiguredDamageType;
+	}
+		
+	if(m_piTarget && !m_piContainerBuilding)
 	{
 		CVector vTargetVel=m_piTarget->GetPhysicInfo()->vVelocity;
 		CVector vTargetPos=m_piTarget->GetPhysicInfo()->vPosition;
@@ -173,7 +246,7 @@ void CTurret::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 		m_PhysicInfo.vLocalAngles.c[YAW]=ApproachAngle(m_PhysicInfo.vLocalAngles.c[YAW],0,180.0*dTimeFraction);
 		m_bTargetLocked=false;
 	}
-	if(m_piTarget && m_bTargetLocked && dwCurrentTime>m_dwNextShotTime && m_vWeapons.size())
+	if(m_piTarget && m_bTargetLocked && dwCurrentTime>m_dwNextShotTime && m_vWeapons.size() && !m_piContainerBuilding)
 	{
 		bool bVisible=g_PlayAreaManagerWrapper.m_piInterface && g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,m_dRadius,true);
 		if(bVisible)

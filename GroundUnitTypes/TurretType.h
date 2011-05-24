@@ -68,10 +68,16 @@ class CTurret: public CEntityBase, virtual public IEntityEvents
 	unsigned int m_dwNextShotTime;
 	bool		 m_bTargetLocked;
 	double       m_dRadius;
+	bool 		 m_bFirstFrame;
+	unsigned int m_nConfiguredDamageType;
 	
 	void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
 	
 	void Render(IGenericRender *piRender,IGenericCamera *piCamera);
+	
+	static void FindBuilding(IEntity *piEntity,void *pParam1,void *pParam2);
+	bool IsInsideBuilding(IEntity *piEntity);
+	IEntity *m_piContainerBuilding;
 	
 public:
 	
