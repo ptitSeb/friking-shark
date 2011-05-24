@@ -41,11 +41,14 @@ IEntity *CVehicleType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTi
 
 CVehicle::CVehicle(CVehicleType *pType)
 {
+	m_bFirstFrame=true;
+	m_piContainerBuilding=NULL;
 	m_piTarget=NULL;
     m_sClassName="CVehicle";
     m_pType=pType;
     m_dwDamageType=DAMAGE_TYPE_NORMAL;
 	m_nRoutePoint=0;
+	m_piContainerBuilding=NULL;
 	m_bRouteFinished=false;
 	SEntityTypeConfig sconfig;
 	m_pType->GetEntityTypeConfig(&sconfig);
@@ -90,22 +93,76 @@ void CVehicle::AcquireTarget()
 	SetTarget(piTarget);
 }
 
+bool CVehicle::IsInsideBuilding(IEntity *piEntity)
+{
+	CVector vFake1,vFake2;
+	CVector vForward,vRight,vUp;
+	ComputeReferenceSystem(piEntity->GetPhysicInfo()->vPosition,piEntity->GetPhysicInfo()->vAngles,Origin,Origin,&vFake1,&vFake2,&vForward,&vUp,&vRight);
+
+	CVector vMyCenter=m_PhysicInfo.vPosition;
+	vMyCenter+=(m_PhysicInfo.vMins+m_PhysicInfo.vMaxs)*0.5;
+	vMyCenter-=piEntity->GetPhysicInfo()->vPosition;
+	CMatrix m;
+	m.Ref(vForward,vUp,vRight);
+	vMyCenter*=m;
+
+	bool bInside=true;
+	for(int c=0;c<3;c++)
+	{
+		if(vMyCenter.c[c]<piEntity->GetPhysicInfo()->vMins.c[c]){bInside=false;break;}
+		if(vMyCenter.c[c]>piEntity->GetPhysicInfo()->vMaxs.c[c]){bInside=false;break;}
+	}
+	return bInside;
+}
+
+void CVehicle::FindBuilding(IEntity *piEntity,void *pParam1,void *pParam2)
+{
+	CVehicle *pThis=(CVehicle *)pParam1;
+	if(pThis->m_piContainerBuilding){return;}
+	if(piEntity->IsRemoved()){return;}
+	if(piEntity->GetHealth()<=0){return;}
+	if(*piEntity->GetEntityClass()!="CStaticStructure"){return;}
+	
+	bool bInside=pThis->IsInsideBuilding(piEntity);
+	if(bInside){pThis->m_piContainerBuilding=piEntity;}
+}
+
+	
+	
 void CVehicle::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
+	
+	if(m_bFirstFrame)
+	{
+		m_piContainerBuilding=NULL;
+		GetEntityManager()->PerformUnaryOperation(FindBuilding,this,0);
+		if(m_piContainerBuilding){SUBSCRIBE_TO_CAST(m_piContainerBuilding,IEntityEvents);}
+	}
+	m_bFirstFrame=false;
 	
 	if(GetState()==eVehicleState_Destroyed)
 	{
 		if(m_vActiveAnimations.size()==0){Remove();}
 		return;
 	}
-	
-	bool bAllChildDead=true;
-	for(unsigned int x=0;x<m_vChildren.size();x++){if(m_vChildren[x].piEntity->GetHealth()>0){bAllChildDead=false;}}
-	m_dwDamageType=(bAllChildDead?m_nConfiguredDamageType:DAMAGE_TYPE_NONE);
 
-	
-	if(m_piTarget==NULL){AcquireTarget();}
+	if(m_piContainerBuilding)
+	{
+		m_dwDamageType=DAMAGE_TYPE_NONE;
+		if(!IsInsideBuilding(m_piContainerBuilding))
+		{
+			UNSUBSCRIBE_FROM_CAST(m_piContainerBuilding,IEntityEvents);
+			m_piContainerBuilding=NULL;			
+		}
+	}
+	else
+	{
+		bool bAllChildDead=true;
+		for(unsigned int x=0;x<m_vChildren.size();x++){if(m_vChildren[x].piEntity->GetHealth()>0){bAllChildDead=false;}}
+		m_dwDamageType=(bAllChildDead?m_nConfiguredDamageType:DAMAGE_TYPE_NONE);
+		if(m_piTarget==NULL){AcquireTarget();}
+	}
 	
 	if(m_bRouteFinished)
 	{
@@ -182,3 +239,20 @@ bool CVehicle::HasFinishedRoute()
 	return m_piRoute==NULL || m_bRouteFinished || m_dHealth==0;
 }
 
+void CVehicle::OnRemoved(IEntity *piEntity)
+{
+	if(piEntity==m_piContainerBuilding)
+	{
+		UNSUBSCRIBE_FROM_CAST(m_piContainerBuilding,IEntityEvents);
+		m_piContainerBuilding=NULL;
+	}
+}
+
+void CVehicle::OnKilled(IEntity *piEntity)
+{
+	if(piEntity==m_piContainerBuilding)
+	{
+		UNSUBSCRIBE_FROM_CAST(m_piContainerBuilding,IEntityEvents);
+		m_piContainerBuilding=NULL;
+	}
+}

@@ -46,19 +46,27 @@ public:
 };
 
 
-class CVehicle: public CEntityBase
+class CVehicle: public CEntityBase,virtual public IEntityEvents
 {
 	IEntity *m_piTarget;
     CVehicleType  *m_pType;
 	int m_nRoutePoint;
 	bool m_bRouteFinished;
+	bool m_bFirstFrame;
 	unsigned int m_dwNextShotTime;
 	unsigned int m_nConfiguredDamageType;
+	
+	static void FindBuilding(IEntity *piEntity,void *pParam1,void *pParam2);
+	
+	bool IsInsideBuilding(IEntity *piEntity);
+	IEntity *m_piContainerBuilding;
 	
 	void AcquireTarget();
 	
 	void Render(IGenericRender *piRender,IGenericCamera *piCamera);
 	
+	void OnRemoved(IEntity *piEntity);
+	void OnKilled(IEntity *piEntity);
 public:
 
 	bool HasFinishedRoute();
