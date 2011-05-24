@@ -1244,6 +1244,16 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			int nDelay=pEntity->m_piPlayAreaEntity->GetDelay();
 			if(nDelay>=100){pEntity->m_piPlayAreaEntity->SetDelay(nDelay-100);}
 		}
+		else if(piControl==m_piBTEntityIncreaseRouteDelay)
+		{
+			int nRouteDelay=pEntity->m_piPlayAreaEntity->GetRouteDelay();
+			pEntity->m_piPlayAreaEntity->SetRouteDelay(nRouteDelay+100);
+		}
+		else if(piControl==m_piBTEntityDecreaseRouteDelay)
+		{
+			int nRouteDelay=pEntity->m_piPlayAreaEntity->GetRouteDelay();
+			if(nRouteDelay>=100){pEntity->m_piPlayAreaEntity->SetRouteDelay(nRouteDelay-100);}
+		}
 		else if(piControl==m_piBTEntityIncreaseInterval)
 		{
 			int nInterval=pEntity->m_piPlayAreaEntity->GetInterval();
@@ -1927,6 +1937,9 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 		
 		sprintf(A,"Delay : %.02fs",((double)m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetDelay())/1000.0);
 		m_piSTEntityDelay->SetText(A);
+		
+		sprintf(A,"R.Del : %.02fs",((double)m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetRouteDelay())/1000.0);
+		m_piSTEntityRouteDelay->SetText(A);
 		
 		sprintf(A,"Inter : %.02fs",((double)m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetInterval())/1000.0);
 		m_piSTEntityInterval->SetText(A);

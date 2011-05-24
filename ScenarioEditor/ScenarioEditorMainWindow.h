@@ -275,6 +275,9 @@ public:
 	IGameGUILabel  *m_piSTEntityDelay;
 	IGameGUIButton *m_piBTEntityDecreaseDelay;
 	IGameGUIButton *m_piBTEntityIncreaseDelay;
+	IGameGUILabel  *m_piSTEntityRouteDelay;
+	IGameGUIButton *m_piBTEntityDecreaseRouteDelay;
+	IGameGUIButton *m_piBTEntityIncreaseRouteDelay;
 	IGameGUILabel  *m_piSTEntityInterval;
 	IGameGUIButton *m_piBTEntityDecreaseInterval;
 	IGameGUIButton *m_piBTEntityIncreaseInterval;
@@ -532,6 +535,7 @@ public:
 		CHILD_MAP_ENTRY("EntityYaw",m_piSTEntityYaw);
 		CHILD_MAP_ENTRY("EntityCount",m_piSTEntityCount);
 		CHILD_MAP_ENTRY("EntityDelay",m_piSTEntityDelay);
+		CHILD_MAP_ENTRY("EntityRouteDelay",m_piSTEntityRouteDelay);
 		CHILD_MAP_ENTRY("EntityInterval",m_piSTEntityInterval);
 		CHILD_MAP_ENTRY_EX("EntitySample",m_piBTEntitySample,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("EntityRemove",m_piBTEntityRemove,IGameGUIButtonEvents);
@@ -541,6 +545,8 @@ public:
 		CHILD_MAP_ENTRY_EX("EntityIncreaseCount",m_piBTEntityIncreaseCount,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("EntityDecreaseDelay",m_piBTEntityDecreaseDelay,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("EntityIncreaseDelay",m_piBTEntityIncreaseDelay,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("EntityDecreaseRouteDelay",m_piBTEntityDecreaseRouteDelay,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("EntityIncreaseRouteDelay",m_piBTEntityIncreaseRouteDelay,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("EntityDecreaseInterval",m_piBTEntityDecreaseInterval,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("EntityIncreaseInterval",m_piBTEntityIncreaseInterval,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("EntityClearRoute",m_piBTEntityClearRoute,IGameGUIButtonEvents);
