@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=199.907946
 			NearPlane=130.000000
-			Posicion=-783.556215,198.441526,-3.947302
+			Posicion=1685.502921,198.441526,0.000000
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -550,7 +550,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=1731.553531,-13.716895,23.446376
+				Posicion=1679.589168,-7.034996,23.446129
 				RouteDelay=0
 				Ruta
 				{
@@ -559,7 +559,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Level2BaseTerrain
+					Name=Level3BaseTerrain
 					System=EntityTypes
 				}
 			}
@@ -4133,25 +4133,25 @@ AreaDeJuego
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=1617.531232,58.441526,0.000000
+				Posicion=1570.812921,58.441526,0.000000
 			}
 			Item1
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=1672.727727,58.441526,0.000000
+				Posicion=1614.343271,58.441526,0.000000
 			}
 			Item2
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=1721.771395,26.446330,0.000000
+				Posicion=1668.542100,26.446077,0.000000
 			}
 			Item3
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=1770.217050,26.446560,0.000000
+				Posicion=1714.643657,26.446296,0.000000
 			}
 		}
 	}
