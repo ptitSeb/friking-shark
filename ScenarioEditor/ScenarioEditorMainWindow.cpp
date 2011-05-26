@@ -27,6 +27,8 @@
 #define SELECT_PLAY_AREA_INDEX		0x000
 #define SELECT_TAKEOFF_BASE			0x100
 #define SELECT_LANDING_BASE			0x200
+#define SELECT_CHECKPOINT_BASE		0x300
+
 #include "../GameManagers/GameManagers.h"
 
 extern CSystemModuleHelper *g_pSystemModuleHelper;
@@ -38,6 +40,7 @@ CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 	m_bMovingObject=false;
 	m_bMovingRoutePoint=false;
 	m_bMovingPlayerRoutePoint=false;
+	m_bMovingCheckPoint=false;
 	m_bAutoGenerateBSP=true;
 	m_bAutoUpdateBSP=false;
 	m_bRenderPlayArea=false;
@@ -75,6 +78,7 @@ CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 	m_nSelectedEntityLayer=-1;
 	m_nSelectedEntity=-1;
 	m_nSelectedFormation=-1;
+	m_nSelectedCheckPoint=-1;
 	m_bMovingCameraPosition=false;
 
 	InitializeChildren();
@@ -184,6 +188,7 @@ void CScenarioEditorMainWindow::Reset()
 	m_nSelectedEntityLayer=-1;
 	m_nSelectedEntity=-1;
 	m_nSelectedFormation=-1;
+	m_nSelectedCheckPoint=-1;
 	m_bShowFilePanel=false;
 	m_bShowGeneralPanel=true;
 	m_bShowTerrainPanel=true;
@@ -339,6 +344,44 @@ void CScenarioEditorMainWindow::RenderPlayerRoutes(bool bSelectionRender)
 	m_Render.m_piRender->PopState();
 }
 
+void CScenarioEditorMainWindow::RenderCheckPoints(bool bSelectionRender)
+{
+	SPlayAreaConfig sPlayAreaConfig;
+	m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sPlayAreaConfig);
+	
+	m_Render.m_piRender->PushState();
+	m_Render.m_piRender->ActivateBlending();
+	if(!bSelectionRender){m_Render.m_piRender->DeactivateDepth();}
+	
+	for(unsigned int x=0;x<m_vCheckPoints.size();x++)
+	{
+		if(bSelectionRender){m_Render.m_piRender->SetSelectionId(SELECT_CHECKPOINT_BASE+x);}
+		m_Render.m_piRender->RenderPoint(m_vCheckPoints[x]->m_piPlayAreaCheckPoint->GetCheckPointPosition(),m_nSelectedCheckPoint==(int)x?15:10,CVector(1,0,1),1.0);
+		if(!bSelectionRender && m_nSelectedCheckPoint==(int)x)
+		{
+			CVector vPlayAreaMins,vPlayAreaMaxs,vStart,vEnd;
+			m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayAreaPlaneAt(m_vCheckPoints[x]->m_piPlayAreaCheckPoint->GetCheckPointPosition(),&vPlayAreaMins,&vPlayAreaMaxs);
+			CVector vCenter=(vPlayAreaMaxs+vPlayAreaMins)*0.5;
+			CVector vSize=(vPlayAreaMaxs-vPlayAreaMins);
+			
+			m_Render.m_piRender->ActivateSolid();
+			m_Render.m_piRender->SetColor(CVector(1,0,1),0.1);
+			m_Render.m_piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2]);
+
+			m_Render.m_piRender->DeactivateSolid();
+			m_Render.m_piRender->SetColor(CVector(1,0,1),1);
+			m_Render.m_piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2]);
+		}
+	}
+	if(!bSelectionRender)
+	{
+		m_Render.m_piRender->RenderLine(sPlayAreaConfig.pvPlayerTakeOffPoints[3],sPlayAreaConfig.pvPlayerLandingPoints[0],CVector(1,0,1),0xFFFF);
+	}
+	
+	m_Render.m_piRender->PopState();
+}
+
+
 void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 {
 	if(!m_FrameManager.m_piFrameManager)
@@ -446,6 +489,7 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 	{
 		RenderPlayArea(false);
 		RenderPlayerRoutes(false);
+		RenderCheckPoints(false);
 	}
 
 
@@ -2407,6 +2451,16 @@ void CScenarioEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 	else if(nKey==GK_DELETE)
 	{
 		*pbProcessed=true;
+		
+		if(m_bRenderPlayArea && m_nSelectedCheckPoint!=-1)
+		{
+			if(ConfirmDialog("Do you really want to delete the checkpoint?","Delete checkpoint",eMessageDialogType_Warning))
+			{
+				m_PlayAreaManagerWrapper.m_piPlayAreaDesign->RemoveElement(m_vCheckPoints[m_nSelectedCheckPoint]->m_nPlayAreaElementId);
+				UpdateCheckPoints();
+				m_nSelectedCheckPoint=-1;
+			}
+		}
 		if(m_nSelectedEntity!=-1 && m_nSelectedRoutePoint!=-1)
 		{
 			m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->RemoveRoutePoint(m_nSelectedRoutePoint);
@@ -2419,7 +2473,27 @@ void CScenarioEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 	else if(nKey==GK_INSERT)
 	{
 		*pbProcessed=true;
-		if(m_nSelectedEntity!=-1)
+		if(m_bRenderPlayArea)
+		{
+			if(ConfirmDialog("Add a new checkpoint?","New checkpoint",eMessageDialogType_Warning))
+			{
+				unsigned long nObjectIndex=m_PlayAreaManagerWrapper.m_piPlayAreaDesign->AddElement("CPlayAreaCheckPoint");
+				IPlayAreaElement *piElement=NULL;
+				m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetElement(nObjectIndex,&piElement);
+				IPlayAreaCheckPoint *piCheckPoint=QI(IPlayAreaCheckPoint,piElement);
+				if(piCheckPoint)
+				{
+					CVector vPos;
+					GetAirPlaneCoordinatesFromCursorPos(m_rRealRect.w/2,m_rRealRect.h/2,&vPos);
+					piCheckPoint->SetCheckPointPosition(vPos);
+				}
+				REL(piCheckPoint);
+				REL(piElement);
+				UpdateCheckPoints();
+				m_nSelectedCheckPoint=m_vCheckPoints.size()-1;
+			}
+		}
+		else if(m_nSelectedEntity!=-1)
 		{
 			SRoutePoint sRoutePoint;
 			sRoutePoint.bAbsolutePoint=true;
@@ -2469,17 +2543,56 @@ void CScenarioEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 	}
 }
 
+void CScenarioEditorMainWindow::OnMouseDoubleClick(int nButton,double dx,double dy)
+{
+	IGenericCamera *piCamera=NULL;
+	if(m_bInspectionMode)
+	{
+		piCamera=ADD(m_Camera.m_piCamera);
+	}
+	else
+	{
+		piCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager?m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera():m_Camera.m_piCamera;
+	}
+	
+	if(m_bRenderPlayArea)
+	{
+		m_Render.m_piRender->StartSelection(m_rRealRect,piCamera,dx,dy,10);
+		RenderCheckPoints(true);
+		int nSelection=m_Render.m_piRender->EndSelection();
+		if(nSelection>=SELECT_CHECKPOINT_BASE && nSelection<(int)(SELECT_CHECKPOINT_BASE+m_vCheckPoints.size()))
+		{
+			m_nSelectedCheckPoint=nSelection-SELECT_CHECKPOINT_BASE;
+			m_vPlayMovementPosition=m_vCheckPoints[m_nSelectedCheckPoint]->m_piPlayAreaCheckPoint->GetCheckPointPosition();
+		}
+	}
+	REL(piCamera);
+}
+
 void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 {
+	IGenericCamera *piCamera=NULL;
+	if(m_bInspectionMode)
+	{
+		piCamera=ADD(m_Camera.m_piCamera);
+	}
+	else
+	{
+		piCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager?m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera():m_Camera.m_piCamera;
+	}
+	
 	if(m_bRenderPlayArea)
 	{
 		int nPreviouslySelectedLanding=m_nSelectedLandingRoutePoint;
 		int nPreviouslySelectedTakeOff=m_nSelectedTakeOffRoutePoint;
+		int nPreviouslySelectedCheckPoint=m_nSelectedCheckPoint;
 		m_nSelectedLandingRoutePoint=-1;
 		m_nSelectedTakeOffRoutePoint=-1;
+		m_nSelectedCheckPoint=-1;
 		
-		m_Render.m_piRender->StartSelection(m_rRealRect,m_Camera.m_piCamera,dx,dy,10);
+		m_Render.m_piRender->StartSelection(m_rRealRect,piCamera,dx,dy,10);
 		RenderPlayerRoutes(true);
+		RenderCheckPoints(true);
 		int nSelection=m_Render.m_piRender->EndSelection();
 		if(nSelection>=SELECT_LANDING_BASE && nSelection<SELECT_LANDING_BASE+4)
 		{
@@ -2532,7 +2645,29 @@ void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 			}
 			return;
 		}
-		m_Render.m_piRender->StartSelection(m_rRealRect,m_Camera.m_piCamera,dx,dy,5);
+		else if(nSelection>=SELECT_CHECKPOINT_BASE && nSelection<(int)(SELECT_CHECKPOINT_BASE+m_vCheckPoints.size()))
+		{
+			m_nSelectedCheckPoint=nSelection-SELECT_CHECKPOINT_BASE;
+			
+			if(nPreviouslySelectedCheckPoint==m_nSelectedCheckPoint&&
+				DetectDrag(dx,dy))
+			{
+				m_bMovingCheckPoint=true;
+				m_piGUIManager->SetMouseCapture(this);
+				m_vObjectOriginalPosition=m_vCheckPoints[m_nSelectedCheckPoint]->m_piPlayAreaCheckPoint->GetCheckPointPosition();
+				
+				if(m_nSelectedTakeOffRoutePoint>=2)
+				{
+					GetAirPlaneCoordinatesFromCursorPos(dx,dy,&m_vCursorOriginalPosition);
+				}
+				else
+				{
+					GetTerrainCoordinatesFromCursorPos(dx,dy,false,&m_vCursorOriginalPosition);
+				}
+			}
+			return;
+		}
+		m_Render.m_piRender->StartSelection(m_rRealRect,piCamera,dx,dy,5);
 		RenderPlayArea(true);
 		nSelection=m_Render.m_piRender->EndSelection();
 		if(nSelection==SELECT_PLAY_AREA_INDEX)
@@ -2554,7 +2689,7 @@ void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 	{
 		if(nButton==GK_LBUTTON)
 		{
-			m_Render.m_piRender->StartSelection(m_rRealRect,m_Camera.m_piCamera,dx,dy,10);
+			m_Render.m_piRender->StartSelection(m_rRealRect,piCamera,dx,dy,10);
 			for(unsigned x=0;x<m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetRoutePoints();x++)
 			{
 				SRoutePoint point;
@@ -2588,7 +2723,7 @@ void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 
 	if(m_vEntityControls.size()==0 && m_vFormationControls.size()==0){return;}
 
-	m_Render.m_piRender->StartSelection(m_rRealRect,m_Camera.m_piCamera,dx,dy,5);
+	m_Render.m_piRender->StartSelection(m_rRealRect,piCamera,dx,dy,5);
 
 	for(unsigned int x=0;x<m_vEntityControls.size();x++)
 	{
@@ -2674,6 +2809,7 @@ void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 		}
 	}
 
+	REL(piCamera);
 }
 
 bool CScenarioEditorMainWindow::GetHeightAt(CVector vPoint,bool bIgnoreTerrainObjects, double *pdHeight)
@@ -2687,7 +2823,16 @@ bool CScenarioEditorMainWindow::GetHeightAt(CVector vPoint,bool bIgnoreTerrainOb
 
 bool CScenarioEditorMainWindow::GetAirPlaneCoordinatesFromCursorPos(double x,double y,CVector *pAirPlanePos)
 {
-	CLine mouseRay=GetMouseRay(x,y,10000.0,m_Camera.m_piCamera);
+	IGenericCamera *piCamera=NULL;
+	if(m_bInspectionMode)
+	{
+		piCamera=ADD(m_Camera.m_piCamera);
+	}
+	else
+	{
+		piCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager?m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera():m_Camera.m_piCamera;
+	}
+	CLine mouseRay=GetMouseRay(x,y,10000.0,piCamera);
 
 	double dAirPlaneHeight=GetAirPlaneAbsoluteHeight();
 
@@ -2711,6 +2856,7 @@ bool CScenarioEditorMainWindow::GetAirPlaneCoordinatesFromCursorPos(double x,dou
 
 	if(pAirPlanePos){*pAirPlanePos=vPos;}
 
+	REL(piCamera);
 	return (dSide1*dSide2)<0;
 }
 
@@ -2744,7 +2890,16 @@ bool CScenarioEditorMainWindow::GetTerrainCoordinatesFromLine(CLine line,bool bI
 
 bool CScenarioEditorMainWindow::GetTerrainCoordinatesFromCursorPos(double x,double y,bool bIgnoreTerrainObjects, CVector *pTerrainPos)
 {
-	CLine mouseRay=GetMouseRay(x,y,10000.0,m_Camera.m_piCamera);
+	IGenericCamera *piCamera=NULL;
+	if(m_bInspectionMode)
+	{
+		piCamera=ADD(m_Camera.m_piCamera);
+	}
+	else
+	{
+		piCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager?m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera():m_Camera.m_piCamera;
+	}
+	CLine mouseRay=GetMouseRay(x,y,10000.0,piCamera);
 	if(m_dMouseTraceDistance>0)
 	{
 		CVector vTerrainRef;
@@ -2756,6 +2911,7 @@ bool CScenarioEditorMainWindow::GetTerrainCoordinatesFromCursorPos(double x,doub
 			mouseRay.m_Points[0]=vNewOrigin;
 		}
 	}
+	REL(piCamera);
 	return GetTerrainCoordinatesFromLine(mouseRay,bIgnoreTerrainObjects,pTerrainPos);
 }
 
@@ -2792,6 +2948,21 @@ void CScenarioEditorMainWindow::OnMouseMove( double x,double y )
 			point.bAbsolutePoint=true;
 			
 			pObject->m_piPlayAreaEntity->SetRoutePoint(m_nSelectedRoutePoint,point);
+		}
+	}
+	else if(m_bMovingCheckPoint && m_nSelectedCheckPoint!=-1)
+	{
+		CVector vTemp;
+		if(GetAirPlaneCoordinatesFromCursorPos(x,y,&vTemp))
+		{
+			if(m_PlayAreaManagerWrapper.m_piPlayAreaDesign)
+			{
+				CVector vPlayerRouteStart,vPlayerRouteEnd;
+				m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayerRoute(&vPlayerRouteStart,&vPlayerRouteEnd);
+				vTemp.c[1]=vPlayerRouteStart.c[1];
+				vTemp.c[2]=vPlayerRouteStart.c[2];
+			}
+			m_vCheckPoints[m_nSelectedCheckPoint]->m_piPlayAreaCheckPoint->SetCheckPointPosition(vTemp);
 		}
 	}
 	else if(m_bMovingPlayerRoutePoint && m_nSelectedLandingRoutePoint!=-1)
@@ -2889,6 +3060,7 @@ void CScenarioEditorMainWindow::OnMouseUp( int nButton,double x,double y )
 	m_bMovingRoutePoint=false;
 	m_bMovingPlayerRoutePoint=false;
 	m_bMovingCameraPosition=false;
+	m_bMovingCheckPoint=false;
 }
 
 void CScenarioEditorMainWindow::StopGameSimulation()
@@ -3301,6 +3473,37 @@ void CScenarioEditorMainWindow::UpdateHeightLayerControls()
 	}
 }
 
+void CScenarioEditorMainWindow::UpdateCheckPoints()
+{
+	unsigned int x;
+	std::vector<SCheckPoint *>::iterator i;
+	for(x=0;x<m_vCheckPoints.size();x++)
+	{
+		SCheckPoint *pCheckPoint=m_vCheckPoints[x];
+		delete pCheckPoint;
+		pCheckPoint=NULL;
+	}
+	m_vCheckPoints.clear();
+	if(m_PlayAreaManagerWrapper.m_piPlayAreaDesign)
+	{
+		for(x=0;x<m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetElements();x++)
+		{
+			IPlayAreaElement *piElement=NULL;
+			m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetElement(x,&piElement);
+			IPlayAreaCheckPoint  *piCheckPoint=QI(IPlayAreaCheckPoint,piElement);
+			if(piCheckPoint)
+			{
+				SCheckPoint *pCheckPoint=new SCheckPoint;
+				pCheckPoint->m_nPlayAreaElementId=x;
+				pCheckPoint->m_piPlayAreaCheckPoint=ADD(piCheckPoint);
+				m_vCheckPoints.push_back(pCheckPoint);
+			}
+			REL(piElement);
+			REL(piCheckPoint);
+		}
+	}
+}
+
 void CScenarioEditorMainWindow::UpdateFormationsHeight()
 {
 	double dAirPlaneHeight=GetAirPlaneAbsoluteHeight();
@@ -3361,6 +3564,7 @@ void CScenarioEditorMainWindow::OpenScenario( std::string sScenario )
 	UpdateEntityLayerControls();
 	UpdateEntityControls();
 	UpdateFormationControls();
+	UpdateCheckPoints();
 	UpdateLayerPanel();
 	UpdateCaption();
 	CenterCamera();

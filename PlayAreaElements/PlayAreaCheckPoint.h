@@ -33,7 +33,8 @@ public:
 
 	// IPlayAreaCheckPoint
 	CVector GetCheckPointPosition();
-
+	void    SetCheckPointPosition(CVector vPosition);
+	
 	CPlayAreaCheckPoint();
 	~CPlayAreaCheckPoint();
 };

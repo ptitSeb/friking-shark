@@ -77,6 +77,15 @@ struct SEntityControls
 	~SEntityControls(){REL(m_piBonusDesignObject);REL(m_piPlayAreaEntity);REL(m_piEntityType);REL(m_piDesignObject);REL(m_piObject);}
 };
 
+struct SCheckPoint
+{
+	unsigned long					m_nPlayAreaElementId;
+	IPlayAreaCheckPoint				*m_piPlayAreaCheckPoint;
+	
+	SCheckPoint(){m_piPlayAreaCheckPoint=NULL;m_nPlayAreaElementId=0;}
+	~SCheckPoint(){REL(m_piPlayAreaCheckPoint);}
+};
+
 struct SFormationControls
 {
 	CButtonWrapper					m_BTListRow;
@@ -108,6 +117,7 @@ public:
 	std::vector<SEntityLayerControls *> m_vEntityLayerControls;
 	std::vector<SEntityControls *>		m_vEntityControls;
 	std::vector<SFormationControls *>	m_vFormationControls;
+	std::vector<SCheckPoint *>			m_vCheckPoints;
 	std::string							m_sFile;
 
 	unsigned long		m_dwNexControlKey;
@@ -143,6 +153,7 @@ public:
 	bool				m_bMovingObject;
 	bool				m_bMovingRoutePoint;
 	bool				m_bMovingPlayerRoutePoint;
+	bool				m_bMovingCheckPoint;
 	CVector				m_vObjectOriginalPosition;
 	CVector				m_vCursorOriginalPosition;
 
@@ -151,7 +162,8 @@ public:
 	int					m_nSelectedEntityLayer;
 	int					m_nSelectedEntity;
 	int					m_nSelectedFormation;
-
+	int					m_nSelectedCheckPoint;
+	
 	bool				m_bAutoGenerateBSP;
 	bool				m_bAutoUpdateBSP;
 
@@ -702,6 +714,7 @@ public:
 	void OnKeyDown(int nKey,bool *pbProcessed);
 	void OnMouseDown(int nButton,double x,double y);
 	void OnMouseMove(double x,double y);
+	void OnMouseDoubleClick(int nButton,double x,double y);	
 	void OnMouseUp(int nButton,double x,double y);
 
 	void OnColorChanged(CVector vColor);
@@ -730,10 +743,12 @@ public:
 	void UpdateEntityControls();
 	void UpdateFormationControls();
 	void UpdateFormationsHeight();
-
+	void UpdateCheckPoints();
+	
 	void RenderRoute( IGenericRender * piRender, int nSelectedEntity, int nSelectedRoutePoint );
 	void RenderPlayArea(bool bSelectionRender);
 	void RenderPlayerRoutes(bool bSelectionRender);
+	void RenderCheckPoints(bool bSelectionRender);
 	
 	CScenarioEditorMainWindow(void);
 	~CScenarioEditorMainWindow(void);
