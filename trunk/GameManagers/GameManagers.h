@@ -333,6 +333,8 @@ public:
 struct IPlayAreaCheckPoint:virtual public ISystemUnknown
 {
 	virtual CVector GetCheckPointPosition()=0;
+	virtual void    SetCheckPointPosition(CVector vPosition)=0;
+	
 };
 
 struct SPlayAreaConfig

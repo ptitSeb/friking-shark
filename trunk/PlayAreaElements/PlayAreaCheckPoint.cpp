@@ -28,10 +28,8 @@ CPlayAreaCheckPoint::~CPlayAreaCheckPoint()
 {
 }
 
-CVector CPlayAreaCheckPoint::GetCheckPointPosition()
-{
-	return m_vPosition;
-}
+CVector CPlayAreaCheckPoint::GetCheckPointPosition(){return m_vPosition;}
+void    CPlayAreaCheckPoint::SetCheckPointPosition(CVector vPosition){m_vPosition=vPosition;}
 
 void CPlayAreaCheckPoint::DesignRender( IGenericRender *piRender,bool bSelected)
 {
