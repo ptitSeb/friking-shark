@@ -2546,7 +2546,7 @@ void CScenarioEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 void CScenarioEditorMainWindow::OnMouseDoubleClick(int nButton,double dx,double dy)
 {
 	IGenericCamera *piCamera=NULL;
-	if(m_bInspectionMode)
+	if(!m_bSimulationStarted || m_bInspectionMode)
 	{
 		piCamera=ADD(m_Camera.m_piCamera);
 	}
@@ -2572,7 +2572,7 @@ void CScenarioEditorMainWindow::OnMouseDoubleClick(int nButton,double dx,double 
 void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 {
 	IGenericCamera *piCamera=NULL;
-	if(m_bInspectionMode)
+	if(!m_bSimulationStarted ||m_bInspectionMode)
 	{
 		piCamera=ADD(m_Camera.m_piCamera);
 	}
@@ -2824,7 +2824,7 @@ bool CScenarioEditorMainWindow::GetHeightAt(CVector vPoint,bool bIgnoreTerrainOb
 bool CScenarioEditorMainWindow::GetAirPlaneCoordinatesFromCursorPos(double x,double y,CVector *pAirPlanePos)
 {
 	IGenericCamera *piCamera=NULL;
-	if(m_bInspectionMode)
+	if(!m_bSimulationStarted ||m_bInspectionMode)
 	{
 		piCamera=ADD(m_Camera.m_piCamera);
 	}
@@ -2891,7 +2891,7 @@ bool CScenarioEditorMainWindow::GetTerrainCoordinatesFromLine(CLine line,bool bI
 bool CScenarioEditorMainWindow::GetTerrainCoordinatesFromCursorPos(double x,double y,bool bIgnoreTerrainObjects, CVector *pTerrainPos)
 {
 	IGenericCamera *piCamera=NULL;
-	if(m_bInspectionMode)
+	if(!m_bSimulationStarted ||m_bInspectionMode)
 	{
 		piCamera=ADD(m_Camera.m_piCamera);
 	}
