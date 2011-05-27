@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=202.395636
 			NearPlane=130.000000
-			Posicion=1688.777979,228.678936,3.554870
+			Posicion=1836.892130,228.678936,7.809878
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -25,7 +25,7 @@ AreaDeJuego
 			Class=CPlayAreaCheckPoint
 			Data
 			{
-				Posicion=0.000000,-4.859726,88.678936
+				Posicion=-48.051992,-4.859726,88.678936
 			}
 			Name=""
 			System=GameSystem
@@ -35,7 +35,7 @@ AreaDeJuego
 			Class=CPlayAreaCheckPoint
 			Data
 			{
-				Posicion=70.000000,-4.859726,88.678936
+				Posicion=153.805731,-4.859726,88.678936
 			}
 			Name=""
 			System=GameSystem
@@ -51,6 +51,7 @@ AreaDeJuego
 				Delay=8500
 				Interval=0
 				Posicion=833.466694,61.130258,52.324294
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -84,6 +85,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=780.669946,58.735196,52.951401
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -103,7 +105,7 @@ AreaDeJuego
 			Class=CPlayAreaCheckPoint
 			Data
 			{
-				Posicion=140.000000,-4.859726,88.678936
+				Posicion=397.517993,-4.859726,88.678936
 			}
 			Name=""
 			System=GameSystem
@@ -119,6 +121,7 @@ AreaDeJuego
 				Delay=0
 				Interval=2200
 				Posicion=92.383328,87.123292,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -164,6 +167,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=410.320196,-7.692440,54.159653
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -189,6 +193,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=298.690939,39.163447,54.155086
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -214,6 +219,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=753.697763,2.744797,52.924840
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -239,6 +245,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=1406.489056,20.313036,52.965399
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -264,6 +271,7 @@ AreaDeJuego
 				Delay=2000
 				Interval=0
 				Posicion=836.071722,-87.184781,52.951368
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -343,6 +351,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=349.564788,71.559919,52.965399
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -368,6 +377,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=829.659336,55.406101,53.807677
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -393,6 +403,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=322.057293,-7.324236,54.159653
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -426,6 +437,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=321.969389,-21.614759,54.159653
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -479,6 +491,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=624.441831,12.873176,52.965399
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -504,6 +517,7 @@ AreaDeJuego
 				Delay=4000
 				Interval=0
 				Posicion=835.857778,-89.471956,52.915436
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -543,6 +557,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=672.771705,-1.688801,54.913456
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -568,6 +583,7 @@ AreaDeJuego
 				Delay=3000
 				Interval=0
 				Posicion=813.479989,-112.285961,52.965399
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -601,6 +617,7 @@ AreaDeJuego
 				Delay=1500
 				Interval=0
 				Posicion=798.382453,-111.013740,52.965399
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -634,6 +651,7 @@ AreaDeJuego
 				Delay=3500
 				Interval=0
 				Posicion=834.544785,50.653311,52.324294
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -667,6 +685,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=893.120345,58.122360,52.965399
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -692,6 +711,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=927.756634,-57.378650,52.965399
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -717,6 +737,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=957.245945,-57.226602,52.965399
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -742,6 +763,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=939.584630,52.994997,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -767,6 +789,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=422.583920,58.075719,54.155086
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -792,6 +815,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=348.362586,-16.181790,52.767170
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -817,6 +841,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=1032.352182,-72.692686,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -842,6 +867,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=1170.488261,-36.592504,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -867,6 +893,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=1208.347567,-74.839504,52.965399
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -892,6 +919,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=1558.501134,-17.806661,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -917,6 +945,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=700.012867,-5.636856,54.913456
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -942,6 +971,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=625.905702,-2.540457,54.913456
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -967,6 +997,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=647.256313,-11.173965,54.913456
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -992,6 +1023,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=647.098744,6.152982,54.913456
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1017,6 +1049,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=967.655652,-1.480677,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1042,6 +1075,7 @@ AreaDeJuego
 				Delay=1000
 				Interval=0
 				Posicion=953.294814,22.910767,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1075,6 +1109,7 @@ AreaDeJuego
 				Delay=1000
 				Interval=0
 				Posicion=953.463782,1.959247,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1108,6 +1143,7 @@ AreaDeJuego
 				Delay=1000
 				Interval=0
 				Posicion=953.091837,-16.693690,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1141,6 +1177,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=1881.719262,-61.829024,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1166,6 +1203,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=-157.440769,3.982405,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1191,6 +1229,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=-82.191996,-62.824625,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1216,6 +1255,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=-102.487290,66.390667,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1241,6 +1281,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=-145.075343,58.366493,50.998502
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1266,6 +1307,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=379.511103,-13.200978,54.159653
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1291,6 +1333,7 @@ AreaDeJuego
 				Delay=1000
 				Interval=2200
 				Posicion=267.369375,-104.253759,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1354,6 +1397,7 @@ AreaDeJuego
 				Delay=6000
 				Interval=0
 				Posicion=421.819742,58.933868,54.155086
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1387,6 +1431,7 @@ AreaDeJuego
 				Delay=1000
 				Interval=0
 				Posicion=372.974603,86.868416,54.159650
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1420,6 +1465,7 @@ AreaDeJuego
 				Delay=2500
 				Interval=0
 				Posicion=373.201045,92.723608,54.159650
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1453,6 +1499,7 @@ AreaDeJuego
 				Delay=4000
 				Interval=0
 				Posicion=373.467731,93.267216,54.159650
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1492,6 +1539,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=537.145863,60.495113,54.913456
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1531,6 +1579,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=581.937315,6.601493,54.913456
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1594,6 +1643,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=594.457808,6.601493,54.913456
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1661,6 +1711,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=609.441324,-5.658125,54.913456
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1694,6 +1745,7 @@ AreaDeJuego
 				Delay=2500
 				Interval=0
 				Posicion=606.338608,96.147513,52.764660
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1733,6 +1785,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=2161.516717,-16.049648,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1758,6 +1811,7 @@ AreaDeJuego
 				Delay=500
 				Interval=2500
 				Posicion=715.354867,96.568261,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1815,6 +1869,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=669.771215,22.087705,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1860,6 +1915,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=693.322679,23.552778,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1905,6 +1961,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=824.474910,63.877307,52.324294
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1938,6 +1995,7 @@ AreaDeJuego
 				Delay=4000
 				Interval=0
 				Posicion=916.756616,90.691913,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -1971,6 +2029,7 @@ AreaDeJuego
 				Delay=4000
 				Interval=0
 				Posicion=965.419444,12.728944,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -2004,6 +2063,7 @@ AreaDeJuego
 				Delay=4000
 				Interval=0
 				Posicion=965.982854,-7.754569,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -2037,6 +2097,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=993.768897,64.890495,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -2070,6 +2131,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=993.893446,46.611515,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -2103,6 +2165,7 @@ AreaDeJuego
 				Delay=2000
 				Interval=0
 				Posicion=1031.582810,-71.547701,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -2136,6 +2199,7 @@ AreaDeJuego
 				Delay=1000
 				Interval=2500
 				Posicion=1022.692657,91.100847,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -2187,6 +2251,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=1128.533736,12.669928,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -2212,6 +2277,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=1128.965712,-17.989972,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -2241,6 +2307,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=1128.906298,-48.627518,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -2266,6 +2333,7 @@ AreaDeJuego
 				Delay=3000
 				Interval=0
 				Posicion=1160.513443,96.122534,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -2299,6 +2367,7 @@ AreaDeJuego
 				Delay=5000
 				Interval=0
 				Posicion=1207.942021,-71.316790,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -2332,6 +2401,7 @@ AreaDeJuego
 				Delay=7000
 				Interval=0
 				Posicion=1407.015167,-8.018991,53.614199
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -2365,6 +2435,7 @@ AreaDeJuego
 				Delay=3000
 				Interval=0
 				Posicion=1559.772267,-45.935578,53.614202
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -2398,6 +2469,7 @@ AreaDeJuego
 				Delay=3000
 				Interval=0
 				Posicion=1559.067594,7.795782,53.614202
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -2431,6 +2503,7 @@ AreaDeJuego
 				Delay=7000
 				Interval=0
 				Posicion=1525.723319,-17.828089,53.614202
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -2464,6 +2537,7 @@ AreaDeJuego
 				Delay=7000
 				Interval=1800
 				Posicion=1658.029141,95.516448,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -2509,6 +2583,7 @@ AreaDeJuego
 				Delay=2000
 				Interval=1800
 				Posicion=1868.909543,-106.392793,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -2554,6 +2629,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=884.881097,-72.934134,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -3379,6 +3455,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=1679.383735,0.000000,52.965402
+				RouteDelay=0
 				Ruta
 				{
 					Ciclica=0
@@ -3439,6 +3516,46 @@ AreaDeJuego
 					Name=Level1Boss
 					System=EntityTypes
 				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item120
+		{
+			Class=CPlayAreaCheckPoint
+			Data
+			{
+				Posicion=609.870631,-4.859726,88.678936
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item121
+		{
+			Class=CPlayAreaCheckPoint
+			Data
+			{
+				Posicion=814.401765,-4.859726,88.678936
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item122
+		{
+			Class=CPlayAreaCheckPoint
+			Data
+			{
+				Posicion=1070.856902,-4.859726,88.678936
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item123
+		{
+			Class=CPlayAreaCheckPoint
+			Data
+			{
+				Posicion=1503.667130,-4.859726,88.678936
 			}
 			Name=""
 			System=GameSystem
