@@ -64,6 +64,8 @@ CTurret::CTurret(CTurretType *pType,unsigned int dwCurrentTime)
 
 void CTurret::OnRemoved(IEntity *piEntity)
 {
+	CEntityBase::OnRemoved(piEntity);
+	
 	if(piEntity==m_piTarget){SetTarget(NULL);}
 	if(piEntity==m_piContainerBuilding)
 	{
@@ -74,6 +76,8 @@ void CTurret::OnRemoved(IEntity *piEntity)
 
 void CTurret::OnKilled(IEntity *piEntity)
 {
+	CEntityBase::OnKilled(piEntity);
+	
 	if(piEntity==m_piTarget){SetTarget(NULL);}
 	if(piEntity==m_piContainerBuilding)
 	{

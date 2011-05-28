@@ -29,11 +29,12 @@ struct SChildEntity
 	CVector vPosition;
 	CVector vAngles;
 	IEntity *piEntity;
+	unsigned int nId;
 	
-	SChildEntity(){piEntity=NULL;}
+	SChildEntity(){piEntity=NULL;nId=0;}
 };
 
-class CEntityBase: public IEntity, public CPublisherBase, public CSubscriberBase
+class CEntityBase: public IEntity,public CPublisherBase, public CSubscriberBase, virtual public IEntityEvents
 {
 protected:
 	CSteeringBehaviours m_Behaviours;
@@ -78,6 +79,7 @@ protected:
 	
 	IEntity 			*m_piParent;
 	vector<SChildEntity> m_vChildren;
+	unsigned int		 m_nNextChildId;
 	
     // Alineacion (Bando) de la entidad
 
@@ -164,9 +166,12 @@ public:
 	
     IEntity *GetTarget();
 	void	 SetTarget(IEntity *piTarget);
-
+	
 	void GivePoints(unsigned int nPoints);
-
+	
+	void OnKilled(IEntity *piEntity);
+	void OnRemoved(IEntity *piEntity);
+	
            CEntityBase();
     virtual ~CEntityBase();
 };

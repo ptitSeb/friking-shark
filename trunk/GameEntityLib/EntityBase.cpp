@@ -33,6 +33,7 @@ CEntityBase::CEntityBase()
 
 	m_dwCreationTime=g_FrameManagerSingleton.m_piInterface->GetCurrentTime();
     m_dwNextProcessFrame=0;
+	m_nNextChildId=0;
     m_bRemoved=false;
     m_dwDamageType=DAMAGE_TYPE_NONE;
     m_dDamage=0;
@@ -102,6 +103,7 @@ void         CEntityBase::OnKilledInternal(bool bRemove)
 		{
 			SChildEntity *pChildEntity=&sTemp[x];
 			pChildEntity->piEntity->Kill();
+			UNSUBSCRIBE_FROM_CAST(pChildEntity->piEntity,IEntityEvents);
 		}
 		sTemp.clear();
 	}
@@ -125,6 +127,7 @@ void         CEntityBase::Remove()
 		{
 			SChildEntity *pChildEntity=&sTemp[x];
 			pChildEntity->piEntity->Remove();
+			UNSUBSCRIBE_FROM_CAST(pChildEntity->piEntity,IEntityEvents);
 		}
 		sTemp.clear();
 	}
@@ -317,8 +320,12 @@ void CEntityBase::AddChild(IEntity *piEntity,CVector vPosition,CVector vAngles)
 		childEntity.piEntity=piEntity;
 		childEntity.vPosition=vPosition;
 		childEntity.vAngles=vAngles;
+		childEntity.nId=m_nNextChildId;
+		m_nNextChildId++;
+		
 		m_vChildren.push_back(childEntity);
 		piEntity->SetParent(this);
+		SUBSCRIBE_TO_CAST(piEntity,IEntityEvents);
 	}
 }
 	
@@ -329,6 +336,7 @@ void CEntityBase::RemoveChild(IEntity *piEntity)
 	{
 		if(i->piEntity==piEntity)
 		{
+			UNSUBSCRIBE_FROM_CAST(piEntity,IEntityEvents);
 			piEntity->SetParent(NULL);
 			m_vChildren.erase(i);
 			break;
@@ -383,4 +391,28 @@ void CEntityBase::GivePoints( unsigned int nPoints )
 	if(piManager){piPlayerEntity=piManager->FindEntity("Player");}
 	if(piPlayerEntity){piPlayer=dynamic_cast<IPlayer*>(piPlayerEntity);}
 	if(piPlayer){piPlayer->AddPoints(nPoints);}
+}
+
+void CEntityBase::OnKilled(IEntity *piEntity)
+{
+	for(unsigned int x=0;x<m_vChildren.size();x++)
+	{
+		SChildEntity *pChildEntity=&m_vChildren[x];
+		if(pChildEntity->piEntity==piEntity)
+		{
+			NOTIFY_EVENT(IEntityEvents,OnChildKilled(this,(int)pChildEntity->nId,piEntity));
+		}
+	}
+}
+
+void CEntityBase::OnRemoved(IEntity *piEntity)
+{
+	for(unsigned int x=0;x<m_vChildren.size();x++)
+	{
+		SChildEntity *pChildEntity=&m_vChildren[x];
+		if(pChildEntity->piEntity==piEntity)
+		{
+			NOTIFY_EVENT(IEntityEvents,OnChildRemoved(this,(int)pChildEntity->nId,piEntity));
+		}
+	}
 }

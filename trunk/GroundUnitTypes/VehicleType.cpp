@@ -241,6 +241,8 @@ bool CVehicle::HasFinishedRoute()
 
 void CVehicle::OnRemoved(IEntity *piEntity)
 {
+	CEntityBase::OnRemoved(piEntity);
+	
 	if(piEntity==m_piContainerBuilding)
 	{
 		UNSUBSCRIBE_FROM_CAST(m_piContainerBuilding,IEntityEvents);
@@ -250,6 +252,8 @@ void CVehicle::OnRemoved(IEntity *piEntity)
 
 void CVehicle::OnKilled(IEntity *piEntity)
 {
+	CEntityBase::OnKilled(piEntity);
+	
 	if(piEntity==m_piContainerBuilding)
 	{
 		UNSUBSCRIBE_FROM_CAST(m_piContainerBuilding,IEntityEvents);

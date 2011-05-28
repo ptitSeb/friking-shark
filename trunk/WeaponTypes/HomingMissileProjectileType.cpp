@@ -160,6 +160,8 @@ void CHomingMissileProjectile::ProcessFrame(unsigned int dwCurrentTime,double dT
 
 void CHomingMissileProjectile::OnRemoved(IEntity *piEntity)
 {
+  CEntityBase::OnRemoved(piEntity);
+ 
   if(piEntity==m_piTarget)
   {
     UNSUBSCRIBE_FROM_CAST(m_piTarget,IEntityEvents);
@@ -168,6 +170,8 @@ void CHomingMissileProjectile::OnRemoved(IEntity *piEntity)
 }
 void CHomingMissileProjectile::OnKilled(IEntity *piEntity)
 {
+  CEntityBase::OnKilled(piEntity);
+	
   if(piEntity==m_piTarget)
   {
     UNSUBSCRIBE_FROM_CAST(m_piTarget,IEntityEvents);

@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=199.907946
 			NearPlane=130.000000
-			Posicion=1685.521058,198.441526,-0.372581
+			Posicion=398.682369,198.441526,-2.512813
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -27,6 +27,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -53,6 +54,11 @@ AreaDeJuego
 			{
 				Angulos=180.000000,0.000000,0.000000
 				Bonus
+				{
+					Name=BombBonus
+					System=EntityTypes
+				}
+				BonusOnChild=10
 				Count=1
 				Delay=0
 				Interval=0
@@ -79,6 +85,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -105,6 +112,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -131,6 +139,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -157,6 +166,7 @@ AreaDeJuego
 			{
 				Angulos=180.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -221,6 +231,7 @@ AreaDeJuego
 			{
 				Angulos=180.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -309,6 +320,7 @@ AreaDeJuego
 			{
 				Angulos=270.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -335,6 +347,7 @@ AreaDeJuego
 			{
 				Angulos=270.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -361,6 +374,7 @@ AreaDeJuego
 			{
 				Angulos=270.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -387,6 +401,7 @@ AreaDeJuego
 			{
 				Angulos=90.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -413,6 +428,11 @@ AreaDeJuego
 			{
 				Angulos=180.000000,0.000000,0.000000
 				Bonus
+				{
+					Name=BombBonus
+					System=EntityTypes
+				}
+				BonusOnChild=3
 				Count=1
 				Delay=0
 				Interval=0
@@ -439,6 +459,7 @@ AreaDeJuego
 			{
 				Angulos=180.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -465,6 +486,7 @@ AreaDeJuego
 			{
 				Angulos=180.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -491,6 +513,7 @@ AreaDeJuego
 			{
 				Angulos=75.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -517,6 +540,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -543,6 +567,7 @@ AreaDeJuego
 			{
 				Angulos=180.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -569,6 +594,7 @@ AreaDeJuego
 			{
 				Angulos=180.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -643,6 +669,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -677,6 +704,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -711,6 +739,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -785,6 +814,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -819,6 +849,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -853,6 +884,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -887,6 +919,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -921,6 +954,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -955,6 +989,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -989,6 +1024,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -1023,6 +1059,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -1057,6 +1094,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -1091,6 +1129,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -1125,6 +1164,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -1159,6 +1199,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -1193,6 +1234,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -1227,6 +1269,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -1261,6 +1304,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -1295,6 +1339,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -1329,6 +1374,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -1363,6 +1409,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -1397,6 +1444,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -1431,6 +1479,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -1465,6 +1514,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -1499,6 +1549,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -1533,6 +1584,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -1567,6 +1619,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -1601,6 +1654,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -1763,6 +1817,7 @@ AreaDeJuego
 			{
 				Angulos=180.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -1793,6 +1848,7 @@ AreaDeJuego
 					Name=BombBonus
 					System=EntityTypes
 				}
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -1819,6 +1875,7 @@ AreaDeJuego
 			{
 				Angulos=180.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -1845,6 +1902,7 @@ AreaDeJuego
 			{
 				Angulos=180.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -1871,6 +1929,7 @@ AreaDeJuego
 			{
 				Angulos=180.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -1897,6 +1956,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=4
 				Delay=2800
 				Interval=1800
@@ -2001,6 +2061,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -2041,6 +2102,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -2099,6 +2161,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -2337,6 +2400,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -2383,6 +2447,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -2435,6 +2500,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -2505,6 +2571,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -2545,6 +2612,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -2591,6 +2659,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -2637,6 +2706,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=100
@@ -2701,6 +2771,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=100
@@ -2753,6 +2824,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=100
@@ -2805,6 +2877,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=100
@@ -2869,6 +2942,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=100
@@ -2927,6 +3001,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=100
@@ -2991,6 +3066,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=100
@@ -3049,6 +3125,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -3101,6 +3178,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -3135,6 +3213,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -3169,6 +3248,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -3203,6 +3283,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -3267,6 +3348,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -3331,6 +3413,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -3395,6 +3478,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -3477,6 +3561,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -3565,6 +3650,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -3617,6 +3703,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -3675,6 +3762,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -3739,6 +3827,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -3803,6 +3892,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -3873,6 +3963,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -3931,6 +4022,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -3989,6 +4081,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -4041,6 +4134,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -4093,6 +4187,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -4133,6 +4228,7 @@ AreaDeJuego
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
