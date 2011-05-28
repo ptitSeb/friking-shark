@@ -42,6 +42,7 @@ class CPlayAreaEntity: virtual public CPlayAreaElementBase,virtual public IPlayA
 	bool                 m_bFirstFrame;
 	bool				 m_bDoNotActivate;
 	bool                 m_bDynamic;
+	int					 m_nBonusOnChild;
 	
 	void 				 Reset();
 public:
@@ -55,6 +56,7 @@ public:
 		PROP_VALUE_FLAGS(m_nInterval,"Interval",0,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_nDelay,"Delay",0,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_nRouteDelay,"RouteDelay",0,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_nBonusOnChild,"BonusOnChild",-1,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_BonusType,"Bonus",MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP()
 
@@ -71,13 +73,15 @@ public:
 
     void OnKilled(IEntity *pUnit);
     void OnRemoved(IEntity *pUnit);
- 
+	void OnChildKilled(IEntity *piEntity,unsigned int nChildId,IEntity *piChildEntity);
+	
 	//	IPlayAreaEntity
 
 	void SetPosition(const CVector &vPosition);
 	void SetAngles(const CVector &vAngles);
 	void SetEntityType(IEntityType *piEntityType);
 	void SetBonusType(IEntityType *piEntityType);
+	void SetBonusOnChild(int nChildIndex);
 	void SetDynamic(bool bDynamic);
 	
 	void SetCount(unsigned int nCount);
@@ -89,6 +93,7 @@ public:
 	CVector GetAngles();
 	void	GetEntityType(IEntityType **piEntityType);
 	void	GetBonusType(IEntityType **ppiEntityType);
+	int		GetBonusOnChild();
 	
 	unsigned int GetCount();
 	unsigned int GetDelay();

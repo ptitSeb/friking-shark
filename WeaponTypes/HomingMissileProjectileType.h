@@ -62,7 +62,7 @@ public:
 };
 
 
-class CHomingMissileProjectile: public CEntityBase,public IEntityEvents
+class CHomingMissileProjectile: public CEntityBase,virtual public IEntityEvents
 {
   CHomingMissileProjectileType  *m_pType;
   IEntity *m_piParent;

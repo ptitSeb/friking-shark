@@ -31,6 +31,7 @@ CPlayAreaEntity::CPlayAreaEntity()
 	m_nLastEntityTime=0;
 	m_nCreatedEntities=0;
 	m_nKilledEntities=0;
+	m_nBonusOnChild=0;
 	m_bFirstFrame=true;
 	m_bDoNotActivate=false;
 	m_bDynamic=false;
@@ -162,12 +163,26 @@ void CPlayAreaEntity::Deactivate()
     CPlayAreaElementBase::Deactivate();
 }
 
+void CPlayAreaEntity::OnChildKilled(IEntity *piEntity,unsigned int nChildId,IEntity *piChildEntity)
+{
+	if(m_nBonusOnChild!=-1)
+	{
+		if((int)nChildId==m_nBonusOnChild && m_BonusType.m_piEntityType)
+		{
+			m_BonusType.m_piEntityType->CreateInstance(piChildEntity,g_FrameManagerSingleton.m_piInterface->GetCurrentTime());
+		}
+	}
+}
+
 void CPlayAreaEntity::OnKilled(IEntity *piEntity)
 {
-	m_nKilledEntities++;
-	if(m_nKilledEntities==m_nEntityCount && m_BonusType.m_piEntityType)
+	if(m_nBonusOnChild==-1)
 	{
-		m_BonusType.m_piEntityType->CreateInstance(piEntity,g_FrameManagerSingleton.m_piInterface->GetCurrentTime());
+		m_nKilledEntities++;
+		if(m_nKilledEntities==m_nEntityCount && m_BonusType.m_piEntityType)
+		{
+			m_BonusType.m_piEntityType->CreateInstance(piEntity,g_FrameManagerSingleton.m_piInterface->GetCurrentTime());
+		}
 	}
 }
 
@@ -260,3 +275,5 @@ void CPlayAreaEntity::RemoveRoutePoint( unsigned int nIndex ){m_Route.RemovePoin
 void CPlayAreaEntity::ClearRoute(){return m_Route.Clear();}
 void CPlayAreaEntity::SetBonusType(IEntityType *piBonusType){m_BonusType.Attach(piBonusType);}
 void CPlayAreaEntity::GetBonusType(IEntityType **ppiBonusType){if(ppiBonusType){*ppiBonusType=ADD(m_BonusType.m_piEntityType);}}
+void CPlayAreaEntity::SetBonusOnChild(int nChildIndex){m_nBonusOnChild=nChildIndex;}
+int  CPlayAreaEntity::GetBonusOnChild(){return m_nBonusOnChild;}

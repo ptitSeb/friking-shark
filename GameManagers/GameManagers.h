@@ -223,6 +223,8 @@ struct IEntityEvents
 public:
     virtual void OnRemoved(IEntity *piEntity){};
     virtual void OnKilled(IEntity *piEntity){};
+	virtual void OnChildRemoved(IEntity *piEntity,unsigned int nChildId,IEntity *piChildEntity){};
+	virtual void OnChildKilled(IEntity *piEntity,unsigned int nChildId,IEntity *piChildEntity){};
 };
 
 typedef void (*EntityUnaryOperation)(IEntity *piEntity,void *pParam1,void *pParam2);
@@ -481,6 +483,7 @@ struct IPlayAreaEntity:virtual public IPlayAreaElement
 	virtual void SetAngles(const CVector &vAngles)=0;
 	virtual void SetEntityType(IEntityType *piEntityType)=0;
 	virtual void SetBonusType(IEntityType *piEntityType)=0;
+	virtual void SetBonusOnChild(int nChildIndex)=0;
 	
 	virtual unsigned int GetCount()=0;
 	virtual unsigned int GetDelay()=0;
@@ -491,6 +494,7 @@ struct IPlayAreaEntity:virtual public IPlayAreaElement
 	virtual CVector GetAngles()=0;
 	virtual void	GetEntityType(IEntityType **piEntityType)=0;
 	virtual void 	GetBonusType(IEntityType **piEntityType)=0;
+	virtual int 	GetBonusOnChild()=0;
 	
 	virtual unsigned int GetRoutePoints()=0;
 	virtual bool 		 GetRoutePoint(unsigned int nIndex,SRoutePoint *psPoint)=0;

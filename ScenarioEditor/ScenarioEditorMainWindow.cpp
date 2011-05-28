@@ -1288,6 +1288,16 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			int nDelay=pEntity->m_piPlayAreaEntity->GetDelay();
 			if(nDelay>=100){pEntity->m_piPlayAreaEntity->SetDelay(nDelay-100);}
 		}
+		else if(piControl==m_piBTEntityIncreaseBonusOnChild)
+		{
+			int nBonusOnChild=pEntity->m_piPlayAreaEntity->GetBonusOnChild();
+			pEntity->m_piPlayAreaEntity->SetBonusOnChild(nBonusOnChild+1);
+		}
+		else if(piControl==m_piBTEntityDecreaseBonusOnChild)
+		{
+			int nBonusOnChild=pEntity->m_piPlayAreaEntity->GetBonusOnChild();
+			if(nBonusOnChild>=0){pEntity->m_piPlayAreaEntity->SetBonusOnChild(nBonusOnChild-1);}
+		}
 		else if(piControl==m_piBTEntityIncreaseRouteDelay)
 		{
 			int nRouteDelay=pEntity->m_piPlayAreaEntity->GetRouteDelay();
@@ -1981,6 +1991,16 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 		
 		sprintf(A,"Delay : %.02fs",((double)m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetDelay())/1000.0);
 		m_piSTEntityDelay->SetText(A);
+
+		if(m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetBonusOnChild()!=-1)
+		{
+			sprintf(A,"On Child: %d",m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetBonusOnChild());
+		}
+		else
+		{
+			sprintf(A,"On Child: N/A");
+		}
+		m_piSTEntityBonusOnChild->SetText(A);
 		
 		sprintf(A,"R.Del : %.02fs",((double)m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetRouteDelay())/1000.0);
 		m_piSTEntityRouteDelay->SetText(A);
