@@ -384,7 +384,7 @@ void CEntityEditorMainWindow::ProcessFileOpen()
 	std::vector<IDesignObject *> vEntityTypes;
 	GetSystemObjects("EntityTypes",&vEntityTypes);
 
-	if(m_ObjectSelector.m_piObjectSelector->SelectObject("Open Entity...",this,&vEntityTypes,&nSelectedEntityType,96.0,96.0))
+	if(m_ObjectSelector.m_piObjectSelector->SelectObject("Open Entity...",this,&vEntityTypes,&nSelectedEntityType,32.0,32.0))
 	{
 		Reset();
 		CConfigFile cfg;
@@ -467,7 +467,7 @@ void CEntityEditorMainWindow::ProcessFileRemove()
 	std::vector<IDesignObject *> vEntityTypes;
 	GetSystemObjects("EntityTypes",&vEntityTypes);
 	
-	if(m_ObjectSelector.m_piObjectSelector->SelectObject("Remove Entity...",this,&vEntityTypes,&nSelectedEntityType,96.0,96.0))
+	if(m_ObjectSelector.m_piObjectSelector->SelectObject("Remove Entity...",this,&vEntityTypes,&nSelectedEntityType,32.0,32.0))
 	{
 		CEntityTypeWrapper existingWrapper;
 		bool bOk=existingWrapper.Attach(vEntityTypes[nSelectedEntityType]);
@@ -1338,7 +1338,7 @@ void CEntityEditorMainWindow::ProcessNewSound()
 	
 	CSoundWrapper model;
 	
-	if(OpenFileDialog("Select Sound...",".wav;.WAV",&sBaseSound))
+	if(OpenFileDialog("Select Sound...",".wav;.WAV;.ogg;.OGG",&sBaseSound))
 	{
 		std::vector<ISoundType*> vSounds;
 		GetSystemObjects("GameResources",&vSounds);
@@ -1488,7 +1488,7 @@ void CEntityEditorMainWindow::ProcessNewChild()
 	std::vector<IDesignObject *> vEntityTypes;
 	GetSystemObjects("EntityTypes",&vEntityTypes);
 
-	if(m_ObjectSelector.m_piObjectSelector->SelectObject("New Child...",this,&vEntityTypes,&nSelectedEntityType,96.0,96.0))
+	if(m_ObjectSelector.m_piObjectSelector->SelectObject("New Child...",this,&vEntityTypes,&nSelectedEntityType,32.0,32.0))
 	{
 		ISystemObject *piObject=QI(ISystemObject,vEntityTypes[nSelectedEntityType]);
 		if(piObject)
@@ -1525,7 +1525,7 @@ void CEntityEditorMainWindow::ProcessNewEntity()
 	std::vector<IDesignObject *> vEntityTypes;
 	GetSystemObjects("EntityTypes",&vEntityTypes);
 	
-	if(m_ObjectSelector.m_piObjectSelector->SelectObject("New Entity...",this,&vEntityTypes,&nSelectedEntityType,96.0,96.0))
+	if(m_ObjectSelector.m_piObjectSelector->SelectObject("New Entity...",this,&vEntityTypes,&nSelectedEntityType,32.0,32.0))
 	{
 		CEntityTypeWrapper entityTypeWrapper;
 		entityTypeWrapper.Attach(vEntityTypes[nSelectedEntityType]);
