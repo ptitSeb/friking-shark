@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Friking Shark 3D
-AppVerName=Friking Shark 3D v0.9.1.0
+AppVerName=Friking Shark 3D v0.91
 AppPublisher=Javier Martin Garcia
 AppPublisherURL=http://kyanaprime.blogspot.com/
 AppSupportURL=http://kyanaprime.blogspot.com/
