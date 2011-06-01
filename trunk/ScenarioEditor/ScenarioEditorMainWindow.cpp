@@ -651,6 +651,23 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		UpdateTexturization();
 		CenterCamera();
 	}
+	if(m_piBTGeneralChangeMusic==piControl)
+	{
+		std::string sMusic="./Sounds/";
+		if(OpenFileDialog("Select music...",".wav;.ogg",&sMusic))
+		{
+			m_PlayAreaManagerWrapper.m_piMusicDesign->SetMusic(sMusic);
+		}
+	}
+	if(m_piBTGeneralChangeIntroMusic==piControl)
+	{
+		std::string sMusic="./Sounds/";
+		if(OpenFileDialog("Select intro music...",".wav;.ogg",&sMusic))
+		{
+			m_PlayAreaManagerWrapper.m_piMusicDesign->SetIntroMusic(sMusic);
+		}
+	}
+	
 	if(m_piBTGeneralChangeColorMap==piControl)
 	{
 		std::string sColorMap="./Textures/";
@@ -2395,6 +2412,17 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 	if(m_WorldManagerWrapper.m_piTerrain){m_WorldManagerWrapper.m_piTerrain->GetTerrainColorMap(&sColorMap,NULL);}
 	sprintf(A,"Color Map: %s",sColorMap.c_str());
 	m_piSTGeneralColorMapName->SetText(A);
+
+	std::string sMusicName;
+	if(m_PlayAreaManagerWrapper.m_piMusicDesign){m_PlayAreaManagerWrapper.m_piMusicDesign->GetMusic(&sMusicName,NULL);}
+	sprintf(A,"Music    : %s",sMusicName.c_str());
+	m_piSTGeneralMusicName->SetText(A);
+	
+	std::string sIntroMusicName;
+	if(m_PlayAreaManagerWrapper.m_piMusicDesign){m_PlayAreaManagerWrapper.m_piMusicDesign->GetIntroMusic(&sIntroMusicName,NULL);}
+	sprintf(A,"Intro    : %s",sIntroMusicName.c_str());
+	m_piSTGeneralIntroMusicName->SetText(A);
+	
 }
 
 void CScenarioEditorMainWindow::CenterCamera()
