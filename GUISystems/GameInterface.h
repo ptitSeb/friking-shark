@@ -39,6 +39,7 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	ISystem					*m_piGameSystem;
 	
 	EGameInterfaceState      m_eState;
+	EGameMode 				 m_eGameMode;
 	unsigned int             m_nEndBombs;
 	unsigned int             m_nEndPoints;
 	unsigned int             m_nLastCountTime;
@@ -120,7 +121,7 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	
 	void RenderCourtain(IGenericRender *piRender,unsigned int nCurrentTime);
 
-	void StartGame();
+	void StartGame(EGameMode eMode,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel);
 	void StopGame();
 	void ResetGame(bool bGoToLastCheckPoint);
 

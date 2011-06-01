@@ -27,6 +27,7 @@ CGameInterface::CGameInterface(void)
 {
 	m_eState=eGameInterfaceState_Idle;
 	m_bActive=false;
+	m_eGameMode=eGameMode_Normal;
 	m_bCompleted=false;
 	m_piSystemManager   =NULL;
 	m_piGameSystem			=NULL;
@@ -95,9 +96,10 @@ bool CGameInterface::LoadScenario(std::string sScenario)
 	return bResult;
 }
 
-void CGameInterface::StartGame()
+void CGameInterface::StartGame(EGameMode eMode,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel)
 {
 	if(m_bGameStarted){return;}
+	m_eGameMode=eMode;
 	m_FrameManagerWrapper.m_piFrameManager->Reset();
 	m_bPlayerKilledOnPreviousFrame=false;
 
@@ -109,9 +111,13 @@ void CGameInterface::StartGame()
 
 		SUBSCRIBE_TO_CAST(m_piPlayerEntity,IEntityEvents);
 	}
-	if(m_piPlayer)
+	if(m_piPlayer && m_piPlayerEntity)
 	{
-		m_piPlayer->SetLivesLeft(3);
+		m_piPlayer->SetLivesLeft(nLivesLeft);
+		m_piPlayer->SetPoints(nPoints);
+		m_piPlayer->SetGodMode(m_eGameMode==eGameMode_God);
+		IWeapon *piWeapon=m_piPlayerEntity->GetWeapon(0);
+		if(piWeapon){piWeapon->SetCurrentLevel(nWeaponLevel);}
 	}
 	m_bGameStarted=true;
 	m_eState=eGameInterfaceState_StartCourtain;
@@ -148,8 +154,13 @@ void CGameInterface::ResetGame(bool bGoToLastCheckPoint)
 		}
 	}
 
+	IWeapon *piWeapon=m_piPlayerEntity?m_piPlayerEntity->GetWeapon(0):NULL;
+	unsigned int nLives=m_piPlayer?m_piPlayer->GetLivesLeft():0;
+	unsigned int nPoints=m_piPlayer?m_piPlayer->GetPoints():0;
+	unsigned int nWeapon=piWeapon?piWeapon->GetCurrentLevel():0;
+	
 	StopGame();
-	StartGame();
+	StartGame(m_eGameMode,nPoints,nLives,nWeapon);
 	if(bGoToLastCheckPoint)
 	{
 		m_PlayAreaManagerWrapper.m_piPlayAreaManager->SetPlayMovementPosition(m_vLastCheckPointPosition);
@@ -251,15 +262,21 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 	{
 		if(m_bCourtainClosed)
 		{
+			if(m_eGameMode==eGameMode_InfiniteLives)
+			{
+				m_piPlayer->SetLivesLeft(3);
+			}
+				
 			m_bPlayerKilledOnPreviousFrame=false;
 			if(m_piPlayer->GetLivesLeft()==0)
 			{
-				NOTIFY_EVENT(IGameInterfaceWindowEvents,OnScenarioFinished(eScenarioFinishedReason_GameOver));
+				NOTIFY_EVENT(IGameInterfaceWindowEvents,OnScenarioFinished(eScenarioFinishedReason_GameOver,m_piPlayer->GetPoints(),0,0));
 			}
 			else
 			{
 				unsigned long nLivesLeft=m_piPlayer->GetLivesLeft();
 				unsigned long nPoints=m_piPlayer->GetPoints();
+				
 				ResetGame(true);
 				m_piPlayer->SetLivesLeft(nLivesLeft);
 				m_piPlayer->SetPoints(nPoints);
@@ -363,7 +380,11 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 		{
 			m_eState=eGameInterfaceState_Idle;
 			m_bCompleted=true;
-			NOTIFY_EVENT(IGameInterfaceWindowEvents,OnScenarioFinished(eScenarioFinishedReason_Completed));
+			
+			IWeapon *piWeapon=m_piPlayerEntity?m_piPlayerEntity->GetWeapon(0):NULL;
+			unsigned int nWeapon=piWeapon?piWeapon->GetCurrentLevel():0;
+			
+			NOTIFY_EVENT(IGameInterfaceWindowEvents,OnScenarioFinished(eScenarioFinishedReason_Completed,m_piPlayer->GetPoints(),m_piPlayer->GetLivesLeft(),nWeapon));
 			m_nLastCountTime=dwCurrentTime;
 			return;
 		}

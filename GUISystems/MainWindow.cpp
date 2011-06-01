@@ -23,13 +23,20 @@
 #include "GUISystems.h"
 #include "MainWindow.h"
 
+#define AVAILABLE_LEVELS 3
+
 extern CSystemModuleHelper *g_pSystemModuleHelper;
 
 CMainWindow::CMainWindow(void)
 {
+	m_eGameMode=eGameMode_Normal;
 	m_eStage=eInterfaceStage_MainMenu;
+	m_nCurrentLevel=0;
 	m_dBackgroundAlpha=0;
 	m_bVisible=true;
+	m_nPoints=0;
+	m_nLivesLeft=0;
+	m_nWeaponLevel=0;
 }
 
 CMainWindow::~CMainWindow(void)
@@ -52,14 +59,16 @@ bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 			m_MainMenuDialog.Create("GameGUI","CMainMenu","MainMenu");
 			m_GameMenuDialog.Create("GameGUI","CGameMenu","GameMenu");
 			m_ConfirmationDialog.Create("GameGUI","CConfirmationDialog","ConfirmationDialog");
-			m_GameOverDialog.Create("GameGUI","CGameSimpleDialog","GameOverDialog");
-			m_CongratulationsDialog.Create("GameGUI","CGameSimpleDialog","CongratulationsDialog");
+			m_GameOverDialog.Create("GameGUI","CTimeOutDialog","GameOverDialog");
+			m_LevelOptionsDialog.Create("GameGUI","CLevelOptions","LevelOptions");
+			m_CongratulationsDialog.Create("GameGUI","CTimeOutDialog","CongratulationsDialog");
 
 			m_MainMenuDialog.m_piSerializable->Unserialize(m_GUIConfigFile.GetNode("GameDialogs\\MainMenu"));
 			m_GameMenuDialog.m_piSerializable->Unserialize(m_GUIConfigFile.GetNode("GameDialogs\\GameMenu"));
 			m_ConfirmationDialog.m_piSerializable->Unserialize(m_GUIConfigFile.GetNode("GameDialogs\\ConfirmationDialog"));
 			m_GameOverDialog.m_piSerializable->Unserialize(m_GUIConfigFile.GetNode("GameDialogs\\GameOverDialog"));
 			m_CongratulationsDialog.m_piSerializable->Unserialize(m_GUIConfigFile.GetNode("GameDialogs\\CongratulationsDialog"));
+			m_LevelOptionsDialog.m_piSerializable->Unserialize(m_GUIConfigFile.GetNode("GameDialogs\\LevelOptions"));
 		}
 
 		if(bResult)
@@ -77,10 +86,24 @@ void CMainWindow::OnDraw(IGenericRender *piRender)
 {
 	CGameWindowBase::OnDraw(piRender);
 	
-	if(m_eStage==eInterfaceStage_MainMenu && !m_MainMenuDialog.m_piDialog->IsVisible())
+	if(m_eStage==eInterfaceStage_MainMenu 
+		&& !m_MainMenuDialog.m_piDialog->IsVisible()
+		&& !m_LevelOptionsDialog.m_piDialog->IsVisible())
 	{
 		bool bProcessed=false;
 		OnKeyDown(GK_ESCAPE,&bProcessed);
+	}
+	
+	if(m_eStage==eInterfaceStage_LaunchNextLevel)
+	{
+		char sFile[200];
+		sprintf(sFile,"Level%d.ges",m_nCurrentLevel+1);
+		m_eStage=eInterfaceStage_Playing;
+		m_piGUIManager->ShowMouseCursor(false);
+		m_piSTBackground->Show(false);
+		m_piGameInterface->LoadScenario(sFile);
+		m_piGameInterface->StartGame(m_eGameMode,m_nPoints,m_nLivesLeft,m_nWeaponLevel);
+		m_piGameInterface->Show(true);
 	}
 }
 
@@ -89,7 +112,6 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 	if(nKey==GK_ESCAPE)
 	{
 		*pbProcessed=true;
-
 		if(m_eStage==eInterfaceStage_MainMenu)
 		{
 			int result=m_MainMenuDialog.m_piDialog->Execute(this);
@@ -99,11 +121,20 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 			}
 			else if(result==eMainMenuAction_NewGame)
 			{
+				m_LevelOptionsDialog.m_piLevelOptions->SelectOptions(this,&m_eGameMode,&m_nCurrentLevel);
+				
+				char sFile[200];
+				sprintf(sFile,"Level%d.ges",m_nCurrentLevel+1);
+				
+				m_nWeaponLevel=0;
+				m_nPoints=0;
+				m_nLivesLeft=3;
+				
 				m_eStage=eInterfaceStage_Playing;
 				m_piGUIManager->ShowMouseCursor(false);
 				m_piSTBackground->Show(false);
-				m_piGameInterface->LoadScenario("Level1.ges");
-				m_piGameInterface->StartGame();
+				m_piGameInterface->LoadScenario(sFile);
+				m_piGameInterface->StartGame(m_eGameMode,m_nPoints,m_nLivesLeft,m_nWeaponLevel);
 				m_piGameInterface->Show(true);
 			}
 			m_piGUIManager->SetFocus(this);
@@ -131,20 +162,35 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 	}
 }
 
-void CMainWindow::OnScenarioFinished(eScenarioFinishedReason eReason)
+void CMainWindow::OnScenarioFinished(eScenarioFinishedReason eReason,unsigned int nPoints, unsigned int nLivesLeft, unsigned int nWeaponLevel)
 {
 	m_piGUIManager->ShowMouseCursor(true);
 	m_piGameInterface->Freeze(true);
-	if(eReason!=eScenarioFinishedReason_Completed)
-	{
-		m_GameOverDialog.m_piDialog->Execute(this);
-	}
 	m_piGameInterface->Freeze(false);
 	m_piGameInterface->Show(false);
 	m_piGameInterface->StopGame();
 	m_piGameInterface->CloseScenario();
-	m_piSTBackground->Show(true);
-	m_eStage=eInterfaceStage_MainMenu;
+	if(eReason!=eScenarioFinishedReason_Completed)
+	{
+		m_GameOverDialog.m_piDialog->Execute(this);
+		m_piSTBackground->Show(true);
+		m_eStage=eInterfaceStage_MainMenu;
+	}
+	else
+	{
+		m_nPoints=nPoints;
+		m_nLivesLeft=nLivesLeft;
+		m_nWeaponLevel=nWeaponLevel;
+		
+		m_nCurrentLevel++;
+		if(m_nCurrentLevel>=AVAILABLE_LEVELS)
+		{
+			m_nCurrentLevel=0;
+		}
+		m_eStage=eInterfaceStage_LaunchNextLevel;
+	}
+	
+
 }
 
 void CMainWindow::OnWantFocus(bool *pbWant){*pbWant=true;}

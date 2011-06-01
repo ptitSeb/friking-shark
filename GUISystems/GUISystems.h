@@ -21,11 +21,19 @@
 #include "GameRunTimeLib.h"
 #include "GameGUILib.h"
 
+enum EGameMode 
+{
+	eGameMode_Normal=0,
+	eGameMode_God,
+	eGameMode_InfiniteLives,
+	eGameMode_Count
+};
+
 class IGameInterfaceWindow: virtual public IGameWindow
 {	
 public:
 
-	virtual void StartGame()=0;
+	virtual void StartGame(EGameMode eMode,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel)=0;
 	virtual void StopGame()=0;
 	
 	virtual void SetHighScore(unsigned int nScore)=0;
@@ -40,6 +48,15 @@ public:
 	virtual ~IGameInterfaceWindow(){}
 };
 
+class ILevelOptions: virtual public IGameWindow
+{	
+public:
+	
+	virtual void SelectOptions(IGameWindow *piParent,EGameMode *pMode,unsigned int *pnSelectedLevel)=0;
+	
+	virtual ~ILevelOptions(){}
+};
+
 enum eScenarioFinishedReason
 {
 	eScenarioFinishedReason_UNKNOWN,
@@ -51,7 +68,7 @@ class IGameInterfaceWindowEvents
 {	
 public:
 
-	virtual void	OnScenarioFinished(eScenarioFinishedReason eReason)=0;
+	virtual void	OnScenarioFinished(eScenarioFinishedReason eReason,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel)=0;
 
 	virtual ~IGameInterfaceWindowEvents(){}
 };
