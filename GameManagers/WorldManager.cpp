@@ -405,8 +405,8 @@ unsigned int CWorldManager::GetTerrainHeightLayers()
 
 struct SVertexKey
 {
-	double dKey[6]; // 3 coordenadas + 2 textura + alpha
-
+	double dKey[9]; // 3 coordenadas + 2 textura + 3 normal + alpha
+	
 	bool operator<(const SVertexKey &vOther) const
 	{
 		for(int x=0;x<6;x++)
@@ -750,9 +750,12 @@ bool CWorldManager::UpdateTerrain()
 					key.dKey[0]=vVertexes[nVertex].c[0];
 					key.dKey[1]=vVertexes[nVertex].c[1];
 					key.dKey[2]=vVertexes[nVertex].c[2];
-					key.dKey[3]=vTexture[nVertex].c[0];
-					key.dKey[4]=vTexture[nVertex].c[1];
-					key.dKey[5]=dColorAlpha[nVertex];
+					key.dKey[3]=vNormals[nVertex].c[0];
+					key.dKey[4]=vNormals[nVertex].c[1];
+					key.dKey[5]=vNormals[nVertex].c[2];
+					key.dKey[6]=vTexture[nVertex].c[0];
+					key.dKey[7]=vTexture[nVertex].c[1];
+					key.dKey[8]=dColorAlpha[nVertex];
 
 					unsigned long nVertexIndex=0;
 
