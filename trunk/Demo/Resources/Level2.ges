@@ -4347,6 +4347,7 @@ AreaDeJuego
 		}
 	}
 	InclinacionVista=0.000000
+	IntroMusic
 	LandingEnabled=1
 	LandingRoute
 	{
@@ -4380,6 +4381,19 @@ AreaDeJuego
 		}
 	}
 	MaximoScrollHorz=10.000000
+	Music
+	{
+		Class=SoundType
+		Data
+		{
+			Channels=5
+			File=./Sounds/level2music.ogg
+			Loop=0
+			Volume=100.000000
+		}
+		Name=""
+		System=GameSystem
+	}
 	Origen=-1120.153242,-0.000004,58.441526
 	TakeOffEnabled=1
 	TakeOffRoute
