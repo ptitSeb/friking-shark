@@ -452,7 +452,7 @@ bool COpenGLViewport::Create(unsigned x, unsigned y, unsigned w, unsigned h, boo
 		RegisterClass(&wc);
 	}
 
-	unsigned int dwStyle=WS_CAPTION|WS_SYSMENU|WS_MINIMIZEBOX|WS_MAXIMIZEBOX|WS_THICKFRAME|WS_OVERLAPPED;
+	unsigned int dwStyle=WS_CAPTION|WS_MINIMIZEBOX|WS_MAXIMIZEBOX|WS_THICKFRAME|WS_OVERLAPPED;
 	if(dwStyle==0xFFFFFFFF){dwStyle=WS_OVERLAPPED;}
 	m_hWnd = CreateWindowEx(WS_EX_DLGMODALFRAME,VIEWPORT_CLASSNAME,"Loading...",dwStyle,x,y,w,h,NULL,NULL,NULL,(void *)this);
 	if(m_hWnd)

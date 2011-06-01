@@ -202,11 +202,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\GameSimpleDialog.cpp"
+				RelativePath=".\GUISystems.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\GUISystems.cpp"
+				RelativePath=".\LevelOptions.cpp"
 				>
 			</File>
 			<File
@@ -237,6 +237,10 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\TimeOutDialog.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -256,15 +260,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\GameSimpleDialog.h"
-				>
-			</File>
-			<File
 				RelativePath=".\GUIDefs.h"
 				>
 			</File>
 			<File
 				RelativePath=".\GUISystems.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LevelOptions.h"
 				>
 			</File>
 			<File
@@ -281,6 +285,10 @@
 			</File>
 			<File
 				RelativePath=".\stdafx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TimeOutDialog.h"
 				>
 			</File>
 		</Filter>

@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\GameEntityLib;..\ParticleSystems;..\AnimationSystems;..\VectorLib;..\GameManagers;..\GameGraphics;..\GameGUI"
+				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\GameEntityLib;..\ParticleSystems;..\AnimationSystems;..\VectorLib;..\GameManagers;..\GameGraphics;..\GameGUI;..\SoundSystems"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;GAMEMANAGERS_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -125,7 +125,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\GameEntityLib;..\ParticleSystems;..\AnimationSystems;..\VectorLib;..\GameManagers;..\GameGraphics;..\GameGUI"
+				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\GameEntityLib;..\ParticleSystems;..\AnimationSystems;..\VectorLib;..\GameManagers;..\GameGraphics;..\GameGUI;..\SoundSystems"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;_USRDLL;GAMEMANAGERS_EXPORTS"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="true"

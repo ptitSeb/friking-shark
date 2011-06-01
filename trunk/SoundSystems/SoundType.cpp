@@ -21,7 +21,8 @@
 #include "SoundType.h"
 #include "vorbis/vorbisfile.h"
 
-#define OGG_PACKET_SIZE (32*1024)
+#define OGG_PACKET_SIZE (4096)
+#define OGG_REALLOC_SIZE (1024*512)
 
 CSoundType::CSoundType(void)
 {
@@ -104,13 +105,18 @@ bool CSoundType::LoadOgg()
 		{
 			int bitStream=0;
 			int nDecodedBytes=0;
+			int nAllocatedSize=0;
 			char temp[OGG_PACKET_SIZE];
 			do 
 			{
 				nDecodedBytes=ov_read(&oggFile, temp, OGG_PACKET_SIZE, 0, 2, 1, &bitStream);
 				if(nDecodedBytes)
 				{
-					pBuffer=(char*)realloc(pBuffer,nBufferSize+nDecodedBytes);
+					if(nAllocatedSize<nBufferSize+nDecodedBytes)
+					{
+						nAllocatedSize+=OGG_REALLOC_SIZE;
+						pBuffer=(char*)realloc(pBuffer,nAllocatedSize);
+					}
 					memcpy(pBuffer+nBufferSize,temp,nDecodedBytes);
 					nBufferSize+=nDecodedBytes;
 				}
