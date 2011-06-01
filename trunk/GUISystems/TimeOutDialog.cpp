@@ -16,28 +16,36 @@
 //  
 
 
-// GameGUI.cpp : Defines the entry point for the DLL application.
-//
-
 #include "./stdafx.h"
-#include "GUISystems.h"
-#include "GameGUI.h"
+#include "GameRunTimeLib.h"
 #include "GameGUILib.h"
-#include "MainWindow.h"
-#include "MainMenu.h"
-#include "GameMenu.h"
-#include "GameInterface.h"
-#include "ConfirmationDialog.h"
 #include "TimeOutDialog.h"
-#include "LevelOptions.h"
 
-BEGIN_SYSTEM_MODULE()
-	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CMainWindow,"CMainWindow")
-	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CMainMenu,"CMainMenu")
-	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameMenu,"CGameMenu")
-	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameInterface,"CGameInterface")
-	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CConfirmationDialog,"CConfirmationDialog")
-	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CTimeOutDialog,"CTimeOutDialog")
-	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CLevelOptions,"CLevelOptions")
-END_SYSTEM_MODULE()
+CTimeOutDialog::CTimeOutDialog(void)
+{
+	m_nStartTime=0;
+	m_bAlreadyFinished=false;
+}
+
+CTimeOutDialog::~CTimeOutDialog(void)
+{
+}
+
+int	CTimeOutDialog::Execute(IGameWindow *piParent)
+{
+	m_nStartTime=GetTimeStamp();
+	m_bAlreadyFinished=false;
+	return CGameDialogBase::Execute(piParent);
+}
+
+void CTimeOutDialog::OnDraw(IGenericRender *piRender)
+{
+	CGameDialogBase::OnDraw(piRender);
+	
+	if(!m_bAlreadyFinished && (m_nStartTime+3*1000)<GetTimeStamp())
+	{
+		m_bAlreadyFinished=true;
+		EndDialog(0);
+	}
+}
 

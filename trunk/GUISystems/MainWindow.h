@@ -21,12 +21,14 @@
 DECLARE_CUSTOM_WRAPPER1(CViewportWrapper,IGenericViewport,m_piViewport)
 DECLARE_CUSTOM_WRAPPER1(CGameDialogWrapper,IGameDialog,m_piDialog)
 DECLARE_CUSTOM_WRAPPER1(CGameInterfaceWrapper,IGameInterfaceWindow,m_piInterfaceWindow)
+DECLARE_CUSTOM_WRAPPER2(CLevelOptionsDialogWrapper,IGameDialog,m_piDialog,ILevelOptions,m_piLevelOptions)
 
 enum eInterfaceStage
 {
 	eInterfaceStage_None,
 	eInterfaceStage_MainMenu,
-	eInterfaceStage_Playing
+	eInterfaceStage_Playing,
+	eInterfaceStage_LaunchNextLevel
 };
 
 class CMainWindow: virtual public CGameWindowBase,virtual public IGameInterfaceWindowEvents
@@ -35,6 +37,7 @@ class CMainWindow: virtual public CGameWindowBase,virtual public IGameInterfaceW
 
 	CConfigFile m_GUIConfigFile;
 
+	EGameMode 			  m_eGameMode;
 	IGameGUILabel        *m_piSTBackground;
 	IGameInterfaceWindow *m_piGameInterface;
 
@@ -44,7 +47,12 @@ class CMainWindow: virtual public CGameWindowBase,virtual public IGameInterfaceW
 	CGameDialogWrapper m_MainMenuDialog;
 	CGameDialogWrapper m_GameMenuDialog;
 	CGameDialogWrapper m_ConfirmationDialog;
-
+	CLevelOptionsDialogWrapper m_LevelOptionsDialog;
+	
+	unsigned int m_nCurrentLevel;
+	unsigned int m_nPoints;
+	unsigned int m_nLivesLeft;
+	unsigned int m_nWeaponLevel;
 public:
 	// Sobrecarga para cambiar el valor por defecto del sistema de referencia.
 
@@ -63,7 +71,7 @@ public:
 	void OnWantFocus(bool *pbWant);
 	void OnDraw(IGenericRender *piRender);
 	
-	void	OnScenarioFinished(eScenarioFinishedReason eReason);
+	void	OnScenarioFinished(eScenarioFinishedReason eReason,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel);
 
 	CMainWindow(void);
 	~CMainWindow(void);

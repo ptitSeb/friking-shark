@@ -19,8 +19,9 @@ GameInterface.cpp \
 MainWindow.cpp \
 ConfirmationDialog.cpp \
 GameMenu.cpp \
-GameSimpleDialog.cpp \
+TimeOutDialog.cpp \
 MainMenu.cpp \
+LevelOptions.cpp \
 stdafx.cpp
 
 
