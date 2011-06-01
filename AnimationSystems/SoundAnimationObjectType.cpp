@@ -118,7 +118,7 @@ bool CSoundAnimationObject::ProcessFrame(IPhysicManager *pPhysicManager,unsigned
 	CheckActivation(dwCurrentTime);
 	if(m_piSound)
     {
-      if(!m_piSound->IsPlaying())
+      if(m_piSound->IsPlaying())
       {
         return true;
       }

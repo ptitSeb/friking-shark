@@ -28,10 +28,10 @@ release: ../Demo/Bin/Release/SoundSystems.so
 debug: ../Demo/Bin/Debug/SoundSystems.so
 
 ../Demo/Bin/Release/SoundSystems.so: $(OUT_SOURCES:.cpp=.o) $(LIBS)
-	$(CC) -shared -o ../Demo/Bin/Release/SoundSystems.so .intermediate/*.o $(CFLAGS) $(LIBS) -lopenal  -lalut
+	$(CC) -shared -o ../Demo/Bin/Release/SoundSystems.so .intermediate/*.o $(CFLAGS) $(LIBS) -lvorbisfile -lvorbis -logg -lopenal  -lalut
 
 ../Demo/Bin/Debug/SoundSystems.so: $(OUT_SOURCES:.cpp=.od) $(LIBS_DEBUG)
-	$(CC) -shared -o ../Demo/Bin/Debug/SoundSystems.so .intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG) -lopenal  -lalut
+	$(CC) -shared -o ../Demo/Bin/Debug/SoundSystems.so .intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG) -lvorbisfile -lvorbis -logg -lopenal  -lalut
 
 $(INTERMEDIATE_DIR)/%.o: ./%.cpp
 	$(CXX) -MF $@.dep -o $@ -c $(DFLAGS) $(CFLAGS) $(INCLUDES) $<

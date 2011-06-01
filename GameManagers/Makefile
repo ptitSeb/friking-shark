@@ -10,6 +10,7 @@ INCLUDES = -I. \
 -I../GameEntityLib \
 -I../GameGUI \
 -I../GameGraphics \
+-I../SoundSystems\
 -I../VectorLib \
 
 SOURCES = EntityManager.cpp\

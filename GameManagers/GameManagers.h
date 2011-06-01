@@ -53,6 +53,7 @@ class IGenericModel;
 class IGenericCamera;
 class IGenericTexture;
 class IGenericRender;
+class ISoundType;
 class IGameGUIManager;
 
 struct IEntity;
@@ -797,6 +798,18 @@ public:
 	virtual bool			GetTerrainHeightAt( CVector vPoint ,double *pdHeight)=0;
 	virtual bool			GetTerrainTrace( CVector vPoint1 ,CVector vPoint2 ,CVector *pHitPos)=0;
 };
+
+
+struct IMusicDesign:virtual public ISystemUnknown
+{
+public:
+	virtual bool SetIntroMusic(std::string sMusicFile)=0;
+	virtual void GetIntroMusic(std::string *psMusicFile,ISoundType **ppiSoundType)=0;
+
+	virtual bool SetMusic(std::string sMusicFile)=0;
+	virtual void GetMusic(std::string *psMusicFile,ISoundType **ppiSoundType)=0;
+};
+
 
 struct IWorldManager:virtual public ISystemUnknown
 {

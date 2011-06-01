@@ -51,6 +51,8 @@ CPlayAreaManager::CPlayAreaManager(void)
 
 	m_dCameraFollowFactor=1.0;
 
+	m_piMusicSound=NULL;
+	m_piIntroMusicSound=NULL;
 }
 
 CPlayAreaManager::~CPlayAreaManager(void)
@@ -102,6 +104,8 @@ void CPlayAreaManager::CloseScenario()
 	m_vDynamicElements.clear();
 	m_vEntityLayers.clear();
     m_vElements.clear();
+	m_IntroMusic.Destroy();
+	m_Music.Destroy();
 	m_CameraWrapper.Destroy();
 	m_PlayerLandingRoute.Clear();
 	m_PlayerTakeOffRoute.Clear();
@@ -140,10 +144,37 @@ void CPlayAreaManager::Start()
 	m_dPlayMovementCurrentRight=0;
 	
 	SetPlayMovementPosition(m_vPlayerRouteStart);
+	
+	if(m_IntroMusic.m_piSoundType)
+	{
+		m_piIntroMusicSound=m_IntroMusic.m_piSoundType->CreateInstance();
+		if(m_piIntroMusicSound)
+		{
+			m_piIntroMusicSound->SetLoop(false);
+			m_piIntroMusicSound->Play();
+		}
+	}
+	if(m_Music.m_piSoundType)
+	{
+		m_piMusicSound=m_Music.m_piSoundType->CreateInstance();
+		if(m_piMusicSound){m_piMusicSound->SetLoop(true);}
+	}
 }
 
 void CPlayAreaManager::Stop()
 {
+	if(m_piMusicSound)
+	{
+		if(m_piMusicSound->IsPlaying()){m_piMusicSound->Stop();}
+		delete m_piMusicSound;
+		m_piMusicSound=NULL;
+	}
+	if(m_piIntroMusicSound)
+	{
+		if(m_piIntroMusicSound->IsPlaying()){m_piIntroMusicSound->Stop();}
+		delete m_piIntroMusicSound;
+		m_piIntroMusicSound=NULL;
+	}
 	for(unsigned x=0;x<m_vElements.size();x++)
     {
         IPlayAreaElement *piElement=m_vElements[x].m_piElement;
@@ -168,6 +199,23 @@ void CPlayAreaManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFract
 	if(!m_bStarted){return;}
 	if(!m_piPlayerEntity){return;}
 	
+	// Watch out music playback
+	// First see if this level has intro music, if not, or if the intro has finished, play the main theme
+	
+	if(!m_bScenarioCompleted)
+	{
+		bool bPlayMainTheme=(m_piIntroMusicSound==NULL || !m_piIntroMusicSound->IsPlaying());
+		if(bPlayMainTheme && m_piMusicSound && !m_piMusicSound->IsPlaying())
+		{
+			m_piMusicSound->Play();
+		}
+	}
+	else 
+	{
+		if(m_piIntroMusicSound && m_piIntroMusicSound->IsPlaying()){m_piIntroMusicSound->Stop();}
+		if(m_piMusicSound && m_piMusicSound->IsPlaying()){m_piMusicSound->Stop();}
+	}
+		
 	// Comprobar si el Jugador ha llegado al final, si lo ha hecho finalizar la partida.
 	if(m_piPlayerEntity->GetHealth()>0 && m_bScenarioCompleted==false)
 	{
@@ -808,3 +856,85 @@ void CPlayAreaManager::CreateDynamicEntityElement(IEntityType *piEntityType,CVec
 		if(ppiElement){*ppiElement=ADD(wrapper.m_piElement);}
 	}
 }
+
+
+bool CPlayAreaManager::SetIntroMusic(std::string sMusicFile)
+{
+	if(m_piIntroMusicSound)
+	{
+		if(m_piIntroMusicSound->IsPlaying()){m_piIntroMusicSound->Stop();}
+		delete m_piIntroMusicSound;
+		m_piIntroMusicSound=NULL;
+	}
+	
+	m_IntroMusic.Destroy();
+	bool bOk=m_IntroMusic.Create(m_piSystem,"SoundType","");
+	if(bOk){m_IntroMusic.m_piSoundType->Load(sMusicFile);}
+	if(bOk && m_bStarted && m_IntroMusic.m_piSoundType)
+	{
+		m_piIntroMusicSound=m_IntroMusic.m_piSoundType->CreateInstance();
+		if(m_piIntroMusicSound)
+		{
+			m_piIntroMusicSound->SetLoop(false);
+			if(!m_bScenarioCompleted)
+			{
+				if(m_piMusicSound && m_piMusicSound->IsPlaying()){m_piMusicSound->Stop();}
+				m_piIntroMusicSound->Play();				
+			}
+		}
+	}
+	return bOk;
+}
+
+void CPlayAreaManager::GetIntroMusic(std::string *psMusicFile,ISoundType **ppiSoundType)
+{
+	if(psMusicFile)
+	{
+		*psMusicFile="";
+		if(m_IntroMusic.m_piSoundType){*psMusicFile=m_IntroMusic.m_piSoundType->GetFileName();}
+	}
+	if(ppiSoundType)
+	{
+		*ppiSoundType=NULL;
+		if(m_IntroMusic.m_piSoundType){*ppiSoundType=m_IntroMusic.m_piSoundType;}
+	}
+}
+
+bool CPlayAreaManager::SetMusic(std::string sMusicFile)
+{
+	if(m_piMusicSound)
+	{
+		if(m_piMusicSound->IsPlaying()){m_piMusicSound->Stop();}
+		delete m_piMusicSound;
+		m_piMusicSound=NULL;
+	}
+	
+	m_Music.Destroy();
+	bool bOk=m_Music.Create(m_piSystem,"SoundType","");
+	if(bOk){bOk=m_Music.m_piSoundType->Load(sMusicFile);}
+	if(bOk && m_bStarted && m_Music.m_piSoundType)
+	{
+		m_piMusicSound=m_Music.m_piSoundType->CreateInstance();
+		if(m_piMusicSound)
+		{
+			m_piMusicSound->SetLoop(true);
+			if(!m_bScenarioCompleted){m_piMusicSound->Play();}
+		}
+	}
+	return bOk;
+}
+
+void CPlayAreaManager::GetMusic(std::string *psMusicFile,ISoundType **ppiSoundType)
+{
+	if(psMusicFile)
+	{
+		*psMusicFile="";
+		if(m_Music.m_piSoundType){*psMusicFile=m_Music.m_piSoundType->GetFileName();}
+	}
+	if(ppiSoundType)
+	{
+		*ppiSoundType=NULL;
+		if(m_Music.m_piSoundType){*ppiSoundType=m_Music.m_piSoundType;}
+	}
+}
+

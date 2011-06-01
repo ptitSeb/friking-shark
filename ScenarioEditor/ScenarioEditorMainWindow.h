@@ -336,8 +336,12 @@ public:
 
 	// General
 	IGameGUILabel  *m_piSTGeneralModelName;
+	IGameGUILabel  *m_piSTGeneralIntroMusicName;
+	IGameGUILabel  *m_piSTGeneralMusicName;
 	IGameGUILabel  *m_piSTGeneralColorMapName;
 	IGameGUIButton *m_piBTGeneralChangeModel;
+	IGameGUIButton *m_piBTGeneralChangeIntroMusic;
+	IGameGUIButton *m_piBTGeneralChangeMusic;
 	IGameGUIButton *m_piBTGeneralChangeColorMap;
 
 	// Water 
@@ -601,9 +605,13 @@ public:
 		CHILD_MAP_ENTRY_EX("FileExit",m_piBTFileExit,IGameGUIButtonEvents);
 
 		CHILD_MAP_ENTRY("GeneralModelName",m_piSTGeneralModelName);
+		CHILD_MAP_ENTRY("GeneralMusicName",m_piSTGeneralMusicName);
+		CHILD_MAP_ENTRY("GeneralIntroMusicName",m_piSTGeneralIntroMusicName);
 		CHILD_MAP_ENTRY("GeneralColorMapName",m_piSTGeneralColorMapName);
 		CHILD_MAP_ENTRY_EX("GeneralPanel",m_piGRGeneralPanel,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("GeneralChangeModel",m_piBTGeneralChangeModel,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("GeneralChangeMusic",m_piBTGeneralChangeMusic,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("GeneralChangeIntroMusic",m_piBTGeneralChangeIntroMusic,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("GeneralChangeColorMap",m_piBTGeneralChangeColorMap,IGameGUIButtonEvents);
 
 		CHILD_MAP_ENTRY("WaterPanel",m_piGRWaterPanel);

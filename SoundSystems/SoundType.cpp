@@ -19,6 +19,9 @@
 #include "./stdafx.h"
 #include "SoundSystems.h"
 #include "SoundType.h"
+#include "vorbis/vorbisfile.h"
+
+#define OGG_PACKET_SIZE (32*1024)
 
 CSoundType::CSoundType(void)
 {
@@ -52,6 +55,23 @@ bool CSoundType::LoadFromFile()
 {
 	bool bOk=true;
 	
+	char sExt[1024]={0};
+	GetExtension(m_sFileName.c_str(),sExt);
+	if(strcasecmp(sExt,".OGG")==0)
+	{
+		bOk=LoadOgg();
+	}
+	else
+	{
+		bOk=LoadWav();
+	}
+	return bOk;
+}
+
+bool CSoundType::LoadOgg()
+{
+	bool bOk=true;
+	
 	for(size_t x=0;x<m_dAvailableSources.size();x++)
 	{
 		ALuint nSource=m_dAvailableSources[x];
@@ -59,11 +79,110 @@ bool CSoundType::LoadFromFile()
 	}
 	m_dAvailableSources.clear();
 	if(m_iSoundBuffer){alDeleteBuffers(1,&m_iSoundBuffer);m_iSoundBuffer=AL_NONE;}
+	char *pBuffer=NULL;
+	unsigned int nBufferSize=0;
+	unsigned int nFileFormat=0;
+	long         nFrequency=0;
+	FILE *pFile=fopen(m_sFileName.c_str(), "rb");
+	bOk=(pFile!=NULL);
+	if(bOk)
+	{
+		vorbis_info *pInfo=NULL;
+		OggVorbis_File oggFile;
+		bool bVorbisFileOpen=bOk=(ov_open(pFile, &oggFile, NULL, 0)==0);
+		if(bOk)
+		{
+			pInfo = ov_info(&oggFile, -1);
+			bOk=(pInfo!=NULL);
+			if(pInfo)
+			{
+				nFileFormat=pInfo->channels == 1?AL_FORMAT_MONO16:AL_FORMAT_STEREO16;
+				nFrequency=pInfo->rate;
+			}
+		}
+		if(bOk)
+		{
+			int bitStream=0;
+			int nDecodedBytes=0;
+			char temp[OGG_PACKET_SIZE];
+			do 
+			{
+				nDecodedBytes=ov_read(&oggFile, temp, OGG_PACKET_SIZE, 0, 2, 1, &bitStream);
+				if(nDecodedBytes)
+				{
+					pBuffer=(char*)realloc(pBuffer,nBufferSize+nDecodedBytes);
+					memcpy(pBuffer+nBufferSize,temp,nDecodedBytes);
+					nBufferSize+=nDecodedBytes;
+				}
+			} while (nDecodedBytes> 0 && bOk);
+			bOk=(nBufferSize!=0);
+		}
+		if(bVorbisFileOpen)
+		{
+			ov_clear(&oggFile);
+		}
+	}
+	if(bOk)
+	{
+		RTTRACE("CSoundType::LoadOgg -> Loaded Sound %s",m_sFileName.c_str());
 
+		alGetError();
+		alGenBuffers(1, &m_iSoundBuffer);
+		if(m_iSoundBuffer!=AL_NONE)
+		{
+			alBufferData(m_iSoundBuffer, nFileFormat, pBuffer, nBufferSize, nFrequency);
+			
+			ALuint *pSources=new ALuint [m_nChannels];
+			alGenSources(m_nChannels,pSources);
+			if(alGetError()==AL_NO_ERROR)
+			{
+				for(unsigned int x=0;x<m_nChannels;x++)
+				{
+					alSourcei(pSources[x],AL_BUFFER,m_iSoundBuffer);
+					alSourcef(pSources[x],AL_GAIN,(float)(m_dVolume/100.0));
+					
+					m_dAvailableSources.push_back(pSources[x]);
+				}
+			}
+			else
+			{
+				RTTRACE("CSoundType::LoadOgg -> Failed to create sources. Error %d",alGetError());
+			}
+			delete [] pSources;
+			pSources=NULL;
+		}
+		else
+		{
+			RTTRACE("CSoundType::LoadOgg -> Failed to create buffer for file %s: Error %d",m_sFileName.c_str(),alGetError());
+		}
+	}
+	free(pBuffer);
+	pBuffer=NULL;
+	
+	bOk=(m_dAvailableSources.size()!=0);
+	if(!bOk)
+	{
+		RTTRACE("CSoundType::LoadFromFile -> Failed to load sound %s. Error %d:%s",m_sFileName.c_str(),alutGetError(),alutGetErrorString(alutGetError()));
+	}
+	return bOk;
+}
+
+bool CSoundType::LoadWav()
+{
+	bool bOk=true;
+	
+	for(size_t x=0;x<m_dAvailableSources.size();x++)
+	{
+		ALuint nSource=m_dAvailableSources[x];
+		if(nSource){alDeleteSources(1,&nSource);}
+	}
+	m_dAvailableSources.clear();
+	if(m_iSoundBuffer){alDeleteBuffers(1,&m_iSoundBuffer);m_iSoundBuffer=AL_NONE;}
+	
 	m_iSoundBuffer=alutCreateBufferFromFile(m_sFileName.c_str());
 	if(m_iSoundBuffer!=AL_NONE)
 	{
-		RTTRACE("CSoundType::LoadFromFile -> Loaded Sound %s",m_sFileName.c_str());
+		RTTRACE("CSoundType::LoadWav -> Loaded Sound %s",m_sFileName.c_str());
 		
 		ALuint *pSources=new ALuint [m_nChannels];
 		alGetError();
@@ -80,7 +199,7 @@ bool CSoundType::LoadFromFile()
 		}
 		else
 		{
-			RTTRACE("CSoundType::LoadFromFile -> Failed to create sources. Error %d",alGetError());
+			RTTRACE("CSoundType::LoadWav -> Failed to create sources. Error %d",alGetError());
 		}
 		delete [] pSources;
 		pSources=NULL;
@@ -88,7 +207,7 @@ bool CSoundType::LoadFromFile()
 	bOk=(m_dAvailableSources.size()!=0);
 	if(!bOk)
 	{
-		RTTRACE("CSoundType::LoadFromFile -> Failed to load sound %s. Error %d:%s",m_sFileName.c_str(),alutGetError(),alutGetErrorString(alutGetError()));
+		RTTRACE("CSoundType::LoadWav -> Failed to load sound %s. Error %d:%s",m_sFileName.c_str(),alutGetError(),alutGetErrorString(alutGetError()));
 	}
 	return bOk;
 }
@@ -206,14 +325,11 @@ void CSound::Stop()
 
 bool CSound::IsPlaying()
 {
-  if(m_nSource==AL_NONE){return true;}
+  if(m_nSource==AL_NONE){return false;}
   ALint nState=AL_STOPPED;
   alGetSourcei(m_nSource,AL_SOURCE_STATE,&nState);
-  if(nState==AL_PLAYING || nState==AL_INITIAL){return false;}
-  
-  m_pType->ReleaseSoundSource(m_nSource);
-  m_nSource=AL_NONE;
-  return true;
+  if(nState==AL_PLAYING || nState==AL_INITIAL){return true;}
+  return false;
 }
 
 void CSound::UpdateSource()

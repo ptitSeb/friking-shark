@@ -18,9 +18,11 @@
 
 #pragma once
 #include "Route.h"
+#include "SoundSystems.h"
 
 DECLARE_CUSTOM_WRAPPER1(CPlayAreaElementWrapper,IPlayAreaElement,m_piElement)
 DECLARE_CUSTOM_WRAPPER1(CPlayAreaEntityWrapper,IPlayAreaEntity,m_piElement)
+DECLARE_CUSTOM_WRAPPER1(CSoundTypeWrapper,ISoundType,m_piSoundType)
 
 struct SEntityLayerData
 {
@@ -48,6 +50,7 @@ class CPlayAreaManager: virtual public CSystemObjectBase,
                         virtual public IPlayAreaManager,
                         virtual public IGameManager,
 						virtual public IPlayAreaDesign,
+						virtual public IMusicDesign,
 						virtual public IEntityEvents
 {
 	bool m_bStarted;
@@ -55,6 +58,11 @@ class CPlayAreaManager: virtual public CSystemObjectBase,
     vector<CPlayAreaElementWrapper>	m_vElements;
 	vector<CPlayAreaEntityWrapper>	m_vEntityLayerElements;
 	vector<CPlayAreaEntityWrapper>	m_vDynamicElements;
+	CSoundTypeWrapper				m_IntroMusic;
+	CSoundTypeWrapper				m_Music;
+	
+	ISound *m_piMusicSound;
+	ISound *m_piIntroMusicSound;
 	
     double m_dCameraDistanceFromPlayer;
     double m_dCameraPitch;
@@ -100,7 +108,6 @@ class CPlayAreaManager: virtual public CSystemObjectBase,
 	CRoute m_PlayerLandingRoute;
 	CRoute m_PlayerTakeOffRoute;
 	
-
 	std::vector<SEntityLayerData>  m_vEntityLayers;
 
     void CalculateAirPlayArea();
@@ -171,11 +178,16 @@ public:
 	void MovePlayer(unsigned long nKey);
 	void ProcessInput(IGameGUIManager *piManager);
 
-	
-	// IEntityEvents
-	
 	void OnRemoved(IEntity *piEntity);
 	void OnKilled(IEntity *piEntity);
+	
+	// IMusicDesign
+
+	bool SetIntroMusic(std::string sMusicFile);
+	void GetIntroMusic(std::string *psMusicFile,ISoundType **ppiSoundType);
+	
+	bool SetMusic(std::string sMusicFile);
+	void GetMusic(std::string *psMusicFile,ISoundType **ppiSoundType);
 	
 	// Edition method
 
@@ -199,7 +211,9 @@ public:
 		  PROP_VALUE(m_dPlayMovementMaxHorzScroll,    "MaximoScrollHorz",0);
 		  PROP_VALUE_FLAGS(m_dPlayAreaHeight,    "AlturaJuego",20,MRPF_NORMAL|MRPF_OPTIONAL);
 		  PROP_FLAGS(m_vEntityLayers,"EntityLayers",MRPF_NORMAL|MRPF_OPTIONAL)
-        END_PROP_SUBMAP("ScenarioProps")
+		  PROP_FLAGS(m_Music,"Music",MRPF_NORMAL|MRPF_OPTIONAL)
+		  PROP_FLAGS(m_IntroMusic,"IntroMusic",MRPF_NORMAL|MRPF_OPTIONAL)
+	END_PROP_SUBMAP("ScenarioProps")
 	END_PROP_MAP();
 
     CPlayAreaManager(void);
