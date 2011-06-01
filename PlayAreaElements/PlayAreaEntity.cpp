@@ -35,11 +35,13 @@ CPlayAreaEntity::CPlayAreaEntity()
 	m_bFirstFrame=true;
 	m_bDoNotActivate=false;
 	m_bDynamic=false;
+	g_FrameManagerSingleton.AddRef();
 }
 
 CPlayAreaEntity::~CPlayAreaEntity()
 {
     m_EntityType.Detach();
+	g_FrameManagerSingleton.Release();
 }
 
 bool CPlayAreaEntity::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInfo,unsigned int dwCurrentTime,double dInterval)
