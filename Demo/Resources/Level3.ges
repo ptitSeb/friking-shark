@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=200.435349
 			NearPlane=130.000000
-			Posicion=1700.360374,198.570478,0.315792
+			Posicion=8.361254,198.570478,4.715119
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -1736,6 +1736,7 @@ AreaDeJuego
 	}
 	EntityLayers
 	InclinacionVista=0.000000
+	IntroMusic
 	LandingEnabled=1
 	LandingRoute
 	{
@@ -1769,6 +1770,19 @@ AreaDeJuego
 		}
 	}
 	MaximoScrollHorz=10.000000
+	Music
+	{
+		Class=SoundType
+		Data
+		{
+			Channels=5
+			File=./Sounds/level3music.ogg
+			Loop=0
+			Volume=100.000000
+		}
+		Name=""
+		System=GameSystem
+	}
 	Origen=-1119.848746,-0.000011,58.570478
 	TakeOffEnabled=1
 	TakeOffRoute
