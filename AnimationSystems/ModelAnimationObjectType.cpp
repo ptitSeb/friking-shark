@@ -52,7 +52,6 @@ void CModelAnimationObjectType::DesignRender( IGenericRender *piRender,CVector &
 			CVector vMins,vMaxs;
 			piRender->PushState();
 			piRender->DeactivateShadowReception();
-			piRender->DeactivateHeightFog();
 
 			CVector vTempPos,vTempAngles;
 			ComputeReferenceSystem(vPosition,vAngles,m_vPosition,m_vAngles,&vTempPos,&vTempAngles);
@@ -68,7 +67,6 @@ void CModelAnimationObjectType::DesignRender( IGenericRender *piRender,CVector &
 			piRender->PushState();
 			if(!m_bCastShadow){piRender->DeactivateShadowEmission();}
 			if(!m_bReceiveShadows){piRender->DeactivateShadowReception();}
-			piRender->DeactivateHeightFog();
 			if(m_bLighting){piRender->ActivateLighting();}
 			if(m_ShaderWrapper.m_piShader){m_ShaderWrapper.m_piShader->Activate();}
 			piRender->RenderModel(vTempPos,vTempAngles,m_ModelWrapper.m_piModel);
@@ -178,7 +176,6 @@ void CModelAnimationObject::Render(IGenericRender *piRender,IGenericCamera *piCa
 	piRender->PushState();
 	if(!m_pType->m_bCastShadow){piRender->DeactivateShadowEmission();}
 	if(!m_pType->m_bReceiveShadows){piRender->DeactivateShadowReception();}
-	piRender->DeactivateHeightFog();
 	if(m_pType->m_bLighting){piRender->ActivateLighting();}
 	if(m_pType->m_ShaderWrapper.m_piShader){m_pType->m_ShaderWrapper.m_piShader->Activate();}
 	piRender->RenderModel(vTempPos,vTempAngles,m_pType->m_ModelWrapper.m_piModel);
