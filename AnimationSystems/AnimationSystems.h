@@ -26,7 +26,7 @@ struct IAnimationType;
 struct IAnimationObject;
 struct IAnimationObjectType;
 struct IParticleSystemType;
-struct ISoundType;
+class  ISoundType;
 struct IGenericFont;
 
 #define OBJECT_INVALID (unsigned int)(-1)

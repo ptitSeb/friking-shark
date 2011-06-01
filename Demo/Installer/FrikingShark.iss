@@ -3,15 +3,15 @@
 
 [Setup]
 AppName=Friking Shark 3D
-AppVerName=Friking Shark 3D v0.9.0.0
+AppVerName=Friking Shark 3D v0.9.1.0
 AppPublisher=Javier Martin Garcia
 AppPublisherURL=http://kyanaprime.blogspot.com/
 AppSupportURL=http://kyanaprime.blogspot.com/
 AppUpdatesURL=http://kyanaprime.blogspot.com/
 DefaultDirName={pf}\Friking Shark 3D
 DefaultGroupName=Friking Shark 3D
-InfoAfterFile=..\Docs\Readme.txt
 OutputDir=..\Installer\Output
+LicenseFile=..\..\License.txt
 OutputBaseFilename=FrikingSharkSetup
 SetupIconFile=..\..\GameEngine\res\GameEngine.ico
 Compression=lzma
@@ -19,14 +19,15 @@ SolidCompression=true
 WindowVisible=false
 
 [Languages]
-Name: english; MessagesFile: compiler:Default.isl
-Name: spanish; MessagesFile: compiler:Languages\Spanish.isl
+Name: english; MessagesFile: "compiler:Default.isl"; InfoAfterFile:..\Docs\Readme-en.txt
+Name: spanish; MessagesFile: "compiler:Languages\Spanish.isl"; InfoAfterFile:..\Docs\Readme-es.txt
 
 [Tasks]
 Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
 
 [Files]
-Source: ..\Bin\Release\GameEngine.exe; DestDir: {app}\Bin\Release; Flags: ignoreversion; 
+Source: ..\..\License.txt; DestDir: {app}; Flags: ignoreversion;
+Source: ..\Bin\Release\GameEngine.exe; DestDir: {app}\Bin\Release; Flags: ignoreversion;
 Source: ..\Bin\Release\*.dll; DestDir: {app}\Bin\Release; Flags: ignoreversion; 
 Source: ..\Resources\GUI\*.jpg; DestDir: {app}\Resources\GUI; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: ..\Resources\ScenarioEditor\*; DestDir: {app}\Resources\ScenarioEditor; Flags: ignoreversion recursesubdirs createallsubdirs
