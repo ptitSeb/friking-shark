@@ -128,7 +128,7 @@ void CGroundBoss::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 			m_PhysicInfo.vVelocity*=dNewVel;
 		}
 	}
-	else if(m_piRoute)
+	else if(m_piRoute && dwCurrentTime>=(m_dwCreationTime+m_nRouteDelay))
 	{
 		CVector vDest,vDir;
 		// Just follow the configured route
