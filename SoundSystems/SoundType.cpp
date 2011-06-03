@@ -104,8 +104,8 @@ bool CSoundType::LoadOgg()
 		if(bOk)
 		{
 			int bitStream=0;
-			int nDecodedBytes=0;
-			int nAllocatedSize=0;
+			unsigned int nDecodedBytes=0;
+			unsigned int nAllocatedSize=0;
 			char temp[OGG_PACKET_SIZE];
 			do 
 			{
