@@ -240,6 +240,7 @@ public:
 	IGameGUILabel  *m_piSTColorLayerName;
 	IGameGUIButton *m_piBTColorLayerSample;
 	IGameGUIButton *m_piBTColorLayerColorSample;
+	IGameGUIButton *m_piBTColorLayerAbruptEnd;
 	IGameGUILabel  *m_piSTColorLayerHorzResolution;
 	IGameGUIButton *m_piBTColorLayerDecreaseHorzResolution;
 	IGameGUIButton *m_piBTColorLayerIncreaseHorzResolution;
@@ -519,6 +520,7 @@ public:
 		CHILD_MAP_ENTRY("ColorLayerTextureName",m_piSTColorLayerName);
 		CHILD_MAP_ENTRY("ColorLayerTextureHorzResolution",m_piSTColorLayerHorzResolution);
 		CHILD_MAP_ENTRY("ColorLayerTextureVertResolution",m_piSTColorLayerVertResolution);
+		CHILD_MAP_ENTRY_EX("ColorLayerAbruptEnd",m_piBTColorLayerAbruptEnd,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("ColorLayerTextureSample",m_piBTColorLayerSample,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("ColorLayerColorSample",m_piBTColorLayerColorSample,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("ColorLayerDecreaseHorzResolution",m_piBTColorLayerDecreaseHorzResolution,IGameGUIButtonEvents);
