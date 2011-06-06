@@ -157,7 +157,7 @@ void CGameInterface::ResetGame(bool bGoToLastCheckPoint)
 	IWeapon *piWeapon=m_piPlayerEntity?m_piPlayerEntity->GetWeapon(0):NULL;
 	unsigned int nLives=m_piPlayer?m_piPlayer->GetLivesLeft():0;
 	unsigned int nPoints=m_piPlayer?m_piPlayer->GetPoints():0;
-	unsigned int nWeapon=piWeapon?piWeapon->GetCurrentLevel():0;
+	unsigned int nWeapon=!bGoToLastCheckPoint && piWeapon?piWeapon->GetCurrentLevel():0;
 	
 	StopGame();
 	StartGame(m_eGameMode,nPoints,nLives,nWeapon);
