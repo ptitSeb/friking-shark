@@ -69,7 +69,11 @@ class CBomber: public CEntityBase
   
   CBomberType  *m_pType;
 
+  void OnKilled(IEntity *piEntity);
+  void OnRemoved(IEntity *piEntity);
+  
 public:
+	
   bool HasFinishedRoute();
   void SetRoute(IRoute *piRoute);
   
