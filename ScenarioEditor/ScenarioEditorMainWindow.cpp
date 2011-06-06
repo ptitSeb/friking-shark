@@ -1115,6 +1115,11 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 				bChange=true;
 			}
 		}
+		else if(piControl==m_piBTColorLayerAbruptEnd)
+		{
+			colorLayer.bAbruptEnd=!colorLayer.bAbruptEnd;
+			bChange=true;
+		}
 		else if(piControl==m_piBTColorLayerColorSample)
 		{
 			IGenericTexture *piTexture=NULL;
@@ -1950,6 +1955,7 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 		IGenericTexture *piTexture=NULL;
 		m_WorldManagerWrapper.m_piTerrain->GetTerrainColorLayer(m_nSelectedColorLayer,&layer,&piTexture);
 		m_piBTColorLayerSample->SetBackgroundTexture(piTexture);
+		m_piBTColorLayerAbruptEnd->SetText(layer.bAbruptEnd?"Sharp Mix":"Soft Mix");
 		m_piBTColorLayerColorSample->SetBackgroundColor(layer.vColor,1.0);
 
 		m_piGRColorLayerPanel->Show(m_bShowTerrainPanel);
