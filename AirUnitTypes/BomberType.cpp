@@ -152,7 +152,12 @@ IEntity *CBomber::GetTarget()
     IEntityManager *piManager=GetEntityManager();
     if(piManager)
     {
-      m_piTarget=piManager->FindEntity("Player");
+      IEntity *piTarget=piManager->FindEntity("Player");
+	  if(piTarget && piTarget->GetHealth()>0)
+	  {
+			m_piTarget=piTarget;
+			SUBSCRIBE_TO_CAST(m_piTarget,IEntityEvents);
+	  }
     }
   }
   return m_piTarget;
@@ -172,4 +177,13 @@ void CBomber::SetRoute(IRoute *piRoute)
 		// ya que el bombardero aplica fuerzas para moverse y le cuesta coger velocidad.
 		m_PhysicInfo.vVelocity=m_piRoute->GetDirection(0)*m_PhysicInfo.dMaxVelocity;
 	}
+}
+void CBomber::OnKilled(IEntity *piEntity)
+{
+	if(piEntity==m_piTarget){UNSUBSCRIBE_FROM_CAST(m_piTarget,IEntityEvents);m_piTarget=NULL;}
+}
+
+void CBomber::OnRemoved(IEntity *piEntity)
+{
+	if(piEntity==m_piTarget){UNSUBSCRIBE_FROM_CAST(m_piTarget,IEntityEvents);m_piTarget=NULL;}
 }
