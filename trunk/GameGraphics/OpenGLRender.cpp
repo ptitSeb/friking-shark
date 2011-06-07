@@ -193,13 +193,10 @@ void COpenGLRender::SetCamera(const CVector &vPosition,double dYaw, double dPitc
 				{
 					for(int nTextures=0;nTextures<=m_sHardwareSupport.nMaxTextureUnits;nTextures++)
 					{
-						for(int nLighs=0;nLighs<=m_sHardwareSupport.nMaxLights;nLighs++)
-						{
-							SShaderKey keywater(bHeightFog!=0,bShadows!=0,nTextures,nLighs,true);
-							SShaderKey keynowater(bHeightFog!=0,bShadows!=0,nTextures,nLighs,false);
-							AddShader(keywater);
-							AddShader(keynowater);
-						}
+						AddShader(SShaderKey(bHeightFog!=0,bShadows!=0,nTextures,true,true));
+						AddShader(SShaderKey(bHeightFog!=0,bShadows!=0,nTextures,true,false));
+						AddShader(SShaderKey(bHeightFog!=0,bShadows!=0,nTextures,false,true));
+						AddShader(SShaderKey(bHeightFog!=0,bShadows!=0,nTextures,false,false));
 					}
 				}
 			}
@@ -2078,7 +2075,7 @@ void COpenGLRender::SetRenderState( const SRenderState &sNewState,bool bForce)
 	}
 	if(m_bRenderingWithShader)
 	{
-		SShaderKey key(sNewState.bActiveHeightFog,m_sRenderOptions.bEnableShadows && m_bRenderingShadowReception,sNewState.bActiveTextures && m_sRenderOptions.bEnableTextures?m_mTextureLevels.size():0,m_nActiveLights,sNewState.bActiveWater);
+		SShaderKey key(sNewState.bActiveHeightFog,m_sRenderOptions.bEnableShadows && m_bRenderingShadowReception,sNewState.bActiveTextures && m_sRenderOptions.bEnableTextures?m_mTextureLevels.size():0,m_sRenderOptions.bEnableLighting && sNewState.bActiveLighting,sNewState.bActiveWater);
 		std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader=m_mShaders.find(key);
 		CGenericShaderWrapper *pNewShader=(iShader==m_mShaders.end())?NULL:&iShader->second;
 		if(m_pCurrentShader && m_pCurrentShader!=pNewShader)
@@ -2086,7 +2083,11 @@ void COpenGLRender::SetRenderState( const SRenderState &sNewState,bool bForce)
 			m_pCurrentShader->m_piShader->Deactivate();
 		}
 		m_pCurrentShader=pNewShader;
-		if(m_pCurrentShader){m_pCurrentShader->m_piShader->Activate();}
+		if(m_pCurrentShader)
+		{
+			m_pCurrentShader->m_piShader->Activate();
+			if(key.bLighting){m_pCurrentShader->m_piShader->AddUniform("g_ActiveLights",(int)m_nActiveLights);}
+		}
 	}
 }
 
@@ -2395,12 +2396,9 @@ void COpenGLRender::AddShader( const SShaderKey &key )
 		sprintf(sTemp,"#define TEXTURE_UNITS %d\n",key.nTextureUnits);
 		sPreprocessor+=sTemp;
 	}
-	if(key.nActiveLighs)
+	if(key.bLighting)
 	{
 		sPreprocessor+="#define ENABLE_LIGHTING\n";
-		char sTemp[128];
-		sprintf(sTemp,"#define ENABLED_LIGHTS %d\n",key.nActiveLighs);
-		sPreprocessor+=sTemp;
 	}
 	CGenericShaderWrapper wrapper;
 	if(wrapper.Create(m_piSystem,"Shader",""))
