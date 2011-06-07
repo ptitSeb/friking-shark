@@ -4,6 +4,7 @@
 //    OpenGLShading Language Third Edition
 //
 
+uniform int  g_ActiveLights;
 uniform mat4 CameraModelViewInverse;
 varying vec3 g_WorldVertexPos;
 #ifdef ENABLE_LIGHTING
@@ -81,27 +82,11 @@ void main (void)
 	vec4 sunspec=vec4(0);
 	
 	DirectionalLight(0, normal, sunamb, sundiff,sunspec);
-#if ENABLED_LIGHTS > 1
-	PointLight(1, EyeVertexPos.xyz, normal, amb, diff, spec);
-#endif
-#if ENABLED_LIGHTS > 2
-	PointLight(2, EyeVertexPos.xyz, normal, amb, diff, spec);
-#endif
-#if ENABLED_LIGHTS > 3
-	PointLight(3, EyeVertexPos.xyz, normal, amb, diff, spec);
-#endif
-#if ENABLED_LIGHTS > 4
-	PointLight(4, EyeVertexPos.xyz, normal, amb, diff, spec);
-#endif
-#if ENABLED_LIGHTS > 5
-	PointLight(5, EyeVertexPos.xyz, normal, amb, diff, spec);
-#endif
-#if ENABLED_LIGHTS > 6
-	PointLight(6, EyeVertexPos.xyz, normal, amb, diff, spec);
-#endif
-#if ENABLED_LIGHTS > 7
-	PointLight(7, EyeVertexPos.xyz, normal, amb, diff, spec);
-#endif
+	for(int x=1;x<g_ActiveLights;x++)
+	{
+		PointLight(x, EyeVertexPos.xyz, normal, amb, diff, spec);
+	}
+	
 	g_ambdiffspec=gl_LightModel.ambient+amb+diff+spec*gl_FrontMaterial.specular;
 	g_sunambdiffspec=sunamb+sundiff+sunspec*gl_FrontMaterial.specular;	
 	

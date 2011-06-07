@@ -296,8 +296,8 @@ struct SShaderKey
 	bool bHeightFog;
 	bool bShadows;
 	int  nTextureUnits;
-	int  nActiveLighs;
-	int  bWater;
+	bool bLighting;
+	bool  bWater;
 	
 	bool operator <(const SShaderKey &otherKey) const
 	{
@@ -307,15 +307,15 @@ struct SShaderKey
 		if(bShadows>otherKey.bShadows){return false;}
 		if(nTextureUnits<otherKey.nTextureUnits){return true;}
 		if(nTextureUnits>otherKey.nTextureUnits){return false;}
-		if(nActiveLighs<otherKey.nActiveLighs){return true;}
-		if(nActiveLighs>otherKey.nActiveLighs){return false;}
+		if(bLighting<otherKey.bLighting){return true;}
+		if(bLighting>otherKey.bLighting){return false;}
 		if(bWater<otherKey.bWater){return true;}
 		if(bWater>otherKey.bWater){return false;}
 		return false;
 	}
 
-	SShaderKey(){bHeightFog=false;bShadows=false;nTextureUnits=0;nActiveLighs=0;bWater=false;}
-	SShaderKey(bool heightFog,bool shadows,int textureUnits,int activeLighs,int water){bHeightFog=heightFog;bShadows=shadows;nTextureUnits=textureUnits;nActiveLighs=activeLighs;bWater=water;}
+	SShaderKey(){bHeightFog=false;bShadows=false;nTextureUnits=0;bLighting=false;bWater=false;}
+	SShaderKey(bool heightFog,bool shadows,int textureUnits,bool lighting,bool water){bHeightFog=heightFog;bShadows=shadows;nTextureUnits=textureUnits;bLighting=lighting;bWater=water;}
 };
 
 class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRender
