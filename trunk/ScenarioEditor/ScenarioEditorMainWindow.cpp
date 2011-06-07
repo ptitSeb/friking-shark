@@ -1302,13 +1302,19 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		}
 		else if(piControl==m_piBTEntityIncreaseDelay)
 		{
+			int nIncrement=100;
+			if(m_piGUIManager->IsKeyDown(GK_LCONTROL)){nIncrement=1000;}
+			if(m_piGUIManager->IsKeyDown(GK_LMENU)){nIncrement=5000;}
 			int nDelay=pEntity->m_piPlayAreaEntity->GetDelay();
-			pEntity->m_piPlayAreaEntity->SetDelay(nDelay+100);
+			pEntity->m_piPlayAreaEntity->SetDelay(nDelay+nIncrement);
 		}
 		else if(piControl==m_piBTEntityDecreaseDelay)
 		{
+			int nIncrement=100;
+			if(m_piGUIManager->IsKeyDown(GK_LCONTROL)){nIncrement=1000;}
+			if(m_piGUIManager->IsKeyDown(GK_LMENU)){nIncrement=5000;}
 			int nDelay=pEntity->m_piPlayAreaEntity->GetDelay();
-			if(nDelay>=100){pEntity->m_piPlayAreaEntity->SetDelay(nDelay-100);}
+			pEntity->m_piPlayAreaEntity->SetDelay(nDelay>=nIncrement?nDelay-nIncrement:0);
 		}
 		else if(piControl==m_piBTEntityIncreaseBonusOnChild)
 		{
@@ -1322,23 +1328,35 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		}
 		else if(piControl==m_piBTEntityIncreaseRouteDelay)
 		{
+			int nIncrement=100;
+			if(m_piGUIManager->IsKeyDown(GK_LCONTROL)){nIncrement=1000;}
+			if(m_piGUIManager->IsKeyDown(GK_LMENU)){nIncrement=5000;}
 			int nRouteDelay=pEntity->m_piPlayAreaEntity->GetRouteDelay();
-			pEntity->m_piPlayAreaEntity->SetRouteDelay(nRouteDelay+100);
+			pEntity->m_piPlayAreaEntity->SetRouteDelay(nRouteDelay+nIncrement);
 		}
 		else if(piControl==m_piBTEntityDecreaseRouteDelay)
 		{
+			int nIncrement=100;
+			if(m_piGUIManager->IsKeyDown(GK_LCONTROL)){nIncrement=1000;}
+			if(m_piGUIManager->IsKeyDown(GK_LMENU)){nIncrement=5000;}
 			int nRouteDelay=pEntity->m_piPlayAreaEntity->GetRouteDelay();
-			if(nRouteDelay>=100){pEntity->m_piPlayAreaEntity->SetRouteDelay(nRouteDelay-100);}
+			pEntity->m_piPlayAreaEntity->SetRouteDelay(nRouteDelay>=nIncrement?nRouteDelay-nIncrement:0);
 		}
 		else if(piControl==m_piBTEntityIncreaseInterval)
 		{
+			int nIncrement=100;
+			if(m_piGUIManager->IsKeyDown(GK_LCONTROL)){nIncrement=1000;}
+			if(m_piGUIManager->IsKeyDown(GK_LMENU)){nIncrement=5000;}
 			int nInterval=pEntity->m_piPlayAreaEntity->GetInterval();
-			pEntity->m_piPlayAreaEntity->SetInterval(nInterval+100);
+			pEntity->m_piPlayAreaEntity->SetInterval(nInterval+nIncrement);
 		}		
 		else if(piControl==m_piBTEntityDecreaseInterval)
 		{
+			int nIncrement=100;
+			if(m_piGUIManager->IsKeyDown(GK_LCONTROL)){nIncrement=1000;}
+			if(m_piGUIManager->IsKeyDown(GK_LMENU)){nIncrement=5000;}
 			int nInterval=pEntity->m_piPlayAreaEntity->GetInterval();
-			if(nInterval>=100){pEntity->m_piPlayAreaEntity->SetInterval(nInterval-100);}
+			pEntity->m_piPlayAreaEntity->SetInterval(nInterval>=nIncrement?nInterval-nIncrement:0);
 		}
 	}
 	if(pFormation)
