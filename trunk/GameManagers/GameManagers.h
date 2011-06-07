@@ -169,7 +169,8 @@ public:
     virtual string      *GetEntityClass()=0;
     virtual string      *GetEntityName()=0;
     virtual SPhysicInfo *GetPhysicInfo()=0;
-
+	virtual IEntityType *GetEntityType()=0;
+	
 	virtual unsigned int GetDamageType()=0;
 	virtual unsigned int GetAlignment()=0;
     virtual void         SetAlignment(unsigned int dwAlignment)=0;
@@ -203,7 +204,8 @@ public:
 	virtual void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)=0;
     virtual void ProcessAnimations(unsigned int dwCurrentTime,double dTimeFraction,bool *pbAnimationsFinished)=0;
     virtual unsigned int GetNextProcessFrame()=0;
-
+	virtual unsigned int GetCreationTime()=0;
+	
     virtual bool OnCollision(IEntity *piOther,CVector &vCollisionPos)=0;
     virtual void OnDamage(double dDamage,IEntity *pAggresor)=0;
     virtual void OnAnimationEvent(string sEvent,string sParams)=0;
@@ -212,6 +214,7 @@ public:
 	virtual CTraceInfo GetTrace(const CVector &p1,const CVector &p2)=0;
 
 	virtual void 	SetRouteDelay(unsigned int nDelay)=0;
+	virtual unsigned int GetRouteDelay()=0;
 	virtual void    SetRoute(IRoute *piRoute)=0;
 	virtual bool    HasFinishedRoute()=0;
 	virtual IRoute *GetRoute()=0;

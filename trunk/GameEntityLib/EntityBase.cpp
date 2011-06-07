@@ -143,7 +143,9 @@ void         CEntityBase::ProcessFrame(unsigned int dwCurrentTime,double dTimeFr
 SPhysicInfo *CEntityBase::GetPhysicInfo(){return &m_PhysicInfo;}
 string      *CEntityBase::GetEntityClass(){return &m_sClassName;}
 string      *CEntityBase::GetEntityName(){return &m_sName;}
+IEntityType *CEntityBase::GetEntityType(){return ADD(m_pTypeBase);}
 unsigned int        CEntityBase::GetNextProcessFrame(){return m_dwNextProcessFrame;}
+unsigned int        CEntityBase::GetCreationTime(){return m_dwCreationTime;}
 unsigned int        CEntityBase::GetAlignment(){return m_dwAlignment;}
 void         CEntityBase::SetAlignment(unsigned int dwAlignment){m_dwAlignment=dwAlignment;}
 double       CEntityBase::GetHealth(){return m_dHealth;}
@@ -223,6 +225,8 @@ void CEntityBase::OnAnimationEvent(string sEvent,string sParams)
 
 void CEntityBase::SetRoute(IRoute *piRoute){m_piRoute=piRoute;}
 void CEntityBase::SetRouteDelay(unsigned int nDelay){m_nRouteDelay=nDelay;}
+unsigned int CEntityBase::GetRouteDelay(){return m_nRouteDelay;}
+
 IRoute *CEntityBase::GetRoute(){return m_piRoute;}
 bool CEntityBase::HasFinishedRoute(){return true;}
 
