@@ -61,6 +61,8 @@ class CStaticStructure: public CEntityBase
 	double m_dRadius;
 	
 	IEntity *GetTarget();
+protected:
+	
 	void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
 	
 public:

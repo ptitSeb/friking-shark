@@ -104,6 +104,7 @@ public:
 	
     string      *GetEntityClass();
     string      *GetEntityName();
+	IEntityType *GetEntityType();	
     SPhysicInfo *GetPhysicInfo();
 
     unsigned int	GetAlignment();
@@ -128,7 +129,8 @@ public:
 
     // Procesamiento
     unsigned int GetNextProcessFrame();
-    void         ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
+	unsigned int GetCreationTime();
+	void         ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
 
     // Colisiones y Daños
     double 	GetHealth();
@@ -160,6 +162,7 @@ public:
     // Rutas
     void SetRoute(IRoute *piRoute);
 	void SetRouteDelay(unsigned int nDelay);
+	unsigned int GetRouteDelay();
 	
 	IRoute *GetRoute();
 	bool HasFinishedRoute();
