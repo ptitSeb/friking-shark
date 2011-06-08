@@ -4545,8 +4545,8 @@ Terrain
 	{
 		Color=0.078919,0.135307,0.279639
 		Enabled=1
-		End=17.703619
-		Start=-0.466419
+		Maxs=732.511841,17.703619,93.074356
+		Mins=-924.632385,-0.466419,-93.074348
 	}
 	HeightLayers
 	{
@@ -4601,8 +4601,9 @@ Terrain
 		Config
 		{
 			Enabled=1
-			Height=0.760000
 			HorzResolution=50.500000
+			Maxs=732.511841,17.703619,93.074356
+			Mins=-924.632385,-0.466419,-93.074348
 			Opacity=0.200000
 			Speed=0.110000
 			Texture1=./Textures/WaterB.jpg

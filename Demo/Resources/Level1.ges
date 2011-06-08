@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=202.395636
 			NearPlane=130.000000
-			Posicion=1836.892130,228.678936,7.809878
+			Posicion=1030.725631,228.678936,0.282809
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -3928,8 +3928,8 @@ Terrain
 	{
 		Color=0.061294,0.131579,0.037134
 		Enabled=1
-		End=49.883371
-		Start=23.283300
+		Maxs=869.803772,50.511460,94.282211
+		Mins=120.930115,27.283300,-84.917809
 	}
 	HeightLayers
 	{
@@ -4034,8 +4034,9 @@ Terrain
 		Config
 		{
 			Enabled=1
-			Height=0.880000
 			HorzResolution=21.000000
+			Maxs=869.803772,50.511460,94.282211
+			Mins=120.930115,27.283300,-84.917809
 			Opacity=0.200000
 			Speed=0.110000
 			Texture1=./Textures/rtrock_1.jpg

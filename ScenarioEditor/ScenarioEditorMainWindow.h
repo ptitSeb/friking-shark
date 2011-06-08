@@ -367,7 +367,8 @@ public:
 	IGameGUIButton *m_piBTWaterDecreaseVertResolution;
 	IGameGUIButton *m_piBTWaterIncreaseVertResolution;
 	IGameGUIButton *m_piBTWaterEnable;
-
+	IGameGUIButton *m_piBTWaterAuto;
+	
 
 	// Fog 
 
@@ -637,7 +638,8 @@ public:
 		CHILD_MAP_ENTRY_EX("WaterDecreaseVertResolution",m_piBTWaterDecreaseVertResolution,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("WaterIncreaseVertResolution",m_piBTWaterIncreaseVertResolution,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("WaterEnable",m_piBTWaterEnable,IGameGUIButtonEvents);
-
+		CHILD_MAP_ENTRY_EX("WaterAuto",m_piBTWaterAuto,IGameGUIButtonEvents);
+		
 		CHILD_MAP_ENTRY("FogPanel",m_piGRFogPanel);
 		CHILD_MAP_ENTRY("FogStart",m_piSTFogStart);
 		CHILD_MAP_ENTRY("FogEnd",m_piSTFogEnd);

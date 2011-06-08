@@ -1454,6 +1454,49 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		sWater.bEnabled=!sWater.bEnabled;
 		bWaterChanged=true;
 	}
+	else if(piControl==m_piBTWaterAuto)
+	{
+		bWaterChanged=true;
+
+		IGenericModel *piModel=NULL;
+		if(m_WorldManagerWrapper.m_piTerrain){m_WorldManagerWrapper.m_piTerrain->GetTerrainBaseModel(NULL,&piModel);}
+		if(piModel)
+		{
+			CVector vBaseModelMins,vBaseModelMaxs;
+			CVector vModelSize=piModel->GetFrameSize(0,0);
+			piModel->GetFrameBBox(0,0,&vBaseModelMins,&vBaseModelMaxs);
+		
+			CVector vWaterMins,vWaterMaxs;
+			
+			for(unsigned int nBuffer=0;nBuffer<piModel->GetFrameRenderBuffers(0,0);nBuffer++)
+			{
+				unsigned long nBaseModelVertexes=0;
+				float        *pBaseModelFaceCursor=NULL;
+				
+				piModel->GetRenderBufferVertexes(0,0,nBuffer,&nBaseModelVertexes,&pBaseModelFaceCursor);
+				
+				bool bFirstVertex=true;
+				for(unsigned int nVertex=0;nVertex<nBaseModelVertexes;nVertex++)
+				{
+					CVector vVertex(pBaseModelFaceCursor[0],pBaseModelFaceCursor[1],pBaseModelFaceCursor[2]);
+					if(vVertex.c[1]<=sWater.vMaxs.c[1])
+					{
+						if(bFirstVertex || vVertex.c[0]<vWaterMins.c[0]){vWaterMins.c[0]=vVertex.c[0];}
+						if(bFirstVertex || vVertex.c[0]>vWaterMaxs.c[0]){vWaterMaxs.c[0]=vVertex.c[0];}
+						if(bFirstVertex || vVertex.c[2]<vWaterMins.c[2]){vWaterMins.c[2]=vVertex.c[2];}
+						if(bFirstVertex || vVertex.c[2]>vWaterMaxs.c[2]){vWaterMaxs.c[2]=vVertex.c[2];}
+						bFirstVertex=false;
+					}
+					pBaseModelFaceCursor+=3;
+				}
+			}
+			sWater.vMins.c[0]=vWaterMins.c[0];
+			sWater.vMins.c[2]=vWaterMins.c[2];
+			sWater.vMaxs.c[0]=vWaterMaxs.c[0];
+			sWater.vMaxs.c[2]=vWaterMaxs.c[2];
+		}
+		REL(piModel);
+	}
 	else if(piControl==m_piBTWaterSample)
 	{
 		std::string sTexture="./Textures/";
@@ -1494,14 +1537,30 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	}
 	else if(piControl==m_piBTWaterIncreaseHeight)
 	{
-		sWater.dHeight+=0.02;
-		if(sWater.dHeight>1){sWater.dHeight=1;}
+		CVector vBaseModelMins,vBaseModelMaxs;
+		IGenericModel *piModel=NULL;
+		if(m_WorldManagerWrapper.m_piTerrain){m_WorldManagerWrapper.m_piTerrain->GetTerrainBaseModel(NULL,&piModel);}
+		if(piModel){piModel->GetFrameBBox(0,0,&vBaseModelMins,&vBaseModelMaxs);}
+		REL(piModel);
+			
+		sWater.vMaxs.c[1]+=(vBaseModelMaxs.c[1]-vBaseModelMins.c[1])*0.02;
+		sWater.vMins.c[1]=vBaseModelMins.c[1];
+		if(sWater.vMaxs.c[1]>vBaseModelMaxs.c[1]){sWater.vMaxs.c[1]=vBaseModelMaxs.c[1];}
+		if(sWater.vMaxs.c[1]<vBaseModelMins.c[1]){sWater.vMaxs.c[1]=vBaseModelMins.c[1];}
 		bWaterChanged=true;
 	}
 	else if(piControl==m_piBTWaterDecreaseHeight)
 	{
-		sWater.dHeight-=0.02;
-		if(sWater.dHeight<0){sWater.dHeight=0;}
+		CVector vBaseModelMins,vBaseModelMaxs;
+		IGenericModel *piModel=NULL;
+		if(m_WorldManagerWrapper.m_piTerrain){m_WorldManagerWrapper.m_piTerrain->GetTerrainBaseModel(NULL,&piModel);}
+		if(piModel){piModel->GetFrameBBox(0,0,&vBaseModelMins,&vBaseModelMaxs);}
+		REL(piModel);
+		
+		sWater.vMaxs.c[1]-=(vBaseModelMaxs.c[1]-vBaseModelMins.c[1])*0.02;
+		sWater.vMins.c[1]=vBaseModelMins.c[1];
+		if(sWater.vMaxs.c[1]>vBaseModelMaxs.c[1]){sWater.vMaxs.c[1]=vBaseModelMaxs.c[1];}
+		if(sWater.vMaxs.c[1]<vBaseModelMins.c[1]){sWater.vMaxs.c[1]=vBaseModelMins.c[1];}
 		bWaterChanged=true;
 	}
 	else if(piControl==m_piBTWaterIncreaseOpacity)
@@ -1619,11 +1678,9 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		if(piModel){vSize=piModel->GetFrameSize(0,0);}
 		REL(piModel);
 
-		//sFog.dStart=sPlayAreaConfig.dCameraDistance+sPlayAreaConfig.dAirPlaneHeight+(1.0-sWater.dHeight)*vSize.c[1];
-		//sFog.dEnd=sPlayAreaConfig.dCameraDistance+sPlayAreaConfig.dAirPlaneHeight+vSize.c[1];
-
-		sFog.dStart=vMins.c[1];
-		sFog.dEnd=vMins.c[1]+sWater.dHeight*vSize.c[1];
+		sFog.vMins=sWaterConfig.vMins;
+		sFog.vMaxs=sWaterConfig.vMaxs;
+		sFog.vMins.c[1]=vMins.c[1];
 		bFogChanged=true;
 	}
 	if(piControl==m_piBTFogFitSky)
@@ -1639,8 +1696,10 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		if(piModel){vSize=piModel->GetFrameSize(0,0);}
 		REL(piModel);
 
-		sFog.dStart=sPlayAreaConfig.dCameraDistance;
-		sFog.dEnd=sPlayAreaConfig.dCameraDistance+sPlayAreaConfig.dAirPlaneHeight+(1.0-sWater.dHeight)*vSize.c[1];
+		sFog.vMins=sWaterConfig.vMins;
+		sFog.vMaxs=sWaterConfig.vMaxs;
+		sFog.vMins.c[1]=sWaterConfig.vMaxs.c[1];
+		sFog.vMaxs.c[1]=sWaterConfig.vMaxs.c[1]+sPlayAreaConfig.dCameraDistance+sPlayAreaConfig.dAirPlaneHeight;
 		bFogChanged=true;
 	}
 	else if(piControl==m_piBTFogColorSample)
@@ -1653,24 +1712,24 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	}
 	else if(piControl==m_piBTFogIncreaseStart)
 	{
-		sFog.dStart+=1;
-		if(sFog.dStart+1>sFog.dEnd){sFog.dStart=sFog.dEnd-1;}
+		sFog.vMins.c[1]+=1;
+		if(sFog.vMins.c[1]+1>sFog.vMaxs.c[1]){sFog.vMins.c[1]=sFog.vMaxs.c[1]-1;}
 		bFogChanged=true;
 	}
 	else if(piControl==m_piBTFogDecreaseStart)
 	{
-		sFog.dStart-=1;
+		sFog.vMins.c[1]-=1;
 		bFogChanged=true;
 	}
 	else if(piControl==m_piBTFogIncreaseEnd)
 	{
-		sFog.dEnd+=1;
+		sFog.vMaxs.c[1]+=1;
 		bFogChanged=true;
 	}
 	else if(piControl==m_piBTFogDecreaseEnd)
 	{
-		sFog.dEnd-=1;
-		if(sFog.dEnd-1<sFog.dStart){sFog.dEnd=sFog.dStart+1;}
+		sFog.vMaxs.c[1]-=1;
+		if(sFog.vMaxs.c[1]-1<sFog.vMins.c[1]){sFog.vMaxs.c[1]=sFog.vMins.c[1]+1;}
 		bFogChanged=true;
 	}
 	if(bFogChanged)
@@ -2070,6 +2129,12 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 	STerrainWater sWater;
 	IGenericTexture *piWaterTexture1=NULL;
 	IGenericTexture *piWaterTexture2=NULL;
+	IGenericModel *piModel=NULL;
+	CVector vBaseModelMins,vBaseModelMaxs;
+	if(m_WorldManagerWrapper.m_piTerrain){m_WorldManagerWrapper.m_piTerrain->GetTerrainBaseModel(NULL,&piModel);}
+	if(piModel){piModel->GetFrameBBox(0,0,&vBaseModelMins,&vBaseModelMaxs);}
+	REL(piModel);
+	
 	if(m_WorldManagerWrapper.m_piTerrain)
 	{
 		m_WorldManagerWrapper.m_piTerrain->GetTerrainWater(&sWater,&piWaterTexture1,&piWaterTexture2);
@@ -2090,7 +2155,7 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 	sprintf(A,"%s (%d x %d)",sWater.sTextureFile2.c_str(),nSecondWidth,nSecondHeight);
 	m_piSTWaterSecondName->SetText(A);
 
-	sprintf(A,"Height  : %.02f",sWater.dHeight);
+	sprintf(A,"Height  : %.02f",(sWater.vMaxs.c[1]-vBaseModelMins.c[1])/(vBaseModelMaxs.c[1]-vBaseModelMins.c[1]));
 	m_piSTWaterHeight->SetText(A);
 
 	sprintf(A,"Opacity : %.f%%",sWater.dOpacity*100.0);
@@ -2107,6 +2172,7 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 
 	m_piBTWaterEnable->SetText(sWater.bEnabled?"Enabled":"Disabled");
 	m_piBTWaterEnable->SetBackgroundColor(sWater.bEnabled?CVector(0.8,0.8,0.8):CVector(0.6,0.6,0.6),1.0);
+	m_piBTWaterAuto->Show(sWater.bEnabled);
 	m_piBTWaterIncreaseHorzResolution->Show(sWater.bEnabled);
 	m_piBTWaterDecreaseHorzResolution->Show(sWater.bEnabled);
 	m_piBTWaterIncreaseVertResolution->Show(sWater.bEnabled);
@@ -2195,10 +2261,10 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 
 	m_piBTFogColorSample->SetBackgroundColor(sFog.vColor,1);
 
-	sprintf(A,"Min    : %.f",sFog.dStart);
+	sprintf(A,"Min    : %.f",sFog.vMins.c[1]);
 	m_piSTFogStart->SetText(A);
 
-	sprintf(A,"Max    : %.f",sFog.dEnd);
+	sprintf(A,"Max    : %.f",sFog.vMaxs.c[1]);
 	m_piSTFogEnd->SetText(A);
 
 	m_piBTFogEnable->SetText(sFog.bEnabled?"Enabled":"Disabled");

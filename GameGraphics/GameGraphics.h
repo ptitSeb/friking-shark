@@ -426,7 +426,7 @@ public:
 
 	// Render state
 
-	virtual void ActivateHeightFog(double dMinHeight,double dMaxHeight,const CVector &vColor)=0;
+	virtual void ActivateHeightFog(const CVector &vMins,const CVector &vMaxs,const CVector &vColor)=0;
 	virtual void DeactivateHeightFog()=0;
 	virtual bool IsHeightFogActive()=0;
 	 
