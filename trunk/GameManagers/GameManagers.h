@@ -630,8 +630,9 @@ struct STerrainWater
 	double		 dVerticalResolution;
 	std::string  sTextureFile1;
 	std::string  sTextureFile2;
-	double		 dHeight;
-
+	CVector      vMins;
+	CVector      vMaxs;
+	
 	STerrainWater()
 	{
 		dOpacity=1;
@@ -639,7 +640,6 @@ struct STerrainWater
 		bEnabled=false;
 		dHorizontalResolution=1;
 		dVerticalResolution=1;
-		dHeight=0;
 	}
 };
 
@@ -681,15 +681,13 @@ struct STerrainSun
 struct STerrainFog
 {
 	bool		 bEnabled;
-	double		 dStart;
-	double		 dEnd;
+	CVector      vMins;
+	CVector      vMaxs;
 	CVector		 vColor;
 
 	STerrainFog()
 	{
 		bEnabled=false;
-		dStart=100;
-		dEnd=1000;
 		vColor=CVector(1,1,1);
 	}
 };

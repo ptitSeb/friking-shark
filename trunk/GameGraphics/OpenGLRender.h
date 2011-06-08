@@ -41,8 +41,8 @@ struct SRenderState
 	unsigned int nBlendingLayer;
 
 	bool bActiveHeightFog;
-	double dHeightFogStart;
-	double dHeightFogEnd;
+	CVector vHeightFogMins;
+	CVector vHeightFogMaxs;
 	CVector vHeightFogColor;
 
 	bool operator <(const SRenderState &otherState) const
@@ -104,8 +104,6 @@ struct SRenderState
 		nBlendingLayer=0;
 		
 		bActiveHeightFog=false;
-		dHeightFogStart=0;
-		dHeightFogEnd=0;
 		bActiveWater=false;
 	}
 };
@@ -352,8 +350,8 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	double		 m_dMinDistanceToLight;
 
 	bool		 m_bActiveHeightFog;
-	double		 m_dHeightFogStart;
-	double		 m_dHeightFogEnd;
+	double		 m_vHeightFogMins;
+	double		 m_vHeightFogMaxs;
 	CVector		 m_vHeightFogColor;
 	
 	CVector      m_vLastShadowCameraTarget;
@@ -478,7 +476,7 @@ public:
 	void RenderPyramid(const CVector &vTopVertex,double dUpperSizeX,double dUpperSizeZ,double dLowerSizeX,double dLowerSizeZ,double dHeight,bool bSolid);
 	void RenderArrowHead(const CVector &vPosition,const CVector &vDirection,CVector &vUp,double dForward,double dUp,double dRight);
 	
-	void ActivateHeightFog(double dStart,double dEnd,const CVector &vColor);
+	void ActivateHeightFog(const CVector &vMins,const CVector &vMaxs,const CVector &vColor);
 	void DeactivateHeightFog();
 	bool IsHeightFogActive();
 

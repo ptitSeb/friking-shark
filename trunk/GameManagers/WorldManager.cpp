@@ -543,10 +543,6 @@ bool CWorldManager::UpdateTerrain()
 	int nDestBufs=0;
 	int pnDestBuf[1024]={0,0,0,0};
 
-	double dAbsWaterHeight=(vMaxs.c[1]-vMins.c[1])*m_TerrainWater.m_Config.dHeight+vMins.c[1];
-	CVector vWaterMins,vWaterMaxs;
-	bool bFirstVertex=true;
-
 	for(unsigned int nBuffer=0;nBuffer<m_TerrainBaseModel.m_piModel->GetFrameRenderBuffers(0,0);nBuffer++)
 	{
 		unsigned int *pBaseModelFaces=NULL,*pBaseModelFaceCursor=NULL;
@@ -594,30 +590,6 @@ bool CWorldManager::UpdateTerrain()
 				vColorMapTexture[nVertex].c[1]=1.0-vRelativeVertex.c[2];
 				vShadow[nVertex].c[0]=(vVertexes[nVertex].c[0]-vMins.c[0])/vSize.c[0];
 				vShadow[nVertex].c[1]=(vVertexes[nVertex].c[2]-vMins.c[2])/vSize.c[2];
-			}
-
-			if(m_TerrainWater.m_Config.bEnabled)
-			{
-				bool bInWater=false;
-
-				// Deducimos si algun vertice del poligono esta por debajo de la altura del agua
-				for(unsigned long nVertex=0;nVertex<3;nVertex++)
-				{
-					if(vVertexes[nVertex].c[1]<=dAbsWaterHeight){bInWater=true;break;}
-				}
-				if(bInWater)
-				{
-					// si esta debajo del agua, cogemos la X y Z minima.
-					for(unsigned long nVertex=0;nVertex<3;nVertex++)
-					{
-						if(bFirstVertex || vVertexes[nVertex].c[0]<vWaterMins.c[0]){vWaterMins.c[0]=vVertexes[nVertex].c[0];}
-						if(bFirstVertex || vVertexes[nVertex].c[0]>vWaterMaxs.c[0]){vWaterMaxs.c[0]=vVertexes[nVertex].c[0];}
-						if(bFirstVertex || vVertexes[nVertex].c[2]<vWaterMins.c[2]){vWaterMins.c[2]=vVertexes[nVertex].c[2];}
-						if(bFirstVertex || vVertexes[nVertex].c[2]>vWaterMaxs.c[2]){vWaterMaxs.c[2]=vVertexes[nVertex].c[2];}
-
-						bFirstVertex=false;
-					}
-				}
 			}
 
 			CVector vTexture[3];
@@ -829,6 +801,7 @@ bool CWorldManager::UpdateTerrain()
 
 				float *pWaterVertexBuffer=new GLfloat[12];
 				float *pCursor=pWaterVertexBuffer;
+				/*
 				*pCursor++=(float)vWaterMins.c[0];
 				*pCursor++=(float)dAbsWaterHeight;
 				*pCursor++=(float)vWaterMins.c[2];
@@ -844,6 +817,23 @@ bool CWorldManager::UpdateTerrain()
 				*pCursor++=(float)vWaterMaxs.c[0];
 				*pCursor++=(float)dAbsWaterHeight;
 				*pCursor++=(float)vWaterMins.c[2];
+				*/
+				*pCursor++=(float)m_TerrainWater.m_Config.vMins.c[0];
+				*pCursor++=(float)m_TerrainWater.m_Config.vMaxs.c[1];
+				*pCursor++=(float)m_TerrainWater.m_Config.vMins.c[2];
+				
+				*pCursor++=(float)m_TerrainWater.m_Config.vMins.c[0];
+				*pCursor++=(float)m_TerrainWater.m_Config.vMaxs.c[1];
+				*pCursor++=(float)m_TerrainWater.m_Config.vMaxs.c[2];
+				
+				*pCursor++=(float)m_TerrainWater.m_Config.vMaxs.c[0];
+				*pCursor++=(float)m_TerrainWater.m_Config.vMaxs.c[1];
+				*pCursor++=(float)m_TerrainWater.m_Config.vMaxs.c[2];
+				
+				*pCursor++=(float)m_TerrainWater.m_Config.vMaxs.c[0];
+				*pCursor++=(float)m_TerrainWater.m_Config.vMaxs.c[1];
+				*pCursor++=(float)m_TerrainWater.m_Config.vMins.c[2];
+				
 				m_WaterModel.m_piModel->SetRenderBufferVertexes(nWaterAnimation,nWaterFrame,m_pnWaterRenderBuffers[x],4,pWaterVertexBuffer);
 
 				float *pWaterNormalBuffer=new GLfloat[12];
@@ -960,7 +950,8 @@ CTraceInfo CWorldManager::GetTerrainTrace( CVector vPoint1 ,CVector vPoint2)
 	{
 		CVector vMins,vMaxs;
 		m_TerrainBaseModel.m_piModel->GetFrameBBox(0,0,&vMins,&vMaxs);
-		double dAbsWaterHeight=(vMaxs.c[1]-vMins.c[1])*m_TerrainWater.m_Config.dHeight+vMins.c[1];
+		//double dAbsWaterHeight=(vMaxs.c[1]-vMins.c[1])*m_TerrainWater.m_Config.dHeight+vMins.c[1];
+		double dAbsWaterHeight=m_TerrainWater.m_Config.vMaxs.c[1];
 		
 		CPlane waterPlane(CVector(0,1,0),dAbsWaterHeight);
 		double dSide1=waterPlane.GetSide(vPoint1);
@@ -1028,7 +1019,7 @@ void CWorldManager::SetupRenderingEnvironment( IGenericRender *piRender )
 {
 	if(m_TerrainFog.bEnabled)
 	{
-		piRender->ActivateHeightFog(m_TerrainFog.dStart,m_TerrainFog.dEnd,m_TerrainFog.vColor);
+		piRender->ActivateHeightFog(m_TerrainFog.vMins,m_TerrainFog.vMaxs,m_TerrainFog.vColor);
 	}
 	else
 	{

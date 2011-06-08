@@ -818,21 +818,19 @@ void CScenarioEditorMainWindow::RenderPlane(CVector vMins,CVector vMaxs,CVector 
 	glEnable(GL_TEXTURE_2D);
 }
 */
-void COpenGLRender::ActivateHeightFog(double dMinHeight,double dMaxHeight,const CVector &vColor)
+void COpenGLRender::ActivateHeightFog(const CVector &vMins,const CVector &vMaxs,const CVector &vColor)
 {
 	if(!m_sRenderOptions.bEnableHeightFog){return;}
 
 	SRenderState *pState=m_bStagedRendering?&m_sStagedRenderingState:&m_sRenderState;
 	pState->bActiveHeightFog=true;
-	pState->dHeightFogStart=dMinHeight;
-	pState->dHeightFogEnd=dMaxHeight;
+	pState->vHeightFogMins=vMins;
+	pState->vHeightFogMaxs=vMaxs;
 	pState->vHeightFogColor=vColor;
 
 	if(!m_bStagedRendering && m_bRenderingWithShader)
 	{
 		glFogf(GL_FOG_MODE,GL_LINEAR);
-		glFogf(GL_FOG_START,(float)dMinHeight);
-		glFogf(GL_FOG_END,(float)dMaxHeight);
 		float vHeightFogColor[3]={(float)vColor.c[0],(float)vColor.c[1],(float)vColor.c[2]};
 		glFogfv(GL_FOG_COLOR,vHeightFogColor);
 	}
@@ -2071,8 +2069,9 @@ void COpenGLRender::SetRenderState( const SRenderState &sNewState,bool bForce)
 	}
 	if(bForce || m_sRenderState.bActiveHeightFog!=sNewState.bActiveHeightFog)
 	{
-		sNewState.bActiveHeightFog?ActivateHeightFog(sNewState.dHeightFogStart,sNewState.dHeightFogEnd,sNewState.vHeightFogColor):DeactivateHeightFog();
+		sNewState.bActiveHeightFog?ActivateHeightFog(sNewState.vHeightFogMins,sNewState.vHeightFogMaxs,sNewState.vHeightFogColor):DeactivateHeightFog();
 	}
+	
 	if(m_bRenderingWithShader)
 	{
 		SShaderKey key(sNewState.bActiveHeightFog,m_sRenderOptions.bEnableShadows && m_bRenderingShadowReception,sNewState.bActiveTextures && m_sRenderOptions.bEnableTextures?m_mTextureLevels.size():0,m_sRenderOptions.bEnableLighting && sNewState.bActiveLighting,sNewState.bActiveWater);
@@ -2087,6 +2086,11 @@ void COpenGLRender::SetRenderState( const SRenderState &sNewState,bool bForce)
 		{
 			m_pCurrentShader->m_piShader->Activate();
 			if(key.bLighting){m_pCurrentShader->m_piShader->AddUniform("g_ActiveLights",(int)m_nActiveLights);}
+			if(key.bHeightFog)
+			{
+				m_pCurrentShader->m_piShader->AddUniform("g_vHeightFogMins",m_sRenderState.vHeightFogMins);
+				m_pCurrentShader->m_piShader->AddUniform("g_vHeightFogMaxs",m_sRenderState.vHeightFogMaxs);
+			}
 		}
 	}
 }

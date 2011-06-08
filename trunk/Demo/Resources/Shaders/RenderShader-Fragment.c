@@ -106,7 +106,7 @@ void main (void)
   
   #ifdef ENABLE_FOG
 	finalcolor= vec4(clamp(finalcolor.rgb, 0.0, 1.0),finalcolor.a);
-	finalcolor.rgb=mix(gl_Fog.color.rgb,finalcolor.rgb,g_fFogFactor);
+	finalcolor.rgb=mix(finalcolor.rgb,gl_Fog.color.rgb,g_fFogFactor);
   #endif
 
 	gl_FragColor=finalcolor;

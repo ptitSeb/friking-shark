@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=200.435349
 			NearPlane=130.000000
-			Posicion=1658.757936,198.570478,-0.938720
+			Posicion=1245.891254,198.570478,-7.579736
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -3863,6 +3863,60 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
+		Item148
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=270.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=0
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-857.047404,-54.434327,23.570678
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=Tent
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item149
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=90.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=0
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-848.106495,-72.877791,23.570678
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=Tent
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
 	}
 	EntityLayers
 	InclinacionVista=0.000000
@@ -3950,7 +4004,7 @@ AreaDeJuego
 }
 Terrain
 {
-	AmbientColor=0.320930,0.320930,0.320930
+	AmbientColor=0.374707,0.370907,0.336973
 	BaseModel
 	{
 		Class=Model
@@ -4116,8 +4170,8 @@ Terrain
 	{
 		Color=0.078919,0.135307,0.279639
 		Enabled=1
-		End=17.703619
-		Start=-0.466419
+		Maxs=1435.499268,17.705995,93.074379
+		Mins=-1234.992798,-0.864870,-93.074356
 	}
 	HeightLayers
 	{
@@ -4187,8 +4241,8 @@ Terrain
 	}
 	Sun
 	{
-		Azimuth=30.000000
-		Color=0.635309,0.635309,0.635309
+		Azimuth=60.000000
+		Color=0.707260,0.707260,0.707260
 		Distance=1.000000
 		Elevation=55.000000
 	}
@@ -4197,8 +4251,9 @@ Terrain
 		Config
 		{
 			Enabled=1
-			Height=0.760000
 			HorzResolution=50.500000
+			Maxs=1435.498901,17.705995,93.074379
+			Mins=-938.228394,-0.864870,-93.074356
 			Opacity=0.200000
 			Speed=0.110000
 			Texture1=./Textures/WaterB.jpg

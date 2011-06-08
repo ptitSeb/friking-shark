@@ -5,6 +5,8 @@
 //
 
 uniform int  g_ActiveLights;
+uniform vec3 g_vHeightFogMins;
+uniform vec3 g_vHeightFogMaxs;
 uniform mat4 CameraModelViewInverse;
 varying vec3 g_WorldVertexPos;
 #ifdef ENABLE_LIGHTING
@@ -93,9 +95,11 @@ void main (void)
 #endif
 
 #ifdef ENABLE_FOG
-	float fFogSize=gl_Fog.end-gl_Fog.start;
-	float fFogDist=WorldVertexPos.y-gl_Fog.start;
-	g_fFogFactor=fFogDist/fFogSize;
+	float fFogSize=g_vHeightFogMaxs.y-g_vHeightFogMins.y;
+	float fFogDist=WorldVertexPos.y-g_vHeightFogMins.y;
+	g_fFogFactor=1.0-fFogDist/fFogSize;
+ 	g_fFogFactor*=1.0-step(g_vHeightFogMaxs.x,WorldVertexPos.x);
+	g_fFogFactor*=step(g_vHeightFogMins.x,WorldVertexPos.x);
 	g_fFogFactor=clamp(g_fFogFactor,0.0,1.0);
 #endif
 	
