@@ -1471,6 +1471,9 @@ void CMatrix::Inverse()
 
 double CMatrix::Adjunt( int r,int c )
 {
+	if(c<0 || c>3){return 0;}
+	if(r<0 || r>3){return 0;}
+	
 	CMatrix33 minor;
 	int nDestx=0;
 	int nDesty=0;

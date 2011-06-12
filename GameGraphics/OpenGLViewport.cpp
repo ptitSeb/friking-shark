@@ -260,8 +260,8 @@ COpenGLViewport::COpenGLViewport(void)
 	m_bShowSystemMouseCursor=true;
 	m_pXDisplay=NULL;
 	m_pGLXContext=NULL;
-	m_pXColorMap=NULL;
-	m_pXHollowCursor=NULL;
+	m_pXColorMap=0;
+	m_pXHollowCursor=0;
 	m_XWindow=None;
 	m_XLastX=-1;
 	m_XLastY=-1;
@@ -535,7 +535,7 @@ void COpenGLViewport::Destroy()
 	{
 	  XUndefineCursor(m_pXDisplay,m_XWindow);
 	  XFreeCursor(m_pXDisplay,m_pXHollowCursor);
-	  m_pXHollowCursor=NULL;
+	  m_pXHollowCursor=0;
 	}
 
 	if(m_XWindow!=None)
@@ -548,7 +548,7 @@ void COpenGLViewport::Destroy()
 	if(m_pXColorMap)
 	{
 	  XFreeColormap(m_pXDisplay,m_pXColorMap);
-	  m_pXColorMap=NULL;
+	  m_pXColorMap=0;
 	}
 	if(m_pGLXContext)
 	{
