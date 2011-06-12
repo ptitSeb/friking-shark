@@ -180,7 +180,7 @@ void COpenGLRender::SetCamera(const CVector &vPosition,double dYaw, double dPitc
 
 		GLhandleARB hFakeShaderProgram=m_bIgnoreShaderSupport?0:glCreateProgramObjectARB();
 		m_sHardwareSupport.bShaders=(hFakeShaderProgram!=0);
-		if(hFakeShaderProgram){glDeleteObjectARB(hFakeShaderProgram);hFakeShaderProgram=NULL;}
+		if(hFakeShaderProgram){glDeleteObjectARB(hFakeShaderProgram);hFakeShaderProgram=0;}
 
 		glGetIntegerv(GL_MAX_LIGHTS,&m_sHardwareSupport.nMaxLights);
 		glGetIntegerv(GL_MAX_TEXTURE_UNITS,&m_sHardwareSupport.nMaxTextureUnits);

@@ -22,9 +22,9 @@
 
 COpenGLShader::COpenGLShader(void)
 {
-  m_hVertexShader=NULL;
-  m_hFragmentShader=NULL;
-  m_hShaderProgram=NULL;
+  m_hVertexShader=0;
+  m_hFragmentShader=0;
+  m_hShaderProgram=0;
   m_bTriedToCompile=false;
 }
 
@@ -156,9 +156,9 @@ bool COpenGLShader::Compile()
 
 void COpenGLShader::FreeShader()
 {
-  if(m_hVertexShader){glDetachObjectARB(m_hShaderProgram,m_hVertexShader);glDeleteObjectARB(m_hVertexShader);m_hVertexShader=NULL;}
-  if(m_hFragmentShader){glDetachObjectARB(m_hShaderProgram,m_hFragmentShader);glDeleteObjectARB(m_hFragmentShader);m_hFragmentShader=NULL;}
-  if(m_hShaderProgram){glDeleteObjectARB(m_hShaderProgram);m_hShaderProgram=NULL;}
+  if(m_hVertexShader){glDetachObjectARB(m_hShaderProgram,m_hVertexShader);glDeleteObjectARB(m_hVertexShader);m_hVertexShader=0;}
+  if(m_hFragmentShader){glDetachObjectARB(m_hShaderProgram,m_hFragmentShader);glDeleteObjectARB(m_hFragmentShader);m_hFragmentShader=0;}
+  if(m_hShaderProgram){glDeleteObjectARB(m_hShaderProgram);m_hShaderProgram=0;}
   std::map<std::string,SUniformData>::iterator i;
   for(i=m_mUniforms.begin();i!=m_mUniforms.end();i++)
   {
@@ -317,7 +317,7 @@ void COpenGLShader::AddUniform( std::string sUniformName,const CVector &vColor, 
 
 void COpenGLShader::Deactivate()
 {
-  if(m_hShaderProgram){glUseProgramObjectARB(NULL);}
+  if(m_hShaderProgram){glUseProgramObjectARB(0);}
 }
 
 bool COpenGLShader::Unserialize(ISystemPersistencyNode *piNode)

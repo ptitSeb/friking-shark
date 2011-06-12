@@ -17,7 +17,7 @@ StdAfx.cpp
 CFLAGS += -DNDEBUG -pedantic -pedantic-errors -Wall -Werror  -D_REENTRANT -O3 -MMD -g
 CFLAGS_DEBUG += -DDEBUG  -pedantic -pedantic-errors -Wall -Werror  -D_REENTRANT -MMD -g
 
-LIBS = ../GameRunTimeLib/lib/GameRuntimeLib.a 
+LIBS = ../GameRunTimeLib/lib/GameRuntimeLib.a
 LIBS_DEBUG = ../GameRunTimeLib/lib/GameRuntimeLibd.a
 
 INTERMEDIATE_DIR = ./.intermediate
@@ -29,11 +29,11 @@ debug: ../Demo/Bin/Debug/GameEngine
 
 ../Demo/Bin/Release/GameEngine: $(OUT_SOURCES:.cpp=.o) $(LIBS) 
 	cp ../Demo/Bin/Release/GameRuntime.so .
-	$(CC) -o ../Demo/Bin/Release/GameEngine .intermediate/*.o $(CFLAGS) $(LIBS) ./GameRuntime.so -lpthread
+	$(CC) -o ../Demo/Bin/Release/GameEngine  -lstdc++ .intermediate/*.o $(CFLAGS) $(LIBS) ./GameRuntime.so -lpthread
 
 ../Demo/Bin/Debug/GameEngine: $(OUT_SOURCES:.cpp=.od) $(LIBS_DEBUG) 
 	cp ../Demo/Bin/Debug/GameRuntime.so .
-	$(CC) -o ../Demo/Bin/Debug/GameEngine .intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG) ./GameRuntime.so -lpthread
+	$(CC) -o ../Demo/Bin/Debug/GameEngine  -lstdc++ .intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG) ./GameRuntime.so -lpthread
 
 $(INTERMEDIATE_DIR)/%.o: ./%.cpp
 	$(CXX) -MF $@.dep -o $@ -c $(DFLAGS) $(CFLAGS) $(INCLUDES) $<
