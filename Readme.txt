@@ -7,8 +7,13 @@ How to build:
 	libXrandr-devel.i386
 	libopenal-dev 
 	libalut-dev
+	libogg-dev
+	libvorbis-dev
 
 2) Run "make". Faster with make -j<number of cpus> :)
+
+	The global makefile at the root folder  is just a batch calling the makefiles on the other folders.
+	It does not stop if a project compilation fails, run more than once to be sure it built correctly.
 
 
 How to use:
