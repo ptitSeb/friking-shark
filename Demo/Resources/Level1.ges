@@ -95,7 +95,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Muelle2
+					Name=HarborTypeC
 					System=EntityTypes
 				}
 			}
@@ -233,7 +233,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Muelle3
+					Name=HarborTypeD
 					System=EntityTypes
 				}
 			}
@@ -368,7 +368,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Muelle0
+					Name=HarborTypeA
 					System=EntityTypes
 				}
 			}
@@ -512,7 +512,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Muelle1
+					Name=HarborTypeB
 					System=EntityTypes
 				}
 			}
@@ -3915,7 +3915,7 @@ Terrain
 		Class=Texture
 		Data
 		{
-			Archivo=ColorMap.bmp
+			Archivo=Level1TerrainColorMap.bmp
 			ArchivoAlpha=""
 			ColorKey=0.000000,0.000000,0.000000
 			UsarColorKey=0
@@ -3923,7 +3923,7 @@ Terrain
 		Name=""
 		System=GameResources
 	}
-	ColorMapFile=ColorMap.bmp
+	ColorMapFile=Level1TerrainColorMap.bmp
 	Fog
 	{
 		Color=0.061294,0.131579,0.037134
