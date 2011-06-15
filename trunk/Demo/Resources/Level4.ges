@@ -1,6 +1,6 @@
 AreaDeJuego
 {
-	AlturaJuego=50.000000
+	AlturaJuego=55.000000
 	Camara
 	{
 		Class=Camera
@@ -9,15 +9,15 @@ AreaDeJuego
 			AnguloVisualizacion=60.000000
 			Angulos=0.000000,-90.000000,0.000000
 			AspectRatio=0.700000
-			FarPlane=195.729521
-			NearPlane=125.000000
-			Posicion=1294.121376,193.483138,5.067352
+			FarPlane=212.458680
+			NearPlane=130.000000
+			Posicion=-81.463199,203.483138,1.161011
 		}
 		Name=PlayCamera
 		System=GameSystem
 	}
-	Destino=1983.918317,-0.000576,58.483138
-	DistanciaCamara=135.000000
+	Destino=1974.259733,-1.161011,63.483138
+	DistanciaCamara=140.000000
 	Elementos
 	{
 		Item000
@@ -25,7 +25,7 @@ AreaDeJuego
 			Class=CPlayAreaCheckPoint
 			Data
 			{
-				Posicion=-927.046638,-0.000576,58.483138
+				Posicion=-932.363126,-1.161011,63.483138
 			}
 			Name=""
 			System=GameSystem
@@ -35,7 +35,7 @@ AreaDeJuego
 			Class=CPlayAreaCheckPoint
 			Data
 			{
-				Posicion=-225.660447,-0.000576,58.483138
+				Posicion=-230.973800,-0.000576,63.483138
 			}
 			Name=""
 			System=GameSystem
@@ -45,7 +45,7 @@ AreaDeJuego
 			Class=CPlayAreaCheckPoint
 			Data
 			{
-				Posicion=599.736361,-0.000576,58.483138
+				Posicion=596.262143,-0.000576,63.483138
 			}
 			Name=""
 			System=GameSystem
@@ -55,7 +55,7 @@ AreaDeJuego
 			Class=CPlayAreaCheckPoint
 			Data
 			{
-				Posicion=865.826376,-0.000576,58.483138
+				Posicion=875.983890,-0.000576,63.483138
 			}
 			Name=""
 			System=GameSystem
@@ -388,7 +388,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-1311.124249,-20.850094,5.386783
+				Posicion=-1315.534133,-23.397977,5.386783
 				RouteDelay=0
 				Ruta
 				{
@@ -415,7 +415,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-1282.722216,77.578669,5.386783
+				Posicion=-1255.266287,79.313458,5.386783
 				RouteDelay=0
 				Ruta
 				{
@@ -442,7 +442,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-64.546324,30.355256,2.426796
+				Posicion=-36.546324,30.355256,2.426796
 				RouteDelay=0
 				Ruta
 				{
@@ -469,7 +469,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=697.049039,29.440966,2.426796
+				Posicion=686.049039,29.440966,2.426796
 				RouteDelay=0
 				Ruta
 				{
@@ -496,7 +496,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-551.814546,-35.693998,2.426796
+				Posicion=-555.814546,-35.693998,2.426796
 				RouteDelay=0
 				Ruta
 				{
@@ -523,7 +523,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-553.471252,-52.073130,2.426796
+				Posicion=-555.814546,-52.073130,2.426796
 				RouteDelay=0
 				Ruta
 				{
@@ -550,7 +550,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-555.161181,-68.621112,2.426796
+				Posicion=-555.814546,-68.621112,2.426796
 				RouteDelay=0
 				Ruta
 				{
@@ -631,7 +631,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-23.812907,-57.734907,2.426796
+				Posicion=-24.409212,-57.734907,2.426796
 				RouteDelay=0
 				Ruta
 				{
@@ -652,7 +652,7 @@ AreaDeJuego
 			Class=CPlayAreaCheckPoint
 			Data
 			{
-				Posicion=-621.795098,-0.000576,58.483138
+				Posicion=-625.995845,-0.000576,63.483138
 			}
 			Name=""
 			System=GameSystem
@@ -722,7 +722,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-185.095330,-57.532887,2.361388
+				Posicion=-186.567221,-57.532887,2.361388
 				RouteDelay=0
 				Ruta
 				{
@@ -776,7 +776,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-307.061690,11.714104,-1.081627
+				Posicion=-306.692131,11.714104,-1.081627
 				RouteDelay=0
 				Ruta
 				{
@@ -803,7 +803,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-1118.750366,48.304323,5.386783
+				Posicion=-1118.750366,45.304323,5.386783
 				RouteDelay=0
 				Ruta
 				{
@@ -1127,7 +1127,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-1068.794740,57.728769,6.231155
+				Posicion=-1068.785549,57.617073,5.386783
 				RouteDelay=0
 				Ruta
 				{
@@ -1136,7 +1136,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=BoxTypeABig
+					Name=BoxTypeAMedium
 					System=EntityTypes
 				}
 			}
@@ -1289,7 +1289,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-1173.927859,-47.614664,10.713470
+				Posicion=-1174.868335,-47.659428,9.965220
 				RouteDelay=0
 				Ruta
 				{
@@ -1316,7 +1316,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-1142.838751,-45.676867,10.713471
+				Posicion=-1143.970656,-47.035227,9.965221
 				RouteDelay=0
 				Ruta
 				{
@@ -1343,7 +1343,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-1112.032362,-96.026977,10.713471
+				Posicion=-1113.065111,-95.128536,9.965221
 				RouteDelay=0
 				Ruta
 				{
@@ -1370,7 +1370,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-1088.954541,-95.633806,10.713471
+				Posicion=-1089.410508,-95.205053,9.965221
 				RouteDelay=0
 				Ruta
 				{
@@ -1397,7 +1397,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-1065.487598,-95.633806,10.713471
+				Posicion=-1065.499519,-95.135633,9.965221
 				RouteDelay=0
 				Ruta
 				{
@@ -1424,7 +1424,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-1184.001777,-96.026977,10.713471
+				Posicion=-1184.829483,-95.057556,9.965221
 				RouteDelay=0
 				Ruta
 				{
@@ -1451,7 +1451,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-1159.751213,-96.026977,10.713471
+				Posicion=-1160.136290,-95.401333,9.965221
 				RouteDelay=0
 				Ruta
 				{
@@ -4179,6 +4179,215 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
+		Item146
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=0
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-1346.036661,-76.437731,5.386783
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=BlueCrapHouse
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item147
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=90.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=0
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-1322.502597,78.257131,5.386783
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=WarehouseTypeC
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item148
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=0
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-1396.503380,-79.550160,-7.975342
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=Level4BaseMetalColumns
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item149
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=0
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-1404.775537,-45.555527,5.386783
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=BoxTypeABig
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item150
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=0
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-1343.607870,49.526355,4.248837
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=DecoRedFighter
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item151
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=0
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-1330.824700,49.526355,4.248837
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=DecoRedFighter
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item152
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=0
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-1414.592200,66.632254,5.386783
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=WarehouseTypeD
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item153
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-396.260697,-0.000576,63.483138
+				Tipo
+				{
+					Name=ArrowRed
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
 	}
 	EntityLayers
 	{
@@ -4213,31 +4422,31 @@ AreaDeJuego
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=1943.918317,58.483138,0.000576
+				Posicion=1934.259733,63.483138,1.161011
 			}
 			Item1
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=1983.918317,58.483138,0.000576
+				Posicion=1974.259733,63.483138,1.161011
 			}
 			Item2
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=2037.014873,8.386783,0.000576
+				Posicion=2032.356288,8.386783,1.161011
 			}
 			Item3
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=2090.111428,8.386783,0.000576
+				Posicion=2090.452844,8.386783,1.161011
 			}
 		}
 	}
 	MaximoScrollHorz=10.000000
 	Music
-	Origen=-1204.360456,-0.000576,58.483138
+	Origen=-1282.873869,-1.161011,63.483138
 	TakeOffEnabled=1
 	TakeOffRoute
 	{
@@ -4248,25 +4457,25 @@ AreaDeJuego
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=-1310.553567,8.386783,0.000576
+				Posicion=-1399.066978,8.386783,1.161011
 			}
 			Item1
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=-1257.457011,8.386783,0.000576
+				Posicion=-1340.970424,8.386783,1.161011
 			}
 			Item2
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=-1204.360456,58.483138,0.000576
+				Posicion=-1282.873869,63.483138,1.161011
 			}
 			Item3
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=-1164.360456,58.483138,0.000576
+				Posicion=-1242.873869,63.483138,1.161011
 			}
 		}
 	}
@@ -4296,11 +4505,11 @@ Terrain
 			Config
 			{
 				AbrupEnd=0
-				Color=0.572549,0.945098,0.662745
+				Color=0.725490,0.262745,0.843137
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
 				HorzResolution=5.000000
-				Texture=./Textures/hiervsPeq.jpg
+				Texture=./Textures/ArenaOscura.jpg
 				VertResolution=5.000000
 			}
 			Texture
@@ -4308,7 +4517,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=./Textures/hiervsPeq.jpg
+					Archivo=./Textures/ArenaOscura.jpg
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -4347,7 +4556,7 @@ Terrain
 		{
 			Config
 			{
-				AbrupEnd=1
+				AbrupEnd=0
 				Color=0.843137,0.670588,0.262745
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
@@ -4374,6 +4583,32 @@ Terrain
 			Config
 			{
 				AbrupEnd=0
+				Color=0.572549,0.945098,0.662745
+				ColorSaturationMargin=1.000000
+				ColorValueMargin=0.010000
+				HorzResolution=5.000000
+				Texture=./Textures/hiervsPeq.jpg
+				VertResolution=5.000000
+			}
+			Texture
+			{
+				Class=Texture
+				Data
+				{
+					Archivo=./Textures/hiervsPeq.jpg
+					ArchivoAlpha=""
+					ColorKey=0.000000,0.000000,0.000000
+					UsarColorKey=0
+				}
+				Name=""
+				System=GameResources
+			}
+		}
+		Item4
+		{
+			Config
+			{
+				AbrupEnd=0
 				Color=0.000000,0.701961,0.800000
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
@@ -4395,7 +4630,7 @@ Terrain
 				System=GameResources
 			}
 		}
-		Item4
+		Item5
 		{
 			Config
 			{
@@ -4405,7 +4640,7 @@ Terrain
 				ColorValueMargin=0.010000
 				HorzResolution=4.000000
 				Texture=./Textures/Dirt.jpg
-				VertResolution=3.500000
+				VertResolution=2.000000
 			}
 			Texture
 			{
@@ -4421,7 +4656,7 @@ Terrain
 				System=GameResources
 			}
 		}
-		Item5
+		Item6
 		{
 			Config
 			{
@@ -4447,7 +4682,7 @@ Terrain
 				System=GameResources
 			}
 		}
-		Item6
+		Item7
 		{
 			Config
 			{

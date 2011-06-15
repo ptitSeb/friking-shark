@@ -88,7 +88,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Muelle2
+					Name=HarborTypeC
 					System=EntityTypes
 				}
 			}
@@ -211,7 +211,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Muelle3
+					Name=HarborTypeD
 					System=EntityTypes
 				}
 			}
@@ -322,7 +322,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Muelle0
+					Name=HarborTypeA
 					System=EntityTypes
 				}
 			}
@@ -448,7 +448,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Muelle1
+					Name=HarborTypeB
 					System=EntityTypes
 				}
 			}
@@ -1084,7 +1084,7 @@ Terrain
 		Class=Model
 		Data
 		{
-			Archivo=TextureTester.ase
+			Archivo=Level1Terrain.ase
 			AutoGenerateBSP=1
 			AutoUpdateBSP=1
 			LoadBSP=1
@@ -1092,7 +1092,7 @@ Terrain
 		Name=""
 		System=GameResources
 	}
-	BaseModelFile=TextureTester.ase
+	BaseModelFile=Level1Terrain.ase
 	ColorLayers
 	{
 		Item000

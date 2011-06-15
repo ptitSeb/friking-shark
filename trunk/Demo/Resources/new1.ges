@@ -9,9 +9,9 @@ AreaDeJuego
 			AnguloVisualizacion=60.000000
 			Angulos=0.000000,-90.000000,0.000000
 			AspectRatio=0.700000
-			FarPlane=10000.000000
-			NearPlane=10.000000
-			Posicion=141.914251,227.965199,4.682201
+			FarPlane=201.681898
+			NearPlane=130.000000
+			Posicion=94.329251,227.965199,4.682201
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -52,23 +52,39 @@ AreaDeJuego
 		}
 		Item3
 		{
-			Class=CPlayAreaFormation
+			Class=CPlayAreaEntity
 			Data
 			{
-				AlternativeBonus
-				AlternativeType
+				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=92.688514,5.336136,52.965399
+				RouteDelay=0
+				Ruta
 				{
-					Name=PointsBonus
-					System=EntityTypes
+					Ciclica=0
+					Puntos
+					{
+						Item0
+						{
+							Absoluto=1
+							Pause=0
+							Posicion=127.541499,52.965399,16.387844
+						}
+						Item1
+						{
+							Absoluto=1
+							Pause=0
+							Posicion=127.541499,52.965399,58.740061
+						}
+					}
 				}
-				ConditionType=0
-				ConditionValue=0
-				Posicion=-10.849363,-4.682201,87.965199
 				Tipo
 				{
-					Name=2-ROOKIE-DCH
-					System=FormationTypes
+					Name=Tank
+					System=EntityTypes
 				}
 			}
 			Name=""
@@ -76,31 +92,25 @@ AreaDeJuego
 		}
 		Item4
 		{
-			Class=CPlayAreaFormation
+			Class=CPlayAreaEntity
 			Data
 			{
-				AlternativeBonus
-				{
-					Name=BombBonus
-					System=EntityTypes
-				}
-				AlternativeType
-				{
-					Name=Formacion6
-					System=FormationTypes
-				}
+				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=83.220820,11.776714,52.965399
+				RouteDelay=0
+				Ruta
 				{
-					Name=WeaponBonus
-					System=EntityTypes
+					Ciclica=0
+					Puntos
 				}
-				ConditionType=1
-				ConditionValue=1
-				Posicion=173.214119,-4.682201,87.965199
 				Tipo
 				{
-					Name=WEAP-RIGHT-CIRCLE
-					System=FormationTypes
+					Name=CaveBunker
+					System=EntityTypes
 				}
 			}
 			Name=""
@@ -118,21 +128,25 @@ AreaDeJuego
 			Item0
 			{
 				Absoluto=1
+				Pause=0
 				Posicion=0.000000,0.000000,0.000000
 			}
 			Item1
 			{
 				Absoluto=1
+				Pause=0
 				Posicion=0.000000,0.000000,0.000000
 			}
 			Item2
 			{
 				Absoluto=1
+				Pause=0
 				Posicion=0.000000,0.000000,0.000000
 			}
 			Item3
 			{
 				Absoluto=1
+				Pause=0
 				Posicion=0.000000,0.000000,0.000000
 			}
 		}
@@ -148,26 +162,30 @@ AreaDeJuego
 			Item0
 			{
 				Absoluto=1
+				Pause=0
 				Posicion=0.000000,0.000000,0.000000
 			}
 			Item1
 			{
 				Absoluto=1
+				Pause=0
 				Posicion=0.000000,0.000000,0.000000
 			}
 			Item2
 			{
 				Absoluto=1
+				Pause=0
 				Posicion=0.000000,0.000000,0.000000
 			}
 			Item3
 			{
 				Absoluto=1
+				Pause=0
 				Posicion=0.000000,0.000000,0.000000
 			}
 		}
 	}
-	VelocidadCamara=25.000000
+	VelocidadCamara=15.000000
 }
 Terrain
 {
@@ -177,7 +195,7 @@ Terrain
 		Class=Model
 		Data
 		{
-			Archivo=./Models/TextureTester.ase
+			Archivo=./Models/Level1Terrain.ase
 			AutoGenerateBSP=1
 			AutoUpdateBSP=1
 			LoadBSP=1
@@ -185,7 +203,7 @@ Terrain
 		Name=""
 		System=GameResources
 	}
-	BaseModelFile=./Models/TextureTester.ase
+	BaseModelFile=./Models/Level1Terrain.ase
 	ColorLayers
 	ColorMap
 	{
@@ -218,7 +236,7 @@ Terrain
 				HorzResolution=2.500000
 				MaxHeight=0.300000
 				MinHeight=0.000000
-				Texture=hiervsPeq.jpg
+				Texture=./Textures/rtrock_1.jpg
 				VertResolution=2.500000
 			}
 			Texture
@@ -226,7 +244,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=hiervsPeq.jpg
+					Archivo=./Textures/rtrock_1.jpg
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -310,21 +328,21 @@ Terrain
 	{
 		Config
 		{
-			Enabled=0
-			Height=0.080000
-			HorzResolution=4.000000
+			Enabled=1
+			Height=0.700000
+			HorzResolution=10.000000
 			Opacity=0.200000
-			Speed=0.000000
-			Texture1=rtice_1.bmp
+			Speed=0.025000
+			Texture1=./Textures/rtrock_1.jpg
 			Texture2=hiervsPeq.jpg
-			VertResolution=3.000000
+			VertResolution=5.500000
 		}
 		Texture1
 		{
 			Class=Texture
 			Data
 			{
-				Archivo=rtice_1.bmp
+				Archivo=./Textures/rtrock_1.jpg
 				ArchivoAlpha=""
 				ColorKey=0.000000,0.000000,0.000000
 				UsarColorKey=0
