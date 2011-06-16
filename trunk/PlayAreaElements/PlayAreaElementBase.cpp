@@ -42,3 +42,15 @@ bool Util_IsInPlayArea(CVector vPosition,SPlayAreaInfo *pInfo)
     }
     return true;
 }
+
+bool Util_IsInPlayArea(CVector vPosition,double dRadius,SPlayAreaInfo *pInfo)
+{
+	for(int x=0;x<pInfo->nPlaneCount;x++)
+	{
+		double dMinSide,dMaxSide;
+		dMinSide=pInfo->planes[x].GetSide(vPosition-CVector(dRadius,0,0));
+		dMaxSide=pInfo->planes[x].GetSide(vPosition+CVector(dRadius,0,0));
+		if(dMinSide>0 && dMaxSide>0){return false;}
+	}
+	return true;
+}

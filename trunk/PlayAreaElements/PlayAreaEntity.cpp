@@ -51,7 +51,7 @@ bool CPlayAreaEntity::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInf
 	if(m_bFirstFrame)
 	{
 		m_bFirstFrame=false;
-		if(!m_bDynamic && Util_IsInPlayArea(m_vPosition,pAreaInfo))
+		if(!m_bDynamic && Util_IsInPlayArea(m_vPosition,m_dRadius,pAreaInfo))
 		{
 			SEntityTypeConfig sConfig;
 			IEntityTypeDesign *piDesign=QI(IEntityTypeDesign,m_EntityType.m_piEntityType);
@@ -63,10 +63,7 @@ bool CPlayAreaEntity::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInf
 	   
 	if(!m_bActive && !m_bDoNotActivate)
 	{
-		bool bCurrentlyInPlayArea=Util_IsInPlayArea(m_vPosition,pAreaInfo);
-		bCurrentlyInPlayArea=bCurrentlyInPlayArea||Util_IsInPlayArea(m_vPosition-CVector(m_dRadius,0,0),pAreaInfo);
-		bCurrentlyInPlayArea=bCurrentlyInPlayArea||Util_IsInPlayArea(m_vPosition+CVector(m_dRadius,0,0),pAreaInfo);
-		
+		bool bCurrentlyInPlayArea=Util_IsInPlayArea(m_vPosition,m_dRadius,pAreaInfo);
 		if(bCurrentlyInPlayArea)
 		{
 			Activate(dwCurrentTime);
@@ -98,9 +95,7 @@ bool CPlayAreaEntity::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInf
 		for(i=m_sEntities.begin();i!=m_sEntities.end();)
 		{
 			IEntity *piEntity=*i;
-			bool bEntityCurrentlyInPlayArea=Util_IsInPlayArea(piEntity->GetPhysicInfo()->vPosition,pAreaInfo);
-			bEntityCurrentlyInPlayArea=bEntityCurrentlyInPlayArea||Util_IsInPlayArea(piEntity->GetPhysicInfo()->vPosition-CVector(m_dRadius,0,0),pAreaInfo);
-			bEntityCurrentlyInPlayArea=bEntityCurrentlyInPlayArea||Util_IsInPlayArea(piEntity->GetPhysicInfo()->vPosition+CVector(m_dRadius,0,0),pAreaInfo);
+			bool bEntityCurrentlyInPlayArea=Util_IsInPlayArea(piEntity->GetPhysicInfo()->vPosition,m_dRadius,pAreaInfo);
 			if(!bEntityCurrentlyInPlayArea && piEntity->HasFinishedRoute())
 			{
 				m_sEntities.erase(i++);
@@ -112,10 +107,7 @@ bool CPlayAreaEntity::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInf
 		}
 		if(m_nCreatedEntities==m_nEntityCount && m_sEntities.size()==0)
 		{
-			bool bCurrentlyInPlayArea=Util_IsInPlayArea(m_vPosition,pAreaInfo);
-			bCurrentlyInPlayArea=bCurrentlyInPlayArea||Util_IsInPlayArea(m_vPosition-CVector(m_dRadius,0,0),pAreaInfo);
-			bCurrentlyInPlayArea=bCurrentlyInPlayArea||Util_IsInPlayArea(m_vPosition+CVector(m_dRadius,0,0),pAreaInfo);
-			
+			bool bCurrentlyInPlayArea=Util_IsInPlayArea(m_vPosition,m_dRadius,pAreaInfo);
 			if(!bCurrentlyInPlayArea){Deactivate();}
 		}
 	}
