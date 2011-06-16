@@ -40,3 +40,5 @@ public:
 };
 
 bool Util_IsInPlayArea(CVector vPosition,SPlayAreaInfo *pInfo);
+bool Util_IsInPlayArea(CVector vPosition,double dRadius,SPlayAreaInfo *pInfo);
+
