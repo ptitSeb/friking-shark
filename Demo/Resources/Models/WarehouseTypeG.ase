@@ -1,5 +1,5 @@
 *3DSMAX_ASCIIEXPORT	200
-*COMMENT "Exported from Blender 249 - Mon Jun 13 07:41:07 2011"
+*COMMENT "Exported from Blender 249 - Thu Jun 16 02:13:05 2011"
 *SCENE {
 	*SCENE_FILENAME "WarehouseTypeG.blend"
 	*SCENE_FIRSTFRAME 1
@@ -26,6 +26,26 @@
 		*MATERIAL_SELFILLUM 0.0000
 		*MATERIAL_FALLOFF In
 		*MATERIAL_XP_TYPE Filter
+		*MAP_DIFFUSE {
+			*MAP_NAME "Tex"
+			*MAP_CLASS "Bitmap"
+			*MAP_SUBNO 1
+			*MAP_AMOUNT 1.0000
+			*BITMAP "/home/javi/workspace/Game/Demo/Resources/Textures/WarehouseTypeG.jpg"
+			*MAP_TYPE Screen
+			*UVW_U_OFFSET 0.0000
+			*UVW_V_OFFSET 0.0000
+			*UVW_U_TILING 1.0000
+			*UVW_V_TILING 1.0000
+			*UVW_ANGLE 0.0000
+			*UVW_BLUR 1.0000
+			*UVW_BLUR_OFFSET 0.0000
+			*UVW_NOUSE_AMT 1.0000
+			*UVW_NOISE_SIZE 1.0000
+			*UVW_NOISE_LEVEL 1
+			*UVW_NOISE_PHASE 0.0000
+			*BITMAP_FILTER Pyramidal
+		}
 	}
 }
 *GEOMOBJECT {

@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=212.458680
 			NearPlane=130.000000
-			Posicion=-81.463199,203.483138,1.161011
+			Posicion=385.436200,203.483138,-3.648992
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -4388,6 +4388,141 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
+		Item154
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=0
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-43.582442,-16.356455,8.483338
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=Level4RailwayStopMarks
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item155
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=90.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=0
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-194.655454,80.582891,5.386783
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=WarehouseTypeO
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item156
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=90.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=0
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-252.315485,80.209083,5.386783
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=WarehouseTypeO
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item157
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=0
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=145.542858,90.737100,5.386783
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=WarehouseTypeF
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item158
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=90.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=0
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=915.209234,86.189820,8.483338
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=WarehouseTypeN
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
 	}
 	EntityLayers
 	{
@@ -4638,16 +4773,16 @@ Terrain
 				Color=0.439216,0.333333,0.000000
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
-				HorzResolution=4.000000
-				Texture=./Textures/Dirt.jpg
-				VertResolution=2.000000
+				HorzResolution=8.000000
+				Texture=./Textures/DirtRocky.jpg
+				VertResolution=8.000000
 			}
 			Texture
 			{
 				Class=Texture
 				Data
 				{
-					Archivo=./Textures/Dirt.jpg
+					Archivo=./Textures/DirtRocky.jpg
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -4664,7 +4799,7 @@ Terrain
 				Color=1.000000,0.360784,0.752941
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
-				HorzResolution=3.500000
+				HorzResolution=5.500000
 				Texture=./Textures/LightWood.jpg
 				VertResolution=9.500000
 			}
