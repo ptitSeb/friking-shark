@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=212.458680
 			NearPlane=130.000000
-			Posicion=287.982754,203.483138,3.384655
+			Posicion=118.767879,203.483138,11.161011
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -2845,7 +2845,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Truck
+					Name=GreenTank
 					System=EntityTypes
 				}
 			}
@@ -2872,7 +2872,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Truck
+					Name=GreenTank
 					System=EntityTypes
 				}
 			}
