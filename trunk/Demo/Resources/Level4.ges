@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=212.458680
 			NearPlane=130.000000
-			Posicion=-790.115294,203.483138,3.994326
+			Posicion=287.982754,203.483138,3.384655
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -4435,7 +4435,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=WarehouseTypeO
+					Name=Level3BaseWarehouseTypeB
 					System=EntityTypes
 				}
 			}
@@ -4462,7 +4462,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=WarehouseTypeO
+					Name=Level3BaseWarehouseTypeB
 					System=EntityTypes
 				}
 			}
@@ -4523,6 +4523,166 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
+		Item159
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=0
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=1986.491630,-17.896894,5.386783
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=Level5BaseTerrain
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item160
+		{
+			Class=CPlayAreaCheckPoint
+			Data
+			{
+				Posicion=1805.985844,-1.161011,63.483138
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item161
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=-1
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=86.591536,-41.205407,2.426796
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+					{
+						Item0
+						{
+							Absoluto=1
+							Pause=0
+							Posicion=-179.690452,2.426796,41.205407
+						}
+					}
+				}
+				Tipo
+				{
+					Name=TrainTypeB
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item162
+		{
+			Class=CPlayAreaCheckPoint
+			Data
+			{
+				Posicion=-94.922246,-1.161011,63.483138
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item163
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Bonus
+				{
+					Name=BombBonus
+					System=EntityTypes
+				}
+				BonusOnChild=2
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=55.887537,-57.515257,2.426796
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+					{
+						Item0
+						{
+							Absoluto=1
+							Pause=0
+							Posicion=-166.130918,2.426796,57.515257
+						}
+					}
+				}
+				Tipo
+				{
+					Name=TrainTypeC
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item164
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Bonus
+				{
+					Name=BombBonus
+					System=EntityTypes
+				}
+				BonusOnChild=2
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-27.491460,-24.814037,2.426796
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+					{
+						Item0
+						{
+							Absoluto=1
+							Pause=0
+							Posicion=-255.032796,2.426796,24.814037
+						}
+					}
+				}
+				Tipo
+				{
+					Name=TrainTypeA
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
 	}
 	EntityLayers
 	{
@@ -4557,25 +4717,25 @@ AreaDeJuego
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=1934.259733,63.483138,1.161011
+				Posicion=1859.234013,63.483138,1.161011
 			}
 			Item1
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=1974.259733,63.483138,1.161011
+				Posicion=1895.814643,63.483138,1.161011
 			}
 			Item2
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=2032.356288,8.386783,1.161011
+				Posicion=1975.028703,8.386783,1.161011
 			}
 			Item3
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=2090.452844,8.386783,1.161011
+				Posicion=2039.072665,8.386783,1.161011
 			}
 		}
 	}
