@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=202.395636
 			NearPlane=130.000000
-			Posicion=1030.725631,228.678936,0.282809
+			Posicion=971.751765,228.678936,12.167422
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -3813,16 +3813,16 @@ Terrain
 				Color=0.000000,1.000000,1.000000
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
-				HorzResolution=4.000000
-				Texture=Azulejos.jpg
-				VertResolution=4.000000
+				HorzResolution=3.000000
+				Texture=./Textures/Tiles.jpg
+				VertResolution=3.000000
 			}
 			Texture
 			{
 				Class=Texture
 				Data
 				{
-					Archivo=Azulejos.jpg
+					Archivo=./Textures/Tiles.jpg
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -3865,16 +3865,16 @@ Terrain
 				Color=0.972549,0.172549,0.945098
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
-				HorzResolution=4.000000
-				Texture=./Textures/Azulejos.jpg
-				VertResolution=4.000000
+				HorzResolution=3.000000
+				Texture=./Textures/Tiles.jpg
+				VertResolution=3.000000
 			}
 			Texture
 			{
 				Class=Texture
 				Data
 				{
-					Archivo=./Textures/Azulejos.jpg
+					Archivo=./Textures/Tiles.jpg
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
