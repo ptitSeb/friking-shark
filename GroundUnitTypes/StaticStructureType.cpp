@@ -101,7 +101,7 @@ void CStaticStructure::ProcessFrame(unsigned int dwCurrentTime,double dTimeFract
 	
 	if(m_piTarget && dwCurrentTime>m_dwNextShotTime && m_vWeapons.size())
 	{
-		bool bVisible=g_PlayAreaManagerWrapper.m_piInterface && g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,m_dRadius,true);
+		bool bVisible=g_PlayAreaManagerWrapper.m_piInterface && g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,0);
 		if(bVisible)
 		{
 			FireWeapon(0,dwCurrentTime);

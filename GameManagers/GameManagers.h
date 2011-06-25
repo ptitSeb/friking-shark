@@ -565,7 +565,7 @@ struct IPlayAreaManager:virtual public ISystemUnknown
 	virtual void ProcessInput(IGameGUIManager *piManager)=0;
 	virtual bool IsScenarioCompleted()=0;
 
-	virtual bool IsVisible(CVector vPos,double dRadius,bool bWithScroll)=0;
+	virtual bool IsVisible(CVector vPos,double dRadius)=0;
 
 	virtual void CreateDynamicEntityElement(IEntityType *piEntityType,CVector vPosition,CVector vAngles,IPlayAreaEntity **ppiElement)=0;
 	

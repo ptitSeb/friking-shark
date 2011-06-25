@@ -829,13 +829,23 @@ void CPlayAreaManager::OnKilled(IEntity *piEntity)
 	}
 }
 
-bool CPlayAreaManager::IsVisible(CVector vPos,double dRadius,bool bWithScroll)
+bool CPlayAreaManager::IsVisible(CVector vPos,double dRadius)
 {
-	double dToAdd=bWithScroll?m_dPlayMovementMaxHorzScroll:0;
-	bool bHidden=((vPos.c[0]+dRadius)<(m_vVisibleAirPlayAreaMins.c[0]-dToAdd)||
-	(vPos.c[0]-dRadius)>(m_vVisibleAirPlayAreaMaxs.c[0]+dToAdd) ||
-	(vPos.c[2]+dRadius)<(m_vVisibleAirPlayAreaMins.c[2]-dToAdd) ||
-	(vPos.c[2]-dRadius)>(m_vVisibleAirPlayAreaMaxs.c[2]+dToAdd));
+	if(m_CameraWrapper.m_piCamera==NULL){return false;}
+	
+	CVector visibleSize;
+	CVector vCameraPos=m_CameraWrapper.m_piCamera->GetPosition();
+	visibleSize.c[0]=fabs((vCameraPos.c[1]-vPos.c[1])*tan(DegreesToRadians(m_CameraWrapper.m_piCamera->GetViewAngle()*0.5)));
+	visibleSize.c[2]=visibleSize.c[0]*m_CameraWrapper.m_piCamera->GetAspectRatio();
+	
+	CVector vMins=vCameraPos-visibleSize;
+	CVector vMaxs=vCameraPos+visibleSize;
+	vMins.c[1]=vPos.c[1];
+	vMaxs.c[1]=vPos.c[1];
+	bool bHidden=((vPos.c[0]+dRadius)<vMins.c[0] ||
+	(vPos.c[0]-dRadius)>vMaxs.c[0] ||
+	(vPos.c[2]+dRadius)<vMins.c[2] ||
+	(vPos.c[2]-dRadius)>vMaxs.c[2]);
 	return !bHidden;
 }
 

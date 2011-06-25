@@ -252,7 +252,7 @@ void CTurret::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 	}
 	if(m_piTarget && m_bTargetLocked && dwCurrentTime>m_dwNextShotTime && m_vWeapons.size() && !m_piContainerBuilding)
 	{
-		bool bVisible=g_PlayAreaManagerWrapper.m_piInterface && g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,m_dRadius,true);
+		bool bVisible=g_PlayAreaManagerWrapper.m_piInterface && g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,0);
 		if(bVisible)
 		{
 			FireWeapon(0,dwCurrentTime);
