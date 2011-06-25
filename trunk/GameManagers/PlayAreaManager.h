@@ -159,7 +159,7 @@ public:
 	void	SetPlayMovementPosition(CVector vPosition);
 	
 	bool	IsScenarioCompleted();
-	bool	IsVisible(CVector vPos,double dRadius,bool bWithScroll);
+	bool	IsVisible(CVector vPos,double dRadius);
 	
 	void 	CreateDynamicEntityElement(IEntityType *piEntityType,CVector vPosition,CVector vAngles,IPlayAreaEntity **ppiElement);
 		

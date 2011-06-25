@@ -51,6 +51,7 @@ CFighter::CFighter(CFighterType *pType,unsigned int dwCurrentTime)
   m_nCurrentTime=dwCurrentTime;
   m_nRoutePoint=0;
   m_nFallStartTime=0;
+  m_nFleeShadowKeepEndTime=0;
   m_dwNextProcessFrame=dwCurrentTime+10;
   m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeFirstShotMax-m_pType->m_dTimeFirstShotMin)+m_pType->m_dTimeFirstShotMin;
   m_dRadius=m_pType->DesignGetRadius();
@@ -140,12 +141,22 @@ void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 	
 	// When the entity is configured to head to the target or is feeing, the only way to
 	// know if it has to be removed is to check if the plane is no longer in
-	// the visible play area (including scroll)
+	// the visible play area. The entity is removed some seconds after it exits the visible area 
+	// just to avoid its shadow to suddenly vanish.
 
 	if((m_pType->m_bHeadToTarget || m_bFleeing) && g_PlayAreaManagerWrapper.m_piInterface)
 	{
-		bool bVisible=g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,m_dRadius,true);
+		bool bVisible=g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,m_dRadius);
+		// Reset the shadow keep counter in the rare case the plane is visible again
+		if(bVisible){m_nFleeShadowKeepEndTime=0;}
 		if(m_bWasVisible && !bVisible)
+		{
+			if(!m_nFleeShadowKeepEndTime)
+			{
+				m_nFleeShadowKeepEndTime=dwCurrentTime+m_pType->m_nFleeShadowKeepTime;
+			}
+		}
+		if(m_nFleeShadowKeepEndTime && m_nFleeShadowKeepEndTime<dwCurrentTime)
 		{
 			Remove();
 			return;
@@ -292,9 +303,10 @@ void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 	m_PhysicInfo.vVelocity*=m_PhysicInfo.dMaxVelocity;
 	m_dwNextProcessFrame=dwCurrentTime+10;
 
-	if(dwCurrentTime>m_dwNextShotTime)
+	if(dwCurrentTime>m_dwNextShotTime )
 	{
-		FireWeapon(0,dwCurrentTime);
+		bool bVisible=g_PlayAreaManagerWrapper.m_piInterface && g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,0);
+		if(bVisible){FireWeapon(0,dwCurrentTime);}
 		m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeBetweenShotsMax-m_pType->m_dTimeBetweenShotsMin)+m_pType->m_dTimeBetweenShotsMin;
 	}
 }

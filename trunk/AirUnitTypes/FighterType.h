@@ -42,6 +42,7 @@ public:
 	bool         m_bFleeOnSameX;
 	bool         m_bFleeOnSameZ;
 	unsigned int m_nFleeDelay;
+	unsigned int m_nFleeShadowKeepTime;
 	double       m_dFleeProbability;
 	double       m_dMinFleeAngle; // Min angle to flee, centered on 90 and 270 depending on the target position
 	double       m_dMaxFleeAngle; // Max angle to flee, centered on 90 and 270 depending on the target position
@@ -62,6 +63,7 @@ public:
 		PROP_VALUE_FLAGS(m_nFleeDelay,"FleeDelay",0,MRPF_NORMAL|MRPF_OPTIONAL);
         PROP_VALUE_FLAGS(m_bFleeOnSameX,"FleeOnSameX",false,MRPF_NORMAL|MRPF_OPTIONAL);
         PROP_VALUE_FLAGS(m_bFleeOnSameZ,"FleeOnSameZ",false,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_VALUE_FLAGS(m_nFleeShadowKeepTime,"FleeShadowKeepTime",2000,MRPF_NORMAL|MRPF_OPTIONAL);
         PROP_VALUE_FLAGS(m_dMinFleeAngle,"MinFleeAngle",20,MRPF_NORMAL|MRPF_OPTIONAL);
         PROP_VALUE_FLAGS(m_dMaxFleeAngle,"MaxFleeAngle",55,MRPF_NORMAL|MRPF_OPTIONAL);
         PROP_VALUE_FLAGS(m_dMaxHeadingCorrection,"MaxHeadingCorrection",0,MRPF_NORMAL|MRPF_OPTIONAL);
@@ -94,6 +96,7 @@ class CFighter: public CEntityBase
 	unsigned int m_nFallStartTime;
 	unsigned int m_nFleeStartTime;
 	unsigned int m_nCurrentTime;
+	unsigned int m_nFleeShadowKeepEndTime;
 public:
 
 	void AcquireTarget();
