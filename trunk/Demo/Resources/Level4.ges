@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=212.458680
 			NearPlane=130.000000
-			Posicion=118.767879,203.483138,11.161011
+			Posicion=-855.503959,203.483138,9.445913
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -2760,7 +2760,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Truck
+					Name=CarTypeA
 					System=EntityTypes
 				}
 			}
@@ -2787,7 +2787,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Truck
+					Name=CarTypeA
 					System=EntityTypes
 				}
 			}
@@ -2805,7 +2805,7 @@ AreaDeJuego
 					Name=BombBonus
 					System=EntityTypes
 				}
-				BonusOnChild=0
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -2899,7 +2899,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Truck
+					Name=CarTypeB
 					System=EntityTypes
 				}
 			}
@@ -2911,7 +2911,7 @@ AreaDeJuego
 			Class=CPlayAreaEntity
 			Data
 			{
-				Angulos=180.000000,0.000000,0.000000
+				Angulos=90.000000,0.000000,0.000000
 				Bonus
 				BonusOnChild=0
 				Count=1
@@ -2926,7 +2926,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Truck
+					Name=CarTypeB
 					System=EntityTypes
 				}
 			}
@@ -2938,7 +2938,7 @@ AreaDeJuego
 			Class=CPlayAreaEntity
 			Data
 			{
-				Angulos=180.000000,0.000000,0.000000
+				Angulos=0.000000,0.000000,0.000000
 				Bonus
 				BonusOnChild=0
 				Count=1
@@ -2953,7 +2953,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Truck
+					Name=CarTypeA
 					System=EntityTypes
 				}
 			}
@@ -2980,7 +2980,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Truck
+					Name=GreenTank
 					System=EntityTypes
 				}
 			}

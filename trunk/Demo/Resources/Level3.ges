@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=200.435349
 			NearPlane=130.000000
-			Posicion=1245.891254,198.570478,-7.579736
+			Posicion=1622.514876,198.570478,3.170947
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -2256,7 +2256,7 @@ AreaDeJuego
 			Class=CPlayAreaEntity
 			Data
 			{
-				Angulos=270.000000,0.000000,0.000000
+				Angulos=90.000000,0.000000,0.000000
 				Bonus
 				BonusOnChild=0
 				Count=1
@@ -2271,7 +2271,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=Truck
+					Name=CarTypeB
 					System=EntityTypes
 				}
 			}
