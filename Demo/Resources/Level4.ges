@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=212.458680
 			NearPlane=130.000000
-			Posicion=-751.028126,203.483138,-0.743545
+			Posicion=1957.489335,203.483138,1.631002
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -4768,6 +4768,18 @@ AreaDeJuego
 	}
 	MaximoScrollHorz=10.000000
 	Music
+	{
+		Class=SoundType
+		Data
+		{
+			Channels=5
+			File=./Sounds/level4music.ogg
+			Loop=0
+			Volume=100.000000
+		}
+		Name=""
+		System=GameSystem
+	}
 	Origen=-1282.873869,-1.161011,63.483138
 	TakeOffEnabled=1
 	TakeOffRoute
