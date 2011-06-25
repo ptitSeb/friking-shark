@@ -53,11 +53,7 @@ class CBulletProjectile: public CEntityBase
 {
   CBulletProjectileType  *m_pType;
   IEntity *m_piParent;
-  unsigned int  m_dwNextTryAcquireTarget;
-
-  bool m_bTargetAcquired;
-  CVector m_vTargetPosition;
-  CVector m_vOriginalVelocity;
+  unsigned int  m_dwNextCollisionCheck;
   double m_dRadius;
   
   void Render(IGenericRender *piRender,IGenericCamera *piCamera);
@@ -67,7 +63,7 @@ public:
   bool OnCollision(IEntity *pOther,CVector &vCollisionPos);
   void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
 
-  static void AcquireTargetOperation(IEntity *piEntity,void *pParam1,void *pParam2);
+  static void CheckCollisions(IEntity *piEntity,void *pParam1,void *pParam2);
 
   CBulletProjectile(CBulletProjectileType *pType,IEntity *piParent);
   ~CBulletProjectile();

@@ -20,12 +20,10 @@
 #include "BulletProjectileType.h"
 #include "../GameGraphics/GameGraphics.h"
 
-struct SBulletTargetingData
+struct SBulletCollisionData
 {
 	CPlane  forwardPlane;
-	CPlane  velPlane;
 	CPlane  fallPlane;
-	CVector vFallDirection;
 };
 
 CBulletProjectileType::CBulletProjectileType()
@@ -50,12 +48,11 @@ IEntity *CBulletProjectileType::CreateInstance(IEntity *piParent,unsigned int dw
 
 CBulletProjectile::CBulletProjectile(CBulletProjectileType *pType,IEntity *piParent)
 {
-	m_dwNextTryAcquireTarget=0;
+	m_dwNextCollisionCheck=0;
 	m_sClassName="CBulletProjectile";
 	m_sName="BulletProjectile";
 	m_pType=pType;
 	m_piParent=piParent;
-	m_bTargetAcquired=false;
 	m_dRadius=pType->DesignGetRadius();
 
 	g_PlayAreaManagerWrapper.AddRef();
@@ -66,11 +63,12 @@ CBulletProjectile::~CBulletProjectile()
 	g_PlayAreaManagerWrapper.Release();
 }
 
-void CBulletProjectile::AcquireTargetOperation(IEntity *piEntity,void *pParam1,void *pParam2)
+void CBulletProjectile::CheckCollisions(IEntity *piEntity,void *pParam1,void *pParam2)
 {
-	SBulletTargetingData *pTargetingData=(SBulletTargetingData *)pParam2;
+	SBulletCollisionData *pCollisionData=(SBulletCollisionData *)pParam2;
 	CBulletProjectile *pThis=(CBulletProjectile *)pParam1;
 	
+	if(pThis->m_bRemoved){return;}
 	if(pThis->m_piParent==NULL){return;}
 	if(piEntity->IsRemoved()){return;}
 	if(piEntity->GetAlignment()==pThis->m_dwAlignment){return;}
@@ -78,42 +76,20 @@ void CBulletProjectile::AcquireTargetOperation(IEntity *piEntity,void *pParam1,v
 	if(piEntity->GetDamageType()==DAMAGE_TYPE_NONE){return;}
 	if(piEntity->GetHealth()<=0.0){return;}
 	
-	if(pTargetingData->forwardPlane.GetSide(piEntity->GetPhysicInfo()->vPosition)<0)
-	{
-		return;
-	}	
-	
 	SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();
 	CVector pVolumePoints[8];
 	CalcBBoxVolume(pPhysicInfo->vPosition,pPhysicInfo->vAngles,pPhysicInfo->vMins,pPhysicInfo->vMaxs,pVolumePoints);
 
 	int nPointsIn=0,nPointsOut=0;
-	for(unsigned int x=0;x<8;x++){if(pTargetingData->fallPlane.GetSide(pVolumePoints[x])>=0){nPointsOut++;}else{nPointsIn++;}}
+	for(unsigned int x=0;x<8;x++){if(pCollisionData->fallPlane.GetSide(pVolumePoints[x])>=0){nPointsOut++;}else{nPointsIn++;}}
 	if(nPointsOut && nPointsIn)
 	{
-		CVector vTargetPos=pPhysicInfo->vPosition-(pTargetingData->fallPlane)*pTargetingData->fallPlane.GetSide(pPhysicInfo->vPosition);
-		double dTargetDistance=pThis->m_PhysicInfo.vPosition-vTargetPos;
-		if(pThis->m_bTargetAcquired==false || dTargetDistance<(pThis->m_PhysicInfo.vPosition-pThis->m_vTargetPosition))
+		nPointsIn=0,nPointsOut=0;
+		for(unsigned int x=0;x<8;x++){if(pCollisionData->forwardPlane.GetSide(pVolumePoints[x])>=0){nPointsOut++;}else{nPointsIn++;}}
+		if(nPointsOut && nPointsIn) 
 		{
-			CVector vTargetDif=vTargetPos-pThis->m_PhysicInfo.vPosition;
-			vTargetDif.c[1]=0;
-			double dTimeToTarget=(vTargetDif)/pThis->m_PhysicInfo.dMaxVelocity;
-			if(dTimeToTarget<=0.2)
-			{
-				double dVerticalVel=(vTargetPos.c[1]-pThis->m_PhysicInfo.vPosition.c[1])/dTimeToTarget;
-				CVector vVel=pTargetingData->vFallDirection*dVerticalVel;
-				// Dada la perspectiva puede que las ballas tengan que ir hacia atras,
-				if(pTargetingData->velPlane.GetSide(pPhysicInfo->vPosition)<0)
-				{
-					pThis->m_PhysicInfo.vVelocity=(Origin-pThis->m_vOriginalVelocity)+vVel;
-				}
-				else
-				{
-					pThis->m_PhysicInfo.vVelocity=pThis->m_vOriginalVelocity+vVel;
-				}
-				pThis->m_vTargetPosition=vTargetPos;
-				pThis->m_bTargetAcquired=true;
-			}
+			piEntity->OnCollision(pThis,pThis->m_PhysicInfo.vPosition);
+			pThis->OnCollision(piEntity,pThis->m_PhysicInfo.vPosition);
 		}
 	}
 }
@@ -122,15 +98,13 @@ void CBulletProjectile::ProcessFrame(unsigned int dwCurrentTime,double dTimeFrac
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
 
-	if(!m_bTargetAcquired){m_vOriginalVelocity=m_PhysicInfo.vVelocity;}
-
-	bool bVisible=g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,m_dRadius,true);
+	bool bVisible=g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,m_dRadius);
 
 	if((m_dwCreationTime+m_pType->m_dwDuration)<dwCurrentTime || !bVisible)
 	{
 		Remove();
 	}
-	else if(m_dwNextTryAcquireTarget<dwCurrentTime &&  !m_bTargetAcquired)
+	else if(m_dwNextCollisionCheck<dwCurrentTime)
 	{
 		if(m_dwAlignment==ENTITY_ALIGNMENT_PLAYER)
 		{
@@ -138,25 +112,16 @@ void CBulletProjectile::ProcessFrame(unsigned int dwCurrentTime,double dTimeFrac
 			CVector vCameraPos=piCamera?piCamera->GetPosition():Origin;
 			REL(piCamera);
 			
-			CVector vRight,vNormalizedVelocity=m_vOriginalVelocity;
+			CVector vRight,vNormalizedVelocity=m_PhysicInfo.vVelocity;
 			vNormalizedVelocity.N();
 			VectorsFromAngles(m_PhysicInfo.vAngles,NULL,&vRight,NULL);
 
-			SBulletTargetingData data;
-			data.velPlane=CPlane(vNormalizedVelocity,m_PhysicInfo.vPosition);
-			data.fallPlane=CPlane(m_PhysicInfo.vPosition,m_PhysicInfo.vPosition+m_vOriginalVelocity,vCameraPos);
+			SBulletCollisionData data;
+			data.fallPlane=CPlane(m_PhysicInfo.vPosition,m_PhysicInfo.vPosition+m_PhysicInfo.vVelocity,vCameraPos);
 			data.forwardPlane=CPlane(m_PhysicInfo.vPosition,m_PhysicInfo.vPosition+vRight*10.0,vCameraPos);
-			data.vFallDirection=(vNormalizedVelocity)^data.fallPlane;
 			
-			GetEntityManager()->PerformUnaryOperation(AcquireTargetOperation,this,&data);
-			if(!m_bTargetAcquired)
-			{
-				m_dwNextTryAcquireTarget=dwCurrentTime+20;
-			}
-		}
-		else
-		{
-			m_bTargetAcquired=true;
+			GetEntityManager()->PerformUnaryOperation(CheckCollisions,this,&data);
+			m_dwNextCollisionCheck=dwCurrentTime+20;
 		}
 	}
 }
