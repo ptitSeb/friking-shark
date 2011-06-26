@@ -75,6 +75,7 @@ void CEntityTypeBase::InitializeEntity(CEntityBase *pEntity,unsigned int dwCurre
 	pEntity->SetDamageType(m_nDamageType);
 	pEntity->SetHealth(m_dMaxHealth);
 	pEntity->SetMaxHealth(m_dMaxHealth);
+	pEntity->SetPlacement(m_nPlacement);
 	
 	for(unsigned int x=0;x<m_vChildren.size();x++)
 	{
@@ -235,6 +236,7 @@ void CEntityTypeBase::GetEntityTypeConfig(SEntityTypeConfig *pConfig)
 	pConfig->nBoundsType=m_nBoundsType;
 	pConfig->nAlignment=m_nAlignment;
 	pConfig->nPoints=m_nPoints;
+	pConfig->nPlacement=m_nPlacement;
 }
 
 void CEntityTypeBase::SetEntityTypeConfig(SEntityTypeConfig *pConfig)
@@ -249,6 +251,7 @@ void CEntityTypeBase::SetEntityTypeConfig(SEntityTypeConfig *pConfig)
 	m_nBoundsType=pConfig->nBoundsType;
 	m_nAlignment=pConfig->nAlignment;
 	m_nPoints=pConfig->nPoints;
+	m_nPlacement=pConfig->nPlacement;
 }
 
 // State Management

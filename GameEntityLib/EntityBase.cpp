@@ -41,6 +41,7 @@ CEntityBase::CEntityBase()
     m_dMaxHealth=0;
 	m_nCurrentState=ENTITY_STATE_INVALID;
 	m_nCurrentStateAnimation=ANIMATION_INVALID;
+	m_nPlacement=ENTITY_PLACEMENT_GROUND;
 	
     g_EntityManagerSingleton.m_piInterface->AddEntity(this);
     m_piRoute=NULL;
@@ -147,7 +148,9 @@ IEntityType *CEntityBase::GetEntityType(){return ADD(m_pTypeBase);}
 unsigned int        CEntityBase::GetNextProcessFrame(){return m_dwNextProcessFrame;}
 unsigned int        CEntityBase::GetCreationTime(){return m_dwCreationTime;}
 unsigned int        CEntityBase::GetAlignment(){return m_dwAlignment;}
+unsigned int        CEntityBase::GetPlacement(){return m_nPlacement;}
 void         CEntityBase::SetAlignment(unsigned int dwAlignment){m_dwAlignment=dwAlignment;}
+void         CEntityBase::SetPlacement(unsigned int nPlacement){m_nPlacement=nPlacement;}
 double       CEntityBase::GetHealth(){return m_dHealth;}
 double       CEntityBase::GetMaxHealth(){return m_dMaxHealth;}
 void		 CEntityBase::SetHealth(double dHealth){m_dHealth=dHealth;}

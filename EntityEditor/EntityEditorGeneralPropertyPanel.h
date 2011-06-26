@@ -30,6 +30,7 @@ class CEntityEditorGeneralPropertyPanel: public CGameWindowBase, virtual public 
 	IGameGUIButton *m_piBTMovementType;
 	IGameGUIButton *m_piBTCollisionType;
 	IGameGUIButton *m_piBTAlignment;
+	IGameGUIButton *m_piBTPlacement;
 	IGameGUILabel  *m_piSTHealth;
 	IGameGUIButton *m_piBTHealthIncrease;
 	IGameGUIButton *m_piBTHealthDecrease;
@@ -44,6 +45,7 @@ protected:
 		CHILD_MAP_ENTRY_EX("GeneralMovementType",m_piBTMovementType,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("GeneralCollisionType",m_piBTCollisionType,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("GeneralAlignment",m_piBTAlignment,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("GeneralPlacement",m_piBTPlacement,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY("GeneralHealth",m_piSTHealth);
 		CHILD_MAP_ENTRY_EX("GeneralDecreaseHealth",m_piBTHealthDecrease,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("GeneralIncreaseHealth",m_piBTHealthIncrease,IGameGUIButtonEvents);

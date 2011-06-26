@@ -58,6 +58,7 @@ protected:
     // Miembros para la aplicacion de daños
 
     unsigned int   m_dwDamageType;
+	
     double	m_dDamage;
     double	m_dMaxHealth;
     double	m_dHealth;
@@ -84,7 +85,9 @@ protected:
     // Alineacion (Bando) de la entidad
 
     unsigned int m_dwAlignment;
-
+	
+	unsigned int m_nPlacement;
+	
     // Miembors de Rutas
     IRoute  *m_piRoute;
 	unsigned int m_nRouteDelay;
@@ -109,6 +112,9 @@ public:
 
     unsigned int	GetAlignment();
     void        	SetAlignment(unsigned int dwAlignment);
+	
+	unsigned int GetPlacement();
+	void         SetPlacement(unsigned int nPlacement);
 	
 	IEntity      *GetParent();
 	void          SetParent(IEntity *piEntity);

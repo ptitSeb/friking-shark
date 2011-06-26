@@ -25,6 +25,7 @@ const char *g_ppDamageTypeDescriptions[]={"None","Normal"};
 const char *g_ppMovementTypeDescriptions[]={"None","Normal","Fly","Custom"};
 const char *g_ppCollisionTypeDescriptions[]={"None","Stuck","Slide","Bounce","Through"};
 const char *g_ppAlignmentDescriptions[]={"Neutral","Player","Enemy"};
+const char *g_ppPlacementDescriptions[]={"Ground","Air","Water"};
 
 CEntityEditorGeneralPropertyPanel::CEntityEditorGeneralPropertyPanel(void)
 {
@@ -53,6 +54,7 @@ void CEntityEditorGeneralPropertyPanel::UpdateData()
 	if(m_piSTHealth)       {sprintf(A,"Health:   %d",(int)sConfig.dMaxHealth);m_piSTHealth->SetText(A);}
 	if(m_piSTVelocity)     {sprintf(A,"Velocity: %d",(int)sConfig.dMaxVelocity);m_piSTVelocity->SetText(A);}
 	if(m_piBTAlignment)    {m_piBTAlignment->SetText(g_ppAlignmentDescriptions[sConfig.nAlignment]);}
+	if(m_piBTPlacement)    {m_piBTPlacement->SetText(g_ppPlacementDescriptions[sConfig.nPlacement]);}
 	if(m_piBTBoundsType)   {m_piBTBoundsType->SetText(g_ppBoundsTypeDescriptions[sConfig.nBoundsType]);}
 	if(m_piBTCollisionType){m_piBTCollisionType->SetText(g_ppCollisionTypeDescriptions[sConfig.nCollisionType]);}
 	if(m_piBTMovementType) {m_piBTMovementType->SetText(g_ppMovementTypeDescriptions[sConfig.nMovementType]);}
@@ -75,6 +77,7 @@ void CEntityEditorGeneralPropertyPanel::OnButtonClicked(IGameGUIButton *piContro
 	if(m_piBTMovementType==piControl){bUpdateConfig=true;sConfig.nMovementType++;if(sConfig.nMovementType>PHYSIC_MOVE_TYPE_CUSTOM){sConfig.nMovementType=PHYSIC_MOVE_TYPE_NONE;}}
 	if(m_piBTCollisionType==piControl){bUpdateConfig=true;sConfig.nCollisionType++;if(sConfig.nCollisionType>PHYSIC_COLLISION_TYPE_THROUGH){sConfig.nCollisionType=PHYSIC_COLLISION_TYPE_NONE;}}
 	if(m_piBTAlignment==piControl){bUpdateConfig=true;sConfig.nAlignment++;if(sConfig.nAlignment>ENTITY_ALIGNMENT_ENEMIES){sConfig.nAlignment=ENTITY_ALIGNMENT_NEUTRAL;}}
+	if(m_piBTPlacement==piControl){bUpdateConfig=true;sConfig.nPlacement++;if(sConfig.nPlacement>ENTITY_PLACEMENT_WATER){sConfig.nPlacement=ENTITY_PLACEMENT_GROUND;}}
 	
 	if(bUpdateConfig)
 	{

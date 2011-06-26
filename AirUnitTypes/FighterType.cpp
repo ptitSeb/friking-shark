@@ -118,12 +118,17 @@ void CFighter::OnKilled()
 
 bool CFighter::OnCollision(IEntity *piOther,CVector &vCollisionPos)
 {
-	if(GetState()==eFighterState_Falling && (m_nCurrentTime-m_nFallStartTime)>1000)
+	if(GetState()==eFighterState_Falling && piOther->GetPlacement()!=ENTITY_PLACEMENT_AIR)
 	{
 		if(GetState()!=eFighterState_Crashed && m_pTypeBase->GetStateAnimations(eFighterState_Crashed))
 		{
 			SetState(eFighterState_Crashed);
 		}
+		if(piOther->GetDamageType()!=DAMAGE_TYPE_NONE)
+		{
+			piOther->OnDamage(m_dMaxHealth,this);
+		}
+		
 		Remove();
 	}
 	return false;
