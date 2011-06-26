@@ -46,6 +46,10 @@
 #define ENTITY_ALIGNMENT_PLAYER 		  0x0001
 #define ENTITY_ALIGNMENT_ENEMIES      0x0002
 
+#define ENTITY_PLACEMENT_GROUND			0
+#define ENTITY_PLACEMENT_AIR			1
+#define ENTITY_PLACEMENT_WATER			2
+
 #define DAMAGE_TYPE_NONE    0
 #define DAMAGE_TYPE_NORMAL  1
 
@@ -174,6 +178,10 @@ public:
 	virtual unsigned int GetDamageType()=0;
 	virtual unsigned int GetAlignment()=0;
     virtual void         SetAlignment(unsigned int dwAlignment)=0;
+
+	// Placement is just a hint if the entity is placed in Ground/Air/Sea/etc...
+	virtual unsigned int GetPlacement()=0;
+	virtual void         SetPlacement(unsigned int nPlacement)=0;
 	
 	virtual void         Kill()=0;
 	
@@ -855,11 +863,12 @@ struct SEntityTypeConfig
 	unsigned int 	nDamageType;
 	unsigned int 	nBoundsType;
 	unsigned int 	nAlignment;
+	unsigned int 	nPlacement;
 	double			dMaxHealth;
 	double			dMaxVelocity;
 	unsigned int    nPoints;
 
-	SEntityTypeConfig(){nPoints=0;dMaxHealth=1;dMaxVelocity=0;nDamageType=DAMAGE_TYPE_NONE;nMovementType=PHYSIC_MOVE_TYPE_NONE;nCollisionType=PHYSIC_COLLISION_TYPE_STUCK;nBoundsType=PHYSIC_BOUNDS_TYPE_NONE;nAlignment=ENTITY_ALIGNMENT_NEUTRAL;}
+	SEntityTypeConfig(){nPoints=0;dMaxHealth=1;dMaxVelocity=0;nDamageType=DAMAGE_TYPE_NONE;nMovementType=PHYSIC_MOVE_TYPE_NONE;nCollisionType=PHYSIC_COLLISION_TYPE_STUCK;nBoundsType=PHYSIC_BOUNDS_TYPE_NONE;nAlignment=ENTITY_ALIGNMENT_NEUTRAL;nPlacement=ENTITY_PLACEMENT_GROUND;}
 };
 
 struct IAttributeManagement:virtual public ISystemUnknown

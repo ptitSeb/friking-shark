@@ -70,6 +70,7 @@ protected:
 	unsigned int m_nMovementType;
 	unsigned int m_nCollisionType;
 	unsigned int m_nAlignment;
+	unsigned int m_nPlacement;
 	double		 m_dMaxHealth;
 	double		 m_dMaxVelocity;
 	unsigned int	m_nPoints;
@@ -102,6 +103,7 @@ public:
 		PROP_FLAGS(m_nCollisionType,"CollisionType",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_nBoundsType,"BoundsType",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_nDamageType,"DamageType",MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_nPlacement,"Placement",ENTITY_PLACEMENT_GROUND,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_nAlignment ,"Alignment",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_dMaxHealth ,"MaxHealth",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_dMaxVelocity,"MaxVelocity",MRPF_NORMAL|MRPF_OPTIONAL)
