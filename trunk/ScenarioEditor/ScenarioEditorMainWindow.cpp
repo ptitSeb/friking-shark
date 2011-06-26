@@ -1918,6 +1918,39 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		sPlayAreaConfig.pvPlayerLandingPoints[3]=vTerrainPos-CVector(vEnd.c[0]-vTerrainPos.c[0],0,0);
 		bPlayAreaChange=true;
 	}
+	if(m_nSelectedEntity!=-1 && m_nSelectedRoutePoint!=-1)
+	{
+		bool bRoutePointChanged=false;
+		SRoutePoint sRoutePoint;
+		m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetRoutePoint(m_nSelectedRoutePoint,&sRoutePoint);
+		
+		if(piControl==m_piBTRoutePointIncreasePause)
+		{
+			sRoutePoint.nPause+=100;
+			bRoutePointChanged=true;
+		}
+		else if(piControl==m_piBTRoutePointDecreasePause)
+		{
+			sRoutePoint.nPause=sRoutePoint.nPause<=100?0:sRoutePoint.nPause-100;
+			bRoutePointChanged=true;
+		}
+		else if(piControl==m_piBTRoutePointIncreaseSpeed)
+		{
+			sRoutePoint.dSpeedFactor+=0.1;
+			bRoutePointChanged=true;
+		}
+		else if(piControl==m_piBTRoutePointDecreaseSpeed)
+		{
+			sRoutePoint.dSpeedFactor-=0.1;
+			if(sRoutePoint.dSpeedFactor<0.1){sRoutePoint.dSpeedFactor=0.1;}
+			bRoutePointChanged=true;
+		}
+		if(bRoutePointChanged)
+		{
+			m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->SetRoutePoint(m_nSelectedRoutePoint,sRoutePoint);
+		}		
+	}
+	
 	if(m_PlayAreaManagerWrapper.m_piPlayAreaDesign && bPlayAreaChange)
 	{
 		m_PlayAreaManagerWrapper.m_piPlayAreaDesign->SetPlayAreaConfig(&sPlayAreaConfig);
@@ -1975,6 +2008,7 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 	m_piGRGeneralPanel->Show(m_bShowGeneralPanel && m_bShowTerrainPanel);
 	m_piGRWaterPanel->Show(m_bShowWaterPanel && m_bShowTerrainPanel);
 	m_piGRFogPanel->Show(m_bShowFogPanel && m_bShowTerrainPanel);
+	m_piGRRoutePointPanel->Show(m_nSelectedEntity!=-1 && m_nSelectedRoutePoint!=-1);
 	m_piGRSunPanel->Show(m_bShowSunPanel && m_bShowTerrainPanel);
 	m_piGRSkyPanel->Show(m_bShowSkyPanel && m_bShowTerrainPanel);
 	m_piGRPlayAreaPanel->Show(m_bShowPlayAreaPanel && m_bShowTerrainPanel);
@@ -2492,6 +2526,21 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 		}
 		dCurrentX+=41;
 	}
+	if(m_nSelectedEntity!=-1 && m_nSelectedRoutePoint!=-1)
+	{		
+		SRoutePoint sRoutePoint;
+		m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetRoutePoint(m_nSelectedRoutePoint,&sRoutePoint);
+		
+		sprintf(A,"Pause : %.02fs",((double)sRoutePoint.nPause)/1000.0);
+		m_piSTRoutePointPause->SetText(A);
+		
+		sprintf(A,"Speed : %.02fs",sRoutePoint.dSpeedFactor);
+		m_piSTRoutePointSpeed->SetText(A);
+	
+		sprintf(A,"Route Point %d",m_nSelectedRoutePoint);
+		m_piSTRoutePointCaption->SetText(A);
+	}
+
 
 	std::string sModelName;
 	if(m_WorldManagerWrapper.m_piTerrain){m_WorldManagerWrapper.m_piTerrain->GetTerrainBaseModel(&sModelName,NULL);}

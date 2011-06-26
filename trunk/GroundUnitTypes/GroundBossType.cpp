@@ -148,14 +148,16 @@ void CGroundBoss::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 			else
 			{
 				SRoutePoint sPoint;
-				m_piRoute->GetPoint(nNext,&sPoint);
+				m_piRoute->GetPoint(m_nRoutePoint,&sPoint);
 				m_nPauseEnd=sPoint.nPause?dwCurrentTime+sPoint.nPause:0;
 				m_nRoutePoint=nNext;
 			}
 		}
 		
+		SRoutePoint sCurrentPoint;
+		m_piRoute->GetPoint(m_nRoutePoint,&sCurrentPoint);
 		m_PhysicInfo.vVelocity=vDir;
-		m_PhysicInfo.vVelocity*=m_PhysicInfo.dMaxVelocity;
+		m_PhysicInfo.vVelocity*=m_PhysicInfo.dMaxVelocity*sCurrentPoint.dSpeedFactor;
 		m_dwNextProcessFrame=dwCurrentTime+10;
 	}
 }
