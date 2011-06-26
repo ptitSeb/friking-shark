@@ -759,11 +759,26 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	{
 		unsigned long nSelectedEntityType=0;
 		std::vector<IDesignObject *> vEntityTypes;
+		std::vector<IDesignObject *> vFilteredEntities;
 		GetSystemObjects("EntityTypes",&vEntityTypes);
-		if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vEntityTypes,&nSelectedEntityType))
+		
+		for(unsigned long x=0;x<vEntityTypes.size();x++)
 		{
-			ISystemObject *piObject=QI(ISystemObject,vEntityTypes[nSelectedEntityType]);
-			IEntityType *piEntityType=QI(IEntityType,vEntityTypes[nSelectedEntityType]);
+			SEntityTypeConfig sConfig;
+			IDesignObject *piEntityType=vEntityTypes[x];
+			IEntityTypeDesign *piDesign=QI(IEntityTypeDesign,piEntityType);
+			piDesign->GetEntityTypeConfig(&sConfig);
+			if(sConfig.nPlacement!=ENTITY_PLACEMENT_AIR)
+			{
+				vFilteredEntities.push_back(piEntityType);
+			}
+			REL(piDesign);
+		}
+		
+		if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vFilteredEntities,&nSelectedEntityType))
+		{
+			ISystemObject *piObject=QI(ISystemObject,vFilteredEntities[nSelectedEntityType]);
+			IEntityType *piEntityType=QI(IEntityType,vFilteredEntities[nSelectedEntityType]);
 			std::string sEntityType=piObject?piObject->GetName():"";
 
 			unsigned long nObjectIndex=m_PlayAreaManagerWrapper.m_piPlayAreaDesign->AddElement("CPlayAreaEntity");
