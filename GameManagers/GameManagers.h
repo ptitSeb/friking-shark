@@ -75,10 +75,11 @@ public:
 	
 	bool         bAbsolutePoint; // si es falso son valores de 0 a 1 relativos al plano de juego aereo
 	unsigned int nPause;
+	double		 dSpeedFactor; // Relative to the entity speed 1:full speed. 0: Disabled.
 	CVector      vPosition;
 	
-	SRoutePoint(){nPause=0;bAbsolutePoint=true;}
-	SRoutePoint(bool absolutePoint,CVector position,unsigned int pause=0){vPosition=position;bAbsolutePoint=absolutePoint;nPause=pause;}
+	SRoutePoint(){nPause=0;dSpeedFactor=1;bAbsolutePoint=true;}
+	SRoutePoint(bool absolutePoint,CVector position,unsigned int pause=0,double speed=1){vPosition=position;bAbsolutePoint=absolutePoint;nPause=pause;dSpeedFactor=speed;}
 };
 
 

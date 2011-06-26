@@ -197,7 +197,8 @@ public:
 	IGameWindow	  *m_piGROptionsPanel;
 	IGameWindow	  *m_piGRTerrainPanel;
 	IGameWindow	  *m_piGRLayerList;
-
+	IGameWindow	  *m_piGRRoutePointPanel;
+	
 	IGameGUIButton *m_piBTShowOptionsPanel;
 	IGameGUIButton *m_piBTShowEntitiesPanel;
 	IGameGUIButton *m_piBTShowFormationsPanel;
@@ -439,6 +440,17 @@ public:
 	IGameGUIButton *m_piBTPlayAreaAutoTakeOff;
 	IGameGUIButton *m_piBTPlayAreaAutoLanding;
 	
+	// Route Point
+	
+	IGameGUILabel  *m_piSTRoutePointCaption;
+	IGameGUILabel  *m_piSTRoutePointPause;
+	IGameGUIButton *m_piBTRoutePointDecreasePause;
+	IGameGUIButton *m_piBTRoutePointIncreasePause;
+	IGameGUILabel  *m_piSTRoutePointSpeed;
+	IGameGUIButton *m_piBTRoutePointDecreaseSpeed;
+	IGameGUIButton *m_piBTRoutePointIncreaseSpeed;
+	
+	
 	ISystem					*m_piGameSystem;
 	CGameControllerWrapper   m_GameControllerWrapper;
 	CPlayAreaManagerWrapper  m_PlayAreaManagerWrapper;
@@ -652,6 +664,15 @@ public:
 		CHILD_MAP_ENTRY_EX("FogFitWater",m_piBTFogFitWater,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("FogFitSky",m_piBTFogFitSky,IGameGUIButtonEvents);
 
+		CHILD_MAP_ENTRY("RoutePointPanel",m_piGRRoutePointPanel);
+		CHILD_MAP_ENTRY("RoutePointCaption",m_piSTRoutePointCaption);
+		CHILD_MAP_ENTRY("RoutePointPause",m_piSTRoutePointPause);
+		CHILD_MAP_ENTRY("RoutePointSpeed",m_piSTRoutePointSpeed);
+		CHILD_MAP_ENTRY_EX("RoutePointDecreasePause",m_piBTRoutePointDecreasePause,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("RoutePointIncreasePause",m_piBTRoutePointIncreasePause,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("RoutePointDecreaseSpeed",m_piBTRoutePointDecreaseSpeed,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("RoutePointIncreaseSpeed",m_piBTRoutePointIncreaseSpeed,IGameGUIButtonEvents);
+		
 		CHILD_MAP_ENTRY("SunPanel",m_piGRSunPanel);
 		CHILD_MAP_ENTRY("SunDistance",m_piSTSunDistance);
 		CHILD_MAP_ENTRY("SunElevation",m_piSTSunElevation);

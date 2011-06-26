@@ -3541,19 +3541,19 @@ AreaDeJuego
 						Item0
 						{
 							Absoluto=1
-							Pause=0
+							Pause=1500
 							Posicion=1645.527653,52.965402,0.000000
 						}
 						Item1
 						{
 							Absoluto=1
-							Pause=1500
+							Pause=1000
 							Posicion=1672.139799,52.965402,0.000000
 						}
 						Item2
 						{
 							Absoluto=1
-							Pause=1000
+							Pause=0
 							Posicion=1781.738489,52.965402,0.000000
 						}
 						Item3
@@ -3565,7 +3565,7 @@ AreaDeJuego
 						Item4
 						{
 							Absoluto=1
-							Pause=0
+							Pause=1000
 							Posicion=1822.889699,52.965402,0.000000
 						}
 						Item5
@@ -3577,7 +3577,7 @@ AreaDeJuego
 						Item6
 						{
 							Absoluto=1
-							Pause=1000
+							Pause=0
 							Posicion=1829.824468,52.965402,0.000000
 						}
 						Item7

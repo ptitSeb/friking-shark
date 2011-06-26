@@ -21,7 +21,8 @@
 BEGIN_STRUCT_PROPS(SRoutePoint)
     PROP(vPosition,"Posicion")
     PROP_VALUE_FLAGS(bAbsolutePoint,"Absoluto",true,MRPF_NORMAL|MRPF_OPTIONAL)
-	PROP_VALUE_FLAGS(nPause,"Pause",0,MRPF_NORMAL|MRPF_OPTIONAL)
+    PROP_VALUE_FLAGS(nPause,"Pause",0,MRPF_NORMAL|MRPF_OPTIONAL)
+    PROP_VALUE_FLAGS(dSpeedFactor,"SpeedFactor",1,MRPF_NORMAL|MRPF_OPTIONAL)
 END_STRUCT_PROPS()
 
 class CRoute:public IRoute
