@@ -27,7 +27,8 @@ protected:
 
 public:
 
-
+	virtual bool PrepareResources();
+	
     virtual void Activate(unsigned int dwCurrentTime);
     virtual void Deactivate();
     virtual bool IsActive();

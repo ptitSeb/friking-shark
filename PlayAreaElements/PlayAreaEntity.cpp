@@ -271,3 +271,11 @@ void CPlayAreaEntity::SetBonusType(IEntityType *piBonusType){m_BonusType.Attach(
 void CPlayAreaEntity::GetBonusType(IEntityType **ppiBonusType){if(ppiBonusType){*ppiBonusType=ADD(m_BonusType.m_piEntityType);}}
 void CPlayAreaEntity::SetBonusOnChild(int nChildIndex){m_nBonusOnChild=nChildIndex;}
 int  CPlayAreaEntity::GetBonusOnChild(){return m_nBonusOnChild;}
+
+bool CPlayAreaEntity::PrepareResources()
+{
+	bool bOk=true;
+	if(m_BonusType.m_piEntityType){bOk=bOk&&m_BonusType.m_piEntityType->PrepareResources();}
+	if(m_EntityType.m_piEntityType){bOk=bOk&&m_EntityType.m_piEntityType->PrepareResources();}
+	return bOk;
+}

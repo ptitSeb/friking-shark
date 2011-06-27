@@ -278,6 +278,9 @@ public:
 	virtual void		  GetRenderBufferColors(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,float **ppColors)=0;
 	virtual void		  GetRenderBufferTextureCoords(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,float **ppTexVertexes)=0;
 
+	// Method to ensure that the model is resident.
+	virtual bool 		  Prepare()=0;
+	
 	virtual void UpdateFrameBuffers()=0;
 
 	// for the render only

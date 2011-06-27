@@ -105,7 +105,10 @@ struct STextAnimationObjectTypeConfig
 
 struct IAnimationType:virtual public ISystemUnknown,virtual public IDesignObject
 {
-    virtual IAnimation *CreateInstance(IEntity *piEntity,unsigned int dwCurrentTime)=0;
+	virtual IAnimation *CreateInstance(IEntity *piEntity,unsigned int dwCurrentTime)=0;
+
+	// Method to ensure that the resources are resident.
+	virtual bool PrepareResources()=0;
 };
 
 struct IAnimationObjectType:virtual public ISystemUnknown,virtual public IDesignObject
@@ -113,18 +116,21 @@ struct IAnimationObjectType:virtual public ISystemUnknown,virtual public IDesign
     virtual IAnimationObject *CreateInstance(IAnimation *piAnimation,unsigned int dwCurrentTime)=0;
 	
 	virtual std::string GetAnimationObjectDescription()=0;
+
+	// Method to ensure that the resources are resident.
+	virtual bool PrepareResources()=0;
 };
 
 struct IAnimationObject
 {
     virtual string GetName()=0;
 
-    virtual void Activate(unsigned int dwCurrentTime)=0;
+	virtual void Activate(unsigned int dwCurrentTime)=0;
     virtual void Deactivate()=0;
     virtual bool IsActive()=0;
 
     virtual IAnimation *GetAnimation()=0;
-
+	
     virtual bool ProcessFrame(IPhysicManager *pPhysicManager,unsigned int dwCurrentTime,double dInterval)=0;
     virtual void CustomRender(IGenericRender *piRender,IGenericCamera *piCamera)=0;
 
@@ -135,7 +141,7 @@ struct IAnimationObject
 
 struct IAnimation
 {
-    virtual void Activate(unsigned int dwCurrentTime)=0;
+	virtual void Activate(unsigned int dwCurrentTime)=0;
     virtual void Deactivate()=0;
     virtual bool IsActive()=0;
 

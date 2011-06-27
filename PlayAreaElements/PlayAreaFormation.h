@@ -53,6 +53,8 @@ public:
     void Deactivate();
 	void Reset();
 
+	bool PrepareResources();
+	
 	void DesignRender(IGenericRender *piRender,bool bSelected);
 	void DesignGetBBox(CVector *pvMins,CVector *pvMaxs);
 	CTraceInfo DesignGetTrace(const CVector &p1,const CVector &p2);

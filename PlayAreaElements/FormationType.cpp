@@ -30,6 +30,17 @@ IFormation *CFormationType::CreateInstance(CVector vPosition,unsigned int dwCurr
 	return pFormation;
 }
 
+bool CFormationType::PrepareResources()
+{
+	bool bOk=true;
+	for(unsigned int x=0;x<m_vElements.size();x++)
+	{
+		SFormationElement *pElement=&m_vElements[x];
+		if(pElement->m_EntityType.m_piEntityType){bOk=bOk&&pElement->m_EntityType.m_piEntityType->PrepareResources();}
+	}
+	return bOk;
+}
+
 void CFormationType::DesignRender( IGenericRender *piRender,CVector &vPosition,CVector &vAngles ,bool bSelected)
 {
 	if(bSelected)

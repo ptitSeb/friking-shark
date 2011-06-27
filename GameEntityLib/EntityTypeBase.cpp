@@ -50,6 +50,40 @@ bool CEntityTypeBase::Unserialize(ISystemPersistencyNode *piNode)
 	return bOk;
 }
 
+bool CEntityTypeBase::PrepareResources()
+{
+	bool bOk=true;
+	for(unsigned int x=0;x<m_vStates.size();x++)
+	{
+		SEntityState *pState=&m_vStates[x];
+		vector<CAnimationTypeWrapper>::iterator i;
+		for(i=pState->vAnimations.begin();i!=pState->vAnimations.end();i++)
+		{
+			bOk=bOk && i->m_piAnimationType->PrepareResources();
+		}
+	}
+	
+	for(unsigned int x=0;x<m_vChildren.size();x++)
+	{
+		SChildEntityType *pChild=&m_vChildren[x];
+		if(pChild->entityType.m_piEntityType)
+		{
+			bOk=bOk && pChild->entityType.m_piEntityType->PrepareResources();
+		}		
+	}
+	
+	for(unsigned int x=0;x<m_vWeapons.size();x++)
+	{
+		CWeaponTypeWrapper *pWeapon=&m_vWeapons[x];
+		if(pWeapon->m_piWeaponType)
+		{
+			bOk=bOk && pWeapon->m_piWeaponType->PrepareResources();
+		}		
+	}
+	return bOk;
+}
+
+
 void CEntityTypeBase::InitializeStates(){m_vStates.clear();RegisterStates();}
 
 void CEntityTypeBase::InitializeEntity(CEntityBase *pEntity,unsigned int dwCurrentTime)

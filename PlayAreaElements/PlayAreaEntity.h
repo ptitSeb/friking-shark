@@ -99,7 +99,8 @@ public:
 	unsigned int GetDelay();
 	unsigned int GetRouteDelay();
 	unsigned int GetInterval();
-
+	
+	bool PrepareResources();
 
 	// Route edition
 

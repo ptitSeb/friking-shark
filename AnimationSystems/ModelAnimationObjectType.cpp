@@ -42,6 +42,11 @@ IAnimationObject *CModelAnimationObjectType::CreateInstance(IAnimation *piAnimat
     return pParticle;
 }
 
+bool CModelAnimationObjectType::PrepareResources()
+{
+	if(!m_ModelWrapper.m_piModel){return false;}
+	return m_ModelWrapper.m_piModel->Prepare();
+}
 
 void CModelAnimationObjectType::DesignRender( IGenericRender *piRender,CVector &vPosition,CVector &vAngles ,bool bSelected)
 {

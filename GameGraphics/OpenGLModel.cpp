@@ -21,6 +21,8 @@
 
 COpenGLModel::COpenGLModel(void)
 {
+	m_bLoadPending=false;
+	m_bLoadResult=false;
 	m_bLoadBSP=false;
 	m_bAutoGenerateBSP=false;
 	m_bAutoUpdateBSP=false;
@@ -46,6 +48,8 @@ public:
 
 bool COpenGLModel::LoadFromFile()
 {
+	m_bLoadPending=false;
+	m_bLoadResult=false;
 	RemoveAnimations();
 	
 	int nStartTime=GetTimeStamp();
@@ -406,13 +410,17 @@ bool COpenGLModel::LoadFromFile()
 	
 	LoadBSP(sFileName.c_str());
 	UpdateFrameBuffers();
-
+	
+	m_bLoadResult=true;
+	
 	RTTRACE("COpenGLModel::LoadFromFile -> Loaded model %s (%d ms)",m_sFileName.c_str(),GetTimeStamp()-nStartTime);
 	return true;
 }
 
 void COpenGLModel::GetGeometry(std::vector<CPolygon*> *pPolygons)
 {
+	if(m_bLoadPending){LoadFromFile();}
+	
   	if(m_vAnimations.size()==0){return;}
 	if(m_vAnimations[0]->vFrames.size()==0){return;}
 	
@@ -490,7 +498,7 @@ bool COpenGLModel::LoadBSP(const char *pFileName)
 bool COpenGLModel::Unserialize(ISystemPersistencyNode *piNode)
 {
 	bool bResult=CSystemObjectBase::Unserialize(piNode);
-	if(bResult){bResult=LoadFromFile();}
+	m_bLoadPending=(bResult && m_sFileName.length());
 	return bResult;
 }
 
@@ -510,6 +518,7 @@ void COpenGLModel::Create()
 
 void COpenGLModel::Render(IGenericRender *piRender,unsigned long nAnimation,unsigned long nFrame)
 {
+	if(m_bLoadPending){LoadFromFile();}
 	if(nAnimation>=m_vAnimations.size()){return;}
 	if(nFrame>=m_vAnimations[nAnimation]->vFrames.size()){return;}
 	SModelFrame *pFrame=m_vAnimations[nAnimation]->vFrames[nFrame];
@@ -618,17 +627,20 @@ void COpenGLModel::UpdateFrameBuffers()
 
 unsigned long COpenGLModel::GetAnimations()
 {
+	if(m_bLoadPending){return LoadFromFile();}
 	return m_vAnimations.size();
 }
 
 unsigned long COpenGLModel::GetAnimationFrames(unsigned long nAnimation)
 {
+	if(m_bLoadPending){return LoadFromFile();}
 	if(nAnimation>=m_vAnimations.size()){return 0;}
 	return m_vAnimations[nAnimation]->vFrames.size();
 }	
 
 unsigned long COpenGLModel::GetFrameRenderBuffers( unsigned long nAnimation,unsigned long nFrame )
 {
+	if(m_bLoadPending){return LoadFromFile();}
 	if(nAnimation>=m_vAnimations.size()){return 0;}
 	if(nFrame>=m_vAnimations[nAnimation]->vFrames.size()){return 0;}
 	return m_vAnimations[nAnimation]->vFrames[nFrame]->vRenderBuffers.size();
@@ -636,6 +648,7 @@ unsigned long COpenGLModel::GetFrameRenderBuffers( unsigned long nAnimation,unsi
 
 void COpenGLModel::GetFrameBBox(unsigned long nAnimation,unsigned long nFrame,CVector *pvMins,CVector *pvMaxs)
 {
+	if(m_bLoadPending){LoadFromFile();}
 	if(nAnimation>=m_vAnimations.size()){return;}
 	if(nFrame>=m_vAnimations[nAnimation]->vFrames.size()){return;}
 	*pvMins=m_vAnimations[nAnimation]->vFrames[nFrame]->vMins;
@@ -644,6 +657,7 @@ void COpenGLModel::GetFrameBBox(unsigned long nAnimation,unsigned long nFrame,CV
 
 CVector COpenGLModel::GetFrameSize( unsigned long nAnimation,unsigned long nFrame )
 {
+	if(m_bLoadPending){LoadFromFile();}
 	if(nAnimation>=m_vAnimations.size()){return Origin;}
 	if(nFrame>=m_vAnimations[nAnimation]->vFrames.size()){return Origin;}
 	return m_vAnimations[nAnimation]->vFrames[nFrame]->vSize;
@@ -651,6 +665,7 @@ CVector COpenGLModel::GetFrameSize( unsigned long nAnimation,unsigned long nFram
 
 double COpenGLModel::GetFrameRadius( unsigned long nAnimation,unsigned long nFrame )
 {
+	if(m_bLoadPending){LoadFromFile();}
 	if(nAnimation>=m_vAnimations.size()){return 0;}
 	if(nFrame>=m_vAnimations[nAnimation]->vFrames.size()){return 0;}
 	return m_vAnimations[nAnimation]->vFrames[nFrame]->dRadius;
@@ -674,7 +689,6 @@ unsigned long COpenGLModel::AddAnimationFrame( unsigned long nAnimation)
 
 unsigned long COpenGLModel::AddRenderBuffer( unsigned long nAnimation,unsigned long nFrame )
 {
-	if(nAnimation>=m_vAnimations.size()){return 0;}
 	if(nFrame>=m_vAnimations[nAnimation]->vFrames.size()){return 0;}
 	SModelRenderBuffer *pRenderBuffer=new SModelRenderBuffer;
 	m_vAnimations[nAnimation]->vFrames[nFrame]->vRenderBuffers.push_back(pRenderBuffer);
@@ -683,6 +697,7 @@ unsigned long COpenGLModel::AddRenderBuffer( unsigned long nAnimation,unsigned l
 
 SModelRenderBuffer *COpenGLModel::GetRenderBuffer( unsigned long nAnimation, unsigned long nFrame, unsigned long nBuffer )
 {
+	if(m_bLoadPending){LoadFromFile();}
 	if(nAnimation>=m_vAnimations.size()){return NULL;}
 	if(nFrame>=m_vAnimations[nAnimation]->vFrames.size()){return NULL;}
 	if(nBuffer>=m_vAnimations[nAnimation]->vFrames[nFrame]->vRenderBuffers.size()){return NULL;}
@@ -773,6 +788,7 @@ void COpenGLModel::SetRenderBufferTextureCoords( unsigned long nAnimation,unsign
 
 void COpenGLModel::GetRenderBufferMaterial( unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,CVector *pvAmbientColor,CVector *pvDiffuseColor,CVector *pvSpecularColor, float *pfShininess, float *pfOpacity )
 {
+	if(m_bLoadPending){LoadFromFile();}
 	if(pvAmbientColor){*pvAmbientColor=Origin;}
 	if(pvDiffuseColor){*pvDiffuseColor=Origin;}
 	if(pvSpecularColor){*pvSpecularColor=Origin;}
@@ -791,6 +807,7 @@ void COpenGLModel::GetRenderBufferMaterial( unsigned long nAnimation,unsigned lo
 
 void COpenGLModel::GetRenderBufferTexture( unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,IGenericTexture **ppiTexture )
 {
+	if(m_bLoadPending){LoadFromFile();}
 	if(ppiTexture){*ppiTexture=NULL;}
 	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation, nFrame, nBuffer);
 	if(pBuffer==NULL){return;}
@@ -801,6 +818,7 @@ void COpenGLModel::GetRenderBufferTexture( unsigned long nAnimation,unsigned lon
 
 void COpenGLModel::GetRenderBufferTextureMatrix(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,CMatrix *pMatrix)
 {
+	if(m_bLoadPending){LoadFromFile();}
 	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation, nFrame, nBuffer);
 	if(pBuffer==NULL){return;}
 	while(nTextureLevel>=pBuffer->vTextureLevels.size()){pBuffer->vTextureLevels.push_back(new SModelTextureLevel);}
@@ -811,6 +829,7 @@ void COpenGLModel::GetRenderBufferTextureMatrix(unsigned long nAnimation,unsigne
 
 void COpenGLModel::GetRenderBufferVertexes( unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long *pVertexes,float **ppVertexes )
 {
+	if(m_bLoadPending){LoadFromFile();}
 	if(pVertexes){*pVertexes=0;}
 	if(ppVertexes){*ppVertexes=NULL;}
 	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation, nFrame, nBuffer);
@@ -821,6 +840,7 @@ void COpenGLModel::GetRenderBufferVertexes( unsigned long nAnimation,unsigned lo
 
 void COpenGLModel::GetRenderBufferFaces( unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long *pFaces,unsigned int **ppFacesVertexes )
 {
+	if(m_bLoadPending){LoadFromFile();}
 	if(pFaces){*pFaces=0;}
 	if(ppFacesVertexes){*ppFacesVertexes=NULL;}
 	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation, nFrame, nBuffer);
@@ -831,6 +851,7 @@ void COpenGLModel::GetRenderBufferFaces( unsigned long nAnimation,unsigned long 
 
 void COpenGLModel::GetRenderBufferNormals( unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,float **ppNormals )
 {
+	if(m_bLoadPending){LoadFromFile();}
 	if(ppNormals){*ppNormals=NULL;}
 	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation, nFrame, nBuffer);
 	if(pBuffer==NULL){return;}
@@ -839,6 +860,7 @@ void COpenGLModel::GetRenderBufferNormals( unsigned long nAnimation,unsigned lon
 
 void COpenGLModel::GetRenderBufferColors( unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,float **ppColors )
 {
+	if(m_bLoadPending){LoadFromFile();}
 	if(ppColors){*ppColors=NULL;}
 	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation, nFrame, nBuffer);
 	if(pBuffer==NULL){return;}
@@ -847,6 +869,7 @@ void COpenGLModel::GetRenderBufferColors( unsigned long nAnimation,unsigned long
 
 void COpenGLModel::GetRenderBufferTextureCoords( unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,float **ppTexVertexes )
 {
+	if(m_bLoadPending){LoadFromFile();}
 	if(ppTexVertexes){*ppTexVertexes=NULL;}
 	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation, nFrame, nBuffer);
 	if(pBuffer==NULL){return;}
@@ -880,6 +903,7 @@ void COpenGLModel::RemoveRenderBuffers( unsigned long nAnimation,unsigned long n
 
 CBSPNode *COpenGLModel::GetBSP()
 {
+	if(m_bLoadPending){LoadFromFile();}
 	return m_pModelBSP;
 }
 
@@ -899,6 +923,7 @@ void COpenGLModel::GetBSPOptions(bool *pbLoad,bool *pbAutoGenerate,bool *pbAutoU
 
 void COpenGLModel::PrepareRenderBuffer(IGenericRender *piRender, unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer ,bool bRenderingShadow)
 {
+	if(m_bLoadPending){LoadFromFile();}
 	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation,nFrame,nBuffer);
 	if(pBuffer==NULL){return;}
 
@@ -1062,6 +1087,7 @@ void COpenGLModel::UnPrepareRenderBuffer(IGenericRender *piRender, unsigned int 
 
 CTraceInfo COpenGLModel::GetTrace( const CVector &vOrigin,const CVector &vAngles,const CVector &p1,const CVector &p2 )
 {
+	if(m_bLoadPending){LoadFromFile();}
 	if(m_pModelBSP)
 	{
 		CVector vMins,vMaxs;
@@ -1082,6 +1108,12 @@ CTraceInfo COpenGLModel::GetTrace( const CVector &vOrigin,const CVector &vAngles
 		info.m_vTracePos=p2;
 		return info;
 	}
+}
+
+bool COpenGLModel::Prepare()
+{
+	if(m_bLoadPending){return LoadFromFile();}
+	return m_bLoadResult;
 }
 
 SModelTextureLevel::SModelTextureLevel()
@@ -1148,3 +1180,4 @@ SModelAnimation::~SModelAnimation()
 	for(unsigned x=0;x<vFrames.size();x++){delete vFrames[x];}
 	vFrames.clear();
 }
+

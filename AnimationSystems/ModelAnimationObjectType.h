@@ -50,6 +50,7 @@ public:
 	std::vector<SModelAnimationKeyFrame> m_vKeyFrames;
 	
     IAnimationObject *CreateInstance(IAnimation *piAnimation,unsigned int dwCurrentTime);
+	bool			  PrepareResources();
 	std::string 	  GetAnimationObjectDescription();
 	
 	void DesignRender(IGenericRender *pRender,CVector &vPosition,CVector &vAngles,bool bSelected);
