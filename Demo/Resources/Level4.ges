@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=212.458680
 			NearPlane=130.000000
-			Posicion=1957.489335,203.483138,1.631002
+			Posicion=1148.241412,203.483138,2.914584
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -25,7 +25,7 @@ AreaDeJuego
 			Class=CPlayAreaCheckPoint
 			Data
 			{
-				Posicion=-932.363126,-1.161011,63.483138
+				Posicion=-1185.866703,-1.161011,63.483138
 			}
 			Name=""
 			System=GameSystem
@@ -35,7 +35,7 @@ AreaDeJuego
 			Class=CPlayAreaCheckPoint
 			Data
 			{
-				Posicion=-230.973800,-0.000576,63.483138
+				Posicion=207.474148,-1.161011,63.483138
 			}
 			Name=""
 			System=GameSystem
@@ -45,22 +45,12 @@ AreaDeJuego
 			Class=CPlayAreaCheckPoint
 			Data
 			{
-				Posicion=596.262143,-0.000576,63.483138
+				Posicion=918.947699,-1.161011,63.483138
 			}
 			Name=""
 			System=GameSystem
 		}
 		Item003
-		{
-			Class=CPlayAreaCheckPoint
-			Data
-			{
-				Posicion=875.983890,-0.000576,63.483138
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item004
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -69,7 +59,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=0
 				Count=1
-				Delay=7000
+				Delay=8500
 				Interval=0
 				Posicion=-380.819959,30.597502,2.426796
 				RouteDelay=0
@@ -78,23 +68,82 @@ AreaDeJuego
 					Ciclica=0
 					Puntos
 					{
-						Item0
+						Item00
 						{
 							Absoluto=1
 							Pause=0
-							Posicion=-251.408105,2.426796,-30.597502
+							Posicion=-271.865690,2.426796,-30.597502
+							SpeedFactor=1.500000
 						}
-						Item1
+						Item01
 						{
 							Absoluto=1
 							Pause=0
-							Posicion=-221.378173,2.426796,-30.597502
+							Posicion=-195.433930,2.426796,-30.597502
+							SpeedFactor=0.600000
 						}
-						Item2
+						Item02
+						{
+							Absoluto=1
+							Pause=1000
+							Posicion=-132.139809,2.426796,-30.597502
+							SpeedFactor=1.000000
+						}
+						Item03
 						{
 							Absoluto=1
 							Pause=0
-							Posicion=-135.348354,2.426796,-30.597502
+							Posicion=-77.709065,2.426796,-30.597502
+							SpeedFactor=0.800000
+						}
+						Item04
+						{
+							Absoluto=1
+							Pause=2000
+							Posicion=-48.381114,2.426796,-30.597502
+							SpeedFactor=0.400000
+						}
+						Item05
+						{
+							Absoluto=1
+							Pause=0
+							Posicion=-1.040321,2.426796,-30.597502
+							SpeedFactor=0.700000
+						}
+						Item06
+						{
+							Absoluto=1
+							Pause=0
+							Posicion=38.926556,2.426796,-30.597502
+							SpeedFactor=0.800000
+						}
+						Item07
+						{
+							Absoluto=1
+							Pause=0
+							Posicion=97.465168,2.426796,-30.597502
+							SpeedFactor=1.200000
+						}
+						Item08
+						{
+							Absoluto=1
+							Pause=0
+							Posicion=163.029750,2.426796,-30.597502
+							SpeedFactor=1.000000
+						}
+						Item09
+						{
+							Absoluto=1
+							Pause=3000
+							Posicion=228.466069,2.426796,-30.597502
+							SpeedFactor=0.600000
+						}
+						Item10
+						{
+							Absoluto=1
+							Pause=0
+							Posicion=88.977280,2.426796,-30.597502
+							SpeedFactor=0.400000
 						}
 					}
 				}
@@ -107,7 +156,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item005
+		Item004
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -134,7 +183,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item006
+		Item005
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -161,7 +210,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item007
+		Item006
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -188,7 +237,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item008
+		Item007
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -215,7 +264,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item009
+		Item008
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -242,7 +291,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item010
+		Item009
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -269,7 +318,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item011
+		Item010
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -296,7 +345,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item012
+		Item011
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -323,7 +372,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item013
+		Item012
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -350,7 +399,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item014
+		Item013
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -377,7 +426,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item015
+		Item014
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -404,7 +453,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item016
+		Item015
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -431,7 +480,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item017
+		Item016
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -458,7 +507,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item018
+		Item017
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -485,7 +534,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item019
+		Item018
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -512,7 +561,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item020
+		Item019
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -539,7 +588,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item021
+		Item020
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -566,7 +615,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item022
+		Item021
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -593,7 +642,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item023
+		Item022
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -620,7 +669,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item024
+		Item023
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -647,17 +696,17 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item025
+		Item024
 		{
 			Class=CPlayAreaCheckPoint
 			Data
 			{
-				Posicion=-625.995845,-0.000576,63.483138
+				Posicion=-715.148731,-1.161011,63.483138
 			}
 			Name=""
 			System=GameSystem
 		}
-		Item026
+		Item025
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -684,7 +733,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item027
+		Item026
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -711,7 +760,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item028
+		Item027
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -738,7 +787,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item029
+		Item028
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -765,7 +814,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item030
+		Item029
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -792,7 +841,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item031
+		Item030
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -819,7 +868,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item032
+		Item031
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -846,7 +895,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item033
+		Item032
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -873,7 +922,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item034
+		Item033
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -900,7 +949,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item035
+		Item034
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -927,7 +976,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item036
+		Item035
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -954,7 +1003,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item037
+		Item036
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -981,7 +1030,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item038
+		Item037
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1008,7 +1057,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item039
+		Item038
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1035,7 +1084,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item040
+		Item039
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1062,7 +1111,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item041
+		Item040
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1089,7 +1138,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item042
+		Item041
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1116,7 +1165,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item043
+		Item042
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1143,7 +1192,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item044
+		Item043
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1170,7 +1219,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item045
+		Item044
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1197,7 +1246,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item046
+		Item045
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1224,7 +1273,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item047
+		Item046
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1251,7 +1300,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item048
+		Item047
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1278,7 +1327,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item049
+		Item048
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1305,7 +1354,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item050
+		Item049
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1332,7 +1381,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item051
+		Item050
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1359,7 +1408,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item052
+		Item051
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1386,7 +1435,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item053
+		Item052
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1413,7 +1462,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item054
+		Item053
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1440,7 +1489,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item055
+		Item054
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1467,7 +1516,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item056
+		Item055
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1494,7 +1543,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item057
+		Item056
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1521,7 +1570,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item058
+		Item057
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1548,7 +1597,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item059
+		Item058
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1575,7 +1624,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item060
+		Item059
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1602,7 +1651,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item061
+		Item060
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1629,7 +1678,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item062
+		Item061
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1656,7 +1705,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item063
+		Item062
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1667,7 +1716,7 @@ AreaDeJuego
 					Name=BombBonus
 					System=EntityTypes
 				}
-				BonusOnChild=0
+				BonusOnChild=-1
 				Count=1
 				Delay=0
 				Interval=0
@@ -1687,7 +1736,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item064
+		Item063
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1714,7 +1763,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item065
+		Item064
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1741,7 +1790,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item066
+		Item065
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1768,7 +1817,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item067
+		Item066
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1795,7 +1844,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item068
+		Item067
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1822,7 +1871,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item069
+		Item068
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1849,7 +1898,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item070
+		Item069
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1876,7 +1925,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item071
+		Item070
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1903,7 +1952,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item072
+		Item071
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1930,7 +1979,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item073
+		Item072
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1957,7 +2006,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item074
+		Item073
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -1984,7 +2033,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item075
+		Item074
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2011,7 +2060,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item076
+		Item075
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2038,7 +2087,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item077
+		Item076
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2065,7 +2114,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item078
+		Item077
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2092,7 +2141,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item079
+		Item078
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2119,7 +2168,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item080
+		Item079
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2146,7 +2195,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item081
+		Item080
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2173,7 +2222,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item082
+		Item081
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2200,7 +2249,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item083
+		Item082
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2227,7 +2276,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item084
+		Item083
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2254,7 +2303,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item085
+		Item084
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2281,7 +2330,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item086
+		Item085
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2308,7 +2357,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item087
+		Item086
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2335,7 +2384,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item088
+		Item087
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2362,7 +2411,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item089
+		Item088
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2389,7 +2438,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item090
+		Item089
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2416,7 +2465,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item091
+		Item090
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2443,7 +2492,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item092
+		Item091
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2470,7 +2519,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item093
+		Item092
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2497,7 +2546,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item094
+		Item093
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2524,7 +2573,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item095
+		Item094
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2551,7 +2600,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item096
+		Item095
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2578,7 +2627,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item097
+		Item096
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2605,7 +2654,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item098
+		Item097
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2632,7 +2681,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item099
+		Item098
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2659,7 +2708,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item100
+		Item099
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2686,7 +2735,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item101
+		Item100
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2713,7 +2762,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item102
+		Item101
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2740,7 +2789,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item103
+		Item102
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2767,7 +2816,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item104
+		Item103
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2794,7 +2843,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item105
+		Item104
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2815,6 +2864,15 @@ AreaDeJuego
 				{
 					Ciclica=0
 					Puntos
+					{
+						Item0
+						{
+							Absoluto=1
+							Pause=0
+							Posicion=-1041.952829,5.386783,24.533171
+							SpeedFactor=1.000000
+						}
+					}
 				}
 				Tipo
 				{
@@ -2825,7 +2883,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item106
+		Item105
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2852,7 +2910,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item107
+		Item106
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2879,7 +2937,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item108
+		Item107
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2906,7 +2964,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item109
+		Item108
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2933,7 +2991,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item110
+		Item109
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2960,7 +3018,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item111
+		Item110
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -2987,7 +3045,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item112
+		Item111
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -3010,6 +3068,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=-960.832374,5.386783,21.263466
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -3022,7 +3081,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item113
+		Item112
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -3045,6 +3104,43 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=-960.659549,5.386783,-15.953402
+							SpeedFactor=1.000000
+						}
+					}
+				}
+				Tipo
+				{
+					Name=Tank
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item113
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=0
+				Count=1
+				Delay=3500
+				Interval=0
+				Posicion=-961.000066,113.744874,5.386783
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+					{
+						Item0
+						{
+							Absoluto=1
+							Pause=0
+							Posicion=-961.000066,5.386783,-43.399805
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -3068,7 +3164,7 @@ AreaDeJuego
 				Count=1
 				Delay=3500
 				Interval=0
-				Posicion=-961.000066,113.744874,5.386783
+				Posicion=-961.439020,-117.065908,5.386783
 				RouteDelay=0
 				Ruta
 				{
@@ -3079,7 +3175,8 @@ AreaDeJuego
 						{
 							Absoluto=1
 							Pause=0
-							Posicion=-961.000066,5.386783,-43.399805
+							Posicion=-961.439020,5.386783,44.906700
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -3093,41 +3190,6 @@ AreaDeJuego
 			System=GameSystem
 		}
 		Item115
-		{
-			Class=CPlayAreaEntity
-			Data
-			{
-				Angulos=0.000000,0.000000,0.000000
-				Bonus
-				BonusOnChild=0
-				Count=1
-				Delay=3500
-				Interval=0
-				Posicion=-961.439020,-117.065908,5.386783
-				RouteDelay=0
-				Ruta
-				{
-					Ciclica=0
-					Puntos
-					{
-						Item0
-						{
-							Absoluto=1
-							Pause=0
-							Posicion=-961.439020,5.386783,44.906700
-						}
-					}
-				}
-				Tipo
-				{
-					Name=Tank
-					System=EntityTypes
-				}
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item116
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -3150,30 +3212,85 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=183.741876,5.386783,54.736374
+							SpeedFactor=1.000000
 						}
 						Item1
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=202.562662,5.386783,20.538328
+							SpeedFactor=1.000000
 						}
 						Item2
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=255.571490,5.386783,20.538328
+							SpeedFactor=1.000000
 						}
 						Item3
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=279.761002,5.386783,61.559989
+							SpeedFactor=1.000000
 						}
 						Item4
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=279.761002,5.386783,105.209331
+							SpeedFactor=1.000000
+						}
+					}
+				}
+				Tipo
+				{
+					Name=Tank
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item116
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=0
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=340.135414,-20.706548,5.386783
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+					{
+						Item0
+						{
+							Absoluto=1
+							Pause=0
+							Posicion=307.289092,5.386783,20.706548
+							SpeedFactor=1.000000
+						}
+						Item1
+						{
+							Absoluto=1
+							Pause=0
+							Posicion=298.311025,5.386783,60.722947
+							SpeedFactor=1.000000
+						}
+						Item2
+						{
+							Absoluto=1
+							Pause=0
+							Posicion=298.311025,5.386783,98.804123
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -3197,7 +3314,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=340.135414,-20.706548,5.386783
+				Posicion=353.075420,-20.902381,5.386783
 				RouteDelay=0
 				Ruta
 				{
@@ -3208,19 +3325,22 @@ AreaDeJuego
 						{
 							Absoluto=1
 							Pause=0
-							Posicion=307.289092,5.386783,20.706548
+							Posicion=307.419581,5.386783,20.445663
+							SpeedFactor=1.000000
 						}
 						Item1
 						{
 							Absoluto=1
 							Pause=0
-							Posicion=298.311025,5.386783,60.722947
+							Posicion=298.270304,5.386783,60.724257
+							SpeedFactor=1.000000
 						}
 						Item2
 						{
 							Absoluto=1
 							Pause=0
-							Posicion=298.311025,5.386783,98.804123
+							Posicion=298.270304,5.386783,97.729676
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -3244,7 +3364,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=353.075420,-20.902381,5.386783
+				Posicion=366.156708,-21.203353,5.386783
 				RouteDelay=0
 				Ruta
 				{
@@ -3255,19 +3375,22 @@ AreaDeJuego
 						{
 							Absoluto=1
 							Pause=0
-							Posicion=307.419581,5.386783,20.445663
+							Posicion=308.255702,5.386783,20.031552
+							SpeedFactor=1.000000
 						}
 						Item1
 						{
 							Absoluto=1
 							Pause=0
-							Posicion=298.270304,5.386783,60.724257
+							Posicion=298.475043,5.386783,60.740187
+							SpeedFactor=1.000000
 						}
 						Item2
 						{
 							Absoluto=1
 							Pause=0
-							Posicion=298.270304,5.386783,97.729676
+							Posicion=298.475043,5.386783,98.843202
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -3281,53 +3404,6 @@ AreaDeJuego
 			System=GameSystem
 		}
 		Item119
-		{
-			Class=CPlayAreaEntity
-			Data
-			{
-				Angulos=0.000000,0.000000,0.000000
-				Bonus
-				BonusOnChild=0
-				Count=1
-				Delay=0
-				Interval=0
-				Posicion=366.156708,-21.203353,5.386783
-				RouteDelay=0
-				Ruta
-				{
-					Ciclica=0
-					Puntos
-					{
-						Item0
-						{
-							Absoluto=1
-							Pause=0
-							Posicion=308.255702,5.386783,20.031552
-						}
-						Item1
-						{
-							Absoluto=1
-							Pause=0
-							Posicion=298.475043,5.386783,60.740187
-						}
-						Item2
-						{
-							Absoluto=1
-							Pause=0
-							Posicion=298.475043,5.386783,98.843202
-						}
-					}
-				}
-				Tipo
-				{
-					Name=Tank
-					System=EntityTypes
-				}
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item120
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -3354,7 +3430,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item121
+		Item120
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -3381,7 +3457,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item122
+		Item121
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -3404,6 +3480,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=643.426987,2.426796,-115.028888
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -3416,7 +3493,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item123
+		Item122
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -3438,19 +3515,57 @@ AreaDeJuego
 						{
 							Absoluto=1
 							Pause=0
-							Posicion=468.870705,2.426796,-29.196613
+							Posicion=516.547505,2.426796,-29.196613
+							SpeedFactor=1.200000
 						}
 						Item1
 						{
 							Absoluto=1
 							Pause=0
-							Posicion=535.229214,2.426796,-29.196613
+							Posicion=499.287002,2.426796,-29.196613
+							SpeedFactor=0.600000
 						}
 						Item2
 						{
 							Absoluto=1
 							Pause=0
-							Posicion=1043.270840,2.426796,-29.196613
+							Posicion=643.844048,2.426796,-29.196613
+							SpeedFactor=1.100000
+						}
+						Item3
+						{
+							Absoluto=1
+							Pause=0
+							Posicion=725.038442,2.426796,-29.196613
+							SpeedFactor=0.600000
+						}
+						Item4
+						{
+							Absoluto=1
+							Pause=0
+							Posicion=783.856660,2.426796,-29.196613
+							SpeedFactor=0.400000
+						}
+						Item5
+						{
+							Absoluto=1
+							Pause=0
+							Posicion=934.865926,2.426796,-29.196613
+							SpeedFactor=1.000000
+						}
+						Item6
+						{
+							Absoluto=1
+							Pause=3000
+							Posicion=966.300726,2.426796,-29.196613
+							SpeedFactor=0.600000
+						}
+						Item7
+						{
+							Absoluto=1
+							Pause=0
+							Posicion=842.649480,2.426796,-29.196613
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -3463,7 +3578,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item124
+		Item123
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -3486,6 +3601,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=930.193201,8.483338,4.193459
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -3498,7 +3614,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item125
+		Item124
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -3521,6 +3637,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=906.182818,8.483338,4.545754
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -3533,7 +3650,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item126
+		Item125
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -3556,6 +3673,43 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=882.305025,8.483338,4.979486
+							SpeedFactor=1.000000
+						}
+					}
+				}
+				Tipo
+				{
+					Name=Tank
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item126
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=0
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=805.357055,-15.846868,5.573837
+				RouteDelay=3000
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+					{
+						Item0
+						{
+							Absoluto=1
+							Pause=0
+							Posicion=838.181528,5.573837,15.846868
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -3579,7 +3733,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=805.357055,-15.846868,5.573837
+				Posicion=808.673967,-50.121661,5.573837
 				RouteDelay=3000
 				Ruta
 				{
@@ -3590,7 +3744,8 @@ AreaDeJuego
 						{
 							Absoluto=1
 							Pause=0
-							Posicion=838.181528,5.573837,15.846868
+							Posicion=837.763154,5.573837,50.121661
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -3604,41 +3759,6 @@ AreaDeJuego
 			System=GameSystem
 		}
 		Item128
-		{
-			Class=CPlayAreaEntity
-			Data
-			{
-				Angulos=0.000000,0.000000,0.000000
-				Bonus
-				BonusOnChild=0
-				Count=1
-				Delay=0
-				Interval=0
-				Posicion=808.673967,-50.121661,5.573837
-				RouteDelay=3000
-				Ruta
-				{
-					Ciclica=0
-					Puntos
-					{
-						Item0
-						{
-							Absoluto=1
-							Pause=0
-							Posicion=837.763154,5.573837,50.121661
-						}
-					}
-				}
-				Tipo
-				{
-					Name=Tank
-					System=EntityTypes
-				}
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item129
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -3665,7 +3785,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item130
+		Item129
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -3692,7 +3812,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item131
+		Item130
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -3715,6 +3835,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=1008.211724,5.386783,20.836520
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -3727,7 +3848,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item132
+		Item131
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -3750,6 +3871,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=1008.208944,5.386783,34.481525
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -3762,7 +3884,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item133
+		Item132
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -3785,6 +3907,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=1136.227737,5.806611,62.082569
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -3797,7 +3920,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item134
+		Item133
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -3820,6 +3943,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=1136.351932,5.426933,39.706914
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -3832,7 +3956,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item135
+		Item134
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -3859,7 +3983,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item136
+		Item135
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -3886,7 +4010,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item137
+		Item136
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -3913,7 +4037,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item138
+		Item137
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -3940,7 +4064,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item139
+		Item138
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -3967,7 +4091,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item140
+		Item139
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -3998,7 +4122,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item141
+		Item140
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -4021,6 +4145,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=1270.925129,5.386783,-102.364406
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -4033,7 +4158,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item142
+		Item141
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -4056,6 +4181,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=1432.887155,5.386783,-101.529975
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -4068,7 +4194,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item143
+		Item142
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -4091,6 +4217,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=1711.212662,5.386783,-96.694641
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -4103,7 +4230,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item144
+		Item143
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -4112,7 +4239,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=0
 				Count=3
-				Delay=1500
+				Delay=1000
 				Interval=1500
 				Posicion=1802.903334,102.469055,5.386783
 				RouteDelay=0
@@ -4126,6 +4253,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=1802.903334,5.386783,105.450930
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -4138,7 +4266,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item145
+		Item144
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -4161,12 +4289,14 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=1633.592740,5.386783,-65.615051
+							SpeedFactor=1.000000
 						}
 						Item1
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=1633.592740,5.386783,-14.503378
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -4179,7 +4309,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item146
+		Item145
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -4206,7 +4336,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item147
+		Item146
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -4233,7 +4363,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item148
+		Item147
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -4260,7 +4390,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item149
+		Item148
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -4287,7 +4417,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item150
+		Item149
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -4314,7 +4444,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item151
+		Item150
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -4341,7 +4471,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item152
+		Item151
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -4368,27 +4498,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item153
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				AlternativeBonus
-				AlternativeType
-				Bonus
-				ConditionType=0
-				ConditionValue=0
-				Posicion=-396.260697,-0.000576,63.483138
-				Tipo
-				{
-					Name=ArrowRed
-					System=FormationTypes
-				}
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item154
+		Item152
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -4415,7 +4525,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item155
+		Item153
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -4442,7 +4552,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item156
+		Item154
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -4469,7 +4579,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item157
+		Item155
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -4496,7 +4606,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item158
+		Item156
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -4523,7 +4633,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item159
+		Item157
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -4550,7 +4660,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item160
+		Item158
 		{
 			Class=CPlayAreaCheckPoint
 			Data
@@ -4560,7 +4670,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item161
+		Item159
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -4571,7 +4681,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=86.591536,-41.205407,2.426796
+				Posicion=-20.012450,-40.620827,2.426796
 				RouteDelay=0
 				Ruta
 				{
@@ -4582,7 +4692,8 @@ AreaDeJuego
 						{
 							Absoluto=1
 							Pause=0
-							Posicion=-179.690452,2.426796,41.205407
+							Posicion=-179.363345,2.426796,40.620827
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -4595,17 +4706,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item162
-		{
-			Class=CPlayAreaCheckPoint
-			Data
-			{
-				Posicion=-94.922246,-1.161011,63.483138
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item163
+		Item160
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -4620,7 +4721,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=55.887537,-57.515257,2.426796
+				Posicion=97.574082,-56.924091,2.426796
 				RouteDelay=0
 				Ruta
 				{
@@ -4631,7 +4732,8 @@ AreaDeJuego
 						{
 							Absoluto=1
 							Pause=0
-							Posicion=-166.130918,2.426796,57.515257
+							Posicion=-173.911181,2.426796,56.924091
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -4644,7 +4746,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item164
+		Item161
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -4659,7 +4761,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-27.491460,-24.814037,2.426796
+				Posicion=-84.572735,-24.903691,2.426796
 				RouteDelay=0
 				Ruta
 				{
@@ -4670,7 +4772,8 @@ AreaDeJuego
 						{
 							Absoluto=1
 							Pause=0
-							Posicion=-255.032796,2.426796,24.814037
+							Posicion=-248.550331,2.426796,24.903691
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -4683,7 +4786,7 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item165
+		Item162
 		{
 			Class=CPlayAreaEntity
 			Data
@@ -4705,6 +4808,1757 @@ AreaDeJuego
 				{
 					Name=IceCreamStand
 					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item163
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-1107.407095,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRight
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item164
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-1071.883219,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item165
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-1034.017500,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRight
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item166
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-1006.226234,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item167
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-979.617347,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRight
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item168
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-953.535386,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item169
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				{
+					Name=PointsBonus
+					System=EntityTypes
+				}
+				AlternativeType
+				{
+					Name=POINTS-LEFT-CIRCLE-DOWN
+					System=FormationTypes
+				}
+				Bonus
+				{
+					Name=WeaponBonus
+					System=EntityTypes
+				}
+				ConditionType=1
+				ConditionValue=3
+				Posicion=-820.489713,-1.161011,63.483138
+				Tipo
+				{
+					Name=WEAP-LEFT-CIRCLE-DOWN
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item170
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-924.920185,-1.161011,63.483138
+				Tipo
+				{
+					Name=VeteranCentroDch
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item171
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-893.058897,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRight
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item172
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-869.265807,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item173
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-799.993574,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item174
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-775.013584,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRight
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item175
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-748.765848,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item176
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-722.116429,-1.161011,63.483138
+				Tipo
+				{
+					Name=VeteranCentroDch
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item177
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-696.079457,-1.161011,63.483138
+				Tipo
+				{
+					Name=VeteranCentroIzq
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item178
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				{
+					Name=PointsBonus
+					System=EntityTypes
+				}
+				AlternativeType
+				{
+					Name=Formacion6
+					System=FormationTypes
+				}
+				Bonus
+				{
+					Name=WeaponBonus
+					System=EntityTypes
+				}
+				ConditionType=1
+				ConditionValue=4
+				Posicion=-509.098142,-1.161011,63.483138
+				Tipo
+				{
+					Name=Formacion7
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item179
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-669.662349,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRight
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item180
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-647.116152,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item181
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-620.919176,-1.161011,63.483138
+				Tipo
+				{
+					Name=VeteranCentroIzq
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item182
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-593.497908,-1.161011,63.483138
+				Tipo
+				{
+					Name=VeteranCentroDch
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item183
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-559.955060,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRightFirstAhead
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item184
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-476.975617,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeftFirstAhead
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item185
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-448.168856,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRight
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item186
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-419.629519,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item187
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-393.455230,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRight
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item188
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				{
+					Name=PointsBonus
+					System=EntityTypes
+				}
+				AlternativeType
+				{
+					Name=POINTS-RIGHT-CIRCLE
+					System=FormationTypes
+				}
+				Bonus
+				{
+					Name=WeaponBonus
+					System=EntityTypes
+				}
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-187.378800,-1.161011,63.483138
+				Tipo
+				{
+					Name=WEAP-RIGHT-CIRCLE
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item189
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-365.396213,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item190
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-337.893934,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRight
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item191
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-310.270221,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeftFirstAhead
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item192
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-284.121521,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRightFirstAhead
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item193
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-255.294627,-1.161011,63.483138
+				Tipo
+				{
+					Name=VeteranCentroIzq
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item194
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-225.278899,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item195
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-159.968296,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item196
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-1175.676332,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRight
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item197
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-1138.663177,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item198
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				{
+					Name=PointsBonus
+					System=EntityTypes
+				}
+				AlternativeType
+				{
+					Name=POINTS-LEFT-CIRCLE
+					System=FormationTypes
+				}
+				Bonus
+				{
+					Name=WeaponBonus
+					System=EntityTypes
+				}
+				ConditionType=1
+				ConditionValue=3
+				Posicion=1470.097218,-1.161011,63.483138
+				Tipo
+				{
+					Name=WEAP-LEFT-CIRCLE
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item199
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=73.723837,-1.161011,63.483138
+				Tipo
+				{
+					Name=SmallBomberRight
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item200
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=185.316479,-1.161011,63.483138
+				Tipo
+				{
+					Name=SmallBomberLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item201
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=295.934957,-1.161011,63.483138
+				Tipo
+				{
+					Name=SmallBomberCenter
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item202
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				{
+					Name=BombBonus
+					System=EntityTypes
+				}
+				AlternativeType
+				{
+					Name=SpiralYellow
+					System=FormationTypes
+				}
+				Bonus
+				{
+					Name=WeaponBonus
+					System=EntityTypes
+				}
+				ConditionType=1
+				ConditionValue=4
+				Posicion=565.715236,-1.161011,63.483138
+				Tipo
+				{
+					Name=SpiralRed
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item203
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=654.088593,-1.161011,63.483138
+				Tipo
+				{
+					Name=SmallBomberCenter
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item204
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=695.793276,-1.161011,63.483138
+				Tipo
+				{
+					Name=SmallBomberRight
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item205
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=730.142747,-1.161011,63.483138
+				Tipo
+				{
+					Name=SmallBomberLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item206
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				{
+					Name=PointsBonus
+					System=EntityTypes
+				}
+				AlternativeType
+				{
+					Name=SplitCircleYellowNoDelay
+					System=FormationTypes
+				}
+				Bonus
+				{
+					Name=WeaponBonus
+					System=EntityTypes
+				}
+				ConditionType=0
+				ConditionValue=0
+				Posicion=799.633847,-1.161011,63.483138
+				Tipo
+				{
+					Name=SplitCircleRedNoDelay
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item207
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=849.274426,-1.161011,63.483138
+				Tipo
+				{
+					Name=SmallBomberLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item208
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=891.359741,-1.161011,63.483138
+				Tipo
+				{
+					Name=SmallBomberCenter
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item209
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=926.632972,-1.161011,63.483138
+				Tipo
+				{
+					Name=SmallBomberLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item210
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=956.644085,-1.161011,63.483138
+				Tipo
+				{
+					Name=SmallBomberRight
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item211
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=1001.055896,-1.161011,63.483138
+				Tipo
+				{
+					Name=SmallBomberLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item212
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=1114.272885,-1.161011,63.483138
+				Tipo
+				{
+					Name=MediumBomberDerecha
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item213
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=1172.899780,-1.161011,63.483138
+				Tipo
+				{
+					Name=MediumBomberIzquierda
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item214
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=1242.651990,-1.161011,63.483138
+				Tipo
+				{
+					Name=MediumBomberCentro
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item215
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=0
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-602.955199,60.280873,5.386783
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=CarTypeB
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item216
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-116.868352,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRight
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item217
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-74.598402,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item218
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-32.141492,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRight
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item219
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=10.386181,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item220
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				{
+					Name=PointsBonus
+					System=EntityTypes
+				}
+				AlternativeType
+				{
+					Name=SpiralYellow
+					System=FormationTypes
+				}
+				Bonus
+				{
+					Name=WeaponBonus
+					System=EntityTypes
+				}
+				ConditionType=0
+				ConditionValue=0
+				Posicion=216.775113,-1.161011,63.483138
+				Tipo
+				{
+					Name=SpiralRed
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item221
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=383.402914,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRight
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item222
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=410.494131,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item223
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=758.456515,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRight
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item224
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=788.891632,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeftFirstAhead
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item225
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=813.245258,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRightFirstAhead
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item226
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=850.539049,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item227
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=875.361535,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRight
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item228
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=912.367218,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item229
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=954.666990,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRight
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item230
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=1295.782443,-1.161011,63.483138
+				Tipo
+				{
+					Name=MediumBomberDerecha
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item231
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=1353.694421,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRight
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item232
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=1386.643132,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item233
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=1415.535597,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRight
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item234
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=1564.810918,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item235
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=1589.503519,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRight
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item236
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=1619.936069,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item237
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=1644.653576,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRightFirstAhead
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item238
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=1674.204741,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeftFirstAhead
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item239
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=1701.888965,-1.161011,63.483138
+				Tipo
+				{
+					Name=VeteranCentroDch
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item240
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=1733.182854,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item241
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=1760.304258,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRightFirstAhead
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item242
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=1788.525041,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeftFirstAhead
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item243
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=1814.969707,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRight
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item244
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=1843.490427,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item245
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=1869.107843,-1.161011,63.483138
+				Tipo
+				{
+					Name=TreeVeteranRight
+					System=FormationTypes
 				}
 			}
 			Name=""
@@ -4745,24 +6599,28 @@ AreaDeJuego
 				Absoluto=1
 				Pause=0
 				Posicion=1859.234013,63.483138,1.161011
+				SpeedFactor=1.000000
 			}
 			Item1
 			{
 				Absoluto=1
 				Pause=0
 				Posicion=1895.814643,63.483138,1.161011
+				SpeedFactor=1.000000
 			}
 			Item2
 			{
 				Absoluto=1
 				Pause=0
 				Posicion=1975.028703,8.386783,1.161011
+				SpeedFactor=1.000000
 			}
 			Item3
 			{
 				Absoluto=1
 				Pause=0
 				Posicion=2039.072665,8.386783,1.161011
+				SpeedFactor=1.000000
 			}
 		}
 	}
@@ -4791,25 +6649,29 @@ AreaDeJuego
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=-1399.066978,8.386783,1.161011
+				Posicion=-1380.717855,8.386783,1.161011
+				SpeedFactor=1.000000
 			}
 			Item1
 			{
 				Absoluto=1
 				Pause=0
 				Posicion=-1340.970424,8.386783,1.161011
+				SpeedFactor=1.000000
 			}
 			Item2
 			{
 				Absoluto=1
 				Pause=0
 				Posicion=-1282.873869,63.483138,1.161011
+				SpeedFactor=1.000000
 			}
 			Item3
 			{
 				Absoluto=1
 				Pause=0
 				Posicion=-1242.873869,63.483138,1.161011
+				SpeedFactor=1.000000
 			}
 		}
 	}
