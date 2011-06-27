@@ -26,12 +26,14 @@ class CLevelOptions: virtual public CGameDialogBase,virtual public IGameGUIButto
 	IGameGUIButton *m_piBTLevel1;
 	IGameGUIButton *m_piBTLevel2;
 	IGameGUIButton *m_piBTLevel3;
+	IGameGUIButton *m_piBTLevel4;
 	IGameGUIButton *m_piBTMode;
 	
 	BEGIN_CHILD_MAP()
 		CHILD_MAP_ENTRY_EX("Level1",m_piBTLevel1,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Level2",m_piBTLevel2,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Level3",m_piBTLevel3,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("Level4",m_piBTLevel4,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Mode",m_piBTMode,IGameGUIButtonEvents);
 	END_CHILD_MAP()
 
