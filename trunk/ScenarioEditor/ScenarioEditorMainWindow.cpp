@@ -97,6 +97,7 @@ bool CScenarioEditorMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 	{
 		m_ColorSelector.Attach("GameGUI","ColorSelector");
 		m_ObjectSelector.Attach("GameGUI","ObjectSelector");
+		m_ObjectListSelector.Attach("GameGUI","ObjectListSelector");
 		m_Viewport.Attach("GameGUI","Viewport");
 		m_Render.Attach("GameGUI","Render");
 		m_Viewport.m_piViewport->SetCaption("Scenario Editor");
@@ -158,6 +159,7 @@ void CScenarioEditorMainWindow::DestroyWindow()
 
 	m_ColorSelector.Detach();
 	m_ObjectSelector.Detach();
+	m_ObjectListSelector.Detach();	
 	m_Viewport.Detach();
 	m_Viewport.Detach();
 
@@ -821,7 +823,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			REL(piDesign);
 		}
 		
-		if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vFilteredEntities,&nSelectedEntityType))
+		if(m_ObjectListSelector.m_piObjectListSelector->SelectObject("Select Entity",this,&vFilteredEntities,&nSelectedEntityType))
 		{
 			ISystemObject *piObject=QI(ISystemObject,vFilteredEntities[nSelectedEntityType]);
 			IEntityType *piEntityType=QI(IEntityType,vFilteredEntities[nSelectedEntityType]);
@@ -857,7 +859,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		unsigned long nSelectedEntityType=0;
 		std::vector<IDesignObject *> vEntityTypes;
 		GetSystemObjects("EntityTypes",&vEntityTypes);
-		if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vEntityTypes,&nSelectedEntityType))
+		if(m_ObjectListSelector.m_piObjectListSelector->SelectObject("Select Entity",this,&vEntityTypes,&nSelectedEntityType))
 		{
 			ISystemObject *piObject=QI(ISystemObject,vEntityTypes[nSelectedEntityType]);
 			layer.sEntityType=piObject?piObject->GetName():"";
@@ -1224,7 +1226,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			unsigned long nSelectedEntityType=0;
 			std::vector<IDesignObject *> vEntityTypes;
 			GetSystemObjects("EntityTypes",&vEntityTypes);
-			if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vEntityTypes,&nSelectedEntityType))
+			if(m_ObjectListSelector.m_piObjectListSelector->SelectObject("Select Entity",this,&vEntityTypes,&nSelectedEntityType))
 			{
 				ISystemObject *piObject=QI(ISystemObject,vEntityTypes[nSelectedEntityType]);
 				entityLayer.sEntityType=piObject?piObject->GetName():"";
@@ -1295,7 +1297,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			unsigned long nSelectedEntityType=0;
 			std::vector<IDesignObject *> vEntityTypes;
 			GetSystemObjects("EntityTypes",&vEntityTypes);
-			if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vEntityTypes,&nSelectedEntityType))
+			if(m_ObjectListSelector.m_piObjectListSelector->SelectObject("Select Entity",this,&vEntityTypes,&nSelectedEntityType))
 			{
 				IEntityType *piEntityType=QI(IEntityType,vEntityTypes[nSelectedEntityType]);
 				pEntity->m_piPlayAreaEntity->SetEntityType(piEntityType);
@@ -1310,7 +1312,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			unsigned long nSelectedEntityType=0;
 			std::vector<IDesignObject *> vEntityTypes;
 			GetSystemObjects("EntityTypes",&vEntityTypes);
-			if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vEntityTypes,&nSelectedEntityType))
+			if(m_ObjectListSelector.m_piObjectListSelector->SelectObject("Select Bonus",this,&vEntityTypes,&nSelectedEntityType))
 			{
 				IEntityType *piEntityType=QI(IEntityType,vEntityTypes[nSelectedEntityType]);
 				pEntity->m_piPlayAreaEntity->SetBonusType(piEntityType);
@@ -1440,7 +1442,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			unsigned long nSelectedEntityType=0;
 			std::vector<IDesignObject *> vEntityTypes;
 			GetSystemObjects("EntityTypes",&vEntityTypes);
-			if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vEntityTypes,&nSelectedEntityType))
+			if(m_ObjectListSelector.m_piObjectListSelector->SelectObject("Select Bonus",this,&vEntityTypes,&nSelectedEntityType))
 			{
 				IEntityType *piEntityType=QI(IEntityType,vEntityTypes[nSelectedEntityType]);
 				pFormation->m_piPlayAreaFormation->SetBonusType(piEntityType);
@@ -1470,7 +1472,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			unsigned long nSelectedEntityType=0;
 			std::vector<IDesignObject *> vEntityTypes;
 			GetSystemObjects("EntityTypes",&vEntityTypes);
-			if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vEntityTypes,&nSelectedEntityType))
+			if(m_ObjectListSelector.m_piObjectListSelector->SelectObject("Select Bonus",this,&vEntityTypes,&nSelectedEntityType))
 			{
 				IEntityType *piEntityType=QI(IEntityType,vEntityTypes[nSelectedEntityType]);
 				pFormation->m_piPlayAreaFormation->SetAlternativeBonusType(piEntityType);

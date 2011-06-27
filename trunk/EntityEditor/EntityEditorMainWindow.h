@@ -19,12 +19,12 @@
 #pragma once
 
 #include "EntityEditor.h"
-#include "EntityEditorObjectSelector.h"
+#include "EntityEditorObjectListSelector.h"
 #include "GameGUITranslationGizmo.h"
 #include "GameGUIRotationGizmo.h"
 #include "GameGUIBBoxGizmo.h"
 
-DECLARE_CUSTOM_WRAPPER1(CEntityEditorObjectSelectorWrapper,IEntityEditorObjectSelector,m_piObjectSelector)
+DECLARE_CUSTOM_WRAPPER1(CEntityEditorObjectSelectorWrapper,IEntityEditorObjectListSelector,m_piObjectListSelector)
 DECLARE_CUSTOM_WRAPPER1(CEntityEditorNamedObjectSelectorWrapper,IEntityEditorNamedObjectSelector,m_piObjectSelector)
 DECLARE_CUSTOM_WRAPPER1(CEntityEditorClassSelectorWrapper,IEntityEditorClassSelector,m_piClassSelector)
 

@@ -18,8 +18,6 @@
 
 #pragma once
 
-#define DEFAULT_OBJECT_SELECTOR_BUTTON_SIZE		128.0
-
 class IEntityEditorPropertyPanel:virtual public IGameWindow
 {
 public:
@@ -31,12 +29,6 @@ class IEntityEditorPropertyPanelEvents
 public:
 	virtual void OnObjectChanged(IEntityEditorPropertyPanel *piPanel,ISystemObject *piObject)=0;
 	virtual void OnObjectRemoved(IEntityEditorPropertyPanel *piPanel,ISystemObject *piObject)=0;
-};
-
-class IEntityEditorObjectLabel:virtual public IGameWindow
-{
-public:
-	virtual void SetObject(IDesignObject *piObject)=0;
 };
 
 class IEntityEditorNamedObjectSelector:virtual public IGameWindow
@@ -52,10 +44,10 @@ public:
 };
 
 
-class IEntityEditorObjectSelector: virtual public ISystemUnknown
+class IEntityEditorObjectListSelector: virtual public ISystemUnknown
 {
 public:
 	
-	virtual bool SelectObject(std::string sTitle,IGameWindow *piParent,std::vector<IDesignObject *> *vObjects,unsigned long *pnSelectedObject,double dButtonSizeX=DEFAULT_OBJECT_SELECTOR_BUTTON_SIZE,double dButtonSizeY=DEFAULT_OBJECT_SELECTOR_BUTTON_SIZE)=0;
+	virtual bool SelectObject(std::string sTitle,IGameWindow *piParent,std::vector<IDesignObject *> *vObjects,unsigned long *pnSelectedObject)=0;
 	
 };

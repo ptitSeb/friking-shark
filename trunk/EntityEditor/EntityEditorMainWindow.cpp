@@ -378,13 +378,13 @@ void CEntityEditorMainWindow::ProcessFileNew()
 
 void CEntityEditorMainWindow::ProcessFileOpen()
 {
-	if(m_ObjectSelector.m_piObjectSelector==NULL){return;}
+	if(m_ObjectSelector.m_piObjectListSelector==NULL){return;}
 	
 	unsigned long nSelectedEntityType=0;
 	std::vector<IDesignObject *> vEntityTypes;
 	GetSystemObjects("EntityTypes",&vEntityTypes);
 
-	if(m_ObjectSelector.m_piObjectSelector->SelectObject("Open Entity...",this,&vEntityTypes,&nSelectedEntityType,32.0,32.0))
+	if(m_ObjectSelector.m_piObjectListSelector->SelectObject("Open Entity...",this,&vEntityTypes,&nSelectedEntityType))
 	{
 		Reset();
 		CConfigFile cfg;
@@ -467,7 +467,7 @@ void CEntityEditorMainWindow::ProcessFileRemove()
 	std::vector<IDesignObject *> vEntityTypes;
 	GetSystemObjects("EntityTypes",&vEntityTypes);
 	
-	if(m_ObjectSelector.m_piObjectSelector->SelectObject("Remove Entity...",this,&vEntityTypes,&nSelectedEntityType,32.0,32.0))
+	if(m_ObjectSelector.m_piObjectListSelector->SelectObject("Remove Entity...",this,&vEntityTypes,&nSelectedEntityType))
 	{
 		CEntityTypeWrapper existingWrapper;
 		bool bOk=existingWrapper.Attach(vEntityTypes[nSelectedEntityType]);
@@ -1488,7 +1488,7 @@ void CEntityEditorMainWindow::ProcessNewChild()
 	std::vector<IDesignObject *> vEntityTypes;
 	GetSystemObjects("EntityTypes",&vEntityTypes);
 
-	if(m_ObjectSelector.m_piObjectSelector->SelectObject("New Child...",this,&vEntityTypes,&nSelectedEntityType,32.0,32.0))
+	if(m_ObjectSelector.m_piObjectListSelector->SelectObject("New Child...",this,&vEntityTypes,&nSelectedEntityType))
 	{
 		ISystemObject *piObject=QI(ISystemObject,vEntityTypes[nSelectedEntityType]);
 		if(piObject)
@@ -1525,7 +1525,7 @@ void CEntityEditorMainWindow::ProcessNewEntity()
 	std::vector<IDesignObject *> vEntityTypes;
 	GetSystemObjects("EntityTypes",&vEntityTypes);
 	
-	if(m_ObjectSelector.m_piObjectSelector->SelectObject("New Entity...",this,&vEntityTypes,&nSelectedEntityType,32.0,32.0))
+	if(m_ObjectSelector.m_piObjectListSelector->SelectObject("New Entity...",this,&vEntityTypes,&nSelectedEntityType))
 	{
 		CEntityTypeWrapper entityTypeWrapper;
 		entityTypeWrapper.Attach(vEntityTypes[nSelectedEntityType]);

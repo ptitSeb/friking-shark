@@ -21,9 +21,11 @@
 #include "ScenarioEditor.h"
 #include "ScenarioEditorColorSelector.h"
 #include "ScenarioEditorObjectSelector.h"
+#include "ScenarioEditorObjectListSelector.h"
 
 DECLARE_CUSTOM_WRAPPER1(CScenarioEditorColorSelectorWrapper,IScenarioEditorColorSelector,m_piColorSelector)
 DECLARE_CUSTOM_WRAPPER1(CScenarioEditorObjectSelectorWrapper,IScenarioEditorObjectSelector,m_piObjectSelector)
+DECLARE_CUSTOM_WRAPPER1(CScenarioEditorObjectListSelectorWrapper,IScenarioEditorObjectListSelector,m_piObjectListSelector)
 
 #define KEY_FORWARD		1
 #define KEY_BACK		2
@@ -731,6 +733,7 @@ public:
 
 	CScenarioEditorColorSelectorWrapper m_ColorSelector;
 	CScenarioEditorObjectSelectorWrapper m_ObjectSelector;
+	CScenarioEditorObjectListSelectorWrapper m_ObjectListSelector;
 
 	bool m_bSimulationStarted;
 	bool m_bInspectionMode;

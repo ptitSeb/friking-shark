@@ -19,8 +19,7 @@ INCLUDES = -I. \
 SOURCES = EntityEditor.cpp\
 EntityEditorMainWindow.cpp\
 EntityEditorNamedObjectSelector.cpp\
-EntityEditorObjectSelector.cpp\
-EntityEditorObjectLabel.cpp\
+EntityEditorObjectListSelector.cpp\
 EntityEditorClassSelector.cpp\
 EntityEditorGeneralPropertyPanel.cpp\
 EntityEditorAnimationPropertyPanel.cpp\
