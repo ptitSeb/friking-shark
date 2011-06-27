@@ -64,8 +64,6 @@ struct SEntityLayerControls
 
 struct SEntityControls
 {
-	CButtonWrapper					m_BTListRow;
-	CObjectLabelWrapper				m_STEntity;
 	unsigned long					m_nPlayAreaElementId;
 	IPlayAreaEntity					*m_piPlayAreaEntity;
 	IEntityType						*m_piEntityType;
@@ -88,8 +86,6 @@ struct SCheckPoint
 
 struct SFormationControls
 {
-	CButtonWrapper					m_BTListRow;
-	CObjectLabelWrapper				m_STFormation;
 	unsigned long					m_nPlayAreaElementId;
 	IPlayAreaFormation				*m_piPlayAreaFormation;
 	IFormationType					*m_piFormationType;
@@ -103,7 +99,7 @@ struct SFormationControls
 	~SFormationControls(){REL(m_piAlternativeDesignObject);REL(m_piAlternativeBonusDesignObject);REL(m_piPlayAreaFormation);REL(m_piFormationType);REL(m_piDesignObject);REL(m_piObject);REL(m_piBonusDesignObject);}
 };
 
-class CScenarioEditorMainWindow: virtual public CGameWindowBase, virtual public IGameGUIButtonEvents,virtual public IGameGUIColorDialogCallback
+class CScenarioEditorMainWindow: virtual public CGameWindowBase, virtual public IGameGUIButtonEvents,virtual public IGameGUIListEvents,virtual public IGameGUIColorDialogCallback
 {
 public:
 	CConfigFile				m_GUIConfigFile;
@@ -318,7 +314,9 @@ public:
 	// Entity Layers
 
 	IGameWindow *m_piGREntityLayerList;
-
+	IGameGUIList *m_piLSEntityList;
+	IGameGUIList *m_piLSFormationList;
+	
 	// Options
 
 	IGameGUIButton *m_piBTOptionsTextures;
@@ -492,10 +490,13 @@ public:
 		CHILD_MAP_ENTRY("EntityLayerList",m_piGREntityLayerList);
 		CHILD_MAP_ENTRY_EX("NewEntityLayer",m_piBTNewEntityLayer,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("NewEntity",m_piBTNewEntity,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("EntityList",m_piLSEntityList,IGameGUIListEvents);
+		
 
 		CHILD_MAP_ENTRY("FormationsPanel",m_piGRFormationsPanel);
 		CHILD_MAP_ENTRY_EX("NewFormation",m_piBTNewFormation,IGameGUIButtonEvents);
-
+		CHILD_MAP_ENTRY_EX("FormationList",m_piLSFormationList,IGameGUIListEvents);
+		
 		CHILD_MAP_ENTRY("TerrainPanel",m_piGRTerrainPanel);
 		CHILD_MAP_ENTRY("LayerList",m_piGRLayerList);
 		CHILD_MAP_ENTRY_EX("GeneralProperties",m_piBTShowGeneralProperties,IGameGUIButtonEvents);
@@ -749,6 +750,9 @@ public:
 	void OnWantFocus(bool *pbWant);
 	void OnDraw(IGenericRender *piRender);
 	void OnButtonClicked(IGameGUIButton *piControl);
+	void OnSelectionChanged(IGameGUIList *piControl,int nElement,std::string sElement);
+	void OnSelectionDoubleCliked(IGameGUIList *piControl,int nElement,std::string sElement);
+	
 	void OnCharacter( int nKey,bool *pbProcessed );
 	void OnKeyDown(int nKey,bool *pbProcessed);
 	void OnMouseDown(int nButton,double x,double y);
