@@ -29,6 +29,7 @@ class CGameGUIList: virtual public CGameWindowBase,virtual public IGameGUIList
 	CVector m_vScrollBkColor;
 	CVector m_vScrollButtonColor;
 	int 	m_nSelectedElement;
+	bool    m_bWantFocus;
 
 	double    m_dThumbPixelsPerLine;
 	SGamePos  m_ptScrollThumbDragStart;
@@ -65,6 +66,7 @@ public:
 		PROP_VALUE_FLAGS(m_vScrollBkColor,"ScrollBkColor",CVector(0.4,0.4,0.4),MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_vScrollButtonColor,"ScrollButtonColor",CVector(0.7,0.7,0.7),MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_nMouseWheelPageSize,"MouseWheelPageSize",3,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_bWantFocus,"WantFocus",true,MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP()
 	
 	void DestroyWindow();

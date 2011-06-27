@@ -23,6 +23,7 @@
 CGameGUIList::CGameGUIList(void)
 {
   	m_bActive=true;
+	m_bWantFocus=true;
 	m_dThumbPixelsPerLine=0;
 	m_nScrollThumbDragStartFirstVisible=0;
 	m_nFirstVisible=0;
@@ -250,4 +251,4 @@ void CGameGUIList::OnMouseDoubleClick(int nButton,double x,double y)
   }
 }
 
-void CGameGUIList::OnWantFocus(bool *pbWant){*pbWant=true;}
+void CGameGUIList::OnWantFocus(bool *pbWant){*pbWant=m_bWantFocus;}

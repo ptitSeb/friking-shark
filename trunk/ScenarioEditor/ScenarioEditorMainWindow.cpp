@@ -206,7 +206,10 @@ void CScenarioEditorMainWindow::Reset()
 	m_bInspectionMode=false;
 	m_bMovingRoutePoint=false;
 	m_nSelectedRoutePoint=-1;
-
+	
+	if(m_piLSEntityList){m_piLSEntityList->SetSelectedElement(m_nSelectedEntity);}
+	if(m_piLSFormationList){m_piLSFormationList->SetSelectedElement(m_nSelectedFormation);}
+	
 	UpdateCaption();
 }
 
@@ -590,6 +593,49 @@ void CScenarioEditorMainWindow::ProcessFileExit()
 	}
 }
 
+void CScenarioEditorMainWindow::OnSelectionChanged(IGameGUIList *piControl,int nElement,std::string sElement)
+{
+	if(piControl==m_piLSEntityList)
+	{
+		m_nSelectedEntityLayer=-1;
+		m_nSelectedEntity=nElement;
+		m_nSelectedFormation=-1;
+		if(m_piLSFormationList){m_piLSFormationList->SetSelectedElement(m_nSelectedFormation);}
+		m_piGUIManager->SetFocus(this);
+	}
+	if(piControl==m_piLSFormationList)
+	{
+		m_nSelectedFormation=nElement;
+		m_nSelectedEntity=-1;
+		m_nSelectedEntityLayer=-1;
+		if(m_piLSEntityList){m_piLSEntityList->SetSelectedElement(m_nSelectedEntity);}
+		m_piGUIManager->SetFocus(this);
+	}
+}
+
+void CScenarioEditorMainWindow::OnSelectionDoubleCliked(IGameGUIList *piControl,int nElement,std::string sElement)
+{
+	if(piControl==m_piLSEntityList)
+	{
+		m_nSelectedEntityLayer=-1;
+		m_nSelectedEntity=nElement;
+		m_nSelectedFormation=-1;
+		if(m_piLSFormationList){m_piLSFormationList->SetSelectedElement(m_nSelectedFormation);}
+		m_piGUIManager->SetFocus(this);
+		CenterCamera();
+	}
+	if(piControl==m_piLSFormationList)
+	{
+		m_nSelectedFormation=nElement;
+		m_nSelectedEntity=-1;
+		m_nSelectedEntityLayer=-1;
+		if(m_piLSEntityList){m_piLSEntityList->SetSelectedElement(m_nSelectedEntity);}
+		m_piGUIManager->SetFocus(this);
+		CenterCamera();
+	}
+}
+
+
 void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 {
 	if(m_piBTIncreaseVolume==piControl && m_SoundManagerWrapper.m_piSoundManager)
@@ -800,6 +846,8 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			m_nSelectedEntity=m_vEntityControls.size()-1;
 			m_nSelectedEntityLayer=-1;	
 			m_nSelectedFormation=-1;
+			if(m_piLSEntityList){m_piLSEntityList->SetSelectedElement(m_nSelectedEntity);}
+			if(m_piLSFormationList){m_piLSFormationList->SetSelectedElement(m_nSelectedFormation);}
 		}
 		for(unsigned long x=0;x<vEntityTypes.size();x++){IDesignObject *piEntityType=vEntityTypes[x];REL(piEntityType);}
 	}
@@ -821,6 +869,8 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			m_nSelectedEntityLayer=m_vEntityLayerControls.size()-1;
 			m_nSelectedEntity=-1;	
 			m_nSelectedFormation=-1;
+			if(m_piLSEntityList){m_piLSEntityList->SetSelectedElement(m_nSelectedEntity);}
+			if(m_piLSFormationList){m_piLSFormationList->SetSelectedElement(m_nSelectedFormation);}
 		}
 		for(unsigned long x=0;x<vEntityTypes.size();x++){IDesignObject *piEntityType=vEntityTypes[x];REL(piEntityType);}
 
@@ -855,6 +905,8 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			m_nSelectedFormation=m_vFormationControls.size()-1;
 			m_nSelectedEntity=-1;
 			m_nSelectedEntityLayer=-1;
+			if(m_piLSEntityList){m_piLSEntityList->SetSelectedElement(m_nSelectedEntity);}
+			if(m_piLSFormationList){m_piLSFormationList->SetSelectedElement(m_nSelectedFormation);}
 		}
 		for(unsigned long x=0;x<vFormationTypes.size();x++){IDesignObject *piFormationType=vFormationTypes[x];REL(piFormationType);}
 	}
@@ -948,26 +1000,10 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			m_nSelectedEntityLayer=x;
 			m_nSelectedEntity=-1;
 			m_nSelectedFormation=-1;
+			if(m_piLSEntityList){m_piLSEntityList->SetSelectedElement(m_nSelectedEntity);}
+			if(m_piLSFormationList){m_piLSFormationList->SetSelectedElement(m_nSelectedFormation);}
 		}
 	}
-	for(unsigned int x=0;x<m_vEntityControls.size();x++)
-	{
-		if(m_vEntityControls[x]->m_BTListRow.m_piButton==piControl)
-		{
-			m_nSelectedEntityLayer=-1;
-			m_nSelectedEntity=x;
-			m_nSelectedFormation=-1;
-		}
-	}
-	for(unsigned int x=0;x<m_vFormationControls.size();x++)
-	{
-		if(m_vFormationControls[x]->m_BTListRow.m_piButton==piControl)
-		{
-			m_nSelectedFormation=x;
-			m_nSelectedEntity=-1;
-			m_nSelectedEntityLayer=-1;
-		}
-	}	
 	SHeightLayerControls *pHeightLayer=NULL;
 	SColorLayerControls  *pColorLayer=NULL;
 	SEntityLayerControls *pEntityLayer=NULL;
@@ -2489,28 +2525,14 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 		SGameRect sRowRect(3,dCurrentY,sListRect.w-6,20);
 		m_piBTNewEntity->SetRect(&sRowRect);
 	}
-	double dCurrentX=3;
-	if(m_vEntityControls.size()){dCurrentY-=41;}
-	for(int x=m_vEntityControls.size()-1;x>=0;x--)
-	{	
-		if(dCurrentX+38>sListRect.w){dCurrentX=3;dCurrentY-=41;}
-
-		SGameRect sRowRect(dCurrentX,dCurrentY,38,38);
-		SEntityControls *pData=m_vEntityControls[x];
-		if(pData->m_BTListRow.m_piButton)
-		{
-			pData->m_BTListRow.m_piButton->SetRect(&sRowRect);
-			pData->m_BTListRow.m_piButton->SetBackgroundColor(CVector(1,1,1),x==m_nSelectedEntity?0.8:0.1);
-		}
-		if(pData->m_STEntity.m_piLabel)
-		{
-			SGameRect sRect(3,3,32,32);
-			pData->m_STEntity.m_piLabel->SetRect(&sRect);
-			pData->m_STEntity.m_piLabel->SetObject(m_vEntityControls[x]->m_piDesignObject);
-		}
-		dCurrentX+=41;
+	if(m_piLSEntityList)
+	{
+		dCurrentY-=3;
+		SGameRect sEntityListRect(3,3,sListRect.w-6,dCurrentY-6);
+		m_piLSEntityList->SetRect(&sEntityListRect);
+		dCurrentY=0;
 	}
-
+	
 	if(m_piGRFormationsPanel){m_piGRFormationsPanel->GetRealRect(&sListRect);}
 	dCurrentY=sListRect.h;
 
@@ -2520,27 +2542,14 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 		SGameRect sRowRect(3,dCurrentY,sListRect.w-6,20);
 		m_piBTNewFormation->SetRect(&sRowRect);
 	}
-	dCurrentX=3;
-	if(m_vFormationControls.size()){dCurrentY-=41;}
-	for(int x=m_vFormationControls.size()-1;x>=0;x--)
-	{	
-		if(dCurrentX+38>sListRect.w){dCurrentX=3;dCurrentY-=41;}
-
-		SGameRect sRowRect(dCurrentX,dCurrentY,38,38);
-		SFormationControls *pData=m_vFormationControls[x];
-		if(pData->m_BTListRow.m_piButton)
-		{
-			pData->m_BTListRow.m_piButton->SetRect(&sRowRect);
-			pData->m_BTListRow.m_piButton->SetBackgroundColor(CVector(1,1,1),x==m_nSelectedFormation?0.8:0.1);
-		}
-		if(pData->m_STFormation.m_piLabel)
-		{
-			SGameRect sRect(3,3,32,32);
-			pData->m_STFormation.m_piLabel->SetRect(&sRect);
-			pData->m_STFormation.m_piLabel->SetObject(m_vFormationControls[x]->m_piDesignObject);
-		}
-		dCurrentX+=41;
+	if(m_piLSFormationList)
+	{
+		dCurrentY-=3;
+		SGameRect sFormationListRect(3,3,sListRect.w-6,dCurrentY-6);
+		m_piLSFormationList->SetRect(&sFormationListRect);
+		dCurrentY=0;
 	}
+	
 	if(m_nSelectedEntity!=-1 && m_nSelectedRoutePoint!=-1)
 	{		
 		SRoutePoint sRoutePoint;
@@ -2736,6 +2745,8 @@ void CScenarioEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 			m_nSelectedEntityLayer=-1 ;
 			m_nSelectedFormation=-1;
 			m_nSelectedRoutePoint=-1;
+			if(m_piLSEntityList){m_piLSEntityList->SetSelectedElement(m_nSelectedEntity);}
+			if(m_piLSFormationList){m_piLSFormationList->SetSelectedElement(m_nSelectedFormation);}
 		}
 		else
 		{
@@ -2878,6 +2889,9 @@ void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 			{
 				m_nSelectedFormation=-1;
 				m_nSelectedEntity=-1;
+				if(m_piLSEntityList){m_piLSEntityList->SetSelectedElement(m_nSelectedEntity);}
+				if(m_piLSFormationList){m_piLSFormationList->SetSelectedElement(m_nSelectedFormation);}
+				
 				m_bMovingCameraPosition=true;
 				m_piGUIManager->SetMouseCapture(this);
 				
@@ -2944,6 +2958,9 @@ void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 	{
 		m_nSelectedFormation=-1;
 		m_nSelectedEntity=-1;
+		if(m_piLSEntityList){m_piLSEntityList->SetSelectedElement(m_nSelectedEntity);}
+		if(m_piLSFormationList){m_piLSFormationList->SetSelectedElement(m_nSelectedFormation);}
+		
 		m_bMovingCameraPosition=false;
 	}
 	else if(nNewIndex<SELECT_FORMATION_BASE_INDEX)
@@ -2976,6 +2993,8 @@ void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 				m_bShowEntitiesPanel=true;
 				m_bShowTerrainPanel=false;
 			}
+			if(m_piLSEntityList){m_piLSEntityList->SetSelectedElement(m_nSelectedEntity);}
+			if(m_piLSFormationList){m_piLSFormationList->SetSelectedElement(m_nSelectedFormation);}
 		}
 	}
 	else
@@ -3008,6 +3027,8 @@ void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 				m_bShowEntitiesPanel=false;
 				m_bShowTerrainPanel=false;
 			}
+			if(m_piLSEntityList){m_piLSEntityList->SetSelectedElement(m_nSelectedEntity);}
+			if(m_piLSFormationList){m_piLSFormationList->SetSelectedElement(m_nSelectedFormation);}
 		}
 	}
 
@@ -3146,9 +3167,9 @@ void CScenarioEditorMainWindow::OnMouseMove( double x,double y )
 			}
 			
 			SRoutePoint point;
+			pObject->m_piPlayAreaEntity->GetRoutePoint(m_nSelectedRoutePoint,&point);
 			point.vPosition=vTemp;
 			point.bAbsolutePoint=true;
-			
 			pObject->m_piPlayAreaEntity->SetRoutePoint(m_nSelectedRoutePoint,point);
 		}
 	}
@@ -3370,12 +3391,10 @@ void CScenarioEditorMainWindow::UpdateEntityControls()
 	for(x=0;x<m_vEntityControls.size();x++)
 	{
 		SEntityControls *pControls=m_vEntityControls[x];
-		UNSUBSCRIBE_FROM_CAST(pControls->m_BTListRow.m_piButton,IGameGUIButtonEvents);
-		pControls->m_BTListRow.m_piButton->DestroyWindow();
-		pControls->m_STEntity.m_piLabel->DestroyWindow();
 		delete pControls;
 		pControls=NULL;
 	}
+	m_piLSEntityList->Clear();
 	m_vEntityControls.clear();
 	if(m_PlayAreaManagerWrapper.m_piPlayAreaDesign)
 	{
@@ -3402,34 +3421,14 @@ void CScenarioEditorMainWindow::UpdateEntityControls()
 				continue;
 			}
 
+			m_piLSEntityList->AddElement(piObject->GetName());
 			SEntityControls *pControls=new SEntityControls;
 			pControls->m_nPlayAreaElementId=x;
-			pControls->m_BTListRow.Create(m_piSystem,"CGameGUIButton","");
 			pControls->m_piEntityType=ADD(piEntityType);
 			pControls->m_piBonusDesignObject=ADD(piBonusDesignObject);
 			pControls->m_piDesignObject=ADD(piDesignObject);
 			pControls->m_piPlayAreaEntity=ADD(piEntity);
 			pControls->m_piObject=QI(ISystemObject,piEntityType);
-			if(pControls->m_BTListRow.m_piButton)
-			{
-				pControls->m_BTListRow.m_piButton->InitWindow(m_piGREntityLayerList,false);
-				pControls->m_BTListRow.m_piButton->SetReferenceSystem(eGameGUIReferenceSystem_Absolute);
-				pControls->m_BTListRow.m_piButton->SetBackgroundColor(CVector(1,1,1),0.1);
-				pControls->m_BTListRow.m_piButton->Show(true);
-				pControls->m_BTListRow.m_piButton->Activate(true);
-				SUBSCRIBE_TO_CAST(pControls->m_BTListRow.m_piButton,IGameGUIButtonEvents);
-
-				pControls->m_STEntity.Create(m_piSystem,"CScenarioEditorObjectLabel","");
-				if(pControls->m_STEntity.m_piLabel)
-				{
-					pControls->m_STEntity.m_piLabel->InitWindow(pControls->m_BTListRow.m_piButton,false);
-					pControls->m_STEntity.m_piLabel->SetObject(piDesignObject);
-					pControls->m_STEntity.m_piLabel->SetReferenceSystem(eGameGUIReferenceSystem_Absolute);
-					pControls->m_STEntity.m_piLabel->SetBackgroundColor(CVector(0,0,0),1);
-					pControls->m_STEntity.m_piLabel->Show(true);
-					pControls->m_STEntity.m_piLabel->Activate(false);
-				}
-			}
 			REL(piEntityType);
 			REL(piDesignObject);
 			REL(piBonusType);
@@ -3443,6 +3442,7 @@ void CScenarioEditorMainWindow::UpdateEntityControls()
 	if(m_nSelectedEntity!=-1 && m_nSelectedEntity>=(int)m_vEntityControls.size())
 	{
 		m_nSelectedEntity=(int)(m_vEntityControls.size()-1);
+		if(m_piLSEntityList){m_piLSEntityList->SetSelectedElement(m_nSelectedEntity);}
 	}
 }
 
@@ -3453,12 +3453,11 @@ void CScenarioEditorMainWindow::UpdateFormationControls()
 	for(x=0;x<m_vFormationControls.size();x++)
 	{
 		SFormationControls *pControls=m_vFormationControls[x];
-		UNSUBSCRIBE_FROM_CAST(pControls->m_BTListRow.m_piButton,IGameGUIButtonEvents);
-		pControls->m_BTListRow.m_piButton->DestroyWindow();
-		pControls->m_STFormation.m_piLabel->DestroyWindow();
 		delete pControls;
 		pControls=NULL;
 	}
+	
+	m_piLSFormationList->Clear();
 	m_vFormationControls.clear();
 	if(m_PlayAreaManagerWrapper.m_piPlayAreaDesign)
 	{
@@ -3493,9 +3492,9 @@ void CScenarioEditorMainWindow::UpdateFormationControls()
 				continue;
 			}
 
+			m_piLSFormationList->AddElement(piObject->GetName());
 			SFormationControls *pControls=new SFormationControls;
 			pControls->m_nPlayAreaElementId=x;
-			pControls->m_BTListRow.Create(m_piSystem,"CGameGUIButton","");
 			pControls->m_piFormationType=ADD(piFormationType);
 			pControls->m_piDesignObject=ADD(piDesignObject);
 			pControls->m_piAlternativeDesignObject=ADD(piAlternativeDesignObject);
@@ -3503,26 +3502,6 @@ void CScenarioEditorMainWindow::UpdateFormationControls()
 			pControls->m_piObject=QI(ISystemObject,piFormationType);
 			pControls->m_piBonusDesignObject=ADD(piBonusDesignObject);
 			pControls->m_piAlternativeBonusDesignObject=ADD(piAlternativeBonusDesignObject);
-			if(pControls->m_BTListRow.m_piButton)
-			{
-				pControls->m_BTListRow.m_piButton->InitWindow(m_piGRFormationsPanel,false);
-				pControls->m_BTListRow.m_piButton->SetReferenceSystem(eGameGUIReferenceSystem_Absolute);
-				pControls->m_BTListRow.m_piButton->SetBackgroundColor(CVector(1,1,1),0.1);
-				pControls->m_BTListRow.m_piButton->Show(true);
-				pControls->m_BTListRow.m_piButton->Activate(true);
-				SUBSCRIBE_TO_CAST(pControls->m_BTListRow.m_piButton,IGameGUIButtonEvents);
-
-				pControls->m_STFormation.Create(m_piSystem,"CScenarioEditorObjectLabel","");
-				if(pControls->m_STFormation.m_piLabel)
-				{
-					pControls->m_STFormation.m_piLabel->InitWindow(pControls->m_BTListRow.m_piButton,false);
-					pControls->m_STFormation.m_piLabel->SetObject(piDesignObject);
-					pControls->m_STFormation.m_piLabel->SetReferenceSystem(eGameGUIReferenceSystem_Absolute);
-					pControls->m_STFormation.m_piLabel->SetBackgroundColor(CVector(0,0,0),1);
-					pControls->m_STFormation.m_piLabel->Show(true);
-					pControls->m_STFormation.m_piLabel->Activate(false);
-				}
-			}
 			REL(piBonusType);
 			REL(piBonusDesignObject);
 			REL(piFormationType);
@@ -3543,6 +3522,8 @@ void CScenarioEditorMainWindow::UpdateFormationControls()
 		m_nSelectedFormation=(int)(m_vFormationControls.size()-1);
 		m_nSelectedEntity=-1;
 		m_nSelectedEntityLayer=-1;
+		if(m_piLSEntityList){m_piLSEntityList->SetSelectedElement(m_nSelectedEntity);}
+		if(m_piLSFormationList){m_piLSFormationList->SetSelectedElement(m_nSelectedFormation);}
 	}
 }
 

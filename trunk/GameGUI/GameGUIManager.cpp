@@ -592,7 +592,6 @@ void CGameGUIManager::OnMouseWheelUp(unsigned x,unsigned y)
 	{
 		SGameRect rRect;
 		piWindow->GetRealRect(&rRect);
-		ProcessMouseActivation(piWindow);
 		piWindow->OnMouseWheelUp(pos.x-rRect.x,pos.y-rRect.y);
 	}
 	REL(piWindow);
@@ -611,7 +610,6 @@ void CGameGUIManager::OnMouseWheelDown(unsigned x,unsigned y)
 	{
 		SGameRect rRect;
 		piWindow->GetRealRect(&rRect);
-		ProcessMouseActivation(piWindow);
 		piWindow->OnMouseWheelDown(pos.x-rRect.x,pos.y-rRect.y);
 	}
 	REL(piWindow);
