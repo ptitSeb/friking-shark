@@ -224,6 +224,21 @@ void CEntityBase::Render(IGenericRender *piRender,IGenericCamera *piCamera)
 
 void CEntityBase::OnAnimationEvent(string sEvent,string sParams)
 {
+	if(sEvent=="RemoveChildren")
+	{
+		if(m_vChildren.size())
+		{
+			vector<SChildEntity> sTemp=m_vChildren;
+			for(unsigned int x=0;x<sTemp.size();x++)
+			{
+				SChildEntity *pChildEntity=&sTemp[x];
+				pChildEntity->piEntity->Remove();
+				UNSUBSCRIBE_FROM_CAST(pChildEntity->piEntity,IEntityEvents);
+			}
+			sTemp.clear();
+		}
+	}
+	
 }
 
 void CEntityBase::SetRoute(IRoute *piRoute){m_piRoute=piRoute;}
