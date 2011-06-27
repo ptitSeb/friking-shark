@@ -84,6 +84,8 @@ class COpenGLModel : virtual public CSystemObjectBase,virtual public IGenericMod
 	bool						 	m_bLoadBSP;
 	bool						 	m_bAutoGenerateBSP;
 	bool						 	m_bAutoUpdateBSP;
+	bool							m_bLoadPending;
+	bool							m_bLoadResult;
 
 	bool LoadFromFile();
 	bool LoadBSP(const char *pFileName);
@@ -142,6 +144,8 @@ public:
 	CTraceInfo	  GetTrace(const CVector &vOrigin,const CVector &vAngles,const CVector &p1,const CVector &p2 );
 
 	void UpdateFrameBuffers();
+	
+	bool Prepare();
 
 
 	// IOpenGLModel

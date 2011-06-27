@@ -69,6 +69,23 @@ SProjectileLauncherLevel *CProjectileLauncherType::GetLevel(unsigned int dwLevel
   return &m_dLevels[dwLevel];
 }
 
+bool CProjectileLauncherType::PrepareResources()
+{
+	bool bOk=true;
+	for(unsigned int nLevel=0;nLevel<m_dLevels.size();nLevel++)
+	{
+		SProjectileLauncherLevel *pLevel=&m_dLevels[nLevel];
+		for(unsigned int nProjectile=0;nProjectile<pLevel->dProjectiles.size();nProjectile++)
+		{
+			SProjectileLauncherProjectile *pProjectileInfo=&pLevel->dProjectiles[nProjectile];
+			if(pProjectileInfo->projectileEntityType.m_piEntityType)
+			{
+				bOk=bOk && pProjectileInfo->projectileEntityType.m_piEntityType->PrepareResources();
+			}
+		}
+	}
+	return bOk;
+}
 CProjectileLauncher::CProjectileLauncher(CProjectileLauncherType *pType,IEntity *piEntity,unsigned int dwCurrentTimeBase)
 {
   m_pType=pType;
@@ -82,6 +99,7 @@ CProjectileLauncher::CProjectileLauncher(CProjectileLauncherType *pType,IEntity 
 CProjectileLauncher::~CProjectileLauncher()
 {
 }
+
 
 bool         CProjectileLauncher::UsesAmmo(){return m_pType->UsesAmmo();}
 void 		 CProjectileLauncher::SetAmmo(unsigned int nAmmo){m_nAmmo=nAmmo;}

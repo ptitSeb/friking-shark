@@ -296,6 +296,9 @@ public:
 struct IEntityType:virtual public ISystemUnknown,virtual public IDesignObject
 {
 	virtual IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)=0;
+	
+	// Method to ensure that the resources are resident.
+	virtual bool    PrepareResources()=0;
 
 	virtual void	GetBBox(CVector *pvMins,CVector *pvMaxs)=0;
 	virtual CVector	GetSize()=0;
@@ -316,6 +319,9 @@ struct IFormation:virtual public ISystemUnknown
 struct IFormationType:virtual public ISystemUnknown,virtual public IDesignObject
 {
 	virtual IFormation *CreateInstance(CVector vPosition,unsigned int dwCurrentTime)=0;
+	
+	// Method to ensure that the resources are resident.
+	virtual bool PrepareResources()=0;
 };
 
 struct IFormationTypeDesign:virtual public IDesignObject
@@ -482,6 +488,9 @@ struct IPlayAreaElement:virtual public ISystemUnknown
 
 	virtual void DesignRender(IGenericRender *piRender,bool bSelected)=0;
 	virtual CTraceInfo DesignGetTrace(const CVector &p1,const CVector &p2)=0;
+	
+	// Method to ensure that the resources are resident.
+	virtual bool PrepareResources()=0;
 };
 
 struct IPlayAreaEntity:virtual public IPlayAreaElement
@@ -603,6 +612,9 @@ struct IWeapon
 struct IWeaponType:virtual public ISystemUnknown
 {
   virtual IWeapon *CreateInstance(IEntity *piEntity,unsigned int dwCurrentTime)=0;
+  
+  // Method to ensure that the resources are resident.
+  virtual bool    PrepareResources()=0;
 };
 
 

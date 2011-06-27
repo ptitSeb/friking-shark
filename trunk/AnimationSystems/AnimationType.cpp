@@ -40,6 +40,16 @@ IAnimation *CAnimationType::CreateInstance(IEntity *piEntity,unsigned int dwCurr
     return pAnimation;
 }
 
+bool CAnimationType::PrepareResources()
+{
+	bool bOk=true;
+	for(unsigned x=0;x<m_vObjects.size();x++)
+	{
+		bOk=bOk && m_vObjects[x].m_piObjectType->PrepareResources();
+	}
+	return bOk;
+}
+
 void CAnimationType::DesignRender( IGenericRender *piRender,CVector &vPosition,CVector &vAngles,bool bSelected)
 {
 	for(unsigned x=0;x<m_vObjects.size();x++)

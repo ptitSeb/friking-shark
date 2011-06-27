@@ -29,6 +29,8 @@ CPlayAreaElementBase::~CPlayAreaElementBase()
 {
 }
 
+bool CPlayAreaElementBase::PrepareResources(){return true;}
+
 void CPlayAreaElementBase::Activate(unsigned int dwCurrentTime){m_bActive=true;m_nActivationTime=dwCurrentTime;}
 void CPlayAreaElementBase::Deactivate(){m_bActive=false;m_nActivationTime=0;}
 bool CPlayAreaElementBase::IsActive(){return m_bActive;}

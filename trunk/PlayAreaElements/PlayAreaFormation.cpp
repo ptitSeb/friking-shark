@@ -164,3 +164,13 @@ void	CPlayAreaFormation::GetBonusType(IEntityType **ppiBonusType){if(ppiBonusTyp
 void	CPlayAreaFormation::GetAlternativeFormationType(IFormationType **ppiFormationType){if(ppiFormationType){*ppiFormationType=ADD(m_AlternativeFormationType.m_piFormationType);}}
 void	CPlayAreaFormation::GetAlternativeBonusType(IEntityType **ppiBonusType){if(ppiBonusType){*ppiBonusType=ADD(m_AlternativeBonusType.m_piEntityType);}}
 void    CPlayAreaFormation::GetCondition(EPlayerStateCondition *peConditionType,unsigned int *pnValue){if(peConditionType){*peConditionType=m_eConditionType;}if(pnValue){*pnValue=m_nConditionValue;}}
+
+bool CPlayAreaFormation::PrepareResources()
+{
+	bool bOk=true;
+	if(m_BonusType.m_piEntityType){bOk=bOk&&m_BonusType.m_piEntityType->PrepareResources();}
+	if(m_FormationType.m_piFormationType){bOk=bOk&&m_FormationType.m_piFormationType->PrepareResources();}
+	if(m_AlternativeBonusType.m_piEntityType){bOk=bOk&&m_AlternativeBonusType.m_piEntityType->PrepareResources();}
+	if(m_AlternativeFormationType.m_piFormationType){bOk=bOk&&m_AlternativeFormationType.m_piFormationType->PrepareResources();}
+	return bOk;
+}

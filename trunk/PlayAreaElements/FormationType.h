@@ -51,6 +51,8 @@ public:
     END_PROP_MAP()
 
    IFormation *CreateInstance(CVector vPosition,unsigned int dwCurrentTime);
+   bool PrepareResources();
+   
 	void DesignRender(IGenericRender *piRender,CVector &vPosition,CVector &vAngles,bool bSelected);
 	void DesignGetBBox(CVector *pvMins,CVector *pvMaxs);
 	double DesignGetRadius();

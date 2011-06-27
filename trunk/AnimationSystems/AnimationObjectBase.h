@@ -24,6 +24,7 @@ public:
 
     string m_sObjectName;
 
+	bool PrepareResources();
 	void DesignRender(IGenericRender *pRender,CVector &vPosition,CVector &vAngles,bool bSelected);
 	void DesignGetBBox(CVector *pvMins,CVector *pvMaxs);
 	double DesignGetRadius();

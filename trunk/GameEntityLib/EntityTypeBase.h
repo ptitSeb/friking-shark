@@ -150,6 +150,9 @@ public:
 	void			SetChildLocation(unsigned int nChild,CVector vPosition,CVector vAngles);
 	void			GetChildLocation(unsigned int nChild,CVector &vPosition,CVector &vAngles);
 	
+	// Method to ensure that the resources are resident.
+	bool             PrepareResources();
+	
 	CEntityTypeBase(void);
     ~CEntityTypeBase(void);
 };

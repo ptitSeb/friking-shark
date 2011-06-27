@@ -111,7 +111,9 @@ class CPlayAreaManager: virtual public CSystemObjectBase,
 	std::vector<SEntityLayerData>  m_vEntityLayers;
 
     void CalculateAirPlayArea();
-
+	
+	void PrepareResources();
+	
 public:
 
     bool Init(std::string sClass,std::string sName,ISystem *piSystem);

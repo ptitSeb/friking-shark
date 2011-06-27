@@ -85,7 +85,9 @@ public:
   bool m_bIgnoreRoll;
 
   IWeapon *CreateInstance(IEntity *piEntity,unsigned int dwCurrentTime);
-
+  
+  bool    PrepareResources();
+  
   unsigned int                     GetSlot();
   unsigned int                     GetMaxLevel();
   bool                             UsesAmmo();

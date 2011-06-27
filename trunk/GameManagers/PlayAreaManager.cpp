@@ -91,6 +91,31 @@ void CPlayAreaManager::LoadScenario(ISystemPersistencyNode *piNode)
     PersistencyLoad(piNode->GetNode("AreaDeJuego"),"ScenarioProps");
 	UpdateEntityLayers();
 	UpdatePlayArea();
+	PrepareResources();
+}
+
+void CPlayAreaManager::PrepareResources()
+{
+	//	Generacion de objetos basada directamente en ColorMap
+	for(unsigned long l=0;l<m_vEntityLayers.size();l++)
+	{
+		SEntityLayerData *pLayer=&m_vEntityLayers[l];
+		if(pLayer->m_EntityType.m_piEntityType==NULL){continue;}
+		pLayer->m_EntityType.m_piEntityType->PrepareResources();
+	}
+	
+	for(unsigned x=0;x<m_vElements.size();x++)
+	{
+		IPlayAreaElement *piElement=m_vElements[x].m_piElement;
+		piElement->PrepareResources();
+	}
+	CEntityTypeWrapper playerTypeWrapper;
+	playerTypeWrapper.Attach("EntityTypes","Player");
+	if(playerTypeWrapper.m_piEntityType)
+	{
+		playerTypeWrapper.m_piEntityType->PrepareResources();
+	}
+	
 }
 
 void CPlayAreaManager::SaveScenario(ISystemPersistencyNode *piNode)
