@@ -20,6 +20,7 @@ ScenarioEditorColorSelector.cpp\
 ScenarioEditorMainWindow.cpp\
 ScenarioEditorObjectLabel.cpp\
 ScenarioEditorObjectSelector.cpp\
+ScenarioEditorObjectListSelector.cpp\
 stdafx.cpp
 
 
