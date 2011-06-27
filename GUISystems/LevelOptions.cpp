@@ -48,6 +48,11 @@ void CLevelOptions::OnButtonClicked(IGameGUIButton *piControl)
 	{
 		m_nSelectedLevel=2;
 		EndDialog(0);
+	}	
+	if(piControl==m_piBTLevel4)
+	{
+		m_nSelectedLevel=3;
+		EndDialog(0);
 	}
 	if(piControl==m_piBTMode)
 	{
