@@ -88,6 +88,7 @@ void CGroundBossHatch::ProcessFrame(unsigned int dwCurrentTime,double dTimeFract
 }
 void CGroundBossHatch::OnAnimationEvent(string sEvent,string sParams)
 {
+	CEntityBase::OnAnimationEvent(sEvent,sParams);
 	if(sEvent=="Open"){m_bIsOpen=true;}
 }
 
