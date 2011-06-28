@@ -42,7 +42,7 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</IntDir>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</LinkIncremental>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
@@ -104,6 +104,7 @@
     <ClCompile Include="ScenarioEditorColorSelector.cpp" />
     <ClCompile Include="ScenarioEditorMainWindow.cpp" />
     <ClCompile Include="ScenarioEditorObjectLabel.cpp" />
+    <ClCompile Include="ScenarioEditorObjectListSelector.cpp" />
     <ClCompile Include="ScenarioEditorObjectSelector.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -115,6 +116,7 @@
     <ClInclude Include="ScenarioEditorColorSelector.h" />
     <ClInclude Include="ScenarioEditorMainWindow.h" />
     <ClInclude Include="ScenarioEditorObjectLabel.h" />
+    <ClInclude Include="ScenarioEditorObjectListSelector.h" />
     <ClInclude Include="ScenarioEditorObjectSelector.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>

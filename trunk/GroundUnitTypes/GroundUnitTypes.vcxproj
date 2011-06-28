@@ -110,6 +110,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DreadnoughtTowerType.cpp" />
+    <ClCompile Include="GroundBossHatchType.cpp" />
     <ClCompile Include="GroundBossType.cpp" />
     <ClCompile Include="GroundUnitTypes.cpp" />
     <ClCompile Include="StaticEntityType.cpp" />
@@ -122,6 +124,8 @@
     <ClCompile Include="VehicleType.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DreadnoughtTowerType.h" />
+    <ClInclude Include="GroundBossHatchType.h" />
     <ClInclude Include="GroundBossType.h" />
     <ClInclude Include="GroundUnitTypes.h" />
     <ClInclude Include="resource.h" />

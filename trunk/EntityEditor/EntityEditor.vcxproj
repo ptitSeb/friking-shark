@@ -109,8 +109,7 @@
     <ClCompile Include="EntityEditorMainWindow.cpp" />
     <ClCompile Include="EntityEditorModelPropertyPanel.cpp" />
     <ClCompile Include="EntityEditorNamedObjectSelector.cpp" />
-    <ClCompile Include="EntityEditorObjectLabel.cpp" />
-    <ClCompile Include="EntityEditorObjectSelector.cpp" />
+    <ClCompile Include="EntityEditorObjectListSelector.cpp" />
     <ClCompile Include="EntityEditorParticleSystemPropertyPanel.cpp" />
     <ClCompile Include="EntityEditorSoundPropertyPanel.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -128,8 +127,7 @@
     <ClInclude Include="EntityEditorMainWindow.h" />
     <ClInclude Include="EntityEditorModelPropertyPanel.h" />
     <ClInclude Include="EntityEditorNamedObjectSelector.h" />
-    <ClInclude Include="EntityEditorObjectLabel.h" />
-    <ClInclude Include="EntityEditorObjectSelector.h" />
+    <ClInclude Include="EntityEditorObjectListSelector.h" />
     <ClInclude Include="EntityEditorParticleSystemPropertyPanel.h" />
     <ClInclude Include="EntityEditorSoundPropertyPanel.h" />
     <ClInclude Include="stdafx.h" />

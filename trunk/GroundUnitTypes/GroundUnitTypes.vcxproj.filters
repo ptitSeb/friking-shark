@@ -36,6 +36,12 @@
     <ClCompile Include="GroundBossType.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GroundBossHatchType.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DreadnoughtTowerType.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GroundUnitTypes.h">
@@ -60,6 +66,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GroundBossType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GroundBossHatchType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DreadnoughtTowerType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

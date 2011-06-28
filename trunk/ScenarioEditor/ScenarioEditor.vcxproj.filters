@@ -33,6 +33,9 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ScenarioEditorObjectListSelector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ScenarioEditor.h">
@@ -51,6 +54,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScenarioEditorObjectListSelector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

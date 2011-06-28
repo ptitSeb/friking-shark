@@ -21,12 +21,6 @@
     <ClCompile Include="EntityEditorMainWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EntityEditorObjectLabel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EntityEditorObjectSelector.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -57,18 +51,15 @@
     <ClCompile Include="EntityEditorGeneralPropertyPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="EntityEditorObjectListSelector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EntityEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EntityEditorMainWindow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EntityEditorObjectLabel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EntityEditorObjectSelector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
@@ -99,6 +90,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EntityEditorGeneralPropertyPanel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityEditorObjectListSelector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
