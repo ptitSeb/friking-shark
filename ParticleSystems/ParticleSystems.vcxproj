@@ -116,6 +116,7 @@
     <ClCompile Include="ParticleEmitterType.cpp" />
     <ClCompile Include="ParticleModifierType.cpp" />
     <ClCompile Include="ParticleSizeModifierType.cpp" />
+    <ClCompile Include="ParticleSphereEmitterType.cpp" />
     <ClCompile Include="ParticleSystems.cpp" />
     <ClCompile Include="ParticleSystemType.cpp" />
     <ClCompile Include="ParticleWhirlpoolModifierType.cpp" />
@@ -133,6 +134,7 @@
     <ClInclude Include="ParticleEmitterType.h" />
     <ClInclude Include="ParticleModifierType.h" />
     <ClInclude Include="ParticleSizeModifierType.h" />
+    <ClInclude Include="ParticleSphereEmitterType.h" />
     <ClInclude Include="ParticleSystems.h" />
     <ClInclude Include="ParticleSystemType.h" />
     <ClInclude Include="ParticleWhirlpoolModifierType.h" />

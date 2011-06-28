@@ -51,6 +51,9 @@
     <ClCompile Include="ParticleEmitterModifierType.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ParticleSphereEmitterType.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LightParticleType.h">
@@ -90,6 +93,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ParticleEmitterModifierType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleSphereEmitterType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
