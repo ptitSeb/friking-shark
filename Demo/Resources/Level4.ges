@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=212.458680
 			NearPlane=130.000000
-			Posicion=1900.536269,203.483138,1.219828
+			Posicion=232.692283,203.483138,-8.838989
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -4945,7 +4945,7 @@ AreaDeJuego
 				}
 				ConditionType=1
 				ConditionValue=3
-				Posicion=-820.489713,-1.161011,63.483138
+				Posicion=-826.370187,-1.161011,63.483138
 				Tipo
 				{
 					Name=WEAP-LEFT-CIRCLE-DOWN

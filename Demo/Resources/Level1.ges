@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=202.395636
 			NearPlane=130.000000
-			Posicion=971.751765,228.678936,12.167422
+			Posicion=2049.378041,228.678936,4.859726
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -63,6 +63,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=863.057683,52.324294,-59.444868
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -135,18 +136,21 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=94.826496,52.965402,67.823858
+							SpeedFactor=1.000000
 						}
 						Item1
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=65.357482,52.965402,82.784798
+							SpeedFactor=1.000000
 						}
 						Item2
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=-38.404869,52.965399,84.668939
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -290,12 +294,14 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=836.130304,52.324292,67.905906
+							SpeedFactor=1.000000
 						}
 						Item1
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=835.973126,52.324293,14.619465
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -425,6 +431,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=303.809188,54.159653,7.513800
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -460,6 +467,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=303.671067,54.159653,21.608472
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -542,12 +550,14 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=836.131336,52.324292,68.095137
+							SpeedFactor=1.000000
 						}
 						Item1
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=835.905502,52.324292,45.900035
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -610,6 +620,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=813.449467,49.883571,-11.023394
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -645,6 +656,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=800.314337,49.883571,-11.469851
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -680,6 +692,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=834.781944,52.324294,-20.217695
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -1120,6 +1133,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=896.532374,52.965399,-22.912681
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -1155,6 +1169,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=897.620786,52.965399,-2.395097
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -1190,6 +1205,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=896.163913,52.965399,17.443743
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -1387,36 +1403,42 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=280.564705,52.965402,59.700284
+							SpeedFactor=1.000000
 						}
 						Item1
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=293.807389,52.958504,39.772826
+							SpeedFactor=1.000000
 						}
 						Item2
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=337.194804,52.965402,38.215656
+							SpeedFactor=1.000000
 						}
 						Item3
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=354.693650,52.965402,60.799738
+							SpeedFactor=1.000000
 						}
 						Item4
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=362.169550,52.965402,75.933874
+							SpeedFactor=1.000000
 						}
 						Item5
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=363.424070,52.965402,102.062360
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -1452,6 +1474,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=443.970434,52.931361,-59.035349
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -1487,6 +1510,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=374.126252,54.159653,-11.670052
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -1522,6 +1546,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=374.889305,54.156099,-40.776998
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -1557,12 +1582,14 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=371.547082,54.159651,-55.528810
+							SpeedFactor=1.000000
 						}
 						Item1
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=395.380049,54.155086,-56.086952
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -1598,12 +1625,14 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=468.538705,54.913456,-60.974699
+							SpeedFactor=1.000000
 						}
 						Item1
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=467.502200,52.965402,-95.149639
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -1639,36 +1668,42 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=553.658558,54.913456,-6.522199
+							SpeedFactor=1.000000
 						}
 						Item1
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=551.723412,54.913456,-41.099347
+							SpeedFactor=1.000000
 						}
 						Item2
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=556.657011,54.913456,-59.454244
+							SpeedFactor=1.000000
 						}
 						Item3
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=524.138052,54.913456,-61.318309
+							SpeedFactor=1.000000
 						}
 						Item4
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=464.988983,54.913456,-61.318309
+							SpeedFactor=1.000000
 						}
 						Item5
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=460.754002,52.965402,-97.545525
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -1704,36 +1739,42 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=552.798834,54.913456,-5.871487
+							SpeedFactor=1.000000
 						}
 						Item1
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=551.390076,54.913456,-41.176191
+							SpeedFactor=1.000000
 						}
 						Item2
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=557.300595,54.913456,-61.872928
+							SpeedFactor=1.000000
 						}
 						Item3
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=523.926346,54.913456,-60.876264
+							SpeedFactor=1.000000
 						}
 						Item4
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=462.851142,54.913456,-60.876264
+							SpeedFactor=1.000000
 						}
 						Item5
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=460.484797,52.965402,-95.546795
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -1773,6 +1814,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=578.009186,54.913456,6.223618
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -1808,12 +1850,14 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=601.741276,52.965402,-55.261294
+							SpeedFactor=1.000000
 						}
 						Item1
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=577.484042,52.965402,-37.352258
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -1876,30 +1920,35 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=700.608190,52.965402,-30.183094
+							SpeedFactor=1.000000
 						}
 						Item1
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=673.899084,52.965402,-20.741011
+							SpeedFactor=1.000000
 						}
 						Item2
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=604.681597,52.965402,-22.727581
+							SpeedFactor=1.000000
 						}
 						Item3
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=599.301538,52.965402,-40.706548
+							SpeedFactor=1.000000
 						}
 						Item4
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=605.046316,52.922830,-84.720492
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -1935,18 +1984,21 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=603.375687,52.965402,-22.057034
+							SpeedFactor=1.000000
 						}
 						Item1
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=596.290003,52.965402,-42.107689
+							SpeedFactor=1.000000
 						}
 						Item2
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=610.281865,52.742172,-101.196266
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -1982,18 +2034,21 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=600.685343,52.965402,-22.533041
+							SpeedFactor=1.000000
 						}
 						Item1
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=594.483661,52.965402,-38.356208
+							SpeedFactor=1.000000
 						}
 						Item2
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=606.952748,52.837924,-90.419519
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -2029,6 +2084,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=774.801710,52.965402,-60.397294
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -2064,6 +2120,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=916.231125,52.965402,-40.402772
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -2099,6 +2156,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=924.004416,52.965402,-13.744506
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -2134,6 +2192,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=923.897448,52.965402,7.805161
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -2169,6 +2228,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=965.615103,52.965402,-65.111608
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -2204,6 +2264,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=965.545611,52.965402,-47.493567
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -2227,7 +2288,7 @@ AreaDeJuego
 				Count=1
 				Delay=2000
 				Interval=0
-				Posicion=1031.582810,-71.547701,52.965402
+				Posicion=1033.698217,-73.469984,52.965402
 				RouteDelay=0
 				Ruta
 				{
@@ -2238,7 +2299,8 @@ AreaDeJuego
 						{
 							Absoluto=1
 							Pause=0
-							Posicion=1032.471371,52.965402,18.944214
+							Posicion=1035.053271,52.965402,13.749889
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -2273,25 +2335,29 @@ AreaDeJuego
 						{
 							Absoluto=1
 							Pause=0
-							Posicion=1021.852477,52.965402,1.883925
+							Posicion=1022.692657,52.965402,-14.421048
+							SpeedFactor=1.000000
 						}
 						Item1
 						{
 							Absoluto=1
 							Pause=0
-							Posicion=1017.720019,52.965402,31.995491
+							Posicion=1015.060766,52.965402,13.627438
+							SpeedFactor=1.000000
 						}
 						Item2
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=1011.761885,52.965402,68.302447
+							SpeedFactor=1.000000
 						}
 						Item3
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=1000.722622,52.965402,100.121137
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -2412,6 +2478,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=1161.164836,52.965402,5.877400
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -2447,6 +2514,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=1206.505447,52.965402,23.814573
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -2482,6 +2550,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=1407.042741,52.965402,39.441065
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -2517,6 +2586,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=1559.290281,52.965402,70.449286
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -2552,6 +2622,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=1560.108894,52.965402,-32.771062
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -2587,6 +2658,7 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=1506.837251,52.965402,17.755741
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -2622,18 +2694,21 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=1680.945273,52.965402,-49.874433
+							SpeedFactor=1.000000
 						}
 						Item1
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=1753.301529,52.965402,-46.941296
+							SpeedFactor=1.000000
 						}
 						Item2
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=1789.423466,52.965402,-92.794590
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -2669,18 +2744,21 @@ AreaDeJuego
 							Absoluto=1
 							Pause=0
 							Posicion=1837.692489,52.965402,27.762564
+							SpeedFactor=1.000000
 						}
 						Item1
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=1760.319559,52.965402,29.092658
+							SpeedFactor=1.000000
 						}
 						Item2
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=1722.100636,52.965402,100.697180
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -3543,48 +3621,56 @@ AreaDeJuego
 							Absoluto=1
 							Pause=1500
 							Posicion=1645.527653,52.965402,0.000000
+							SpeedFactor=1.000000
 						}
 						Item1
 						{
 							Absoluto=1
 							Pause=1000
 							Posicion=1672.139799,52.965402,0.000000
+							SpeedFactor=1.000000
 						}
 						Item2
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=1781.738489,52.965402,0.000000
+							SpeedFactor=1.000000
 						}
 						Item3
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=1732.665029,52.965402,0.000000
+							SpeedFactor=1.000000
 						}
 						Item4
 						{
 							Absoluto=1
 							Pause=1000
 							Posicion=1822.889699,52.965402,0.000000
+							SpeedFactor=1.000000
 						}
 						Item5
 						{
 							Absoluto=1
 							Pause=1000
 							Posicion=1853.880585,52.965402,0.000000
+							SpeedFactor=1.000000
 						}
 						Item6
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=1829.824468,52.965402,0.000000
+							SpeedFactor=1.000000
 						}
 						Item7
 						{
 							Absoluto=1
 							Pause=0
 							Posicion=1700.767714,52.965402,0.000000
+							SpeedFactor=1.000000
 						}
 					}
 				}
@@ -3690,24 +3776,28 @@ AreaDeJuego
 				Absoluto=1
 				Pause=0
 				Posicion=2010.751295,88.678936,4.859726
+				SpeedFactor=1.000000
 			}
 			Item1
 			{
 				Absoluto=1
 				Pause=0
 				Posicion=2041.883558,88.678936,4.859726
+				SpeedFactor=1.000000
 			}
 			Item2
 			{
 				Absoluto=1
 				Pause=0
 				Posicion=2098.459475,56.455661,4.859726
+				SpeedFactor=1.000000
 			}
 			Item3
 			{
 				Absoluto=1
 				Pause=0
 				Posicion=2149.538414,55.965402,4.859726
+				SpeedFactor=1.000000
 			}
 		}
 	}
@@ -3737,24 +3827,28 @@ AreaDeJuego
 				Absoluto=1
 				Pause=0
 				Posicion=-238.310960,57.932302,4.859726
+				SpeedFactor=1.000000
 			}
 			Item1
 			{
 				Absoluto=1
 				Pause=0
 				Posicion=-192.752508,57.932302,4.859726
+				SpeedFactor=1.000000
 			}
 			Item2
 			{
 				Absoluto=1
 				Pause=0
 				Posicion=-146.641870,88.678936,4.859726
+				SpeedFactor=1.000000
 			}
 			Item3
 			{
 				Absoluto=1
 				Pause=0
 				Posicion=-110.440776,88.678936,4.859726
+				SpeedFactor=1.000000
 			}
 		}
 	}
