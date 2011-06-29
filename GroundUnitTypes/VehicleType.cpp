@@ -65,13 +65,16 @@ void CVehicle::Render(IGenericRender *piRender,IGenericCamera *piCamera)
 void CVehicle::OnKilled()
 {
   bool bRemove=false;
-  m_PhysicInfo.dwBoundsType=PHYSIC_BOUNDS_TYPE_NONE;
   if(m_pTypeBase->GetStateAnimations(eVehicleState_Destroyed))
   {
     m_dwDamageType=DAMAGE_TYPE_NONE;
-    m_PhysicInfo.dwBoundsType=PHYSIC_BOUNDS_TYPE_NONE;
-    m_PhysicInfo.dwMoveType=PHYSIC_MOVE_TYPE_NONE;
-    m_PhysicInfo.dwCollisionType=PHYSIC_COLLISION_TYPE_STUCK;
+
+	if(!m_pType->m_bFollowRouteDestroyed || !m_piRoute)
+	{   
+		m_PhysicInfo.dwBoundsType=PHYSIC_BOUNDS_TYPE_NONE;
+		m_PhysicInfo.dwMoveType=PHYSIC_MOVE_TYPE_NONE;
+		m_PhysicInfo.dwCollisionType=PHYSIC_COLLISION_TYPE_STUCK;
+	}
 	
 	SetState(eVehicleState_Destroyed);
   }
@@ -144,7 +147,7 @@ void CVehicle::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 	if(GetState()==eVehicleState_Destroyed)
 	{
 		if(m_vActiveAnimations.size()==0){Remove();}
-		return;
+		if(!m_pType->m_bFollowRouteDestroyed){return;}
 	}
 
 	if(m_piContainerBuilding)
