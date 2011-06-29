@@ -157,6 +157,8 @@ CModelAnimationObject::CModelAnimationObject(CModelAnimationObjectType *pType,IA
 void CModelAnimationObject::Activate(unsigned int dwCurrentTime)
 {
     CAnimationObjectBase::Activate(dwCurrentTime);
+	m_vPosition=m_pType->m_vPosition;
+	m_vAngles=m_pType->m_vAngles;
     UpdateVisibility(dwCurrentTime);
 }
 
