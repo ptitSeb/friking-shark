@@ -30,10 +30,12 @@ public:
     IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
 
     double  m_dMaxAngularSpeed;
+	bool    m_bFollowRouteDestroyed;
 	
     BEGIN_PROP_MAP(CVehicleType)
         PROP_CLASS_CHAIN(CEntityTypeBase)
         PROP_VALUE_FLAGS(m_dMaxAngularSpeed,"MaxAngularVelocity",60,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_VALUE_FLAGS(m_bFollowRouteDestroyed,"FollowRouteDestroyed",false,MRPF_NORMAL|MRPF_OPTIONAL);
 	END_PROP_MAP();
 	
 	BEGIN_ENTITY_STATE_MAP()
