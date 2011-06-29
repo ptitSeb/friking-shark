@@ -865,6 +865,66 @@ void CFormationEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			}
 		}
 	}
+	if(piControl==m_piBTMoveRight)
+	{
+		for(unsigned int x=0;x<m_FormationType.m_piFormationTypeDesign->GetElements();x++)
+		{
+			for(unsigned int y=0;y<m_FormationType.m_piFormationTypeDesign->GetElementRoutePoints(x);y++)
+			{
+				CVector vTemp;
+				SRoutePoint sPoint;
+				m_FormationType.m_piFormationTypeDesign->GetElementRoutePoint(x,y,&sPoint);
+				vTemp=sPoint.vPosition;
+				sPoint.vPosition.c[0]+=0.05;
+				m_FormationType.m_piFormationTypeDesign->SetElementRoutePoint(x,y,sPoint);
+			}
+		}
+	}
+	if(piControl==m_piBTMoveLeft)
+	{
+		for(unsigned int x=0;x<m_FormationType.m_piFormationTypeDesign->GetElements();x++)
+		{
+			for(unsigned int y=0;y<m_FormationType.m_piFormationTypeDesign->GetElementRoutePoints(x);y++)
+			{
+				CVector vTemp;
+				SRoutePoint sPoint;
+				m_FormationType.m_piFormationTypeDesign->GetElementRoutePoint(x,y,&sPoint);
+				vTemp=sPoint.vPosition;
+				sPoint.vPosition.c[0]-=0.05;
+				m_FormationType.m_piFormationTypeDesign->SetElementRoutePoint(x,y,sPoint);
+			}
+		}
+	}
+	if(piControl==m_piBTMoveUp)
+	{
+		for(unsigned int x=0;x<m_FormationType.m_piFormationTypeDesign->GetElements();x++)
+		{
+			for(unsigned int y=0;y<m_FormationType.m_piFormationTypeDesign->GetElementRoutePoints(x);y++)
+			{
+				CVector vTemp;
+				SRoutePoint sPoint;
+				m_FormationType.m_piFormationTypeDesign->GetElementRoutePoint(x,y,&sPoint);
+				vTemp=sPoint.vPosition;
+				sPoint.vPosition.c[1]+=0.05;
+				m_FormationType.m_piFormationTypeDesign->SetElementRoutePoint(x,y,sPoint);
+			}
+		}
+	}
+	if(piControl==m_piBTMoveDown)
+	{
+		for(unsigned int x=0;x<m_FormationType.m_piFormationTypeDesign->GetElements();x++)
+		{
+			for(unsigned int y=0;y<m_FormationType.m_piFormationTypeDesign->GetElementRoutePoints(x);y++)
+			{
+				CVector vTemp;
+				SRoutePoint sPoint;
+				m_FormationType.m_piFormationTypeDesign->GetElementRoutePoint(x,y,&sPoint);
+				vTemp=sPoint.vPosition;
+				sPoint.vPosition.c[1]-=0.05;
+				m_FormationType.m_piFormationTypeDesign->SetElementRoutePoint(x,y,sPoint);
+			}
+		}
+	}	
 }
 
 void CFormationEditorMainWindow::UpdateCaption()
