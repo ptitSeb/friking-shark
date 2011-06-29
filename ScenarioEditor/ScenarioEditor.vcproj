@@ -196,6 +196,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ScenarioEditorObjectListSelector.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ScenarioEditorObjectListSelector.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ScenarioEditorObjectSelector.cpp"
 				>
 			</File>
