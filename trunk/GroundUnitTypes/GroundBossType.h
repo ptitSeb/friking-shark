@@ -29,11 +29,16 @@ class CGroundBossType: public CEntityTypeBase
 public:
     IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
 
-    double  m_dMaxAngularSpeed;
-	
+    CVector m_vFixedAngles;
+    bool    m_bUseFixedAngles;
+
+    void       DesignRender(IGenericRender *piRender,CVector &vPosition,CVector &vAngles,bool bSelected);
+    CTraceInfo DesignGetTrace(const CVector &vPosition,const CVector &vAngles,const CVector &p1,const CVector &p2 );
+
     BEGIN_PROP_MAP(CGroundBossType)
         PROP_CLASS_CHAIN(CEntityTypeBase)
-        PROP_VALUE_FLAGS(m_dMaxAngularSpeed,"MaxAngularVelocity",60,MRPF_NORMAL|MRPF_OPTIONAL);
+	PROP_VALUE_FLAGS(m_bUseFixedAngles,"UseFixedAngles",true,MRPF_NORMAL|MRPF_OPTIONAL);
+	PROP_VALUE_FLAGS(m_vFixedAngles,"FixedAngles",Origin,MRPF_NORMAL|MRPF_OPTIONAL);
 	END_PROP_MAP();
 	
 	BEGIN_ENTITY_STATE_MAP()

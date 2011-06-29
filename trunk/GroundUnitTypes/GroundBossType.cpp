@@ -39,6 +39,17 @@ IEntity *CGroundBossType::CreateInstance(IEntity *piParent,unsigned int dwCurren
     return piEntity;
 }
 
+
+void CGroundBossType::DesignRender(IGenericRender *piRender,CVector &vPosition,CVector &vAngles,bool bSelected)
+{
+        CEntityTypeBase::DesignRender(piRender,vPosition,m_bUseFixedAngles?m_vFixedAngles:vAngles,bSelected);
+}
+        
+CTraceInfo CGroundBossType::DesignGetTrace(const CVector &vPosition,const CVector &vAngles,const CVector &p1,const CVector &p2 )
+{
+        return CEntityTypeBase::DesignGetTrace(vPosition,m_bUseFixedAngles?m_vFixedAngles:vAngles,p1,p2);
+}
+
 CGroundBoss::CGroundBoss(CGroundBossType *pType)
 {
 	m_piTarget=NULL;
@@ -158,6 +169,7 @@ void CGroundBoss::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 		m_piRoute->GetPoint(m_nRoutePoint,&sCurrentPoint);
 		m_PhysicInfo.vVelocity=vDir;
 		m_PhysicInfo.vVelocity*=m_PhysicInfo.dMaxVelocity*sCurrentPoint.dSpeedFactor;
+		if(m_pType->m_bUseFixedAngles){m_PhysicInfo.vAngles=m_pType->m_vFixedAngles;}	
 		m_dwNextProcessFrame=dwCurrentTime+10;
 	}
 }
