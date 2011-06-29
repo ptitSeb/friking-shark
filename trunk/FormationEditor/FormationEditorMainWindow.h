@@ -115,6 +115,10 @@ public:
 	IGameGUIButton *m_piBTFlipH;
 	IGameGUIButton *m_piBTRotateRight;
 	IGameGUIButton *m_piBTRotateLeft;
+	IGameGUIButton *m_piBTMoveUp;
+	IGameGUIButton *m_piBTMoveDown;
+	IGameGUIButton *m_piBTMoveRight;
+	IGameGUIButton *m_piBTMoveLeft;
 	
 	// Entity
 
@@ -211,6 +215,11 @@ public:
 		CHILD_MAP_ENTRY_EX("FlipH",m_piBTFlipH,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("RotateRight",m_piBTRotateRight,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("RotateLeft",m_piBTRotateLeft,IGameGUIButtonEvents);
+
+		CHILD_MAP_ENTRY_EX("MoveUp",m_piBTMoveUp,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("MoveDown",m_piBTMoveDown,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("MoveRight",m_piBTMoveRight,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("MoveLeft",m_piBTMoveLeft,IGameGUIButtonEvents);
 		
 		CHILD_MAP_ENTRY("EntitiesPanel",m_piGREntitiesPanel);
 		CHILD_MAP_ENTRY("EntityList",m_piGREntityList);
