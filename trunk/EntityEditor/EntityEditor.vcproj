@@ -217,11 +217,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\EntityEditorObjectLabel.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\EntityEditorObjectSelector.cpp"
+				RelativePath=".\EntityEditorObjectListSelector.cpp"
 				>
 			</File>
 			<File
@@ -295,11 +291,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\EntityEditorObjectLabel.h"
-				>
-			</File>
-			<File
-				RelativePath=".\EntityEditorObjectSelector.h"
+				RelativePath=".\EntityEditorObjectListSelector.h"
 				>
 			</File>
 			<File

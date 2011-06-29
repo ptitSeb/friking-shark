@@ -19,19 +19,21 @@
 #pragma once
 #include "GameRunTimeLib.h"
 
-struct ISound;
-struct ISoundType;
+class ISound;
+class ISoundType;
 
-struct ISoundType:virtual public ISystemUnknown
+class ISoundType:virtual public ISystemUnknown
 {
-    virtual ISound *CreateInstance()=0;
+public:
+	virtual ISound *CreateInstance()=0;
 
 	virtual bool        Load(std::string sFileName)=0;
 	virtual std::string GetFileName()=0;
 };
 
-struct ISound
+class ISound
 {
+public:
     virtual void Play()=0;
     virtual void Stop()=0;
     virtual bool IsPlaying()=0;
@@ -46,8 +48,9 @@ struct ISound
     virtual ~ISound(){}
 };
 
-struct ISoundManager : virtual public ISystemUnknown
+class ISoundManager : virtual public ISystemUnknown
 {
+public:
   virtual bool Is3DSoundEnabled()=0;
 
   virtual unsigned int  GetMasterVolume()=0;
@@ -60,8 +63,9 @@ struct ISoundManager : virtual public ISystemUnknown
   virtual ~ISoundManager(){}
 };
 
-struct ISoundManagerEvents : virtual public ISystemUnknown
+class ISoundManagerEvents : virtual public ISystemUnknown
 {
+public:
   virtual void OnMasterVolumeChanged(unsigned int dMasterVolume)=0;
 
   virtual ~ISoundManagerEvents(){}
