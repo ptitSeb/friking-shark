@@ -1,9 +1,12 @@
 //  Friking Shark, a Flying Shark arcade remake.
 //  Copyright (C) 2011  Javier Martin Garcia (javiermartingarcia@gmail.com)
 //
-//  Music By Saul Cross
+//  Music arranged by Saul Cross
 //  Copyright (C) 2011  Saul Cross (simple-media@saulc.karoo.co.uk)
-//	
+//
+//  Flying Shark is copyrighted by Taito and is outside the scope of this license.
+//  This license only applies to Friking Shark.
+//
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
