@@ -667,10 +667,24 @@ void CFormationEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		{
 			unsigned long nSelectedEntityType=0;
 			std::vector<IDesignObject *> vEntityTypes;
+			std::vector<IDesignObject *> vFilteredEntities;
 			GetSystemObjects("EntityTypes",&vEntityTypes);
-			if(m_ObjectSelector.m_piObjectSelector->SelectObject("Select Entity...",this,&vEntityTypes,&nSelectedEntityType))
+			for(unsigned long x=0;x<vEntityTypes.size();x++)
 			{
-				IEntityType *piEntityType=QI(IEntityType,vEntityTypes[nSelectedEntityType]);
+				SEntityTypeConfig sConfig;
+				IDesignObject *piEntityType=vEntityTypes[x];
+				IEntityTypeDesign *piDesign=QI(IEntityTypeDesign,piEntityType);
+				piDesign->GetEntityTypeConfig(&sConfig);
+				if(sConfig.nPlacement==ENTITY_PLACEMENT_AIR)
+				{
+					vFilteredEntities.push_back(piEntityType);
+				}
+				REL(piDesign);
+			}
+			
+			if(m_ObjectSelector.m_piObjectSelector->SelectObject("Select Entity...",this,&vFilteredEntities,&nSelectedEntityType))
+			{
+				IEntityType *piEntityType=QI(IEntityType,vFilteredEntities[nSelectedEntityType]);
 				m_FormationType.m_piFormationTypeDesign->SetElementEntityType(m_nSelectedEntity,piEntityType);
 				REL(piEntityType);
 
