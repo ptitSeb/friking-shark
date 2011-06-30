@@ -27,6 +27,8 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+class CGCMFileType;
+
 class CASEFileType :public C3DSFileTypeBase
 {
 	FILE			*m_pFile;
@@ -42,6 +44,8 @@ class CASEFileType :public C3DSFileTypeBase
 public:
 
 	bool Open(const char *pFile);
+	
+	void ToGCM(CGCMFileType *pFile);
 
 	CASEFileType();
 };
