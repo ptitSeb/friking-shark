@@ -1,6 +1,6 @@
 AreaDeJuego
 {
-	AlturaJuego=35.000000
+	AlturaJuego=55.000000
 	Camara
 	{
 		Class=Camera
@@ -9,14 +9,14 @@ AreaDeJuego
 			AnguloVisualizacion=60.000000
 			Angulos=0.000000,-90.000000,0.000000
 			AspectRatio=0.700000
-			FarPlane=201.681898
+			FarPlane=222.395636
 			NearPlane=130.000000
-			Posicion=94.329251,227.965199,4.682201
+			Posicion=-142.512319,248.678936,4.859726
 		}
 		Name=PlayCamera
 		System=GameSystem
 	}
-	Destino=1871.661277,-4.682201,87.965199
+	Destino=2078.003098,-4.859726,108.678936
 	DistanciaCamara=140.000000
 	Elementos
 	{
@@ -25,82 +25,43 @@ AreaDeJuego
 			Class=CPlayAreaCheckPoint
 			Data
 			{
-				Posicion=0.000000,-2.547510,81.671682
+				Posicion=-141.883593,-4.859726,108.678936
 			}
 			Name=""
 			System=GameSystem
 		}
 		Item1
 		{
-			Class=CPlayAreaCheckPoint
+			Class=CPlayAreaFormation
 			Data
 			{
-				Posicion=70.000000,-2.547510,81.671682
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-57.737043,-4.859726,108.678936
+				Tipo
+				{
+					Name=RookieFighterTrianguloCentroRecto
+					System=FormationTypes
+				}
 			}
 			Name=""
 			System=GameSystem
 		}
 		Item2
 		{
-			Class=CPlayAreaCheckPoint
-			Data
-			{
-				Posicion=140.000000,-2.547510,81.671682
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item3
-		{
 			Class=CPlayAreaEntity
 			Data
 			{
 				Angulos=0.000000,0.000000,0.000000
 				Bonus
+				BonusOnChild=0
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=92.688514,5.336136,52.965399
-				RouteDelay=0
-				Ruta
-				{
-					Ciclica=0
-					Puntos
-					{
-						Item0
-						{
-							Absoluto=1
-							Pause=0
-							Posicion=127.541499,52.965399,16.387844
-						}
-						Item1
-						{
-							Absoluto=1
-							Pause=0
-							Posicion=127.541499,52.965399,58.740061
-						}
-					}
-				}
-				Tipo
-				{
-					Name=Tank
-					System=EntityTypes
-				}
-			}
-			Name=""
-			System=GameSystem
-		}
-		Item4
-		{
-			Class=CPlayAreaEntity
-			Data
-			{
-				Angulos=0.000000,0.000000,0.000000
-				Bonus
-				Count=1
-				Delay=0
-				Interval=0
-				Posicion=83.220820,11.776714,52.965399
+				Posicion=-126.371711,-17.343811,52.965402
 				RouteDelay=0
 				Ruta
 				{
@@ -109,7 +70,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=CaveBunker
+					Name=SmallShip
 					System=EntityTypes
 				}
 			}
@@ -119,7 +80,8 @@ AreaDeJuego
 	}
 	EntityLayers
 	InclinacionVista=0.000000
-	LandingEnabled=0
+	IntroMusic
+	LandingEnabled=1
 	LandingRoute
 	{
 		Ciclica=0
@@ -129,31 +91,36 @@ AreaDeJuego
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=0.000000,0.000000,0.000000
+				Posicion=2038.003098,108.678936,4.859726
+				SpeedFactor=1.000000
 			}
 			Item1
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=0.000000,0.000000,0.000000
+				Posicion=2078.003098,108.678936,4.859726
+				SpeedFactor=1.000000
 			}
 			Item2
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=0.000000,0.000000,0.000000
+				Posicion=2133.716832,55.965402,4.859726
+				SpeedFactor=1.000000
 			}
 			Item3
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=0.000000,0.000000,0.000000
+				Posicion=2189.430565,55.965402,4.859726
+				SpeedFactor=1.000000
 			}
 		}
 	}
 	MaximoScrollHorz=0.000000
-	Origen=-42.635749,-4.682201,87.965199
-	TakeOffEnabled=0
+	Music
+	Origen=-145.350174,-4.859726,108.678936
+	TakeOffEnabled=1
 	TakeOffRoute
 	{
 		Ciclica=0
@@ -163,29 +130,33 @@ AreaDeJuego
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=0.000000,0.000000,0.000000
+				Posicion=-256.777642,55.965402,4.859726
+				SpeedFactor=1.000000
 			}
 			Item1
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=0.000000,0.000000,0.000000
+				Posicion=-201.063908,55.965402,4.859726
+				SpeedFactor=1.000000
 			}
 			Item2
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=0.000000,0.000000,0.000000
+				Posicion=-145.350174,108.678936,4.859726
+				SpeedFactor=1.000000
 			}
 			Item3
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=0.000000,0.000000,0.000000
+				Posicion=-105.350174,108.678936,4.859726
+				SpeedFactor=1.000000
 			}
 		}
 	}
-	VelocidadCamara=15.000000
+	VelocidadCamara=0.000000
 }
 Terrain
 {
@@ -223,8 +194,8 @@ Terrain
 	{
 		Color=1.000000,1.000000,1.000000
 		Enabled=0
-		End=1000.000000
-		Start=100.000000
+		Maxs=0.000000,0.000000,0.000000
+		Mins=0.000000,0.000000,0.000000
 	}
 	HeightLayers
 	{
@@ -236,7 +207,7 @@ Terrain
 				HorzResolution=2.500000
 				MaxHeight=0.300000
 				MinHeight=0.000000
-				Texture=./Textures/rtrock_1.jpg
+				Texture=./Textures/rtrock_1.png
 				VertResolution=2.500000
 			}
 			Texture
@@ -244,7 +215,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=./Textures/rtrock_1.jpg
+					Archivo=./Textures/rtrock_1.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -261,7 +232,7 @@ Terrain
 				HorzResolution=2.500000
 				MaxHeight=1.000000
 				MinHeight=0.240000
-				Texture=LechoInferior.jpg
+				Texture=LechoInferior.png
 				VertResolution=2.500000
 			}
 			Texture
@@ -269,7 +240,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=LechoInferior.jpg
+					Archivo=LechoInferior.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -286,7 +257,7 @@ Terrain
 				HorzResolution=2.500000
 				MaxHeight=1.000000
 				MinHeight=0.800000
-				Texture=LechoSuperior.jpg
+				Texture=./Textures/RailwayStationTypeD.png
 				VertResolution=2.500000
 			}
 			Texture
@@ -294,7 +265,32 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=LechoSuperior.jpg
+					Archivo=./Textures/RailwayStationTypeD.png
+					ArchivoAlpha=""
+					ColorKey=0.000000,0.000000,0.000000
+					UsarColorKey=0
+				}
+				Name=""
+				System=GameResources
+			}
+		}
+		Item3
+		{
+			Config
+			{
+				HeightMargin=0.000000
+				HorzResolution=1.000000
+				MaxHeight=1.000000
+				MinHeight=1.000000
+				Texture=./Textures/RailwayStationTypeD.png
+				VertResolution=1.000000
+			}
+			Texture
+			{
+				Class=Texture
+				Data
+				{
+					Archivo=./Textures/RailwayStationTypeD.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -329,12 +325,13 @@ Terrain
 		Config
 		{
 			Enabled=1
-			Height=0.700000
 			HorzResolution=10.000000
+			Maxs=0.000000,0.000000,0.000000
+			Mins=0.000000,0.000000,0.000000
 			Opacity=0.200000
 			Speed=0.025000
-			Texture1=./Textures/rtrock_1.jpg
-			Texture2=hiervsPeq.jpg
+			Texture1=./Textures/rtrock_1.png
+			Texture2=hiervsPeq.png
 			VertResolution=5.500000
 		}
 		Texture1
@@ -342,7 +339,7 @@ Terrain
 			Class=Texture
 			Data
 			{
-				Archivo=./Textures/rtrock_1.jpg
+				Archivo=./Textures/rtrock_1.png
 				ArchivoAlpha=""
 				ColorKey=0.000000,0.000000,0.000000
 				UsarColorKey=0
@@ -355,7 +352,7 @@ Terrain
 			Class=Texture
 			Data
 			{
-				Archivo=hiervsPeq.jpg
+				Archivo=hiervsPeq.png
 				ArchivoAlpha=""
 				ColorKey=0.000000,0.000000,0.000000
 				UsarColorKey=0

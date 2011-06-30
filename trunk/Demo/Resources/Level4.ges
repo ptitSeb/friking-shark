@@ -6775,7 +6775,7 @@ Terrain
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
 				HorzResolution=5.000000
-				Texture=./Textures/ArenaOscura.jpg
+				Texture=./Textures/ArenaOscura.png
 				VertResolution=5.000000
 			}
 			Texture
@@ -6783,7 +6783,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=./Textures/ArenaOscura.jpg
+					Archivo=./Textures/ArenaOscura.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -6801,7 +6801,7 @@ Terrain
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
 				HorzResolution=4.000000
-				Texture=./Textures/BluePetrol.jpg
+				Texture=./Textures/BluePetrol.png
 				VertResolution=4.000000
 			}
 			Texture
@@ -6809,7 +6809,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=./Textures/BluePetrol.jpg
+					Archivo=./Textures/BluePetrol.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -6827,7 +6827,7 @@ Terrain
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
 				HorzResolution=8.000000
-				Texture=./Textures/Bricks.jpg
+				Texture=./Textures/Bricks.png
 				VertResolution=6.000000
 			}
 			Texture
@@ -6835,7 +6835,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=./Textures/Bricks.jpg
+					Archivo=./Textures/Bricks.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -6853,7 +6853,7 @@ Terrain
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
 				HorzResolution=3.000000
-				Texture=./Textures/BricksBlue.jpg
+				Texture=./Textures/BricksBlue.png
 				VertResolution=4.000000
 			}
 			Texture
@@ -6861,7 +6861,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=./Textures/BricksBlue.jpg
+					Archivo=./Textures/BricksBlue.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -6879,7 +6879,7 @@ Terrain
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
 				HorzResolution=5.000000
-				Texture=./Textures/Grass.jpg
+				Texture=./Textures/Grass.png
 				VertResolution=5.000000
 			}
 			Texture
@@ -6887,7 +6887,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=./Textures/Grass.jpg
+					Archivo=./Textures/Grass.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -6905,7 +6905,7 @@ Terrain
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
 				HorzResolution=8.000000
-				Texture=./Textures/DirtRocky.jpg
+				Texture=./Textures/DirtRocky.png
 				VertResolution=8.000000
 			}
 			Texture
@@ -6913,7 +6913,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=./Textures/DirtRocky.jpg
+					Archivo=./Textures/DirtRocky.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -6931,7 +6931,7 @@ Terrain
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
 				HorzResolution=5.000000
-				Texture=./Textures/StoneRoad.jpg
+				Texture=./Textures/StoneRoad.png
 				VertResolution=3.500000
 			}
 			Texture
@@ -6939,7 +6939,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=./Textures/StoneRoad.jpg
+					Archivo=./Textures/StoneRoad.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -6957,7 +6957,7 @@ Terrain
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
 				HorzResolution=7.500000
-				Texture=./Textures/Bricks.jpg
+				Texture=./Textures/Bricks.png
 				VertResolution=4.000000
 			}
 			Texture
@@ -6965,7 +6965,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=./Textures/Bricks.jpg
+					Archivo=./Textures/Bricks.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -6983,7 +6983,7 @@ Terrain
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
 				HorzResolution=5.500000
-				Texture=./Textures/LightWood.jpg
+				Texture=./Textures/LightWood.png
 				VertResolution=9.500000
 			}
 			Texture
@@ -6991,7 +6991,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=./Textures/LightWood.jpg
+					Archivo=./Textures/LightWood.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -7009,7 +7009,7 @@ Terrain
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.030000
 				HorzResolution=3.000000
-				Texture=./Textures/sandPeq.jpg
+				Texture=./Textures/sandPeq.png
 				VertResolution=3.000000
 			}
 			Texture
@@ -7017,7 +7017,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=./Textures/sandPeq.jpg
+					Archivo=./Textures/sandPeq.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -7032,7 +7032,7 @@ Terrain
 		Class=Texture
 		Data
 		{
-			Archivo=./Textures/Level4TerrainColorMap.bmp
+			Archivo=./Textures/Level4TerrainColorMap.png
 			ArchivoAlpha=""
 			ColorKey=0.000000,0.000000,0.000000
 			UsarColorKey=0
@@ -7040,7 +7040,7 @@ Terrain
 		Name=""
 		System=GameResources
 	}
-	ColorMapFile=./Textures/Level4TerrainColorMap.bmp
+	ColorMapFile=./Textures/Level4TerrainColorMap.png
 	Fog
 	{
 		Color=0.078919,0.135307,0.279639
@@ -7058,7 +7058,7 @@ Terrain
 				HorzResolution=7.000000
 				MaxHeight=1.000000
 				MinHeight=0.000000
-				Texture=./Textures/Dirt.jpg
+				Texture=./Textures/Dirt.png
 				VertResolution=7.000000
 			}
 			Texture
@@ -7066,7 +7066,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=./Textures/Dirt.jpg
+					Archivo=./Textures/Dirt.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -7106,8 +7106,8 @@ Terrain
 			Mins=-938.228394,-0.864870,-93.074356
 			Opacity=0.200000
 			Speed=0.110000
-			Texture1=./Textures/WaterB.jpg
-			Texture2=./Textures/WaterB.jpg
+			Texture1=./Textures/WaterB.png
+			Texture2=./Textures/WaterB.png
 			VertResolution=8.500000
 		}
 		Texture1
@@ -7115,7 +7115,7 @@ Terrain
 			Class=Texture
 			Data
 			{
-				Archivo=./Textures/WaterB.jpg
+				Archivo=./Textures/WaterB.png
 				ArchivoAlpha=""
 				ColorKey=0.000000,0.000000,0.000000
 				UsarColorKey=0
@@ -7128,7 +7128,7 @@ Terrain
 			Class=Texture
 			Data
 			{
-				Archivo=./Textures/WaterB.jpg
+				Archivo=./Textures/WaterB.png
 				ArchivoAlpha=""
 				ColorKey=0.000000,0.000000,0.000000
 				UsarColorKey=0
