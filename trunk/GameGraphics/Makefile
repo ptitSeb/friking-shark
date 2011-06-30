@@ -38,10 +38,10 @@ release: ../Demo/Bin/Release/GameGraphics.so
 debug: ../Demo/Bin/Debug/GameGraphics.so
 
 ../Demo/Bin/Release/GameGraphics.so: $(OUT_SOURCES_C:.c=.o)  $(OUT_SOURCES:.cpp=.o) $(LIBS)
-	$(CC) -shared -o ../Demo/Bin/Release/GameGraphics.so .intermediate/*.o ../JPEGLibrary/.intermediate/*.o $(CFLAGS) $(LIBS) -ldl -lGLU -lGL -lX11 -lXrandr
+	$(CC) -shared -o ../Demo/Bin/Release/GameGraphics.so .intermediate/*.o ../JPEGLibrary/.intermediate/*.o $(CFLAGS) $(LIBS) -ldl -lGLU -lGL -lX11 -lXrandr -lpng
 
 ../Demo/Bin/Debug/GameGraphics.so:  $(OUT_SOURCES_C:.c=.od)  $(OUT_SOURCES:.cpp=.od) $(LIBS_DEBUG)
-	$(CC) -shared -o ../Demo/Bin/Debug/GameGraphics.so .intermediate/*.od ../JPEGLibrary/.intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG) -ldl -lGLU -lGL -lX11 -lXrandr
+	$(CC) -shared -o ../Demo/Bin/Debug/GameGraphics.so .intermediate/*.od ../JPEGLibrary/.intermediate/*.od $(CFLAGS_DEBUG) $(LIBS_DEBUG) -ldl -lGLU -lGL -lX11 -lXrandr -lpng
 
 $(INTERMEDIATE_DIR)/%.o: ./%.cpp
 	$(CXX) -MF $@.dep -o $@ -c $(DFLAGS) $(CFLAGS) $(INCLUDES) $<

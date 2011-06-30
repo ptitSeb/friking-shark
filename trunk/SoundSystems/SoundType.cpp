@@ -55,7 +55,7 @@ bool CSoundType::Load(std::string sFileName)
 bool CSoundType::LoadFromFile()
 {
 	bool bOk=true;
-	
+	unsigned int nStartTime=GetTimeStamp();	
 	char sExt[1024]={0};
 	GetExtension(m_sFileName.c_str(),sExt);
 	if(strcasecmp(sExt,".OGG")==0)
@@ -66,6 +66,7 @@ bool CSoundType::LoadFromFile()
 	{
 		bOk=LoadWav();
 	}
+	RTTRACE("CSoundType::LoadFromFile -> %s loaded (%d ms)",m_sFileName.c_str(),GetTimeStamp()-nStartTime);
 	return bOk;
 }
 
