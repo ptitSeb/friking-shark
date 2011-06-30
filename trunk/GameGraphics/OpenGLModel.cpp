@@ -55,23 +55,26 @@ bool COpenGLModel::LoadFromFile()
 	char pPath[MAX_PATH];
 	GetFileFolder(sFileName.c_str(),pPath);
 	
+	bool bGCMOutdated=false;
 	bool bLoadedGCM=false;
 	CGCMFileType gcmfile;
 	
-	bLoadedGCM=gcmfile.Open(sGCMFile);
-	if(!bLoadedGCM)
+	if( FileExists(sFileName.c_str()) &&
+		FileExists(sGCMFile))
 	{
-		if(pPath[0]==0 || strcmp(pPath,".")==0)
+		time_t asetime=GetFileTimeStamp(m_sFileName.c_str());
+		time_t gcmfile=GetFileTimeStamp(sGCMFile);
+		if(gcmfile<asetime)
 		{
-			std::string sTemp="Models/";
-			sTemp+=sGCMFile;
-			sFileName=sTemp;
-		}	
-		bLoadedGCM=gcmfile.Open(sFileName.c_str());
-		if(!bLoadedGCM)
-		{
-			RTTRACE("COpenGLModel::LoadFromFile -> GCM file for %s not found, rebuilding if possible",m_sFileName.c_str());
+			bGCMOutdated=true;
+			RTTRACE("COpenGLModel::LoadFromFile -> GCM file for %s is out of date, rebuilding",m_sFileName.c_str());
 		}
+	}
+
+	if(!bGCMOutdated)
+	{
+		bLoadedGCM=gcmfile.Open(sGCMFile);
+		if(!bLoadedGCM){RTTRACE("COpenGLModel::LoadFromFile -> GCM file for %s not found, rebuilding if possible",m_sFileName.c_str());}
 	}
 	
 	if(!bLoadedGCM)
@@ -79,18 +82,8 @@ bool COpenGLModel::LoadFromFile()
 		CASEFileType	asefile;
 		if(!asefile.Open(m_sFileName.c_str()))
 		{
-			if(pPath[0]==0 || strcmp(pPath,".")==0)
-			{
-				std::string sTemp="Models/";
-				sTemp+=m_sFileName;
-				sFileName=sTemp;
-			}
-			
-			if(!asefile.Open(sFileName.c_str()))
-			{
-				RTTRACE("COpenGLModel::LoadFromFile -> Failed to load model %s",m_sFileName.c_str());
-				return false;
-			}
+			RTTRACE("COpenGLModel::LoadFromFile -> Failed to load model %s",m_sFileName.c_str());
+			return false;
 		}
 		asefile.ToGCM(&gcmfile);
 		if(!gcmfile.Save(sGCMFile))
