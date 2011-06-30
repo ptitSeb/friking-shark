@@ -1,0 +1,3 @@
+
+ROR : No se ha podido cargar el escenario 'Resources\Demo1.ges'
+ERROR : No se ha podido cargar el nivel de detalle 0 del modelo 'terreno3-1', archivo 'Models\terreno3-1.ASE'
