@@ -430,7 +430,7 @@ void CEntityEditorMainWindow::ProcessFileSave()
 			else
 			{
 				CEntityTypeWrapper existingWrapper;
-				if(existingWrapper.Attach("EntityTypes",sName) && sName!=m_sEntityName)
+				if(existingWrapper.Attach("EntityTypes",sName,false) && sName!=m_sEntityName)
 				{
 					std::string sText="Entity '";
 					sText+=sName;
@@ -509,7 +509,7 @@ void CEntityEditorMainWindow::ProcessFileSaveAs()
 			else
 			{
 				CEntityTypeWrapper existingWrapper;
-				if(existingWrapper.Attach("EntityTypes",sName) && sName!=m_sEntityName)
+				if(existingWrapper.Attach("EntityTypes",sName,false) && sName!=m_sEntityName)
 				{
 					std::string sText="Entity '";
 					sText+=sName;

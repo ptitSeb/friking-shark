@@ -41,9 +41,9 @@ public:
     bool Create(std::string sSystem,std::string sClass,std::string sName);
     bool Create(ISystem *piSystem,std::string sClass,std::string sName);
     void Destroy();
-    bool Attach(ISystemUnknown*);
-    bool Attach(ISystem *piSystem,std::string sName);
-    bool Attach(std::string sSystemName,std::string sName);
+	bool Attach(ISystemUnknown*);
+    bool Attach(ISystem *piSystem,std::string sName,bool bTraceIfFailed=true);
+	bool Attach(std::string sSystemName,std::string sName,bool bTraceIfFailed=true);
     void Detach(bool bDestroyIfMust=false);
 
     CSystemObjectWrapper &operator=(const CSystemObjectWrapper &);

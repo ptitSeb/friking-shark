@@ -70,23 +70,23 @@ void CSystemObjectWrapper::ReleaseInterfaces()
 	m_bAttached=false;
 }
 
-bool CSystemObjectWrapper::Attach(std::string sSystemName,std::string sName)
+bool CSystemObjectWrapper::Attach(std::string sSystemName,std::string sName,bool bTraceIfFailed)
 {
     bool bOk=false;
 	ISystemManager *piSystemManager=GetSystemManager();
     ISystem *piSystem=piSystemManager->GetSystem(sSystemName);
-    if(piSystem){bOk=Attach(piSystem,sName);}
+	if(piSystem){bOk=Attach(piSystem,sName,bTraceIfFailed);}
     REL(piSystem);
 	REL(piSystemManager);
     return bOk;
 }
 
-bool CSystemObjectWrapper::Attach(ISystem *piSystem,std::string sName)
+bool CSystemObjectWrapper::Attach(ISystem *piSystem,std::string sName,bool bTraceIfFailed)
 {
     bool bOk=false;
     ISystemObject *piObject=NULL;
-    if(piSystem->GetObject(sName,&piObject)){bOk=Attach(piObject);}
-	if(!bOk)
+	if(piSystem->GetObject(sName,&piObject)){bOk=Attach(piObject);}
+	if(!bOk && bTraceIfFailed)
 	{
 		RTTRACE("CSystemObjectWrapper::Attach -> Failed to attach to  System: %s, Object:%s",piSystem->GetName().c_str(),sName.c_str());
 	}

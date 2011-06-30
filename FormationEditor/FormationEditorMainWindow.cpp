@@ -474,7 +474,7 @@ void CFormationEditorMainWindow::ProcessFileSave()
 			else
 			{
 				CFormationTypeWrapper existingWrapper;
-				if(existingWrapper.Attach("FormationTypes",sName) && sName!=m_sFormationName)
+				if(existingWrapper.Attach("FormationTypes",sName,false) && sName!=m_sFormationName)
 				{
 					std::string sText="Formation '";
 					sText+=sName;
@@ -547,7 +547,7 @@ void CFormationEditorMainWindow::ProcessFileSaveAs()
 			else
 			{
 				CFormationTypeWrapper existingWrapper;
-				if(existingWrapper.Attach("FormationTypes",sName) && sName!=m_sFormationName)
+				if(existingWrapper.Attach("FormationTypes",sName,false) && sName!=m_sFormationName)
 				{
 					std::string sText="Formation '";
 					sText+=sName;
