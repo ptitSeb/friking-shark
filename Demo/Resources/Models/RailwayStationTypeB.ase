@@ -1,5 +1,5 @@
 *3DSMAX_ASCIIEXPORT	200
-*COMMENT "Exported from Blender 249 - Mon Jun 20 23:40:44 2011"
+*COMMENT "Exported from Blender 249 - Fri Jul  1 00:26:33 2011"
 *SCENE {
 	*SCENE_FILENAME "RailwayStationTypeB.blend"
 	*SCENE_FIRSTFRAME 1
@@ -42,7 +42,7 @@
 				*MAP_CLASS "Bitmap"
 				*MAP_SUBNO 1
 				*MAP_AMOUNT 1.0000
-				*BITMAP "/home/javi/workspace/Game/Demo/Resources/Textures/RailwayStationTypeB.jpg"
+				*BITMAP "/home/javi/workspace/Game/Demo/Resources/Textures/RailwayStationTypeB.png"
 				*MAP_TYPE Screen
 				*UVW_U_OFFSET 0.0000
 				*UVW_V_OFFSET 0.0000

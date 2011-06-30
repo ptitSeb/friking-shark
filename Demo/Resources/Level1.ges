@@ -3882,7 +3882,7 @@ Terrain
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
 				HorzResolution=4.000000
-				Texture=hiervsPeq.jpg
+				Texture=hiervsPeq.png
 				VertResolution=4.000000
 			}
 			Texture
@@ -3890,7 +3890,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=hiervsPeq.jpg
+					Archivo=hiervsPeq.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -3908,7 +3908,7 @@ Terrain
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
 				HorzResolution=3.000000
-				Texture=./Textures/Tiles.jpg
+				Texture=./Textures/Tiles.png
 				VertResolution=3.000000
 			}
 			Texture
@@ -3916,7 +3916,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=./Textures/Tiles.jpg
+					Archivo=./Textures/Tiles.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -3934,7 +3934,7 @@ Terrain
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
 				HorzResolution=3.500000
-				Texture=sandPeq.jpg
+				Texture=sandPeq.png
 				VertResolution=3.500000
 			}
 			Texture
@@ -3942,7 +3942,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=sandPeq.jpg
+					Archivo=sandPeq.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -3960,7 +3960,7 @@ Terrain
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
 				HorzResolution=3.000000
-				Texture=./Textures/Tiles.jpg
+				Texture=./Textures/Tiles.png
 				VertResolution=3.000000
 			}
 			Texture
@@ -3968,7 +3968,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=./Textures/Tiles.jpg
+					Archivo=./Textures/Tiles.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -3986,7 +3986,7 @@ Terrain
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
 				HorzResolution=5.500000
-				Texture=./Textures/LechoSuperior.jpg
+				Texture=./Textures/LechoSuperior.png
 				VertResolution=5.000000
 			}
 			Texture
@@ -3994,7 +3994,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=./Textures/LechoSuperior.jpg
+					Archivo=./Textures/LechoSuperior.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -4009,7 +4009,7 @@ Terrain
 		Class=Texture
 		Data
 		{
-			Archivo=Level1TerrainColorMap.bmp
+			Archivo=Level1TerrainColorMap.png
 			ArchivoAlpha=""
 			ColorKey=0.000000,0.000000,0.000000
 			UsarColorKey=0
@@ -4017,7 +4017,7 @@ Terrain
 		Name=""
 		System=GameResources
 	}
-	ColorMapFile=Level1TerrainColorMap.bmp
+	ColorMapFile=Level1TerrainColorMap.png
 	Fog
 	{
 		Color=0.061294,0.131579,0.037134
@@ -4035,7 +4035,7 @@ Terrain
 				HorzResolution=4.000000
 				MaxHeight=0.380000
 				MinHeight=0.000000
-				Texture=LechoInferior.jpg
+				Texture=LechoInferior.png
 				VertResolution=4.000000
 			}
 			Texture
@@ -4043,7 +4043,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=LechoInferior.jpg
+					Archivo=LechoInferior.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -4060,7 +4060,7 @@ Terrain
 				HorzResolution=4.500000
 				MaxHeight=0.880000
 				MinHeight=0.280000
-				Texture=LechoSuperior.jpg
+				Texture=LechoSuperior.png
 				VertResolution=4.500000
 			}
 			Texture
@@ -4068,7 +4068,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=LechoSuperior.jpg
+					Archivo=LechoSuperior.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -4085,7 +4085,7 @@ Terrain
 				HorzResolution=5.500000
 				MaxHeight=1.000000
 				MinHeight=0.900000
-				Texture=ArenaOscura.jpg
+				Texture=ArenaOscura.png
 				VertResolution=5.500000
 			}
 			Texture
@@ -4093,7 +4093,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=ArenaOscura.jpg
+					Archivo=ArenaOscura.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -4133,8 +4133,8 @@ Terrain
 			Mins=120.930115,27.283300,-84.917809
 			Opacity=0.200000
 			Speed=0.110000
-			Texture1=./Textures/rtrock_1.jpg
-			Texture2=hiervsPeq.jpg
+			Texture1=./Textures/rtrock_1.png
+			Texture2=hiervsPeq.png
 			VertResolution=5.500000
 		}
 		Texture1
@@ -4142,7 +4142,7 @@ Terrain
 			Class=Texture
 			Data
 			{
-				Archivo=./Textures/rtrock_1.jpg
+				Archivo=./Textures/rtrock_1.png
 				ArchivoAlpha=""
 				ColorKey=0.000000,0.000000,0.000000
 				UsarColorKey=0
@@ -4155,7 +4155,7 @@ Terrain
 			Class=Texture
 			Data
 			{
-				Archivo=hiervsPeq.jpg
+				Archivo=hiervsPeq.png
 				ArchivoAlpha=""
 				ColorKey=0.000000,0.000000,0.000000
 				UsarColorKey=0

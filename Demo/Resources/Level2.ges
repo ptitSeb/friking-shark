@@ -4457,7 +4457,7 @@ Terrain
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
 				HorzResolution=4.000000
-				Texture=./Textures/ArenaOscura.jpg
+				Texture=./Textures/ArenaOscura.png
 				VertResolution=4.000000
 			}
 			Texture
@@ -4465,7 +4465,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=./Textures/ArenaOscura.jpg
+					Archivo=./Textures/ArenaOscura.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -4483,7 +4483,7 @@ Terrain
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
 				HorzResolution=4.000000
-				Texture=./Textures/ArenaOscura.jpg
+				Texture=./Textures/ArenaOscura.png
 				VertResolution=4.000000
 			}
 			Texture
@@ -4491,7 +4491,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=./Textures/ArenaOscura.jpg
+					Archivo=./Textures/ArenaOscura.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -4509,7 +4509,7 @@ Terrain
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
 				HorzResolution=3.500000
-				Texture=./Textures/SandGrey.jpg
+				Texture=./Textures/SandGrey.png
 				VertResolution=3.000000
 			}
 			Texture
@@ -4517,7 +4517,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=./Textures/SandGrey.jpg
+					Archivo=./Textures/SandGrey.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -4532,7 +4532,7 @@ Terrain
 		Class=Texture
 		Data
 		{
-			Archivo=./Textures/Level2TerrainColorMap.bmp
+			Archivo=./Textures/Level2TerrainColorMap.png
 			ArchivoAlpha=""
 			ColorKey=0.000000,0.000000,0.000000
 			UsarColorKey=0
@@ -4540,7 +4540,7 @@ Terrain
 		Name=""
 		System=GameResources
 	}
-	ColorMapFile=./Textures/Level2TerrainColorMap.bmp
+	ColorMapFile=./Textures/Level2TerrainColorMap.png
 	Fog
 	{
 		Color=0.078919,0.135307,0.279639
@@ -4558,7 +4558,7 @@ Terrain
 				HorzResolution=3.500000
 				MaxHeight=1.000000
 				MinHeight=0.000000
-				Texture=./Textures/sandPeq.jpg
+				Texture=./Textures/sandPeq.png
 				VertResolution=3.000000
 			}
 			Texture
@@ -4566,7 +4566,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=./Textures/sandPeq.jpg
+					Archivo=./Textures/sandPeq.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -4606,8 +4606,8 @@ Terrain
 			Mins=-924.632385,-0.466419,-93.074348
 			Opacity=0.200000
 			Speed=0.110000
-			Texture1=./Textures/WaterB.jpg
-			Texture2=./Textures/WaterB.jpg
+			Texture1=./Textures/WaterB.png
+			Texture2=./Textures/WaterB.png
 			VertResolution=8.500000
 		}
 		Texture1
@@ -4615,7 +4615,7 @@ Terrain
 			Class=Texture
 			Data
 			{
-				Archivo=./Textures/WaterB.jpg
+				Archivo=./Textures/WaterB.png
 				ArchivoAlpha=""
 				ColorKey=0.000000,0.000000,0.000000
 				UsarColorKey=0
@@ -4628,7 +4628,7 @@ Terrain
 			Class=Texture
 			Data
 			{
-				Archivo=./Textures/WaterB.jpg
+				Archivo=./Textures/WaterB.png
 				ArchivoAlpha=""
 				ColorKey=0.000000,0.000000,0.000000
 				UsarColorKey=0
