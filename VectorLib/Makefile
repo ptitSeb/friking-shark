@@ -11,6 +11,7 @@ SOURCES = 3DSFiles.cpp\
 3DSTypes.cpp\
 ASEFiles.cpp\
 GBSFiles.cpp\
+GCMFiles.cpp\
 StdAfx.cpp\
 VectorLib.cpp
 

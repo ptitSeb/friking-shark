@@ -26,6 +26,7 @@
 #include "3DSTypes.h"
 #include "3DSFiles.h"
 #include "ASEFiles.h"
+#include "GCMFiles.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -818,4 +819,335 @@ void CASEFileType::ProcessObjectFrameSubMaterials(S3DSObject *pObject,S3DSFrame 
 			}
 		}
 	}
+}
+
+class CASEToGCMKey
+{
+public:
+	double c[3];double t[2];double n[3];double col[3];unsigned int i;
+	bool operator<(const CASEToGCMKey &v2) const{if(c[0]>v2.c[0]){return false;}if(c[0]<v2.c[0]){return true;}if(c[1]>v2.c[1]){return false;}if(c[1]<v2.c[1]){return true;}if(c[2]>v2.c[2]){return false;}if(c[2]<v2.c[2]){return true;}if(t[0]>v2.t[0]){return false;}if(t[0]<v2.t[0]){return true;}if(t[1]>v2.t[1]){return false;}if(t[1]<v2.t[1]){return true;}if(n[0]>v2.n[0]){return false;}if(n[0]<v2.n[0]){return true;}if(n[1]>v2.n[1]){return false;}if(n[1]<v2.n[1]){return true;}if(n[2]>v2.n[2]){return false;}if(n[2]<v2.n[2]){return true;}return false;}
+	CASEToGCMKey(CVector vc,CVector vt,CVector vn,CVector vcol,int vi){int x;for(x=0;x<3;x++){c[x]=vc.c[x];}for(x=0;x<2;x++){t[x]=vt.c[x];}for(x=0;x<3;x++){n[x]=vn.c[x];}for(x=0;x<3;x++){col[x]=vcol.c[x];}i=vi;}
+	CASEToGCMKey(){memset(t,0,sizeof(t));i=0;}
+};
+
+
+
+void CASEFileType::ToGCM(CGCMFileType *pFile)
+{
+	pFile->Clear();
+	
+	
+	for (int f=0;f<m_Scene.nFrameCount;f++)
+	{
+		unsigned long nFrame=pFile->AddFrame();
+		
+		for (int m=-1;m<(int)m_vMaterials.size();m++)
+		{
+			CVector vAmbientColor=CVector(0.5,0.5,0.5);
+			CVector vDiffuseColor=CVector(0.5,0.5,0.5);
+			CVector vSpecularColor=CVector(0.5,0.5,0.5);
+			float fShininess=1;
+			float fOpacity=1;
+			
+			// Preparacion del material
+			S3DSMaterial *p3DSMaterial=(m>=0)?m_vMaterials[m]:NULL;
+			
+			CMatrix ms,mr;
+			if(p3DSMaterial)
+			{
+				// From http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=172040
+				//			Shininess = exp (MATERIAL_SHINE * 100.0 / 8.0 * log (2.0));
+				//			EffectiveSpecularColor = MATERIAL_SHINESTRENGTH * MATERIAL_SPECULAR + (1 - MATERIAL_SHINESTRENGTH) * MATERIAL_DIFFUSE;
+				
+				vAmbientColor=p3DSMaterial->vAmbientColor;
+				vDiffuseColor=p3DSMaterial->vDiffuseColor;
+				vSpecularColor=p3DSMaterial->vSpecularColor;
+				fShininess=p3DSMaterial->fShininess*64.0;
+				fOpacity=(float)(1.0-p3DSMaterial->fTranparency);
+				
+				// Calculo de las matrices de transformacion de las coordenadas de textura
+				CVector vTextureCenter(0.5,0.5,0);
+				ms.S(p3DSMaterial->fTextureUScale,p3DSMaterial->fTextureVScale,1,vTextureCenter);
+				mr.R(CVector(0,0,1),p3DSMaterial->fTextureAngle,vTextureCenter);
+			}
+			
+			// Contabilizacion de las caras de todos los objetos para este material 
+			int nMaterialFaces=0;
+			for (unsigned int o=0;o<m_vObjects.size();o++)
+			{
+				S3DSObject *pObject=m_vObjects[o];
+				if (pObject->bVisible && p3DSMaterial && pObject->dwMaterialId==p3DSMaterial->dwMaterialId)
+				{
+					if(p3DSMaterial->bSubMaterial)
+					{
+						S3DSFrame  *p3DSFrame=m_vObjects[o]->vAnimationFrames[f];
+						for(unsigned int s=0;s<p3DSFrame->sObjectMaterials.size();s++)
+						{
+							if(p3DSFrame->sObjectMaterials[s]->dwSubMaterialId==p3DSMaterial->dwSubMaterialId)
+							{
+								nMaterialFaces+=p3DSFrame->sObjectMaterials[s]->nFaces;
+								break;
+							}
+						}
+					}
+					else
+					{
+						nMaterialFaces+=pObject->vAnimationFrames[f]->nFaces;
+					}
+				}
+				else if(!p3DSMaterial)
+				{
+					nMaterialFaces+=pObject->vAnimationFrames[f]->nFaces;
+				}
+			}
+			
+			// Prealocacion con el maximo posible de vertices (caras*3)
+			// Despues se realocaran estos buffers a su tamaño correcto
+			
+			unsigned int *pFaceVertexIndexes=new unsigned int [nMaterialFaces*3];
+			float *pVertexArray=new float[nMaterialFaces*3*3];
+			float *pNormalArray=new float[nMaterialFaces*3*3];
+			float *pColorArray=new float[nMaterialFaces*3*4];
+			
+			unsigned int *pFaceVertexCursor=pFaceVertexIndexes;
+			float *pVertexCursor=pVertexArray;
+			float *pNormalCursor=pNormalArray;
+			float *pColorCursor=pColorArray;
+			float *pTextCursor=NULL;
+			float *pTexVertexArray=NULL;
+			
+			if (p3DSMaterial && p3DSMaterial->sFile[0]!=0)
+			{
+				pTexVertexArray=new float[nMaterialFaces*3*2];
+				pTextCursor=pTexVertexArray;
+			}
+			
+			// Alimentacion de los buffers
+			//
+			// Aqui se utiliza un mapa de vertices, ya que en los .ASE
+			// se da la geometria por un lado y la caracteristicas esteticas 
+			// por otro (colores y coordenadas de texturas)
+			// Hay caras de color y coords de textura con colores y coordenadas 
+			// para los vertices en ESA CARA en concreto
+			// Esto se almacena asi en los ase para poder dar coordenadas de textura
+			// y colores independientes a caras que comparten vertices.
+			// 
+			// Como en opengl los vertex buffers solo pueden especificar un color y 
+			// coordenada de textura por vertice hay que duplicar los vertices que tengan 
+			// propiedades diferentes en mas de una cara.
+			//
+			// El numero de caras no varia, pero si puede hacerlo el numero de vertices
+			//
+			// Mediante el mapa se identifican los vertices con varias propiedades,
+			// ya que la clave incluye las coordenadas del vertice, su color y sus coords de textura
+			
+			
+			std::map<CASEToGCMKey,unsigned int> mVertexes;
+			std::map<CASEToGCMKey,unsigned int>::iterator i;
+			
+			for (unsigned int o=0;o<m_vObjects.size();o++)
+			{
+				S3DSObject *pObject=m_vObjects[o];
+				if (!pObject->bVisible || p3DSMaterial==NULL || pObject->dwMaterialId!=p3DSMaterial->dwMaterialId) {continue;}
+				
+				//				S3DSMaterial		*p3DSMaterial=(pObject->dwMaterialId!=(unsigned int)-1)?m_vMaterials[pObject->dwMaterialId]:NULL;
+				S3DSFrame  		   	*p3DSFrame=m_vObjects[o]->vAnimationFrames[f];
+				
+				// Se crean arrays auxiliares de punteros a las propiedades de color y coord de textura
+				// de cada cara, para poder acceder a ellas por su indice de cara.
+				
+				S3DSColorFace 		**ppColorFaces=new S3DSColorFace *[p3DSFrame->nFaces];
+				S3DSTextureFace		**ppTextureFaces=new S3DSTextureFace *[p3DSFrame->nFaces];
+				
+				memset(ppColorFaces,0,sizeof(S3DSColorFace *)*p3DSFrame->nFaces);
+				memset(ppTextureFaces,0,sizeof(S3DSTextureFace *)*p3DSFrame->nFaces);
+				
+				// Creacion del buffer auxiliar de punteros a las propiedades de color de cada cara
+				for (int z=0;z<p3DSFrame->nColorFaces;z++)
+				{
+					if (p3DSFrame->pColorFaces[z].nFaceIndex>=0 && p3DSFrame->pColorFaces[z].nFaceIndex<p3DSFrame->nFaces)
+					{
+						ppColorFaces[p3DSFrame->pColorFaces[z].nFaceIndex]=&p3DSFrame->pColorFaces[z];
+					}
+				}
+				// Creacion del buffer auxiliar de punteros a las coordenadas de textura de cada cara
+				for (int z=0;z<p3DSFrame->nTextFaces;z++)
+				{
+					if (p3DSFrame->pTextFaces[z].nFaceIndex>=0 && p3DSFrame->pTextFaces[z].nFaceIndex<p3DSFrame->nFaces)
+					{
+						ppTextureFaces[p3DSFrame->pTextFaces[z].nFaceIndex]=&p3DSFrame->pTextFaces[z];
+					}
+				}
+				
+				float ambient[]={(float)vDiffuseColor.c[0],(float)vDiffuseColor.c[1],(float)vDiffuseColor.c[2]};
+				float opacity=fOpacity;	
+				
+				// Procesado de la caras,se van alimentando simultaneamente el mapa
+				// de vertices y los buffers.
+				
+				S3DSObjectMaterial *pObjectMaterial=NULL;
+				for(unsigned int s=0;s<p3DSFrame->sObjectMaterials.size();s++)
+				{
+					if(p3DSFrame->sObjectMaterials[s]->dwSubMaterialId==p3DSMaterial->dwSubMaterialId)
+					{
+						pObjectMaterial=p3DSFrame->sObjectMaterials[s];
+						break;
+					}
+				}
+				
+				for (int x=0;pObjectMaterial && x<pObjectMaterial->nFaces;x++)
+				{
+					int nFaceIndex=pObjectMaterial->pFaces[x];
+					S3DSColorFace *pColorFace=ppColorFaces[nFaceIndex];
+					S3DSTextureFace *pTextFace=ppTextureFaces[nFaceIndex];
+					
+					CVector vFaceFlatNormal;
+					//Si no hay normales para los vertices o el tipo de shadding es Flat/Solid
+					if(!p3DSFrame->pVertexNormals || !p3DSFrame->pbFaceSmooth[nFaceIndex])
+					{
+						if(p3DSFrame->pFaceNormals)
+						{
+							vFaceFlatNormal=p3DSFrame->pFaceNormals[nFaceIndex];
+						}
+						else
+						{
+							// Si no existe informacion de normales se calcula la normal de la cara
+							int nVertexes[3];
+							nVertexes[0]=p3DSFrame->pFaces[(nFaceIndex*3)];
+							nVertexes[1]=p3DSFrame->pFaces[(nFaceIndex*3)+1];
+							nVertexes[2]=p3DSFrame->pFaces[(nFaceIndex*3)+2];
+							CPlane plane(p3DSFrame->pVertexes[nVertexes[2]],p3DSFrame->pVertexes[nVertexes[1]],p3DSFrame->pVertexes[nVertexes[0]]);
+							vFaceFlatNormal=plane;
+						}
+					}
+					
+					for (int v=0;v<3;v++)
+					{
+						int nSourceVertexIndex=p3DSFrame->pFaces[(nFaceIndex*3)+v];
+						
+						CASEToGCMKey key;
+						key.c[0]=p3DSFrame->pVertexes[nSourceVertexIndex].c[0];
+						key.c[1]=p3DSFrame->pVertexes[nSourceVertexIndex].c[1];
+						key.c[2]=p3DSFrame->pVertexes[nSourceVertexIndex].c[2];
+						
+						if(p3DSFrame->pVertexNormals && p3DSFrame->pbFaceSmooth[x])
+						{
+							key.n[0]=p3DSFrame->pVertexNormals[(nFaceIndex*3)+v].c[0];
+							key.n[1]=p3DSFrame->pVertexNormals[(nFaceIndex*3)+v].c[1];
+							key.n[2]=p3DSFrame->pVertexNormals[(nFaceIndex*3)+v].c[2];
+						}
+						else
+						{
+							key.n[0]=vFaceFlatNormal.c[0];
+							key.n[1]=vFaceFlatNormal.c[1];
+							key.n[2]=vFaceFlatNormal.c[2];
+						}
+						
+						key.col[0]=pColorFace?p3DSFrame->pColorVertexes[pColorFace->pColorVertexes[v]].c[0]:ambient[0];
+						key.col[1]=pColorFace?p3DSFrame->pColorVertexes[pColorFace->pColorVertexes[v]].c[1]:ambient[1];
+						key.col[2]=pColorFace?p3DSFrame->pColorVertexes[pColorFace->pColorVertexes[v]].c[2]:ambient[2];
+						
+						// Aplicacion de la matriz de transformacion de las coordenadas de textura
+						CVector vTexTemp;
+						if (pTextFace)
+						{
+							vTexTemp=p3DSFrame->pTextVertexes[pTextFace->pTextVertexes[v]];
+							vTexTemp.c[0]-=p3DSMaterial->fTextureUOffset;
+							vTexTemp.c[1]-=p3DSMaterial->fTextureVOffset;
+							vTexTemp*=ms;
+							vTexTemp*=mr;
+						}
+						key.t[0]=vTexTemp.c[0];
+						key.t[1]=vTexTemp.c[1];
+						
+						int nIndex=0;
+						i=mVertexes.find(key);
+						if (i==mVertexes.end())
+						{
+							nIndex=mVertexes.size();
+							mVertexes[key]=nIndex;
+							(*pVertexCursor++)=(float)key.c[0];
+							(*pVertexCursor++)=(float)key.c[1];
+							(*pVertexCursor++)=(float)key.c[2];
+							(*pNormalCursor++)=(float)key.n[0];
+							(*pNormalCursor++)=(float)key.n[1];
+							(*pNormalCursor++)=(float)key.n[2];
+							(*pColorCursor++)=(float)key.col[0];
+							(*pColorCursor++)=(float)key.col[1];
+							(*pColorCursor++)=(float)key.col[2];
+							(*pColorCursor++)=opacity;
+							if(pTextCursor)
+							{
+								(*pTextCursor++)=(float)key.t[0];
+								(*pTextCursor++)=(float)key.t[1];
+							}
+						}
+						else
+						{
+							nIndex=i->second;
+						}
+						(*pFaceVertexCursor++)=nIndex;
+					}
+				}
+				delete [] ppColorFaces;
+				delete [] ppTextureFaces;
+			}
+			// Se reducen los buffers de los vertices a su tamaño correcto
+			// han sido alocados a su tamaño maximo por comodidad
+			
+			unsigned int nVertexes=mVertexes.size();
+			unsigned int nFaces=nMaterialFaces;
+			
+			float *pFinalVertexArray=new float[nVertexes*3];
+			float *pFinalNormalArray=new float[nVertexes*3];
+			float *pFinalColorArray=new float[nVertexes*4];
+			
+			memcpy(pFinalVertexArray,pVertexArray,sizeof(float)*nVertexes*3);
+			memcpy(pFinalNormalArray,pNormalArray,sizeof(float)*nVertexes*3);
+			memcpy(pFinalColorArray,pColorArray,sizeof(float)*nVertexes*4);
+			
+			delete [] pVertexArray;
+			delete [] pNormalArray;
+			delete [] pColorArray;
+			
+			pVertexArray=pFinalVertexArray;
+			pNormalArray=pFinalNormalArray;
+			pColorArray=pFinalColorArray;
+			
+			// Las coordenadas de textura son opcionales.
+			if(pTexVertexArray)
+			{
+				float *pFinalTextArray=new float[nVertexes*2];
+				memcpy(pFinalTextArray,pTexVertexArray,sizeof(float)*nVertexes*2);
+				delete [] pTexVertexArray;
+				pTexVertexArray=pFinalTextArray;
+			}
+			
+			// Si hay vertices para el material se añade el render buffer 
+			// y se carga la textura si hay alguna asignada
+			if (nVertexes)
+			{
+				unsigned long nBuffer=pFile->AddBuffer(nFrame);
+				pFile->SetBufferMaterial(nFrame,nBuffer,vAmbientColor,vDiffuseColor,vSpecularColor,fShininess,fOpacity);
+				pFile->SetBufferVertexes(nFrame,nBuffer,nVertexes,pVertexArray);
+				pFile->SetBufferFaces(nFrame,nBuffer,nFaces,pFaceVertexIndexes);
+				pFile->SetBufferColors(nFrame,nBuffer,pColorArray);
+				pFile->SetBufferNormals(nFrame,nBuffer,pNormalArray);
+				
+				if (pTexVertexArray)
+				{
+					pFile->SetBufferTexture(nFrame,nBuffer,0,p3DSMaterial->sFile);
+					pFile->SetBufferTextureCoords(nFrame,nBuffer,0,pTexVertexArray);
+				}
+			}
+			else
+			{
+				delete [] pVertexArray;
+				delete [] pFaceVertexIndexes;
+				delete [] pColorArray;
+				delete [] pNormalArray;
+				delete [] pTexVertexArray;
+			}
+		}
+	}	
 }
