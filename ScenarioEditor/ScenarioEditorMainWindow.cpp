@@ -557,8 +557,9 @@ void CScenarioEditorMainWindow::ProcessFileOpen()
 	std::string sScenario="./";
 	if(OpenFileDialog("Load scenario...",".ges",&sScenario))
 	{
+		unsigned int nStartTime=GetTimeStamp();
 		OpenScenario(sScenario);
-
+		RTTRACE("CScenarioEditorMainWindow::ProcessFileOpen -> Scenario %s loaded (%d ms)",sScenario.c_str(),GetTimeStamp()-nStartTime);
 	}
 }
 
