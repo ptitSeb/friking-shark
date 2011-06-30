@@ -720,7 +720,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	if(m_piBTGeneralChangeColorMap==piControl)
 	{
 		std::string sColorMap="./Textures/";
-		if(OpenFileDialog("Select layer texture...",".jpg;.jpeg;.bmp",&sColorMap))
+		if(OpenFileDialog("Select layer texture...",".jpg;.jpeg;.bmp;.png",&sColorMap))
 		{
 			m_WorldManagerWrapper.m_piTerrain->SetTerrainColorMap(sColorMap);
 			UpdateTexturization();	
@@ -919,7 +919,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		layer.dHorizontalResolution=1;
 		layer.dVerticalResolution=1;
 		std::string sTexture="./Textures/";
-		if(OpenFileDialog("Select layer texture...",".jpg;.jpeg;.bmp",&sTexture))
+		if(OpenFileDialog("Select layer texture...",".jpg;.jpeg;.bmp;.png",&sTexture))
 		{
 			layer.sTextureFile=sTexture;
 			m_WorldManagerWrapper.m_piTerrain->AddTerrainColorLayer(&layer);
@@ -951,7 +951,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			layer.dMaxHeight=1.0;
 		}
 		std::string sTexture="./Textures/";
-		if(OpenFileDialog("Select layer texture...",".jpg;.jpeg;.bmp",&sTexture))
+		if(OpenFileDialog("Select layer texture...",".jpg;.jpeg;.bmp;.png",&sTexture))
 		{
 			layer.sTextureFile=sTexture;
 			m_WorldManagerWrapper.m_piTerrain->AddTerrainHeightLayer(&layer);
@@ -1054,7 +1054,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		else if(piControl==m_piBTHeightLayerSample)
 		{
 			std::string sTexture="./Textures/";
-			if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp",&sTexture))
+			if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp;.png",&sTexture))
 			{
 				heightLayer.sTextureFile=sTexture;
 				bChange=true;
@@ -1163,7 +1163,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		else if(piControl==m_piBTColorLayerSample)
 		{
 			std::string sTexture="./Textures/";
-			if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp",&sTexture))
+			if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp;.png",&sTexture))
 			{
 				colorLayer.sTextureFile=sTexture;
 				bChange=true;
@@ -1554,7 +1554,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	else if(piControl==m_piBTWaterSample)
 	{
 		std::string sTexture="./Textures/";
-		if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp",&sTexture))
+		if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp;.png",&sTexture))
 		{
 			sWater.sTextureFile1=sTexture;
 			bWaterChanged=true;
@@ -1563,7 +1563,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	else if(piControl==m_piBTWaterSecondSample)
 	{
 		std::string sTexture="./Textures/";
-		if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp",&sTexture))
+		if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp;.png",&sTexture))
 		{
 			sWater.sTextureFile2=sTexture;
 			bWaterChanged=true;
@@ -1657,7 +1657,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	else if(piControl==m_piBTSkySample)
 	{
 		std::string sTexture="./Textures/";
-		if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp",&sSky.sTextureFile))
+		if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp;.png",&sSky.sTextureFile))
 		{
 			sSky.sTextureFile=sTexture;
 			bSkyChanged=true;

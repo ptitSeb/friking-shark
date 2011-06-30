@@ -22,6 +22,8 @@
 #include "OpenGLGraphics.h"
 #include "OpenGLTexture.h"
 #include "jpegdecoder.h"
+#define PNG_SKIP_SETJMP_CHECK
+#include <png.h>
 
 #pragma pack(push,1)
 struct BMPFILEHEADER
@@ -111,6 +113,75 @@ bool LoadBMPFile(const char *pFileName,unsigned int nBits,unsigned int *pnWidth,
 	return bOk;
 }
 
+bool LoadPngFile(const char *pFileName,unsigned int nBits,unsigned int *pnWidth,unsigned int *pnHeight,unsigned char **ppPixels)
+{
+	png_structp pPNGHeader=NULL;
+	png_infop pPNGInfo=NULL;
+
+	bool bOk;
+	FILE *pFile=fopen(pFileName,"rb");
+	bOk=(pFile!=NULL);
+	if(bOk){pPNGHeader=png_create_read_struct(PNG_LIBPNG_VER_STRING,NULL,NULL,NULL);bOk=(pPNGHeader!=NULL);}
+	if(bOk){pPNGInfo=png_create_info_struct(pPNGHeader);bOk=(pPNGInfo!=NULL);}
+	if(bOk){bOk=(setjmp(png_jmpbuf(pPNGHeader))==0);}
+	if(bOk){png_init_io(pPNGHeader, pFile);}
+	if(bOk){png_set_sig_bytes(pPNGHeader, 0);}
+	if(bOk){png_read_png(pPNGHeader, pPNGInfo, PNG_TRANSFORM_STRIP_16 | PNG_TRANSFORM_PACKING | PNG_TRANSFORM_EXPAND, png_voidp_NULL);}
+	if(bOk){bOk=(pPNGInfo->color_type==PNG_COLOR_TYPE_RGBA || pPNGInfo->color_type==PNG_COLOR_TYPE_RGB);}
+	if(bOk)
+	{
+		*pnWidth= pPNGInfo->width;
+		*pnHeight= pPNGInfo->height;
+		unsigned int nFileBits=pPNGInfo->color_type==PNG_COLOR_TYPE_RGBA?32:24;
+		unsigned int nRequestedBits=(nBits==GL_RGBA)?32:24;
+	
+		if(nFileBits==nRequestedBits)
+		{
+			unsigned int nRowSize = png_get_rowbytes(pPNGHeader, pPNGInfo);
+			*ppPixels = new unsigned char [nRowSize* pPNGInfo->height];
+			png_bytepp ppRows = png_get_rows(pPNGHeader, pPNGInfo);
+			for(unsigned int y=0;y<pPNGInfo->height;y++) 
+			{
+				memcpy(*ppPixels+(nRowSize* (pPNGInfo->height-1-y)), ppRows[y], nRowSize);
+			}
+		}
+		else
+		{
+			int nDestBytesPerColor=(nRequestedBits>>3);
+			int nFileBytesPerColor=(nFileBits>>3);
+			
+			png_get_rowbytes(pPNGHeader, pPNGInfo);
+			unsigned int nDestRowSize = nDestBytesPerColor*pPNGInfo->width;
+			*ppPixels = new unsigned char [nDestBytesPerColor*pPNGInfo->width*pPNGInfo->height];
+
+			if(nDestBytesPerColor>nFileBytesPerColor)
+			{
+				// Alpha channel to full opacity if missing.
+				memset(*ppPixels,255,nDestBytesPerColor*pPNGInfo->width*pPNGInfo->height);
+			}
+		
+			png_bytepp ppRows = png_get_rows(pPNGHeader, pPNGInfo);
+			for(unsigned int y=0;y<pPNGInfo->height;y++) 
+			{
+				unsigned char *pFile=ppRows[y];
+				unsigned char *pDest=(*ppPixels)+(nDestRowSize* (pPNGInfo->height-1-y));
+				
+				for(unsigned int x=0;x<pPNGInfo->width;x++) 
+				{
+					pDest[0]=pFile[0];
+					pDest[1]=pFile[1];
+					pDest[2]=pFile[2];
+					pDest+=nDestBytesPerColor;
+					pFile+=nFileBytesPerColor;
+				}
+			}
+		}
+	}
+
+	if(pPNGHeader){png_destroy_read_struct(&pPNGHeader, &pPNGInfo,NULL);}
+	if(pFile){fclose(pFile);}	
+	return bOk;	
+}
 
 bool LoadJPEGImageHelper(std::string sFile,unsigned int dwColorType,unsigned *pOpenGLSkinWidth,unsigned *pOpenGLSkinHeight,unsigned char **ppBuffer)
 {
@@ -220,6 +291,10 @@ bool LoadImageHelper(std::string sFile,unsigned int dwColorType,unsigned *pOpenG
 		if(strcasecmp(sExt,".JPG")==0 || strcasecmp(sExt,".JPEG")==0)
 		{
 			return LoadJPEGImageHelper(path,dwColorType,pOpenGLSkinWidth,pOpenGLSkinHeight,ppBuffer);
+		}
+		else if(strcasecmp(sExt,".PNG")==0)
+		{
+			return LoadPngFile(path.c_str(),dwColorType,pOpenGLSkinWidth,pOpenGLSkinHeight,ppBuffer);
 		}
 	}
 	return LoadBMPFile(path.c_str(),(dwColorType==GL_RGBA)?32:24,pOpenGLSkinWidth,pOpenGLSkinHeight,ppBuffer);
