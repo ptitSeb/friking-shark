@@ -21,7 +21,6 @@
 #include <stdint.h>
 #include "OpenGLGraphics.h"
 #include "OpenGLTexture.h"
-#include "jpegdecoder.h"
 #define PNG_SKIP_SETJMP_CHECK
 #include <png.h>
 
@@ -183,83 +182,6 @@ bool LoadPngFile(const char *pFileName,unsigned int nBits,unsigned int *pnWidth,
 	return bOk;	
 }
 
-bool LoadJPEGImageHelper(std::string sFile,unsigned int dwColorType,unsigned *pOpenGLSkinWidth,unsigned *pOpenGLSkinHeight,unsigned char **ppBuffer)
-{
-	Pjpeg_decoder_file_stream Pinput_stream = new jpeg_decoder_file_stream();
-
-	if (Pinput_stream->open(sFile.c_str()))
-	{
-		delete Pinput_stream;
-		return false;
-	}
-
-	Pjpeg_decoder Pd = new jpeg_decoder(Pinput_stream, false);
-	if (Pd->get_error_code() != 0)
-	{
-		delete Pd;
-		delete Pinput_stream;
-		return false;
-	}
-
-	if (Pd->begin())
-	{
-		delete Pd;
-		delete Pinput_stream;
-		return false;
-	}
-
-	uchar *Pbuf = NULL;
-	if (Pd->get_num_components() == 3)
-	{
-		Pbuf = (uchar *)malloc(Pd->get_width() * 3);
-		if (!Pbuf)
-		{
-			printf("Error: Out of memory!\n");
-
-			delete Pd;
-			delete Pinput_stream;
-			return false;
-		}
-	}
-
-	unsigned int destBytesPerPixel=dwColorType==GL_RGB?3:4;
-	unsigned int dwSize = Pd->get_width() * Pd->get_height() * destBytesPerPixel;
-	*pOpenGLSkinWidth = Pd->get_width();
-	*pOpenGLSkinHeight = Pd->get_height();
-	*ppBuffer = new unsigned char[dwSize];
-
-	memset(*ppBuffer,255,dwSize); // esto se hace para inicializar la imagen y el canal RGBA
-
-	int lines_decoded = 0;
-	for ( ; ; )
-	{
-		void *Pscan_line_ofs;
-		uint scan_line_len;
-
-		if (Pd->decode(&Pscan_line_ofs, &scan_line_len))
-			break;
-
-		if (Pd->get_num_components() == 3)
-		{
-			uchar *Psb = (uchar *)Pscan_line_ofs;
-			uchar *Pdb = (*ppBuffer)+(Pd->get_height()-(lines_decoded+1))*Pd->get_width()*destBytesPerPixel;
-			int src_bpp = Pd->get_bytes_per_pixel();
-
-			for (int x = Pd->get_width(); x > 0; x--, Psb += src_bpp, Pdb += destBytesPerPixel)
-			{
-				Pdb[0] = Psb[0];
-				Pdb[1] = Psb[1];
-				Pdb[2] = Psb[2];
-			}
-		}
-		lines_decoded++;
-	}
-
-	free(Pbuf);
-	delete Pd;
-	delete Pinput_stream;
-	return true;
-}
 
 bool LoadImageHelper(std::string sFile,unsigned int dwColorType,unsigned *pOpenGLSkinWidth,unsigned *pOpenGLSkinHeight,unsigned char **ppBuffer)
 {
@@ -288,11 +210,7 @@ bool LoadImageHelper(std::string sFile,unsigned int dwColorType,unsigned *pOpenG
 	}
 	else
 	{
-		if(strcasecmp(sExt,".JPG")==0 || strcasecmp(sExt,".JPEG")==0)
-		{
-			return LoadJPEGImageHelper(path,dwColorType,pOpenGLSkinWidth,pOpenGLSkinHeight,ppBuffer);
-		}
-		else if(strcasecmp(sExt,".PNG")==0)
+		if(strcasecmp(sExt,".PNG")==0)
 		{
 			return LoadPngFile(path.c_str(),dwColorType,pOpenGLSkinWidth,pOpenGLSkinHeight,ppBuffer);
 		}
