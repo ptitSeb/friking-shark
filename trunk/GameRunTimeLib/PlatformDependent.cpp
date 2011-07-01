@@ -26,8 +26,9 @@
 #include <deque>
 #include "PlatformDependent.h"
 
-#ifndef WIN32
 #include <sys/stat.h>
+
+#ifndef WIN32
 #include <sys/time.h>
 #include <libgen.h>
 #include <glob.h>
@@ -236,6 +237,14 @@ bool FileIsDirectory(const char *pFileName)
 	if(dwAttrib==0xFFFFFFFF){return false;}
 	return ((dwAttrib&FILE_ATTRIBUTE_DIRECTORY)!=0);
 }
+
+time_t GetFileTimeStamp(const char *pFileName)
+{
+	struct stat data;
+	if(stat(pFileName,&data)!=0){return 0;}
+	return data.st_mtime;
+}
+
 #else
 
 void GetFileFolder(const char *pFilePath,char *pFolder)

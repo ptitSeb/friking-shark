@@ -135,6 +135,7 @@
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <ClCompile Include="GCMFiles.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -157,6 +158,7 @@
     <ClInclude Include="3DSTypes.h" />
     <ClInclude Include="ASEFiles.h" />
     <ClInclude Include="GBSFiles.h" />
+    <ClInclude Include="GCMFiles.h" />
     <ClInclude Include="IniFiles.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="VectorLib.h" />

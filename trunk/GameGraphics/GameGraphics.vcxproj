@@ -53,7 +53,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGraphicsLib;..\JPEGLibrary\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGraphicsLib;..\JPEGLibrary\inc;C:\Archivos de programa\libpng\libpng-1.2.37-src;C:\Archivos de programa\libpng\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;GameGraphics_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -66,7 +66,7 @@
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)GameGraphics.dll</OutputFile>
-      <AdditionalLibraryDirectories>..\GameRunTime\Debug;..\GameRunTimeLib\Debug;..\GameEntityLib\Debug;..\GameManagers\Debug;..\VectorLib\Debug;..\GameGraphicsLib\Debug;..\JPEGLibrary\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\GameRunTime\Debug;..\GameRunTimeLib\Debug;..\GameEntityLib\Debug;..\GameManagers\Debug;..\VectorLib\Debug;..\GameGraphicsLib\Debug;..\JPEGLibrary\lib;C:\Archivos de programa\libpng\libpng-1.2.37-src\projects\visualc71\Win32_LIB_Debug\ZLib;C:\Archivos de programa\libpng\libpng-1.2.37-src\projects\visualc71\Win32_LIB_Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)GameGraphics.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -75,6 +75,7 @@
       </DataExecutionPrevention>
       <ImportLibrary>$(OutDir)GameGraphics.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalDependencies>libpngd.lib;zlibd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy $(TargetPath) ..\Demo\bin\Debug</Command>
@@ -83,7 +84,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>..\GameRunTimeLib;..\GameRunTime;..\VectorLib;..\GameManagers;..\JPEGLibrary\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\GameRunTimeLib;..\GameRunTime;..\VectorLib;..\GameManagers;..\JPEGLibrary\inc;C:\Archivos de programa\libpng\libpng-1.2.37-src;C:\Archivos de programa\libpng\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;_USRDLL;GameGraphics_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -94,7 +95,7 @@
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)GameGraphics.dll</OutputFile>
-      <AdditionalLibraryDirectories>..\GameRunTime\Release;..\GameRunTimeLib\Release;..\GameEntityLib\Release;..\GameManagers\Release;..\VectorLib\Release;..\JPEGLibrary\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\GameRunTime\Release;..\GameRunTimeLib\Release;..\GameEntityLib\Release;..\GameManagers\Release;..\VectorLib\Release;..\JPEGLibrary\lib;C:\Archivos de programa\libpng\libpng-1.2.37-src\projects\visualc71\Win32_LIB_Release\ZLib;C:\Archivos de programa\libpng\libpng-1.2.37-src\projects\visualc71\Win32_LIB_Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -104,6 +105,7 @@
       </DataExecutionPrevention>
       <ImportLibrary>$(OutDir)GameGraphics.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalDependencies>libpng.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy $(TargetPath) ..\Demo\bin\Release</Command>

@@ -29,16 +29,18 @@ Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:Ad
 Source: ..\..\License.txt; DestDir: {app}; Flags: ignoreversion;
 Source: ..\Bin\Release\GameEngine.exe; DestDir: {app}\Bin\Release; Flags: ignoreversion;
 Source: ..\Bin\Release\*.dll; DestDir: {app}\Bin\Release; Flags: ignoreversion; 
-Source: ..\Resources\GUI\*.jpg; DestDir: {app}\Resources\GUI; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: ..\Resources\ScenarioEditor\*; DestDir: {app}\Resources\ScenarioEditor; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: ..\Resources\FormationEditor\*; DestDir: {app}\Resources\FormationEditor; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: ..\Resources\EntityEditor\*; DestDir: {app}\Resources\EntityEditor; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\Resources\GUI\*.png; DestDir: {app}\Resources\GUI; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\Resources\ScenarioEditor\*.cfg; DestDir: {app}\Resources\ScenarioEditor; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\Resources\ScenarioEditor\*.png; DestDir: {app}\Resources\ScenarioEditor; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\Resources\FormationEditor\*.cfg; DestDir: {app}\Resources\FormationEditor; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\Resources\FormationEditor\*.png; DestDir: {app}\Resources\FormationEditor; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\Resources\EntityEditor\*.cfg; DestDir: {app}\Resources\EntityEditor; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\Resources\EntityEditor\*.png; DestDir: {app}\Resources\EntityEditor; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: ..\Resources\Scripts\*.cfg; DestDir: {app}\Resources\Scripts; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: ..\Resources\Shaders\*.c; DestDir: {app}\Resources\Shaders; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: ..\Resources\Sounds\*; DestDir: {app}\Resources\Sounds; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: ..\Resources\Textures\*.jpg; DestDir: {app}\Resources\Textures; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: ..\Resources\Textures\*.bmp; DestDir: {app}\Resources\Textures; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: ..\Resources\Models\*.ase; DestDir: {app}\Resources\Models; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\Resources\Textures\*.png; DestDir: {app}\Resources\Textures; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\Resources\Models\*.gcm; DestDir: {app}\Resources\Models; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: ..\Resources\Models\*.gbs; DestDir: {app}\Resources\Models; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: ..\Resources\Level*.ges; DestDir: {app}\Resources; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: .\Redistributables\Windows\alut.dll; DestDir: {app}\Bin\Release; Flags: ignoreversion recursesubdirs createallsubdirs; 

@@ -29,6 +29,9 @@
     <ClCompile Include="VectorLib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GCMFiles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3DSFiles.h">
@@ -50,6 +53,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="VectorLib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GCMFiles.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
