@@ -4,6 +4,7 @@
 	Version="9,00"
 	Name="GameGraphics"
 	ProjectGUID="{A27B1449-7C80-425F-841A-B069BC6A91E0}"
+	RootNamespace="GameGraphics"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -41,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGraphicsLib;..\JPEGLibrary\inc"
+				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGraphicsLib;..\JPEGLibrary\inc;D:\Desarrollo\libpng;D:\Desarrollo\zlib\"
 				PreprocessorDefinitions="NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;GameGraphics_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -64,9 +65,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="libpngd.lib zlibd.lib"
 				OutputFile="$(OutDir)/GameGraphics.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\GameRunTime\Debug;..\GameRunTimeLib\Debug;..\GameEntityLib\Debug;..\GameManagers\Debug;..\VectorLib\Debug;..\GameGraphicsLib\Debug;..\JPEGLibrary\lib"
+				AdditionalLibraryDirectories="..\GameRunTime\Debug;..\GameRunTimeLib\Debug;..\GameEntityLib\Debug;..\GameManagers\Debug;..\VectorLib\Debug;..\GameGraphicsLib\Debug;..\JPEGLibrary\lib;D:\Desarrollo\libpng\projects\visualc71\Win32_LIB_Debug;D:\Desarrollo\libpng\projects\visualc71\Win32_LIB_Debug\ZLib"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/GameGraphics.pdb"
 				SubSystem="2"
@@ -124,7 +126,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="..\GameRunTimeLib;..\GameRunTime;..\VectorLib;..\GameManagers;..\JPEGLibrary\inc"
+				AdditionalIncludeDirectories="..\GameRunTimeLib;..\GameRunTime;..\VectorLib;..\GameManagers;..\JPEGLibrary\inc;D:\Desarrollo\libpng\;D:\Desarrollo\zlib\"
 				PreprocessorDefinitions="NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;_USRDLL;GameGraphics_EXPORTS"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="true"
@@ -145,9 +147,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="libpng.lib zlib.lib"
 				OutputFile="$(OutDir)/GameGraphics.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\GameRunTime\Release;..\GameRunTimeLib\Release;..\GameEntityLib\Release;..\GameManagers\Release;..\VectorLib\Release;..\JPEGLibrary\lib"
+				AdditionalLibraryDirectories="..\GameRunTime\Release;..\GameRunTimeLib\Release;..\GameEntityLib\Release;..\GameManagers\Release;..\VectorLib\Release;..\JPEGLibrary\lib;D:\Desarrollo\libpng\projects\visualc71\Win32_LIB_Release;D:\Desarrollo\libpng\projects\visualc71\Win32_LIB_Release\ZLib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
