@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=219.153680
 			NearPlane=130.000000
-			Posicion=-1146.153504,199.234237,10.527237
+			Posicion=-1272.045658,199.234237,10.228092
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -296,7 +296,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-394.396828,-83.343365,-2.344313
+				Posicion=-381.881401,-83.094195,-2.344314
 				RouteDelay=0
 				Ruta
 				{
@@ -377,7 +377,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-654.028457,-39.304856,0.615682
+				Posicion=-652.498250,-29.512642,0.615682
 				RouteDelay=0
 				Ruta
 				{
@@ -404,7 +404,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-630.246342,-47.066555,0.615682
+				Posicion=-624.811211,-34.208709,0.615682
 				RouteDelay=0
 				Ruta
 				{
@@ -431,7 +431,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-631.515332,-28.247233,0.615682
+				Posicion=-624.295266,-18.179967,0.615682
 				RouteDelay=0
 				Ruta
 				{
@@ -458,7 +458,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-596.217973,-28.247233,0.615682
+				Posicion=-580.688072,-24.173758,0.615682
 				RouteDelay=0
 				Ruta
 				{
@@ -485,7 +485,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-548.985233,-27.914018,0.615682
+				Posicion=-531.985297,-23.720158,0.615682
 				RouteDelay=0
 				Ruta
 				{
@@ -512,7 +512,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-1134.415727,-81.455650,0.615682
+				Posicion=-1107.059168,-91.569606,0.615682
 				RouteDelay=0
 				Ruta
 				{
@@ -782,7 +782,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-672.200982,-0.229642,0.615682
+				Posicion=-672.532828,0.309291,0.615682
 				RouteDelay=0
 				Ruta
 				{
@@ -809,7 +809,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-1132.936786,14.320688,0.615682
+				Posicion=-1120.282251,11.072623,0.615682
 				RouteDelay=0
 				Ruta
 				{
@@ -818,7 +818,7 @@ AreaDeJuego
 				}
 				Tipo
 				{
-					Name=WarehouseTypeE
+					Name=WarehouseTypeS
 					System=EntityTypes
 				}
 			}
@@ -958,6 +958,168 @@ AreaDeJuego
 				Tipo
 				{
 					Name=TrainTypeBStopped
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item37
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=0
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-382.926759,-43.296504,0.615682
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=RailwayStationExtension
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item38
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=0
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-1227.251181,60.914427,0.615682
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=WarehouseTypeR
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item39
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=270.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=0
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-469.020106,-24.934693,0.615682
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=WarehouseTypeQ
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item40
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=0
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-614.462864,-94.367342,-2.344308
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=RailwayMaintenanceBuilding
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item41
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=0
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-1235.537490,1.559035,0.615682
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=HouseTypeE
+					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item42
+		{
+			Class=CPlayAreaEntity
+			Data
+			{
+				Angulos=0.000000,0.000000,0.000000
+				Bonus
+				BonusOnChild=0
+				Count=1
+				Delay=0
+				Interval=0
+				Posicion=-1253.260422,-51.056324,0.615682
+				RouteDelay=0
+				Ruta
+				{
+					Ciclica=0
+					Puntos
+				}
+				Tipo
+				{
+					Name=HouseTypeF
 					System=EntityTypes
 				}
 			}
@@ -1302,6 +1464,32 @@ Terrain
 			{
 				AbrupEnd=0
 				Color=0.000000,1.000000,0.000000
+				ColorSaturationMargin=1.000000
+				ColorValueMargin=0.010000
+				HorzResolution=4.000000
+				Texture=./Textures/Dirt.png
+				VertResolution=4.000000
+			}
+			Texture
+			{
+				Class=Texture
+				Data
+				{
+					Archivo=./Textures/Dirt.png
+					ArchivoAlpha=""
+					ColorKey=0.000000,0.000000,0.000000
+					UsarColorKey=0
+				}
+				Name=""
+				System=GameResources
+			}
+		}
+		Item8
+		{
+			Config
+			{
+				AbrupEnd=0
+				Color=1.000000,0.000000,1.000000
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
 				HorzResolution=4.000000
