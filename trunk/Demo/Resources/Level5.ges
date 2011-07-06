@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=219.153680
 			NearPlane=130.000000
-			Posicion=-1272.045658,199.234237,10.228092
+			Posicion=1691.683025,199.234237,4.833954
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -1121,6 +1121,26 @@ AreaDeJuego
 				{
 					Name=HouseTypeF
 					System=EntityTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item43
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=1830.998166,-4.644054,59.234237
+				Tipo
+				{
+					Name=Level5BossTest
+					System=FormationTypes
 				}
 			}
 			Name=""
