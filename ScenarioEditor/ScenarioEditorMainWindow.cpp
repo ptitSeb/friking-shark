@@ -509,6 +509,35 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 		sprintf(A,"Fps: %.02f",m_FrameManager.m_piFrameManager->GetCurrentFps());
 		m_piSTFps->SetText(A);
 	}
+	if(m_piSTGameTime)
+	{
+		int nTime=0,nTotalMins=0,nTotalSecs=0;
+		
+		SPlayAreaConfig sPlayAreaConfig;
+		if(m_PlayAreaManagerWrapper.m_piPlayAreaDesign)
+		{
+			CVector vStart,vEnd,vPos;
+			vPos=m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayMovementPosition();
+			m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayerRoute(&vStart,&vEnd);
+			m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sPlayAreaConfig);
+			
+			int nTotalTime=(vEnd.c[0]-vStart.c[0])/sPlayAreaConfig.dCameraSpeed;
+			nTotalMins=nTotalTime/60;
+			nTotalSecs=nTotalTime%60;
+			
+			nTime+=(m_vPlayMovementPosition.c[0]-vStart.c[0])/sPlayAreaConfig.dCameraSpeed;
+		}
+		
+		if(m_bSimulationStarted && m_FrameManager.m_piFrameManager && m_PlayAreaManagerWrapper.m_piPlayAreaManager)
+		{
+			nTime+=m_FrameManager.m_piFrameManager->GetCurrentTime()/1000.0;
+		}
+		int nMins=nTime/60;
+		int nSecs=nTime%60;
+		char A[200];
+		sprintf(A,"%02d:%02d - %02d:%02d",nMins,nSecs,nTotalMins,nTotalSecs);
+		m_piSTGameTime->SetText(A);
+	}
 	if(m_piSTVolume && m_SoundManagerWrapper.m_piSoundManager)
 	{
 		char A[200];
@@ -1291,7 +1320,6 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		{
 			m_PlayAreaManagerWrapper.m_piPlayAreaDesign->RemoveElement(m_vEntityControls[m_nSelectedEntity]->m_nPlayAreaElementId);
 			UpdateEntityControls();
-			UpdateTexturization();
 		}
 		else if(piControl==m_piBTEntitySample)
 		{
@@ -1329,7 +1357,6 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			vAngles.c[YAW]+=15.0;
 			if(vAngles.c[YAW]>=360){vAngles.c[YAW]=vAngles.c[YAW]-360;}
 			pEntity->m_piPlayAreaEntity->SetAngles(vAngles);
-			UpdateTexturization();
 		}
 		else if(piControl==m_piBTEntityDecreaseYaw)
 		{
@@ -1337,7 +1364,6 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			vAngles.c[YAW]-=15.0;
 			if(vAngles.c[YAW]<0){vAngles.c[YAW]=360+vAngles.c[YAW];}
 			pEntity->m_piPlayAreaEntity->SetAngles(vAngles);
-			UpdateTexturization();
 		}
 		else if(piControl==m_piBTEntityClearRoute)
 		{
@@ -3304,6 +3330,7 @@ void CScenarioEditorMainWindow::StartGameSimulation()
 	{
 		StopGameSimulation();
 	}
+	if(m_FrameManager.m_piFrameManager){m_FrameManager.m_piFrameManager->Reset();}
 	m_GameControllerWrapper.m_piGameController->Start();
 	if(m_PlayAreaManagerWrapper.m_piPlayAreaManager)
 	{

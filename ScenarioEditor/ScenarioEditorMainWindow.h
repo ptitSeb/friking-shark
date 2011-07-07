@@ -172,6 +172,7 @@ public:
 	EColorCallBack		m_eColorCallBack;
 	
 	IGameGUILabel *m_piSTFps;
+	IGameGUILabel *m_piSTGameTime;
 	IGameGUILabel *m_piSTVolume;
 	IGameGUILabel *m_piBTDecreaseVolume;
 	IGameGUILabel *m_piBTIncreaseVolume;
@@ -475,6 +476,7 @@ public:
 
 	BEGIN_CHILD_MAP()
 		CHILD_MAP_ENTRY("FPS",m_piSTFps);
+		CHILD_MAP_ENTRY("GameTime",m_piSTGameTime);
 		CHILD_MAP_ENTRY("Volume",m_piSTVolume);
 		CHILD_MAP_ENTRY_EX("DecreaseVolume",m_piBTDecreaseVolume,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("IncreaseVolume",m_piBTIncreaseVolume,IGameGUIButtonEvents);
