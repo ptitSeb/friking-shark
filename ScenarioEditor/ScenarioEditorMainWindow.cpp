@@ -64,6 +64,7 @@ CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 	m_nSelectedRoutePoint=-1;
 	m_nSelectedLandingRoutePoint=-1;
 	m_nSelectedTakeOffRoutePoint=-1;
+	m_nStartingWeapon=1;
 	
 	m_dwNexControlKey=0;
 	m_bTextures=1;
@@ -912,7 +913,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		unsigned long nSelectedFormationType=0;
 		std::vector<IDesignObject *> vFormationTypes;
 		GetSystemObjects("FormationTypes",&vFormationTypes);
-		if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vFormationTypes,&nSelectedFormationType,96.0,96.0))
+		if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vFormationTypes,&nSelectedFormationType,64.0,64.0))
 		{
 			ISystemObject *piObject=QI(ISystemObject,vFormationTypes[nSelectedFormationType]);
 			IFormationType *piFormationType=QI(IFormationType,vFormationTypes[nSelectedFormationType]);
@@ -1454,7 +1455,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			unsigned long nSelectedFormationType=0;
 			std::vector<IDesignObject *> vFormationTypes;
 			GetSystemObjects("FormationTypes",&vFormationTypes);
-			if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vFormationTypes,&nSelectedFormationType,96.0,96.0))
+			if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vFormationTypes,&nSelectedFormationType,64.0,64.0))
 			{
 				IFormationType *piFormationType=QI(IFormationType,vFormationTypes[nSelectedFormationType]);
 				pFormation->m_piPlayAreaFormation->SetFormationType(piFormationType);
@@ -1484,7 +1485,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			unsigned long nSelectedFormationType=0;
 			std::vector<IDesignObject *> vFormationTypes;
 			GetSystemObjects("FormationTypes",&vFormationTypes);
-			if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vFormationTypes,&nSelectedFormationType,96.0,96.0))
+			if(m_ObjectSelector.m_piObjectSelector->SelectObject(this,&vFormationTypes,&nSelectedFormationType,64.0,64.0))
 			{
 				IFormationType *piFormationType=QI(IFormationType,vFormationTypes[nSelectedFormationType]);
 				pFormation->m_piPlayAreaFormation->SetAlternativeFormationType(piFormationType);
@@ -2677,6 +2678,12 @@ void CScenarioEditorMainWindow::OnCharacter(int nKey,bool *pbProcessed)
 	else if(nKey=='O'|| nKey=='o'){m_bShadows=!m_bShadows;*pbProcessed=true;}
 	else if(nKey=='H'|| nKey=='h'){m_bShaders=!m_bShaders;*pbProcessed=true;}
 	else if(nKey=='B'|| nKey=='b'){m_bBlend=!m_bBlend;*pbProcessed=true;}
+	else if(nKey=='1'){m_nStartingWeapon=1;*pbProcessed=true;}
+	else if(nKey=='2'){m_nStartingWeapon=2;*pbProcessed=true;}
+	else if(nKey=='3'){m_nStartingWeapon=3;*pbProcessed=true;}
+	else if(nKey=='4'){m_nStartingWeapon=4;*pbProcessed=true;}
+	else if(nKey=='5'){m_nStartingWeapon=5;*pbProcessed=true;}
+	else if(nKey=='6'){m_nStartingWeapon=6;*pbProcessed=true;}
 	else if(nKey==' '){m_FrameManager.m_piFrameManager->SetPauseOnNextFrame(false);m_bPauseOnNextFrame=true;*pbProcessed=true;}
 }
 
@@ -3337,9 +3344,11 @@ void CScenarioEditorMainWindow::StartGameSimulation()
 		m_PlayAreaManagerWrapper.m_piPlayAreaManager->SetPlayMovementPosition(m_vPlayMovementPosition);
 		IEntity *piPlayerEntity=m_EntityManagerWrapper.m_piEntityManager->FindEntity("Player");
 		IWeapon *piBombWeapon=piPlayerEntity?piPlayerEntity->GetWeapon(1):NULL;
+		IWeapon *piBulletWeapon=piPlayerEntity?piPlayerEntity->GetWeapon(0):NULL;
 		IPlayer *piPlayer=dynamic_cast<IPlayer*>(piPlayerEntity);
 		if(piPlayer){piPlayer->SetGodMode(true);}
 		if(piBombWeapon){piBombWeapon->SetAmmo(10000);}
+		if(piBulletWeapon){piBulletWeapon->SetCurrentLevel(m_nStartingWeapon-1);}
 	}
 
 	m_bSimulationStarted=true;

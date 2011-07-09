@@ -169,6 +169,8 @@ public:
 	
 	double 				m_dMouseTraceDistance;
 	
+	unsigned int		m_nStartingWeapon;
+	
 	EColorCallBack		m_eColorCallBack;
 	
 	IGameGUILabel *m_piSTFps;
