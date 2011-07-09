@@ -169,13 +169,6 @@ void CProjectileLauncher::Fire(unsigned int dwCurrentTime)
 					vPosRight=vTargetRight;
 					vPosUp=vTargetUp;
 				}
-				if(pProjectileInfo->dwVelocityReferenceSystem==eProjectileLauncherReferenceSystem_Target && piTarget)
-				{
-					vVelAngles=vTargetAngles;
-					vVelForward=vTargetForward;
-					vVelRight=vTargetRight;
-					vVelUp=vTargetUp;
-				}
 				
 				IEntity *piProjectile=pProjectileInfo->projectileEntityType.m_piEntityType->CreateInstance(m_piEntity,dwCurrentTime);
 				if(piProjectile)
@@ -199,6 +192,21 @@ void CProjectileLauncher::Fire(unsigned int dwCurrentTime)
 					{
 						pProjectilePhysicInfo->vPosition=ProjectToAirPlane(pProjectilePhysicInfo->vPosition);
 					}
+					
+					
+					if(pProjectileInfo->dwVelocityReferenceSystem==eProjectileLauncherReferenceSystem_Target && piTarget)
+					{
+						CVector vTargetAngles,vTargetForward,vTargetRight,vTargetUp;
+						if(piTarget)
+						{
+							SPhysicInfo *pTargetPhysicInfo=piTarget->GetPhysicInfo();
+							CVector vDirection=GetIdealHeadingToTarget(pProjectilePhysicInfo->vPosition,pTargetPhysicInfo->vPosition,pTargetPhysicInfo->vVelocity);
+							AnglesFromVector(vDirection,&vVelAngles);
+						}						
+						if(m_pType->m_bIgnoreRoll){vVelAngles.c[ROLL]=0;}
+						VectorsFromAngles(vVelAngles,&vVelForward,&vVelRight,&vVelUp);
+					}					
+					
 					pProjectilePhysicInfo->vVelocity+=vVelForward*vDirection.c[0]*pProjectileInfo->dVelocity;
 					pProjectilePhysicInfo->vVelocity+=vVelUp*vDirection.c[1]*pProjectileInfo->dVelocity;
 					pProjectilePhysicInfo->vVelocity+=vVelRight*vDirection.c[2]*pProjectileInfo->dVelocity;
