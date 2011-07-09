@@ -23,7 +23,7 @@
 #include "GUISystems.h"
 #include "MainWindow.h"
 
-#define AVAILABLE_LEVELS 4
+#define AVAILABLE_LEVELS 5
 
 extern CSystemModuleHelper *g_pSystemModuleHelper;
 
