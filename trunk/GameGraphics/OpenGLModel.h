@@ -82,8 +82,6 @@ class COpenGLModel : virtual public CSystemObjectBase,virtual public IGenericMod
 	std::vector<SModelAnimation *>  m_vAnimations;
 	CBSPNode						*m_pModelBSP;
 	bool						 	m_bLoadBSP;
-	bool						 	m_bAutoGenerateBSP;
-	bool						 	m_bAutoUpdateBSP;
 	bool							m_bLoadPending;
 	bool							m_bLoadResult;
 
@@ -139,8 +137,8 @@ public:
 	void		  Render(IGenericRender *piRender,unsigned long nAnimation,unsigned long nFrame);
 
 	CBSPNode	 *GetBSP();
-	void		  GetBSPOptions(bool *pbLoad,bool *pbAutoGenerate,bool *pbAutoUpdate);
-	void		  SetBSPOptions(bool bLoad,bool bAutoGenerate,bool bAutoUpdate);
+	void		  GetBSPOptions(bool *pbLoad);
+	void		  SetBSPOptions(bool bLoad);
 	CTraceInfo	  GetTrace(const CVector &vOrigin,const CVector &vAngles,const CVector &p1,const CVector &p2 );
 
 	void UpdateFrameBuffers();
@@ -157,8 +155,6 @@ public:
 	BEGIN_PROP_MAP(COpenGLModel)
 		PROP_FLAGS(m_sFileName,"Archivo",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_bLoadBSP,"LoadBSP",false,MRPF_NORMAL|MRPF_OPTIONAL)
-		PROP_VALUE_FLAGS(m_bAutoUpdateBSP,"AutoUpdateBSP",false,MRPF_NORMAL|MRPF_OPTIONAL)
-		PROP_VALUE_FLAGS(m_bAutoGenerateBSP,"AutoGenerateBSP",false,MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP();
 
 	COpenGLModel(void);

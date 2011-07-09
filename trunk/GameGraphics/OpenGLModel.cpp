@@ -25,8 +25,6 @@ COpenGLModel::COpenGLModel(void)
 	m_bLoadPending=false;
 	m_bLoadResult=false;
 	m_bLoadBSP=false;
-	m_bAutoGenerateBSP=false;
-	m_bAutoUpdateBSP=false;
 	m_pModelBSP=NULL;
 }
 
@@ -173,7 +171,7 @@ bool COpenGLModel::LoadFromFile()
 		}
 	}
 	
-	LoadBSP(sFileName.c_str());
+	if(m_bLoadBSP){LoadBSP(sFileName.c_str());}
 	UpdateFrameBuffers();
 	
 	m_bLoadResult=true;
@@ -217,44 +215,47 @@ bool COpenGLModel::LoadBSP(const char *pFileName)
 {
 	CBSPNode *pModelBSP=NULL;;
 	char sGBSFile[MAX_PATH]={0};
+	char sASEFile[MAX_PATH]={0};
 	strcpy(sGBSFile,pFileName);
+	strcpy(sASEFile,pFileName);
 	ReplaceExtension(sGBSFile,".gbs");
-
-	bool bGenerateBSP=false;
-	std::vector<CPolygon*> vGeometry;
-	std::vector<CPolygon*> vBSPGeometry;
-
-	CGBSFileType gbsFile;
-	if(!gbsFile.Load(sGBSFile,&pModelBSP,m_bAutoUpdateBSP?&vBSPGeometry:NULL))
+	ReplaceExtension(sASEFile,".ase");
+	
+	
+	bool bGBSOutdated = !FileExists(sGBSFile);
+	if(bGBSOutdated)
 	{
-		bGenerateBSP=m_bAutoGenerateBSP || m_bAutoUpdateBSP;
-		if(bGenerateBSP){GetGeometry(&vGeometry);}
+		RTTRACE("COpenGLModel::LoadBSP -> GBS file for %s does not exist, rebuilding",m_sFileName.c_str());
+	}
+	if(!bGBSOutdated &&  FileExists(sASEFile))
+	{
+		time_t asetime=GetFileTimeStamp(sASEFile);
+		time_t gbstime=GetFileTimeStamp(sGBSFile);
+		if(gbstime<asetime)
+		{
+			bGBSOutdated=true;
+			RTTRACE("COpenGLModel::LoadBSP -> GBS file for %s is out of date, rebuilding",m_sFileName.c_str());
+		}
+	}
+	
+	if(bGBSOutdated)
+	{
+		std::vector<CPolygon*> vGeometry;
+		CGBSFileType gbsFile;
+		GetGeometry(&vGeometry);
+		pModelBSP=BSPFromPolygonVector(NULL,1,&vGeometry,CONTENT_NODE,NULL,true);
+		if(pModelBSP){gbsFile.Save(sGBSFile,pModelBSP,NULL);}
+		for(unsigned int x=0;x<vGeometry.size();x++){delete vGeometry[x];}
+		vGeometry.clear();
 	}
 	else
 	{
-		if(m_bAutoUpdateBSP)
+		CGBSFileType gbsFile;
+		if(!gbsFile.Load(sGBSFile,&pModelBSP,NULL))
 		{
-			GetGeometry(&vGeometry);
-			if(!CGBSFileType::CompareGeometricData(&vGeometry,&vBSPGeometry))
-			{
-				bGenerateBSP=true;				
-			}
+			RTTRACE("COpenGLModel::LoadBSP -> Failed to load BSP file for %s",m_sFileName.c_str());
 		}
 	}
-
-	if(bGenerateBSP)
-	{
-		pModelBSP=BSPFromPolygonVector(NULL,1,&vGeometry,CONTENT_NODE,NULL,true);
-		if(pModelBSP)
-		{
-			gbsFile.Save(sGBSFile,pModelBSP,&vGeometry);
-		}
-	}
-	for(unsigned int x=0;x<vGeometry.size();x++){delete vGeometry[x];}
-	for(unsigned int x=0;x<vBSPGeometry.size();x++){delete vBSPGeometry[x];}
-
-	vGeometry.clear();
-	vBSPGeometry.clear();
 
 	m_pModelBSP=pModelBSP;
 	return (m_pModelBSP!=NULL);
@@ -276,8 +277,6 @@ bool COpenGLModel::Load( std::string sFileName )
 void COpenGLModel::Create()
 {
 	m_bLoadBSP=false;
-	m_bAutoGenerateBSP=false;
-	m_bAutoUpdateBSP=false;
 	RemoveAnimations();
 }
 
@@ -672,18 +671,14 @@ CBSPNode *COpenGLModel::GetBSP()
 	return m_pModelBSP;
 }
 
-void COpenGLModel::SetBSPOptions(bool bLoad,bool bAutoGenerate,bool bAutoUpdate)
+void COpenGLModel::SetBSPOptions(bool bLoad)
 {
 	m_bLoadBSP=bLoad;
-	m_bAutoGenerateBSP=bAutoGenerate;
-	m_bAutoUpdateBSP=bAutoUpdate;
 }
 
-void COpenGLModel::GetBSPOptions(bool *pbLoad,bool *pbAutoGenerate,bool *pbAutoUpdate)
+void COpenGLModel::GetBSPOptions(bool *pbLoad)
 {
 	if(pbLoad){*pbLoad=m_bLoadBSP;}
-	if(pbAutoGenerate){*pbAutoGenerate=m_bAutoGenerateBSP;}
-	if(pbAutoUpdate){*pbAutoUpdate=m_bAutoUpdateBSP;}
 }
 
 void COpenGLModel::PrepareRenderBuffer(IGenericRender *piRender, unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer ,bool bRenderingShadow)

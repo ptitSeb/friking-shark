@@ -238,8 +238,8 @@ public:
 	virtual void Create()=0;
 	virtual bool Load(std::string sFileName)=0;
 
-	virtual void		  SetBSPOptions(bool bLoad,bool bAutoGenerate,bool bAutoUpdate)=0;
-	virtual void		  GetBSPOptions(bool *pbLoad,bool *pbAutoGenerate,bool *pbAutoUpdate)=0;
+	virtual void		  SetBSPOptions(bool bLoad)=0;
+	virtual void		  GetBSPOptions(bool *pbLoad)=0;
 	virtual CBSPNode	 *GetBSP()=0;
 	virtual CTraceInfo	  GetTrace(const CVector &vOrigin,const CVector &vAngles,const CVector &p1,const CVector &p2 )=0;
 
