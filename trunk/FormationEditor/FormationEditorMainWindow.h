@@ -80,6 +80,7 @@ public:
 	bool				m_bColors;
 	bool				m_bRenderPlayArea;
 	bool				m_bRenderWorld;
+	bool				m_bRenderShadows;
 	bool				m_bAutoAlign;
 
 	

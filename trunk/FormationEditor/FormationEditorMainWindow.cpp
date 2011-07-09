@@ -32,8 +32,9 @@ CFormationEditorMainWindow::CFormationEditorMainWindow(void)
 	m_d3DFontSize=0;
 	m_nFormationId=0;
 	m_bMovingRoutePoint=false;
-	m_bRenderPlayArea=false;
+	m_bRenderPlayArea=true;
 	m_bRenderWorld=true;
+	m_bRenderShadows=true;
 	
 	m_bInspectionMode=false;
 	m_bShowOptionsPanel=false;
@@ -114,6 +115,13 @@ bool CFormationEditorMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 	}
 	if(m_WorldManagerWrapper.m_piTerrain && m_sWorldModelFile!="")
 	{
+		STerrainSun sSun;
+		sSun.dDistance=1.5;
+		sSun.dAzimuth=30;
+		sSun.dElevation=60;
+		sSun.vColor=CVector(0.5,0.5,0.5);
+		m_WorldManagerWrapper.m_piTerrain->SetTerrainSun(&sSun);		
+		m_WorldManagerWrapper.m_piTerrain->SetTerrainAmbientColor(CVector(0.2,0.2,0.2));
 		m_WorldManagerWrapper.m_piTerrain->SetTerrainBaseModel(m_sWorldModelFile);
 		if(m_sWorldTextureFile!="")
 		{
@@ -256,7 +264,7 @@ void CFormationEditorMainWindow::OnDraw(IGenericRender *piRender)
 	m_bTextures?m_Render.m_piRender->EnableTextures():m_Render.m_piRender->DisableTextures();
 	m_bSolid?m_Render.m_piRender->EnableSolid():m_Render.m_piRender->DisableSolid();
 	m_Render.m_piRender->EnableBlending();
-	m_Render.m_piRender->EnableShadows();
+	m_bRenderShadows?m_Render.m_piRender->EnableShadows():m_Render.m_piRender->DisableShadows();
 	m_Render.m_piRender->DisableLighting();
 	m_Render.m_piRender->DisableHeightFog();
 	m_Render.m_piRender->DisableShaders();
@@ -356,37 +364,41 @@ void CFormationEditorMainWindow::OnDraw(IGenericRender *piRender)
 	m_Render.m_piRender->PopOptions();
 	m_Render.m_piRender->PopState();
 
-
 	//Play Area
-	m_Render.m_piRender->PushState();
-	m_Render.m_piRender->ActivateBlending();
-	CVector vPlayAreaMins,vPlayAreaMaxs;
-	SPlayAreaConfig vPlayAreaConfig;
-	m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&vPlayAreaConfig);
-	m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetVisibleAirPlayPlane(&vPlayAreaMins,&vPlayAreaMaxs);
-	CVector vCenter=(vPlayAreaMaxs+vPlayAreaMins)*0.5;
-	CVector vSize=(vPlayAreaMaxs-vPlayAreaMins);
+	if(m_bRenderPlayArea)
+	{	
+		m_Render.m_piRender->PushState();
+		m_Render.m_piRender->ActivateBlending();
+		CVector vPlayAreaMins,vPlayAreaMaxs;
+		SPlayAreaConfig vPlayAreaConfig;
+		m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&vPlayAreaConfig);
+		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetVisibleAirPlayPlane(&vPlayAreaMins,&vPlayAreaMaxs);
+		CVector vCenter=(vPlayAreaMaxs+vPlayAreaMins)*0.5;
+		CVector vSize=(vPlayAreaMaxs-vPlayAreaMins);
 
-	piRender->ActivateSolid();
 
-	piRender->SetColor(CVector(1,1,1),0.1);
-	piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2]);
-	//Left scroll
-	piRender->SetColor(CVector(1,1,1),0.05);
-	piRender->RenderRect(vCenter-CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
-	//Right scroll
-	piRender->SetColor(CVector(1,1,1),0.05);
-	piRender->RenderRect(vCenter+CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
+		piRender->ActivateSolid();
+
+		piRender->SetColor(CVector(1,1,1),0.1);
+		piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2]);
+		//Left scroll
+		piRender->SetColor(CVector(1,1,1),0.05);
+		piRender->RenderRect(vCenter-CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
+		//Right scroll
+		piRender->SetColor(CVector(1,1,1),0.05);
+		piRender->RenderRect(vCenter+CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
+		
+		piRender->DeactivateSolid();
+		piRender->DeactivateDepth();
+		
+		piRender->SetColor(CVector(1,1,1),1.0);
+		piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2]);
+		piRender->RenderRect(vCenter-CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
+		piRender->RenderRect(vCenter+CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
 	
-	piRender->DeactivateSolid();
-	piRender->DeactivateDepth();
+		m_Render.m_piRender->PopState();
+	}
 	
-	piRender->SetColor(CVector(1,1,1),1.0);
-	piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2]);
-	piRender->RenderRect(vCenter-CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
-	piRender->RenderRect(vCenter+CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
-
-	m_Render.m_piRender->PopState();
 
 	
 	if(m_piSTFps)
@@ -436,7 +448,7 @@ void CFormationEditorMainWindow::ProcessFileOpen()
 		if(piTemp==m_FormationType.m_piFormationType){REL(piTemp);vFormationTypes.erase(i);break;}
 	}
 
-	if(m_ObjectSelector.m_piObjectSelector->SelectObject("Open Formation...",this,&vFormationTypes,&nSelectedFormationType,96.0,96.0))
+	if(m_ObjectSelector.m_piObjectSelector->SelectObject("Open Formation...",this,&vFormationTypes,&nSelectedFormationType,64.0,64.0))
 	{
 		Reset();
 		CConfigFile cfg;
@@ -511,7 +523,7 @@ void CFormationEditorMainWindow::ProcessFileRemove()
 	std::vector<IDesignObject *> vFormationTypes;
 	GetSystemObjects("FormationTypes",&vFormationTypes);
 	
-	if(m_ObjectSelector.m_piObjectSelector->SelectObject("Remove Formation...",this,&vFormationTypes,&nSelectedFormationType,96.0,96.0))
+	if(m_ObjectSelector.m_piObjectSelector->SelectObject("Remove Formation...",this,&vFormationTypes,&nSelectedFormationType,64.0,64.0))
 	{
 		CFormationTypeWrapper existingWrapper;
 		bool bOk=existingWrapper.Attach(vFormationTypes[nSelectedFormationType]);
@@ -1092,7 +1104,8 @@ void CFormationEditorMainWindow::OnCharacter(int nKey,bool *pbProcessed)
 	if     (nKey=='T'|| nKey=='t'){m_bTextures=!m_bTextures;*pbProcessed=true;}
 	else if(nKey=='P'|| nKey=='p'){m_bRenderPlayArea=!m_bRenderPlayArea;*pbProcessed=true;}
 	else if(nKey=='L'|| nKey=='l'){m_bSolid=!m_bSolid;*pbProcessed=true;}
-	else if(nKey=='O'|| nKey=='o'){m_bRenderWorld=!m_bRenderWorld;*pbProcessed=true;}
+	else if(nKey=='B'|| nKey=='b'){m_bRenderWorld=!m_bRenderWorld;*pbProcessed=true;}
+	else if(nKey=='O'|| nKey=='o'){m_bRenderShadows=!m_bRenderShadows;*pbProcessed=true;}
 	else if(nKey=='G'|| nKey=='g'){m_bAutoAlign=!m_bAutoAlign;*pbProcessed=true;}
 	else if(nKey==' '){m_FrameManager.m_piFrameManager->SetPauseOnNextFrame(false);m_bPauseOnNextFrame=true;*pbProcessed=true;}
 }
@@ -1363,6 +1376,16 @@ void CFormationEditorMainWindow::StartGameSimulation()
 		REL(piElement);
 	}
 	m_GameControllerWrapper.m_piGameController->Start();
+	
+	if(m_EntityManagerWrapper.m_piEntityManager)
+	{
+		IEntity *piPlayerEntity=m_EntityManagerWrapper.m_piEntityManager->FindEntity("Player");
+		IWeapon *piBombWeapon=piPlayerEntity?piPlayerEntity->GetWeapon(1):NULL;
+		IPlayer *piPlayer=dynamic_cast<IPlayer*>(piPlayerEntity);
+		if(piPlayer){piPlayer->SetGodMode(true);}
+		if(piBombWeapon){piBombWeapon->SetAmmo(10000);}
+	}
+	
 	m_bSimulationStarted=true;
 }
 
