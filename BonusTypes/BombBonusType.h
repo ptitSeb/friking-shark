@@ -49,13 +49,15 @@ class CBombBonus: public CEntityBase
   CVector 		   m_vOriginalPosition;
   CPlane 		   m_PlayAreaPlane;
   IGenericCamera  *m_piCamera;
+  IEntity		  *m_piOwner;
   
 public:
  
   bool OnCollision(IEntity *pOther,CVector &vCollisionPos);
+  void OnRemoved(IEntity *piEntity);
   
   void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
   
-  CBombBonus(CBombBonusType *pType,CVector vOriginalPosition);
+  CBombBonus(CBombBonusType *pType,IEntity *piOwner);
   ~CBombBonus();
 };
