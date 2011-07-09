@@ -83,7 +83,7 @@ void CGroundBossHatch::ProcessFrame(unsigned int dwCurrentTime,double dTimeFract
 	if(m_piTarget && m_bIsOpen && m_vWeapons.size())
 	{
 		bool bVisible=g_PlayAreaManagerWrapper.m_piInterface && g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,0);
-		if(bVisible){FireWeapon(0,dwCurrentTime);}
+		if(bVisible){for(unsigned int x=0;x<m_vWeapons.size();x++){FireWeapon(x,dwCurrentTime);}}
 	}
 }
 void CGroundBossHatch::OnAnimationEvent(string sEvent,string sParams)

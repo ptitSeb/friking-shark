@@ -255,7 +255,7 @@ void CTurret::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 		bool bVisible=g_PlayAreaManagerWrapper.m_piInterface && g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,0);
 		if(bVisible)
 		{
-			FireWeapon(0,dwCurrentTime);
+			for(unsigned int x=0;x<m_vWeapons.size();x++){FireWeapon(x,dwCurrentTime);}
 			m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeBetweenShotsMax-m_pType->m_dTimeBetweenShotsMin)+m_pType->m_dTimeBetweenShotsMin;
 		}
 	}
