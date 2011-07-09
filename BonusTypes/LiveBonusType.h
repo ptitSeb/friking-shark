@@ -27,26 +27,44 @@ enum ELiveBonusState
 class CLiveBonusType: public CEntityTypeBase
 {
 public:
-
-  IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
-
-  BEGIN_ENTITY_STATE_MAP()
+	CPlayAreaManagerWrapper m_PlayAreaManager;
+	
+	double m_dAngularVelocity;
+	double m_dForwardVelocity;
+	double m_dExitVelocity;
+	
+	IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
+	
+	BEGIN_PROP_MAP(CLiveBonusType)
+	PROP_CLASS_CHAIN(CEntityTypeBase)
+	PROP_VALUE_FLAGS(m_dAngularVelocity,"AngularVelocity",60,MRPF_NORMAL|MRPF_OPTIONAL);
+	PROP_VALUE_FLAGS(m_dForwardVelocity,"ForwardVelocity",20,MRPF_NORMAL|MRPF_OPTIONAL);
+	PROP_VALUE_FLAGS(m_dExitVelocity,"ExitVelocity",5,MRPF_NORMAL|MRPF_OPTIONAL);
+	END_PROP_MAP();
+	
+	BEGIN_ENTITY_STATE_MAP()
 	ENTITY_STATE_CHAIN(CEntityTypeBase)
 	ENTITY_STATE(eLiveBonusState_Taken,"Taken")
-  END_ENTITY_STATE_MAP()
-  
-  CLiveBonusType();
-  ~CLiveBonusType();
+	END_ENTITY_STATE_MAP()
+	
+	CLiveBonusType();
+	~CLiveBonusType();
 };
 
 
 class CLiveBonus: public CEntityBase
 {
-  CLiveBonusType  *m_pType;
-
+	CLiveBonusType  *m_pType;
+	
+	CVector m_vCurrentForwardDirection;
+	double  m_dCurrentAngularVelocity;
+	
 public:
-
-  bool OnCollision(IEntity *pOther,CVector &vCollisionPos);
-
-  CLiveBonus(CLiveBonusType *pType);
+	
+	bool OnCollision(IEntity *pOther,CVector &vCollisionPos);
+	
+	void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
+	void SetInitialVelocity();
+	
+	CLiveBonus(CLiveBonusType *pType);
 };
