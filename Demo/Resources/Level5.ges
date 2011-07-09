@@ -6424,30 +6424,6 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
-		Item213
-		{
-			Class=CPlayAreaFormation
-			Data
-			{
-				AlternativeBonus
-				AlternativeType
-				Bonus
-				{
-					Name=LiveBonus
-					System=EntityTypes
-				}
-				ConditionType=0
-				ConditionValue=0
-				Posicion=-1230.225750,-4.644054,59.234237
-				Tipo
-				{
-					Name=Formacion6
-					System=FormationTypes
-				}
-			}
-			Name=""
-			System=GameSystem
-		}
 	}
 	EntityLayers
 	{
@@ -6588,8 +6564,6 @@ Terrain
 		Data
 		{
 			Archivo=./Models/Level5Terrain.ase
-			AutoGenerateBSP=1
-			AutoUpdateBSP=1
 			LoadBSP=1
 		}
 		Name=""
