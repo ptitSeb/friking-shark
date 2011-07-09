@@ -32,23 +32,29 @@ CBombBonusType::~CBombBonusType()
 {
 }
 
-IEntity *CBombBonusType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
+IEntity *CBombBonusType::CreateInstance(IEntity *piOwner,unsigned int dwCurrentTime)
 {
-  CBombBonus *piEntity=new CBombBonus(this,piParent?piParent->GetPhysicInfo()->vPosition:Origin);
-  InitializeEntity(piEntity,dwCurrentTime);
+	CBombBonus *piEntity=new CBombBonus(this,piOwner);
+	InitializeEntity(piEntity,dwCurrentTime);
   
-  piEntity->SetState(eBombBonusState_Normal,ANIMATION_RANDOM);
-  return piEntity;
+	piEntity->SetState(eBombBonusState_Normal,ANIMATION_RANDOM);
+	return piEntity;
 }
 
-CBombBonus::CBombBonus(CBombBonusType *pType,CVector vOriginalPosition)
+CBombBonus::CBombBonus(CBombBonusType *pType,IEntity *piOwner)
 {
   m_sClassName="CBombBonus";
   m_sName="BombBonus";
   m_pType=pType;
   m_piCamera=NULL;
   m_dwDamageType=DAMAGE_TYPE_NONE;
-  m_vOriginalPosition=vOriginalPosition;
+  m_piOwner=piOwner;
+  if(m_piOwner)
+  {
+	  SUBSCRIBE_TO_CAST(m_piOwner,IEntityEvents);
+	  m_vOriginalPosition=m_piOwner->GetPhysicInfo()->vPosition;
+  }
+  
   
   if(m_pType->m_PlayAreaManager.m_piPlayAreaManager)
   {
@@ -94,9 +100,22 @@ bool CBombBonus::OnCollision(IEntity *pOther,CVector &vCollisionPos)
   return false;
 }
 
+void CBombBonus::OnRemoved(IEntity *piEntity)
+{
+	CEntityBase::OnRemoved(piEntity);
+	if(piEntity==m_piOwner)
+	{
+		UNSUBSCRIBE_FROM_CAST(m_piOwner,IEntityEvents);
+		m_piOwner=NULL;
+		Remove();
+	}
+}
+
 void CBombBonus::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
+	
+	if(m_piOwner){m_vOriginalPosition=m_piOwner->GetPhysicInfo()->vPosition;}
 	
 	CVector vMins,vMaxs;
 	m_pType->m_PlayAreaManager.m_piPlayAreaManager->GetCurrentVisibleArea(&vMins,&vMaxs);
