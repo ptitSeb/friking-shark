@@ -178,7 +178,7 @@ bool CWorldManager::SetTerrainBaseModel( std::string sModel )
 	bool bOk=false;
 	m_sTerrainBaseModel=sModel;
 	bOk=m_TerrainBaseModel.Create("GameResources","Model","");
-	if(bOk){m_TerrainBaseModel.m_piModel->SetBSPOptions(true,true,true);}
+	if(bOk){m_TerrainBaseModel.m_piModel->SetBSPOptions(true);}
 	if(bOk){bOk=m_TerrainBaseModel.m_piModel->Load(sModel);}
 	return bOk;
 }
