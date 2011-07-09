@@ -54,6 +54,11 @@ void CLevelOptions::OnButtonClicked(IGameGUIButton *piControl)
 		m_nSelectedLevel=3;
 		EndDialog(0);
 	}
+	if(piControl==m_piBTLevel5)
+	{
+		m_nSelectedLevel=4;
+		EndDialog(0);
+	}
 	if(piControl==m_piBTMode)
 	{
 		unsigned int nMode=m_eMode;
