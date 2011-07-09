@@ -30,10 +30,4 @@
 	#pragma comment (lib, "GameRuntimeLib.lib")
 	#pragma comment (lib, "opengl32.lib")
 	#pragma comment (lib, "glu32.lib")
-
-	#ifdef _DEBUG
-		#pragma comment(lib,"jpgdlib_d.lib")
-	#else
-		#pragma comment(lib,"jpgdlib.lib")
-	#endif
 #endif
