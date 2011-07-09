@@ -123,6 +123,8 @@ bool CFighter::OnCollision(IEntity *piOther,CVector &vCollisionPos)
 		if(GetState()!=eFighterState_Crashed && m_pTypeBase->GetStateAnimations(eFighterState_Crashed))
 		{
 			SetState(eFighterState_Crashed);
+			m_PhysicInfo.dwBoundsType=PHYSIC_BOUNDS_TYPE_NONE;
+			m_PhysicInfo.dwMoveType=PHYSIC_MOVE_TYPE_NONE;
 		}
 		if(piOther->GetDamageType()!=DAMAGE_TYPE_NONE)
 		{
@@ -311,7 +313,7 @@ void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 	if(dwCurrentTime>m_dwNextShotTime )
 	{
 		bool bVisible=g_PlayAreaManagerWrapper.m_piInterface && g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,0);
-		if(bVisible){FireWeapon(0,dwCurrentTime);}
+		if(bVisible){for(unsigned int x=0;x<m_vWeapons.size();x++){FireWeapon(x,dwCurrentTime);}}
 		m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeBetweenShotsMax-m_pType->m_dTimeBetweenShotsMin)+m_pType->m_dTimeBetweenShotsMin;
 	}
 }

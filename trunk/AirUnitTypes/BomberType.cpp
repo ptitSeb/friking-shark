@@ -140,7 +140,7 @@ void CBomber::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
   if(m_piTarget && m_vWeapons.size() && dwCurrentTime>m_dwNextShotTime)
   {
 	  bool bVisible=g_PlayAreaManagerWrapper.m_piInterface && g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,0);
-	  if(bVisible){FireWeapon(0,dwCurrentTime);}
+	  if(bVisible){for(unsigned int x=0;x<m_vWeapons.size();x++){FireWeapon(x,dwCurrentTime);}}
 	  m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeBetweenShotsMax-m_pType->m_dTimeBetweenShotsMin)+m_pType->m_dTimeBetweenShotsMin;
   }
 }
