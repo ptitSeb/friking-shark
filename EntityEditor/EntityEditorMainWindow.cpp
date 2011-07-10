@@ -26,6 +26,7 @@
 CEntityEditorMainWindow::CEntityEditorMainWindow(void)
 {
 	m_d3DFontSize=0;
+	m_eMode=eEntityEditorMode_EntityProperties;
 	
 	m_bShowTranslationGizmo=false;
 	m_bShowRotationGizmo=false;
@@ -101,6 +102,7 @@ bool CEntityEditorMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 	m_SoundManagerWrapper.Attach("GameSystem","SoundManager");
 	UpdateVisiblePanels();
 	UpdateStateList();
+	UpdateBBoxList();
 	return bOk;
 }
 
@@ -109,6 +111,7 @@ void CEntityEditorMainWindow::DestroyWindow()
 	StopGameSimulation();
 	Reset();
 	UpdateStateList();
+	UpdateBBoxList();
 	if(m_GameControllerWrapper.m_piGameController){m_GameControllerWrapper.m_piGameController->EndGame();}
 	if(m_GameControllerWrapper.m_piGameController){m_GameControllerWrapper.m_piGameController->CloseScenario();}
 	m_PhysicManagerWrapper.Detach();
@@ -146,6 +149,7 @@ void CEntityEditorMainWindow::Reset()
 
 	UpdateCaption();
 	UpdateStateList();
+	UpdateBBoxList();
 }
 
 void CEntityEditorMainWindow::ProcessInput(double dTimeFraction,double dRealTimeFraction)
@@ -330,8 +334,17 @@ void CEntityEditorMainWindow::OnDraw(IGenericRender *piRender)
 	m_RotationGizmo.SetPosition(m_TranslationGizmo.GetPosition());
 	if(m_bShowTranslationGizmo){m_TranslationGizmo.Render(m_Render.m_piRender,m_Camera.m_piCamera);}
 	if(m_bShowRotationGizmo){m_RotationGizmo.Render(m_Render.m_piRender,m_Camera.m_piCamera);}
-	if(m_bShowBBoxGizmo){m_BBoxGizmo.Render(m_Render.m_piRender,m_Camera.m_piCamera);}
-
+	if(m_bShowBBoxGizmo)
+	{
+		m_BBoxGizmo.Render(m_Render.m_piRender,m_Camera.m_piCamera);
+		
+		SEntityTypeConfig sConfig;
+		if(m_EntityType.m_piEntityTypeDesign){m_EntityType.m_piEntityTypeDesign->GetEntityTypeConfig(&sConfig);}
+		for(unsigned int b=0;b<sConfig.vBBoxes.size();b++)
+		{
+			piRender->RenderBBox(m_pEntity->GetPhysicInfo()->vPosition,Origin,sConfig.vBBoxes[b].vMins,sConfig.vBBoxes[b].vMaxs,CVector(1,1,1));
+		}
+	}
 	m_Render.m_piRender->PopOptions();
 	m_Render.m_piRender->PopState();
 
@@ -348,6 +361,10 @@ void CEntityEditorMainWindow::OnDraw(IGenericRender *piRender)
 		sprintf(A,"Vol: %d%%",m_SoundManagerWrapper.m_piSoundManager->GetMasterVolume());
 		m_piSTVolume->SetText(A);
 	}
+	m_piGREntityProperties->Show(m_eMode==eEntityEditorMode_EntityProperties);
+	m_piGRGraphicProperties->Show(m_eMode==eEntityEditorMode_GraphicProperties);
+	m_piBTShowEntityProperties->SetBackgroundColor(CVector(1,1,1),m_eMode==eEntityEditorMode_EntityProperties?0.5:0.3);
+	m_piBTShowGraphicProperties->SetBackgroundColor(CVector(1,1,1),m_eMode==eEntityEditorMode_GraphicProperties?0.5:0.3);
 }
 void CEntityEditorMainWindow::ProcessFileNew()
 {
@@ -368,11 +385,12 @@ void CEntityEditorMainWindow::ProcessFileNew()
 		{
 			SEntityTypeConfig config;
 			m_EntityType.m_piEntityTypeDesign->GetEntityTypeConfig(&config);
-			m_BBoxGizmo.SetBounds(config.vBBoxMins,config.vBBoxMaxs);
+			m_BBoxGizmo.SetBounds(Origin,Origin);
 		}
 		
 		UpdateCaption();
 		UpdateStateList();
+		UpdateBBoxList();
 	}	
 }
 
@@ -397,10 +415,14 @@ void CEntityEditorMainWindow::ProcessFileOpen()
 		{
 			SEntityTypeConfig config;
 			m_EntityType.m_piEntityTypeDesign->GetEntityTypeConfig(&config);
-			m_BBoxGizmo.SetBounds(config.vBBoxMins,config.vBBoxMaxs);
+			if(config.vBBoxes.size())
+			{
+				m_BBoxGizmo.SetBounds(config.vBBoxes[0].vMins,config.vBBoxes[0].vMaxs);
+			}
 			m_sEntityName=existingWrapper.m_piObject->GetName();
 			UpdateCaption();
 			UpdateStateList();
+			UpdateBBoxList();
 			CenterCamera();
 		}
 	}
@@ -606,8 +628,12 @@ void CEntityEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	if(m_piBTNewParticleSystem==piControl){ProcessNewParticleSystem();}
 	if(m_piBTNewAnimation==piControl){ProcessNewAnimation();}
 	if(m_piBTNewChild==piControl){ProcessNewChild();}
+	if(m_piBTRemoveChild==piControl){ProcessRemoveChild();}
+	if(m_piBTNewBBox==piControl){ProcessNewBBox();}
+	if(m_piBTRemoveBBox==piControl){ProcessRemoveBBox();}
 	if(m_piBTNewEntity==piControl){ProcessNewEntity();}
-	if(m_piBTShowEntityProperties==piControl){ShowPropertiesOf(m_EntityType.m_piObject);}
+	if(m_piBTShowEntityProperties==piControl){m_eMode=eEntityEditorMode_EntityProperties;UpdateSelectedObject();}
+	if(m_piBTShowGraphicProperties==piControl){m_eMode=eEntityEditorMode_GraphicProperties;UpdateSelectedObject();}
 	
 	
 	UpdateVisiblePanels();
@@ -628,7 +654,6 @@ void CEntityEditorMainWindow::OnCharacter( int nKey,bool *pbProcessed )
 {
 	if     (nKey=='T' || nKey=='t'){m_bTextures=!m_bTextures;*pbProcessed=true;}
 	else if(nKey=='L' || nKey=='l'){m_bSolid=!m_bSolid;*pbProcessed=true;}
-	else if(nKey=='E' || nKey=='e'){ShowPropertiesOf(m_EntityType.m_piObject);*pbProcessed=true;}
 	/*	if(nKey=='I' && m_pEntity){m_pEntity->GetPhysicInfo()->vAngles.c[PITCH]+=5;if(m_pEntity->GetPhysicInfo()->vAngles.c[PITCH]>360){m_pEntity->GetPhysicInfo()->vAngles.c[PITCH]=90;}}
 	 i f*(nKey=='K' && m_pEntity){m_pEntity->GetPhysicInfo()->vAngles.c[PITCH]-=5;if(m_pEntity->GetPhysicInfo()->vAngles.c[PITCH]<-0){m_pEntity->GetPhysicInfo()->vAngles.c[PITCH]=-0;}}
 	 if(nKey=='J' && m_pEntity){m_pEntity->GetPhysicInfo()->vAngles.c[YAW]+=5;if(m_pEntity->GetPhysicInfo()->vAngles.c[YAW]>360){m_pEntity->GetPhysicInfo()->vAngles.c[YAW]-=360;}}
@@ -650,6 +675,7 @@ void CEntityEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 	else if(nKey==GK_NUMPAD8){CenterCamera(eEntityEditorView_Front);*pbProcessed=true;}
 	else if(nKey==GK_NUMPAD2){CenterCamera(eEntityEditorView_Back);*pbProcessed=true;}
 	else if(nKey==GK_NUMPAD6){CenterCamera(eEntityEditorView_Right);*pbProcessed=true;}
+	else if(nKey=='\t'){m_eMode=(m_eMode==eEntityEditorMode_EntityProperties)?eEntityEditorMode_GraphicProperties:eEntityEditorMode_EntityProperties;UpdateSelectedObject();*pbProcessed=true;}
 	else if(nKey==GK_DELETE)
 	{
 		*pbProcessed=true;
@@ -765,11 +791,13 @@ void CEntityEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 			{
 				if(m_piLSObjects){m_piLSObjects->SetSelectedElement(nSelectionId);}
 				if(m_piLSChildren){m_piLSChildren->SetSelectedElement(-1);}
+				m_eMode=eEntityEditorMode_GraphicProperties;
 			}
 			else
 			{
 				if(m_piLSObjects){m_piLSObjects->SetSelectedElement(-1);}
 				if(m_piLSChildren){m_piLSChildren->SetSelectedElement(nSelectionId-nObjects);}
+				m_eMode=eEntityEditorMode_EntityProperties;
 			}
 			m_Render.m_piRender->PopOptions();
 			m_Render.m_piRender->PopState();
@@ -806,11 +834,13 @@ void CEntityEditorMainWindow::OnMouseMove( double x,double y )
 			}
 		}
 		
-		if(m_EntityType.m_piEntityTypeDesign)
+		if(m_EntityType.m_piEntityTypeDesign && m_piLSBBoxes && m_piLSBBoxes->GetSelectedElement()!=-1)
 		{
 			SEntityTypeConfig sConfig;
 			m_EntityType.m_piEntityTypeDesign->GetEntityTypeConfig(&sConfig);
-			m_BBoxGizmo.GetBounds(&sConfig.vBBoxMins,&sConfig.vBBoxMaxs);
+			SBBox sBBox;
+			m_BBoxGizmo.GetBounds(&sBBox.vMins,&sBBox.vMaxs);
+			sConfig.vBBoxes[m_piLSBBoxes->GetSelectedElement()]=sBBox;
 			m_EntityType.m_piEntityTypeDesign->SetEntityTypeConfig(&sConfig);
 		}
 		UpdateInteractiveElementsSpeedsAndSizes();
@@ -975,6 +1005,41 @@ void CEntityEditorMainWindow::UpdateChildrenList()
 	}
 }
 
+
+void CEntityEditorMainWindow::UpdateBBoxList()
+{
+	if(m_piLSBBoxes==NULL){return;}
+	
+	m_piLSBBoxes->Clear();
+	if(m_EntityType.m_piEntityType)
+	{
+		SEntityTypeConfig sConfig;
+		m_EntityType.m_piEntityTypeDesign->GetEntityTypeConfig(&sConfig);
+		for(unsigned int b=0;b<sConfig.vBBoxes.size();b++)
+		{
+			char sName[100];
+			sprintf(sName,"%d",b+1);
+			m_piLSBBoxes->AddElement(sName);
+		}
+	}
+	if(m_piLSBBoxes->GetElementCount()){m_piLSBBoxes->SetSelectedElement(0);}
+	UpdateSelectedBBox();
+}
+
+void CEntityEditorMainWindow::UpdateSelectedBBox()
+{
+	if(m_piLSBBoxes==NULL){return;}
+	if(m_EntityType.m_piEntityTypeDesign==NULL){return;}
+	SBBox sBBox;
+	if(m_piLSBBoxes->GetSelectedElement()!=-1)
+	{
+		SEntityTypeConfig sConfig;
+		m_EntityType.m_piEntityTypeDesign->GetEntityTypeConfig(&sConfig);
+		sBBox=sConfig.vBBoxes[m_piLSBBoxes->GetSelectedElement()];
+	}
+	m_BBoxGizmo.SetBounds(sBBox.vMins,sBBox.vMaxs);
+}
+
 void CEntityEditorMainWindow::ShowPropertiesOf(ISystemObject *piObject)
 {
 	for(unsigned int x=0;x<ePropertyPanel_Count;x++)
@@ -1018,7 +1083,7 @@ void CEntityEditorMainWindow::UpdateGizmos()
 		}
 	}
 
-	m_bShowBBoxGizmo=(m_ppiPropertyPanels[ePropertyPanel_General] && m_ppiPropertyPanels[ePropertyPanel_General]->IsVisible());
+	m_bShowBBoxGizmo=(m_eMode==eEntityEditorMode_EntityProperties);
 }
 
 void CEntityEditorMainWindow::UpdateSelectedObject()
@@ -1029,27 +1094,31 @@ void CEntityEditorMainWindow::UpdateSelectedObject()
 	m_PositionWrapper.Detach();
 	m_OrientationWrapper.Detach();
 
-	int nSelectedAnimation=(m_piLSAnimations->GetSelectedElement());
-	int nSelectedObject=(m_piLSObjects->GetSelectedElement());
-	
-	IAnimationObjectType *piAnimationObject=NULL;
 	ISystemObject *piObject=NULL;
-
-	if(nSelectedAnimation!=-1)
+	
+	if(m_eMode==eEntityEditorMode_EntityProperties)
 	{
-		if(nSelectedObject!=-1)
-		{
-			m_vAnimations[nSelectedAnimation].m_piAnimationTypeDesign->GetObject(nSelectedObject,&piAnimationObject);
-			piObject=QI(ISystemObject,piAnimationObject);
-		}
-		else
-		{
-			piObject=ADD(m_vAnimations[nSelectedAnimation].m_piObject);
-		}
+		piObject=ADD(m_EntityType.m_piObject);
 	}
 	else
 	{
-		piObject=ADD(m_EntityType.m_piObject);
+		int nSelectedAnimation=(m_piLSAnimations->GetSelectedElement());
+		int nSelectedObject=(m_piLSObjects->GetSelectedElement());
+		
+		IAnimationObjectType *piAnimationObject=NULL;
+		
+		if(nSelectedAnimation!=-1)
+		{
+			if(nSelectedObject!=-1)
+			{
+				m_vAnimations[nSelectedAnimation].m_piAnimationTypeDesign->GetObject(nSelectedObject,&piAnimationObject);
+				piObject=QI(ISystemObject,piAnimationObject);
+			}
+			else
+			{
+				piObject=ADD(m_vAnimations[nSelectedAnimation].m_piObject);
+			}
+		}
 	}
 		
 	ShowPropertiesOf(piObject);
@@ -1129,6 +1198,10 @@ void CEntityEditorMainWindow::OnSelectionChanged(IGameGUIList *piControl,int nEl
 	{
 		// Deselect animation object
 		if(nElement!=-1 && m_piLSObjects){m_piLSObjects->SetSelectedElement(-1);UpdateSelectedObject();}
+	}
+	if(piControl==m_piLSBBoxes)
+	{
+		UpdateSelectedBBox();
 	}
 }
 void CEntityEditorMainWindow::OnSelectionDoubleCliked(IGameGUIList *piControl,int nElement,std::string sElement){}
@@ -1508,6 +1581,76 @@ void CEntityEditorMainWindow::ProcessNewChild()
 		REL(piObject);
 	}
 	for(unsigned long x=0;x<vEntityTypes.size();x++){IDesignObject *piEntityType=vEntityTypes[x];REL(piEntityType);}	
+}
+
+void CEntityEditorMainWindow::ProcessRemoveChild()
+{
+	if(m_EntityType.m_piEntityTypeDesign==NULL){return;}
+	
+	if(m_piLSChildren==NULL || m_piLSChildren->GetSelectedElement()==-1)
+	{
+		MessageDialog("No child selected","Entity Editor",eMessageDialogType_Error);
+		return;
+	}
+	
+	IEntityType   *piEntityType=NULL;
+	ISystemObject *piObject=NULL;
+	m_EntityType.m_piEntityTypeDesign->GetChild(m_piLSChildren->GetSelectedElement(),&piEntityType);
+	piObject=QI(ISystemObject,piEntityType);
+	if(piObject==NULL)
+	{
+		REL(piEntityType);
+		REL(piObject);
+		return;
+	}
+
+	std::string sText="Remove child '";
+	sText+=piObject->GetName();
+	sText+="' ?";
+	REL(piEntityType);
+	REL(piObject);
+	
+	if(!ConfirmDialog(sText,"New project",eMessageDialogType_Warning)){return;}
+	
+	m_EntityType.m_piEntityTypeDesign->RemoveChild(m_piLSChildren->GetSelectedElement());
+	UpdateChildrenList();
+}
+
+void CEntityEditorMainWindow::ProcessNewBBox()
+{
+	if(!m_EntityType.m_piEntityTypeDesign){return;}
+	
+	SEntityTypeConfig sConfig;
+	m_EntityType.m_piEntityTypeDesign->GetEntityTypeConfig(&sConfig);
+	SBBox sBBox;
+	sConfig.vBBoxes.push_back(sBBox);
+	m_EntityType.m_piEntityTypeDesign->SetEntityTypeConfig(&sConfig);
+	UpdateBBoxList();
+	m_piLSBBoxes->SetSelectedElement(((int)sConfig.vBBoxes.size())-1);
+	UpdateSelectedBBox();
+}
+
+void CEntityEditorMainWindow::ProcessRemoveBBox()
+{
+	if(m_piLSBBoxes==NULL || m_piLSBBoxes->GetSelectedElement()==-1)
+	{
+		MessageDialog("No BBox selected.","Entity Editor",eMessageDialogType_Error);
+		return;
+	}
+	int nSelected=m_piLSBBoxes->GetSelectedElement();
+	
+	SEntityTypeConfig sConfig,sOldConfig;
+	m_EntityType.m_piEntityTypeDesign->GetEntityTypeConfig(&sOldConfig);
+	sConfig=sOldConfig;
+	sConfig.vBBoxes.clear();
+	for(int x=0;x<(int)sOldConfig.vBBoxes.size();x++)
+	{
+		if(x!=nSelected){sConfig.vBBoxes.push_back(sOldConfig.vBBoxes[x]);}
+	}
+	m_EntityType.m_piEntityTypeDesign->SetEntityTypeConfig(&sConfig);
+	UpdateBBoxList();
+	m_piLSBBoxes->SetSelectedElement(nSelected>=(int)sConfig.vBBoxes.size()?((int)sConfig.vBBoxes.size())-1:nSelected);
+	UpdateSelectedBBox();
 }
 
 void CEntityEditorMainWindow::ProcessNewEntity()
