@@ -58,7 +58,7 @@ class CLiveBonus: public CEntityBase
 	
 	CVector m_vCurrentForwardDirection;
 	double  m_dCurrentAngularVelocity;
-	
+	double m_dRadius;	
 public:
 	
 	bool OnCollision(IEntity *pOther,CVector &vCollisionPos);

@@ -33,6 +33,8 @@ IEntity *CVehicleType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTi
 {
     CVehicle *piEntity=new CVehicle(this);
     InitializeEntity(piEntity,dwCurrentTime);
+	// Set damage type to none till first frame to let the unit know if it is inside a building.
+	piEntity->SetDamageType(DAMAGE_TYPE_NONE);	
     piEntity->SetState(eVehicleState_Normal);
 	piEntity->GetPhysicInfo()->dMass=1;
 	piEntity->GetPhysicInfo()->dwCollisionType=PHYSIC_COLLISION_TYPE_SLIDE;
@@ -46,7 +48,6 @@ CVehicle::CVehicle(CVehicleType *pType)
 	m_piTarget=NULL;
     m_sClassName="CVehicle";
     m_pType=pType;
-    m_dwDamageType=DAMAGE_TYPE_NORMAL;
 	m_nRoutePoint=0;
 	m_piContainerBuilding=NULL;
 	m_bRouteFinished=false;
@@ -98,22 +99,30 @@ void CVehicle::AcquireTarget()
 
 bool CVehicle::IsInsideBuilding(IEntity *piEntity)
 {
+	SPhysicInfo *pOtherPhysicInfo=piEntity->GetPhysicInfo();
+	if(pOtherPhysicInfo->pvBBoxes==NULL){return false;}
+	if(pOtherPhysicInfo->pvBBoxes->size()==0){return false;}
+	
 	CVector vFake1,vFake2;
 	CVector vForward,vRight,vUp;
 	ComputeReferenceSystem(piEntity->GetPhysicInfo()->vPosition,piEntity->GetPhysicInfo()->vAngles,Origin,Origin,&vFake1,&vFake2,&vForward,&vUp,&vRight);
 
 	CVector vMyCenter=m_PhysicInfo.vPosition;
-	vMyCenter+=(m_PhysicInfo.vMins+m_PhysicInfo.vMaxs)*0.5;
+	/*vMyCenter+=(m_PhysicInfo.vMins+m_PhysicInfo.vMaxs)*0.5;*/
 	vMyCenter-=piEntity->GetPhysicInfo()->vPosition;
 	CMatrix m;
 	m.Ref(vForward,vUp,vRight);
 	vMyCenter*=m;
-
-	bool bInside=true;
-	for(int c=0;c<3;c++)
+	
+	bool bInside=false;
+	for(unsigned int b=0;!bInside && b<pOtherPhysicInfo->pvBBoxes->size();b++)
 	{
-		if(vMyCenter.c[c]<piEntity->GetPhysicInfo()->vMins.c[c]){bInside=false;break;}
-		if(vMyCenter.c[c]>piEntity->GetPhysicInfo()->vMaxs.c[c]){bInside=false;break;}
+		bInside=true;
+		for(int c=0;c<3;c++)
+		{
+			if(vMyCenter.c[c]<(*pOtherPhysicInfo->pvBBoxes)[b].vMins.c[c]){bInside=false;break;}
+			if(vMyCenter.c[c]>(*pOtherPhysicInfo->pvBBoxes)[b].vMaxs.c[c]){bInside=false;break;}
+		}
 	}
 	return bInside;
 }

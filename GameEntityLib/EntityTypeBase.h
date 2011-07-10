@@ -44,6 +44,11 @@ BEGIN_STRUCT_PROPS(SChildEntityType)
 	PROP_FLAGS(vAngles     ,"Angles",MRPF_NORMAL|MRPF_OPTIONAL)
 END_STRUCT_PROPS()
 
+BEGIN_STRUCT_PROPS(SBBox)
+	PROP(vMins  ,"Mins")
+	PROP(vMaxs	,"Maxs")
+END_STRUCT_PROPS()
+
 #define BEGIN_ENTITY_STATE_MAP() virtual void RegisterStates(){
 #define ENTITY_STATE(index,name) if(m_vStates.size()<=index){m_vStates.resize(index+1);} m_vStates[index].sName=name;
 #define ENTITY_STATE_CHAIN(toclass) toclass::RegisterStates();
@@ -63,8 +68,7 @@ private:
 	CAnimationTypeWrapper *GetStateAnimation(unsigned int nState,unsigned int nIndex);
 protected:
 	
-	CVector      m_vBBoxMins;
-	CVector      m_vBBoxMaxs;
+	std::vector<SBBox> m_vBBoxes;
 	unsigned int m_nDamageType;
 	unsigned int m_nBoundsType;
 	unsigned int m_nMovementType;
@@ -80,9 +84,6 @@ protected:
 	
     virtual void	InitializeEntity(CEntityBase *piEntity,unsigned int dwCurrentTime);
 
-	virtual void	GetBBox(CVector *pvMins,CVector *pvMaxs);
-	virtual CVector	GetSize();
-
 public:
 	
 	virtual void	DesignRender(IGenericRender *piRender,CVector &vPosition,CVector &vAngles,bool bSelected);
@@ -97,8 +98,7 @@ public:
         PROP(m_mStateAnimations ,"StateAnimations")
 		PROP_FLAGS(m_vWeapons   ,"Weapons",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_vChildren  ,"Children",MRPF_NORMAL|MRPF_OPTIONAL)
-		PROP_FLAGS(m_vBBoxMins  ,"BBoxMins",MRPF_NORMAL|MRPF_OPTIONAL)
-		PROP_FLAGS(m_vBBoxMaxs  ,"BBoxMaxs",MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_FLAGS(m_vBBoxes    ,"BBoxes",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_nMovementType,"MovementType",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_nCollisionType,"CollisionType",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_nBoundsType,"BoundsType",MRPF_NORMAL|MRPF_OPTIONAL)

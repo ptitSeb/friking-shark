@@ -82,8 +82,8 @@ void CFighter::AcquireTarget()
 		{
 			CVector vTargetPos=m_piTarget->GetPhysicInfo()->vPosition;
 			// Do not flee if the player appears just ahead
-			if((m_PhysicInfo.vPosition.c[2]+m_PhysicInfo.vMins.c[2])<=vTargetPos.c[2] &&
-				(m_PhysicInfo.vPosition.c[2]+m_PhysicInfo.vMaxs.c[2])>=vTargetPos.c[2])
+			if((m_PhysicInfo.vPosition.c[2]-m_dRadius)<=vTargetPos.c[2] &&
+				(m_PhysicInfo.vPosition.c[2]+m_dRadius)>=vTargetPos.c[2])
 			{
 				m_bFleeEnabled=false;
 			}
@@ -186,8 +186,8 @@ void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 			CVector vTargetPos=m_piTarget->GetPhysicInfo()->vPosition;
 			
 			if(m_pType->m_bFleeOnSameZ &&
-			   (m_PhysicInfo.vPosition.c[2]+m_PhysicInfo.vMins.c[2])<=vTargetPos.c[2] &&
-			   (m_PhysicInfo.vPosition.c[2]+m_PhysicInfo.vMaxs.c[2])>=vTargetPos.c[2])
+				(m_PhysicInfo.vPosition.c[2]-m_dRadius)<=vTargetPos.c[2] &&
+				(m_PhysicInfo.vPosition.c[2]+m_dRadius)>=vTargetPos.c[2])
 			{
 				double dTempAngle=drand()*(m_pType->m_dMaxFleeAngle-m_pType->m_dMinFleeAngle)+m_pType->m_dMinFleeAngle;//35.0+20.0;
 				m_dFleeAngle=(vTargetPos.c[2]-m_PhysicInfo.vPosition.c[2])>0?90.0+dTempAngle:270-dTempAngle;
@@ -197,8 +197,8 @@ void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 			}
 			
 			if(m_pType->m_bFleeOnSameX &&
-			   (m_PhysicInfo.vPosition.c[0]+m_PhysicInfo.vMins.c[0])<=vTargetPos.c[0] &&
-			   (m_PhysicInfo.vPosition.c[0]+m_PhysicInfo.vMaxs.c[0])>=vTargetPos.c[0])
+				(m_PhysicInfo.vPosition.c[0]-m_dRadius)<=vTargetPos.c[0] &&
+				(m_PhysicInfo.vPosition.c[0]+m_dRadius)>=vTargetPos.c[0])
 			{
 				double dTempAngle=drand()*(m_pType->m_dMaxFleeAngle-m_pType->m_dMinFleeAngle)+m_pType->m_dMinFleeAngle;//35.0+20.0;
 				m_dFleeAngle=(vTargetPos.c[2]-m_PhysicInfo.vPosition.c[2])>0?270.0-dTempAngle:90+dTempAngle;

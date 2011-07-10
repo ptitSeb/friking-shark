@@ -53,17 +53,22 @@ public:
 
 class CGroundBoss: public CEntityBase
 {
-	IEntity *m_piTarget;
     CGroundBossType  *m_pType;
 	int m_nRoutePoint;
 	bool m_bRouteFinished;
 	unsigned int m_dwNextShotTime;
 	unsigned int m_nConfiguredDamageType;
 	unsigned int m_nPauseEnd;
+	bool 		 m_bFirstFrame;
 	
 	void AcquireTarget();
 	
 	void Render(IGenericRender *piRender,IGenericCamera *piCamera);
+	
+	
+	static void FindBuilding(IEntity *piEntity,void *pParam1,void *pParam2);
+	bool IsInsideBuilding(IEntity *piEntity);
+	IEntity *m_piContainerBuilding;
 	
 public:
 
@@ -71,6 +76,11 @@ public:
 	void SetRoute(IRoute *piRoute);
 	void OnKilled();
 	void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
-
+	
+	// IEntityEvents
+	
+	void OnRemoved(IEntity *piEntity);
+	void OnKilled(IEntity *piEntity);
+	
     CGroundBoss(CGroundBossType *pType);
 };

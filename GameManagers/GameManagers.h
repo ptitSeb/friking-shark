@@ -102,6 +102,12 @@ struct SPhysicForce
     }
 }; 
 
+struct SBBox
+{
+	CVector vMins;
+	CVector vMaxs;
+};
+
 struct SPhysicInfo
 {
     unsigned int			dwMoveType;
@@ -116,9 +122,8 @@ struct SPhysicInfo
     CVector					vAngles;
     CVector					vAngleVelocity;
 	CVector					vForward;
-    CVector					vMins;
-    CVector					vMaxs;
-    vector<SPhysicForce>	vForces;
+	vector<SBBox>			*pvBBoxes;
+	vector<SPhysicForce>	vForces;
     SPhysicForce			fOwnForce;
 	double					dMaxVelocity;
 	double					dMaxForce;
@@ -142,6 +147,7 @@ struct SPhysicInfo
 		dMaxVelocity=0;
 		dMaxForce=0;
 		bOnSurface=false;
+		pvBBoxes=NULL;
     }
 };
 
@@ -299,10 +305,6 @@ struct IEntityType:virtual public ISystemUnknown,virtual public IDesignObject
 	
 	// Method to ensure that the resources are resident.
 	virtual bool    PrepareResources()=0;
-
-	virtual void	GetBBox(CVector *pvMins,CVector *pvMaxs)=0;
-	virtual CVector	GetSize()=0;
-
 };
 
 struct IFormationEvents:virtual public ISystemUnknown
@@ -869,8 +871,7 @@ enum EEntityAttributeType
 
 struct SEntityTypeConfig
 {
-	CVector 		vBBoxMins;
-	CVector 		vBBoxMaxs;
+	std::vector<SBBox> vBBoxes;
 	unsigned int	nMovementType;
 	unsigned int 	nCollisionType;
 	unsigned int 	nDamageType;

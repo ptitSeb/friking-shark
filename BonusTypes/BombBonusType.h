@@ -50,6 +50,7 @@ class CBombBonus: public CEntityBase
   CPlane 		   m_PlayAreaPlane;
   IGenericCamera  *m_piCamera;
   IEntity		  *m_piOwner;
+  double		   m_dRadius;
   
 public:
  
