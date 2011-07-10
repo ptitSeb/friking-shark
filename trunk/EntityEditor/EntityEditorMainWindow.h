@@ -61,6 +61,11 @@ enum EEntityEditorView
 	eEntityEditorView_Bottom
 };
 
+enum EEntityEditorMode
+{
+	eEntityEditorMode_EntityProperties,
+	eEntityEditorMode_GraphicProperties
+};
 class CFakeEntity: virtual public CEntityBase
 {
 public:
@@ -69,6 +74,7 @@ public:
 	~CFakeEntity(){}	
 };
 
+	
 class CEntityEditorMainWindow: public CGameWindowBase, public IGameGUIButtonEvents, public IGameGUIListEvents, public IEntityEditorPropertyPanelEvents
 {
 public:
@@ -90,6 +96,8 @@ public:
 	IAnimation 				*m_piAnimation;
 	CEntityTypeWrapper		 m_EntityType;
 	std::string				 m_sEntityName;
+	
+	EEntityEditorMode		 m_eMode;
 	
 	IEntityEditorPropertyPanel *m_ppiPropertyPanels[ePropertyPanel_Count];
 
@@ -123,15 +131,19 @@ public:
 	IGameGUILabel *m_piBTDecreaseVolume;
 	IGameGUILabel *m_piBTIncreaseVolume;
 
+	
 	IGameWindow	  *m_piGREntityPanel;
 	IGameWindow	  *m_piGREntitiesPanel;
 	IGameWindow	  *m_piGROptionsPanel;
 	IGameWindow   *m_piGREntityList;
-
+	
 	IGameGUIButton *m_piBTShowOptionsPanel;
 	IGameGUIButton *m_piBTShowFilePanel;
 	IGameGUIButton *m_piBTShowEntityProperties;
-
+	IGameGUIButton *m_piBTShowGraphicProperties;
+	IGameWindow	  *m_piGRGraphicProperties;
+	IGameWindow	  *m_piGREntityProperties;
+	
 	IGameGUIList   *m_piLSStates;
 	IGameGUIList   *m_piLSAnimations;
 	IGameGUIButton *m_piBTNewAnimation;
@@ -147,6 +159,12 @@ public:
 	
 	IGameGUIList    *m_piLSChildren;
 	IGameGUIButton  *m_piBTNewChild;
+	IGameGUIButton  *m_piBTRemoveChild;
+	
+	IGameGUIList    *m_piLSBBoxes;
+	IGameGUIButton  *m_piBTNewBBox;
+	IGameGUIButton  *m_piBTRemoveBBox;
+	
 	// Options
 
 	IGameGUIButton *m_piBTOptionsTextures;
@@ -183,10 +201,16 @@ public:
 	void ProcessNewAnimation();
 	void ProcessNewEntity();
 	void ProcessNewChild();
+	void ProcessNewBBox();
+	void ProcessRemoveChild();
+	void ProcessRemoveBBox();
+	
 	
 	void Reset();
 	
 	BEGIN_CHILD_MAP()
+		CHILD_MAP_ENTRY("EntityProperties",m_piGREntityProperties);
+		CHILD_MAP_ENTRY("GraphicProperties",m_piGRGraphicProperties);
 		CHILD_MAP_ENTRY("FPS",m_piSTFps);
 		CHILD_MAP_ENTRY("Volume",m_piSTVolume);
 		CHILD_MAP_ENTRY_EX("DecreaseVolume",m_piBTDecreaseVolume,IGameGUIButtonEvents);
@@ -195,8 +219,9 @@ public:
 		CHILD_MAP_ENTRY_EX("Options",m_piBTShowOptionsPanel,IGameGUIButtonEvents);
 		//CHILD_MAP_ENTRY_EX("Entities",m_piBTShowEntitiesPanel,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Entity",m_piBTShowFilePanel,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("EntityProperties",m_piBTShowEntityProperties,IGameGUIButtonEvents);
-
+		CHILD_MAP_ENTRY_EX("ShowEntityProperties",m_piBTShowEntityProperties,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("ShowGraphicProperties",m_piBTShowGraphicProperties,IGameGUIButtonEvents);
+		
 		CHILD_MAP_ENTRY("OptionsPanel",m_piGROptionsPanel);
 		CHILD_MAP_ENTRY_EX("OptionShowTextures",m_piBTOptionsTextures,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("OptionSolid",m_piBTOptionsSolid,IGameGUIButtonEvents);
@@ -215,6 +240,11 @@ public:
 		
 		CHILD_MAP_ENTRY_EX("ChildrenList",m_piLSChildren,IGameGUIListEvents);
 		CHILD_MAP_ENTRY_EX("NewChild",m_piBTNewChild,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("RemoveChild",m_piBTRemoveChild,IGameGUIButtonEvents);
+		
+		CHILD_MAP_ENTRY_EX("BBoxList",m_piLSBBoxes,IGameGUIListEvents);
+		CHILD_MAP_ENTRY_EX("NewBBox",m_piBTNewBBox,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("RemoveBBox",m_piBTRemoveBBox,IGameGUIButtonEvents);
 		
 		CHILD_MAP_ENTRY("EntityPanel",m_piGREntity);
 		CHILD_MAP_ENTRY_EX("EntityNew",m_piBTEntityNew,IGameGUIButtonEvents);
@@ -265,8 +295,10 @@ public:
 	void UpdateAnimationList();
 	void UpdateObjectList();
 	void UpdateChildrenList();
+	void UpdateBBoxList();
 	void UpdateSelectedAnimation();
 	void UpdateSelectedObject();
+	void UpdateSelectedBBox();
 	void UpdateInteractiveElementsSpeedsAndSizes();
 	void UpdateGizmos();
 	void ShowPropertiesOf(ISystemObject *piObject);
