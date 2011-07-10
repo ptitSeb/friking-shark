@@ -18,12 +18,15 @@
 
 #include "./stdafx.h"
 #include "BombProjectileType.h"
+#include "../GameGraphics/GameGraphics.h"
 
 struct SBombDamageData
 {
 	double dTimeFraction;
 	double dDamage;
 	double dRadius;
+	CVector vCameraPos;
+	CPlane  playAreaPlane;
 	
 	SBombDamageData(){dTimeFraction=0;dDamage=0;dRadius=0;}
 };
@@ -38,10 +41,12 @@ CBombProjectileType::CBombProjectileType()
    m_dDamageEndRadius=0;
    m_nDamageStartTime=0;
    m_nDamageEndTime=0;
+   g_PlayAreaManagerWrapper.AddRef();
 }
 
 CBombProjectileType::~CBombProjectileType()
 {
+	g_PlayAreaManagerWrapper.Release();
 }
 
 IEntity *CBombProjectileType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
@@ -80,11 +85,37 @@ void CBombProjectile::ApplyDamageOperation(IEntity *piEntity,void *pParam1,void 
 	if(piEntity->GetDamageType()==DAMAGE_TYPE_NONE && !bProjectile){return;}
 	if(piEntity->GetHealth()<=0.0){return;}
 	
-	CVector vTemp=piEntity->GetPhysicInfo()->vPosition;
-	vTemp.c[1]=pThis->m_PhysicInfo.vPosition.c[1];
-	CVector vDist=vTemp-pThis->m_PhysicInfo.vPosition;
-	double dDist=vDist;
-	if(dDist<pDamageData->dRadius)
+	SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();
+	
+	CVector vProjection;
+	
+	bool bHit=false;
+	
+	if(pDamageData->playAreaPlane.Cut(pDamageData->vCameraPos,pPhysicInfo->vPosition,&vProjection))
+	{
+		CVector vDist=vProjection-pThis->m_PhysicInfo.vPosition;
+		double dDist=vDist;
+		bHit=(dDist<pDamageData->dRadius);
+	}
+	if(!bHit)
+	{
+		for(unsigned int b=0;pPhysicInfo->pvBBoxes && b<pPhysicInfo->pvBBoxes->size();b++)
+		{
+			CVector pVolumePoints[8];
+			CalcBBoxVolume(pPhysicInfo->vPosition,pPhysicInfo->vAngles,(*pPhysicInfo->pvBBoxes)[b].vMins,(*pPhysicInfo->pvBBoxes)[b].vMaxs,pVolumePoints);
+			
+			for(unsigned int x=0;!bHit && x<8;x++)
+			{
+				if(pDamageData->playAreaPlane.Cut(pDamageData->vCameraPos,pVolumePoints[x],&vProjection))
+				{
+					CVector vDist=vProjection-pThis->m_PhysicInfo.vPosition;
+					double dDist=vDist;
+					bHit=(dDist<pDamageData->dRadius);
+				}
+			}
+		}
+	}
+	if(bHit)
 	{
 		if(bProjectile)
 		{
@@ -126,6 +157,10 @@ void CBombProjectile::ProcessFrame(unsigned int dwCurrentTime,double dTimeFracti
 		}
 		else if(dwCurrentTime>(m_dwCreationTime+m_pType->m_nTimeToExplode+m_pType->m_nDamageStartTime))
 		{
+			IGenericCamera *piCamera=g_PlayAreaManagerWrapper.m_piInterface->GetCamera();
+			CVector vCameraPos=piCamera?piCamera->GetPosition():Origin;
+			REL(piCamera);
+			
 			double dElapsedTime=((double)(dwCurrentTime-(m_dwCreationTime+m_pType->m_nTimeToExplode+m_pType->m_nDamageStartTime)));
 			double dTotalDuration=((double)(m_pType->m_nDamageEndTime-m_pType->m_nDamageStartTime));
 			double dElapsedFraction=dElapsedTime/dTotalDuration;
@@ -134,7 +169,8 @@ void CBombProjectile::ProcessFrame(unsigned int dwCurrentTime,double dTimeFracti
 			data.dTimeFraction=dTimeFraction;
 			data.dDamage=m_pType->m_dDamagePerSecond*dTimeFraction;
 			data.dRadius=(m_pType->m_dDamageEndRadius-m_pType->m_dDamageStartRadius)*dElapsedFraction+m_pType->m_dDamageStartRadius;
-			
+			data.vCameraPos=vCameraPos;
+			data.playAreaPlane=CPlane(AxisPosY,m_PhysicInfo.vPosition);
 			GetEntityManager()->PerformUnaryOperation(ApplyDamageOperation,this,&data);
 		}
 	}
