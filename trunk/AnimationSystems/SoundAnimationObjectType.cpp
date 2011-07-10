@@ -98,6 +98,7 @@ void CSoundAnimationObject::CheckActivation(unsigned int dwCurrentTime)
 	{
 		if(m_pType->m_SoundType.m_piSoundType && m_pType->m_nEndTime && dwRelativeTime>=m_pType->m_nEndTime)
 		{
+			if(m_piSound){m_piSound->Stop();}
 			Deactivate();
 		}
 	}
@@ -105,7 +106,7 @@ void CSoundAnimationObject::CheckActivation(unsigned int dwCurrentTime)
 
 void CSoundAnimationObject::Deactivate()
 {
-    if(m_piSound){m_piSound->Stop();}
+	if(m_piSound && m_pType->m_bLoop){m_piSound->Stop();}
     CAnimationObjectBase::Deactivate();
 }
 
@@ -120,7 +121,7 @@ bool CSoundAnimationObject::ProcessFrame(IPhysicManager *pPhysicManager,unsigned
     {
       if(m_piSound->IsPlaying())
       {
-        return true;
+		  return true;
       }
       else
       {
