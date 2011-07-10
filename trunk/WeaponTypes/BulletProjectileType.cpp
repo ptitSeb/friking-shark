@@ -32,10 +32,13 @@ CBulletProjectileType::CBulletProjectileType()
   m_dwDuration=1000;
   m_nCollisionType=PHYSIC_COLLISION_TYPE_THROUGH;
   m_nMovementType=PHYSIC_MOVE_TYPE_FLY;
-  
+  g_PlayAreaManagerWrapper.AddRef();
 }
 
-CBulletProjectileType::~CBulletProjectileType(){}
+CBulletProjectileType::~CBulletProjectileType()
+{
+	g_PlayAreaManagerWrapper.Release();
+}
 
 IEntity *CBulletProjectileType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
 {
