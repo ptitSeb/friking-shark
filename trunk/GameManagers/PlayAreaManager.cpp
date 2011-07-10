@@ -635,8 +635,27 @@ bool CPlayAreaManager::UpdateEntityLayers()
 		double dSeparation=pLayer->m_LayerConfig.dSeparation;// in Entities
 		double dJitter=pLayer->m_LayerConfig.dPositionJitter;// in Entities
 		double dYawJitter=pLayer->m_LayerConfig.dYawJitter;// 0-360
-		CVector vEntitiesize=pLayer->m_EntityType.m_piEntityType->GetSize();
-
+		
+		SEntityTypeConfig vConfig;
+		CVector vEntitiesMins,vEntitiesMaxs;
+		IEntityTypeDesign *piEntityTypeDesign=QI(IEntityTypeDesign,pLayer->m_EntityType.m_piEntityType);
+		if(piEntityTypeDesign){piEntityTypeDesign->GetEntityTypeConfig(&vConfig);}
+		REL(piEntityTypeDesign);
+		
+		if(vConfig.vBBoxes.size())
+		{
+			vEntitiesMins=vConfig.vBBoxes[0].vMins;
+			vEntitiesMaxs=vConfig.vBBoxes[0].vMaxs;
+			for(unsigned int b=0;b<vConfig.vBBoxes.size();b++)
+			{
+				vEntitiesMins.Mins(vEntitiesMins,vConfig.vBBoxes[0].vMins);
+				vEntitiesMaxs.Maxs(vEntitiesMaxs,vConfig.vBBoxes[0].vMaxs);
+			}
+		}
+			
+		CVector vEntitiesize=vEntitiesMaxs-vEntitiesMins;
+		if(vEntitiesize.c[0]==0 || vEntitiesize.c[2]==0){continue;}
+		
 		srand(0);
 
 		for(double dX=vTerrainMins.c[0];dX<=vTerrainMaxs.c[0];dX+=(dSeparation*vEntitiesize.c[0]))

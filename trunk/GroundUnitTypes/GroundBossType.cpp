@@ -52,7 +52,6 @@ CTraceInfo CGroundBossType::DesignGetTrace(const CVector &vPosition,const CVecto
 
 CGroundBoss::CGroundBoss(CGroundBossType *pType)
 {
-	m_piTarget=NULL;
     m_sClassName="CGroundBoss";
     m_pType=pType;
     m_dwDamageType=DAMAGE_TYPE_NORMAL;
@@ -62,6 +61,8 @@ CGroundBoss::CGroundBoss(CGroundBossType *pType)
 	m_pType->GetEntityTypeConfig(&sconfig);
 	m_nConfiguredDamageType=sconfig.nDamageType;
 	m_nPauseEnd=0;
+	m_bFirstFrame=true;
+	m_piContainerBuilding=NULL;
 }
 
 void CGroundBoss::Render(IGenericRender *piRender,IGenericCamera *piCamera)
@@ -69,6 +70,30 @@ void CGroundBoss::Render(IGenericRender *piRender,IGenericCamera *piCamera)
 	//piRender->RenderBBox(m_PhysicInfo.vPosition,Origin,m_PhysicInfo.vMins,m_PhysicInfo.vMaxs,CVector(1,1,1),0x8888);
 	
 	CEntityBase::Render(piRender,piCamera);	
+}
+
+void CGroundBoss::OnRemoved(IEntity *piEntity)
+{
+	CEntityBase::OnRemoved(piEntity);
+	
+	if(piEntity==m_piTarget){SetTarget(NULL);}
+	if(piEntity==m_piContainerBuilding)
+	{
+		UNSUBSCRIBE_FROM_CAST(m_piContainerBuilding,IEntityEvents);
+		m_piContainerBuilding=NULL;
+	}
+}
+
+void CGroundBoss::OnKilled(IEntity *piEntity)
+{
+	CEntityBase::OnKilled(piEntity);
+	
+	if(piEntity==m_piTarget){SetTarget(NULL);}
+	if(piEntity==m_piContainerBuilding)
+	{
+		UNSUBSCRIBE_FROM_CAST(m_piContainerBuilding,IEntityEvents);
+		m_piContainerBuilding=NULL;
+	}
 }
 
 void CGroundBoss::OnKilled()
@@ -102,9 +127,58 @@ void CGroundBoss::AcquireTarget()
 	SetTarget(piTarget);
 }
 
+bool CGroundBoss::IsInsideBuilding(IEntity *piEntity)
+{
+	SPhysicInfo *pOtherPhysicInfo=piEntity->GetPhysicInfo();
+	if(pOtherPhysicInfo->pvBBoxes==NULL){return false;}
+	if(pOtherPhysicInfo->pvBBoxes->size()==0){return false;}
+	
+	CVector vFake1,vFake2;
+	CVector vForward,vRight,vUp;
+	ComputeReferenceSystem(piEntity->GetPhysicInfo()->vPosition,piEntity->GetPhysicInfo()->vAngles,Origin,Origin,&vFake1,&vFake2,&vForward,&vUp,&vRight);
+	
+	CVector vMyCenter=m_PhysicInfo.vPosition;
+	vMyCenter-=piEntity->GetPhysicInfo()->vPosition;
+	CMatrix m;
+	m.Ref(vForward,vUp,vRight);
+	vMyCenter*=m;
+	
+	bool bInside=false;
+	for(unsigned int b=0;!bInside && b<pOtherPhysicInfo->pvBBoxes->size();b++)
+	{
+		bInside=true;
+		for(int c=0;c<3;c++)
+		{
+			if(vMyCenter.c[c]<(*pOtherPhysicInfo->pvBBoxes)[b].vMins.c[c]){bInside=false;break;}
+			if(vMyCenter.c[c]>(*pOtherPhysicInfo->pvBBoxes)[b].vMaxs.c[c]){bInside=false;break;}
+		}
+	}
+	return bInside;
+}
+
+void CGroundBoss::FindBuilding(IEntity *piEntity,void *pParam1,void *pParam2)
+{
+	CGroundBoss *pThis=(CGroundBoss *)pParam1;
+	if(pThis->m_piContainerBuilding){return;}
+	if(piEntity->IsRemoved()){return;}
+	if(piEntity->GetHealth()<=0){return;}
+	if(*piEntity->GetEntityClass()!="CStaticStructure"){return;}
+	
+	bool bInside=pThis->IsInsideBuilding(piEntity);
+	if(bInside){pThis->m_piContainerBuilding=piEntity;}
+}
+
 void CGroundBoss::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
+	
+	if(m_bFirstFrame)
+	{
+		m_piContainerBuilding=NULL;
+		GetEntityManager()->PerformUnaryOperation(FindBuilding,this,0);
+		if(m_piContainerBuilding){SUBSCRIBE_TO_CAST(m_piContainerBuilding,IEntityEvents);}
+	}
+	m_bFirstFrame=false;
 	
 	if(GetState()==eGroundBossState_Destroyed)
 	{
@@ -122,13 +196,23 @@ void CGroundBoss::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 		SetState(ENTITY_STATE_BASE,(int)nAnimationToSet);
 	}
 	
-	bool bAllChildDead=true;
-	for(unsigned int x=0;x<m_vChildren.size();x++){if(m_vChildren[x].piEntity->GetHealth()>0){bAllChildDead=false;}}
-	m_dwDamageType=(bAllChildDead?m_nConfiguredDamageType:DAMAGE_TYPE_NONE);
-
-	
-	if(m_piTarget==NULL){AcquireTarget();}
-	
+	if(m_piContainerBuilding)
+	{
+		m_dwDamageType=DAMAGE_TYPE_NONE;
+		if(!IsInsideBuilding(m_piContainerBuilding))
+		{
+			UNSUBSCRIBE_FROM_CAST(m_piContainerBuilding,IEntityEvents);
+			m_piContainerBuilding=NULL;			
+		}
+	}
+	else
+	{
+		bool bAllChildDead=true;
+		for(unsigned int x=0;x<m_vChildren.size();x++){if(m_vChildren[x].piEntity->GetHealth()>0){bAllChildDead=false;}}
+		m_dwDamageType=(bAllChildDead?m_nConfiguredDamageType:DAMAGE_TYPE_NONE);
+		if(m_piTarget==NULL){AcquireTarget();}
+	}
+		
 	if(m_bRouteFinished || (dwCurrentTime<m_nPauseEnd))
 	{
 		double dVel=m_PhysicInfo.vVelocity.N();

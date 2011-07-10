@@ -123,22 +123,28 @@ void EntityOperation_CheckCollision(IEntity *piOther,void *pParam1,void *pParam2
     SPhysicInfo         *pPhysicInfo=piEntity->GetPhysicInfo();
     SPhysicInfo         *pOtherPhysicInfo=piOther->GetPhysicInfo();
     SCheckCollisionInfo *pInfo=(SCheckCollisionInfo *)pParam2;
-
+	
     if(piOther==piEntity){return;}
     if(pOtherPhysicInfo->dwBoundsType==PHYSIC_BOUNDS_TYPE_NONE){return;}
     
-
+	
 	IEntity *piParent=piOther,*piAncestor=piOther;
 	while(piParent){piParent=piParent->GetParent();if(piParent){piAncestor=piParent;}}
 	if(piAncestor==pInfo->piAncestor){return;}
 
 	if(pOtherPhysicInfo->dwBoundsType==PHYSIC_BOUNDS_TYPE_BBOX)
     {
+		SBBox vOtherBBox;
+		SBBox vBBox;
+		
+		if(pPhysicInfo->pvBBoxes && pPhysicInfo->pvBBoxes->size()){vBBox=(*pPhysicInfo->pvBBoxes)[0];}
+		if(pOtherPhysicInfo->pvBBoxes && pOtherPhysicInfo->pvBBoxes->size()){vOtherBBox=(*pOtherPhysicInfo->pvBBoxes)[0];}
+		
         bool bInMovementBox=true;
         for(int x=0;x<3;x++)
         {
-            if((pOtherPhysicInfo->vPosition.c[x]+pOtherPhysicInfo->vMaxs.c[x])<pInfo->vTotalMins.c[x]){bInMovementBox=false;break;}
-            if((pOtherPhysicInfo->vPosition.c[x]+pOtherPhysicInfo->vMins.c[x])>pInfo->vTotalMaxs.c[x]){bInMovementBox=false;break;}
+			if((pOtherPhysicInfo->vPosition.c[x]+vOtherBBox.vMaxs.c[x])<pInfo->vTotalMins.c[x]){bInMovementBox=false;break;}
+			if((pOtherPhysicInfo->vPosition.c[x]+vOtherBBox.vMins.c[x])>pInfo->vTotalMaxs.c[x]){bInMovementBox=false;break;}
         }
         if(bInMovementBox)
         {
@@ -165,8 +171,8 @@ void EntityOperation_CheckCollision(IEntity *piOther,void *pParam1,void *pParam2
                 bInStepBox=true;
                 for(int x=0;x<3;x++)
                 {
-                    if((pOtherPhysicInfo->vPosition.c[x]+pOtherPhysicInfo->vMaxs.c[x])<pPhysicInfo->vMins.c[x]+vTempPos.c[x]){bInStepBox=false;break;}
-                    if((pOtherPhysicInfo->vPosition.c[x]+pOtherPhysicInfo->vMins.c[x])>pPhysicInfo->vMaxs.c[x]+vTempPos.c[x]){bInStepBox=false;break;}
+					if((pOtherPhysicInfo->vPosition.c[x]+vOtherBBox.vMaxs.c[x])<vBBox.vMins.c[x]+vTempPos.c[x]){bInStepBox=false;break;}
+					if((pOtherPhysicInfo->vPosition.c[x]+vOtherBBox.vMins.c[x])>vBBox.vMaxs.c[x]+vTempPos.c[x]){bInStepBox=false;break;}
                 }
                 if(bInStepBox){break;}
                 vTempPos+=vStep;
@@ -325,13 +331,20 @@ void EntityOperation_ProcessPhysicFrame(IEntity *piEntity,void *pParam1,void *pP
         pPhysicInfo->dwBoundsType!=PHYSIC_BOUNDS_TYPE_NONE && 
         pPhysicInfo->dwBoundsType!=PHYSIC_BOUNDS_TYPE_BSP)
     {
+		SBBox vBBox;
+		
+		if(pPhysicInfo->pvBBoxes && pPhysicInfo->pvBBoxes->size())
+		{
+			vBBox=(*pPhysicInfo->pvBBoxes)[0];			
+		}
+		
         SCheckCollisionInfo info;
         info.vOrigin=pPhysicInfo->vPosition;
         info.vDestination=vNewPos;
-        info.vTotalMinsOrigin=pPhysicInfo->vMins+info.vOrigin;
-        info.vTotalMaxsOrigin=pPhysicInfo->vMaxs+info.vOrigin;
-        info.vTotalMinsDestination=pPhysicInfo->vMins+info.vDestination;
-        info.vTotalMaxsDestination=pPhysicInfo->vMaxs+info.vDestination;
+		info.vTotalMinsOrigin=vBBox.vMins+info.vOrigin;
+		info.vTotalMaxsOrigin=vBBox.vMaxs+info.vOrigin;
+		info.vTotalMinsDestination=vBBox.vMins+info.vDestination;
+		info.vTotalMaxsDestination=vBBox.vMaxs+info.vDestination;
         info.traceInfo.m_vTracePos=info.vDestination;
 
         for(int x=0;x<3;x++)

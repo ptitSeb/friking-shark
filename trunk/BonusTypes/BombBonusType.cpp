@@ -49,6 +49,8 @@ CBombBonus::CBombBonus(CBombBonusType *pType,IEntity *piOwner)
   m_piCamera=NULL;
   m_dwDamageType=DAMAGE_TYPE_NONE;
   m_piOwner=piOwner;
+  m_dRadius=m_pType->DesignGetRadius();
+  
   if(m_piOwner)
   {
 	  SUBSCRIBE_TO_CAST(m_piOwner,IEntityEvents);
@@ -120,7 +122,7 @@ void CBombBonus::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 	CVector vMins,vMaxs;
 	m_pType->m_PlayAreaManager.m_piPlayAreaManager->GetCurrentVisibleArea(&vMins,&vMaxs);
 	
-	if(m_PhysicInfo.vPosition.c[0]+m_PhysicInfo.vMaxs.c[0]<vMins.c[0])
+	if(m_PhysicInfo.vPosition.c[0]+m_dRadius<vMins.c[0])
 	{
 		Remove();
 		return;

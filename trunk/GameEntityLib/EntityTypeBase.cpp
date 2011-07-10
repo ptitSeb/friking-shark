@@ -99,9 +99,8 @@ void CEntityTypeBase::InitializeEntity(CEntityBase *pEntity,unsigned int dwCurre
     pPhysicInfo->dwMoveType=m_nMovementType;
 	pPhysicInfo->dwBoundsType=m_nBoundsType;
 	pPhysicInfo->dwCollisionType=m_nCollisionType;
-    pPhysicInfo->vMins=m_vBBoxMins;
-    pPhysicInfo->vMaxs=m_vBBoxMaxs;
-	pPhysicInfo->dMaxVelocity=m_dMaxVelocity;
+	pPhysicInfo->pvBBoxes=&m_vBBoxes;
+    pPhysicInfo->dMaxVelocity=m_dMaxVelocity;
 	pPhysicInfo->dMaxForce=m_dMaxVelocity;
 
 	pEntity->SetEntityTypeBase(this);
@@ -117,17 +116,6 @@ void CEntityTypeBase::InitializeEntity(CEntityBase *pEntity,unsigned int dwCurre
 		IEntity *piEntity=m_vChildren[x].entityType.m_piEntityType->CreateInstance(NULL,dwCurrentTime);
 		if(piEntity){pEntity->AddChild(piEntity,m_vChildren[x].vPosition,m_vChildren[x].vAngles);}
 	}
-}
-
-void CEntityTypeBase::GetBBox( CVector *pvMins,CVector *pvMaxs )
-{
-	if(pvMins){*pvMins=m_vBBoxMins;}
-	if(pvMaxs){*pvMaxs=m_vBBoxMaxs;}
-}
-
-CVector CEntityTypeBase::GetSize()
-{
-	return m_vBBoxMaxs-m_vBBoxMins;
 }
 
 double CEntityTypeBase::DesignGetRadius()
@@ -262,8 +250,7 @@ void CEntityTypeBase::GetEntityTypeConfig(SEntityTypeConfig *pConfig)
 {
 	pConfig->dMaxHealth=m_dMaxHealth;
 	pConfig->dMaxVelocity=m_dMaxVelocity;
-	pConfig->vBBoxMins=m_vBBoxMins;
-	pConfig->vBBoxMaxs=m_vBBoxMaxs;
+	pConfig->vBBoxes=m_vBBoxes;
 	pConfig->nMovementType=m_nMovementType;
 	pConfig->nCollisionType=m_nCollisionType;
 	pConfig->nDamageType=m_nDamageType;
@@ -277,8 +264,7 @@ void CEntityTypeBase::SetEntityTypeConfig(SEntityTypeConfig *pConfig)
 {
 	m_dMaxHealth=pConfig->dMaxHealth;
 	m_dMaxVelocity=pConfig->dMaxVelocity;
-	m_vBBoxMins=pConfig->vBBoxMins;
-	m_vBBoxMaxs=pConfig->vBBoxMaxs;
+	m_vBBoxes=pConfig->vBBoxes;
 	m_nMovementType=pConfig->nMovementType;
 	m_nCollisionType=pConfig->nCollisionType;
 	m_nDamageType=pConfig->nDamageType;

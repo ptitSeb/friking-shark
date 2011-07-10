@@ -75,22 +75,31 @@ void CBulletProjectile::CheckCollisions(IEntity *piEntity,void *pParam1,void *pP
 	if(piEntity->GetAlignment()==ENTITY_ALIGNMENT_NEUTRAL ){return;}
 	if(piEntity->GetDamageType()==DAMAGE_TYPE_NONE){return;}
 	if(piEntity->GetHealth()<=0.0){return;}
+
+	bool bCollision=false;
 	
 	SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();
-	CVector pVolumePoints[8];
-	CalcBBoxVolume(pPhysicInfo->vPosition,pPhysicInfo->vAngles,pPhysicInfo->vMins,pPhysicInfo->vMaxs,pVolumePoints);
-
-	int nPointsIn=0,nPointsOut=0;
-	for(unsigned int x=0;x<8;x++){if(pCollisionData->fallPlane.GetSide(pVolumePoints[x])>=0){nPointsOut++;}else{nPointsIn++;}}
-	if(nPointsOut && nPointsIn)
+	for(unsigned int b=0;pPhysicInfo->pvBBoxes && b<pPhysicInfo->pvBBoxes->size();b++)
 	{
-		nPointsIn=0,nPointsOut=0;
-		for(unsigned int x=0;x<8;x++){if(pCollisionData->forwardPlane.GetSide(pVolumePoints[x])>=0){nPointsOut++;}else{nPointsIn++;}}
-		if(nPointsOut && nPointsIn) 
+		CVector pVolumePoints[8];
+		CalcBBoxVolume(pPhysicInfo->vPosition,pPhysicInfo->vAngles,(*pPhysicInfo->pvBBoxes)[b].vMins,(*pPhysicInfo->pvBBoxes)[b].vMaxs,pVolumePoints);
+
+		int nPointsIn=0,nPointsOut=0;
+		for(unsigned int x=0;x<8;x++){if(pCollisionData->fallPlane.GetSide(pVolumePoints[x])>=0){nPointsOut++;}else{nPointsIn++;}}
+		if(nPointsOut && nPointsIn)
 		{
-			piEntity->OnCollision(pThis,pThis->m_PhysicInfo.vPosition);
-			pThis->OnCollision(piEntity,pThis->m_PhysicInfo.vPosition);
+			nPointsIn=0,nPointsOut=0;
+			for(unsigned int x=0;x<8;x++){if(pCollisionData->forwardPlane.GetSide(pVolumePoints[x])>=0){nPointsOut++;}else{nPointsIn++;}}
+			if(nPointsOut && nPointsIn) 
+			{
+				bCollision=true;			
+			}
 		}
+	}
+	if(bCollision)
+	{
+		piEntity->OnCollision(pThis,pThis->m_PhysicInfo.vPosition);
+		pThis->OnCollision(piEntity,pThis->m_PhysicInfo.vPosition);
 	}
 }
 

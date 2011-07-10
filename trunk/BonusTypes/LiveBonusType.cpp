@@ -72,6 +72,7 @@ CLiveBonus::CLiveBonus(CLiveBonusType *pType)
 	m_pType=pType;
 	m_dwDamageType=DAMAGE_TYPE_NONE;
 	m_dCurrentAngularVelocity=0;
+	m_dRadius=pType->DesignGetRadius();
 }
 
 bool CLiveBonus::OnCollision(IEntity *pOther,CVector &vCollisionPos)
@@ -98,13 +99,13 @@ void CLiveBonus::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 	CVector vMins,vMaxs;
 	m_pType->m_PlayAreaManager.m_piPlayAreaManager->GetCurrentVisibleArea(&vMins,&vMaxs);
 	
-	if(m_PhysicInfo.vPosition.c[0]+m_PhysicInfo.vMaxs.c[0]<vMins.c[0])
+	if(m_PhysicInfo.vPosition.c[0]+m_dRadius<vMins.c[0])
 	{
 		Remove();
 		return;
 	}
 	
-	if(m_PhysicInfo.vPosition.c[2]+m_PhysicInfo.vMins.c[2]<vMins.c[2] && m_vCurrentForwardDirection.c[2]<0)
+	if(m_PhysicInfo.vPosition.c[2]-m_dRadius<vMins.c[2] && m_vCurrentForwardDirection.c[2]<0)
 	{
 		CMatrix m;
 		double dInitialAngle=drand()*(-25.0)-20.0;
@@ -113,7 +114,7 @@ void CLiveBonus::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 		m_vCurrentForwardDirection=AxisPosX;
 		m_vCurrentForwardDirection*=m;
 	}
-	if(m_PhysicInfo.vPosition.c[2]+m_PhysicInfo.vMaxs.c[2]>vMaxs.c[2] && m_vCurrentForwardDirection.c[2]>0)
+	if(m_PhysicInfo.vPosition.c[2]+m_dRadius>vMaxs.c[2] && m_vCurrentForwardDirection.c[2]>0)
 	{
 		CMatrix m;
 		double dInitialAngle=drand()*25.0+20.0;
