@@ -50,6 +50,7 @@ CBombBonus::CBombBonus(CBombBonusType *pType,IEntity *piOwner)
   m_dwDamageType=DAMAGE_TYPE_NONE;
   m_piOwner=piOwner;
   m_dRadius=m_pType->DesignGetRadius();
+  m_bInPlayAreaAnyTime=false;
   
   if(m_piOwner)
   {
@@ -109,7 +110,6 @@ void CBombBonus::OnRemoved(IEntity *piEntity)
 	{
 		UNSUBSCRIBE_FROM_CAST(m_piOwner,IEntityEvents);
 		m_piOwner=NULL;
-		Remove();
 	}
 }
 
@@ -121,13 +121,14 @@ void CBombBonus::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 	
 	CVector vMins,vMaxs;
 	m_pType->m_PlayAreaManager.m_piPlayAreaManager->GetCurrentVisibleArea(&vMins,&vMaxs);
-	
-	if(m_PhysicInfo.vPosition.c[0]+m_dRadius<vMins.c[0])
+	bool bInPlayArea=((m_PhysicInfo.vPosition.c[0]-m_dRadius)<=vMaxs.c[0] && (m_PhysicInfo.vPosition.c[0]+m_dRadius)>=vMins.c[0]);
+	m_bInPlayAreaAnyTime=m_bInPlayAreaAnyTime|| bInPlayArea;
+
+	if(!bInPlayArea && m_bInPlayAreaAnyTime)
 	{
 		Remove();
 		return;
 	}
-	
 	CVector vCameraPos,vCut;
 	if(m_piCamera){vCameraPos=m_piCamera->GetPosition();}
 	if(m_PlayAreaPlane.Cut(m_vOriginalPosition,vCameraPos,&vCut))

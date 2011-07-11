@@ -51,6 +51,7 @@ class CBombBonus: public CEntityBase
   IGenericCamera  *m_piCamera;
   IEntity		  *m_piOwner;
   double		   m_dRadius;
+  bool			   m_bInPlayAreaAnyTime;
   
 public:
  
