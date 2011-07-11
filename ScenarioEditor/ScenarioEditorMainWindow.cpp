@@ -1385,7 +1385,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		{
 			int nIncrement=100;
 			if(m_piGUIManager->IsKeyDown(GK_LCONTROL)){nIncrement=1000;}
-			if(m_piGUIManager->IsKeyDown(GK_LMENU)){nIncrement=5000;}
+			if(m_piGUIManager->IsKeyDown(GK_LSHIFT)){nIncrement=5000;}
 			int nDelay=pEntity->m_piPlayAreaEntity->GetDelay();
 			pEntity->m_piPlayAreaEntity->SetDelay(nDelay+nIncrement);
 		}
@@ -1393,7 +1393,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		{
 			int nIncrement=100;
 			if(m_piGUIManager->IsKeyDown(GK_LCONTROL)){nIncrement=1000;}
-			if(m_piGUIManager->IsKeyDown(GK_LMENU)){nIncrement=5000;}
+			if(m_piGUIManager->IsKeyDown(GK_LSHIFT)){nIncrement=5000;}
 			int nDelay=pEntity->m_piPlayAreaEntity->GetDelay();
 			pEntity->m_piPlayAreaEntity->SetDelay(nDelay>=nIncrement?nDelay-nIncrement:0);
 		}
@@ -1411,7 +1411,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		{
 			int nIncrement=100;
 			if(m_piGUIManager->IsKeyDown(GK_LCONTROL)){nIncrement=1000;}
-			if(m_piGUIManager->IsKeyDown(GK_LMENU)){nIncrement=5000;}
+			if(m_piGUIManager->IsKeyDown(GK_LSHIFT)){nIncrement=5000;}
 			int nRouteDelay=pEntity->m_piPlayAreaEntity->GetRouteDelay();
 			pEntity->m_piPlayAreaEntity->SetRouteDelay(nRouteDelay+nIncrement);
 		}
@@ -1419,7 +1419,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		{
 			int nIncrement=100;
 			if(m_piGUIManager->IsKeyDown(GK_LCONTROL)){nIncrement=1000;}
-			if(m_piGUIManager->IsKeyDown(GK_LMENU)){nIncrement=5000;}
+			if(m_piGUIManager->IsKeyDown(GK_LSHIFT)){nIncrement=5000;}
 			int nRouteDelay=pEntity->m_piPlayAreaEntity->GetRouteDelay();
 			pEntity->m_piPlayAreaEntity->SetRouteDelay(nRouteDelay>=nIncrement?nRouteDelay-nIncrement:0);
 		}
@@ -1427,7 +1427,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		{
 			int nIncrement=100;
 			if(m_piGUIManager->IsKeyDown(GK_LCONTROL)){nIncrement=1000;}
-			if(m_piGUIManager->IsKeyDown(GK_LMENU)){nIncrement=5000;}
+			if(m_piGUIManager->IsKeyDown(GK_LSHIFT)){nIncrement=5000;}
 			int nInterval=pEntity->m_piPlayAreaEntity->GetInterval();
 			pEntity->m_piPlayAreaEntity->SetInterval(nInterval+nIncrement);
 		}		
@@ -1435,7 +1435,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		{
 			int nIncrement=100;
 			if(m_piGUIManager->IsKeyDown(GK_LCONTROL)){nIncrement=1000;}
-			if(m_piGUIManager->IsKeyDown(GK_LMENU)){nIncrement=5000;}
+			if(m_piGUIManager->IsKeyDown(GK_LSHIFT)){nIncrement=5000;}
 			int nInterval=pEntity->m_piPlayAreaEntity->GetInterval();
 			pEntity->m_piPlayAreaEntity->SetInterval(nInterval>=nIncrement?nInterval-nIncrement:0);
 		}
