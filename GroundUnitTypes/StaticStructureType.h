@@ -58,6 +58,7 @@ class CStaticStructure: public CEntityBase
 	CStaticStructureType  *m_pType;
 	unsigned int m_nConfiguredDamageType;
 	unsigned int m_dwNextShotTime;
+	bool 		 m_bFirstTimeVisible;
 	double m_dRadius;
 	
 	IEntity *GetTarget();

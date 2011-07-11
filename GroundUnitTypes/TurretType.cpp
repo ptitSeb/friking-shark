@@ -51,10 +51,11 @@ CTurret::CTurret(CTurretType *pType,unsigned int dwCurrentTime)
 	m_bTargetLocked=false;
 	m_sClassName="CTurret";
 	m_pType=pType;
-	m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeFirstShotMax-m_pType->m_dTimeFirstShotMin)+m_pType->m_dTimeFirstShotMin;
+	m_dwNextShotTime=0;
 	m_dRadius=m_pType->DesignGetRadius();
 	m_piContainerBuilding=NULL;
 	m_bFirstFrame=true;
+	m_bFirstTimeVisible=true;
 	
 	SEntityTypeConfig sconfig;
 	m_pType->GetEntityTypeConfig(&sconfig);
@@ -259,11 +260,38 @@ void CTurret::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 	}
 	if(m_piTarget && m_bTargetLocked && dwCurrentTime>m_dwNextShotTime && m_vWeapons.size() && !m_piContainerBuilding)
 	{
-		bool bVisible=g_PlayAreaManagerWrapper.m_piInterface && g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,0);
-		if(bVisible)
+		
+		bool bTargetTooClose=false;
+		// Check minimun distance to target in the target's plane.
+		if(m_pType->m_dTargetMinDistance!=0)
 		{
-			for(unsigned int x=0;x<m_vWeapons.size();x++){FireWeapon(x,dwCurrentTime);}
-			m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeBetweenShotsMax-m_pType->m_dTimeBetweenShotsMin)+m_pType->m_dTimeBetweenShotsMin;
+			IGenericCamera *piCamera=g_PlayAreaManagerWrapper.m_piInterface->GetCamera();
+			CVector vCameraPos=piCamera?piCamera->GetPosition():Origin;
+			REL(piCamera);
+			CVector vPosInTargetPlane;
+			CPlane plane(AxisPosY,m_piTarget->GetPhysicInfo()->vPosition);
+			if(plane.Cut(vCameraPos,m_PhysicInfo.vPosition,&vPosInTargetPlane))
+			{
+				bTargetTooClose=(m_piTarget->GetPhysicInfo()->vPosition-vPosInTargetPlane)<m_pType->m_dTargetMinDistance;
+			}
+		}
+		
+		if(!bTargetTooClose)
+		{
+			bool bVisible=g_PlayAreaManagerWrapper.m_piInterface && g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,0);
+			if(bVisible)
+			{
+				if(m_bFirstTimeVisible)
+				{
+					m_bFirstTimeVisible=false;
+					m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeFirstShotMax-m_pType->m_dTimeFirstShotMin)+m_pType->m_dTimeFirstShotMin;
+				}
+				else
+				{
+					for(unsigned int x=0;x<m_vWeapons.size();x++){FireWeapon(x,dwCurrentTime);}
+					m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeBetweenShotsMax-m_pType->m_dTimeBetweenShotsMin)+m_pType->m_dTimeBetweenShotsMin;
+				}
+			}
 		}
 	}
 }

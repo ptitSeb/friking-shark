@@ -89,6 +89,7 @@ class CFighter: public CEntityBase
 	bool   m_bFleeing;
 	double m_dFleeAngle;
 	bool   m_bWasVisible;
+	bool   m_bFirstTimeVisible;
 	double m_dRadius;
 	
     double m_dwNextShotTime;
