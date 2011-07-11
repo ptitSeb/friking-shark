@@ -73,7 +73,7 @@ void CEntityEditorGeneralPropertyPanel::OnButtonClicked(IGameGUIButton *piContro
 	if(m_piGUIManager->IsKeyDown(GK_LCONTROL)){dMultiplier=10;}
 	if(m_piGUIManager->IsKeyDown(GK_LSHIFT)){dMultiplier=100;}
 	
-	if(m_piBTHealthI	ncrease==piControl){bUpdateConfig=true;sConfig.dMaxHealth+=1*dMultiplier;}
+	if(m_piBTHealthIncrease==piControl){bUpdateConfig=true;sConfig.dMaxHealth+=1*dMultiplier;}
 	if(m_piBTHealthDecrease==piControl){bUpdateConfig=true;sConfig.dMaxHealth-=1*dMultiplier;if(sConfig.dMaxHealth<0){sConfig.dMaxHealth=0;}}
 	if(m_piBTPointsIncrease==piControl){bUpdateConfig=true;sConfig.nPoints+=10*dMultiplier;}
 	if(m_piBTPointsDecrease==piControl){bUpdateConfig=true;sConfig.nPoints-=10*dMultiplier;if(sConfig.nPoints<0){sConfig.nPoints=0;}}
