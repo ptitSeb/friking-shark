@@ -52,6 +52,7 @@ void CEntityEditorGeneralPropertyPanel::UpdateData()
 	
 	char A[200];
 	if(m_piSTHealth)       {sprintf(A,"Health:   %d",(int)sConfig.dMaxHealth);m_piSTHealth->SetText(A);}
+	if(m_piSTPoints)       {sprintf(A,"Points:   %d",sConfig.nPoints);m_piSTPoints->SetText(A);}
 	if(m_piSTVelocity)     {sprintf(A,"Velocity: %d",(int)sConfig.dMaxVelocity);m_piSTVelocity->SetText(A);}
 	if(m_piBTAlignment)    {m_piBTAlignment->SetText(g_ppAlignmentDescriptions[sConfig.nAlignment]);}
 	if(m_piBTPlacement)    {m_piBTPlacement->SetText(g_ppPlacementDescriptions[sConfig.nPlacement]);}
@@ -68,10 +69,16 @@ void CEntityEditorGeneralPropertyPanel::OnButtonClicked(IGameGUIButton *piContro
 	SEntityTypeConfig sConfig;
 	m_Object.m_piEntityTypeDesign->GetEntityTypeConfig(&sConfig);
 	
-	if(m_piBTHealthIncrease==piControl){bUpdateConfig=true;sConfig.dMaxHealth++;}
-	if(m_piBTHealthDecrease==piControl){bUpdateConfig=true;sConfig.dMaxHealth--;if(sConfig.dMaxHealth<0){sConfig.dMaxHealth=0;}}
-	if(m_piBTVelocityIncrease==piControl){bUpdateConfig=true;sConfig.dMaxVelocity++;}
-	if(m_piBTVelocityDecrease==piControl){bUpdateConfig=true;sConfig.dMaxVelocity--;if(sConfig.dMaxVelocity<0){sConfig.dMaxVelocity=0;}}
+	double  dMultiplier=1;
+	if(m_piGUIManager->IsKeyDown(GK_LCONTROL)){dMultiplier=10;}
+	if(m_piGUIManager->IsKeyDown(GK_LSHIFT)){dMultiplier=100;}
+	
+	if(m_piBTHealthI	ncrease==piControl){bUpdateConfig=true;sConfig.dMaxHealth+=1*dMultiplier;}
+	if(m_piBTHealthDecrease==piControl){bUpdateConfig=true;sConfig.dMaxHealth-=1*dMultiplier;if(sConfig.dMaxHealth<0){sConfig.dMaxHealth=0;}}
+	if(m_piBTPointsIncrease==piControl){bUpdateConfig=true;sConfig.nPoints+=10*dMultiplier;}
+	if(m_piBTPointsDecrease==piControl){bUpdateConfig=true;sConfig.nPoints-=10*dMultiplier;if(sConfig.nPoints<0){sConfig.nPoints=0;}}
+	if(m_piBTVelocityIncrease==piControl){bUpdateConfig=true;sConfig.dMaxVelocity+=1*dMultiplier;}
+	if(m_piBTVelocityDecrease==piControl){bUpdateConfig=true;sConfig.dMaxVelocity-=1*dMultiplier;if(sConfig.dMaxVelocity<0){sConfig.dMaxVelocity=0;}}
 	if(m_piBTDamageType==piControl){bUpdateConfig=true;sConfig.nDamageType++;if(sConfig.nDamageType>DAMAGE_TYPE_NORMAL){sConfig.nDamageType=DAMAGE_TYPE_NONE;}}
 	if(m_piBTBoundsType==piControl){bUpdateConfig=true;sConfig.nBoundsType++;if(sConfig.nBoundsType>PHYSIC_BOUNDS_TYPE_BSP){sConfig.nBoundsType=PHYSIC_BOUNDS_TYPE_NONE;}}
 	if(m_piBTMovementType==piControl){bUpdateConfig=true;sConfig.nMovementType++;if(sConfig.nMovementType>PHYSIC_MOVE_TYPE_CUSTOM){sConfig.nMovementType=PHYSIC_MOVE_TYPE_NONE;}}
