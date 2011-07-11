@@ -53,7 +53,8 @@ CFighter::CFighter(CFighterType *pType,unsigned int dwCurrentTime)
   m_nFallStartTime=0;
   m_nFleeShadowKeepEndTime=0;
   m_dwNextProcessFrame=dwCurrentTime+10;
-  m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeFirstShotMax-m_pType->m_dTimeFirstShotMin)+m_pType->m_dTimeFirstShotMin;
+  m_dwNextShotTime=0;
+  m_bFirstTimeVisible=true;
   m_dRadius=m_pType->DesignGetRadius();
 }
 
@@ -313,8 +314,19 @@ void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 	if(dwCurrentTime>m_dwNextShotTime )
 	{
 		bool bVisible=g_PlayAreaManagerWrapper.m_piInterface && g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,0);
-		if(bVisible){for(unsigned int x=0;x<m_vWeapons.size();x++){FireWeapon(x,dwCurrentTime);}}
-		m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeBetweenShotsMax-m_pType->m_dTimeBetweenShotsMin)+m_pType->m_dTimeBetweenShotsMin;
+		if(bVisible)
+		{
+			if(m_bFirstTimeVisible)
+			{
+				m_bFirstTimeVisible=false;
+				m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeFirstShotMax-m_pType->m_dTimeFirstShotMin)+m_pType->m_dTimeFirstShotMin;;
+			}
+			else
+			{
+				for(unsigned int x=0;x<m_vWeapons.size();x++){FireWeapon(x,dwCurrentTime);}
+				m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeBetweenShotsMax-m_pType->m_dTimeBetweenShotsMin)+m_pType->m_dTimeBetweenShotsMin;
+			}			
+		}
 	}
 }
 

@@ -66,6 +66,7 @@ class CBomber: public CEntityBase
   bool m_bRouteFinished;
   unsigned int m_nPauseEnd;
   double m_dRadius;
+  bool   m_bFirstTimeVisible;
   
   CBomberType  *m_pType;
 
