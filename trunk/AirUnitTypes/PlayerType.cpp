@@ -160,9 +160,7 @@ void CPlayer::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 		else
 		{
 			// Just follow the configured route
-			CVector vForward,vRight,vUp;
 			double dCurrentAngularSpeed=m_pType->m_dMaxAngularSpeed;
-			VectorsFromAngles(m_PhysicInfo.vAngles.c[YAW],m_PhysicInfo.vAngles.c[PITCH],0,vForward,vRight,vUp);
 			
 			bool bNext=false;
 			int nNext=m_piRoute->GetNextPointIndex(m_nRoutePoint);
@@ -174,7 +172,7 @@ void CPlayer::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 				double dCirclePerimeter=(m_PhysicInfo.dMaxVelocity*360.0/m_pType->m_dMaxAngularSpeed);
 				double dCapableRadius=(dCirclePerimeter/(2*PI));
 				
-				CVector vPerpB=vDirNext^vRight;
+				CVector vPerpB=vDirNext^m_PhysicInfo.vOwnZ;
 				CVector vPB1=vDest+vDirNext*dDist;
 				CPlane  vPlaneA=CPlane(vDir,m_PhysicInfo.vPosition);
 				

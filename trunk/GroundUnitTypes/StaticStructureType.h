@@ -24,7 +24,7 @@ enum EStaticStructureState
 	eStaticStructureState_Destroyed
 };
 
-class CStaticStructureType: public CEntityTypeBase
+class CStaticStructureType: virtual public CEntityTypeBase, virtual public IStaticStructureTypeDesign
 {
 public:
 	
@@ -32,6 +32,11 @@ public:
 	double m_dTimeFirstShotMax;
 	double m_dTimeBetweenShotsMin;
 	double m_dTimeBetweenShotsMax;
+	
+	std::vector<SBBox> m_vVulnerableRegions;
+	std::vector<SBBox> m_vProtectiveRegions;
+	std::vector<SBBox> m_vProtectiveDestroyedRegions;
+	
 	
 	IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
 	void InitializeEntity(CEntityBase *piEntity,unsigned int dwCurrentTime);
@@ -47,13 +52,27 @@ public:
 		PROP_VALUE_FLAGS(m_dTimeFirstShotMax,"TimeFirstShotMax",5000,MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_VALUE_FLAGS(m_dTimeBetweenShotsMin,"TimeBetweenShotsMin",2000,MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_VALUE_FLAGS(m_dTimeBetweenShotsMax,"TimeBetweenShotsMax",5000,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_FLAGS(m_vVulnerableRegions,"VulnerableRegions",MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_FLAGS(m_vProtectiveRegions,"ProtectiveRegions",MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_FLAGS(m_vProtectiveDestroyedRegions,"ProtectiveDestroyedRegions",MRPF_NORMAL|MRPF_OPTIONAL);
 	END_PROP_MAP();	
+	
+	
+	// IStaticStructureTypeDesign
+	
+	void GetVulnerableRegions(std::vector<SBBox> *pvRegions);
+	void SetVulnerableRegions(std::vector<SBBox> *pvRegions);
+	void GetProtectiveRegions(std::vector<SBBox> *pvRegions);
+	void SetProtectiveRegions(std::vector<SBBox> *pvRegions);
+	void GetProtectiveDestroyedRegions(std::vector<SBBox> *pvRegions);
+	void SetProtectiveDestroyedRegions(std::vector<SBBox> *pvRegions);
+	
 	CStaticStructureType();
 	~CStaticStructureType();
 };
 
 
-class CStaticStructure: public CEntityBase
+class CStaticStructure: virtual public CEntityBase, virtual public IStaticStructure
 {
 	CStaticStructureType  *m_pType;
 	unsigned int m_nConfiguredDamageType;
@@ -65,9 +84,13 @@ class CStaticStructure: public CEntityBase
 protected:
 	
 	void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
-	
+	void OnAnimationEvent(string sEvent,string sParams);
+	void OnDamage(double dDamage,IEntity *piAggresor);
 public:
 
+	const std::vector<SBBox> &GetVulnerableRegions();
+	const std::vector<SBBox> &GetProtectiveRegions();
+	
 	void OnKilled();
 
 	CStaticStructure(CStaticStructureType *pType,unsigned int dwCurrentTime);

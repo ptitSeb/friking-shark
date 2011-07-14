@@ -121,7 +121,6 @@ struct SPhysicInfo
     double					dMass;
     CVector					vAngles;
     CVector					vAngleVelocity;
-	CVector					vForward;
 	vector<SBBox>			*pvBBoxes;
 	vector<SPhysicForce>	vForces;
     SPhysicForce			fOwnForce;
@@ -130,13 +129,17 @@ struct SPhysicInfo
 	bool					bOnSurface;
 	CPlane					surfacePlane;
 	
+	CVector	 				vOwnX;
+	CVector	 				vOwnY;
+	CVector	 				vOwnZ;
+	
 	CVector	 				vRefSysX;
 	CVector	 				vRefSysY;
 	CVector	 				vRefSysZ;
 	CVector					vLocalAngles;
 	CVector					vLocalPosition;
 		
-	SPhysicInfo():vRefSysX(AxisPosX),vRefSysY(AxisPosY),vRefSysZ(AxisPosZ)
+	SPhysicInfo():vOwnX(AxisPosX),vOwnY(AxisPosY),vOwnZ(AxisPosZ),vRefSysX(AxisPosX),vRefSysY(AxisPosY),vRefSysZ(AxisPosZ)
     {
         dwMoveType=PHYSIC_MOVE_TYPE_NORMAL;
         dwBoundsType=PHYSIC_BOUNDS_TYPE_NONE;
@@ -351,6 +354,22 @@ public:
 	virtual bool 		 SetElementRoutePoint(unsigned int nElement,unsigned int nIndex,const SRoutePoint &sPoint)=0;
 	virtual void		 RemoveElementRoutePoint(unsigned int nElement,unsigned int nIndex)=0;
 	virtual void 		 ClearElementRoute(unsigned int nElement)=0;	
+};
+
+struct IStaticStructureTypeDesign:virtual public ISystemUnknown
+{
+	virtual void GetVulnerableRegions(std::vector<SBBox> *pvRegions)=0;
+	virtual void SetVulnerableRegions(std::vector<SBBox> *pvRegions)=0;
+	virtual void GetProtectiveRegions(std::vector<SBBox> *pvRegions)=0;
+	virtual void SetProtectiveRegions(std::vector<SBBox> *pvRegions)=0;
+	virtual void GetProtectiveDestroyedRegions(std::vector<SBBox> *pvRegions)=0;
+	virtual void SetProtectiveDestroyedRegions(std::vector<SBBox> *pvRegions)=0;
+};
+
+struct IStaticStructure:virtual public IEntity
+{
+	virtual const std::vector<SBBox> &GetVulnerableRegions()=0;
+	virtual const std::vector<SBBox> &GetProtectiveRegions()=0;
 };
 
 struct IPlayAreaCheckPoint:virtual public ISystemUnknown

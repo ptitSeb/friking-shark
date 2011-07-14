@@ -173,9 +173,7 @@ void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 	}
 
 	// By default, continue in the current direction
-	CVector vForward,vRight;
-	VectorsFromAngles(m_PhysicInfo.vAngles,&vForward,&vRight);
-	CVector vDir=vForward;
+	CVector vDir=m_PhysicInfo.vOwnX;
 	CVector vDest=m_PhysicInfo.vPosition+vDir*100.0;
 	double dCurrentAngularSpeed=m_pType->m_dMaxAngularSpeed;
 
@@ -232,8 +230,6 @@ void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 	else if(m_piRoute)
 	{
 		// Just follow the configured route
-		CVector vForward,vRight,vUp;
-		VectorsFromAngles(m_PhysicInfo.vAngles.c[YAW],m_PhysicInfo.vAngles.c[PITCH],0,vForward,vRight,vUp);
 		vDest=m_piRoute->GetAbsolutePoint(m_piRoute->GetNextPointIndex(m_nRoutePoint));
 		vDir=vDest-m_PhysicInfo.vPosition;
 		double dDist=vDir.N();  
@@ -248,7 +244,7 @@ void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 			double dCirclePerimeter=(m_PhysicInfo.dMaxVelocity*360.0/m_pType->m_dMaxAngularSpeed);
 			double dCapableRadius=(dCirclePerimeter/(2*PI));
 			
-			CVector vPerpB=vDirNext^vUp;
+			CVector vPerpB=vDirNext^m_PhysicInfo.vOwnY;
 			CVector vPB1=vDest+vDirNext*dDist;
 			CPlane  vPlaneA=CPlane(vDir,m_PhysicInfo.vPosition);
 			
@@ -275,9 +271,9 @@ void CFighter::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 	}
 
 	// Apply the roll visual effect: Proportional to the heading diference to the target
-	if(vForward!=vDir)
+	if(m_PhysicInfo.vOwnX!=vDir)
 	{
-		CPlane plane(vRight,m_PhysicInfo.vPosition);
+		CPlane plane(m_PhysicInfo.vOwnZ,m_PhysicInfo.vPosition);
 		if(plane.GetSide(vDest)>0)
 		{
 			m_PhysicInfo.vAngles.c[ROLL]+=m_pType->m_dMaxRoll*dTimeFraction;

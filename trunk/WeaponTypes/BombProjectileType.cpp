@@ -20,6 +20,7 @@
 #include "BombProjectileType.h"
 #include "../GameGraphics/GameGraphics.h"
 
+
 struct SBombDamageData
 {
 	double dTimeFraction;
@@ -27,26 +28,26 @@ struct SBombDamageData
 	double dRadius;
 	CVector vCameraPos;
 	CPlane  playAreaPlane;
+	bool   bDamageEffect;
 	
-	SBombDamageData(){dTimeFraction=0;dDamage=0;dRadius=0;}
+	SBombDamageData(){bDamageEffect=false;dTimeFraction=0;dDamage=0;dRadius=0;}
 };
 
 CBombProjectileType::CBombProjectileType()
 {
-   m_nTimeToExplode=400;
    m_nCollisionType=PHYSIC_COLLISION_TYPE_NONE;
    m_nMovementType=PHYSIC_MOVE_TYPE_FLY;
-   m_dDamagePerSecond=0;
-   m_dDamageStartRadius=0;
-   m_dDamageEndRadius=0;
-   m_nDamageStartTime=0;
-   m_nDamageEndTime=0;
+   PersistencyInitialize();
    g_PlayAreaManagerWrapper.AddRef();
+   g_PhysicsManagerWrapper.AddRef();
+   
 }
 
 CBombProjectileType::~CBombProjectileType()
 {
 	g_PlayAreaManagerWrapper.Release();
+	g_PhysicsManagerWrapper.Release();
+	
 }
 
 IEntity *CBombProjectileType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
@@ -65,10 +66,17 @@ CBombProjectile::CBombProjectile(CBombProjectileType *pType,IEntity *piParent)
   m_sName="BombProjectile";
   m_pType=pType;
   m_piParent=piParent;
+  m_nNextDamageEffect=0;
 }
 
 CBombProjectile::~CBombProjectile()
 {
+	std::vector<IParticleSystem *>::iterator i;
+	for(i=m_vParticleSystems.begin();i!=m_vParticleSystems.end();i++)
+	{
+		delete *i;
+	}
+	m_vParticleSystems.clear();
 }
 
 void CBombProjectile::ApplyDamageOperation(IEntity *piEntity,void *pParam1,void *pParam2)
@@ -88,21 +96,22 @@ void CBombProjectile::ApplyDamageOperation(IEntity *piEntity,void *pParam1,void 
 	SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();
 	
 	CVector vProjection;
-	
 	bool bHit=false;
 	
-	if(pDamageData->playAreaPlane.Cut(pDamageData->vCameraPos,pPhysicInfo->vPosition,&vProjection))
+	if(pPhysicInfo->dwBoundsType==PHYSIC_BOUNDS_TYPE_BBOX)
 	{
-		CVector vDist=vProjection-pThis->m_PhysicInfo.vPosition;
-		double dDist=vDist;
-		bHit=(dDist<pDamageData->dRadius);
-	}
-	if(!bHit)
-	{
-		for(unsigned int b=0;pPhysicInfo->pvBBoxes && b<pPhysicInfo->pvBBoxes->size();b++)
+		const std::vector<SBBox> *pvBBoxes=pPhysicInfo->pvBBoxes;
+		
+		if(pDamageData->playAreaPlane.Cut(pDamageData->vCameraPos,pPhysicInfo->vPosition,&vProjection))
+		{
+			CVector vDist=vProjection-pThis->m_PhysicInfo.vPosition;
+			double dDist=vDist;
+			bHit=(dDist<pDamageData->dRadius);
+		}
+		for(unsigned int b=0;!bHit && pvBBoxes && b<pvBBoxes->size();b++)
 		{
 			CVector pVolumePoints[8];
-			CalcBBoxVolume(pPhysicInfo->vPosition,pPhysicInfo->vAngles,(*pPhysicInfo->pvBBoxes)[b].vMins,(*pPhysicInfo->pvBBoxes)[b].vMaxs,pVolumePoints);
+			CalcBBoxVolume(pPhysicInfo->vPosition,pPhysicInfo->vAngles,(*pvBBoxes)[b].vMins,(*pvBBoxes)[b].vMaxs,pVolumePoints);
 			
 			for(unsigned int x=0;!bHit && x<8;x++)
 			{
@@ -115,8 +124,69 @@ void CBombProjectile::ApplyDamageOperation(IEntity *piEntity,void *pParam1,void 
 			}
 		}
 	}
+	else if(pPhysicInfo->dwBoundsType==PHYSIC_BOUNDS_TYPE_BSP)
+	{		
+		const std::vector<SBBox> *pvVulnerableRegions=NULL;
+		if(*piEntity->GetEntityClass()=="CStaticStructure")
+		{
+			IStaticStructure *piStaticStructure=dynamic_cast<IStaticStructure *>(piEntity);
+			if(piStaticStructure && piStaticStructure->GetVulnerableRegions().size()){pvVulnerableRegions=&piStaticStructure->GetVulnerableRegions();}
+		}
+		
+		for(double dX=-pDamageData->dRadius;dX<=pDamageData->dRadius;dX+=pThis->m_pType->m_dDamageEffectSeparation)
+		{
+			for(double dZ=-pDamageData->dRadius;dZ<=pDamageData->dRadius;dZ+=pThis->m_pType->m_dDamageEffectSeparation)
+			{
+				CVector vOffset(dX,0,dZ);
+				if(vOffset>pDamageData->dRadius){continue;}
+				
+				vOffset+=CVector(pThis->m_pType->m_dDamageEffectSeparation*(drand()-0.5),0,pThis->m_pType->m_dDamageEffectSeparation*(drand()-0.5));
+				CVector vDirection=pThis->m_PhysicInfo.vPosition+vOffset-pDamageData->vCameraPos;
+				CVector vDest=pThis->m_PhysicInfo.vPosition+vDirection*1000.0;
+				
+				CTraceInfo info=piEntity->GetTrace(pDamageData->vCameraPos,vDest);
+				if(pThis->m_pType->m_DamageEffect.m_piParticleSystemType && info.m_bTraceHit)
+				{
+					CVector vTempPos=info.m_vTracePos-pPhysicInfo->vPosition;
+					CVector vRelPos;
+					vRelPos.c[0]=pPhysicInfo->vOwnX*vTempPos;
+					vRelPos.c[1]=pPhysicInfo->vOwnY*vTempPos;
+					vRelPos.c[2]=pPhysicInfo->vOwnZ*vTempPos;
+					
+					bool bSimpleHit=true;
+					
+					if(pvVulnerableRegions)
+					{
+						bSimpleHit=false;
+						for(unsigned int b=0;!bSimpleHit && b<pvVulnerableRegions->size();b++)
+						{
+							bSimpleHit= (vRelPos.c[0]>=(*pvVulnerableRegions)[b].vMins.c[0] &&
+										vRelPos.c[0]<=(*pvVulnerableRegions)[b].vMaxs.c[0] &&
+										vRelPos.c[1]>=(*pvVulnerableRegions)[b].vMins.c[1] &&
+										vRelPos.c[1]<=(*pvVulnerableRegions)[b].vMaxs.c[1] &&
+										vRelPos.c[2]>=(*pvVulnerableRegions)[b].vMins.c[2] &&
+										vRelPos.c[2]<=(*pvVulnerableRegions)[b].vMaxs.c[2]);
+						}
+					}
+					if(bSimpleHit)
+					{
+						bHit=true;
+						if(pDamageData->bDamageEffect)
+						{
+							IParticleSystem *piParticleSystem=pThis->m_pType->m_DamageEffect.m_piParticleSystemType->CreateInstance(pThis->m_nCurrentTime);
+							if(piParticleSystem)
+							{
+								piParticleSystem->SetPosition(info.m_vTracePos);
+								pThis->m_vParticleSystems.push_back(piParticleSystem);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 	if(bHit)
-	{
+	{		
 		if(bProjectile)
 		{
 			piEntity->Remove();
@@ -124,6 +194,39 @@ void CBombProjectile::ApplyDamageOperation(IEntity *piEntity,void *pParam1,void 
 		else
 		{
 			piEntity->OnDamage(pDamageData->dDamage,pThis);
+		}
+	}
+}
+
+void CBombProjectile::Render(IGenericRender *piRender,IGenericCamera *piCamera)
+{
+	CEntityBase::Render(piRender,piCamera);
+	
+	std::vector<IParticleSystem *>::iterator i;
+	for(i=m_vParticleSystems.begin();i!=m_vParticleSystems.end();i++)
+	{
+		IParticleSystem *piParticleSystem=*i;
+		piParticleSystem->CustomRender(piRender,piCamera);
+	}
+}
+	
+void CBombProjectile::ProcessAnimations(unsigned int dwCurrentTime,double dTimeFraction,bool *pbAnimationsFinished)
+{
+	CEntityBase::ProcessAnimations(dwCurrentTime,dTimeFraction,pbAnimationsFinished);
+	
+	std::vector<IParticleSystem *>::iterator i;
+	for(i=m_vParticleSystems.begin();i!=m_vParticleSystems.end();)
+	{
+		IParticleSystem *piParticleSystem=*i;
+		if(!piParticleSystem->ProcessFrame(g_PhysicsManagerWrapper.m_piInterface,dwCurrentTime,dTimeFraction))
+		{
+			delete piParticleSystem;
+			i=m_vParticleSystems.erase(i);
+		}
+		else
+		{
+			if(pbAnimationsFinished){*pbAnimationsFinished=false;}
+			i++;
 		}
 	}
 }
@@ -171,6 +274,11 @@ void CBombProjectile::ProcessFrame(unsigned int dwCurrentTime,double dTimeFracti
 			data.dRadius=(m_pType->m_dDamageEndRadius-m_pType->m_dDamageStartRadius)*dElapsedFraction+m_pType->m_dDamageStartRadius;
 			data.vCameraPos=vCameraPos;
 			data.playAreaPlane=CPlane(AxisPosY,m_PhysicInfo.vPosition);
+			if(dwCurrentTime>m_nNextDamageEffect)
+			{
+				data.bDamageEffect=true;
+				m_nNextDamageEffect=dwCurrentTime+m_pType->m_nDamageEffectInterval;
+			}
 			GetEntityManager()->PerformUnaryOperation(ApplyDamageOperation,this,&data);
 		}
 	}

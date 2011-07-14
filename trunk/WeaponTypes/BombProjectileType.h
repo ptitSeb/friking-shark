@@ -18,6 +18,10 @@
 
 #pragma once
 
+#include "../ParticleSystems/ParticleSystems.h"
+
+DECLARE_CUSTOM_WRAPPER1(CParticleSystemTypeWrapper,IParticleSystemType,m_piParticleSystemType)
+
 enum EBombState
 {
 	eBombState_Normal=ENTITY_STATE_BASE,
@@ -32,8 +36,13 @@ public:
 	double m_dDamagePerSecond;
 	double m_dDamageStartRadius;
 	double m_dDamageEndRadius;
+	double m_dDamageEffectSeparation;
 	unsigned int m_nDamageStartTime;
 	unsigned int m_nDamageEndTime;
+	unsigned int m_nDamageEffectInterval;
+	
+	CEntityTypeWrapper m_DamageType;
+	CParticleSystemTypeWrapper m_DamageEffect;
 	
   IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
 
@@ -45,6 +54,9 @@ public:
 	PROP_VALUE_FLAGS(m_dDamageEndRadius,"DamageEndRadius",0,MRPF_NORMAL|MRPF_OPTIONAL)
 	PROP_VALUE_FLAGS(m_nDamageStartTime,"DamageStartTime",0,MRPF_NORMAL|MRPF_OPTIONAL)
 	PROP_VALUE_FLAGS(m_nDamageEndTime,"DamageEndTime",0,MRPF_NORMAL|MRPF_OPTIONAL)
+	PROP_VALUE_FLAGS(m_dDamageEffectSeparation,"DamageEffectSeparation",5,MRPF_NORMAL|MRPF_OPTIONAL)
+	PROP_VALUE_FLAGS(m_nDamageEffectInterval,"DamageEffectInterval",100,MRPF_NORMAL|MRPF_OPTIONAL)
+	PROP_FLAGS(m_DamageEffect,"DamageEffect",MRPF_NORMAL|MRPF_OPTIONAL)
   END_PROP_MAP();
   
   BEGIN_ENTITY_STATE_MAP()
@@ -62,6 +74,13 @@ class CBombProjectile: public CEntityBase
   CBombProjectileType  *m_pType;
   IEntity *m_piParent;
   unsigned int m_nCurrentTime;
+  unsigned int m_nNextDamageEffect;
+  
+  std::vector<IParticleSystem *> m_vParticleSystems;
+  
+  void Render(IGenericRender *piRender,IGenericCamera *piCamera);
+  void ProcessAnimations(unsigned int dwCurrentTime,double dTimeFraction,bool *pbAnimationsFinished);
+  
 public:
 	
   static void ApplyDamageOperation(IEntity *piEntity,void *pParam1,void *pParam2);

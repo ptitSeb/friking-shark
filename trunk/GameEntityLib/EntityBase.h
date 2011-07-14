@@ -34,7 +34,7 @@ struct SChildEntity
 	SChildEntity(){piEntity=NULL;nId=0;}
 };
 
-class CEntityBase: public IEntity,public CPublisherBase, public CSubscriberBase, virtual public IEntityEvents
+class CEntityBase: virtual public IEntity,virtual public CPublisherBase, virtual public CSubscriberBase, virtual public IEntityEvents
 {
 protected:
 	CSteeringBehaviours m_Behaviours;

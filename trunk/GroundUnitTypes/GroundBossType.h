@@ -59,7 +59,7 @@ class CGroundBoss: public CEntityBase
 	unsigned int m_dwNextShotTime;
 	unsigned int m_nConfiguredDamageType;
 	unsigned int m_nPauseEnd;
-	bool 		 m_bFirstFrame;
+	unsigned int m_nNextCheckContainerBuilding;
 	
 	void AcquireTarget();
 	
@@ -67,8 +67,8 @@ class CGroundBoss: public CEntityBase
 	
 	
 	static void FindBuilding(IEntity *piEntity,void *pParam1,void *pParam2);
-	bool IsInsideBuilding(IEntity *piEntity);
-	IEntity *m_piContainerBuilding;
+	bool IsInsideBuilding(IStaticStructure *piStaticStructure);
+	IStaticStructure *m_piContainerBuilding;
 	
 public:
 
