@@ -119,7 +119,7 @@ void CFighter::OnKilled()
 
 bool CFighter::OnCollision(IEntity *piOther,CVector &vCollisionPos)
 {
-	if(GetState()==eFighterState_Falling && piOther->GetPlacement()!=ENTITY_PLACEMENT_AIR)
+	if(GetState()==eFighterState_Falling && (piOther->GetPlacement()!=ENTITY_PLACEMENT_AIR || piOther->GetPhysicInfo()->dwBoundsType==PHYSIC_BOUNDS_TYPE_BSP))
 	{
 		if(GetState()!=eFighterState_Crashed && m_pTypeBase->GetStateAnimations(eFighterState_Crashed))
 		{
