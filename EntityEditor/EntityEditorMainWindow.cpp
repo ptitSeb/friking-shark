@@ -27,6 +27,7 @@ CEntityEditorMainWindow::CEntityEditorMainWindow(void)
 {
 	m_d3DFontSize=0;
 	m_eMode=eEntityEditorMode_EntityProperties;
+	m_eBBoxGroup=eEntityEditorBBoxGroup_Collisions;
 	
 	m_bShowTranslationGizmo=false;
 	m_bShowRotationGizmo=false;
@@ -34,6 +35,7 @@ CEntityEditorMainWindow::CEntityEditorMainWindow(void)
 	
 	m_bMovingGizmo=false;
 	m_piAnimation=NULL;
+	m_piStaticStructureTypeDesign=NULL;
 	
 	m_bShowOptionsPanel=false;
 	m_bShowFilePanel=false;
@@ -137,6 +139,7 @@ void CEntityEditorMainWindow::Reset()
 {
 	delete m_piAnimation;
 	m_piAnimation=NULL;
+	REL(m_piStaticStructureTypeDesign);
 	
 	StopGameSimulation();
 	m_EntityType.Detach();
@@ -146,6 +149,8 @@ void CEntityEditorMainWindow::Reset()
 	m_bSimulationStarted=false;
 	m_bInspectionMode=false;
 	m_sEntityName="";
+	m_eBBoxGroup=eEntityEditorBBoxGroup_Collisions;
+	
 
 	UpdateCaption();
 	UpdateStateList();
@@ -338,11 +343,12 @@ void CEntityEditorMainWindow::OnDraw(IGenericRender *piRender)
 	{
 		m_BBoxGizmo.Render(m_Render.m_piRender,m_Camera.m_piCamera);
 		
-		SEntityTypeConfig sConfig;
-		if(m_EntityType.m_piEntityTypeDesign){m_EntityType.m_piEntityTypeDesign->GetEntityTypeConfig(&sConfig);}
-		for(unsigned int b=0;b<sConfig.vBBoxes.size();b++)
+		std::vector<SBBox> vBBoxes;
+		GetBBoxGroup(&vBBoxes);
+		
+		for(unsigned int b=0;b<vBBoxes.size();b++)
 		{
-			piRender->RenderBBox(m_pEntity->GetPhysicInfo()->vPosition,Origin,sConfig.vBBoxes[b].vMins,sConfig.vBBoxes[b].vMaxs,CVector(1,1,1));
+			piRender->RenderBBox(m_pEntity->GetPhysicInfo()->vPosition,Origin,vBBoxes[b].vMins,vBBoxes[b].vMaxs,CVector(1,1,1));
 		}
 	}
 	m_Render.m_piRender->PopOptions();
@@ -365,6 +371,25 @@ void CEntityEditorMainWindow::OnDraw(IGenericRender *piRender)
 	m_piGRGraphicProperties->Show(m_eMode==eEntityEditorMode_GraphicProperties);
 	m_piBTShowEntityProperties->SetBackgroundColor(CVector(1,1,1),m_eMode==eEntityEditorMode_EntityProperties?0.5:0.3);
 	m_piBTShowGraphicProperties->SetBackgroundColor(CVector(1,1,1),m_eMode==eEntityEditorMode_GraphicProperties?0.5:0.3);
+	
+	m_piBTBBoxGroupCollisions->SetBackgroundColor(CVector(1,1,1),m_eBBoxGroup==eEntityEditorBBoxGroup_Collisions?0.5:0.3);
+	
+	m_piBTBBoxGroupVulnerable->Activate(m_piStaticStructureTypeDesign!=NULL);
+	m_piBTBBoxGroupProtectiveNormal->Activate(m_piStaticStructureTypeDesign!=NULL);
+	m_piBTBBoxGroupProtectiveDestroyed->Activate(m_piStaticStructureTypeDesign!=NULL);
+	
+	if(m_piStaticStructureTypeDesign)
+	{
+		m_piBTBBoxGroupVulnerable->SetBackgroundColor(CVector(1,1,1),m_eBBoxGroup==eEntityEditorBBoxGroup_Vulnerable?0.5:0.3);
+		m_piBTBBoxGroupProtectiveNormal->SetBackgroundColor(CVector(1,1,1),m_eBBoxGroup==eEntityEditorBBoxGroup_ProtectiveNormal?0.5:0.3);
+		m_piBTBBoxGroupProtectiveDestroyed->SetBackgroundColor(CVector(1,1,1),m_eBBoxGroup==eEntityEditorBBoxGroup_ProtectiveDestroyed?0.5:0.3);
+	}
+	else
+	{
+		m_piBTBBoxGroupVulnerable->SetBackgroundColor(CVector(1,1,1),0.1);
+		m_piBTBBoxGroupProtectiveNormal->SetBackgroundColor(CVector(1,1,1),0.1);
+		m_piBTBBoxGroupProtectiveDestroyed->SetBackgroundColor(CVector(1,1,1),0.1);
+	}
 }
 void CEntityEditorMainWindow::ProcessFileNew()
 {
@@ -384,6 +409,7 @@ void CEntityEditorMainWindow::ProcessFileNew()
 		if(m_EntityType.m_piEntityTypeDesign)
 		{
 			SEntityTypeConfig config;
+			m_piStaticStructureTypeDesign=QI(IStaticStructureTypeDesign,m_EntityType.m_piEntityTypeDesign);
 			m_EntityType.m_piEntityTypeDesign->GetEntityTypeConfig(&config);
 			m_BBoxGizmo.SetBounds(Origin,Origin);
 		}
@@ -411,6 +437,7 @@ void CEntityEditorMainWindow::ProcessFileOpen()
 		if(bOk){bOk=existingWrapper.m_piSerializable->Serialize(cfg.GetRoot());}
 		if(bOk){bOk=m_EntityType.Create("EntityTypes",existingWrapper.m_piObject->GetClass(),"");}
 		if(bOk){bOk=m_EntityType.m_piSerializable->Unserialize(cfg.GetRoot());}
+		if(bOk){m_piStaticStructureTypeDesign=QI(IStaticStructureTypeDesign,m_EntityType.m_piEntityTypeDesign);}
 		if(bOk)
 		{
 			SEntityTypeConfig config;
@@ -635,6 +662,10 @@ void CEntityEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	if(m_piBTShowEntityProperties==piControl){m_eMode=eEntityEditorMode_EntityProperties;UpdateSelectedObject();}
 	if(m_piBTShowGraphicProperties==piControl){m_eMode=eEntityEditorMode_GraphicProperties;UpdateSelectedObject();}
 	
+	if(m_piBTBBoxGroupCollisions==piControl){m_eBBoxGroup=eEntityEditorBBoxGroup_Collisions;UpdateBBoxList();}
+	if(m_piBTBBoxGroupVulnerable==piControl){m_eBBoxGroup=eEntityEditorBBoxGroup_Vulnerable;UpdateBBoxList();}
+	if(m_piBTBBoxGroupProtectiveNormal==piControl){m_eBBoxGroup=eEntityEditorBBoxGroup_ProtectiveNormal;UpdateBBoxList();}
+	if(m_piBTBBoxGroupProtectiveDestroyed==piControl){m_eBBoxGroup=eEntityEditorBBoxGroup_ProtectiveDestroyed;UpdateBBoxList();}
 	
 	UpdateVisiblePanels();
 }
@@ -834,14 +865,16 @@ void CEntityEditorMainWindow::OnMouseMove( double x,double y )
 			}
 		}
 		
-		if(m_EntityType.m_piEntityTypeDesign && m_piLSBBoxes && m_piLSBBoxes->GetSelectedElement()!=-1)
+		
+		if(m_piLSBBoxes && m_piLSBBoxes->GetSelectedElement()!=-1)
 		{
-			SEntityTypeConfig sConfig;
-			m_EntityType.m_piEntityTypeDesign->GetEntityTypeConfig(&sConfig);
 			SBBox sBBox;
 			m_BBoxGizmo.GetBounds(&sBBox.vMins,&sBBox.vMaxs);
-			sConfig.vBBoxes[m_piLSBBoxes->GetSelectedElement()]=sBBox;
-			m_EntityType.m_piEntityTypeDesign->SetEntityTypeConfig(&sConfig);
+			
+			std::vector<SBBox> vBBoxes;
+			GetBBoxGroup(&vBBoxes);
+			vBBoxes[m_piLSBBoxes->GetSelectedElement()]=sBBox;
+			SetBBoxGroup(&vBBoxes);			
 		}
 		UpdateInteractiveElementsSpeedsAndSizes();
 	}
@@ -1009,33 +1042,33 @@ void CEntityEditorMainWindow::UpdateChildrenList()
 void CEntityEditorMainWindow::UpdateBBoxList()
 {
 	if(m_piLSBBoxes==NULL){return;}
+	m_piLSBBoxes->Clear();	
 	
-	m_piLSBBoxes->Clear();
-	if(m_EntityType.m_piEntityType)
+	std::vector<SBBox> vBBoxes;
+	GetBBoxGroup(&vBBoxes);
+	
+	for(unsigned int b=0;b<vBBoxes.size();b++)
 	{
-		SEntityTypeConfig sConfig;
-		m_EntityType.m_piEntityTypeDesign->GetEntityTypeConfig(&sConfig);
-		for(unsigned int b=0;b<sConfig.vBBoxes.size();b++)
-		{
-			char sName[100];
-			sprintf(sName,"%d",b+1);
-			m_piLSBBoxes->AddElement(sName);
-		}
+		char sName[100];
+		sprintf(sName,"%d",b+1);
+		m_piLSBBoxes->AddElement(sName);
 	}
+	
 	if(m_piLSBBoxes->GetElementCount()){m_piLSBBoxes->SetSelectedElement(0);}
 	UpdateSelectedBBox();
 }
 
 void CEntityEditorMainWindow::UpdateSelectedBBox()
 {
+	SBBox sBBox;
+	
 	if(m_piLSBBoxes==NULL){return;}
 	if(m_EntityType.m_piEntityTypeDesign==NULL){return;}
-	SBBox sBBox;
 	if(m_piLSBBoxes->GetSelectedElement()!=-1)
 	{
-		SEntityTypeConfig sConfig;
-		m_EntityType.m_piEntityTypeDesign->GetEntityTypeConfig(&sConfig);
-		sBBox=sConfig.vBBoxes[m_piLSBBoxes->GetSelectedElement()];
+		std::vector<SBBox> vBBoxes;
+		GetBBoxGroup(&vBBoxes);
+		sBBox=vBBoxes[m_piLSBBoxes->GetSelectedElement()];
 	}
 	m_BBoxGizmo.SetBounds(sBBox.vMins,sBBox.vMaxs);
 }
@@ -1616,17 +1649,65 @@ void CEntityEditorMainWindow::ProcessRemoveChild()
 	UpdateChildrenList();
 }
 
+void CEntityEditorMainWindow::GetBBoxGroup(	std::vector<SBBox> *pvBBoxes)
+{
+	pvBBoxes->clear();
+	
+	if(m_EntityType.m_piEntityType && m_eBBoxGroup==eEntityEditorBBoxGroup_Collisions)
+	{
+		SEntityTypeConfig sConfig;
+		m_EntityType.m_piEntityTypeDesign->GetEntityTypeConfig(&sConfig);
+		*pvBBoxes=sConfig.vBBoxes;
+	}
+	else if(m_piStaticStructureTypeDesign && m_eBBoxGroup==eEntityEditorBBoxGroup_Vulnerable)
+	{
+		m_piStaticStructureTypeDesign->GetVulnerableRegions(pvBBoxes);
+	}
+	else if(m_piStaticStructureTypeDesign && m_eBBoxGroup==eEntityEditorBBoxGroup_ProtectiveNormal)
+	{
+		m_piStaticStructureTypeDesign->GetProtectiveRegions(pvBBoxes);
+	}
+	else if(m_piStaticStructureTypeDesign && m_eBBoxGroup==eEntityEditorBBoxGroup_ProtectiveDestroyed)
+	{
+		m_piStaticStructureTypeDesign->GetProtectiveDestroyedRegions(pvBBoxes);
+	}
+}
+
+void CEntityEditorMainWindow::SetBBoxGroup(	std::vector<SBBox> *pvBBoxes)
+{
+	if(m_EntityType.m_piEntityType && m_eBBoxGroup==eEntityEditorBBoxGroup_Collisions)
+	{
+		SEntityTypeConfig sConfig;
+		m_EntityType.m_piEntityTypeDesign->GetEntityTypeConfig(&sConfig);
+		sConfig.vBBoxes=*pvBBoxes;
+		m_EntityType.m_piEntityTypeDesign->SetEntityTypeConfig(&sConfig);
+	}
+	else if(m_piStaticStructureTypeDesign && m_eBBoxGroup==eEntityEditorBBoxGroup_Vulnerable)
+	{
+		m_piStaticStructureTypeDesign->SetVulnerableRegions(pvBBoxes);
+	}
+	else if(m_piStaticStructureTypeDesign && m_eBBoxGroup==eEntityEditorBBoxGroup_ProtectiveNormal)
+	{
+		m_piStaticStructureTypeDesign->SetProtectiveRegions(pvBBoxes);
+	}
+	else if(m_piStaticStructureTypeDesign && m_eBBoxGroup==eEntityEditorBBoxGroup_ProtectiveDestroyed)
+	{
+		m_piStaticStructureTypeDesign->SetProtectiveDestroyedRegions(pvBBoxes);
+	}
+}
+
 void CEntityEditorMainWindow::ProcessNewBBox()
 {
 	if(!m_EntityType.m_piEntityTypeDesign){return;}
 	
-	SEntityTypeConfig sConfig;
-	m_EntityType.m_piEntityTypeDesign->GetEntityTypeConfig(&sConfig);
 	SBBox sBBox;
-	sConfig.vBBoxes.push_back(sBBox);
-	m_EntityType.m_piEntityTypeDesign->SetEntityTypeConfig(&sConfig);
+	std::vector<SBBox> vBBoxes;
+	GetBBoxGroup(&vBBoxes);
+	vBBoxes.push_back(sBBox);
+	SetBBoxGroup(&vBBoxes);
+	
 	UpdateBBoxList();
-	m_piLSBBoxes->SetSelectedElement(((int)sConfig.vBBoxes.size())-1);
+	m_piLSBBoxes->SetSelectedElement(((int)vBBoxes.size())-1);
 	UpdateSelectedBBox();
 }
 
@@ -1638,18 +1719,18 @@ void CEntityEditorMainWindow::ProcessRemoveBBox()
 		return;
 	}
 	int nSelected=m_piLSBBoxes->GetSelectedElement();
-	
-	SEntityTypeConfig sConfig,sOldConfig;
-	m_EntityType.m_piEntityTypeDesign->GetEntityTypeConfig(&sOldConfig);
-	sConfig=sOldConfig;
-	sConfig.vBBoxes.clear();
-	for(int x=0;x<(int)sOldConfig.vBBoxes.size();x++)
+
+	vector<SBBox> vOldBBoxes,vBBoxes;
+	GetBBoxGroup(&vOldBBoxes);
+	for(int x=0;x<(int)vOldBBoxes.size();x++)
 	{
-		if(x!=nSelected){sConfig.vBBoxes.push_back(sOldConfig.vBBoxes[x]);}
+		if(x!=nSelected){vBBoxes.push_back(vOldBBoxes[x]);}
 	}
-	m_EntityType.m_piEntityTypeDesign->SetEntityTypeConfig(&sConfig);
+	SetBBoxGroup(&vBBoxes);
+	
+	
 	UpdateBBoxList();
-	m_piLSBBoxes->SetSelectedElement(nSelected>=(int)sConfig.vBBoxes.size()?((int)sConfig.vBBoxes.size())-1:nSelected);
+	m_piLSBBoxes->SetSelectedElement(nSelected>=(int)vBBoxes.size()?((int)vBBoxes.size())-1:nSelected);
 	UpdateSelectedBBox();
 }
 

@@ -66,6 +66,15 @@ enum EEntityEditorMode
 	eEntityEditorMode_EntityProperties,
 	eEntityEditorMode_GraphicProperties
 };
+
+enum EEntityEditorBBoxGroup
+{
+	eEntityEditorBBoxGroup_Collisions,
+	eEntityEditorBBoxGroup_Vulnerable,
+	eEntityEditorBBoxGroup_ProtectiveNormal,
+	eEntityEditorBBoxGroup_ProtectiveDestroyed
+};
+
 class CFakeEntity: virtual public CEntityBase
 {
 public:
@@ -93,11 +102,14 @@ public:
 	CAnimationOrientationWrapper m_OrientationWrapper;
 	
 	std::vector<CAnimationDesignTypeWrapper> m_vAnimations;
-	IAnimation 				*m_piAnimation;
-	CEntityTypeWrapper		 m_EntityType;
+	IAnimation 						*m_piAnimation;
+	CEntityTypeWrapper		 		 m_EntityType;
+	IStaticStructureTypeDesign		*m_piStaticStructureTypeDesign;
+	
 	std::string				 m_sEntityName;
 	
 	EEntityEditorMode		 m_eMode;
+	EEntityEditorBBoxGroup   m_eBBoxGroup;
 	
 	IEntityEditorPropertyPanel *m_ppiPropertyPanels[ePropertyPanel_Count];
 
@@ -164,6 +176,10 @@ public:
 	IGameGUIList    *m_piLSBBoxes;
 	IGameGUIButton  *m_piBTNewBBox;
 	IGameGUIButton  *m_piBTRemoveBBox;
+	IGameGUIButton  *m_piBTBBoxGroupCollisions;
+	IGameGUIButton  *m_piBTBBoxGroupVulnerable;
+	IGameGUIButton  *m_piBTBBoxGroupProtectiveNormal;
+	IGameGUIButton  *m_piBTBBoxGroupProtectiveDestroyed;
 	
 	// Options
 
@@ -205,6 +221,8 @@ public:
 	void ProcessRemoveChild();
 	void ProcessRemoveBBox();
 	
+	void SetBBoxGroup(	std::vector<SBBox> *pvBBoxes);
+	void GetBBoxGroup(	std::vector<SBBox> *pvBBoxes);
 	
 	void Reset();
 	
@@ -245,6 +263,10 @@ public:
 		CHILD_MAP_ENTRY_EX("BBoxList",m_piLSBBoxes,IGameGUIListEvents);
 		CHILD_MAP_ENTRY_EX("NewBBox",m_piBTNewBBox,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("RemoveBBox",m_piBTRemoveBBox,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("BBoxGroupCollisions",m_piBTBBoxGroupCollisions,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("BBoxGroupVulnerable",m_piBTBBoxGroupVulnerable,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("BBoxGroupProtectiveNormal",m_piBTBBoxGroupProtectiveNormal,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("BBoxGroupProtectiveDestroyed",m_piBTBBoxGroupProtectiveDestroyed,IGameGUIButtonEvents);
 		
 		CHILD_MAP_ENTRY("EntityPanel",m_piGREntity);
 		CHILD_MAP_ENTRY_EX("EntityNew",m_piBTEntityNew,IGameGUIButtonEvents);

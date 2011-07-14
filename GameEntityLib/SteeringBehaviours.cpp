@@ -102,9 +102,9 @@ CVector CSteeringBehaviours::Pursue(IEntity *pEntity,IEntity *pTarget,CVector *p
 CVector CSteeringBehaviours::Evade(IEntity *pEntity,IEntity *pTarget,CVector *pOutEstimatedPosition)
 {
 	CVector vEntityDistance=pTarget->GetPhysicInfo()->vPosition-pEntity->GetPhysicInfo()->vPosition;
-	double dRelativeHeading=pTarget->GetPhysicInfo()->vForward*pEntity->GetPhysicInfo()->vForward;
+	double dRelativeHeading=pTarget->GetPhysicInfo()->vOwnX*pEntity->GetPhysicInfo()->vOwnX;
 
-	if(vEntityDistance*pEntity->GetPhysicInfo()->vForward>0 && dRelativeHeading<-0.95)
+	if(vEntityDistance*pEntity->GetPhysicInfo()->vOwnX>0 && dRelativeHeading<-0.95)
 	{
 		*pOutEstimatedPosition=pTarget->GetPhysicInfo()->vPosition;
 		return Flee(pEntity,pTarget->GetPhysicInfo()->vPosition);
@@ -132,9 +132,9 @@ CVector CSteeringBehaviours::Wander(IEntity *pEntity,double dDistance,double dRa
 	CMatrix mEntityToWorld;
 	CVector worldTarget=localTarget;
 	CVector vAxisX,vAxisY;
-	vAxisX=pEntity->GetPhysicInfo()->vForward;
+	vAxisX=pEntity->GetPhysicInfo()->vOwnX;
 	vAxisX.N();
-	vAxisY=pEntity->GetPhysicInfo()->vForward^CVector(0,0,1);
+	vAxisY=pEntity->GetPhysicInfo()->vOwnX^CVector(0,0,1);
 	vAxisY.N();
 	mEntityToWorld.Ref(vAxisX,vAxisY,CVector(0,0,1));
 	worldTarget*=mEntityToWorld;
@@ -163,9 +163,9 @@ CVector CSteeringBehaviours::OffsetPursue(IEntity *pEntity,IEntity *pTarget,CVec
 	CVector vWorldTarget;
 	CVector vAxisX,vAxisY;
 	CMatrix mEntityToWorld;
-	vAxisX=pTarget->GetPhysicInfo()->vForward;
+	vAxisX=pTarget->GetPhysicInfo()->vOwnX;
 	vAxisX.N();
-	vAxisY=pTarget->GetPhysicInfo()->vForward^CVector(0,0,1);
+	vAxisY=pTarget->GetPhysicInfo()->vOwnX^CVector(0,0,1);
 	vAxisY.N();
 
 	vWorldTarget=vOffset;

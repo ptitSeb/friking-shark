@@ -54,14 +54,14 @@ class CVehicle: public CEntityBase,virtual public IEntityEvents
     CVehicleType  *m_pType;
 	int m_nRoutePoint;
 	bool m_bRouteFinished;
-	bool m_bFirstFrame;
+	unsigned int m_nNextCheckContainerBuilding;
 	unsigned int m_dwNextShotTime;
 	unsigned int m_nConfiguredDamageType;
 	
 	static void FindBuilding(IEntity *piEntity,void *pParam1,void *pParam2);
 	
-	bool IsInsideBuilding(IEntity *piEntity);
-	IEntity *m_piContainerBuilding;
+	bool IsInsideBuilding(IStaticStructure *piEntity);
+	IStaticStructure *m_piContainerBuilding;
 	
 	void AcquireTarget();
 	

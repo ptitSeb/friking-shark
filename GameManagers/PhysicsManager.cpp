@@ -308,6 +308,7 @@ void ProcessChildren(IEntity *piParent)
 		CVector vFinalPos,vFinalAngles;
 		ComputeReferenceSystem(vPos,vAngles,pChildInfo->vLocalPosition,pChildInfo->vLocalAngles,&vFinalPos,&vFinalAngles);
 		VectorsFromAngles(vAngles,&pChildInfo->vRefSysX,&pChildInfo->vRefSysZ,&pChildInfo->vRefSysY);
+		VectorsFromAngles(vFinalAngles,&pChildInfo->vOwnX,&pChildInfo->vOwnZ,&pChildInfo->vOwnY);
 		
 		pChildInfo->vPosition=vFinalPos;
 		pChildInfo->vAngles=vFinalAngles;
@@ -358,10 +359,12 @@ void EntityOperation_ProcessPhysicFrame(IEntity *piEntity,void *pParam1,void *pP
 
 		pThis->m_EntityManagerWrapper.m_piEntityManager->PerformUnaryOperation(EntityOperation_CheckCollision,piEntity,&info);
 		pPhysicInfo->vPosition=info.traceInfo.m_vTracePos;
-    }
+		VectorsFromAngles(pPhysicInfo->vAngles,&pPhysicInfo->vOwnX,&pPhysicInfo->vOwnZ,&pPhysicInfo->vOwnY);
+	}
     else
     {
 		pPhysicInfo->vPosition=vNewPos;
+		VectorsFromAngles(pPhysicInfo->vAngles,&pPhysicInfo->vOwnX,&pPhysicInfo->vOwnZ,&pPhysicInfo->vOwnY);
     }
     ProcessChildren(piEntity);
 //	RTTRACE("%s ------ Finished : %f",piEntity->GetEntityClass()->c_str(),pPhysicInfo->vPosition.c[1]);

@@ -126,23 +126,22 @@ void CProjectileLauncher::Fire(unsigned int dwCurrentTime)
 	{
 		size_t nProjectile;
 		SPhysicInfo *pEntityPhysicInfo=m_piEntity->GetPhysicInfo();
-		CVector vOwnerAngles=pEntityPhysicInfo->vAngles,vOwnerForward,vOwnerRight,vOwnerUp;
-		CVector vTargetAngles,vTargetForward,vTargetRight,vTargetUp;
+		CVector vTargetAngles;
 		IEntity *piTarget=m_piEntity->GetTarget();
 		CVector vLaunchPosition=m_piEntity->GetPhysicInfo()->vPosition;
+		SPhysicInfo *pTargetPhysicInfo=piTarget?piTarget->GetPhysicInfo():NULL;
+		
+		if(m_pType->m_bIgnoreRoll)
+		{
+		}
 		
 		if(piTarget)
 		{
-			SPhysicInfo *pTargetPhysicInfo=piTarget->GetPhysicInfo();
+			
 			if(m_piEntity->GetAlignment()==ENTITY_ALIGNMENT_ENEMIES){vLaunchPosition=ProjectToAirPlane(m_piEntity->GetPhysicInfo()->vPosition);}
 			CVector vTargetDirection=GetIdealHeadingToTarget(vLaunchPosition,pTargetPhysicInfo->vPosition,pTargetPhysicInfo->vVelocity);
 			AnglesFromVector(vTargetDirection,&vTargetAngles);
 		}
-		
-		if(m_pType->m_bIgnoreRoll){vTargetAngles.c[ROLL]=0;}
-		if(m_pType->m_bIgnoreRoll){vOwnerAngles.c[ROLL]=0;}
-		VectorsFromAngles(vOwnerAngles,&vOwnerForward,&vOwnerRight,&vOwnerUp);
-		VectorsFromAngles(vTargetAngles,&vTargetForward,&vTargetRight,&vTargetUp);
 		
 		for(nProjectile=0;nProjectile<m_pCurrentLevel->dProjectiles.size();nProjectile++)
 		{
@@ -153,21 +152,45 @@ void CProjectileLauncher::Fire(unsigned int dwCurrentTime)
 				CVector vVelAngles,vVelForward,vVelRight,vVelUp;
 				CVector vPosAngles,vPosForward,vPosRight,vPosUp;
 				
-				vVelAngles=vOwnerAngles;
-				vVelForward=vOwnerForward;
-				vVelRight=vOwnerRight;
-				vVelUp=vOwnerUp;
-				vPosAngles=vOwnerAngles;
-				vPosForward=vOwnerForward;
-				vPosRight=vOwnerRight;
-				vPosUp=vOwnerUp;			
+				if(m_pType->m_bIgnoreRoll)
+				{
+					vVelAngles=pEntityPhysicInfo->vAngles;
+					vVelAngles.c[ROLL]=0;
+					VectorsFromAngles(vVelAngles,&vVelForward,&vVelRight,&vVelUp);
+					
+					vPosAngles=pEntityPhysicInfo->vAngles;
+					vPosAngles.c[ROLL]=0;
+					VectorsFromAngles(vPosAngles,&vPosForward,&vPosRight,&vPosUp);
+					
+				}
+				else
+				{
+					vVelAngles=pEntityPhysicInfo->vAngles;
+					vVelForward=pEntityPhysicInfo->vOwnX;
+					vVelRight=pEntityPhysicInfo->vOwnZ;
+					vVelUp=pEntityPhysicInfo->vAngles;
+					
+					vPosAngles=pEntityPhysicInfo->vAngles;
+					vPosForward=pEntityPhysicInfo->vOwnX;
+					vPosRight=pEntityPhysicInfo->vOwnZ;
+					vPosUp=pEntityPhysicInfo->vOwnY;
+				}
 				
 				if(pProjectileInfo->dwPositionReferenceSystem==eProjectileLauncherReferenceSystem_Target && piTarget)
 				{
-					vPosAngles=vTargetAngles;
-					vPosForward=vTargetForward;
-					vPosRight=vTargetRight;
-					vPosUp=vTargetUp;
+					if(m_pType->m_bIgnoreRoll)
+					{
+						vPosAngles=pTargetPhysicInfo->vAngles;
+						vPosAngles.c[ROLL]=0;
+						VectorsFromAngles(vPosAngles,&vPosForward,&vPosRight,&vPosUp);
+					}
+					else
+					{
+						vPosAngles=pTargetPhysicInfo->vAngles;
+						vPosForward=pTargetPhysicInfo->vOwnX;
+						vPosRight=pTargetPhysicInfo->vOwnZ;
+						vPosUp=pTargetPhysicInfo->vOwnY;
+					}
 				}
 				
 				IEntity *piProjectile=pProjectileInfo->projectileEntityType.m_piEntityType->CreateInstance(m_piEntity,dwCurrentTime);

@@ -43,7 +43,7 @@ IEntity *CVehicleType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTi
 
 CVehicle::CVehicle(CVehicleType *pType)
 {
-	m_bFirstFrame=true;
+	m_nNextCheckContainerBuilding=0;
 	m_piContainerBuilding=NULL;
 	m_piTarget=NULL;
     m_sClassName="CVehicle";
@@ -97,31 +97,30 @@ void CVehicle::AcquireTarget()
 	SetTarget(piTarget);
 }
 
-bool CVehicle::IsInsideBuilding(IEntity *piEntity)
+bool CVehicle::IsInsideBuilding(IStaticStructure *piStaticStructure)
 {
-	SPhysicInfo *pOtherPhysicInfo=piEntity->GetPhysicInfo();
-	if(pOtherPhysicInfo->pvBBoxes==NULL){return false;}
-	if(pOtherPhysicInfo->pvBBoxes->size()==0){return false;}
+	const std::vector<SBBox> &vBBoxes=piStaticStructure->GetProtectiveRegions();
+	if(vBBoxes.size()==0){return false;}
+	
 	
 	CVector vFake1,vFake2;
 	CVector vForward,vRight,vUp;
-	ComputeReferenceSystem(piEntity->GetPhysicInfo()->vPosition,piEntity->GetPhysicInfo()->vAngles,Origin,Origin,&vFake1,&vFake2,&vForward,&vUp,&vRight);
+	ComputeReferenceSystem(piStaticStructure->GetPhysicInfo()->vPosition,piStaticStructure->GetPhysicInfo()->vAngles,Origin,Origin,&vFake1,&vFake2,&vForward,&vUp,&vRight);
 
 	CVector vMyCenter=m_PhysicInfo.vPosition;
-	/*vMyCenter+=(m_PhysicInfo.vMins+m_PhysicInfo.vMaxs)*0.5;*/
-	vMyCenter-=piEntity->GetPhysicInfo()->vPosition;
+	vMyCenter-=piStaticStructure->GetPhysicInfo()->vPosition;
 	CMatrix m;
 	m.Ref(vForward,vUp,vRight);
 	vMyCenter*=m;
 	
 	bool bInside=false;
-	for(unsigned int b=0;!bInside && b<pOtherPhysicInfo->pvBBoxes->size();b++)
+	for(unsigned int b=0;!bInside && b<vBBoxes.size();b++)
 	{
 		bInside=true;
 		for(int c=0;c<3;c++)
 		{
-			if(vMyCenter.c[c]<(*pOtherPhysicInfo->pvBBoxes)[b].vMins.c[c]){bInside=false;break;}
-			if(vMyCenter.c[c]>(*pOtherPhysicInfo->pvBBoxes)[b].vMaxs.c[c]){bInside=false;break;}
+			if(vMyCenter.c[c]<vBBoxes[b].vMins.c[c]){bInside=false;break;}
+			if(vMyCenter.c[c]>vBBoxes[b].vMaxs.c[c]){bInside=false;break;}
 		}
 	}
 	return bInside;
@@ -132,11 +131,13 @@ void CVehicle::FindBuilding(IEntity *piEntity,void *pParam1,void *pParam2)
 	CVehicle *pThis=(CVehicle *)pParam1;
 	if(pThis->m_piContainerBuilding){return;}
 	if(piEntity->IsRemoved()){return;}
-	if(piEntity->GetHealth()<=0){return;}
 	if(*piEntity->GetEntityClass()!="CStaticStructure"){return;}
 	
-	bool bInside=pThis->IsInsideBuilding(piEntity);
-	if(bInside){pThis->m_piContainerBuilding=piEntity;}
+	IStaticStructure *piStructure=dynamic_cast<IStaticStructure*>(piEntity);
+	if(piStructure==NULL){return;}
+	
+	bool bInside=pThis->IsInsideBuilding(piStructure);
+	if(bInside){pThis->m_piContainerBuilding=piStructure;}
 }
 
 	
@@ -145,28 +146,34 @@ void CVehicle::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
 	
-	if(m_bFirstFrame)
-	{
-		m_piContainerBuilding=NULL;
-		GetEntityManager()->PerformUnaryOperation(FindBuilding,this,0);
-		if(m_piContainerBuilding){SUBSCRIBE_TO_CAST(m_piContainerBuilding,IEntityEvents);}
-	}
-	m_bFirstFrame=false;
-	
 	if(GetState()==eVehicleState_Destroyed)
 	{
 		if(m_vActiveAnimations.size()==0){Remove();}
 		if(!m_pType->m_bFollowRouteDestroyed){return;}
+	}	
+	
+	if(m_nNextCheckContainerBuilding<dwCurrentTime)
+	{
+		if(m_piContainerBuilding)
+		{
+			if(!IsInsideBuilding(m_piContainerBuilding))
+			{
+				UNSUBSCRIBE_FROM_CAST(m_piContainerBuilding,IEntityEvents);
+				m_piContainerBuilding=NULL;			
+			}
+		}
+		else
+		{
+			m_piContainerBuilding=NULL;
+			GetEntityManager()->PerformUnaryOperation(FindBuilding,this,0);
+			if(m_piContainerBuilding){SUBSCRIBE_TO_CAST(m_piContainerBuilding,IEntityEvents);}
+		}
+		m_nNextCheckContainerBuilding=dwCurrentTime+100;
 	}
 
 	if(m_piContainerBuilding)
 	{
 		m_dwDamageType=DAMAGE_TYPE_NONE;
-		if(!IsInsideBuilding(m_piContainerBuilding))
-		{
-			UNSUBSCRIBE_FROM_CAST(m_piContainerBuilding,IEntityEvents);
-			m_piContainerBuilding=NULL;			
-		}
 	}
 	else
 	{
@@ -190,9 +197,7 @@ void CVehicle::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 	{
 		CVector vDest,vDir;
 		// Just follow the configured route
-		CVector vForward,vRight,vUp;
 		double dCurrentAngularSpeed=m_pType->m_dMaxAngularSpeed;
-		VectorsFromAngles(m_PhysicInfo.vAngles.c[YAW],m_PhysicInfo.vAngles.c[PITCH],0,vForward,vRight,vUp);
 		vDest=m_piRoute->GetAbsolutePoint(m_nRoutePoint);
 		vDir=vDest-m_PhysicInfo.vPosition;
 		double dDist=vDir.N();  
@@ -207,7 +212,7 @@ void CVehicle::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 			double dCirclePerimeter=(m_PhysicInfo.dMaxVelocity*360.0/m_pType->m_dMaxAngularSpeed);
 			double dCapableRadius=(dCirclePerimeter/(2*PI));
 			
-			CVector vPerpB=vDirNext^vUp;
+			CVector vPerpB=vDirNext^m_PhysicInfo.vOwnY;
 			CVector vPB1=vDest+vDirNext*dDist;
 			CPlane  vPlaneA=CPlane(vDir,m_PhysicInfo.vPosition);
 			

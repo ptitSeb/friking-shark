@@ -17,6 +17,7 @@
 
 
 #include "./stdafx.h"
+#include "GroundUnitTypes.h"
 #include "StaticStructureType.h"
 
 CStaticStructureType::CStaticStructureType()
@@ -44,6 +45,13 @@ void CStaticStructureType::InitializeEntity( CEntityBase *piEntity,unsigned int 
 	piEntity->SetState(eStaticStructureState_Normal);
 }
 
+void CStaticStructureType::GetVulnerableRegions(std::vector<SBBox> *pvRegions){*pvRegions=m_vVulnerableRegions;}
+void CStaticStructureType::SetVulnerableRegions(std::vector<SBBox> *pvRegions){m_vVulnerableRegions=*pvRegions;}
+void CStaticStructureType::GetProtectiveRegions(std::vector<SBBox> *pvRegions){*pvRegions=m_vProtectiveRegions;}
+void CStaticStructureType::SetProtectiveRegions(std::vector<SBBox> *pvRegions){m_vProtectiveRegions=*pvRegions;}
+void CStaticStructureType::GetProtectiveDestroyedRegions(std::vector<SBBox> *pvRegions){*pvRegions=m_vProtectiveDestroyedRegions;}
+void CStaticStructureType::SetProtectiveDestroyedRegions(std::vector<SBBox> *pvRegions){m_vProtectiveDestroyedRegions=*pvRegions;}
+
 CStaticStructure::CStaticStructure(CStaticStructureType *pType,unsigned int dwCurrentTime)
 {
 	m_sClassName="CStaticStructure";
@@ -57,21 +65,27 @@ CStaticStructure::CStaticStructure(CStaticStructureType *pType,unsigned int dwCu
 	m_bFirstTimeVisible=true;
 }
 
-void CStaticStructure::OnKilled()
+void CStaticStructure::OnDamage(double dDamage,IEntity *piAggresor)
 {
-	bool bRemove=false;
-	m_PhysicInfo.dwBoundsType=PHYSIC_BOUNDS_TYPE_NONE;
-	
-	if(m_pTypeBase->GetStateAnimations(eStaticStructureState_Destroyed))
+	if((m_dHealth-dDamage)<=0 && m_pTypeBase->GetStateAnimations(eStaticStructureState_Destroyed))
 	{
+		SetState(eStaticStructureState_Destroyed);
 		m_dwDamageType=DAMAGE_TYPE_NONE;
 		m_PhysicInfo.dwBoundsType=PHYSIC_BOUNDS_TYPE_NONE;
 		m_PhysicInfo.dwMoveType=PHYSIC_MOVE_TYPE_NONE;
-		
-		SetState(eStaticStructureState_Destroyed);
 	}
 	else
 	{
+		CEntityBase::OnDamage(dDamage,piAggresor);
+	}
+}
+
+void CStaticStructure::OnKilled()
+{
+	bool bRemove=false;
+	if(!m_pTypeBase->GetStateAnimations(eStaticStructureState_Destroyed))
+	{
+		m_PhysicInfo.dwBoundsType=PHYSIC_BOUNDS_TYPE_NONE;
 		bRemove=true;
 	}
 	CEntityBase::OnKilledInternal(bRemove);
@@ -129,3 +143,16 @@ IEntity *CStaticStructure::GetTarget()
 	
 	return m_piTarget;
 }
+
+void CStaticStructure::OnAnimationEvent(string sEvent,string sParams)
+{
+	CEntityBase::OnAnimationEvent(sEvent,sParams);
+	if(sEvent=="DestructionFinished")
+	{
+		Kill();
+	}
+}
+
+const std::vector<SBBox> &CStaticStructure::GetVulnerableRegions(){return m_pType->m_vVulnerableRegions;}
+const std::vector<SBBox> &CStaticStructure::GetProtectiveRegions(){return m_dHealth>0?m_pType->m_vProtectiveRegions:m_pType->m_vProtectiveDestroyedRegions;}
+

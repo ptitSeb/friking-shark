@@ -54,7 +54,7 @@ CTurret::CTurret(CTurretType *pType,unsigned int dwCurrentTime)
 	m_dwNextShotTime=0;
 	m_dRadius=m_pType->DesignGetRadius();
 	m_piContainerBuilding=NULL;
-	m_bFirstFrame=true;
+	m_nNextCheckContainerBuilding=0;
 	m_bFirstTimeVisible=true;
 	
 	SEntityTypeConfig sconfig;
@@ -117,31 +117,30 @@ void CTurret::SetTarget(IEntity *piTarget)
 	if(m_piTarget){SUBSCRIBE_TO_CAST(m_piTarget,IEntityEvents);}
 }
 
-bool CTurret::IsInsideBuilding(IEntity *piEntity)
+bool CTurret::IsInsideBuilding(IStaticStructure *piStaticStructure)
 {
-	SPhysicInfo *pOtherPhysicInfo=piEntity->GetPhysicInfo();
-	if(pOtherPhysicInfo->pvBBoxes==NULL){return false;}
-	if(pOtherPhysicInfo->pvBBoxes->size()==0){return false;}
+	const std::vector<SBBox> &vBBoxes=piStaticStructure->GetProtectiveRegions();
+	if(vBBoxes.size()==0){return false;}
+	
 	
 	CVector vFake1,vFake2;
 	CVector vForward,vRight,vUp;
-	ComputeReferenceSystem(piEntity->GetPhysicInfo()->vPosition,piEntity->GetPhysicInfo()->vAngles,Origin,Origin,&vFake1,&vFake2,&vForward,&vUp,&vRight);
+	ComputeReferenceSystem(piStaticStructure->GetPhysicInfo()->vPosition,piStaticStructure->GetPhysicInfo()->vAngles,Origin,Origin,&vFake1,&vFake2,&vForward,&vUp,&vRight);
 	
 	CVector vMyCenter=m_PhysicInfo.vPosition;
-	/*vMyCenter+=(m_PhysicInfo.vMins+m_PhysicInfo.vMaxs)*0.5;*/
-	vMyCenter-=piEntity->GetPhysicInfo()->vPosition;
+	vMyCenter-=piStaticStructure->GetPhysicInfo()->vPosition;
 	CMatrix m;
 	m.Ref(vForward,vUp,vRight);
 	vMyCenter*=m;
 	
 	bool bInside=false;
-	for(unsigned int b=0;!bInside && b<pOtherPhysicInfo->pvBBoxes->size();b++)
+	for(unsigned int b=0;!bInside && b<vBBoxes.size();b++)
 	{
 		bInside=true;
 		for(int c=0;c<3;c++)
 		{
-			if(vMyCenter.c[c]<(*pOtherPhysicInfo->pvBBoxes)[b].vMins.c[c]){bInside=false;break;}
-			if(vMyCenter.c[c]>(*pOtherPhysicInfo->pvBBoxes)[b].vMaxs.c[c]){bInside=false;break;}
+			if(vMyCenter.c[c]<vBBoxes[b].vMins.c[c]){bInside=false;break;}
+			if(vMyCenter.c[c]>vBBoxes[b].vMaxs.c[c]){bInside=false;break;}
 		}
 	}
 	return bInside;
@@ -152,26 +151,19 @@ void CTurret::FindBuilding(IEntity *piEntity,void *pParam1,void *pParam2)
 	CTurret *pThis=(CTurret *)pParam1;
 	if(pThis->m_piContainerBuilding){return;}
 	if(piEntity->IsRemoved()){return;}
-	if(piEntity->GetHealth()<=0){return;}
 	if(*piEntity->GetEntityClass()!="CStaticStructure"){return;}
 	
-	bool bInside=pThis->IsInsideBuilding(piEntity);
-	if(bInside){pThis->m_piContainerBuilding=piEntity;}
+	IStaticStructure *piStructure=dynamic_cast<IStaticStructure*>(piEntity);
+	if(piStructure==NULL){return;}
+	
+	bool bInside=pThis->IsInsideBuilding(piStructure);
+	if(bInside){pThis->m_piContainerBuilding=piStructure;}
 }
-
 
 void CTurret::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
-	
-	if(m_bFirstFrame)
-	{
-		m_piContainerBuilding=NULL;
-		GetEntityManager()->PerformUnaryOperation(FindBuilding,this,0);
-		if(m_piContainerBuilding){SUBSCRIBE_TO_CAST(m_piContainerBuilding,IEntityEvents);}
-	}
-	m_bFirstFrame=false;
-	
+		
 	if(GetState()==eTurretState_Destroyed){return;}
 	if(GetState()==eTurretState_Normal)
 	{
@@ -182,14 +174,29 @@ void CTurret::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 		if(nAnimationToSet>nAnimations-1){nAnimationToSet=nAnimations-1;}
 		SetState(ENTITY_STATE_BASE,(int)nAnimationToSet);
 	}
+	
+	if(m_nNextCheckContainerBuilding<dwCurrentTime)
+	{
+		if(m_piContainerBuilding)
+		{
+			if(!IsInsideBuilding(m_piContainerBuilding))
+			{
+				UNSUBSCRIBE_FROM_CAST(m_piContainerBuilding,IEntityEvents);
+				m_piContainerBuilding=NULL;			
+			}
+		}
+		else
+		{
+			m_piContainerBuilding=NULL;
+			GetEntityManager()->PerformUnaryOperation(FindBuilding,this,0);
+			if(m_piContainerBuilding){SUBSCRIBE_TO_CAST(m_piContainerBuilding,IEntityEvents);}
+		}
+		m_nNextCheckContainerBuilding=dwCurrentTime+100;
+	}
+	
 	if(m_piContainerBuilding)
 	{
 		m_dwDamageType=DAMAGE_TYPE_NONE;
-		if(!IsInsideBuilding(m_piContainerBuilding))
-		{
-			UNSUBSCRIBE_FROM_CAST(m_piContainerBuilding,IEntityEvents);
-			m_piContainerBuilding=NULL;			
-		}
 	}
 	else
 	{

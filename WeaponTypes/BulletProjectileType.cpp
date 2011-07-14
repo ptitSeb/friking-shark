@@ -24,6 +24,7 @@ struct SBulletCollisionData
 {
 	CPlane  forwardPlane;
 	CPlane  fallPlane;
+	CLine   lBSPTrace;
 };
 
 CBulletProjectileType::CBulletProjectileType()
@@ -80,22 +81,63 @@ void CBulletProjectile::CheckCollisions(IEntity *piEntity,void *pParam1,void *pP
 	if(piEntity->GetHealth()<=0.0){return;}
 
 	bool bCollision=false;
-	
-	SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();
-	for(unsigned int b=0;pPhysicInfo->pvBBoxes && b<pPhysicInfo->pvBBoxes->size();b++)
-	{
-		CVector pVolumePoints[8];
-		CalcBBoxVolume(pPhysicInfo->vPosition,pPhysicInfo->vAngles,(*pPhysicInfo->pvBBoxes)[b].vMins,(*pPhysicInfo->pvBBoxes)[b].vMaxs,pVolumePoints);
 
-		int nPointsIn=0,nPointsOut=0;
-		for(unsigned int x=0;x<8;x++){if(pCollisionData->fallPlane.GetSide(pVolumePoints[x])>=0){nPointsOut++;}else{nPointsIn++;}}
-		if(nPointsOut && nPointsIn)
+	SPhysicInfo *pPhysicInfo=piEntity->GetPhysicInfo();
+	if(pPhysicInfo->dwBoundsType==PHYSIC_BOUNDS_TYPE_BSP)
+	{
+		CTraceInfo info=piEntity->GetTrace(pCollisionData->lBSPTrace.m_Points[0],pCollisionData->lBSPTrace.m_Points[1]);
+		if(info.m_bTraceHit)
 		{
-			nPointsIn=0,nPointsOut=0;
-			for(unsigned int x=0;x<8;x++){if(pCollisionData->forwardPlane.GetSide(pVolumePoints[x])>=0){nPointsOut++;}else{nPointsIn++;}}
-			if(nPointsOut && nPointsIn) 
+			IStaticStructure *piStaticStructure=*piEntity->GetEntityClass()=="CStaticStructure"?dynamic_cast<IStaticStructure *>(piEntity):NULL;
+			if(piStaticStructure && piStaticStructure->GetVulnerableRegions().size())
 			{
-				bCollision=true;			
+				const std::vector<SBBox> *pBBoxesToCheck=&piStaticStructure->GetVulnerableRegions();
+				for(unsigned int b=0;!bCollision && pBBoxesToCheck && b<pBBoxesToCheck->size();b++)
+				{
+					CVector vTempPos=info.m_vTracePos-pPhysicInfo->vPosition;
+					CVector vRelPos;
+					vRelPos.c[0]=pPhysicInfo->vOwnX*vTempPos;
+					vRelPos.c[1]=pPhysicInfo->vOwnY*vTempPos;
+					vRelPos.c[2]=pPhysicInfo->vOwnZ*vTempPos;
+					
+					const SBBox &bbox=(*pBBoxesToCheck)[b];
+					bCollision=bbox.vMins.c[0] <= vRelPos.c[0] &&
+					           bbox.vMaxs.c[0] >= vRelPos.c[0] && 
+					           bbox.vMins.c[1] <= vRelPos.c[1] &&
+					           bbox.vMaxs.c[1] >= vRelPos.c[1] && 
+					           bbox.vMins.c[2] <= vRelPos.c[2] &&
+					           bbox.vMaxs.c[2] >= vRelPos.c[2];
+					if(bCollision)
+					{
+						pThis->m_PhysicInfo.vPosition=info.m_vTracePos;
+					}
+				}
+			}
+			else
+			{
+				bCollision=true;
+				pThis->m_PhysicInfo.vPosition=info.m_vTracePos;
+			}
+		}
+	}
+	else if(pPhysicInfo->dwBoundsType==PHYSIC_BOUNDS_TYPE_BBOX)
+	{
+		const std::vector<SBBox> *pBBoxesToCheck=pPhysicInfo->pvBBoxes;
+		for(unsigned int b=0;pBBoxesToCheck && b<pBBoxesToCheck->size();b++)
+		{
+			CVector pVolumePoints[8];
+			CalcBBoxVolume(pPhysicInfo->vPosition,pPhysicInfo->vAngles,(*pBBoxesToCheck)[b].vMins,(*pBBoxesToCheck)[b].vMaxs,pVolumePoints);
+
+			int nPointsIn=0,nPointsOut=0;
+			for(unsigned int x=0;x<8;x++){if(pCollisionData->fallPlane.GetSide(pVolumePoints[x])>=0){nPointsOut++;}else{nPointsIn++;}}
+			if(nPointsOut && nPointsIn)
+			{
+				nPointsIn=0,nPointsOut=0;
+				for(unsigned int x=0;x<8;x++){if(pCollisionData->forwardPlane.GetSide(pVolumePoints[x])>=0){nPointsOut++;}else{nPointsIn++;}}
+				if(nPointsOut && nPointsIn) 
+				{
+					bCollision=true;
+				}
 			}
 		}
 	}
@@ -128,9 +170,14 @@ void CBulletProjectile::ProcessFrame(unsigned int dwCurrentTime,double dTimeFrac
 			vNormalizedVelocity.N();
 			VectorsFromAngles(m_PhysicInfo.vAngles,NULL,&vRight,NULL);
 
+			CVector vDir=m_PhysicInfo.vPosition-vCameraPos;
+			vDir.N();
+			
 			SBulletCollisionData data;
 			data.fallPlane=CPlane(m_PhysicInfo.vPosition,m_PhysicInfo.vPosition+m_PhysicInfo.vVelocity,vCameraPos);
 			data.forwardPlane=CPlane(m_PhysicInfo.vPosition,m_PhysicInfo.vPosition+vRight*10.0,vCameraPos);
+			data.lBSPTrace.m_Points[0]=m_PhysicInfo.vPosition;
+			data.lBSPTrace.m_Points[1]=m_PhysicInfo.vPosition+vDir*10000.0;
 			
 			GetEntityManager()->PerformUnaryOperation(CheckCollisions,this,&data);
 			m_dwNextCollisionCheck=dwCurrentTime+20;
@@ -148,6 +195,10 @@ bool CBulletProjectile::OnCollision(IEntity *piOther,CVector &vCollisionPos)
   {
     piOther->OnDamage(m_pType->m_dDamage,m_piParent);
 
+	if(m_pTypeBase->GetStateAnimations(eBulletState_StructureHit) && *piOther->GetEntityClass()=="CStaticStructure")
+	{ 
+		SetState(eBulletState_StructureHit);
+	}
 	if(m_pTypeBase->GetStateAnimations(eBulletState_Hit))
     {
 		SetState(eBulletState_Hit);
