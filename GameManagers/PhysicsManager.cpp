@@ -231,7 +231,7 @@ void EntityOperation_CheckCollision(IEntity *piOther,void *pParam1,void *pParam2
                 CVector vImpact=pInfo->vOrigin;
                 CTraceInfo tempTrace;
                 tempTrace=pInfo->traceInfo;
-		while(tempTrace.m_bTraceHit && nIterations<10)
+				while(tempTrace.m_bTraceHit && nIterations<10)
                 {
 //					RTTRACE("Iteration %d, HIT: normal %.05f,%.05f,%.05f, d:%.05f     Orig:%.05f,%.05f,%.05f    Dest:%.05f,%.05f,%.05f    Hit:%.05f,%.05f,%.05f",nIterations,tempTrace.m_vTracePlane.c[0],tempTrace.m_vTracePlane.c[1],tempTrace.m_vTracePlane.c[2],tempTrace.m_vTracePlane.d,vImpact.c[0],vImpact.c[1],vImpact.c[2],pInfo->vDestination.c[0],pInfo->vDestination.c[1],pInfo->vDestination.c[2],tempTrace.m_vTracePos.c[0],tempTrace.m_vTracePos.c[1],tempTrace.m_vTracePos.c[2]);
 		            double dEnd=-tempTrace.m_vTracePlane.GetSide(pInfo->vDestination);
@@ -329,8 +329,7 @@ void EntityOperation_ProcessPhysicFrame(IEntity *piEntity,void *pParam1,void *pP
 	CVector vNewPos=pThis->ProcessPhysicInfo(pPhysicInfo,dTimeFraction);
 	
 	if( (vNewPos!=pPhysicInfo->vPosition || pPhysicInfo->dwMoveType==PHYSIC_MOVE_TYPE_CUSTOM) && 
-        pPhysicInfo->dwBoundsType!=PHYSIC_BOUNDS_TYPE_NONE && 
-        pPhysicInfo->dwBoundsType!=PHYSIC_BOUNDS_TYPE_BSP)
+        pPhysicInfo->dwBoundsType!=PHYSIC_BOUNDS_TYPE_NONE)
     {
 		SBBox vBBox;
 		
