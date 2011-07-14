@@ -29,6 +29,7 @@ class CTurretType: public CEntityTypeBase
 public:
 	double m_dMinAngle;
 	double m_dMaxAngle;
+	double m_dMaxAngularSpeed;
 	double m_dTargetLockYawDiff;
 	double m_dTargetLockPitchDiff;
 	double m_dTargetMinDistance;
@@ -49,6 +50,7 @@ public:
 		PROP_CLASS_CHAIN(CEntityTypeBase)
 		PROP_VALUE_FLAGS(m_dMinAngle,"MinAngle",0,MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_VALUE_FLAGS(m_dMaxAngle,"MaxAngle",0,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_VALUE_FLAGS(m_dMaxAngularSpeed,"MaxAngularVelocity",180,MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_VALUE_FLAGS(m_dTargetMinDistance,"TargetMinDistance",0,MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_VALUE_FLAGS(m_dTargetLockYawDiff,"TargetLockYawDiff",20,MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_VALUE_FLAGS(m_dTargetLockPitchDiff,"TargetLockPitchDiff",20,MRPF_NORMAL|MRPF_OPTIONAL);
