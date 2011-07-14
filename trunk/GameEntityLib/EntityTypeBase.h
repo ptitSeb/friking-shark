@@ -78,6 +78,7 @@ protected:
 	double		 m_dMaxHealth;
 	double		 m_dMaxVelocity;
 	unsigned int	m_nPoints;
+	unsigned int 	m_nDamagePoints;
 
 
 	vector<SEntityState> m_vStates;
@@ -107,7 +108,8 @@ public:
 		PROP_FLAGS(m_nAlignment ,"Alignment",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_dMaxHealth ,"MaxHealth",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_dMaxVelocity,"MaxVelocity",MRPF_NORMAL|MRPF_OPTIONAL)
-		PROP_FLAGS(m_nPoints,"Points",MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_nPoints,"Points",0,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_nDamagePoints,"DamagePoints",10,MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP();
 
 	BEGIN_ENTITY_STATE_MAP()

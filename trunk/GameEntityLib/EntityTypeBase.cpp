@@ -32,6 +32,7 @@ CEntityTypeBase::CEntityTypeBase(void)
 	m_nMovementType=PHYSIC_MOVE_TYPE_NORMAL;
 	m_nCollisionType=PHYSIC_COLLISION_TYPE_STUCK;
 	m_nAlignment=ENTITY_ALIGNMENT_NEUTRAL;
+	m_nDamagePoints=10;
 }
 
 CEntityTypeBase::~CEntityTypeBase(void){}
@@ -258,6 +259,7 @@ void CEntityTypeBase::GetEntityTypeConfig(SEntityTypeConfig *pConfig)
 	pConfig->nAlignment=m_nAlignment;
 	pConfig->nPoints=m_nPoints;
 	pConfig->nPlacement=m_nPlacement;
+	pConfig->nDamagePoints=m_nDamagePoints;
 }
 
 void CEntityTypeBase::SetEntityTypeConfig(SEntityTypeConfig *pConfig)
@@ -272,6 +274,7 @@ void CEntityTypeBase::SetEntityTypeConfig(SEntityTypeConfig *pConfig)
 	m_nAlignment=pConfig->nAlignment;
 	m_nPoints=pConfig->nPoints;
 	m_nPlacement=pConfig->nPlacement;
+	m_nDamagePoints=pConfig->nDamagePoints;
 }
 
 // State Management
