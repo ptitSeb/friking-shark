@@ -82,6 +82,15 @@ void CEntityBase::OnDamage(double dDamage,IEntity *piAggresor)
 		OnKilled();
 		m_dHealth=0;
 	}
+	else
+	{
+		if(piAggresor && piAggresor->GetAlignment()==ENTITY_ALIGNMENT_PLAYER)
+		{
+			SEntityTypeConfig config;
+			m_pTypeBase->GetEntityTypeConfig(&config);
+			if(config.nDamagePoints){GivePoints(((double)config.nDamagePoints)*dDamage);}
+		}
+	}
 	m_dLastFrameDamage+=dDamage;
 }
 

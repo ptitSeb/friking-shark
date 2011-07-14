@@ -900,8 +900,9 @@ struct SEntityTypeConfig
 	double			dMaxHealth;
 	double			dMaxVelocity;
 	unsigned int    nPoints;
+	unsigned int 	nDamagePoints;
 
-	SEntityTypeConfig(){nPoints=0;dMaxHealth=1;dMaxVelocity=0;nDamageType=DAMAGE_TYPE_NONE;nMovementType=PHYSIC_MOVE_TYPE_NONE;nCollisionType=PHYSIC_COLLISION_TYPE_STUCK;nBoundsType=PHYSIC_BOUNDS_TYPE_NONE;nAlignment=ENTITY_ALIGNMENT_NEUTRAL;nPlacement=ENTITY_PLACEMENT_GROUND;}
+	SEntityTypeConfig(){nPoints=0;dMaxHealth=1;dMaxVelocity=0;nDamageType=DAMAGE_TYPE_NONE;nMovementType=PHYSIC_MOVE_TYPE_NONE;nCollisionType=PHYSIC_COLLISION_TYPE_STUCK;nBoundsType=PHYSIC_BOUNDS_TYPE_NONE;nAlignment=ENTITY_ALIGNMENT_NEUTRAL;nPlacement=ENTITY_PLACEMENT_GROUND;nDamagePoints=0;}
 };
 
 struct IAttributeManagement:virtual public ISystemUnknown
