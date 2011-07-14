@@ -238,7 +238,7 @@ void CTurret::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 		vWorldDir*=m;
 		CVector vLocalAngles=AnglesFromVector(vWorldDir);
 		double dIdealYaw=vLocalAngles.c[YAW];
-		m_PhysicInfo.vLocalAngles.c[YAW]=ApproachAngle(m_PhysicInfo.vLocalAngles.c[YAW],dIdealYaw,180.0*dTimeFraction);
+		m_PhysicInfo.vLocalAngles.c[YAW]=ApproachAngle(m_PhysicInfo.vLocalAngles.c[YAW],dIdealYaw,m_pType->m_dMaxAngularSpeed*dTimeFraction);
 		if(m_pType->m_dMaxAngle>0)
 		{
 			if(dIdealYaw>180)
@@ -252,7 +252,7 @@ void CTurret::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 			}
 			
 			
-			m_PhysicInfo.vLocalAngles.c[YAW]=ApproachAngle(m_PhysicInfo.vLocalAngles.c[YAW],dIdealYaw,180.0*dTimeFraction);
+			m_PhysicInfo.vLocalAngles.c[YAW]=ApproachAngle(m_PhysicInfo.vLocalAngles.c[YAW],dIdealYaw,m_pType->m_dMaxAngularSpeed*dTimeFraction);
 		}
 		double dYawDiff,dPitchDiff;
 		dYawDiff=fabs(AngleDiff(vLocalAngles.c[YAW],m_PhysicInfo.vLocalAngles.c[YAW]));
@@ -262,7 +262,7 @@ void CTurret::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 	}
 	else
 	{
-		m_PhysicInfo.vLocalAngles.c[YAW]=ApproachAngle(m_PhysicInfo.vLocalAngles.c[YAW],0,180.0*dTimeFraction);
+		m_PhysicInfo.vLocalAngles.c[YAW]=ApproachAngle(m_PhysicInfo.vLocalAngles.c[YAW],0,m_pType->m_dMaxAngularSpeed*dTimeFraction);
 		m_bTargetLocked=false;
 	}
 	if(m_piTarget && m_bTargetLocked && dwCurrentTime>m_dwNextShotTime && m_vWeapons.size() && !m_piContainerBuilding)
