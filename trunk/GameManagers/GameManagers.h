@@ -387,12 +387,18 @@ struct SPlayAreaConfig
 	double dCameraSpeed;
 	double dCameraViewAngle;
 	double dAirPlaneHeight;
+	
+	SPlayAreaConfig(){dCameraScroll=0;dCameraDistance=0;dCameraAspectRatio=0;dCameraSpeed=0;dCameraViewAngle=0;dAirPlaneHeight=0;}
+};
+
+struct SPlayerConfig
+{
 	bool   bPlayerLandingEnabled;
 	bool   bPlayerTakeOffEnabled;
 	CVector pvPlayerTakeOffPoints[4];
 	CVector pvPlayerLandingPoints[4];
 	
-	SPlayAreaConfig(){bPlayerLandingEnabled=false;bPlayerTakeOffEnabled=false;dCameraScroll=0;dCameraDistance=0;dCameraAspectRatio=0;dCameraSpeed=0;dCameraViewAngle=0;dAirPlaneHeight=0;}
+	SPlayerConfig(){bPlayerLandingEnabled=false;bPlayerTakeOffEnabled=false;}
 };
 
 struct SEntityLayer
@@ -583,8 +589,24 @@ public:
 	virtual ~IPlayAreaElementEnumerationCallback(){}
 };
 
+struct IPlayerManager:virtual public ISystemUnknown
+{
+	virtual void SetPlayerStart(CVector vPosition)=0;
+	
+	virtual bool IsScenarioCompleted()=0;
+	
+	virtual void GetPlayerConfig(SPlayerConfig *pConfig)=0;
+	virtual void SetPlayerConfig(SPlayerConfig *pConfig)=0;
+	
+	virtual void ProcessInput(IGameGUIManager *piManager,unsigned int dwCurrentTime,double dTimeFraction)=0;
+	
+};
 struct IPlayAreaManager:virtual public ISystemUnknown
 {
+	virtual void StartMovingCamera()=0;
+	virtual void StopMovingCamera()=0;
+	virtual bool IsMovingCamera()=0;
+	
     virtual void GetAirPlayPlane(CVector *pPlayAreaMins,CVector *pPlayAreaMaxs)=0;
     virtual void GetVisibleAirPlayPlane(CVector *pVisiblePlayAreaMins,CVector *pVisiblePlayAreaMaxs)=0;
 	virtual void GetPlayAreaPlaneAt(CVector vPos,CVector *pPlayAreaMins,CVector *pPlayAreaMaxs)=0;
@@ -595,14 +617,15 @@ struct IPlayAreaManager:virtual public ISystemUnknown
     virtual CVector GetPlayMovementForward()=0;
     virtual CVector GetPlayMovementRight()=0;
     virtual CVector GetPlayMovementUp()=0;
-	virtual void	GetPlayerRoute(CVector *pvStart,CVector *pvEnd)=0;
+	virtual double  GetPlayMovementMaxHorzScroll()=0;
+	
+	virtual void	SetCameraOffset(CVector vOffset)=0;
+	
+	virtual void	GetCameraRoute(CVector *pvStart,CVector *pvEnd)=0;
 
 	virtual IGenericCamera *GetCamera()=0;
 	virtual double          GetCameraSpeed()=0;
 	virtual void EnumeratePlayAreaElements(IPlayAreaElementEnumerationCallback *piCallback)=0;
-
-	virtual void ProcessInput(IGameGUIManager *piManager)=0;
-	virtual bool IsScenarioCompleted()=0;
 
 	virtual bool IsVisible(CVector vPos,double dRadius)=0;
 

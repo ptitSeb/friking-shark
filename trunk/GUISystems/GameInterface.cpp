@@ -89,6 +89,7 @@ bool CGameInterface::LoadScenario(std::string sScenario)
 	m_GameControllerWrapper.m_piGameController->LoadScenario(sScenario);
 
 	m_FrameManagerWrapper.Attach("GameSystem","FrameManager");
+	m_PlayerManagerWrapper.Attach("GameSystem","PlayerManager");
 	m_PlayAreaManagerWrapper.Attach("GameSystem","PlayAreaManager");
 	m_EntityManagerWrapper.Attach("GameSystem","EntityManager");
 	m_WorldManagerWrapper.Attach("GameSystem","WorldManager");
@@ -119,6 +120,11 @@ void CGameInterface::StartGame(EGameMode eMode,unsigned int nPoints, unsigned in
 		IWeapon *piWeapon=m_piPlayerEntity->GetWeapon(0);
 		if(piWeapon){piWeapon->SetCurrentLevel(nWeaponLevel);}
 	}
+	
+	CVector vStart,vEnd;
+	m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
+	m_PlayerManagerWrapper.m_piPlayerManager->SetPlayerStart(vStart);
+	
 	m_bGameStarted=true;
 	m_eState=eGameInterfaceState_StartCourtain;
 	unsigned int nCurrentTime=m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime();
@@ -148,7 +154,7 @@ void CGameInterface::ResetGame(bool bGoToLastCheckPoint)
 		if(m_PlayAreaManagerWrapper.m_piPlayAreaManager)
 		{
 			CVector vStart,vEnd;
-			m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayerRoute(&vStart,&vEnd);
+			m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
 			m_vLastCheckPointPosition=vStart;
 			m_PlayAreaManagerWrapper.m_piPlayAreaManager->EnumeratePlayAreaElements(this);
 		}
@@ -163,7 +169,13 @@ void CGameInterface::ResetGame(bool bGoToLastCheckPoint)
 	StartGame(m_eGameMode,nPoints,nLives,nWeapon);
 	if(bGoToLastCheckPoint)
 	{
-		m_PlayAreaManagerWrapper.m_piPlayAreaManager->SetPlayMovementPosition(m_vLastCheckPointPosition);
+		m_PlayerManagerWrapper.m_piPlayerManager->SetPlayerStart(m_vLastCheckPointPosition);
+	}
+	else
+	{
+		CVector vStart,vEnd;
+		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
+		m_PlayerManagerWrapper.m_piPlayerManager->SetPlayerStart(vStart);
 	}
 }
 
@@ -174,7 +186,7 @@ void CGameInterface::ProcessEnumeratedPlayAreaElement(IPlayAreaElement *piElemen
 	{
 		CVector vStart,vEnd,vCheckPoint;
 		CVector vPos=m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayMovementPosition();
-		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayerRoute(&vStart,&vEnd);
+		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
 		vCheckPoint=piCheckPoint->GetCheckPointPosition();
 		if((m_vLastCheckPointPosition-vStart)<(vCheckPoint-vStart) && 
 			(vCheckPoint-vStart)<=(vPos-vStart))
@@ -196,6 +208,7 @@ void CGameInterface::CloseScenario()
 
 	m_FrameManagerWrapper.Detach();
 	m_EntityManagerWrapper.Detach();
+	m_PlayerManagerWrapper.Detach();
 	m_PlayAreaManagerWrapper.Detach();
 	m_GameControllerWrapper.Detach();
 	m_WorldManagerWrapper.Detach();
@@ -291,7 +304,7 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 
 	m_FrameManagerWrapper.m_piFrameManager->ProcessFrame();
 	ProcessInput();
-	m_PlayAreaManagerWrapper.m_piPlayAreaManager->ProcessInput(m_piGUIManager);
+	m_PlayerManagerWrapper.m_piPlayerManager->ProcessInput(m_piGUIManager,m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime(),m_FrameManagerWrapper.m_piFrameManager->GetTimeFraction());
 
 	if(!m_FrameManagerWrapper.m_piFrameManager->IsPaused())
 	{
@@ -307,9 +320,9 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 		}
 	}
 	
-	if(m_eState==eGameInterfaceState_Playing && m_PlayAreaManagerWrapper.m_piPlayAreaManager)
+	if(m_eState==eGameInterfaceState_Playing && m_PlayerManagerWrapper.m_piPlayerManager)
 	{
-		if(m_PlayAreaManagerWrapper.m_piPlayAreaManager->IsScenarioCompleted())
+		if(m_PlayerManagerWrapper.m_piPlayerManager->IsScenarioCompleted())
 		{
 			m_eState=eGameInterfaceState_CountintWait;
 			m_nEndBombs=0;

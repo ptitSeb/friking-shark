@@ -63,7 +63,7 @@ CBombBonus::CBombBonus(CBombBonusType *pType,IEntity *piOwner)
   {
 	  CVector vStart,vEnd;
 	  CVector vCameraPos;
-	  m_pType->m_PlayAreaManager.m_piPlayAreaManager->GetPlayerRoute(&vStart,&vEnd);
+	  m_pType->m_PlayAreaManager.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
 	  m_piCamera=m_pType->m_PlayAreaManager.m_piPlayAreaManager->GetCamera();
 	  m_PlayAreaPlane=CPlane(AxisPosY,vStart);
 	  

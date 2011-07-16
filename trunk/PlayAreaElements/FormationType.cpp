@@ -248,7 +248,7 @@ bool CFormation::ProcessFrame(unsigned int dwCurrentTime,double dInterval)
         {
 			
 			CVector vPlayerStart,vPlayerEnd;
-			g_PlayAreaManagerWrapper.m_piInterface->GetPlayerRoute(&vPlayerStart,&vPlayerEnd);
+			g_PlayAreaManagerWrapper.m_piInterface->GetCameraRoute(&vPlayerStart,&vPlayerEnd);
 			
 			SPhysicForce force;
 			force.dwForceType=PHYSIC_FORCE_CONSTANT_VELOCITY;

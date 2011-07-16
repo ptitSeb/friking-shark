@@ -48,7 +48,7 @@ IEntity *CLiveBonusType::CreateInstance(IEntity *piParent,unsigned int dwCurrent
 	CVector vCameraPos;
 	if(m_PlayAreaManager.m_piPlayAreaManager)
 	{
-		m_PlayAreaManager.m_piPlayAreaManager->GetPlayerRoute(&vStart,&vEnd);
+		m_PlayAreaManager.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
 		IGenericCamera *piCamera=m_PlayAreaManager.m_piPlayAreaManager->GetCamera();
 		if(piCamera){vCameraPos=piCamera->GetPosition();}
 		REL(piCamera);	
