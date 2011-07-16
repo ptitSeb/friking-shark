@@ -50,8 +50,7 @@ class CPlayAreaManager: virtual public CSystemObjectBase,
                         virtual public IPlayAreaManager,
                         virtual public IGameManager,
 						virtual public IPlayAreaDesign,
-						virtual public IMusicDesign,
-						virtual public IEntityEvents
+						virtual public IMusicDesign
 {
 	bool m_bStarted;
 
@@ -72,47 +71,29 @@ class CPlayAreaManager: virtual public CSystemObjectBase,
     double  m_dPlayMovementSpeed;
 	double  m_dPlayMovementMaxHorzScroll;
 
-    C3DSVector m_vPlayerRouteStart;
-    C3DSVector m_vPlayerRouteEnd;
-
+    C3DSVector m_vCameraRouteStart;
+    C3DSVector m_vCameraRouteEnd;
+	CVector    m_vCameraOffset;
+	
     SPlayAreaInfo   m_PlayArea;
-    IEntity         *m_piPlayerEntity;
-	IPlayer         *m_piPlayer;
 
     CGameControllerWrapper  m_GameControllerWrapper;
 	CGenericCameraWrapper	m_CameraWrapper;
-	CFrameManagerWrapper	m_FrameManagerWrapper;
 
     CVector m_vAirPlayAreaMins;
     CVector m_vAirPlayAreaMaxs;
     CVector m_vVisibleAirPlayAreaMins;
     CVector m_vVisibleAirPlayAreaMaxs;
 
-	bool m_bScenarioCompleted;
-
-	double  m_dCameraFollowFactor;
-	double	m_dPlayMovementMaxRoll;
-	double  m_dPlayMovementMaxForward;
-	double  m_dPlayMovementMaxRight;
-	double  m_dPlayMovementMinForward;
-	double  m_dPlayMovementMinRight;
-	double  m_dPlayMovementCurrentForward;
-	double  m_dPlayMovementCurrentRight;
-	double	m_dPlayMovementCurrentRoll;
-	double	m_dPlayMovementRollVelocity;
-	unsigned int	m_dwPlayMovementLastRollTime;
-
-	CVector m_PlayerKilledVelocity;
-	bool   m_bPlayerLandingEnabled;
-	bool   m_bPlayerTakeOffEnabled;
-	CRoute m_PlayerLandingRoute;
-	CRoute m_PlayerTakeOffRoute;
+	bool m_bMovingCamera;
 	
 	std::vector<SEntityLayerData>  m_vEntityLayers;
 
     void CalculateAirPlayArea();
 	
 	void PrepareResources();
+	
+	void UpdatePlayCameraPosition();
 	
 public:
 
@@ -141,6 +122,10 @@ public:
 	void DesignRender(IGenericRender *piRender);
 
     // IPlayAreaManager
+	
+	void StartMovingCamera();
+	void StopMovingCamera();
+	bool IsMovingCamera();
 
 	IGenericCamera *GetCamera();
 	double          GetCameraSpeed();
@@ -150,12 +135,15 @@ public:
     void    GetVisibleAirPlayPlane(CVector *pVisiblePlayAreaMins,CVector *pVisiblePlayAreaMaxs);
 	void    GetCurrentVisibleArea(CVector *pVisiblePlayAreaMins,CVector *pVisiblePlayAreaMaxs);
 	
+	void	SetCameraOffset(CVector vOffset);
+	
     CVector GetPlayMovementPosition();
     CVector GetPlayMovementForward();
     CVector GetPlayMovementRight();
     CVector GetPlayMovementUp();
+    double  GetPlayMovementMaxHorzScroll();
 
-	void	GetPlayerRoute(CVector *pvStart,CVector *pvEnd);
+	void	GetCameraRoute(CVector *pvStart,CVector *pvEnd);
 
 	void	EnumeratePlayAreaElements(IPlayAreaElementEnumerationCallback *piCallback);
 	void	SetPlayMovementPosition(CVector vPosition);
@@ -175,13 +163,6 @@ public:
     void Start();
     void Stop();
     void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
-
-	void UpdatePlayCameraPosition();
-	void MovePlayer(unsigned long nKey);
-	void ProcessInput(IGameGUIManager *piManager);
-
-	void OnRemoved(IEntity *piEntity);
-	void OnKilled(IEntity *piEntity);
 	
 	// IMusicDesign
 
@@ -201,12 +182,8 @@ public:
         BEGIN_PROP_SUBMAP("ScenarioProps")
 		  PROP(m_CameraWrapper,			"Camara");
           PROP(m_vElements,             "Elementos");
-          PROP(m_vPlayerRouteStart,     "Origen");
-          PROP(m_vPlayerRouteEnd,       "Destino");
-		  PROP_FLAGS(m_PlayerTakeOffRoute,"TakeOffRoute",MRPF_NORMAL|MRPF_OPTIONAL);
-		  PROP_FLAGS(m_PlayerLandingRoute,"LandingRoute",MRPF_NORMAL|MRPF_OPTIONAL);
-		  PROP_VALUE_FLAGS(m_bPlayerLandingEnabled,"LandingEnabled",false,MRPF_NORMAL|MRPF_OPTIONAL);
-		  PROP_VALUE_FLAGS(m_bPlayerTakeOffEnabled,"TakeOffEnabled",false,MRPF_NORMAL|MRPF_OPTIONAL);
+          PROP(m_vCameraRouteStart,     "Origen");
+		  PROP(m_vCameraRouteEnd,       "Destino");
 		  PROP_VALUE(m_dCameraDistanceFromPlayer,"DistanciaCamara",115);
           PROP_VALUE(m_dPlayMovementSpeed,"VelocidadCamara",5);
 		  PROP_VALUE(m_dCameraPitch,      "InclinacionVista",0);

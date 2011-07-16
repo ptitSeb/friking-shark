@@ -28,29 +28,12 @@ CPlayAreaManager::CPlayAreaManager(void)
 	m_dPlayAreaHeight=20;
     m_dPlayMovementSpeed=5;
     m_dCameraPitch=0;
-	m_dCameraFollowFactor=0;
     m_dCameraDistanceFromPlayer=115;
 	m_dPlayMovementMaxHorzScroll=0;
-	m_piPlayer=NULL;
-    m_piPlayerEntity=NULL;
-	m_bStarted=false;
-	m_bScenarioCompleted=false;
-	m_bPlayerLandingEnabled=false;
-	m_bPlayerTakeOffEnabled=false;
 	
-	m_dPlayMovementMaxRoll=30;
-	m_dPlayMovementMaxForward=0;
-	m_dPlayMovementMaxRight=0;
-	m_dPlayMovementMinForward=0;
-	m_dPlayMovementMinRight=0;
-	m_dPlayMovementCurrentForward=0;
-	m_dPlayMovementCurrentRight=0;
-	m_dPlayMovementCurrentRoll=0;
-	m_dPlayMovementRollVelocity=360;
-	m_dwPlayMovementLastRollTime=0;
-
-	m_dCameraFollowFactor=1.0;
-
+	m_bStarted=false;
+	m_bMovingCamera=false;
+	
 	m_piMusicSound=NULL;
 	m_piIntroMusicSound=NULL;
 }
@@ -64,7 +47,6 @@ bool CPlayAreaManager::Init(std::string sClass,std::string sName,ISystem *piSyst
     bool bOk=CSystemObjectBase::Init(sClass,sName,piSystem);
     if(bOk){bOk=m_GameControllerWrapper.Attach("GameSystem","GameController");}
     if(bOk){m_GameControllerWrapper.m_piGameController->RegisterManager(200,this);}
-	if(bOk){bOk=m_FrameManagerWrapper.Attach("GameSystem","FrameManager");}
 	return bOk;
 }
 
@@ -72,7 +54,6 @@ void CPlayAreaManager::Destroy()
 {
 	m_CameraWrapper.Detach();
     if(m_GameControllerWrapper.m_piGameController){m_GameControllerWrapper.m_piGameController->UnregisterManager(this);}
-    m_FrameManagerWrapper.Detach();
 	m_GameControllerWrapper.Detach();
 	CSystemObjectBase::Destroy();
 }
@@ -132,43 +113,15 @@ void CPlayAreaManager::CloseScenario()
 	m_IntroMusic.Destroy();
 	m_Music.Destroy();
 	m_CameraWrapper.Destroy();
-	m_PlayerLandingRoute.Clear();
-	m_PlayerTakeOffRoute.Clear();
-	m_bPlayerLandingEnabled=false;
-	m_bPlayerTakeOffEnabled=false;	
+	m_vCameraOffset=Origin;
 }
 
 void CPlayAreaManager::Start()
 {
 	m_bStarted=true;
-
-	UpdatePlayArea();
-
-    CEntityTypeWrapper playerTypeWrapper;
-    CVector vAngles,vDir;
-    vDir=m_vPlayerRouteEnd-m_vPlayerRouteStart;
-    vDir.N();
-    AnglesFromVector(vDir,&vAngles);
-	m_vPlayMovementPos=m_vPlayerRouteStart;
-
-	playerTypeWrapper.Attach("EntityTypes","Player");
-    m_piPlayerEntity=playerTypeWrapper.m_piEntityType->CreateInstance(NULL,0);
-	m_piPlayer=m_piPlayerEntity?dynamic_cast<IPlayer*>(m_piPlayerEntity):NULL;
-	if(m_piPlayer)
-	{
-		m_piPlayerEntity->GetPhysicInfo()->vAngles.c[YAW]=vAngles.c[YAW];
-		m_piPlayerEntity->GetPhysicInfo()->vAngles.c[PITCH]=vAngles.c[PITCH];
-		m_piPlayerEntity->GetPhysicInfo()->dMaxVelocity=m_piPlayer->GetSpeed()*0.5;
-	}	
-	SUBSCRIBE_TO_CAST(m_piPlayerEntity,IEntityEvents);
-
-	m_bScenarioCompleted=false;
-	m_dPlayMovementCurrentRoll=0;
-	m_dwPlayMovementLastRollTime=0;
-	m_dPlayMovementCurrentForward=0;
-	m_dPlayMovementCurrentRight=0;
+	m_bMovingCamera=false;
 	
-	SetPlayMovementPosition(m_vPlayerRouteStart);
+	UpdatePlayArea();
 	
 	if(m_IntroMusic.m_piSoundType)
 	{
@@ -211,96 +164,30 @@ void CPlayAreaManager::Stop()
 		piElement->Reset();
 	}    
 	m_vDynamicElements.clear();
-	
-	if(m_piPlayerEntity){m_piPlayerEntity->Remove();m_piPlayerEntity=NULL;}
-	m_piPlayer=NULL;
 
-	m_bScenarioCompleted=false;
 	m_bStarted=false;
+	m_bMovingCamera=false;
 }
 
 void CPlayAreaManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	if(!m_bStarted){return;}
-	if(!m_piPlayerEntity){return;}
 	
-	// Watch out music playback
-	// First see if this level has intro music, if not, or if the intro has finished, play the main theme
-	
-	if(!m_bScenarioCompleted)
+	bool bPlayMainTheme=(m_piIntroMusicSound==NULL || !m_piIntroMusicSound->IsPlaying());
+	if(bPlayMainTheme && m_piMusicSound && !m_piMusicSound->IsPlaying())
 	{
-		bool bPlayMainTheme=(m_piIntroMusicSound==NULL || !m_piIntroMusicSound->IsPlaying());
-		if(bPlayMainTheme && m_piMusicSound && !m_piMusicSound->IsPlaying())
-		{
-			m_piMusicSound->Play();
-		}
-	}
-	else 
-	{
-		if(m_piIntroMusicSound && m_piIntroMusicSound->IsPlaying()){m_piIntroMusicSound->Stop();}
-		if(m_piMusicSound && m_piMusicSound->IsPlaying()){m_piMusicSound->Stop();}
-	}
-		
-	// Comprobar si el Jugador ha llegado al final, si lo ha hecho finalizar la partida.
-	if(m_piPlayerEntity->GetHealth()>0 && m_bScenarioCompleted==false)
-	{
-		if(m_bPlayerLandingEnabled)
-		{
-			SRoutePoint sPoint;
-			m_PlayerLandingRoute.GetPoint(0,&sPoint);
-			if(sPoint.vPosition.c[0]<m_vPlayMovementPos.c[0])
-			{
-				m_bScenarioCompleted=true;
-				if(m_bPlayerLandingEnabled){m_piPlayerEntity->SetRoute(&m_PlayerLandingRoute);}
-			}
-		}
-		else
-		{
-			if(m_vPlayerRouteEnd.c[0]<m_vPlayMovementPos.c[0])
-			{
-				m_bScenarioCompleted=true;
-			}
-		}
+		m_piMusicSound->Play();
 	}
 
 	UpdatePlayCameraPosition();
 
-	if(!m_FrameManagerWrapper.m_piFrameManager->IsPaused() && m_piPlayerEntity->GetHealth()>0)
-	{
-		if(m_dwPlayMovementLastRollTime+10<m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime())
-		{
-			if(m_dPlayMovementCurrentRoll>0)
-			{
-				m_dPlayMovementCurrentRoll-=m_dPlayMovementRollVelocity*m_FrameManagerWrapper.m_piFrameManager->GetTimeFraction();
-				if(m_dPlayMovementCurrentRoll<0){m_dPlayMovementCurrentRoll=0;}
-			}
-			if(m_dPlayMovementCurrentRoll<0)
-			{
-				m_dPlayMovementCurrentRoll+=m_dPlayMovementRollVelocity*m_FrameManagerWrapper.m_piFrameManager->GetTimeFraction();
-				if(m_dPlayMovementCurrentRoll>0){m_dPlayMovementCurrentRoll=0;}
-			}
-		}
-
-		m_piPlayerEntity->GetPhysicInfo()->vAngles.c[ROLL]=m_dPlayMovementCurrentRoll;
-		if( m_piPlayerEntity->HasFinishedRoute() && !m_bScenarioCompleted)
-		{
-			m_piPlayerEntity->GetPhysicInfo()->vPosition=m_vPlayMovementPos+CVector(m_dPlayMovementCurrentForward,0,m_dPlayMovementCurrentRight);
-			m_piPlayerEntity->GetPhysicInfo()->vVelocity=CVector(m_dPlayMovementSpeed,0,0);
-		}
-		else
-		{
-			m_dPlayMovementCurrentRight=m_piPlayerEntity->GetPhysicInfo()->vPosition.c[2]-m_vPlayMovementPos.c[2];
-			m_dPlayMovementCurrentForward=m_piPlayerEntity->GetPhysicInfo()->vPosition.c[0]-m_vPlayMovementPos.c[0];
-		}
-	}
-	
-	if(!m_piPlayerEntity->HasFinishedRoute())
-	{
-		m_PlayerKilledVelocity=Origin;
-	}
-	if(m_vPlayMovementPos.c[0]<m_vPlayerRouteEnd.c[0] && (m_piPlayerEntity->GetRoute()!=&m_PlayerTakeOffRoute))
+	if(m_bMovingCamera && m_vPlayMovementPos.c[0]<m_vCameraRouteEnd.c[0])
 	{
 		m_vPlayMovementPos.c[0]+=dTimeFraction*m_dPlayMovementSpeed;
+		if(m_vPlayMovementPos.c[0]>m_vCameraRouteEnd.c[0])
+		{
+			m_vPlayMovementPos.c[0]=m_vCameraRouteEnd.c[0];
+		}
 	}
 
 	CalculateAirPlayArea();
@@ -334,52 +221,25 @@ void CPlayAreaManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFract
 	}
 }
 
-void CPlayAreaManager::GetPlayerRoute(CVector *pvStart,CVector *pvEnd)
+void CPlayAreaManager::GetCameraRoute(CVector *pvStart,CVector *pvEnd)
 {
-	*pvStart=m_vPlayerRouteStart;
-	*pvEnd=m_vPlayerRouteEnd;
+	*pvStart=m_vCameraRouteStart;
+	*pvEnd=m_vCameraRouteEnd;
 }
 
 void CPlayAreaManager::SetPlayMovementPosition(CVector vPosition)
 {
-	SRoutePoint sLandPoint;
-	SRoutePoint sTakeOffPoint;
-	m_PlayerLandingRoute.GetPoint(0,&sLandPoint);
-	m_PlayerTakeOffRoute.GetPoint(0,&sTakeOffPoint);
-	
-	if(m_piPlayerEntity)
-	{
-		if(m_bPlayerTakeOffEnabled && vPosition.c[0]<=m_vPlayerRouteStart.c[0])
-		{
-			vPosition.c[0]=m_vPlayerRouteStart.c[0];
-			m_piPlayerEntity->GetPhysicInfo()->vPosition=sTakeOffPoint.vPosition;
-			m_piPlayerEntity->SetRoute(&m_PlayerTakeOffRoute);
-		}
-		else if(m_bPlayerLandingEnabled && vPosition.c[0]>=sLandPoint.vPosition.c[0])
-		{
-			vPosition.c[0]=sLandPoint.vPosition.c[0];
-			m_piPlayerEntity->GetPhysicInfo()->vPosition=sLandPoint.vPosition;
-			m_piPlayerEntity->SetRoute(&m_PlayerLandingRoute);
-		}
-		else
-		{
-			if(vPosition.c[0]<m_vPlayerRouteStart.c[0]){vPosition.c[0]=m_vPlayerRouteStart.c[0];}
-			if(vPosition.c[0]>m_vPlayerRouteEnd.c[0]){vPosition.c[0]=m_vPlayerRouteEnd.c[0];}
-			
-			m_piPlayerEntity->SetRoute(NULL);
-		}
-	}
 	m_vPlayMovementPos=vPosition;
+	if(m_vPlayMovementPos.c[0]<m_vCameraRouteStart.c[0]){m_vPlayMovementPos.c[0]=m_vCameraRouteStart.c[0];}
+	if(m_vPlayMovementPos.c[0]>m_vCameraRouteEnd.c[0]){m_vPlayMovementPos.c[0]=m_vCameraRouteEnd.c[0];}
 	CalculateAirPlayArea();
 }
 CVector CPlayAreaManager::GetPlayMovementPosition(){return m_vPlayMovementPos;}
 CVector CPlayAreaManager::GetPlayMovementForward(){return AxisPosX;}
 CVector CPlayAreaManager::GetPlayMovementRight(){return AxisPosZ;}
 CVector CPlayAreaManager::GetPlayMovementUp(){return AxisPosY;}
-bool  CPlayAreaManager::IsScenarioCompleted()
-{
-	return m_bScenarioCompleted && (m_piPlayerEntity==NULL || m_piPlayerEntity->HasFinishedRoute());
-}
+double  CPlayAreaManager::GetPlayMovementMaxHorzScroll(){return m_dPlayMovementMaxHorzScroll;}
+
 
 void CPlayAreaManager::GetAirPlayPlane(CVector *pPlayAreaMins,CVector *pPlayAreaMaxs){*pPlayAreaMins=m_vAirPlayAreaMins,*pPlayAreaMaxs=m_vAirPlayAreaMaxs;}
 void CPlayAreaManager::GetVisibleAirPlayPlane(CVector *pVisiblePlayAreaMins,CVector *pVisiblePlayAreaMaxs){*pVisiblePlayAreaMins=m_vVisibleAirPlayAreaMins;*pVisiblePlayAreaMaxs=m_vVisibleAirPlayAreaMaxs;}
@@ -388,15 +248,15 @@ void CPlayAreaManager::GetCurrentVisibleArea(CVector *pVisiblePlayAreaMins,CVect
 	*pVisiblePlayAreaMins=m_vVisibleAirPlayAreaMins;
 	*pVisiblePlayAreaMaxs=m_vVisibleAirPlayAreaMaxs;
 	CVector vCameraPos=m_CameraWrapper.m_piCamera?m_CameraWrapper.m_piCamera->GetPosition():Origin;
-	pVisiblePlayAreaMins->c[2]+=vCameraPos.c[2]-m_vPlayerRouteStart.c[2];
-	pVisiblePlayAreaMaxs->c[2]+=vCameraPos.c[2]-m_vPlayerRouteStart.c[2];
+	pVisiblePlayAreaMins->c[2]+=vCameraPos.c[2]-m_vCameraRouteStart.c[2];
+	pVisiblePlayAreaMaxs->c[2]+=vCameraPos.c[2]-m_vCameraRouteStart.c[2];
 }
 
 void CPlayAreaManager::GetPlayAreaPlaneAt(CVector vPos,CVector *pPlayAreaMins,CVector *pPlayAreaMaxs)
 {
 	if(m_CameraWrapper.m_piCamera==NULL){return;}
 	
-    double dCameraDistance=(m_vPlayerRouteStart.c[1]+m_dCameraDistanceFromPlayer)-vPos.c[1];
+    double dCameraDistance=(m_vCameraRouteStart.c[1]+m_dCameraDistanceFromPlayer)-vPos.c[1];
     double dViewAngle=m_CameraWrapper.m_piCamera->GetViewAngle();
     double dAspectRatio=m_CameraWrapper.m_piCamera->GetAspectRatio();
     CVector vOffset;
@@ -413,8 +273,8 @@ void CPlayAreaManager::GetPlayAreaPlaneAt(CVector vPos,CVector *pPlayAreaMins,CV
 void CPlayAreaManager::CalculateAirPlayArea()
 {
 	CVector vStartMins,vStartMaxs,vEndMins,vEndMaxs;
-    GetPlayAreaPlaneAt(m_vPlayerRouteStart,&vStartMins,&vStartMaxs);
-	GetPlayAreaPlaneAt(m_vPlayerRouteEnd,&vEndMins,&vEndMaxs);
+    GetPlayAreaPlaneAt(m_vCameraRouteStart,&vStartMins,&vStartMaxs);
+	GetPlayAreaPlaneAt(m_vCameraRouteEnd,&vEndMins,&vEndMaxs);
 	m_vAirPlayAreaMins.Mins(vStartMins,vEndMins);
 	m_vAirPlayAreaMaxs.Maxs(vStartMaxs,vEndMaxs);
     GetPlayAreaPlaneAt(m_vPlayMovementPos,&m_vVisibleAirPlayAreaMins,&m_vVisibleAirPlayAreaMaxs);
@@ -434,6 +294,7 @@ void CPlayAreaManager::EnumeratePlayAreaElements(IPlayAreaElementEnumerationCall
 
 IGenericCamera *CPlayAreaManager::GetCamera(){return ADD(m_CameraWrapper.m_piCamera);}
 double          CPlayAreaManager::GetCameraSpeed(){return m_dPlayMovementSpeed;}
+void			CPlayAreaManager::SetCameraOffset(CVector vOffset){m_vCameraOffset=vOffset;}
 
 void CPlayAreaManager::UpdatePlayCameraPosition()
 {
@@ -445,93 +306,15 @@ void CPlayAreaManager::UpdatePlayCameraPosition()
 	vCameraAngles.c[PITCH]-=90;
 	vCameraAngles.c[PITCH]+=m_dCameraPitch;
 
-	vCameraPosition=m_vPlayMovementPos;
+	vCameraPosition=m_vPlayMovementPos+m_vCameraOffset;
 	vCameraPosition.c[0]+=(-cos(vCameraAngles.c[PITCH]*2*PI/360)*m_dCameraDistanceFromPlayer);
 	vCameraPosition.c[1]+=(-sin(vCameraAngles.c[PITCH]*2*PI/360)*m_dCameraDistanceFromPlayer);
-	vCameraPosition.c[2]+=(m_dPlayMovementCurrentRight*m_dCameraFollowFactor);
 
 	m_CameraWrapper.m_piCamera->SetPosition(vCameraPosition);
 	m_CameraWrapper.m_piCamera->SetAngles(vCameraAngles);
 
 }
 
-void CPlayAreaManager::ProcessInput(IGameGUIManager *piGUIManager)
-{
-	if( m_piPlayer==NULL || 
-		m_piPlayerEntity==NULL || 
-		m_piPlayerEntity->GetHealth()<=0 || 
-		!m_piPlayerEntity->HasFinishedRoute() || 
-		m_bScenarioCompleted)
-	{
-		return;
-	}
-	m_PlayerKilledVelocity=CVector(m_dPlayMovementSpeed,0,0);
-	if(piGUIManager->IsKeyDown(GK_UP) || piGUIManager->IsKeyDown(GK_NUMPAD8) || piGUIManager->IsKeyDown('W')){MovePlayer(KEY_FORWARD);}
-	if(piGUIManager->IsKeyDown(GK_DOWN) || piGUIManager->IsKeyDown(GK_NUMPAD2) || piGUIManager->IsKeyDown('S')){MovePlayer(KEY_BACK);}
-	if(piGUIManager->IsKeyDown(GK_LEFT) || piGUIManager->IsKeyDown(GK_NUMPAD4) || piGUIManager->IsKeyDown('A')){MovePlayer(KEY_LEFT);}
-	if(piGUIManager->IsKeyDown(GK_RIGHT) || piGUIManager->IsKeyDown(GK_NUMPAD6) || piGUIManager->IsKeyDown('D')){MovePlayer(KEY_RIGHT);}
-	if(piGUIManager->IsKeyDown(GK_LCONTROL)){m_piPlayer->FireWeaponsOnSlot(0,m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime());}
-	if(piGUIManager->IsKeyDown(GK_LMENU)){m_piPlayer->FireWeaponsOnSlot(1,m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime());}	
-}
-
-void CPlayAreaManager::MovePlayer(unsigned long nKey)
-{
-	double dTimeFraction=m_FrameManagerWrapper.m_piFrameManager->GetTimeFraction();
-	CVector vPlayMovementForward=GetPlayMovementForward();
-	CVector vPlayMovementRight=GetPlayMovementRight();
-
-
-	if(nKey==KEY_LEFT)
-	{
-		m_dPlayMovementCurrentRoll-=m_dPlayMovementRollVelocity*dTimeFraction;
-		if(m_dPlayMovementCurrentRoll>m_dPlayMovementMaxRoll){m_dPlayMovementCurrentRoll=m_dPlayMovementMaxRoll;}
-		if(m_dPlayMovementCurrentRoll<-m_dPlayMovementMaxRoll){m_dPlayMovementCurrentRoll=-m_dPlayMovementMaxRoll;}
-		m_dPlayMovementCurrentRight-=m_piPlayer->GetSpeed()*dTimeFraction;
-		if(m_dPlayMovementCurrentRight<m_dPlayMovementMinRight)
-		{
-			m_dPlayMovementCurrentRight=m_dPlayMovementMinRight;
-		}
-		m_dwPlayMovementLastRollTime=m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime();
-
-		m_PlayerKilledVelocity-=vPlayMovementRight*(m_piPlayer->GetSpeed()*0.25);
-	}
-
-	if(nKey==KEY_RIGHT)
-	{
-		m_dPlayMovementCurrentRoll+=m_dPlayMovementRollVelocity*dTimeFraction;
-		if(m_dPlayMovementCurrentRoll>m_dPlayMovementMaxRoll){m_dPlayMovementCurrentRoll=m_dPlayMovementMaxRoll;}
-		if(m_dPlayMovementCurrentRoll<-m_dPlayMovementMaxRoll){m_dPlayMovementCurrentRoll=-m_dPlayMovementMaxRoll;}
-		m_dPlayMovementCurrentRight+=m_piPlayer->GetSpeed()*dTimeFraction;
-		if(m_dPlayMovementCurrentRight>m_dPlayMovementMaxRight)
-		{
-			m_dPlayMovementCurrentRight=m_dPlayMovementMaxRight;
-		}
-		m_dwPlayMovementLastRollTime=m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime();
-
-		m_PlayerKilledVelocity+=vPlayMovementRight*(m_piPlayer->GetSpeed()*0.25);
-	}
-
-	if(nKey==KEY_FORWARD)
-	{
-		m_dPlayMovementCurrentForward+=m_piPlayer->GetSpeed()*dTimeFraction;
-		if(m_dPlayMovementCurrentForward>m_dPlayMovementMaxForward)
-		{
-			m_dPlayMovementCurrentForward=m_dPlayMovementMaxForward;
-		}
-
-		m_PlayerKilledVelocity+=vPlayMovementForward*(m_piPlayer->GetSpeed()*0.25);
-	}
-	if(nKey==KEY_BACK)
-	{
-		m_dPlayMovementCurrentForward-=m_piPlayer->GetSpeed()*dTimeFraction;
-		if(m_dPlayMovementCurrentForward<m_dPlayMovementMinForward)
-		{
-			m_dPlayMovementCurrentForward=m_dPlayMovementMinForward;
-		}
-
-		m_PlayerKilledVelocity-=vPlayMovementForward*(m_piPlayer->GetSpeed()*0.25);
-	}
-}
 
 // Entity Layers
 
@@ -728,18 +511,6 @@ void CPlayAreaManager::GetPlayAreaConfig( SPlayAreaConfig *pConfig )
 	pConfig->dCameraViewAngle=m_CameraWrapper.m_piCamera->GetViewAngle();
 	pConfig->dCameraAspectRatio=m_CameraWrapper.m_piCamera->GetAspectRatio();
 	pConfig->dAirPlaneHeight=m_dPlayAreaHeight;
-	pConfig->bPlayerLandingEnabled=m_bPlayerLandingEnabled;
-	pConfig->bPlayerTakeOffEnabled=m_bPlayerTakeOffEnabled;
-	
-	int x;
-	for(x=0;x<4;x++)
-	{
-		SRoutePoint sTemp1,sTemp2;
-		m_PlayerLandingRoute.GetPoint(x,&sTemp1);
-		m_PlayerTakeOffRoute.GetPoint(x,&sTemp2);
-		pConfig->pvPlayerLandingPoints[x]=sTemp1.vPosition;
-		pConfig->pvPlayerTakeOffPoints[x]=sTemp2.vPosition;
-	}
 }
 
 void CPlayAreaManager::SetPlayAreaConfig( SPlayAreaConfig *pConfig )
@@ -750,13 +521,6 @@ void CPlayAreaManager::SetPlayAreaConfig( SPlayAreaConfig *pConfig )
 	m_CameraWrapper.m_piCamera->SetViewAngle(pConfig->dCameraViewAngle);
 	m_CameraWrapper.m_piCamera->SetAspectRatio(pConfig->dCameraAspectRatio);
 	m_dPlayAreaHeight=pConfig->dAirPlaneHeight;
-	m_bPlayerLandingEnabled=pConfig->bPlayerLandingEnabled;
-	m_bPlayerTakeOffEnabled=pConfig->bPlayerTakeOffEnabled;
-	
-	m_PlayerLandingRoute.Clear();
-	for(int x=0;x<4;x++){m_PlayerLandingRoute.AddPoint(x,SRoutePoint(true,pConfig->pvPlayerLandingPoints[x]));}
-	m_PlayerTakeOffRoute.Clear();
-	for(int x=0;x<4;x++){m_PlayerTakeOffRoute.AddPoint(x,SRoutePoint(true,pConfig->pvPlayerTakeOffPoints[x]));}
 	
 	UpdatePlayArea();
 }
@@ -804,18 +568,10 @@ void CPlayAreaManager::UpdatePlayArea()
 		vTerrainSize=vTerrainMaxs-vTerrainMins;
 	}
 
-	m_vPlayerRouteStart=vTerrainMins+CVector(dInside,0,vTerrainSize.c[2]*0.5);
-	m_vPlayerRouteEnd=m_vPlayerRouteStart+CVector(vTerrainSize.c[0]-dInside*2,0,0);
-	m_vPlayerRouteStart.c[1]=vTerrainMaxs.c[1]+m_dPlayAreaHeight;
-	m_vPlayerRouteEnd.c[1]=vTerrainMaxs.c[1]+m_dPlayAreaHeight;
-
-	double dMaxScroll=m_dPlayMovementMaxHorzScroll;
-	m_dPlayMovementMaxRight	=dMaxScroll+m_dCameraDistanceFromPlayer*sin(DegreesToRadians((m_CameraWrapper.m_piCamera->GetViewAngle()*m_CameraWrapper.m_piCamera->GetAspectRatio())/2.0));
-	m_dPlayMovementMinRight	=-m_dPlayMovementMaxRight;
-	m_dCameraFollowFactor    =dMaxScroll/m_dPlayMovementMaxRight;
-
-	m_dPlayMovementMaxForward=m_dCameraDistanceFromPlayer*sin(DegreesToRadians(m_CameraWrapper.m_piCamera->GetViewAngle()/2.0));
-	m_dPlayMovementMinForward=-m_dPlayMovementMaxForward;
+	m_vCameraRouteStart=vTerrainMins+CVector(dInside,0,vTerrainSize.c[2]*0.5);
+	m_vCameraRouteEnd=m_vCameraRouteStart+CVector(vTerrainSize.c[0]-dInside*2,0,0);
+	m_vCameraRouteStart.c[1]=vTerrainMaxs.c[1]+m_dPlayAreaHeight;
+	m_vCameraRouteEnd.c[1]=vTerrainMaxs.c[1]+m_dPlayAreaHeight;
 	
 	double dNear=m_dCameraDistanceFromPlayer-10;
 	double dFar=m_dCameraDistanceFromPlayer+vTerrainSize.c[1]+m_dPlayAreaHeight+1.0;
@@ -858,19 +614,6 @@ void CPlayAreaManager::GetElement( unsigned int nIndex,IPlayAreaElement **ppiEle
 unsigned int CPlayAreaManager::GetElements()
 {
 	return m_vElements.size();
-}
-
-void CPlayAreaManager::OnRemoved(IEntity *piEntity)
-{
-	if(piEntity==m_piPlayerEntity){m_piPlayer=NULL;m_piPlayerEntity=NULL;}
-}
-
-void CPlayAreaManager::OnKilled(IEntity *piEntity)
-{
-	if(piEntity==m_piPlayerEntity)
-	{
-		m_piPlayerEntity->GetPhysicInfo()->vVelocity=m_PlayerKilledVelocity;
-	}
 }
 
 bool CPlayAreaManager::IsVisible(CVector vPos,double dRadius)
@@ -930,11 +673,8 @@ bool CPlayAreaManager::SetIntroMusic(std::string sMusicFile)
 		if(m_piIntroMusicSound)
 		{
 			m_piIntroMusicSound->SetLoop(false);
-			if(!m_bScenarioCompleted)
-			{
-				if(m_piMusicSound && m_piMusicSound->IsPlaying()){m_piMusicSound->Stop();}
-				m_piIntroMusicSound->Play();				
-			}
+			if(m_piMusicSound && m_piMusicSound->IsPlaying()){m_piMusicSound->Stop();}
+			m_piIntroMusicSound->Play();				
 		}
 	}
 	return bOk;
@@ -972,7 +712,7 @@ bool CPlayAreaManager::SetMusic(std::string sMusicFile)
 		if(m_piMusicSound)
 		{
 			m_piMusicSound->SetLoop(true);
-			if(!m_bScenarioCompleted){m_piMusicSound->Play();}
+			m_piMusicSound->Play();
 		}
 	}
 	return bOk;
@@ -992,3 +732,6 @@ void CPlayAreaManager::GetMusic(std::string *psMusicFile,ISoundType **ppiSoundTy
 	}
 }
 
+void CPlayAreaManager::StartMovingCamera(){m_bMovingCamera=true;}
+void CPlayAreaManager::StopMovingCamera(){m_bMovingCamera=false;}
+bool CPlayAreaManager::IsMovingCamera(){return m_bMovingCamera;}

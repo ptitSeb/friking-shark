@@ -135,6 +135,7 @@ bool CScenarioEditorMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 	}
 
 	m_PlayAreaManagerWrapper.Attach("GameSystem","PlayAreaManager");
+	m_PlayerManagerWrapper.Attach("GameSystem","PlayerManager");
 	m_FrameManager.Attach("GameSystem","FrameManager");
 	m_WorldManagerWrapper.Attach("GameSystem","WorldManager");
 	m_EntityManagerWrapper.Attach("GameSystem","EntityManager");
@@ -150,6 +151,7 @@ void CScenarioEditorMainWindow::DestroyWindow()
 	Reset();
 	if(m_GameControllerWrapper.m_piGameController){m_GameControllerWrapper.m_piGameController->EndGame();}
 	m_SoundManagerWrapper.Detach();
+	m_PlayerManagerWrapper.Detach();
 	m_PlayAreaManagerWrapper.Detach();
 	m_GameControllerWrapper.Detach();
 	m_WorldManagerWrapper.Detach();
@@ -283,7 +285,7 @@ void CScenarioEditorMainWindow::RenderPlayArea(bool bSelectionRender)
 	CVector vPlayAreaMins,vPlayAreaMaxs,vStart,vEnd;
 	SPlayAreaConfig sPlayAreaConfig;
 	m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sPlayAreaConfig);
-	m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayerRoute(&vStart,&vEnd);
+	m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
 	m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayAreaPlaneAt(m_vPlayMovementPosition,&vPlayAreaMins,&vPlayAreaMaxs);
 	CVector vCenter=(vPlayAreaMaxs+vPlayAreaMins)*0.5;
 	CVector vSize=(vPlayAreaMaxs-vPlayAreaMins);
@@ -312,8 +314,8 @@ void CScenarioEditorMainWindow::RenderPlayArea(bool bSelectionRender)
 
 void CScenarioEditorMainWindow::RenderPlayerRoutes(bool bSelectionRender)
 {
-	SPlayAreaConfig sPlayAreaConfig;
-	m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sPlayAreaConfig);
+	SPlayerConfig sPlayerConfig;
+	m_PlayerManagerWrapper.m_piPlayerManager->GetPlayerConfig(&sPlayerConfig);
 	
 	m_Render.m_piRender->PushState();
 	m_Render.m_piRender->ActivateBlending();
@@ -321,28 +323,28 @@ void CScenarioEditorMainWindow::RenderPlayerRoutes(bool bSelectionRender)
 	
 	for(int x=0;x<4;x++)
 	{
-		if(sPlayAreaConfig.bPlayerTakeOffEnabled)
+		if(sPlayerConfig.bPlayerTakeOffEnabled)
 		{
 			if(bSelectionRender){m_Render.m_piRender->SetSelectionId(SELECT_TAKEOFF_BASE+x);}
-			m_Render.m_piRender->RenderPoint(sPlayAreaConfig.pvPlayerTakeOffPoints[x],m_nSelectedTakeOffRoutePoint==x?15:10,CVector(0,0,1),1.0);
+			m_Render.m_piRender->RenderPoint(sPlayerConfig.pvPlayerTakeOffPoints[x],m_nSelectedTakeOffRoutePoint==x?15:10,CVector(0,0,1),1.0);
 		}
-		if(sPlayAreaConfig.bPlayerLandingEnabled)
+		if(sPlayerConfig.bPlayerLandingEnabled)
 		{
 			if(bSelectionRender){m_Render.m_piRender->SetSelectionId(SELECT_LANDING_BASE+x);}
-			m_Render.m_piRender->RenderPoint(sPlayAreaConfig.pvPlayerLandingPoints[x],m_nSelectedLandingRoutePoint==x?15:10,CVector(1,0,0),1.0);
+			m_Render.m_piRender->RenderPoint(sPlayerConfig.pvPlayerLandingPoints[x],m_nSelectedLandingRoutePoint==x?15:10,CVector(1,0,0),1.0);
 		}
 	}
 	if(!bSelectionRender)
 	{
 		for(int x=0;x<3;x++)
 		{
-			if(sPlayAreaConfig.bPlayerTakeOffEnabled)
+			if(sPlayerConfig.bPlayerTakeOffEnabled)
 			{
-				m_Render.m_piRender->RenderLine(sPlayAreaConfig.pvPlayerTakeOffPoints[x],sPlayAreaConfig.pvPlayerTakeOffPoints[x+1],CVector(0,0,1),0xFFFF);
+				m_Render.m_piRender->RenderLine(sPlayerConfig.pvPlayerTakeOffPoints[x],sPlayerConfig.pvPlayerTakeOffPoints[x+1],CVector(0,0,1),0xFFFF);
 			}
-			if(sPlayAreaConfig.bPlayerLandingEnabled)
+			if(sPlayerConfig.bPlayerLandingEnabled)
 			{
-				m_Render.m_piRender->RenderLine(sPlayAreaConfig.pvPlayerLandingPoints[x],sPlayAreaConfig.pvPlayerLandingPoints[x+1],CVector(1,0,0),0xFFFF);
+				m_Render.m_piRender->RenderLine(sPlayerConfig.pvPlayerLandingPoints[x],sPlayerConfig.pvPlayerLandingPoints[x+1],CVector(1,0,0),0xFFFF);
 			}
 		}
 	}
@@ -352,8 +354,8 @@ void CScenarioEditorMainWindow::RenderPlayerRoutes(bool bSelectionRender)
 
 void CScenarioEditorMainWindow::RenderCheckPoints(bool bSelectionRender)
 {
-	SPlayAreaConfig sPlayAreaConfig;
-	m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sPlayAreaConfig);
+	SPlayerConfig sPlayerConfig;
+	m_PlayerManagerWrapper.m_piPlayerManager->GetPlayerConfig(&sPlayerConfig);
 	
 	m_Render.m_piRender->PushState();
 	m_Render.m_piRender->ActivateBlending();
@@ -381,7 +383,7 @@ void CScenarioEditorMainWindow::RenderCheckPoints(bool bSelectionRender)
 	}
 	if(!bSelectionRender)
 	{
-		m_Render.m_piRender->RenderLine(sPlayAreaConfig.pvPlayerTakeOffPoints[3],sPlayAreaConfig.pvPlayerLandingPoints[0],CVector(1,0,1),0xFFFF);
+		m_Render.m_piRender->RenderLine(sPlayerConfig.pvPlayerTakeOffPoints[3],sPlayerConfig.pvPlayerLandingPoints[0],CVector(1,0,1),0xFFFF);
 	}
 	
 	m_Render.m_piRender->PopState();
@@ -415,7 +417,7 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 
 	if(m_bSimulationStarted)
 	{		
-		if(!m_bInspectionMode){m_PlayAreaManagerWrapper.m_piPlayAreaManager->ProcessInput(m_piGUIManager);m_Render.m_piRender->DisableAutoShadowVolume();}
+		if(!m_bInspectionMode){m_PlayerManagerWrapper.m_piPlayerManager->ProcessInput(m_piGUIManager,m_FrameManager.m_piFrameManager->GetCurrentTime(),m_FrameManager.m_piFrameManager->GetTimeFraction());m_Render.m_piRender->DisableAutoShadowVolume();}
 		m_GameControllerWrapper.m_piGameController->ProcessFrame(m_FrameManager.m_piFrameManager->GetCurrentTime(),m_FrameManager.m_piFrameManager->GetTimeFraction());
 		IGenericCamera *piPlayCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera();
 		IGenericCamera *piCamera=NULL;
@@ -519,7 +521,7 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 		{
 			CVector vStart,vEnd,vPos;
 			vPos=m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayMovementPosition();
-			m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayerRoute(&vStart,&vEnd);
+			m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
 			m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sPlayAreaConfig);
 			
 			int nTotalTime=(vEnd.c[0]-vStart.c[0])/sPlayAreaConfig.dCameraSpeed;
@@ -566,7 +568,7 @@ void CScenarioEditorMainWindow::ProcessFileNew()
 		if(m_PlayAreaManagerWrapper.m_piPlayAreaManager)
 		{
 			CVector vStart,vEnd;
-			m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayerRoute(&vStart,&vEnd);
+			m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
 			m_vPlayMovementPosition=vStart;
 		}
 		
@@ -1881,10 +1883,16 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	}
 	bool bUpdateFormations=true;
 	bool bPlayAreaChange=false;
+	bool bPlayerChange=false;
 	SPlayAreaConfig sPlayAreaConfig;
+	SPlayerConfig sPlayerConfig;
 	if(m_PlayAreaManagerWrapper.m_piPlayAreaDesign)
 	{
 		m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sPlayAreaConfig);
+	}
+	if(m_PlayerManagerWrapper.m_piPlayerManager)
+	{
+		m_PlayerManagerWrapper.m_piPlayerManager->GetPlayerConfig(&sPlayerConfig);
 	}
 
 	if(piControl==m_piBTPlayAreaIncreaseAirPlane)
@@ -1952,7 +1960,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	else if(piControl==m_piBTPlayAreaAutoTakeOff)
 	{
 		CVector vStart,vEnd;
-		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayerRoute(&vStart,&vEnd);
+		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
 		CVector vDir=vStart-vEnd; // Hacia la direccion inversa de la ruta.
 		vDir.N();
 		
@@ -1967,17 +1975,17 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		GetTerrainCoordinatesFromLine(line,false,&vTerrainPos);
 		vTerrainPos.c[1]+=3;
 		
-		sPlayAreaConfig.bPlayerTakeOffEnabled=true;
-		sPlayAreaConfig.pvPlayerTakeOffPoints[0]=vTerrainPos-CVector(vStart.c[0]-vTerrainPos.c[0],0,0);
-		sPlayAreaConfig.pvPlayerTakeOffPoints[1]=vTerrainPos;
-		sPlayAreaConfig.pvPlayerTakeOffPoints[2]=vStart;
-		sPlayAreaConfig.pvPlayerTakeOffPoints[3]=vStart+CVector(40,0,0);
-		bPlayAreaChange=true;
+		sPlayerConfig.bPlayerTakeOffEnabled=true;
+		sPlayerConfig.pvPlayerTakeOffPoints[0]=vTerrainPos-CVector(vStart.c[0]-vTerrainPos.c[0],0,0);
+		sPlayerConfig.pvPlayerTakeOffPoints[1]=vTerrainPos;
+		sPlayerConfig.pvPlayerTakeOffPoints[2]=vStart;
+		sPlayerConfig.pvPlayerTakeOffPoints[3]=vStart+CVector(40,0,0);
+		bPlayerChange=true;
 	}
 	else if(piControl==m_piBTPlayAreaAutoLanding)
 	{
 		CVector vStart,vEnd;
-		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayerRoute(&vStart,&vEnd);
+		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
 		CVector vDir=vEnd-vStart;
 		vDir.N();
 		
@@ -1992,12 +2000,12 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		GetTerrainCoordinatesFromLine(line,false,&vTerrainPos);
 		vTerrainPos.c[1]+=3;
 		
-		sPlayAreaConfig.bPlayerLandingEnabled=true;
-		sPlayAreaConfig.pvPlayerLandingPoints[0]=vEnd-CVector(40,0,0);
-		sPlayAreaConfig.pvPlayerLandingPoints[1]=vEnd;
-		sPlayAreaConfig.pvPlayerLandingPoints[2]=vTerrainPos;
-		sPlayAreaConfig.pvPlayerLandingPoints[3]=vTerrainPos-CVector(vEnd.c[0]-vTerrainPos.c[0],0,0);
-		bPlayAreaChange=true;
+		sPlayerConfig.bPlayerLandingEnabled=true;
+		sPlayerConfig.pvPlayerLandingPoints[0]=vEnd-CVector(40,0,0);
+		sPlayerConfig.pvPlayerLandingPoints[1]=vEnd;
+		sPlayerConfig.pvPlayerLandingPoints[2]=vTerrainPos;
+		sPlayerConfig.pvPlayerLandingPoints[3]=vTerrainPos-CVector(vEnd.c[0]-vTerrainPos.c[0],0,0);
+		bPlayerChange=true;
 	}
 	if(m_nSelectedEntity!=-1 && m_nSelectedRoutePoint!=-1)
 	{
@@ -2036,6 +2044,10 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	{
 		m_PlayAreaManagerWrapper.m_piPlayAreaDesign->SetPlayAreaConfig(&sPlayAreaConfig);
 	}
+	if(m_PlayerManagerWrapper.m_piPlayerManager && bPlayerChange)
+	{
+		m_PlayerManagerWrapper.m_piPlayerManager->SetPlayerConfig(&sPlayerConfig);
+	}
 	if(bUpdateFormations)
 	{
 		UpdateFormationsHeight();
@@ -2057,7 +2069,7 @@ void CScenarioEditorMainWindow::UpdateTexturization()
 	if(m_PlayAreaManagerWrapper.m_piPlayAreaManager)
 	{
 		CVector vStart,vEnd;
-		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayerRoute(&vStart,&vEnd);
+		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
 		m_vPlayMovementPosition.c[1]=vStart.c[1];
 		m_vPlayMovementPosition.c[2]=vStart.c[2];
 		if(m_vPlayMovementPosition.c[0]<vStart.c[0]){m_vPlayMovementPosition.c[0]=vStart.c[0];}
@@ -2853,9 +2865,9 @@ void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 				m_bMovingPlayerRoutePoint=true;
 				m_piGUIManager->SetMouseCapture(this);
 				
-				SPlayAreaConfig sPlayAreaConfig;
-				if(m_PlayAreaManagerWrapper.m_piPlayAreaDesign){m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sPlayAreaConfig);}
-				m_vObjectOriginalPosition=sPlayAreaConfig.pvPlayerLandingPoints[m_nSelectedLandingRoutePoint];
+				SPlayerConfig sPlayerConfig;
+				if(m_PlayerManagerWrapper.m_piPlayerManager){m_PlayerManagerWrapper.m_piPlayerManager->GetPlayerConfig(&sPlayerConfig);}
+				m_vObjectOriginalPosition=sPlayerConfig.pvPlayerLandingPoints[m_nSelectedLandingRoutePoint];
 				
 				if(m_nSelectedLandingRoutePoint<2)
 				{
@@ -2879,9 +2891,9 @@ void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 				m_bMovingPlayerRoutePoint=true;
 				m_piGUIManager->SetMouseCapture(this);
 				
-				SPlayAreaConfig sPlayAreaConfig;
-				if(m_PlayAreaManagerWrapper.m_piPlayAreaDesign){m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sPlayAreaConfig);}
-				m_vObjectOriginalPosition=sPlayAreaConfig.pvPlayerTakeOffPoints[m_nSelectedTakeOffRoutePoint];
+				SPlayerConfig sPlayerConfig;
+				if(m_PlayerManagerWrapper.m_piPlayerManager){m_PlayerManagerWrapper.m_piPlayerManager->GetPlayerConfig(&sPlayerConfig);}
+				m_vObjectOriginalPosition=sPlayerConfig.pvPlayerTakeOffPoints[m_nSelectedTakeOffRoutePoint];
 				
 				if(m_nSelectedTakeOffRoutePoint>=2)
 				{
@@ -3106,7 +3118,7 @@ bool CScenarioEditorMainWindow::GetAirPlaneCoordinatesFromCursorPos(double x,dou
 	{
 		CVector vPlayerRouteStart,vPlayerRouteEnd;
 		CVector vPlayAreaMins,vPlayAreaMaxs;
-		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayerRoute(&vPlayerRouteStart,&vPlayerRouteEnd);
+		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vPlayerRouteStart,&vPlayerRouteEnd);
 		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayAreaPlaneAt(vPos,&vPlayAreaMins,&vPlayAreaMaxs);
 		// Center the coordinate in the player route
 		vPos.c[2]=vPlayerRouteStart.c[2];
@@ -3217,7 +3229,7 @@ void CScenarioEditorMainWindow::OnMouseMove( double x,double y )
 			if(m_PlayAreaManagerWrapper.m_piPlayAreaDesign)
 			{
 				CVector vPlayerRouteStart,vPlayerRouteEnd;
-				m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayerRoute(&vPlayerRouteStart,&vPlayerRouteEnd);
+				m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vPlayerRouteStart,&vPlayerRouteEnd);
 				vTemp.c[1]=vPlayerRouteStart.c[1];
 				vTemp.c[2]=vPlayerRouteStart.c[2];
 			}
@@ -3227,16 +3239,16 @@ void CScenarioEditorMainWindow::OnMouseMove( double x,double y )
 	else if(m_bMovingPlayerRoutePoint && m_nSelectedLandingRoutePoint!=-1)
 	{
 		CVector vStart,vEnd;
-		SPlayAreaConfig sPlayAreaConfig;
-		if(m_PlayAreaManagerWrapper.m_piPlayAreaManager){m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayerRoute(&vStart,&vEnd);}
-		if(m_PlayAreaManagerWrapper.m_piPlayAreaDesign){m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sPlayAreaConfig);}
+		SPlayerConfig sPlayerConfig;
+		if(m_PlayAreaManagerWrapper.m_piPlayAreaManager){m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);}
+		if(m_PlayerManagerWrapper.m_piPlayerManager){m_PlayerManagerWrapper.m_piPlayerManager->GetPlayerConfig(&sPlayerConfig);}
 		if(m_nSelectedLandingRoutePoint<2)
 		{
 			CVector vTemp;
 			if(GetAirPlaneCoordinatesFromCursorPos(x,y,&vTemp))
 			{
 				vTemp.c[2]=vStart.c[2];
-				sPlayAreaConfig.pvPlayerLandingPoints[m_nSelectedLandingRoutePoint]=vTemp;
+				sPlayerConfig.pvPlayerLandingPoints[m_nSelectedLandingRoutePoint]=vTemp;
 			}
 		}
 		else
@@ -3246,16 +3258,17 @@ void CScenarioEditorMainWindow::OnMouseMove( double x,double y )
 			{
 				vTemp.c[2]=vStart.c[2];
 				vTemp.c[1]+=3;
-				sPlayAreaConfig.pvPlayerLandingPoints[m_nSelectedLandingRoutePoint]=vTemp;
+				sPlayerConfig.pvPlayerLandingPoints[m_nSelectedLandingRoutePoint]=vTemp;
 			}
 		}
-		if(m_PlayAreaManagerWrapper.m_piPlayAreaDesign){m_PlayAreaManagerWrapper.m_piPlayAreaDesign->SetPlayAreaConfig(&sPlayAreaConfig);}
+		if(m_PlayerManagerWrapper.m_piPlayerManager){m_PlayerManagerWrapper.m_piPlayerManager->SetPlayerConfig(&sPlayerConfig);}
 	}
 	else if(m_bMovingPlayerRoutePoint && m_nSelectedTakeOffRoutePoint!=-1)
 	{
 		CVector vStart,vEnd;
 		SPlayAreaConfig sPlayAreaConfig;
-		if(m_PlayAreaManagerWrapper.m_piPlayAreaManager){m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayerRoute(&vStart,&vEnd);}
+		SPlayerConfig sPlayerConfig;
+		if(m_PlayAreaManagerWrapper.m_piPlayAreaManager){m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);}
 		if(m_PlayAreaManagerWrapper.m_piPlayAreaDesign){m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sPlayAreaConfig);}
 		if(m_nSelectedTakeOffRoutePoint>=2)
 		{
@@ -3263,7 +3276,7 @@ void CScenarioEditorMainWindow::OnMouseMove( double x,double y )
 			if(GetAirPlaneCoordinatesFromCursorPos(x,y,&vTemp))
 			{
 				vTemp.c[2]=vStart.c[2];
-				sPlayAreaConfig.pvPlayerTakeOffPoints[m_nSelectedTakeOffRoutePoint]=vTemp;
+				sPlayerConfig.pvPlayerTakeOffPoints[m_nSelectedTakeOffRoutePoint]=vTemp;
 			}
 		}
 		else
@@ -3273,10 +3286,10 @@ void CScenarioEditorMainWindow::OnMouseMove( double x,double y )
 			{
 				vTemp.c[2]=vStart.c[2];
 				vTemp.c[1]+=3;
-				sPlayAreaConfig.pvPlayerTakeOffPoints[m_nSelectedTakeOffRoutePoint]=vTemp;
+				sPlayerConfig.pvPlayerTakeOffPoints[m_nSelectedTakeOffRoutePoint]=vTemp;
 			}
 		}
-		if(m_PlayAreaManagerWrapper.m_piPlayAreaDesign){m_PlayAreaManagerWrapper.m_piPlayAreaDesign->SetPlayAreaConfig(&sPlayAreaConfig);}
+		if(m_PlayerManagerWrapper.m_piPlayerManager){m_PlayerManagerWrapper.m_piPlayerManager->SetPlayerConfig(&sPlayerConfig);}
 	}
 	else if(m_bMovingObject && m_nSelectedEntity!=-1)
 	{
@@ -3303,7 +3316,7 @@ void CScenarioEditorMainWindow::OnMouseMove( double x,double y )
 		if(GetAirPlaneCoordinatesFromCursorPos(x,y,&vTemp))
 		{
 			CVector vStart,vEnd;
-			m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayerRoute(&vStart,&vEnd);
+			m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
 			m_vPlayMovementPosition=m_vObjectOriginalPosition+(vTemp-m_vCursorOriginalPosition);
 			if(m_vPlayMovementPosition.c[0]<vStart.c[0]){m_vPlayMovementPosition=vStart;}
 			if(m_vPlayMovementPosition.c[0]>vEnd.c[0]){m_vPlayMovementPosition=vEnd;}
@@ -3339,9 +3352,9 @@ void CScenarioEditorMainWindow::StartGameSimulation()
 	}
 	if(m_FrameManager.m_piFrameManager){m_FrameManager.m_piFrameManager->Reset();}
 	m_GameControllerWrapper.m_piGameController->Start();
-	if(m_PlayAreaManagerWrapper.m_piPlayAreaManager)
+	if(m_PlayerManagerWrapper.m_piPlayerManager)
 	{
-		m_PlayAreaManagerWrapper.m_piPlayAreaManager->SetPlayMovementPosition(m_vPlayMovementPosition);
+		m_PlayerManagerWrapper.m_piPlayerManager->SetPlayerStart(m_vPlayMovementPosition);
 		IEntity *piPlayerEntity=m_EntityManagerWrapper.m_piEntityManager->FindEntity("Player");
 		IWeapon *piBombWeapon=piPlayerEntity?piPlayerEntity->GetWeapon(1):NULL;
 		IWeapon *piBulletWeapon=piPlayerEntity?piPlayerEntity->GetWeapon(0):NULL;
@@ -3776,7 +3789,7 @@ void CScenarioEditorMainWindow::OpenScenario( std::string sScenario )
 	if(m_PlayAreaManagerWrapper.m_piPlayAreaManager)
 	{
 		CVector vStart,vEnd;
-		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayerRoute(&vStart,&vEnd);
+		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
 		m_vPlayMovementPosition=vStart;
 	}
 	

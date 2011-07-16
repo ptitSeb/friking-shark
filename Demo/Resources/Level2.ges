@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=199.907946
 			NearPlane=130.000000
-			Posicion=398.682369,198.441526,-2.512813
+			Posicion=816.962035,198.441526,-4.716514
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -4563,6 +4563,30 @@ AreaDeJuego
 	}
 	InclinacionVista=0.000000
 	IntroMusic
+	MaximoScrollHorz=10.000000
+	Music
+	{
+		Class=SoundType
+		Data
+		{
+			Channels=5
+			File=./Sounds/level2music.ogg
+			Loop=0
+			Volume=100.000000
+		}
+		Name=""
+		System=GameSystem
+	}
+	Origen=-1120.153242,-0.000004,58.441526
+	VelocidadCamara=15.000000
+}
+Player
+{
+	EntityType
+	{
+		Name=Player
+		System=EntityTypes
+	}
 	LandingEnabled=1
 	LandingRoute
 	{
@@ -4599,21 +4623,6 @@ AreaDeJuego
 			}
 		}
 	}
-	MaximoScrollHorz=10.000000
-	Music
-	{
-		Class=SoundType
-		Data
-		{
-			Channels=5
-			File=./Sounds/level2music.ogg
-			Loop=0
-			Volume=100.000000
-		}
-		Name=""
-		System=GameSystem
-	}
-	Origen=-1120.153242,-0.000004,58.441526
 	TakeOffEnabled=1
 	TakeOffRoute
 	{
@@ -4650,7 +4659,6 @@ AreaDeJuego
 			}
 		}
 	}
-	VelocidadCamara=15.000000
 }
 Terrain
 {
@@ -4661,8 +4669,6 @@ Terrain
 		Data
 		{
 			Archivo=./Models/Level2Terrain.ase
-			AutoGenerateBSP=1
-			AutoUpdateBSP=1
 			LoadBSP=1
 		}
 		Name=""

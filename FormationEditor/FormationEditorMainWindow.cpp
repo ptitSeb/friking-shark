@@ -100,6 +100,7 @@ bool CFormationEditorMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 	m_PlayAreaManagerWrapper.Attach("GameSystem","PlayAreaManager");
 	m_FrameManager.Attach("GameSystem","FrameManager");
 	m_SoundManagerWrapper.Attach("GameSystem","SoundManager");
+	m_PlayerManagerWrapper.Attach("GameSystem","PlayerManager");
 	
 	if(m_PlayAreaManagerWrapper.m_piPlayAreaDesign)
 	{
@@ -149,6 +150,7 @@ void CFormationEditorMainWindow::DestroyWindow()
 	if(m_GameControllerWrapper.m_piGameController){m_GameControllerWrapper.m_piGameController->CloseScenario();}
 	m_SoundManagerWrapper.Detach();
 	m_PlayAreaManagerWrapper.Detach();
+	m_PlayerManagerWrapper.Detach();
 	m_GameControllerWrapper.Detach();
 	m_EntityManagerWrapper.Detach();
 
@@ -271,7 +273,7 @@ void CFormationEditorMainWindow::OnDraw(IGenericRender *piRender)
 	
 	if(m_bSimulationStarted)
 	{
-		m_PlayAreaManagerWrapper.m_piPlayAreaManager->ProcessInput(m_piGUIManager);
+		m_PlayerManagerWrapper.m_piPlayerManager->ProcessInput(m_piGUIManager,m_FrameManager.m_piFrameManager->GetCurrentTime(),m_FrameManager.m_piFrameManager->GetTimeFraction());
 		m_GameControllerWrapper.m_piGameController->ProcessFrame(m_FrameManager.m_piFrameManager->GetCurrentTime(),m_FrameManager.m_piFrameManager->GetTimeFraction());
 		IGenericCamera *piPlayCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera();
 		IGenericCamera *piCamera=NULL;
@@ -1348,11 +1350,12 @@ void CFormationEditorMainWindow::StartGameSimulation()
 	{
 		StopGameSimulation();
 	}
+	
+	CVector vPlayerStart,vPlayerEnd;
 	if(m_PlayAreaManagerWrapper.m_piPlayAreaManager)
 	{
 		CVector vMins,vMaxs;
-		CVector vPlayerStart,vPlayerEnd;
-		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayerRoute(&vPlayerStart,&vPlayerEnd);
+		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vPlayerStart,&vPlayerEnd);
 		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetVisibleAirPlayPlane(&vMins,&vMaxs);
 
 		IPlayAreaElement *piElement;
@@ -1376,6 +1379,7 @@ void CFormationEditorMainWindow::StartGameSimulation()
 		REL(piElement);
 	}
 	m_GameControllerWrapper.m_piGameController->Start();
+	m_PlayerManagerWrapper.m_piPlayerManager->SetPlayerStart(vPlayerStart);
 	
 	if(m_EntityManagerWrapper.m_piEntityManager)
 	{

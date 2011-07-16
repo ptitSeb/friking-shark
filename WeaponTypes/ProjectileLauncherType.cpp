@@ -247,7 +247,7 @@ void CProjectileLauncher::Fire(unsigned int dwCurrentTime)
 CVector CProjectileLauncher::ProjectToAirPlane(CVector vPos)
 {
 	CVector vPlayerStart,vPlayerEnd;
-	g_PlayAreaManagerWrapper.m_piInterface->GetPlayerRoute(&vPlayerStart,&vPlayerEnd);
+	g_PlayAreaManagerWrapper.m_piInterface->GetCameraRoute(&vPlayerStart,&vPlayerEnd);
 	IGenericCamera *piCamera=g_PlayAreaManagerWrapper.m_piInterface->GetCamera();
 	CVector vCameraPos=piCamera?piCamera->GetPosition():Origin;
 

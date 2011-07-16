@@ -46,6 +46,7 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	
 	CGameControllerWrapper   m_GameControllerWrapper;
 	CPlayAreaManagerWrapper  m_PlayAreaManagerWrapper;
+	CPlayerManagerWrapper	 m_PlayerManagerWrapper;
 	CEntityManagerWrapper	 m_EntityManagerWrapper;
 	CFrameManagerWrapper	 m_FrameManagerWrapper;
 	CWorldManagerWrapper	 m_WorldManagerWrapper;

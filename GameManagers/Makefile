@@ -19,6 +19,7 @@ FrameManager.cpp\
 PhysicsManager.cpp\
 GameManagers.cpp\
 PlayAreaManager.cpp\
+PlayerManager.cpp\
 WorldManager.cpp\
 WorldEntity.cpp\
 WorldSector.cpp\

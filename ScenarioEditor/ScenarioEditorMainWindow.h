@@ -456,6 +456,7 @@ public:
 	
 	ISystem					*m_piGameSystem;
 	CGameControllerWrapper   m_GameControllerWrapper;
+	CPlayerManagerWrapper    m_PlayerManagerWrapper;
 	CPlayAreaManagerWrapper  m_PlayAreaManagerWrapper;
 	CWorldManagerWrapper	 m_WorldManagerWrapper;
 	CEntityManagerWrapper	 m_EntityManagerWrapper;

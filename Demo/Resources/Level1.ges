@@ -3765,6 +3765,30 @@ AreaDeJuego
 	}
 	InclinacionVista=0.000000
 	IntroMusic
+	MaximoScrollHorz=10.000000
+	Music
+	{
+		Class=SoundType
+		Data
+		{
+			Channels=5
+			File=./Sounds/level1music.ogg
+			Loop=0
+			Volume=100.000000
+		}
+		Name=""
+		System=GameSystem
+	}
+	Origen=-156.897180,-4.859726,88.678936
+	VelocidadCamara=15.000000
+}
+Player
+{
+	EntityType
+	{
+		Name=Player
+		System=EntityTypes
+	}
 	LandingEnabled=1
 	LandingRoute
 	{
@@ -3801,21 +3825,6 @@ AreaDeJuego
 			}
 		}
 	}
-	MaximoScrollHorz=10.000000
-	Music
-	{
-		Class=SoundType
-		Data
-		{
-			Channels=5
-			File=./Sounds/level1music.ogg
-			Loop=0
-			Volume=100.000000
-		}
-		Name=""
-		System=GameSystem
-	}
-	Origen=-156.897180,-4.859726,88.678936
 	TakeOffEnabled=1
 	TakeOffRoute
 	{
@@ -3852,7 +3861,6 @@ AreaDeJuego
 			}
 		}
 	}
-	VelocidadCamara=15.000000
 }
 Terrain
 {
@@ -3863,8 +3871,6 @@ Terrain
 		Data
 		{
 			Archivo=./Models/Level1Terrain.ase
-			AutoGenerateBSP=1
-			AutoUpdateBSP=1
 			LoadBSP=1
 		}
 		Name=""
