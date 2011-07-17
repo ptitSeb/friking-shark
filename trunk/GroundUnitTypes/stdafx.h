@@ -30,5 +30,6 @@
 #include "SingletonWrapper.h"
 
 extern CSingletonWrapper<IPlayAreaManager> g_PlayAreaManagerWrapper;
+extern CSingletonWrapper<IPlayerManager> g_PlayerManagerWrapper;
 
 #endif

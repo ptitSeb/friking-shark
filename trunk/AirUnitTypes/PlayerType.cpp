@@ -53,8 +53,6 @@ CPlayer::CPlayer(CPlayerType *pType)
   m_bRouteFinished=false;
   m_nRoutePoint=0;
   m_bGodMode=false;
-  m_nDifficultyLevel=1;
-  m_nFallStartTime=0;
   m_nCurrentTime=0;
 }
 
@@ -68,10 +66,7 @@ void  CPlayer::AddLivesLeft(unsigned int dwLivesLeft){m_dwLivesLeft+=dwLivesLeft
 
 double CPlayer::GetSpeed(){return m_dSpeed;}
 void   CPlayer::SetSpeed(double dSpeed){m_dSpeed=dSpeed;}
-
-void         CPlayer::SetDifficultyLevel(unsigned int nLevel){m_nDifficultyLevel=nLevel;}
-unsigned int CPlayer::GetDifficultyLevel(){return m_nDifficultyLevel;}
-void         CPlayer::SetGodMode(bool bGod){m_bGodMode=bGod;}
+void   CPlayer::SetGodMode(bool bGod){m_bGodMode=bGod;}
 
 void  CPlayer::GetWeaponsOnSlot(unsigned int dwWeaponSlot,vector<IWeapon*> *pWeapons)
 {
@@ -103,7 +98,6 @@ void CPlayer::OnKilled()
 	{
 		if(GetState()!=ePlayerState_Falling)
 		{
-			m_nFallStartTime=m_nCurrentTime;
 			m_PhysicInfo.vAngleVelocity.c[2]+=drand()*300.0-150.0;
 			SetState(ePlayerState_Falling);
 			m_PhysicInfo.dwMoveType=PHYSIC_MOVE_TYPE_NORMAL;
@@ -123,7 +117,7 @@ void CPlayer::OnKilled()
 
 bool CPlayer::OnCollision(IEntity *piOther,CVector &vCollisionPos)
 {
-	if(GetState()==ePlayerState_Falling && (m_nCurrentTime-m_nFallStartTime)>1000)
+	if(GetState()==ePlayerState_Falling && (piOther->GetPlacement()!=ENTITY_PLACEMENT_AIR || piOther->GetPhysicInfo()->dwBoundsType==PHYSIC_BOUNDS_TYPE_BSP))
 	{
 		if(GetState()!=ePlayerState_Crashed && m_pTypeBase->GetStateAnimations(ePlayerState_Crashed))
 		{

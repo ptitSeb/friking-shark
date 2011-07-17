@@ -24,15 +24,23 @@ CBomberType::CBomberType()
   m_nDamageType=DAMAGE_TYPE_NORMAL;
   m_nMovementType=PHYSIC_MOVE_TYPE_FLY;
   PersistencyInitialize();
+
+  g_PlayerManagerWrapper.AddRef();
 }
 
-CBomberType::~CBomberType(){}
+CBomberType::~CBomberType()
+{
+	g_PlayerManagerWrapper.Release();
+}
 
 IEntity *CBomberType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
 {
+  double dDifficulty=g_PlayerManagerWrapper.m_piInterface->GetEffectiveDifficulty();
   CBomber *piEntity=new CBomber(this,dwCurrentTime);
   InitializeEntity(piEntity,dwCurrentTime);
   piEntity->SetState(ENTITY_STATE_BASE,0);
+  piEntity->SetHealth(m_dMaxHealth*dDifficulty);
+  piEntity->SetMaxHealth(m_dMaxHealth*dDifficulty);
   return piEntity;
 }
 void	CBomberType::DesignRender(IGenericRender *piRender,CVector &vPosition,CVector &vAngles,bool bSelected)
@@ -81,7 +89,8 @@ void CBomber::OnKilled()
 void CBomber::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
   CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
- 
+  m_dwNextProcessFrame=dwCurrentTime+10;
+  
   if(m_dHealth<=0){return;}
   if(m_piTarget==NULL){GetTarget();}
   
@@ -135,7 +144,6 @@ void CBomber::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 	  m_PhysicInfo.vVelocity=vDir;
 	  m_PhysicInfo.vVelocity*=m_PhysicInfo.dMaxVelocity;
 	  if(m_pType->m_bUseFixedAngles){m_PhysicInfo.vAngles=m_pType->m_vFixedAngles;}
-	  m_dwNextProcessFrame=dwCurrentTime+10;
   }
   
   if(m_piTarget && m_vWeapons.size() && dwCurrentTime>m_dwNextShotTime)
@@ -143,15 +151,21 @@ void CBomber::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 	  bool bVisible=g_PlayAreaManagerWrapper.m_piInterface && g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,0);
 	  if(bVisible)
 	  {
+		  double dDifficulty=g_PlayerManagerWrapper.m_piInterface->GetEffectiveDifficulty();
+		  double dTimeFirstShotMin=m_pType->m_dTimeFirstShotMin/dDifficulty;
+		  double dTimeFirstShotMax=m_pType->m_dTimeFirstShotMax/dDifficulty;
+		  double dTimeBetweenShotsMin=m_pType->m_dTimeBetweenShotsMin/dDifficulty;
+		  double dTimeBetweenShotsMax=m_pType->m_dTimeBetweenShotsMax/dDifficulty;
+		  
 		  if(m_bFirstTimeVisible)
 		  {
 			  m_bFirstTimeVisible=false;
-			  m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeFirstShotMax-m_pType->m_dTimeFirstShotMin)+m_pType->m_dTimeFirstShotMin;
+			  m_dwNextShotTime=dwCurrentTime+drand()*(dTimeFirstShotMax-dTimeFirstShotMin)+dTimeFirstShotMin;
 		  }
 		  else
 		  {
-			for(unsigned int x=0;x<m_vWeapons.size();x++){FireWeapon(x,dwCurrentTime);}
-			m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeBetweenShotsMax-m_pType->m_dTimeBetweenShotsMin)+m_pType->m_dTimeBetweenShotsMin;
+			  for(unsigned int x=0;x<m_vWeapons.size();x++){FireWeapon(x,dwCurrentTime);}
+			  m_dwNextShotTime=dwCurrentTime+drand()*(dTimeBetweenShotsMax-dTimeBetweenShotsMin)+dTimeBetweenShotsMin;
 		  }
 	  }
   }
@@ -189,13 +203,4 @@ void CBomber::SetRoute(IRoute *piRoute)
 		// ya que el bombardero aplica fuerzas para moverse y le cuesta coger velocidad.
 		m_PhysicInfo.vVelocity=m_piRoute->GetDirection(0)*m_PhysicInfo.dMaxVelocity;
 	}
-}
-void CBomber::OnKilled(IEntity *piEntity)
-{
-	if(piEntity==m_piTarget){UNSUBSCRIBE_FROM_CAST(m_piTarget,IEntityEvents);m_piTarget=NULL;}
-}
-
-void CBomber::OnRemoved(IEntity *piEntity)
-{
-	if(piEntity==m_piTarget){UNSUBSCRIBE_FROM_CAST(m_piTarget,IEntityEvents);m_piTarget=NULL;}
 }

@@ -76,9 +76,7 @@ class CHomingMissileProjectile: public CEntityBase,virtual public IEntityEvents
 
   // IEntityEvents
 
-  void OnRemoved(IEntity *piEntity);
-  void OnKilled(IEntity *piEntity);
-	void OnKilled();
+  void OnKilled();
 
 public:
 

@@ -158,27 +158,6 @@ void CHomingMissileProjectile::ProcessFrame(unsigned int dwCurrentTime,double dT
   }
 }
 
-void CHomingMissileProjectile::OnRemoved(IEntity *piEntity)
-{
-  CEntityBase::OnRemoved(piEntity);
- 
-  if(piEntity==m_piTarget)
-  {
-    UNSUBSCRIBE_FROM_CAST(m_piTarget,IEntityEvents);
-    m_piTarget=NULL;
-  }
-}
-void CHomingMissileProjectile::OnKilled(IEntity *piEntity)
-{
-  CEntityBase::OnKilled(piEntity);
-	
-  if(piEntity==m_piTarget)
-  {
-    UNSUBSCRIBE_FROM_CAST(m_piTarget,IEntityEvents);
-    m_piTarget=NULL;
-  }
-}
-
 bool CHomingMissileProjectile::OnCollision(IEntity *piOther,CVector &vCollisionPos)
 {
   if(piOther->GetAlignment()!=m_dwAlignment && piOther->GetHealth()>0.0 && piOther->GetDamageType()!=DAMAGE_TYPE_NONE)

@@ -55,8 +55,6 @@ class CPlayer: public CEntityBase,public IPlayer
 	
     unsigned int m_dwPoints;
     unsigned int m_dwLivesLeft;
-	unsigned int m_nDifficultyLevel;
-	unsigned int m_nFallStartTime;
 	unsigned int m_nCurrentTime;
 	bool         m_bGodMode;
 	
@@ -90,9 +88,6 @@ public:
     void  GetWeapons(vector<IWeapon*> *pWeapons);
     void  GetWeaponsOnSlot(unsigned int dwWeaponSlot,vector<IWeapon*> *pWeapons);
     void  FireWeaponsOnSlot(unsigned int dwWeaponSlot,unsigned int dwCurrentTime);
-	
-	void         SetDifficultyLevel(unsigned int nLevel);
-	unsigned int GetDifficultyLevel();
 	
 	void         SetGodMode(bool bGod);
 	

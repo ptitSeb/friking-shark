@@ -397,8 +397,9 @@ struct SPlayerConfig
 	bool   bPlayerTakeOffEnabled;
 	CVector pvPlayerTakeOffPoints[4];
 	CVector pvPlayerLandingPoints[4];
+	double  dDifficulty;
 	
-	SPlayerConfig(){bPlayerLandingEnabled=false;bPlayerTakeOffEnabled=false;}
+	SPlayerConfig(){bPlayerLandingEnabled=false;bPlayerTakeOffEnabled=false;dDifficulty=1;}
 };
 
 struct SEntityLayer
@@ -589,10 +590,52 @@ public:
 	virtual ~IPlayAreaElementEnumerationCallback(){}
 };
 
+struct SKeyCombination
+{
+	int nKey;
+	int nModifierA;
+	int nModifierB;
+	
+	SKeyCombination(){nKey=nModifierA=nModifierB=0;}
+	SKeyCombination(int key){nKey=key;nModifierA=nModifierB=0;}
+	SKeyCombination(int key,int modifierA,int modifierB){nKey=key;nModifierA=modifierA;nModifierB=modifierB;}
+};
+
+struct SKeyMapping
+{
+	std::vector<SKeyCombination> vValidCombinations;
+	std::string sFriendlyName;
+};
+
+struct IPlayerProfile:virtual public ISystemUnknown
+{
+	virtual void 		SetPlayerName(std::string sName)=0;
+	virtual std::string GetPlayerName()=0;
+	
+	virtual void 	SetDifficulty(double dDifficulty)=0;
+	virtual double 	GetDifficulty()=0;
+	
+	virtual void 	GetKeyboardMapping(std::map<std::string,SKeyMapping> *pMapping)=0;
+	virtual void 	SetKeyboardMapping(std::map<std::string,SKeyMapping> *pMapping)=0;
+	
+	virtual void 	GetKeyMapping(std::string,SKeyMapping *pMapping)=0;
+	virtual void 	SetKeyMapping(std::string,SKeyMapping *pMapping)=0;
+	
+};
+
+struct IPlayerProfileEvents:virtual public ISystemUnknown
+{
+	virtual void OnPlayerNameChanged(const std::string &sName)=0;
+	virtual void OnDifficultyChanged(double dDifficulty)=0;
+	virtual void OnKeyboardMappingChanged()=0;
+};
+
 struct IPlayerManager:virtual public ISystemUnknown
 {
 	virtual void SetPlayerStart(CVector vPosition)=0;
+	virtual void SetPlayerProfile(IPlayerProfile *piProfile)=0;
 	
+	virtual double GetEffectiveDifficulty()=0;
 	virtual bool IsScenarioCompleted()=0;
 	
 	virtual void GetPlayerConfig(SPlayerConfig *pConfig)=0;
@@ -678,9 +721,6 @@ struct IPlayer
   virtual void  GetWeapons(vector<IWeapon*> *pWeapons)=0;
   virtual void  GetWeaponsOnSlot(unsigned int dwWeaponSlot,vector<IWeapon*> *pWeapons)=0;
   virtual void  FireWeaponsOnSlot(unsigned int dwWeaponSlot,unsigned int dwCurrentTime)=0;
-
-  virtual void         SetDifficultyLevel(unsigned int nLevel)=0;
-  virtual unsigned int GetDifficultyLevel()=0;
   
   virtual void         SetGodMode(bool bGod)=0;
   

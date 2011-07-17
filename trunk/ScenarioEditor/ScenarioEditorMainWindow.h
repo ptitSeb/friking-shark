@@ -23,6 +23,7 @@
 #include "ScenarioEditorObjectSelector.h"
 #include "ScenarioEditorObjectListSelector.h"
 
+DECLARE_CUSTOM_WRAPPER1(CPlayerProfileWrapper,IPlayerProfile,m_piPlayerProfile)
 DECLARE_CUSTOM_WRAPPER1(CScenarioEditorColorSelectorWrapper,IScenarioEditorColorSelector,m_piColorSelector)
 DECLARE_CUSTOM_WRAPPER1(CScenarioEditorObjectSelectorWrapper,IScenarioEditorObjectSelector,m_piObjectSelector)
 DECLARE_CUSTOM_WRAPPER1(CScenarioEditorObjectListSelectorWrapper,IScenarioEditorObjectListSelector,m_piObjectListSelector)
@@ -109,6 +110,7 @@ public:
 	CRenderWrapper			m_Render;
 	CGenericCameraWrapper	m_Camera;
 	CFrameManagerWrapper	m_FrameManager;
+	CPlayerProfileWrapper	m_PlayerProfile;
 
 	std::vector<SHeightLayerControls *> m_vHeightLayerControls;
 	std::vector<SColorLayerControls *>	m_vColorLayerControls;
@@ -143,6 +145,9 @@ public:
 	bool				m_bRenderPlayArea;
 	bool				m_bMovingCameraPosition;
 	CVector 			m_vPlayMovementPosition;
+	bool				m_bGodMode;
+	bool				m_bUseAmmo;
+	double				m_dDifficulty;
 
 	int					m_nSelectedRoutePoint;
 	int					m_nSelectedLandingRoutePoint;
@@ -175,13 +180,7 @@ public:
 	
 	IGameGUILabel *m_piSTFps;
 	IGameGUILabel *m_piSTGameTime;
-	IGameGUILabel *m_piSTVolume;
-	IGameGUILabel *m_piBTDecreaseVolume;
-	IGameGUILabel *m_piBTIncreaseVolume;
-	IGameGUILabel *m_piSTMouseTraceDistance;
-	IGameGUILabel *m_piBTDecreaseMouseTraceDistance;
-	IGameGUILabel *m_piBTIncreaseMouseTraceDistance;
-
+	
 	IGameWindow	  *m_piGRHeightLayerPanel;
 	IGameWindow	  *m_piGRColorLayerPanel;
 	IGameWindow	  *m_piGREntityLayerPanel;
@@ -331,6 +330,18 @@ public:
 	IGameGUIButton *m_piBTOptionsShaders;
 	IGameGUIButton *m_piBTOptionsLighting;
 	IGameGUIButton *m_piBTOptionsFog;
+	IGameGUIButton *m_piBTOptionsGod;
+	IGameGUIButton *m_piBTOptionsAmmo;
+	IGameGUILabel  *m_piSTOptionsVolume;
+	IGameGUIButton *m_piBTOptionsDecreaseVolume;
+	IGameGUIButton *m_piBTOptionsIncreaseVolume;
+	IGameGUILabel  *m_piSTOptionsDifficulty;
+	IGameGUIButton *m_piBTOptionsDecreaseDifficulty;
+	IGameGUIButton *m_piBTOptionsIncreaseDifficulty;
+	IGameGUILabel  *m_piSTOptionsMouseTraceDistance;
+	IGameGUIButton *m_piBTOptionsDecreaseMouseTraceDistance;
+	IGameGUIButton *m_piBTOptionsIncreaseMouseTraceDistance;
+	
 	// File
 	IGameWindow	   *m_piGRFile;
 	IGameGUIButton *m_piBTFileNew;
@@ -439,6 +450,9 @@ public:
 	IGameGUILabel  *m_piSTPlayAreaScroll;
 	IGameGUIButton *m_piBTPlayAreaDecreaseScroll;
 	IGameGUIButton *m_piBTPlayAreaIncreaseScroll;
+	IGameGUILabel  *m_piSTPlayAreaDifficulty;
+	IGameGUIButton *m_piBTPlayAreaDecreaseDifficulty;
+	IGameGUIButton *m_piBTPlayAreaIncreaseDifficulty;
 	IGameGUIButton *m_piBTPlayAreaEnable;
 	IGameGUIButton *m_piBTPlayAreaAutoTakeOff;
 	IGameGUIButton *m_piBTPlayAreaAutoLanding;
@@ -480,12 +494,6 @@ public:
 	BEGIN_CHILD_MAP()
 		CHILD_MAP_ENTRY("FPS",m_piSTFps);
 		CHILD_MAP_ENTRY("GameTime",m_piSTGameTime);
-		CHILD_MAP_ENTRY("Volume",m_piSTVolume);
-		CHILD_MAP_ENTRY_EX("DecreaseVolume",m_piBTDecreaseVolume,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("IncreaseVolume",m_piBTIncreaseVolume,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY("MouseTraceDistance",m_piSTMouseTraceDistance);
-		CHILD_MAP_ENTRY_EX("DecreaseMouseTraceDistance",m_piBTDecreaseMouseTraceDistance,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("IncreaseMouseTraceDistance",m_piBTIncreaseMouseTraceDistance,IGameGUIButtonEvents);
 		
 		CHILD_MAP_ENTRY_EX("Options",m_piBTShowOptionsPanel,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Terrain",m_piBTShowTerrainPanel,IGameGUIButtonEvents);
@@ -619,6 +627,17 @@ public:
 		CHILD_MAP_ENTRY_EX("OptionShaders",m_piBTOptionsShaders,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("OptionFog",m_piBTOptionsFog,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("OptionLighting",m_piBTOptionsLighting,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("OptionGod",m_piBTOptionsGod,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("OptionAmmo",m_piBTOptionsAmmo,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY("OptionVolume",m_piSTOptionsVolume);
+		CHILD_MAP_ENTRY_EX("OptionDecreaseVolume",m_piBTOptionsDecreaseVolume,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("OptionIncreaseVolume",m_piBTOptionsIncreaseVolume,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY("OptionDifficulty",m_piSTOptionsDifficulty);
+		CHILD_MAP_ENTRY_EX("OptionDecreaseDifficulty",m_piBTOptionsDecreaseDifficulty,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("OptionIncreaseDifficulty",m_piBTOptionsIncreaseDifficulty,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY("OptionMouseTraceDistance",m_piSTOptionsMouseTraceDistance);
+		CHILD_MAP_ENTRY_EX("OptionDecreaseMouseTraceDistance",m_piBTOptionsDecreaseMouseTraceDistance,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("OptionIncreaseMouseTraceDistance",m_piBTOptionsIncreaseMouseTraceDistance,IGameGUIButtonEvents);
 		
 		CHILD_MAP_ENTRY("FilePanel",m_piGRFile);
 		CHILD_MAP_ENTRY_EX("FileNew",m_piBTFileNew,IGameGUIButtonEvents);
@@ -718,6 +737,7 @@ public:
 		CHILD_MAP_ENTRY("PlayAreaCameraAspectRatio",m_piSTPlayAreaCameraAspectRatio);
 		CHILD_MAP_ENTRY("PlayAreaAirPlane",m_piSTPlayAreaAirPlane);
 		CHILD_MAP_ENTRY("PlayAreaScroll",m_piSTPlayAreaScroll);
+		CHILD_MAP_ENTRY("PlayAreaDifficulty",m_piSTPlayAreaDifficulty);
 		CHILD_MAP_ENTRY_EX("PlayAreaDecreaseCameraDistance",m_piBTPlayAreaDecreaseCameraDistance,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("PlayAreaIncreaseCameraDistance",m_piBTPlayAreaIncreaseCameraDistance,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("PlayAreaDecreaseCameraSpeed",m_piBTPlayAreaDecreaseCameraSpeed,IGameGUIButtonEvents);
@@ -730,6 +750,8 @@ public:
 		CHILD_MAP_ENTRY_EX("PlayAreaIncreaseAirPlane",m_piBTPlayAreaIncreaseAirPlane,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("PlayAreaDecreaseScroll",m_piBTPlayAreaDecreaseScroll,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("PlayAreaIncreaseScroll",m_piBTPlayAreaIncreaseScroll,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("PlayAreaDecreaseDifficulty",m_piBTPlayAreaDecreaseDifficulty,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("PlayAreaIncreaseDifficulty",m_piBTPlayAreaIncreaseDifficulty,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("PlayAreaAutoTakeOff",m_piBTPlayAreaAutoTakeOff,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("PlayAreaAutoLanding",m_piBTPlayAreaAutoLanding,IGameGUIButtonEvents);
 	END_CHILD_MAP()

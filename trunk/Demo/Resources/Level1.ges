@@ -3784,6 +3784,7 @@ AreaDeJuego
 }
 Player
 {
+	Difficulty=0.000000
 	EntityType
 	{
 		Name=Player

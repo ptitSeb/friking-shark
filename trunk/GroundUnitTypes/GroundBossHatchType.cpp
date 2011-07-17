@@ -24,11 +24,13 @@ CGroundBossHatchType::CGroundBossHatchType()
 	m_nDamageType=DAMAGE_TYPE_NORMAL;
 	m_nMovementType=PHYSIC_MOVE_TYPE_NONE;
 	
+	g_PlayerManagerWrapper.AddRef();
 	PersistencyInitialize();
 }
 
 CGroundBossHatchType::~CGroundBossHatchType()
 {
+	g_PlayerManagerWrapper.Release();
 }
 
 IEntity *CGroundBossHatchType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
@@ -49,6 +51,8 @@ CGroundBossHatch::CGroundBossHatch(CGroundBossHatchType *pType,unsigned int dwCu
 	m_sClassName="CGroundBossHatch";
 	m_pType=pType;
 	m_bIsOpen=false;
+	m_bFirstTimeVisible=true;
+	m_dwNextShotTime=0;
 	m_dRadius=m_pType->DesignGetRadius();
 	m_dwNextStateChange=dwCurrentTime+m_pType->m_nOpenTime;
 }
@@ -64,26 +68,44 @@ void CGroundBossHatch::ProcessFrame(unsigned int dwCurrentTime,double dTimeFract
 	bool bVisible=g_PlayAreaManagerWrapper.m_piInterface && g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,m_dRadius);
 	if(GetState()==eGroundBossHatchState_Open)
 	{
-		if(m_dwNextStateChange<dwCurrentTime && bVisible)
+		if(m_dwNextStateChange<dwCurrentTime || m_piTarget==NULL)
 		{
 			m_bIsOpen=false;
 			SetState(eGroundBossHatchState_Closed,0);
 			m_dwNextStateChange=dwCurrentTime+m_pType->m_nClosedTime;
 		}
 	}
-	else
+	else 
 	{
-		if(m_dwNextStateChange<dwCurrentTime && bVisible)
+		if(m_piTarget && m_dwNextStateChange<dwCurrentTime && bVisible)
 		{
 			SetState(eGroundBossHatchState_Open,0);
 			m_dwNextStateChange=dwCurrentTime+m_pType->m_nOpenTime;
 		}
 	}
 	
-	if(m_piTarget && m_bIsOpen && m_vWeapons.size())
+	if(m_piTarget && dwCurrentTime>m_dwNextShotTime && m_bIsOpen && m_vWeapons.size())
 	{
 		bool bVisible=g_PlayAreaManagerWrapper.m_piInterface && g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,0);
-		if(bVisible){for(unsigned int x=0;x<m_vWeapons.size();x++){FireWeapon(x,dwCurrentTime);}}
+		if(bVisible)
+		{
+			double dDifficulty=g_PlayerManagerWrapper.m_piInterface->GetEffectiveDifficulty();
+			double dTimeFirstShotMin=m_pType->m_dTimeFirstShotMin/dDifficulty;
+			double dTimeFirstShotMax=m_pType->m_dTimeFirstShotMax/dDifficulty;
+			double dTimeBetweenShotsMin=m_pType->m_dTimeBetweenShotsMin/dDifficulty;
+			double dTimeBetweenShotsMax=m_pType->m_dTimeBetweenShotsMax/dDifficulty;
+			
+			if(m_bFirstTimeVisible)
+			{
+				m_bFirstTimeVisible=false;
+				m_dwNextShotTime=dwCurrentTime+drand()*(dTimeFirstShotMax-dTimeFirstShotMin)+dTimeFirstShotMin;
+			}
+			else
+			{
+				for(unsigned int x=0;x<m_vWeapons.size();x++){FireWeapon(x,dwCurrentTime);}
+				m_dwNextShotTime=dwCurrentTime+drand()*(dTimeBetweenShotsMax-dTimeBetweenShotsMin)+dTimeBetweenShotsMin;
+			}			
+		}
 	}
 }
 void CGroundBossHatch::OnAnimationEvent(string sEvent,string sParams)
@@ -96,8 +118,13 @@ IEntity *CGroundBossHatch::GetTarget()
 {
 	if(m_piTarget==NULL)
 	{
-		IEntityManager *piManager=GetEntityManager();
-		if(piManager){SetTarget(piManager->FindEntity("Player"));}
+		IEntity 		*piTarget=NULL;
+		IEntityManager 	*piManager=GetEntityManager();
+		if(piManager){piTarget=piManager->FindEntity("Player");}
+		if(piTarget && piTarget->GetHealth()>0)
+		{
+			SetTarget(piTarget);
+		}
 	}
 	
 	return m_piTarget;

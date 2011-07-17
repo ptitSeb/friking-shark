@@ -30,11 +30,13 @@ CProjectileLauncherType::CProjectileLauncherType(void)
   m_nInitialAmmo=0;
   m_nAmmoPerRound=1;
   g_PlayAreaManagerWrapper.AddRef();
+  g_PlayerManagerWrapper.AddRef();
 }
 
 CProjectileLauncherType::~CProjectileLauncherType(void)
 {
 	g_PlayAreaManagerWrapper.Release();
+	g_PlayerManagerWrapper.Release();
 }
 
 IWeapon *CProjectileLauncherType::CreateInstance(IEntity *piEntity,unsigned int dwCurrentTime)
@@ -131,9 +133,7 @@ void CProjectileLauncher::Fire(unsigned int dwCurrentTime)
 		CVector vLaunchPosition=m_piEntity->GetPhysicInfo()->vPosition;
 		SPhysicInfo *pTargetPhysicInfo=piTarget?piTarget->GetPhysicInfo():NULL;
 		
-		if(m_pType->m_bIgnoreRoll)
-		{
-		}
+		double dDifficulty=g_PlayerManagerWrapper.m_piInterface->GetEffectiveDifficulty();
 		
 		if(piTarget)
 		{
@@ -211,12 +211,14 @@ void CProjectileLauncher::Fire(unsigned int dwCurrentTime)
 					pProjectilePhysicInfo->vPosition+=vPosUp*pProjectileInfo->vOrigin.c[1];
 					pProjectilePhysicInfo->vPosition+=vPosRight*pProjectileInfo->vOrigin.c[2];
 					
+					double dVelocity=pProjectileInfo->dVelocity;
+					
 					if(m_piEntity->GetAlignment()==ENTITY_ALIGNMENT_ENEMIES)
 					{
 						pProjectilePhysicInfo->vPosition=ProjectToAirPlane(pProjectilePhysicInfo->vPosition);
+						dVelocity*=dDifficulty;
 					}
-					
-					
+
 					if(pProjectileInfo->dwVelocityReferenceSystem==eProjectileLauncherReferenceSystem_Target && piTarget)
 					{
 						CVector vTargetAngles,vTargetForward,vTargetRight,vTargetUp;
@@ -230,9 +232,9 @@ void CProjectileLauncher::Fire(unsigned int dwCurrentTime)
 						VectorsFromAngles(vVelAngles,&vVelForward,&vVelRight,&vVelUp);
 					}					
 					
-					pProjectilePhysicInfo->vVelocity+=vVelForward*vDirection.c[0]*pProjectileInfo->dVelocity;
-					pProjectilePhysicInfo->vVelocity+=vVelUp*vDirection.c[1]*pProjectileInfo->dVelocity;
-					pProjectilePhysicInfo->vVelocity+=vVelRight*vDirection.c[2]*pProjectileInfo->dVelocity;
+					pProjectilePhysicInfo->vVelocity+=vVelForward*vDirection.c[0]*dVelocity;
+					pProjectilePhysicInfo->vVelocity+=vVelUp*vDirection.c[1]*dVelocity;
+					pProjectilePhysicInfo->vVelocity+=vVelRight*vDirection.c[2]*dVelocity;
 					pProjectilePhysicInfo->vAngleVelocity=pProjectileInfo->vAngularVelocity;
 					pProjectilePhysicInfo->dMaxVelocity=pProjectileInfo->dVelocity;
 					

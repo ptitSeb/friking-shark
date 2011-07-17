@@ -38,6 +38,7 @@ class CMainWindow: virtual public CGameWindowBase,virtual public IGameInterfaceW
 	CConfigFile m_GUIConfigFile;
 
 	EGameMode 			  m_eGameMode;
+	EGameDifficulty       m_eGameDifficulty;
 	IGameGUILabel        *m_piSTBackground;
 	IGameInterfaceWindow *m_piGameInterface;
 

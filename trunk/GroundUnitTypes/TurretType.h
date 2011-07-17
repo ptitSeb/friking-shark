@@ -86,7 +86,6 @@ class CTurret: public CEntityBase, virtual public IEntityEvents
 	
 public:
 	
-	void SetTarget(IEntity *piTarget);
 	void OnKilled();
 	
 	// IEntityEvents

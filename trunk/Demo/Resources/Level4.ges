@@ -4401,7 +4401,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=-1404.775537,-45.555527,5.386783
+				Posicion=-1405.498295,-38.170747,5.386783
 				RouteDelay=0
 				Ruta
 				{
@@ -6677,6 +6677,7 @@ AreaDeJuego
 }
 Player
 {
+	Difficulty=3.000000
 	EntityType
 	{
 		Name=Player

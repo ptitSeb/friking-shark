@@ -23,12 +23,14 @@
 CTurretType::CTurretType()
 {
 	g_PlayAreaManagerWrapper.AddRef();
+	g_PlayerManagerWrapper.AddRef();
 	PersistencyInitialize();
 }
 
 CTurretType::~CTurretType()
 {
 	g_PlayAreaManagerWrapper.Release();
+	g_PlayerManagerWrapper.Release();
 }
 
 IEntity *CTurretType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
@@ -65,8 +67,6 @@ CTurret::CTurret(CTurretType *pType,unsigned int dwCurrentTime)
 void CTurret::OnRemoved(IEntity *piEntity)
 {
 	CEntityBase::OnRemoved(piEntity);
-	
-	if(piEntity==m_piTarget){SetTarget(NULL);}
 	if(piEntity==m_piContainerBuilding)
 	{
 		UNSUBSCRIBE_FROM_CAST(m_piContainerBuilding,IEntityEvents);
@@ -77,8 +77,6 @@ void CTurret::OnRemoved(IEntity *piEntity)
 void CTurret::OnKilled(IEntity *piEntity)
 {
 	CEntityBase::OnKilled(piEntity);
-	
-	if(piEntity==m_piTarget){SetTarget(NULL);}
 	if(piEntity==m_piContainerBuilding)
 	{
 		UNSUBSCRIBE_FROM_CAST(m_piContainerBuilding,IEntityEvents);
@@ -109,12 +107,6 @@ void CTurret::Render(IGenericRender *piRender,IGenericCamera *piCamera)
 {
 	//piRender->RenderBBox(m_PhysicInfo.vPosition,Origin,m_PhysicInfo.vMins,m_PhysicInfo.vMaxs,CVector(1,1,1),0x8888);
 	CEntityBase::Render(piRender,piCamera);
-}
-void CTurret::SetTarget(IEntity *piTarget)
-{
-	if(m_piTarget){UNSUBSCRIBE_FROM_CAST(m_piTarget,IEntityEvents);}
-	CEntityBase::SetTarget(piTarget);
-	if(m_piTarget){SUBSCRIBE_TO_CAST(m_piTarget,IEntityEvents);}
 }
 
 bool CTurret::IsInsideBuilding(IStaticStructure *piStaticStructure)
@@ -163,7 +155,8 @@ void CTurret::FindBuilding(IEntity *piEntity,void *pParam1,void *pParam2)
 void CTurret::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
-		
+	m_dwNextProcessFrame=dwCurrentTime+10;
+	
 	if(GetState()==eTurretState_Destroyed){return;}
 	if(GetState()==eTurretState_Normal)
 	{
@@ -267,7 +260,6 @@ void CTurret::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 	}
 	if(m_piTarget && m_bTargetLocked && dwCurrentTime>m_dwNextShotTime && m_vWeapons.size() && !m_piContainerBuilding)
 	{
-		
 		bool bTargetTooClose=false;
 		// Check minimun distance to target in the target's plane.
 		if(m_pType->m_dTargetMinDistance!=0)
@@ -288,15 +280,21 @@ void CTurret::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 			bool bVisible=g_PlayAreaManagerWrapper.m_piInterface && g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,0);
 			if(bVisible)
 			{
+				double dDifficulty=g_PlayerManagerWrapper.m_piInterface->GetEffectiveDifficulty();
+				double dTimeFirstShotMin=m_pType->m_dTimeFirstShotMin/dDifficulty;
+				double dTimeFirstShotMax=m_pType->m_dTimeFirstShotMax/dDifficulty;
+				double dTimeBetweenShotsMin=m_pType->m_dTimeBetweenShotsMin/dDifficulty;
+				double dTimeBetweenShotsMax=m_pType->m_dTimeBetweenShotsMax/dDifficulty;
+				
 				if(m_bFirstTimeVisible)
 				{
 					m_bFirstTimeVisible=false;
-					m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeFirstShotMax-m_pType->m_dTimeFirstShotMin)+m_pType->m_dTimeFirstShotMin;
+					m_dwNextShotTime=dwCurrentTime+drand()*(dTimeFirstShotMax-dTimeFirstShotMin)+dTimeFirstShotMin;
 				}
 				else
 				{
 					for(unsigned int x=0;x<m_vWeapons.size();x++){FireWeapon(x,dwCurrentTime);}
-					m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeBetweenShotsMax-m_pType->m_dTimeBetweenShotsMin)+m_pType->m_dTimeBetweenShotsMin;
+					m_dwNextShotTime=dwCurrentTime+drand()*(dTimeBetweenShotsMax-dTimeBetweenShotsMin)+dTimeBetweenShotsMin;
 				}
 			}
 		}

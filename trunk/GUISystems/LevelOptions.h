@@ -21,6 +21,8 @@
 class CLevelOptions: virtual public CGameDialogBase,virtual public IGameGUIButtonEvents, virtual public ILevelOptions
 {
 	EGameMode m_eMode;
+	EGameDifficulty m_eDifficulty;
+	
 	unsigned int m_nSelectedLevel;
 	
 	IGameGUIButton *m_piBTLevel1;
@@ -29,6 +31,7 @@ class CLevelOptions: virtual public CGameDialogBase,virtual public IGameGUIButto
 	IGameGUIButton *m_piBTLevel4;
 	IGameGUIButton *m_piBTLevel5;
 	IGameGUIButton *m_piBTMode;
+	IGameGUIButton *m_piBTDifficulty;
 	
 	BEGIN_CHILD_MAP()
 		CHILD_MAP_ENTRY_EX("Level1",m_piBTLevel1,IGameGUIButtonEvents);
@@ -36,6 +39,7 @@ class CLevelOptions: virtual public CGameDialogBase,virtual public IGameGUIButto
 		CHILD_MAP_ENTRY_EX("Level3",m_piBTLevel3,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Level4",m_piBTLevel4,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Level5",m_piBTLevel5,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("Difficulty",m_piBTDifficulty,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Mode",m_piBTMode,IGameGUIButtonEvents);
 	END_CHILD_MAP()
 
@@ -44,7 +48,7 @@ class CLevelOptions: virtual public CGameDialogBase,virtual public IGameGUIButto
 public:
 	void OnInitDialog();
 
-	void SelectOptions(IGameWindow *piParent,EGameMode *pMode,unsigned int *pnSelectedLevel);
+	void SelectOptions(IGameWindow *piParent,EGameMode *pMode,EGameDifficulty *pDifficulty,unsigned int *pnSelectedLevel);
 	
 	// IGameButtonEvents
 

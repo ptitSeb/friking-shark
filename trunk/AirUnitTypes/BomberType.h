@@ -69,9 +69,6 @@ class CBomber: public CEntityBase
   bool   m_bFirstTimeVisible;
   
   CBomberType  *m_pType;
-
-  void OnKilled(IEntity *piEntity);
-  void OnRemoved(IEntity *piEntity);
   
 public:
 	
