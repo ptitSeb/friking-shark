@@ -46,6 +46,9 @@ CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 	m_bRenderPlayArea=false;
 	m_d3DFontSize=0;
 	m_dMouseTraceDistance=0;
+	m_dDifficulty=0;
+	m_bGodMode=true;
+	m_bUseAmmo=false;
 	
 	m_bInspectionMode=false;
 	m_bShowTerrainPanel=true;
@@ -140,6 +143,12 @@ bool CScenarioEditorMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 	m_WorldManagerWrapper.Attach("GameSystem","WorldManager");
 	m_EntityManagerWrapper.Attach("GameSystem","EntityManager");
 	m_SoundManagerWrapper.Attach("GameSystem","SoundManager");
+	m_PlayerProfile.Create("GameSystem","CPlayerProfile","");
+	if(m_PlayerManagerWrapper.m_piPlayerManager)
+	{
+		m_PlayerManagerWrapper.m_piPlayerManager->SetPlayerProfile(m_PlayerProfile.m_piPlayerProfile);
+	}
+	
 	
 	//OpenScenario("/home/javi/workspace/Game/Demo/Resources/new21.ges");
 	return bOk;
@@ -155,6 +164,7 @@ void CScenarioEditorMainWindow::DestroyWindow()
 	m_PlayAreaManagerWrapper.Detach();
 	m_GameControllerWrapper.Detach();
 	m_WorldManagerWrapper.Detach();
+	m_PlayerProfile.Detach();
 
 	m_FrameManager.Detach();
 	if(m_piGameSystem){m_piGameSystem->Destroy();}
@@ -541,17 +551,36 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 		sprintf(A,"%02d:%02d - %02d:%02d",nMins,nSecs,nTotalMins,nTotalSecs);
 		m_piSTGameTime->SetText(A);
 	}
-	if(m_piSTVolume && m_SoundManagerWrapper.m_piSoundManager)
+	if(m_piSTOptionsVolume && m_SoundManagerWrapper.m_piSoundManager)
 	{
 		char A[200];
-		sprintf(A,"Vol: %d%%",m_SoundManagerWrapper.m_piSoundManager->GetMasterVolume());
-		m_piSTVolume->SetText(A);
+		sprintf(A,"Volume: %d%%",m_SoundManagerWrapper.m_piSoundManager->GetMasterVolume());
+		m_piSTOptionsVolume->SetText(A);
+	}	
+	if(m_piSTOptionsDifficulty && m_SoundManagerWrapper.m_piSoundManager)
+	{
+		char A[200];
+		sprintf(A,"Difficulty: %.f",m_dDifficulty);
+		m_piSTOptionsDifficulty->SetText(A);
+		m_PlayerProfile.m_piPlayerProfile->SetDifficulty(m_dDifficulty);
 	}
-	if(m_piSTMouseTraceDistance)
+	if(m_piBTOptionsGod && m_SoundManagerWrapper.m_piSoundManager)
 	{
 		char A[200];
-		sprintf(A,"Dist: %.f",m_dMouseTraceDistance);
-		m_piSTMouseTraceDistance->SetText(A);
+		sprintf(A,"God: %s",m_bGodMode?"On":"Off");
+		m_piBTOptionsGod->SetText(A);
+	}
+	if(m_piBTOptionsAmmo && m_SoundManagerWrapper.m_piSoundManager)
+	{
+		char A[200];
+		sprintf(A,"Ammo: %s",m_bUseAmmo?"On":"Off");
+		m_piBTOptionsAmmo->SetText(A);
+	}
+	if(m_piSTOptionsMouseTraceDistance)
+	{
+		char A[200];
+		sprintf(A,"Trace Dist: %.f",m_dMouseTraceDistance);
+		m_piSTOptionsMouseTraceDistance->SetText(A);
 	}
 	UpdateLayerPanel();
 }
@@ -673,25 +702,49 @@ void CScenarioEditorMainWindow::OnSelectionDoubleCliked(IGameGUIList *piControl,
 
 void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 {
-	if(m_piBTIncreaseVolume==piControl && m_SoundManagerWrapper.m_piSoundManager)
+	if(m_piBTOptionsIncreaseVolume==piControl && m_SoundManagerWrapper.m_piSoundManager)
 	{
 	  int volume=m_SoundManagerWrapper.m_piSoundManager->GetMasterVolume();
 	  volume+=5;
 	  m_SoundManagerWrapper.m_piSoundManager->SetMasterVolume(volume);
 	}
-	if(m_piBTDecreaseVolume==piControl && m_SoundManagerWrapper.m_piSoundManager)
+	if(m_piBTOptionsDecreaseVolume==piControl && m_SoundManagerWrapper.m_piSoundManager)
 	{
 	  int volume=m_SoundManagerWrapper.m_piSoundManager->GetMasterVolume();
 	  volume-=5;
 	  if(volume<0){volume=0;}
 	  m_SoundManagerWrapper.m_piSoundManager->SetMasterVolume(volume);
 	}
+	if(m_piBTOptionsIncreaseDifficulty==piControl && m_SoundManagerWrapper.m_piSoundManager)
+	{
+		m_dDifficulty+=1.0;
+	}
+	if(m_piBTOptionsDecreaseDifficulty==piControl && m_SoundManagerWrapper.m_piSoundManager)
+	{
+		m_dDifficulty-=1.0;
+		if(m_dDifficulty<0){m_dDifficulty=0;}
+	}	
+	if(m_piBTOptionsGod==piControl)
+	{
+		m_bGodMode=!m_bGodMode;
+		
+		IEntity *piPlayerEntity=m_EntityManagerWrapper.m_piEntityManager->FindEntity("Player");
+		IPlayer *piPlayer=dynamic_cast<IPlayer*>(piPlayerEntity);
+		if(piPlayer){piPlayer->SetGodMode(m_bGodMode);}
+	}
+	if(m_piBTOptionsAmmo==piControl)
+	{
+		m_bUseAmmo=!m_bUseAmmo;
 	
-	if(m_piBTIncreaseMouseTraceDistance==piControl)
+		IEntity *piPlayerEntity=m_EntityManagerWrapper.m_piEntityManager->FindEntity("Player");
+		IWeapon *piBombWeapon=piPlayerEntity?piPlayerEntity->GetWeapon(1):NULL;
+		if(piBombWeapon){piBombWeapon->SetAmmo(m_bUseAmmo?3:10000);}
+	}
+	if(m_piBTOptionsIncreaseMouseTraceDistance==piControl)
 	{
 		m_dMouseTraceDistance++;
 	}
-	if(m_piBTDecreaseMouseTraceDistance==piControl && m_dMouseTraceDistance>0)
+	if(m_piBTOptionsDecreaseMouseTraceDistance==piControl && m_dMouseTraceDistance>0)
 	{
 		m_dMouseTraceDistance--;
 		if(m_dMouseTraceDistance<0){m_dMouseTraceDistance=0;}
@@ -1957,6 +2010,17 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		sPlayAreaConfig.dCameraAspectRatio-=0.05;
 		bPlayAreaChange=true;
 	}
+	else if(piControl==m_piBTPlayAreaIncreaseDifficulty)
+	{
+		sPlayerConfig.dDifficulty+=1.0;
+		bPlayerChange=true;
+	}
+	else if(piControl==m_piBTPlayAreaDecreaseDifficulty)
+	{
+		sPlayerConfig.dDifficulty-=1.0;
+		if(sPlayerConfig.dDifficulty<0){sPlayerConfig.dDifficulty=0;}
+		bPlayerChange=true;
+	}
 	else if(piControl==m_piBTPlayAreaAutoTakeOff)
 	{
 		CVector vStart,vEnd;
@@ -2405,11 +2469,15 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 	m_piBTFogFitSky->Show(sFog.bEnabled);
 
 	SPlayAreaConfig sPlayAreaConfig;
+	SPlayerConfig sPlayerConfig;
 	if(m_PlayAreaManagerWrapper.m_piPlayAreaDesign)
 	{
 		m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sPlayAreaConfig);
 	}
-
+	if(m_PlayerManagerWrapper.m_piPlayerManager)
+	{
+		m_PlayerManagerWrapper.m_piPlayerManager->GetPlayerConfig(&sPlayerConfig);
+	}
 	sprintf(A,"Cam Dist     : %.f",sPlayAreaConfig.dCameraDistance);
 	m_piSTPlayAreaCameraDistance->SetText(A);
 
@@ -2422,10 +2490,13 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 	sprintf(A,"Aspect Ratio : %.02f",sPlayAreaConfig.dCameraAspectRatio);
 	m_piSTPlayAreaCameraAspectRatio->SetText(A);
 
-	sprintf(A,"Scroll    : %.f",sPlayAreaConfig.dCameraScroll);
+	sprintf(A,"Scroll     : %.f",sPlayAreaConfig.dCameraScroll);
 	m_piSTPlayAreaScroll->SetText(A);
-
-	sprintf(A,"Air Plane : %.f",sPlayAreaConfig.dAirPlaneHeight);
+	
+	sprintf(A,"Difficulty : %.f",sPlayerConfig.dDifficulty);
+	m_piSTPlayAreaDifficulty->SetText(A);
+	
+	sprintf(A,"Air Plane  : %.f",sPlayAreaConfig.dAirPlaneHeight);
 	m_piSTPlayAreaAirPlane->SetText(A);
 
 
@@ -2682,6 +2753,7 @@ void CScenarioEditorMainWindow::CenterCamera()
 
 void CScenarioEditorMainWindow::OnCharacter(int nKey,bool *pbProcessed)
 {
+	bool bUpdatePlayerWeapon=false;
 	if     (nKey=='T'|| nKey=='t'){m_bTextures=!m_bTextures;*pbProcessed=true;}
 	else if(nKey=='P'|| nKey=='p'){m_bRenderPlayArea=!m_bRenderPlayArea;*pbProcessed=true;}
 	else if(nKey=='G'|| nKey=='g'){m_bFog=!m_bFog;*pbProcessed=true;}
@@ -2690,13 +2762,20 @@ void CScenarioEditorMainWindow::OnCharacter(int nKey,bool *pbProcessed)
 	else if(nKey=='O'|| nKey=='o'){m_bShadows=!m_bShadows;*pbProcessed=true;}
 	else if(nKey=='H'|| nKey=='h'){m_bShaders=!m_bShaders;*pbProcessed=true;}
 	else if(nKey=='B'|| nKey=='b'){m_bBlend=!m_bBlend;*pbProcessed=true;}
-	else if(nKey=='1'){m_nStartingWeapon=1;*pbProcessed=true;}
-	else if(nKey=='2'){m_nStartingWeapon=2;*pbProcessed=true;}
-	else if(nKey=='3'){m_nStartingWeapon=3;*pbProcessed=true;}
-	else if(nKey=='4'){m_nStartingWeapon=4;*pbProcessed=true;}
-	else if(nKey=='5'){m_nStartingWeapon=5;*pbProcessed=true;}
-	else if(nKey=='6'){m_nStartingWeapon=6;*pbProcessed=true;}
+	else if(nKey=='1'){m_nStartingWeapon=1;*pbProcessed=true;bUpdatePlayerWeapon=true;}
+	else if(nKey=='2'){m_nStartingWeapon=2;*pbProcessed=true;bUpdatePlayerWeapon=true;}
+	else if(nKey=='3'){m_nStartingWeapon=3;*pbProcessed=true;bUpdatePlayerWeapon=true;}
+	else if(nKey=='4'){m_nStartingWeapon=4;*pbProcessed=true;bUpdatePlayerWeapon=true;}
+	else if(nKey=='5'){m_nStartingWeapon=5;*pbProcessed=true;bUpdatePlayerWeapon=true;}
+	else if(nKey=='6'){m_nStartingWeapon=6;*pbProcessed=true;bUpdatePlayerWeapon=true;}
 	else if(nKey==' '){m_FrameManager.m_piFrameManager->SetPauseOnNextFrame(false);m_bPauseOnNextFrame=true;*pbProcessed=true;}
+	
+	if(bUpdatePlayerWeapon)
+	{
+		IEntity *piPlayerEntity=m_EntityManagerWrapper.m_piEntityManager->FindEntity("Player");
+		IWeapon *piBulletWeapon=piPlayerEntity?piPlayerEntity->GetWeapon(0):NULL;
+		if(piBulletWeapon){piBulletWeapon->SetCurrentLevel(m_nStartingWeapon-1);}
+	}
 }
 
 void CScenarioEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
@@ -3359,8 +3438,8 @@ void CScenarioEditorMainWindow::StartGameSimulation()
 		IWeapon *piBombWeapon=piPlayerEntity?piPlayerEntity->GetWeapon(1):NULL;
 		IWeapon *piBulletWeapon=piPlayerEntity?piPlayerEntity->GetWeapon(0):NULL;
 		IPlayer *piPlayer=dynamic_cast<IPlayer*>(piPlayerEntity);
-		if(piPlayer){piPlayer->SetGodMode(true);}
-		if(piBombWeapon){piBombWeapon->SetAmmo(10000);}
+		if(piPlayer){piPlayer->SetGodMode(m_bGodMode);}
+		if(piBombWeapon){piBombWeapon->SetAmmo(m_bUseAmmo?3:10000);}
 		if(piBulletWeapon){piBulletWeapon->SetCurrentLevel(m_nStartingWeapon-1);}
 	}
 

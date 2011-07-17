@@ -28,9 +28,13 @@ enum EGroundBossHatchState
 class CGroundBossHatchType: public CEntityTypeBase
 {
 public:
-	
 	unsigned int m_nClosedTime;
 	unsigned int m_nOpenTime;
+	
+	double m_dTimeFirstShotMin;
+	double m_dTimeFirstShotMax;
+	double m_dTimeBetweenShotsMin;
+	double m_dTimeBetweenShotsMax;
 	
 	IEntity *CreateInstance(IEntity *piParent,unsigned int dwCurrentTime);
 	void InitializeEntity(CEntityBase *piEntity,unsigned int dwCurrentTime);
@@ -45,6 +49,10 @@ public:
 	PROP_CLASS_CHAIN(CEntityTypeBase)
 		PROP_VALUE_FLAGS(m_nClosedTime,"ClosedTime",1000,MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_VALUE_FLAGS(m_nOpenTime,"OpenTime",2500,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_VALUE_FLAGS(m_dTimeFirstShotMin,"TimeFirstShotMin",500,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_VALUE_FLAGS(m_dTimeFirstShotMax,"TimeFirstShotMax",5000,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_VALUE_FLAGS(m_dTimeBetweenShotsMin,"TimeBetweenShotsMin",2000,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_VALUE_FLAGS(m_dTimeBetweenShotsMax,"TimeBetweenShotsMax",5000,MRPF_NORMAL|MRPF_OPTIONAL);
 	END_PROP_MAP();	
 	CGroundBossHatchType();
 	~CGroundBossHatchType();
@@ -58,7 +66,9 @@ class CGroundBossHatch: public CEntityBase
 	
 	double m_dRadius;
 	bool m_bIsOpen;
-	
+	bool m_bFirstTimeVisible;
+	unsigned int m_dwNextShotTime;
+		
 	IEntity *GetTarget();
 	void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
 	

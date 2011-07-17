@@ -22,11 +22,13 @@
 
 CDreadnoughtTowerType::CDreadnoughtTowerType()
 {
+	g_PlayerManagerWrapper.AddRef();
 	PersistencyInitialize();
 }
 
 CDreadnoughtTowerType::~CDreadnoughtTowerType()
 {
+	g_PlayerManagerWrapper.Release();
 }
 
 IEntity *CDreadnoughtTowerType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
@@ -60,8 +62,13 @@ IEntity *CDreadnoughtTower::GetTarget()
 {
 	if(m_piTarget==NULL)
 	{
-		IEntityManager *piManager=GetEntityManager();
-		if(piManager){SetTarget(piManager->FindEntity("Player"));}
+		IEntity 		*piTarget=NULL;
+		IEntityManager 	*piManager=GetEntityManager();
+		if(piManager){piTarget=piManager->FindEntity("Player");}
+		if(piTarget && piTarget->GetHealth()>0)
+		{
+			SetTarget(piTarget);
+		}
 	}
 	
 	return m_piTarget;
@@ -98,15 +105,21 @@ void CDreadnoughtTower::ProcessFrame(unsigned int dwCurrentTime,double dTimeFrac
 		bool bVisible=g_PlayAreaManagerWrapper.m_piInterface && g_PlayAreaManagerWrapper.m_piInterface->IsVisible(m_PhysicInfo.vPosition,0);
 		if(bVisible)
 		{
+			double dDifficulty=g_PlayerManagerWrapper.m_piInterface->GetEffectiveDifficulty();
+			double dTimeFirstShotMin=m_pType->m_dTimeFirstShotMin/dDifficulty;
+			double dTimeFirstShotMax=m_pType->m_dTimeFirstShotMax/dDifficulty;
+			double dTimeBetweenShotsMin=m_pType->m_dTimeBetweenShotsMin/dDifficulty;
+			double dTimeBetweenShotsMax=m_pType->m_dTimeBetweenShotsMax/dDifficulty;
+			
 			if(m_bFirstTimeVisible)
 			{
 				m_bFirstTimeVisible=false;
-				m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeFirstShotMax-m_pType->m_dTimeFirstShotMin)+m_pType->m_dTimeFirstShotMin;
+				m_dwNextShotTime=dwCurrentTime+drand()*(dTimeFirstShotMax-dTimeFirstShotMin)+dTimeFirstShotMin;
 			}
 			else
 			{
 				for(unsigned int x=0;x<m_vWeapons.size();x++){FireWeapon(x,dwCurrentTime);}
-				m_dwNextShotTime=dwCurrentTime+drand()*(m_pType->m_dTimeBetweenShotsMax-m_pType->m_dTimeBetweenShotsMin)+m_pType->m_dTimeBetweenShotsMin;
+				m_dwNextShotTime=dwCurrentTime+drand()*(dTimeBetweenShotsMax-dTimeBetweenShotsMin)+dTimeBetweenShotsMin;
 			}
 		}
 	}

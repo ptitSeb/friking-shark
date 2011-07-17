@@ -58,13 +58,10 @@ CBulletProjectile::CBulletProjectile(CBulletProjectileType *pType,IEntity *piPar
 	m_pType=pType;
 	m_piParent=piParent;
 	m_dRadius=pType->DesignGetRadius();
-
-	g_PlayAreaManagerWrapper.AddRef();
 }
 
 CBulletProjectile::~CBulletProjectile()
 {
-	g_PlayAreaManagerWrapper.Release();
 }
 
 void CBulletProjectile::CheckCollisions(IEntity *piEntity,void *pParam1,void *pParam2)

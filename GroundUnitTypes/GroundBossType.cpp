@@ -22,21 +22,27 @@
 
 CGroundBossType::CGroundBossType()
 {
-  PersistencyInitialize();
+	g_PlayerManagerWrapper.AddRef();
+	PersistencyInitialize();
 }
 
 CGroundBossType::~CGroundBossType()
 {
+	g_PlayerManagerWrapper.Release();	
 }
 
 IEntity *CGroundBossType::CreateInstance(IEntity *piParent,unsigned int dwCurrentTime)
 {
-    CGroundBoss *piEntity=new CGroundBoss(this);
+	double dDifficulty=g_PlayerManagerWrapper.m_piInterface->GetEffectiveDifficulty();
+	
+	CGroundBoss *piEntity=new CGroundBoss(this);
     InitializeEntity(piEntity,dwCurrentTime);
     piEntity->SetState(eGroundBossState_Normal,0);
 	piEntity->GetPhysicInfo()->dMass=1;
 	piEntity->GetPhysicInfo()->dwCollisionType=PHYSIC_COLLISION_TYPE_SLIDE;
-    return piEntity;
+	piEntity->SetHealth(m_dMaxHealth*dDifficulty);
+	piEntity->SetMaxHealth(m_dMaxHealth*dDifficulty);
+	return piEntity;
 }
 
 
@@ -76,7 +82,6 @@ void CGroundBoss::OnRemoved(IEntity *piEntity)
 {
 	CEntityBase::OnRemoved(piEntity);
 	
-	if(piEntity==m_piTarget){SetTarget(NULL);}
 	if(piEntity==m_piContainerBuilding)
 	{
 		UNSUBSCRIBE_FROM_CAST(m_piContainerBuilding,IEntityEvents);
@@ -87,8 +92,7 @@ void CGroundBoss::OnRemoved(IEntity *piEntity)
 void CGroundBoss::OnKilled(IEntity *piEntity)
 {
 	CEntityBase::OnKilled(piEntity);
-	
-	if(piEntity==m_piTarget){SetTarget(NULL);}
+
 	if(piEntity==m_piContainerBuilding)
 	{
 		UNSUBSCRIBE_FROM_CAST(m_piContainerBuilding,IEntityEvents);
@@ -124,7 +128,10 @@ void CGroundBoss::AcquireTarget()
 	IEntity 		*piTarget=NULL;
 	IEntityManager 	*piManager=GetEntityManager();
 	if(piManager){piTarget=piManager->FindEntity("Player");}
-	SetTarget(piTarget);
+	if(piTarget && piTarget->GetHealth()>0)
+	{
+		SetTarget(piTarget);
+	}
 }
 
 bool CGroundBoss::IsInsideBuilding(IStaticStructure *piStaticStructure)

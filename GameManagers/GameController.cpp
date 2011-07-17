@@ -73,6 +73,8 @@ bool CGameController::SetupGame()
 void CGameController::EndGame()
 {
 	Stop();
+	
+	CloseScenario();
 
 	if(m_piEntityTypesSystem){m_piEntityTypesSystem->DestroyAllObjects();}
 	if(m_piFormationTypesSystem){m_piFormationTypesSystem->DestroyAllObjects();}

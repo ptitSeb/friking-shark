@@ -26,4 +26,5 @@
 #endif
 
 CSingletonWrapper<IPlayAreaManager> g_PlayAreaManagerWrapper("GameSystem","PlayAreaManager");
+CSingletonWrapper<IPlayerManager> g_PlayerManagerWrapper("GameSystem","PlayerManager");
 CSingletonWrapper<IPhysicManager>  g_PhysicsManagerWrapper("GameSystem","PhysicManager");

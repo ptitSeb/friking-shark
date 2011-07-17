@@ -20,6 +20,7 @@ PhysicsManager.cpp\
 GameManagers.cpp\
 PlayAreaManager.cpp\
 PlayerManager.cpp\
+PlayerProfile.cpp\
 WorldManager.cpp\
 WorldEntity.cpp\
 WorldSector.cpp\

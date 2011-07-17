@@ -294,8 +294,10 @@ IEntityManager *CEntityBase::GetEntityManager(){return g_EntityManagerSingleton.
 IEntity *CEntityBase::GetTarget(){return m_piTarget;}
 void CEntityBase::SetTarget(IEntity *piTarget)
 {
+	if(m_piTarget){UNSUBSCRIBE_FROM_CAST(m_piTarget,IEntityEvents);}
 	IEntity *piOldTarget=m_piTarget;
 	m_piTarget=piTarget;
+	if(m_piTarget){SUBSCRIBE_TO_CAST(m_piTarget,IEntityEvents);}
 	if(piOldTarget!=m_piTarget)
 	{
 		for(unsigned int x=0;x<m_vChildren.size();x++)
@@ -426,6 +428,8 @@ void CEntityBase::GivePoints( unsigned int nPoints )
 
 void CEntityBase::OnKilled(IEntity *piEntity)
 {
+	if(piEntity==m_piTarget){SetTarget(NULL);}
+	
 	for(unsigned int x=0;x<m_vChildren.size();x++)
 	{
 		SChildEntity *pChildEntity=&m_vChildren[x];
@@ -438,6 +442,8 @@ void CEntityBase::OnKilled(IEntity *piEntity)
 
 void CEntityBase::OnRemoved(IEntity *piEntity)
 {
+	if(piEntity==m_piTarget){SetTarget(NULL);}
+	
 	for(unsigned int x=0;x<m_vChildren.size();x++)
 	{
 		SChildEntity *pChildEntity=&m_vChildren[x];

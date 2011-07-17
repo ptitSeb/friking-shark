@@ -40,6 +40,7 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	
 	EGameInterfaceState      m_eState;
 	EGameMode 				 m_eGameMode;
+	EGameDifficulty			 m_eGameDifficulty;
 	unsigned int             m_nEndBombs;
 	unsigned int             m_nEndPoints;
 	unsigned int             m_nLastCountTime;
@@ -50,6 +51,8 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	CEntityManagerWrapper	 m_EntityManagerWrapper;
 	CFrameManagerWrapper	 m_FrameManagerWrapper;
 	CWorldManagerWrapper	 m_WorldManagerWrapper;
+	CPlayerProfileWrapper	 m_PlayerProfile;
+	
 	IPlayer					*m_piPlayer;
 	IEntity					*m_piPlayerEntity;
 
@@ -122,7 +125,7 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	
 	void RenderCourtain(IGenericRender *piRender,unsigned int nCurrentTime);
 
-	void StartGame(EGameMode eMode,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel);
+	void StartGame(EGameMode eMode,EGameDifficulty eDifficulty,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel);
 	void StopGame();
 	void ResetGame(bool bGoToLastCheckPoint);
 

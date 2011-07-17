@@ -25,6 +25,7 @@
 CLevelOptions::CLevelOptions(void)
 {
 	m_eMode=eGameMode_Normal;
+	m_eDifficulty=eGameDifficulty_Normal;
 	m_nSelectedLevel=0;
 }
 
@@ -67,6 +68,15 @@ void CLevelOptions::OnButtonClicked(IGameGUIButton *piControl)
 		m_eMode=(EGameMode)nMode;
 		UpdateGUI();
 	}
+	
+	if(piControl==m_piBTDifficulty)
+	{
+		unsigned int nDifficulty=m_eDifficulty;
+		nDifficulty++;
+		if(nDifficulty>=eGameDifficulty_Count){nDifficulty=eGameDifficulty_Easy;}
+		m_eDifficulty=(EGameDifficulty)nDifficulty;
+		UpdateGUI();
+	}
 }
 
 void CLevelOptions::UpdateGUI()
@@ -74,6 +84,12 @@ void CLevelOptions::UpdateGUI()
 	if(m_eMode==eGameMode_Normal){m_piBTMode->SetText("Mode: Normal");}
 	if(m_eMode==eGameMode_God){m_piBTMode->SetText("Mode: God");}
 	if(m_eMode==eGameMode_InfiniteLives){m_piBTMode->SetText("Mode: Infinite Lives");}
+
+	if(m_eDifficulty==eGameDifficulty_Easy){m_piBTDifficulty->SetText("Difficulty: Easy");}
+	if(m_eDifficulty==eGameDifficulty_Normal){m_piBTDifficulty->SetText("Difficulty: Normal");}
+	if(m_eDifficulty==eGameDifficulty_Hard){m_piBTDifficulty->SetText("Difficulty: Hard");}
+	if(m_eDifficulty==eGameDifficulty_VeryHard){m_piBTDifficulty->SetText("Difficulty: Very Hard");}
+		
 }
 
 void CLevelOptions::OnInitDialog()
@@ -82,11 +98,13 @@ void CLevelOptions::OnInitDialog()
 	UpdateGUI();
 }
 
-void CLevelOptions::SelectOptions(IGameWindow *piParent,EGameMode *pMode,unsigned int *pnSelectedLevel)
+void CLevelOptions::SelectOptions(IGameWindow *piParent,EGameMode *pMode,EGameDifficulty *pDifficulty,unsigned int *pnSelectedLevel)
 {
 	m_eMode=*pMode;
 	m_nSelectedLevel=*pnSelectedLevel;
+	m_eDifficulty=*pDifficulty;
 	Execute(piParent);
 	*pMode=m_eMode;
 	*pnSelectedLevel=m_nSelectedLevel;
+	*pDifficulty=m_eDifficulty;
 }

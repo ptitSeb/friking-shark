@@ -36,4 +36,5 @@ DECLARE_CUSTOM_WRAPPER1(CEntityTypeWrapper,IEntityType,m_piEntityType)
 
 extern CSingletonWrapper<IPhysicManager> g_PhysicsManagerWrapper;
 extern CSingletonWrapper<IPlayAreaManager> g_PlayAreaManagerWrapper;
+extern CSingletonWrapper<IPlayerManager> g_PlayerManagerWrapper;
 #endif

@@ -21,8 +21,6 @@
 #include "GameGUI.h"
 #include "PlayerManager.h"
 
-
-
 CPlayerManager::CPlayerManager(void)
 {
 	m_piPlayer=NULL;
@@ -31,6 +29,7 @@ CPlayerManager::CPlayerManager(void)
 	m_bPlayerLandingEnabled=false;
 	m_bPlayerTakeOffEnabled=false;
 	m_eGameStage=ePlayerManagerGameStage_TakeOff;
+	m_dScenarioDifficulty=0;
 	
 	m_dPlayMovementMaxRoll=30;
 	m_dPlayMovementMaxForward=0;
@@ -42,6 +41,8 @@ CPlayerManager::CPlayerManager(void)
 	m_dPlayMovementCurrentRoll=0;
 	m_dPlayMovementRollVelocity=360;
 	m_dwPlayMovementLastRollTime=0;
+	
+	PersistencyInitialize();
 }
 
 CPlayerManager::~CPlayerManager(void)
@@ -54,6 +55,7 @@ bool CPlayerManager::Init(std::string sClass,std::string sName,ISystem *piSystem
     if(bOk){bOk=m_GameControllerWrapper.Attach("GameSystem","GameController");}
     if(bOk){bOk=m_PlayAreaManagerWrapper.Attach("GameSystem","PlayAreaManager");}
     if(bOk){m_GameControllerWrapper.m_piGameController->RegisterManager(150,this);}
+    SetPlayerProfile(NULL);
 	return bOk;
 }
 
@@ -62,6 +64,7 @@ void CPlayerManager::Destroy()
 	if(m_GameControllerWrapper.m_piGameController){m_GameControllerWrapper.m_piGameController->UnregisterManager(this);}
     m_GameControllerWrapper.Detach();
 	m_PlayAreaManagerWrapper.Detach();
+	m_PlayerProfile.Detach();
 	CSystemObjectBase::Destroy();
 }
 
@@ -234,39 +237,6 @@ void CPlayerManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFractio
 	}	
 	REL(piCamera);
 }
-/*
-void CPlayerManager::SetPlayMovementPosition(CVector vPosition)
-{
-	SRoutePoint sLandPoint;
-	SRoutePoint sTakeOffPoint;
-	m_PlayerLandingRoute.GetPoint(0,&sLandPoint);
-	m_PlayerTakeOffRoute.GetPoint(0,&sTakeOffPoint);
-	
-	if(m_piPlayerEntity)
-	{
-		if(m_bPlayerTakeOffEnabled && vPosition.c[0]<=m_vPlayerRouteStart.c[0])
-		{
-			vPosition.c[0]=m_vPlayerRouteStart.c[0];
-			m_piPlayerEntity->GetPhysicInfo()->vPosition=sTakeOffPoint.vPosition;
-			m_piPlayerEntity->SetRoute(&m_PlayerTakeOffRoute);
-		}
-		else if(m_bPlayerLandingEnabled && vPosition.c[0]>=sLandPoint.vPosition.c[0])
-		{
-			vPosition.c[0]=sLandPoint.vPosition.c[0];
-			m_piPlayerEntity->GetPhysicInfo()->vPosition=sLandPoint.vPosition;
-			m_piPlayerEntity->SetRoute(&m_PlayerLandingRoute);
-		}
-		else
-		{
-			if(vPosition.c[0]<m_vPlayerRouteStart.c[0]){vPosition.c[0]=m_vPlayerRouteStart.c[0];}
-			if(vPosition.c[0]>m_vPlayerRouteEnd.c[0]){vPosition.c[0]=m_vPlayerRouteEnd.c[0];}
-			
-			m_piPlayerEntity->SetRoute(NULL);
-		}
-	}
-	vPlayMovementPos=vPosition;
-	CalculateAirPlayArea();
-}*/
 
 void CPlayerManager::ProcessInput(IGameGUIManager *piGUIManager,unsigned int dwCurrentTime,double dTimeFraction)
 {
@@ -278,12 +248,33 @@ void CPlayerManager::ProcessInput(IGameGUIManager *piGUIManager,unsigned int dwC
 		return;
 	}
 	m_PlayerKilledVelocity=CVector(m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraSpeed(),0,0);
-	if(piGUIManager->IsKeyDown(GK_UP) || piGUIManager->IsKeyDown(GK_NUMPAD8) || piGUIManager->IsKeyDown('W')){MovePlayer(KEY_FORWARD,dwCurrentTime,dTimeFraction);}
-	if(piGUIManager->IsKeyDown(GK_DOWN) || piGUIManager->IsKeyDown(GK_NUMPAD2) || piGUIManager->IsKeyDown('S')){MovePlayer(KEY_BACK,dwCurrentTime,dTimeFraction);}
-	if(piGUIManager->IsKeyDown(GK_LEFT) || piGUIManager->IsKeyDown(GK_NUMPAD4) || piGUIManager->IsKeyDown('A')){MovePlayer(KEY_LEFT,dwCurrentTime,dTimeFraction);}
-	if(piGUIManager->IsKeyDown(GK_RIGHT) || piGUIManager->IsKeyDown(GK_NUMPAD6) || piGUIManager->IsKeyDown('D')){MovePlayer(KEY_RIGHT,dwCurrentTime,dTimeFraction);}
-	if(piGUIManager->IsKeyDown(GK_LCONTROL)){m_piPlayer->FireWeaponsOnSlot(0,dwCurrentTime);}
-	if(piGUIManager->IsKeyDown(GK_LMENU)){m_piPlayer->FireWeaponsOnSlot(1,dwCurrentTime);}	
+	if(CheckKey(piGUIManager,"MoveForward")){MovePlayer(KEY_FORWARD,dwCurrentTime,dTimeFraction);}
+	if(CheckKey(piGUIManager,"MoveBackward")){MovePlayer(KEY_BACK,dwCurrentTime,dTimeFraction);}
+	if(CheckKey(piGUIManager,"MoveLeft")){MovePlayer(KEY_LEFT,dwCurrentTime,dTimeFraction);}
+	if(CheckKey(piGUIManager,"MoveRight")){MovePlayer(KEY_RIGHT,dwCurrentTime,dTimeFraction);}
+	if(CheckKey(piGUIManager,"FireBullets")){m_piPlayer->FireWeaponsOnSlot(0,dwCurrentTime);}
+	if(CheckKey(piGUIManager,"FireBomb")){m_piPlayer->FireWeaponsOnSlot(1,dwCurrentTime);}
+}
+
+bool CPlayerManager::CheckKey(IGameGUIManager *piGUIManager,const char *pKeyName)
+{
+	std::map<std::string,SKeyMapping>::iterator i=m_KeyboardMapping.find(pKeyName);
+	if(i!=m_KeyboardMapping.end())
+	{
+		SKeyMapping &keyMapping=i->second;
+		for(unsigned int c=0;c<keyMapping.vValidCombinations.size();c++)
+		{
+			SKeyCombination &combination=keyMapping.vValidCombinations[c];
+			if(piGUIManager->IsKeyDown(combination.nKey) &&
+				(combination.nModifierA==0||piGUIManager->IsKeyDown(combination.nModifierA)) &&
+				(combination.nModifierB==0||piGUIManager->IsKeyDown(combination.nModifierB)))
+				{
+					return true;
+				}
+		}
+	}
+	return false;
+	
 }
 
 void CPlayerManager::MovePlayer(unsigned long nKey,unsigned int dwCurrentTime,double dTimeFraction)
@@ -360,6 +351,7 @@ void CPlayerManager::GetPlayerConfig( SPlayerConfig *pConfig )
 {
 	pConfig->bPlayerLandingEnabled=m_bPlayerLandingEnabled;
 	pConfig->bPlayerTakeOffEnabled=m_bPlayerTakeOffEnabled;
+	pConfig->dDifficulty=m_dScenarioDifficulty;
 	
 	int x;
 	for(x=0;x<4;x++)
@@ -376,6 +368,7 @@ void CPlayerManager::SetPlayerConfig( SPlayerConfig *pConfig )
 {
 	m_bPlayerLandingEnabled=pConfig->bPlayerLandingEnabled;
 	m_bPlayerTakeOffEnabled=pConfig->bPlayerTakeOffEnabled;
+	m_dScenarioDifficulty=pConfig->dDifficulty;
 	
 	m_PlayerLandingRoute.Clear();
 	for(int x=0;x<4;x++){m_PlayerLandingRoute.AddPoint(x,SRoutePoint(true,pConfig->pvPlayerLandingPoints[x]));}
@@ -386,6 +379,12 @@ void CPlayerManager::SetPlayerConfig( SPlayerConfig *pConfig )
 bool CPlayerManager::IsScenarioCompleted()
 {
 	return m_eGameStage>=ePlayerManagerGameStage_Finished;
+}
+
+double CPlayerManager::GetEffectiveDifficulty()
+{
+	double dPlayerDifficulty=m_PlayerProfile.m_piProfile?m_PlayerProfile.m_piProfile->GetDifficulty():0;
+	return m_dBaseDifficulty+(m_dScenarioDifficulty*m_dLevelDifficultyWeight)+(dPlayerDifficulty*m_dPlayerDifficultyWeight);
 }
 
 void CPlayerManager::SetPlayerStart(CVector vPosition)
@@ -423,4 +422,26 @@ void CPlayerManager::SetPlayerStart(CVector vPosition)
 	}
 	m_vPlayerStart=vPosition;
 	m_PlayAreaManagerWrapper.m_piPlayAreaManager->SetPlayMovementPosition(m_vPlayerStart);
+}
+
+void CPlayerManager::SetPlayerProfile(IPlayerProfile *piProfile)
+{
+	if(m_PlayerProfile.m_piProfile){UNSUBSCRIBE_FROM_CAST(m_PlayerProfile.m_piProfile,IPlayerProfileEvents);}
+	m_KeyboardMapping.clear();
+	
+	if(piProfile){m_PlayerProfile.Attach(piProfile);}
+			 else{m_PlayerProfile.Create(m_piSystem,"CPlayerProfile","");}
+			 
+	if(m_PlayerProfile.m_piProfile)
+	{
+		SUBSCRIBE_TO_CAST(m_PlayerProfile.m_piProfile,IPlayerProfileEvents);
+		m_PlayerProfile.m_piProfile->GetKeyboardMapping(&m_KeyboardMapping);
+	}
+}
+
+void CPlayerManager::OnPlayerNameChanged(const std::string &sName){}
+void CPlayerManager::OnDifficultyChanged(double dDifficulty){}
+void CPlayerManager::OnKeyboardMappingChanged()
+{
+	m_PlayerProfile.m_piProfile->GetKeyboardMapping(&m_KeyboardMapping);
 }

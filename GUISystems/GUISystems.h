@@ -29,11 +29,20 @@ enum EGameMode
 	eGameMode_Count
 };
 
+enum EGameDifficulty
+{
+	eGameDifficulty_Easy=0,
+	eGameDifficulty_Normal,
+	eGameDifficulty_Hard,
+	eGameDifficulty_VeryHard,
+	eGameDifficulty_Count
+};
+
 class IGameInterfaceWindow: virtual public IGameWindow
 {	
 public:
 
-	virtual void StartGame(EGameMode eMode,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel)=0;
+	virtual void StartGame(EGameMode eMode,EGameDifficulty eDifficulty,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel)=0;
 	virtual void StopGame()=0;
 	
 	virtual void SetHighScore(unsigned int nScore)=0;
@@ -52,7 +61,7 @@ class ILevelOptions: virtual public IGameWindow
 {	
 public:
 	
-	virtual void SelectOptions(IGameWindow *piParent,EGameMode *pMode,unsigned int *pnSelectedLevel)=0;
+	virtual void SelectOptions(IGameWindow *piParent,EGameMode *pMode,EGameDifficulty *pDifficulty,unsigned int *pnSelectedLevel)=0;
 	
 	virtual ~ILevelOptions(){}
 };

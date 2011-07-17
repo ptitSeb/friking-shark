@@ -30,6 +30,7 @@ extern CSystemModuleHelper *g_pSystemModuleHelper;
 CMainWindow::CMainWindow(void)
 {
 	m_eGameMode=eGameMode_Normal;
+	m_eGameDifficulty=eGameDifficulty_Normal;
 	m_eStage=eInterfaceStage_MainMenu;
 	m_nCurrentLevel=0;
 	m_dBackgroundAlpha=0;
@@ -102,7 +103,7 @@ void CMainWindow::OnDraw(IGenericRender *piRender)
 		m_piGUIManager->ShowMouseCursor(false);
 		m_piSTBackground->Show(false);
 		m_piGameInterface->LoadScenario(sFile);
-		m_piGameInterface->StartGame(m_eGameMode,m_nPoints,m_nLivesLeft,m_nWeaponLevel);
+		m_piGameInterface->StartGame(m_eGameMode,m_eGameDifficulty,m_nPoints,m_nLivesLeft,m_nWeaponLevel);
 		m_piGameInterface->Show(true);
 	}
 }
@@ -121,7 +122,7 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 			}
 			else if(result==eMainMenuAction_NewGame)
 			{
-				m_LevelOptionsDialog.m_piLevelOptions->SelectOptions(this,&m_eGameMode,&m_nCurrentLevel);
+				m_LevelOptionsDialog.m_piLevelOptions->SelectOptions(this,&m_eGameMode,&m_eGameDifficulty,&m_nCurrentLevel);
 				
 				char sFile[200];
 				sprintf(sFile,"Level%d.ges",m_nCurrentLevel+1);
@@ -134,7 +135,7 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 				m_piGUIManager->ShowMouseCursor(false);
 				m_piSTBackground->Show(false);
 				m_piGameInterface->LoadScenario(sFile);
-				m_piGameInterface->StartGame(m_eGameMode,m_nPoints,m_nLivesLeft,m_nWeaponLevel);
+				m_piGameInterface->StartGame(m_eGameMode,m_eGameDifficulty,m_nPoints,m_nLivesLeft,m_nWeaponLevel);
 				m_piGameInterface->Show(true);
 			}
 			m_piGUIManager->SetFocus(this);

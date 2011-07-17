@@ -28,6 +28,7 @@ CGameInterface::CGameInterface(void)
 	m_eState=eGameInterfaceState_Idle;
 	m_bActive=false;
 	m_eGameMode=eGameMode_Normal;
+	m_eGameDifficulty=eGameDifficulty_Normal;
 	m_bCompleted=false;
 	m_piSystemManager   =NULL;
 	m_piGameSystem			=NULL;
@@ -93,18 +94,37 @@ bool CGameInterface::LoadScenario(std::string sScenario)
 	m_PlayAreaManagerWrapper.Attach("GameSystem","PlayAreaManager");
 	m_EntityManagerWrapper.Attach("GameSystem","EntityManager");
 	m_WorldManagerWrapper.Attach("GameSystem","WorldManager");
+	m_PlayerProfile.Create("GameSystem","CPlayerProfile","");
 	m_bCompleted=false;
 	return bResult;
 }
 
-void CGameInterface::StartGame(EGameMode eMode,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel)
+void CGameInterface::StartGame(EGameMode eMode,EGameDifficulty eDifficulty,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel)
 {
 	if(m_bGameStarted){return;}
 	m_eGameMode=eMode;
+	m_eGameDifficulty=eDifficulty;
 	m_FrameManagerWrapper.m_piFrameManager->Reset();
 	m_bPlayerKilledOnPreviousFrame=false;
 
+	
+	
+	if(m_PlayerProfile.m_piPlayerProfile)
+	{
+		double dDifficulty=0;
+		switch(m_eGameDifficulty)
+		{
+			case eGameDifficulty_Easy: dDifficulty=0;break;
+			case eGameDifficulty_Normal: dDifficulty=2;break;
+			case eGameDifficulty_Hard: dDifficulty=4;break;
+			case eGameDifficulty_VeryHard: dDifficulty=6;break;
+			default: dDifficulty=0;break;
+		}
+		m_PlayerProfile.m_piPlayerProfile->SetDifficulty(dDifficulty);
+	}
+	
 	m_GameControllerWrapper.m_piGameController->Start();
+	m_PlayerManagerWrapper.m_piPlayerManager->SetPlayerProfile(m_PlayerProfile.m_piPlayerProfile);
 	m_piPlayerEntity=m_EntityManagerWrapper.m_piEntityManager->FindEntity("Player");
 	if(m_piPlayerEntity)
 	{
@@ -166,7 +186,7 @@ void CGameInterface::ResetGame(bool bGoToLastCheckPoint)
 	unsigned int nWeapon=!bGoToLastCheckPoint && piWeapon?piWeapon->GetCurrentLevel():0;
 	
 	StopGame();
-	StartGame(m_eGameMode,nPoints,nLives,nWeapon);
+	StartGame(m_eGameMode,m_eGameDifficulty,nPoints,nLives,nWeapon);
 	if(bGoToLastCheckPoint)
 	{
 		m_PlayerManagerWrapper.m_piPlayerManager->SetPlayerStart(m_vLastCheckPointPosition);
@@ -212,9 +232,11 @@ void CGameInterface::CloseScenario()
 	m_PlayAreaManagerWrapper.Detach();
 	m_GameControllerWrapper.Detach();
 	m_WorldManagerWrapper.Detach();
+	m_PlayerProfile.Detach();
 	
 	if(m_piGameSystem){m_piGameSystem->DestroyAllObjects();}
 	if(m_piGameSystem){m_piGameSystem->Destroy();}
+	
 	REL(m_piGameSystem);
 	REL(m_piSystemManager);
 	m_bCompleted=false;

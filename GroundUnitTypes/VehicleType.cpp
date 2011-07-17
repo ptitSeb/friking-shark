@@ -94,7 +94,10 @@ void CVehicle::AcquireTarget()
 	IEntity 		*piTarget=NULL;
 	IEntityManager 	*piManager=GetEntityManager();
 	if(piManager){piTarget=piManager->FindEntity("Player");}
-	SetTarget(piTarget);
+	if(piTarget && piTarget->GetHealth()>0)
+	{
+		SetTarget(piTarget);
+	}
 }
 
 bool CVehicle::IsInsideBuilding(IStaticStructure *piStaticStructure)
@@ -145,6 +148,7 @@ void CVehicle::FindBuilding(IEntity *piEntity,void *pParam1,void *pParam2)
 void CVehicle::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	CEntityBase::ProcessFrame(dwCurrentTime,dTimeFraction);
+	m_dwNextProcessFrame=dwCurrentTime+10;
 	
 	if(GetState()==eVehicleState_Destroyed)
 	{
@@ -242,7 +246,6 @@ void CVehicle::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 		m_PhysicInfo.vAngles.c[YAW]=ApproachAngle(m_PhysicInfo.vAngles.c[YAW],dDesiredYaw,-dCurrentAngularSpeed*dTimeFraction);
 		VectorsFromAngles(m_PhysicInfo.vAngles,&m_PhysicInfo.vVelocity);
 		m_PhysicInfo.vVelocity*=m_PhysicInfo.dMaxVelocity;
-		m_dwNextProcessFrame=dwCurrentTime+10;
 	}
 }
 
