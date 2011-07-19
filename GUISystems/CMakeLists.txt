@@ -1,0 +1,26 @@
+SET (SRCS
+
+${SRCS}
+./GUISystems/ConfirmationDialog.h
+./GUISystems/GameInterface.h
+./GUISystems/GameMenu.h
+./GUISystems/GUIDefs.h
+./GUISystems/GUISystems.h
+./GUISystems/LevelOptions.h
+./GUISystems/MainMenu.h
+./GUISystems/MainWindow.h
+./GUISystems/resource.h
+./GUISystems/stdafx.h
+./GUISystems/TimeOutDialog.h
+
+./GUISystems/ConfirmationDialog.cpp
+./GUISystems/GameInterface.cpp
+./GUISystems/GameMenu.cpp
+./GUISystems/GUISystems.cpp
+./GUISystems/LevelOptions.cpp
+./GUISystems/MainMenu.cpp
+./GUISystems/MainWindow.cpp
+./GUISystems/stdafx.cpp
+./GUISystems/TimeOutDialog.cpp
+)
+
