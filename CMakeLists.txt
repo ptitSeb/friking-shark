@@ -12,7 +12,7 @@ FIND_PACKAGE ( X11 REQUIRED )
 FIND_PACKAGE ( OpenGL REQUIRED )
 FIND_PACKAGE ( OpenAL REQUIRED )
 FIND_PACKAGE ( PNG REQUIRED )
-FIND_PACKAGE ( Vorbis REQUIRED )
+# FIND_PACKAGE ( Vorbis REQUIRED )
 
 # Libraries
 
@@ -53,17 +53,11 @@ INCLUDE ( ./ScenarioEditor/CMakeLists.txt )
 INCLUDE ( ./SoundSystems/CMakeLists.txt )
 INCLUDE ( ./WeaponTypes/CMakeLists.txt )
 
-# Set the executable name.
-
 #IF (NOT WINDOWS)
 #	ADD_DEFINITIONS(-D_GNU_SOURCE=1 -D_REENTRANT -DGCC_SYMBOLS_PRIVATE_EXTERN=0)
 #ELSE (NOT WINDOWS)
 #	ADD_DEFINITIONS(-D_SCL_SECURE_NO_WARNINGS )
 #ENDIF (NOT WINDOWS)
-
-MESSAGE (STATUS "Linking with ${INCLUDED_LIBRARIES}.")
-MESSAGE (STATUS "Include directory paths are ${INCLUDE_DIRECTORIES}.")
-MESSAGE (STATUS "Using source files ${SRCS}.")
 
 link_libraries (
 	${INCLUDED_LIBRARIES}
