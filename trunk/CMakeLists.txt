@@ -1,4 +1,4 @@
-# $Revision: 1019 $ $Date: 2009-09-29 18:22:45 +1000 (Tue, 29 Sep 2009) $ $Author: dgorst $
+# $Revision$ $Date$ $Author$
 
 PROJECT (FrikingShark)
 
