@@ -229,7 +229,7 @@ bool CSoundType::Init(std::string sClass,std::string sName,ISystem *piSystem)
     ISystemManager  *piSystemManager=GetSystemManager();
     ISystem         *piTempSystem=NULL;
     ISystemObject   *piObject=NULL;
-    if(piSystemManager){piTempSystem=piSystemManager->GetSystem("GameSystem");}
+    if(piSystemManager){piTempSystem=piSystemManager->GetSystem("GameGUI");}
     if(piTempSystem){piTempSystem->GetObject("SoundManager",&piObject);}
     if(piObject){m_piSoundManager=QI(ISoundManager,piObject);}
     REL(piSystemManager);
@@ -359,6 +359,7 @@ void CSound::UpdateSource()
 
 void CSound::SetLoop(bool bLoop){m_bLoop=bLoop;UpdateSource();}
 void CSound::SetVolume(double dVolume){m_dVolume=dVolume;UpdateSource();}
+double CSound::GetVolume(){return m_dVolume;}
 
 void CSound::SetPosition(CVector vPosition){m_vPosition=vPosition;UpdateSource();}
 void CSound::SetOrientation(CVector vOrientation){m_vOrientation=vOrientation;UpdateSource();}

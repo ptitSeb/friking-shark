@@ -93,6 +93,7 @@ public:
 	
 	void SetLoop(bool bLoop);
 	void SetVolume(double nVolume);
+	double GetVolume();
 	
 	void SetPosition(CVector vPosition);
 	void SetOrientation(CVector vOrientation);

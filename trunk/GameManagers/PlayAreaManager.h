@@ -18,11 +18,9 @@
 
 #pragma once
 #include "Route.h"
-#include "SoundSystems.h"
 
 DECLARE_CUSTOM_WRAPPER1(CPlayAreaElementWrapper,IPlayAreaElement,m_piElement)
 DECLARE_CUSTOM_WRAPPER1(CPlayAreaEntityWrapper,IPlayAreaEntity,m_piElement)
-DECLARE_CUSTOM_WRAPPER1(CSoundTypeWrapper,ISoundType,m_piSoundType)
 
 struct SEntityLayerData
 {
@@ -49,19 +47,13 @@ class CPlayAreaManager: virtual public CSystemObjectBase,
                         virtual public CSystemSerializableBase,
                         virtual public IPlayAreaManager,
                         virtual public IGameManager,
-						virtual public IPlayAreaDesign,
-						virtual public IMusicDesign
+						virtual public IPlayAreaDesign
 {
 	bool m_bStarted;
 
     vector<CPlayAreaElementWrapper>	m_vElements;
 	vector<CPlayAreaEntityWrapper>	m_vEntityLayerElements;
 	vector<CPlayAreaEntityWrapper>	m_vDynamicElements;
-	CSoundTypeWrapper				m_IntroMusic;
-	CSoundTypeWrapper				m_Music;
-	
-	ISound *m_piMusicSound;
-	ISound *m_piIntroMusicSound;
 	
     double m_dCameraDistanceFromPlayer;
     double m_dCameraPitch;
@@ -164,14 +156,6 @@ public:
     void Stop();
     void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
 	
-	// IMusicDesign
-
-	bool SetIntroMusic(std::string sMusicFile);
-	void GetIntroMusic(std::string *psMusicFile,ISoundType **ppiSoundType);
-	
-	bool SetMusic(std::string sMusicFile);
-	void GetMusic(std::string *psMusicFile,ISoundType **ppiSoundType);
-	
 	// Edition method
 
 	void	GetPlayAreaConfig(SPlayAreaConfig *pConfig);
@@ -179,20 +163,18 @@ public:
 	void	UpdatePlayArea();
 
 	BEGIN_PROP_MAP(CPlayAreaManager)
-        BEGIN_PROP_SUBMAP("ScenarioProps")
-		  PROP(m_CameraWrapper,			"Camara");
-          PROP(m_vElements,             "Elementos");
-          PROP(m_vCameraRouteStart,     "Origen");
-		  PROP(m_vCameraRouteEnd,       "Destino");
-		  PROP_VALUE(m_dCameraDistanceFromPlayer,"DistanciaCamara",115);
-          PROP_VALUE(m_dPlayMovementSpeed,"VelocidadCamara",5);
-		  PROP_VALUE(m_dCameraPitch,      "InclinacionVista",0);
-		  PROP_VALUE(m_dPlayMovementMaxHorzScroll,    "MaximoScrollHorz",0);
-		  PROP_VALUE_FLAGS(m_dPlayAreaHeight,    "AlturaJuego",20,MRPF_NORMAL|MRPF_OPTIONAL);
-		  PROP_FLAGS(m_vEntityLayers,"EntityLayers",MRPF_NORMAL|MRPF_OPTIONAL)
-		  PROP_FLAGS(m_Music,"Music",MRPF_NORMAL|MRPF_OPTIONAL)
-		  PROP_FLAGS(m_IntroMusic,"IntroMusic",MRPF_NORMAL|MRPF_OPTIONAL)
-	END_PROP_SUBMAP("ScenarioProps")
+		BEGIN_PROP_SUBMAP("ScenarioProps")
+			PROP(m_CameraWrapper,			"Camara");
+			PROP(m_vElements,             "Elementos");
+			PROP(m_vCameraRouteStart,     "Origen");
+			PROP(m_vCameraRouteEnd,       "Destino");
+			PROP_VALUE(m_dCameraDistanceFromPlayer,"DistanciaCamara",115);
+			PROP_VALUE(m_dPlayMovementSpeed,"VelocidadCamara",5);
+			PROP_VALUE(m_dCameraPitch,      "InclinacionVista",0);
+			PROP_VALUE(m_dPlayMovementMaxHorzScroll,    "MaximoScrollHorz",0);
+			PROP_VALUE_FLAGS(m_dPlayAreaHeight,    "AlturaJuego",20,MRPF_NORMAL|MRPF_OPTIONAL);
+			PROP_FLAGS(m_vEntityLayers,"EntityLayers",MRPF_NORMAL|MRPF_OPTIONAL)
+		END_PROP_SUBMAP("ScenarioProps")
 	END_PROP_MAP();
 
     CPlayAreaManager(void);

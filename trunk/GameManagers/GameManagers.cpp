@@ -25,6 +25,7 @@
 #include "PlayerManager.h"
 #include "PlayerProfile.h"
 #include "PlayAreaManager.h"
+#include "MusicManager.h"
 #include "WorldManager.h"
 #include "GameController.h"
 #include "FrameManager.h"
@@ -35,6 +36,7 @@ BEGIN_SYSTEM_MODULE()
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CWorldManager,"CWorldManager");
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CPlayerManager,"CPlayerManager");
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CPlayerProfile,"CPlayerProfile");
+	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CMusicManager,"CMusicManager");
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CPlayAreaManager,"CPlayAreaManager");
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameController,"CGameController");
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CFrameManager,"CFrameManager");

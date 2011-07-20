@@ -6465,14 +6465,19 @@ AreaDeJuego
 		}
 	}
 	InclinacionVista=0.000000
-	IntroMusic
 	MaximoScrollHorz=10.000000
+	Origen=-1454.628504,-4.644054,59.234237
+	VelocidadCamara=15.000000
+}
+Music
+{
+	IntroMusic
 	Music
 	{
 		Class=SoundType
 		Data
 		{
-			Channels=5
+			Channels=1
 			File=./Sounds/level5music.ogg
 			Loop=0
 			Volume=100.000000
@@ -6480,8 +6485,6 @@ AreaDeJuego
 		Name=""
 		System=GameSystem
 	}
-	Origen=-1454.628504,-4.644054,59.234237
-	VelocidadCamara=15.000000
 }
 Player
 {
@@ -6502,28 +6505,28 @@ Player
 				Absoluto=1
 				Pause=0
 				Posicion=2650.881293,59.234237,4.644054
-				SpeedFactor=1.000000
+				SpeedFactor=0.70000
 			}
 			Item1
 			{
 				Absoluto=1
 				Pause=0
 				Posicion=2664.805106,59.234237,4.644054
-				SpeedFactor=1.000000
+				SpeedFactor=0.70000
 			}
 			Item2
 			{
 				Absoluto=1
 				Pause=0
 				Posicion=2757.428628,4.105939,4.644054
-				SpeedFactor=1.000000
+				SpeedFactor=0.70000
 			}
 			Item3
 			{
 				Absoluto=1
 				Pause=0
 				Posicion=2823.985705,3.615682,4.644054
-				SpeedFactor=1.000000
+				SpeedFactor=0.70000
 			}
 		}
 	}

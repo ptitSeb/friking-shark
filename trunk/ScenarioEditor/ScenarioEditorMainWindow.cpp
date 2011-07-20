@@ -139,10 +139,11 @@ bool CScenarioEditorMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 
 	m_PlayAreaManagerWrapper.Attach("GameSystem","PlayAreaManager");
 	m_PlayerManagerWrapper.Attach("GameSystem","PlayerManager");
+	m_MusicManagerWrapper.Attach("GameSystem","MusicManager");
 	m_FrameManager.Attach("GameSystem","FrameManager");
 	m_WorldManagerWrapper.Attach("GameSystem","WorldManager");
 	m_EntityManagerWrapper.Attach("GameSystem","EntityManager");
-	m_SoundManagerWrapper.Attach("GameSystem","SoundManager");
+	m_SoundManagerWrapper.Attach("GameGUI","SoundManager");
 	m_PlayerProfile.Create("GameSystem","CPlayerProfile","");
 	if(m_PlayerManagerWrapper.m_piPlayerManager)
 	{
@@ -161,6 +162,7 @@ void CScenarioEditorMainWindow::DestroyWindow()
 	if(m_GameControllerWrapper.m_piGameController){m_GameControllerWrapper.m_piGameController->EndGame();}
 	m_SoundManagerWrapper.Detach();
 	m_PlayerManagerWrapper.Detach();
+	m_MusicManagerWrapper.Detach();
 	m_PlayAreaManagerWrapper.Detach();
 	m_GameControllerWrapper.Detach();
 	m_WorldManagerWrapper.Detach();
@@ -790,7 +792,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		std::string sMusic="./Sounds/";
 		if(OpenFileDialog("Select music...",".wav;.ogg",&sMusic))
 		{
-			m_PlayAreaManagerWrapper.m_piMusicDesign->SetMusic(sMusic);
+			m_MusicManagerWrapper.m_piMusicDesign->SetMusic(sMusic);
 		}
 	}
 	if(m_piBTGeneralChangeIntroMusic==piControl)
@@ -798,7 +800,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 		std::string sMusic="./Sounds/";
 		if(OpenFileDialog("Select intro music...",".wav;.ogg",&sMusic))
 		{
-			m_PlayAreaManagerWrapper.m_piMusicDesign->SetIntroMusic(sMusic);
+			m_MusicManagerWrapper.m_piMusicDesign->SetIntroMusic(sMusic);
 		}
 	}
 	
@@ -2690,12 +2692,12 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 	m_piSTGeneralColorMapName->SetText(A);
 
 	std::string sMusicName;
-	if(m_PlayAreaManagerWrapper.m_piMusicDesign){m_PlayAreaManagerWrapper.m_piMusicDesign->GetMusic(&sMusicName,NULL);}
+	if(m_MusicManagerWrapper.m_piMusicDesign){m_MusicManagerWrapper.m_piMusicDesign->GetMusic(&sMusicName,NULL);}
 	sprintf(A,"Music    : %s",sMusicName.c_str());
 	m_piSTGeneralMusicName->SetText(A);
 	
 	std::string sIntroMusicName;
-	if(m_PlayAreaManagerWrapper.m_piMusicDesign){m_PlayAreaManagerWrapper.m_piMusicDesign->GetIntroMusic(&sIntroMusicName,NULL);}
+	if(m_MusicManagerWrapper.m_piMusicDesign){m_MusicManagerWrapper.m_piMusicDesign->GetIntroMusic(&sIntroMusicName,NULL);}
 	sprintf(A,"Intro    : %s",sIntroMusicName.c_str());
 	m_piSTGeneralIntroMusicName->SetText(A);
 	
@@ -3345,10 +3347,9 @@ void CScenarioEditorMainWindow::OnMouseMove( double x,double y )
 	else if(m_bMovingPlayerRoutePoint && m_nSelectedTakeOffRoutePoint!=-1)
 	{
 		CVector vStart,vEnd;
-		SPlayAreaConfig sPlayAreaConfig;
 		SPlayerConfig sPlayerConfig;
 		if(m_PlayAreaManagerWrapper.m_piPlayAreaManager){m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);}
-		if(m_PlayAreaManagerWrapper.m_piPlayAreaDesign){m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sPlayAreaConfig);}
+		if(m_PlayerManagerWrapper.m_piPlayerManager){m_PlayerManagerWrapper.m_piPlayerManager->GetPlayerConfig(&sPlayerConfig);}
 		if(m_nSelectedTakeOffRoutePoint>=2)
 		{
 			CVector vTemp;
@@ -3430,10 +3431,13 @@ void CScenarioEditorMainWindow::StartGameSimulation()
 		StopGameSimulation();
 	}
 	if(m_FrameManager.m_piFrameManager){m_FrameManager.m_piFrameManager->Reset();}
-	m_GameControllerWrapper.m_piGameController->Start();
 	if(m_PlayerManagerWrapper.m_piPlayerManager)
 	{
 		m_PlayerManagerWrapper.m_piPlayerManager->SetPlayerStart(m_vPlayMovementPosition);
+	}
+	m_GameControllerWrapper.m_piGameController->Start();
+	if(m_PlayerManagerWrapper.m_piPlayerManager)
+	{
 		IEntity *piPlayerEntity=m_EntityManagerWrapper.m_piEntityManager->FindEntity("Player");
 		IWeapon *piBombWeapon=piPlayerEntity?piPlayerEntity->GetWeapon(1):NULL;
 		IWeapon *piBulletWeapon=piPlayerEntity?piPlayerEntity->GetWeapon(0):NULL;

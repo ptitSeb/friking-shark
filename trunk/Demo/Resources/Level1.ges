@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=202.395636
 			NearPlane=130.000000
-			Posicion=2049.378041,228.678936,4.859726
+			Posicion=2089.550103,228.678936,5.094002
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -1094,7 +1094,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=967.655652,-1.480677,52.965402
+				Posicion=965.403711,-1.323776,52.965402
 				RouteDelay=0
 				Ruta
 				{
@@ -3764,14 +3764,31 @@ AreaDeJuego
 		}
 	}
 	InclinacionVista=0.000000
-	IntroMusic
 	MaximoScrollHorz=10.000000
+	Origen=-156.897180,-4.859726,88.678936
+	VelocidadCamara=15.000000
+}
+Music
+{
+	IntroMusic
+	{
+		Class=SoundType
+		Data
+		{
+			Channels=1
+			File=./Sounds/level1intro.ogg
+			Loop=0
+			Volume=100.000000
+		}
+		Name=""
+		System=GameSystem
+	}
 	Music
 	{
 		Class=SoundType
 		Data
 		{
-			Channels=5
+			Channels=1
 			File=./Sounds/level1music.ogg
 			Loop=0
 			Volume=100.000000
@@ -3779,8 +3796,6 @@ AreaDeJuego
 		Name=""
 		System=GameSystem
 	}
-	Origen=-156.897180,-4.859726,88.678936
-	VelocidadCamara=15.000000
 }
 Player
 {
@@ -3800,29 +3815,29 @@ Player
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=2010.751295,88.678936,4.859726
-				SpeedFactor=1.000000
+				Posicion=1982.099023,88.678936,4.859726
+				SpeedFactor=0.700000
 			}
 			Item1
 			{
 				Absoluto=1
 				Pause=0
 				Posicion=2041.883558,88.678936,4.859726
-				SpeedFactor=1.000000
+				SpeedFactor=0.700000
 			}
 			Item2
 			{
 				Absoluto=1
 				Pause=0
 				Posicion=2098.459475,56.455661,4.859726
-				SpeedFactor=1.000000
+				SpeedFactor=0.700000
 			}
 			Item3
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=2149.538414,55.965402,4.859726
-				SpeedFactor=1.000000
+				Posicion=2163.705245,55.965402,4.859726
+				SpeedFactor=0.700000
 			}
 		}
 	}
@@ -4016,7 +4031,7 @@ Terrain
 		Class=Texture
 		Data
 		{
-			Archivo=Level1TerrainColorMap.png
+			Archivo=./Textures/Level1TerrainColorMap.png
 			ArchivoAlpha=""
 			ColorKey=0.000000,0.000000,0.000000
 			UsarColorKey=0
@@ -4024,7 +4039,7 @@ Terrain
 		Name=""
 		System=GameResources
 	}
-	ColorMapFile=Level1TerrainColorMap.png
+	ColorMapFile=./Textures/Level1TerrainColorMap.png
 	Fog
 	{
 		Color=0.061294,0.131579,0.037134

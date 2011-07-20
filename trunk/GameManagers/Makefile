@@ -21,6 +21,7 @@ GameManagers.cpp\
 PlayAreaManager.cpp\
 PlayerManager.cpp\
 PlayerProfile.cpp\
+MusicManager.cpp\
 WorldManager.cpp\
 WorldEntity.cpp\
 WorldSector.cpp\

@@ -40,6 +40,7 @@ public:
 	
 	virtual void SetLoop(bool bLoop)=0;
 	virtual void SetVolume(double nVolume)=0;
+	virtual double GetVolume()=0;
 	
 	virtual void SetPosition(CVector vPosition)=0;
 	virtual void SetOrientation(CVector vOrientation)=0;

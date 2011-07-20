@@ -20,13 +20,6 @@
 
 #include <Route.h>
 
-enum EPlayerManagerGameStage
-{
-	ePlayerManagerGameStage_TakeOff,
-	ePlayerManagerGameStage_Moving,
-	ePlayerManagerGameStage_Landing,
-	ePlayerManagerGameStage_Finished
-};
 
 DECLARE_CUSTOM_WRAPPER1(CPlayerProfileWrapper,IPlayerProfile,m_piProfile)
 
@@ -84,12 +77,16 @@ class CPlayerManager: virtual public CSystemObjectBase,
 	
 	bool CheckKey(IGameGUIManager *piGUIManager,const char *pKeyName);
 	
+	void SetupPlayerStart(CVector vPosition);
+	
 public:
 
     bool Init(std::string sClass,std::string sName,ISystem *piSystem);
     void Destroy();
 
     // IPlayerManager
+	
+	EPlayerManagerGameStage GetStage();
 	
 	void SetPlayerStart(CVector vPosition);
 	void SetPlayerProfile(IPlayerProfile *piProfile);
@@ -125,12 +122,12 @@ public:
 		PROP_VALUE(m_dLevelDifficultyWeight,"LevelDifficultyWeight",0.05);
 		PROP_VALUE(m_dPlayerDifficultyWeight,"PlayerDifficultyWeight",0.05);
 		BEGIN_PROP_SUBMAP("ScenarioProps")
-		  PROP(m_PlayerEntityType,"EntityType");
-		  PROP_FLAGS(m_PlayerTakeOffRoute,"TakeOffRoute",MRPF_NORMAL|MRPF_OPTIONAL);
-		  PROP_FLAGS(m_PlayerLandingRoute,"LandingRoute",MRPF_NORMAL|MRPF_OPTIONAL);
-		  PROP_VALUE_FLAGS(m_bPlayerLandingEnabled,"LandingEnabled",false,MRPF_NORMAL|MRPF_OPTIONAL);
-		  PROP_VALUE_FLAGS(m_bPlayerTakeOffEnabled,"TakeOffEnabled",false,MRPF_NORMAL|MRPF_OPTIONAL);
-		  PROP_VALUE_FLAGS(m_dScenarioDifficulty,"Difficulty",0,MRPF_NORMAL|MRPF_OPTIONAL);
+			PROP(m_PlayerEntityType,"EntityType");
+			PROP_FLAGS(m_PlayerTakeOffRoute,"TakeOffRoute",MRPF_NORMAL|MRPF_OPTIONAL);
+			PROP_FLAGS(m_PlayerLandingRoute,"LandingRoute",MRPF_NORMAL|MRPF_OPTIONAL);
+			PROP_VALUE_FLAGS(m_bPlayerLandingEnabled,"LandingEnabled",false,MRPF_NORMAL|MRPF_OPTIONAL);
+			PROP_VALUE_FLAGS(m_bPlayerTakeOffEnabled,"TakeOffEnabled",false,MRPF_NORMAL|MRPF_OPTIONAL);
+			PROP_VALUE_FLAGS(m_dScenarioDifficulty,"Difficulty",0,MRPF_NORMAL|MRPF_OPTIONAL);
 		END_PROP_SUBMAP("ScenarioProps")
 	END_PROP_MAP();
 
