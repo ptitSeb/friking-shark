@@ -186,7 +186,11 @@ void CGameController::ProcessFrame(unsigned int dwCurrentTime,double dTimeFracti
 
 bool CGameController::RegisterManager(unsigned int dwHeight,IGameManager *piManager)
 {
-    if(m_mManagers.find(dwHeight)!=m_mManagers.end()){return false;}
+    if(m_mManagers.find(dwHeight)!=m_mManagers.end())
+	{
+		RTTRACE("CGameController::RegisterManager -> Duplicated Manager registration with height %d",dwHeight);
+		return false;
+	}
     ADD(piManager);
     m_mManagers[dwHeight]=piManager;
     return true;
