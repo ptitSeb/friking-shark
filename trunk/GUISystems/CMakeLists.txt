@@ -25,7 +25,7 @@ SET (SRCS
 	./GUISystems/MainWindow.cpp
 	./GUISystems/stdafx.cpp
 	./GUISystems/GameOverDialog.cpp
-        ./GUISystems/HighScoresDialog.cpp
-        ./GUISystems/HighScoresTable.cpp 
+	./GUISystems/HighScoresDialog.cpp
+	./GUISystems/HighScoresTable.cpp 
 )
 
