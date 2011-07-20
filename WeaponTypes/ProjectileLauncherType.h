@@ -114,7 +114,7 @@ class CProjectileLauncher:public IWeapon
   CProjectileLauncherType  *m_pType;
   SProjectileLauncherLevel *m_pCurrentLevel;
   IEntity                  *m_piEntity;
-  unsigned int              m_dwLastFireTime;
+  unsigned int              m_dwNextFireTime;
   unsigned int              m_dwCurrentLevel;
   unsigned int              m_nAmmo;
   
