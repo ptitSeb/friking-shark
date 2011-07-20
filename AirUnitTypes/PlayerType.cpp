@@ -149,7 +149,9 @@ void CPlayer::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 		
 		if(m_nRoutePoint==0 && dDist>m_PhysicInfo.dMaxVelocity*0.1)
 		{
-			m_PhysicInfo.vVelocity=vDir*m_PhysicInfo.dMaxVelocity;
+			SRoutePoint sCurrentPoint;
+			m_piRoute->GetPoint(m_nRoutePoint,&sCurrentPoint);
+			m_PhysicInfo.vVelocity=vDir*m_PhysicInfo.dMaxVelocity*sCurrentPoint.dSpeedFactor;
 		}
 		else
 		{
@@ -190,13 +192,17 @@ void CPlayer::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 					m_nRoutePoint=nNext;
 				}
 			}
+			SRoutePoint sCurrentPoint;
+			m_piRoute->GetPoint(m_nRoutePoint,&sCurrentPoint);
+			
 			// Head to the desired direction
 			double dDesiredYaw=0,dDesiredPitch=0;
 			AnglesFromVector(vDir,dDesiredYaw,dDesiredPitch);
 			m_PhysicInfo.vAngles.c[PITCH]=ApproachAngle(m_PhysicInfo.vAngles.c[PITCH],dDesiredPitch,-dCurrentAngularSpeed*dTimeFraction);
 			VectorsFromAngles(m_PhysicInfo.vAngles,&m_PhysicInfo.vVelocity);
-			m_PhysicInfo.vVelocity*=m_PhysicInfo.dMaxVelocity;
+			m_PhysicInfo.vVelocity*=m_PhysicInfo.dMaxVelocity*sCurrentPoint.dSpeedFactor;
 			m_dwNextProcessFrame=dwCurrentTime+10;
+			
 			
 			if(m_bRouteFinished)
 			{
