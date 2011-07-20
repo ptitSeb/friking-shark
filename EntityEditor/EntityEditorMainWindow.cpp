@@ -101,7 +101,7 @@ bool CEntityEditorMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 
 	m_FrameManager.Attach("GameSystem","FrameManager");
 	m_PhysicManagerWrapper.Attach("GameSystem","PhysicManager");
-	m_SoundManagerWrapper.Attach("GameSystem","SoundManager");
+	m_SoundManagerWrapper.Attach("GameGUI","SoundManager");
 	UpdateVisiblePanels();
 	UpdateStateList();
 	UpdateBBoxList();

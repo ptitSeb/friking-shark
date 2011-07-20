@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=200.435349
 			NearPlane=130.000000
-			Posicion=1622.514876,198.570478,3.170947
+			Posicion=1820.355215,198.570478,0.243264
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -2655,6 +2655,7 @@ AreaDeJuego
 							Posicion=555.732969,17.706195,57.045316
 							SpeedFactor=1.000000
 						}
+
 					}
 				}
 				Tipo
@@ -3948,17 +3949,102 @@ AreaDeJuego
 			Name=""
 			System=GameSystem
 		}
+		Item150
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-993.752206,-0.000011,58.570478
+				Tipo
+				{
+					Name=TreeVeteranLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item151
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-934.379560,-0.000011,58.570478
+				Tipo
+				{
+					Name=TreeVeteranLeft
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item152
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-961.119280,-0.000011,58.570478
+				Tipo
+				{
+					Name=TreeVeteranRight
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
+		Item153
+		{
+			Class=CPlayAreaFormation
+			Data
+			{
+				AlternativeBonus
+				AlternativeType
+				Bonus
+				ConditionType=0
+				ConditionValue=0
+				Posicion=-1028.703860,-0.000011,58.570478
+				Tipo
+				{
+					Name=TreeVeteranRight
+					System=FormationTypes
+				}
+			}
+			Name=""
+			System=GameSystem
+		}
 	}
 	EntityLayers
 	InclinacionVista=0.000000
-	IntroMusic
 	MaximoScrollHorz=10.000000
+	Origen=-1119.848746,-0.000011,58.570478
+	VelocidadCamara=15.000000
+}
+Music
+{
+	IntroMusic
 	Music
 	{
 		Class=SoundType
 		Data
 		{
-			Channels=5
+			Channels=1
 			File=./Sounds/level3music.ogg
 			Loop=0
 			Volume=100.000000
@@ -3966,8 +4052,6 @@ AreaDeJuego
 		Name=""
 		System=GameSystem
 	}
-	Origen=-1119.848746,-0.000011,58.570478
-	VelocidadCamara=15.000000
 }
 Player
 {
@@ -3987,29 +4071,29 @@ Player
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=1716.439797,58.570478,0.000011
-				SpeedFactor=1.000000
+				Posicion=1675.554794,58.570478,0.000011
+				SpeedFactor=0.700000
 			}
 			Item1
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=1746.965544,58.570478,0.000011
-				SpeedFactor=1.000000
+				Posicion=1751.767817,58.570478,0.000011
+				SpeedFactor=0.700000
 			}
 			Item2
 			{
 				Absoluto=1
 				Pause=0
-				Posicion=1835.136011,26.570678,0.000011
-				SpeedFactor=1.000000
+				Posicion=1812.495385,27.162720,0.000011
+				SpeedFactor=0.700000
 			}
 			Item3
 			{
 				Absoluto=1
 				Pause=0
 				Posicion=1866.057693,26.570678,0.000011
-				SpeedFactor=1.000000
+				SpeedFactor=0.700000
 			}
 		}
 	}
@@ -4024,28 +4108,28 @@ Player
 				Absoluto=1
 				Pause=0
 				Posicion=-1189.170440,26.933128,-0.000000
-				SpeedFactor=1.000000
+				SpeedFactor=1
 			}
 			Item1
 			{
 				Absoluto=1
 				Pause=0
 				Posicion=-1154.661841,26.933128,-0.000000
-				SpeedFactor=1.000000
+				SpeedFactor=1
 			}
 			Item2
 			{
 				Absoluto=1
 				Pause=0
 				Posicion=-1120.153242,58.441526,0.000000
-				SpeedFactor=1.000000
+				SpeedFactor=1
 			}
 			Item3
 			{
 				Absoluto=1
 				Pause=0
 				Posicion=-1080.153242,58.441526,0.000000
-				SpeedFactor=1.000000
+				SpeedFactor=1
 			}
 		}
 	}

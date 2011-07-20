@@ -23,7 +23,6 @@
 #include "ScenarioEditorObjectSelector.h"
 #include "ScenarioEditorObjectListSelector.h"
 
-DECLARE_CUSTOM_WRAPPER1(CPlayerProfileWrapper,IPlayerProfile,m_piPlayerProfile)
 DECLARE_CUSTOM_WRAPPER1(CScenarioEditorColorSelectorWrapper,IScenarioEditorColorSelector,m_piColorSelector)
 DECLARE_CUSTOM_WRAPPER1(CScenarioEditorObjectSelectorWrapper,IScenarioEditorObjectSelector,m_piObjectSelector)
 DECLARE_CUSTOM_WRAPPER1(CScenarioEditorObjectListSelectorWrapper,IScenarioEditorObjectListSelector,m_piObjectListSelector)
@@ -471,6 +470,7 @@ public:
 	ISystem					*m_piGameSystem;
 	CGameControllerWrapper   m_GameControllerWrapper;
 	CPlayerManagerWrapper    m_PlayerManagerWrapper;
+	CMusicManagerWrapper     m_MusicManagerWrapper;
 	CPlayAreaManagerWrapper  m_PlayAreaManagerWrapper;
 	CWorldManagerWrapper	 m_WorldManagerWrapper;
 	CEntityManagerWrapper	 m_EntityManagerWrapper;

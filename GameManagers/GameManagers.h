@@ -630,8 +630,23 @@ struct IPlayerProfileEvents:virtual public ISystemUnknown
 	virtual void OnKeyboardMappingChanged()=0;
 };
 
+enum EPlayerManagerGameStage
+{
+	ePlayerManagerGameStage_TakeOff,
+	ePlayerManagerGameStage_Moving,
+	ePlayerManagerGameStage_Landing,
+	ePlayerManagerGameStage_Killed,
+	ePlayerManagerGameStage_Finished
+};
+
+struct IMusicManager:virtual public ISystemUnknown
+{
+};
+
 struct IPlayerManager:virtual public ISystemUnknown
 {
+	virtual EPlayerManagerGameStage GetStage()=0;
+	
 	virtual void SetPlayerStart(CVector vPosition)=0;
 	virtual void SetPlayerProfile(IPlayerProfile *piProfile)=0;
 	

@@ -62,7 +62,7 @@ bool CPlayerManager::Init(std::string sClass,std::string sName,ISystem *piSystem
 void CPlayerManager::Destroy()
 {
 	if(m_GameControllerWrapper.m_piGameController){m_GameControllerWrapper.m_piGameController->UnregisterManager(this);}
-    m_GameControllerWrapper.Detach();
+	m_GameControllerWrapper.Detach();
 	m_PlayAreaManagerWrapper.Detach();
 	m_PlayerProfile.Detach();
 	CSystemObjectBase::Destroy();
@@ -109,23 +109,17 @@ void CPlayerManager::Start()
 	if(m_piPlayerEntity){m_piPlayerEntity->GetPhysicInfo()->dMaxVelocity=m_piPlayer->GetSpeed()*0.5;}	
 	if(m_piPlayerEntity){SUBSCRIBE_TO_CAST(m_piPlayerEntity,IEntityEvents);}
 
-	m_eGameStage=m_bPlayerTakeOffEnabled?ePlayerManagerGameStage_TakeOff:ePlayerManagerGameStage_Moving;
+
+	CVector vStart,vEnd;
+	m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
+
+	m_eGameStage=ePlayerManagerGameStage_TakeOff;
 	m_dPlayMovementCurrentRoll=0;
 	m_dwPlayMovementLastRollTime=0;
 	m_dPlayMovementCurrentForward=0;
 	m_dPlayMovementCurrentRight=0;
-	
-	m_PlayAreaManagerWrapper.m_piPlayAreaManager->SetPlayMovementPosition(m_vPlayerStart);
-	
-	if(m_eGameStage==ePlayerManagerGameStage_Moving)
-	{
-		m_PlayAreaManagerWrapper.m_piPlayAreaManager->StartMovingCamera();
-	}
-	else if(m_eGameStage==ePlayerManagerGameStage_TakeOff)
-	{
-		m_piPlayerEntity->SetRoute(&m_PlayerTakeOffRoute);
-		m_PlayAreaManagerWrapper.m_piPlayAreaManager->StopMovingCamera();
-	}	
+
+	SetupPlayerStart(m_vPlayerStart);
 }
 
 void CPlayerManager::Stop()
@@ -336,7 +330,11 @@ void CPlayerManager::MovePlayer(unsigned long nKey,unsigned int dwCurrentTime,do
 
 void CPlayerManager::OnRemoved(IEntity *piEntity)
 {
-	if(piEntity==m_piPlayerEntity){m_piPlayer=NULL;m_piPlayerEntity=NULL;}
+	if(piEntity==m_piPlayerEntity)
+	{
+		m_piPlayer=NULL;m_piPlayerEntity=NULL;
+		m_eGameStage=ePlayerManagerGameStage_Killed;
+	}
 }
 
 void CPlayerManager::OnKilled(IEntity *piEntity)
@@ -346,6 +344,8 @@ void CPlayerManager::OnKilled(IEntity *piEntity)
 		m_piPlayerEntity->GetPhysicInfo()->vVelocity=m_PlayerKilledVelocity;
 	}
 }
+
+EPlayerManagerGameStage CPlayerManager::GetStage(){return m_eGameStage;}
 
 void CPlayerManager::GetPlayerConfig( SPlayerConfig *pConfig )
 {
@@ -371,9 +371,9 @@ void CPlayerManager::SetPlayerConfig( SPlayerConfig *pConfig )
 	m_dScenarioDifficulty=pConfig->dDifficulty;
 	
 	m_PlayerLandingRoute.Clear();
-	for(int x=0;x<4;x++){m_PlayerLandingRoute.AddPoint(x,SRoutePoint(true,pConfig->pvPlayerLandingPoints[x]));}
+	for(int x=0;x<4;x++){m_PlayerLandingRoute.AddPoint(x,SRoutePoint(true,pConfig->pvPlayerLandingPoints[x],0,0.7));}
 	m_PlayerTakeOffRoute.Clear();
-	for(int x=0;x<4;x++){m_PlayerTakeOffRoute.AddPoint(x,SRoutePoint(true,pConfig->pvPlayerTakeOffPoints[x]));}
+	for(int x=0;x<4;x++){m_PlayerTakeOffRoute.AddPoint(x,SRoutePoint(true,pConfig->pvPlayerTakeOffPoints[x],0,1));}
 }
 
 bool CPlayerManager::IsScenarioCompleted()
@@ -387,17 +387,18 @@ double CPlayerManager::GetEffectiveDifficulty()
 	return m_dBaseDifficulty+(m_dScenarioDifficulty*m_dLevelDifficultyWeight)+(dPlayerDifficulty*m_dPlayerDifficultyWeight);
 }
 
-void CPlayerManager::SetPlayerStart(CVector vPosition)
+void CPlayerManager::SetupPlayerStart(CVector vPosition)
 {
 	SRoutePoint sLandPoint;
 	SRoutePoint sTakeOffPoint;
 	
 	CVector vStart,vEnd;
 	m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
+	m_PlayAreaManagerWrapper.m_piPlayAreaManager->SetPlayMovementPosition(vPosition);
 	
 	m_PlayerLandingRoute.GetPoint(0,&sLandPoint);
 	m_PlayerTakeOffRoute.GetPoint(0,&sTakeOffPoint);
-
+	
 	if(m_piPlayerEntity)
 	{
 		if(m_bPlayerTakeOffEnabled && vPosition.c[0]<=vStart.c[0])
@@ -405,6 +406,7 @@ void CPlayerManager::SetPlayerStart(CVector vPosition)
 			m_piPlayerEntity->GetPhysicInfo()->vPosition=sTakeOffPoint.vPosition;
 			m_piPlayerEntity->SetRoute(&m_PlayerTakeOffRoute);
 			m_eGameStage=ePlayerManagerGameStage_TakeOff;
+			m_PlayAreaManagerWrapper.m_piPlayAreaManager->StopMovingCamera();
 		}
 		else if(m_bPlayerLandingEnabled && vPosition.c[0]>=sLandPoint.vPosition.c[0])
 		{
@@ -420,8 +422,12 @@ void CPlayerManager::SetPlayerStart(CVector vPosition)
 			m_PlayAreaManagerWrapper.m_piPlayAreaManager->StartMovingCamera();
 		}
 	}
+}
+
+void CPlayerManager::SetPlayerStart(CVector vPosition)
+{
 	m_vPlayerStart=vPosition;
-	m_PlayAreaManagerWrapper.m_piPlayAreaManager->SetPlayMovementPosition(m_vPlayerStart);
+	SetupPlayerStart(vPosition);
 }
 
 void CPlayerManager::SetPlayerProfile(IPlayerProfile *piProfile)

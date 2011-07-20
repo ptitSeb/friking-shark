@@ -99,7 +99,7 @@ bool CFormationEditorMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 	m_EntityManagerWrapper.Attach("GameSystem","EntityManager");
 	m_PlayAreaManagerWrapper.Attach("GameSystem","PlayAreaManager");
 	m_FrameManager.Attach("GameSystem","FrameManager");
-	m_SoundManagerWrapper.Attach("GameSystem","SoundManager");
+	m_SoundManagerWrapper.Attach("GameGUI","SoundManager");
 	m_PlayerManagerWrapper.Attach("GameSystem","PlayerManager");
 	
 	if(m_PlayAreaManagerWrapper.m_piPlayAreaDesign)
@@ -1378,8 +1378,8 @@ void CFormationEditorMainWindow::StartGameSimulation()
 		}
 		REL(piElement);
 	}
-	m_GameControllerWrapper.m_piGameController->Start();
 	m_PlayerManagerWrapper.m_piPlayerManager->SetPlayerStart(vPlayerStart);
+	m_GameControllerWrapper.m_piGameController->Start();
 	
 	if(m_EntityManagerWrapper.m_piEntityManager)
 	{
