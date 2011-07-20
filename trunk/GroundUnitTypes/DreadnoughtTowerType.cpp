@@ -17,7 +17,7 @@
 
 
 #include "./stdafx.h"
-#include "DreadnoughtTowerType.h"
+#include "GroundUnitTypes.h"
 #include "DreadnoughtTowerType.h"
 
 CDreadnoughtTowerType::CDreadnoughtTowerType()
@@ -53,7 +53,7 @@ CDreadnoughtTower::CDreadnoughtTower(CDreadnoughtTowerType *pType,unsigned int d
 	SEntityTypeConfig sconfig;
 	m_pType->GetEntityTypeConfig(&sconfig);
 	m_nConfiguredDamageType=sconfig.nDamageType;
-	m_dwNextShotTime=0;
+	m_dwNextShotTime=CHECKPOINT_HOLD_FIRE_TIME;
 	m_dRadius=m_pType->DesignGetRadius();
 	m_bFirstTimeVisible=true;
 }

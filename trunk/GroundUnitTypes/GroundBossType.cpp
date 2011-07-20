@@ -17,6 +17,7 @@
 
 
 #include "./stdafx.h"
+#include "GroundUnitTypes.h"
 #include "GroundBossType.h"
 #include "GameGraphics.h"
 
