@@ -30,7 +30,8 @@ enum EGameInterfaceState
 	eGameInterfaceState_CountingBombs,
 	eGameInterfaceState_CountingPoints,
 	eGameInterfaceState_EndWait,
-	eGameInterfaceState_EndCourtain
+	eGameInterfaceState_EndCourtain,
+	eGameInterfaceState_GameOverCourtain
 };
 
 class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterfaceWindow,virtual public IPlayAreaElementEnumerationCallback,virtual public IEntityEvents
@@ -158,6 +159,8 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 
 	void OpenCourtain(unsigned int nCurrentTime);
 	void CloseCourtain(unsigned int nCurrentTime);
+	
+	void StartGameInternal(EGameMode eMode,EGameDifficulty eDifficulty,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel, bool bGoToLastCheckPoint);
 	
 public:
 

@@ -22,13 +22,16 @@ DECLARE_CUSTOM_WRAPPER1(CViewportWrapper,IGenericViewport,m_piViewport)
 DECLARE_CUSTOM_WRAPPER1(CGameDialogWrapper,IGameDialog,m_piDialog)
 DECLARE_CUSTOM_WRAPPER1(CGameInterfaceWrapper,IGameInterfaceWindow,m_piInterfaceWindow)
 DECLARE_CUSTOM_WRAPPER2(CLevelOptionsDialogWrapper,IGameDialog,m_piDialog,ILevelOptions,m_piLevelOptions)
+DECLARE_CUSTOM_WRAPPER1(CHighScoresTableWrapper,IHighScoresTable,m_piHighScoresTable)
+DECLARE_CUSTOM_WRAPPER2(CHighScoresDialogWrapper,IGameDialog,m_piDialog,IHighScoresDialog,m_piHighScoresDialog)
 
 enum eInterfaceStage
 {
 	eInterfaceStage_None,
 	eInterfaceStage_MainMenu,
 	eInterfaceStage_Playing,
-	eInterfaceStage_LaunchNextLevel
+	eInterfaceStage_LaunchNextLevel,
+	eInterfaceStage_HighScores
 };
 
 class CMainWindow: virtual public CGameWindowBase,virtual public IGameInterfaceWindowEvents
@@ -36,6 +39,7 @@ class CMainWindow: virtual public CGameWindowBase,virtual public IGameInterfaceW
 	eInterfaceStage m_eStage;
 
 	CConfigFile m_GUIConfigFile;
+	CConfigFile m_HighScoresConfigFile;
 
 	EGameMode 			  m_eGameMode;
 	EGameDifficulty       m_eGameDifficulty;
@@ -44,23 +48,27 @@ class CMainWindow: virtual public CGameWindowBase,virtual public IGameInterfaceW
 
 	CGameWindowWrapper m_BackgroundWindow;
 	CGameDialogWrapper m_GameOverDialog;
-	CGameDialogWrapper m_CongratulationsDialog;
 	CGameDialogWrapper m_MainMenuDialog;
 	CGameDialogWrapper m_GameMenuDialog;
 	CGameDialogWrapper m_ConfirmationDialog;
 	CLevelOptionsDialogWrapper m_LevelOptionsDialog;
+	CHighScoresDialogWrapper m_HighScoresDialog;
+	CHighScoresTableWrapper  m_HighScoresTable;
 	
 	unsigned int m_nCurrentLevel;
 	unsigned int m_nPoints;
 	unsigned int m_nLivesLeft;
 	unsigned int m_nWeaponLevel;
+	
+	void Destroy();
+	
 public:
 	// Sobrecarga para cambiar el valor por defecto del sistema de referencia.
 
 	BEGIN_PROP_MAP(CMainWindow)
 		PROP_CLASS_CHAIN(CGameWindowBase);
 		PROP_VALUE_FLAGS(m_eReferenceSystem,"ReferenceSystem",eGameGUIReferenceSystem_Relative,MRPF_NORMAL|MRPF_OPTIONAL)
-	END_PROP_MAP()
+		END_PROP_MAP()
 
 	BEGIN_CHILD_MAP()
 		CHILD_MAP_ENTRY("Background",m_piSTBackground);
@@ -73,7 +81,8 @@ public:
 	void OnDraw(IGenericRender *piRender);
 	
 	void	OnScenarioFinished(eScenarioFinishedReason eReason,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel);
-
+	void	OnGameOverCourtainClosed();
+	
 	CMainWindow(void);
 	~CMainWindow(void);
 };

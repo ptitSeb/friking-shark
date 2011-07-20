@@ -18,17 +18,30 @@
 
 #pragma once
 
-class CTimeOutDialog: virtual public CGameDialogBase
-{
-	unsigned int m_nStartTime;
-	bool m_bAlreadyFinished;
-	
-	void OnDraw(IGenericRender *piRender);
-	
-	int	Execute(IGameWindow *piParent);
-	
-public:
+DECLARE_SERIALIZABLE_ENUMERATION(EGameDifficulty)
 
-	CTimeOutDialog(void);
-	~CTimeOutDialog(void);
+BEGIN_STRUCT_PROPS(SHighScoreRow)
+	PROP(sName,"Name")
+	PROP(eDifficulty,"Difficulty")
+	PROP(nScore,"Score")
+END_STRUCT_PROPS()
+
+class CHighScoresTable: virtual public CSystemObjectBase, virtual public IHighScoresTable
+{
+	unsigned int m_nMaxScores;
+	
+	std::vector<SHighScoreRow> m_vTable;
+	BEGIN_PROP_MAP(CHighScoresTable)
+		PROP_VALUE(m_nMaxScores,"MaxScores",100)
+		PROP(m_vTable,"Table")
+	END_PROP_MAP()
+public:
+	
+	unsigned int	GetRowCount();
+	SHighScoreRow	GetRow(unsigned int nIndex);
+	int 			AddRow(SHighScoreRow &sRow);
+	void			SetRow(unsigned int nIndex,SHighScoreRow &sRow);
+	
+	CHighScoresTable();
+	~CHighScoresTable();
 };
