@@ -92,7 +92,7 @@ CProjectileLauncher::CProjectileLauncher(CProjectileLauncherType *pType,IEntity 
 {
   m_pType=pType;
   m_piEntity=piEntity;
-  m_dwLastFireTime=0;
+  m_dwNextFireTime=0;
   m_dwCurrentLevel=0;
   m_pCurrentLevel=m_pType->GetLevel(m_dwCurrentLevel);
   m_nAmmo=m_pType->GetInitialAmmo();  
@@ -242,7 +242,7 @@ void CProjectileLauncher::Fire(unsigned int dwCurrentTime)
 				}
 			}
 		}
-		m_dwLastFireTime=dwCurrentTime;
+		m_dwNextFireTime=dwCurrentTime+m_pCurrentLevel->dwReloadTime;
 	}
 }
 
@@ -266,7 +266,7 @@ bool CProjectileLauncher::IsReady(unsigned int dwCurrentTime)
 {
   if(m_pCurrentLevel)
   {
-    return ((m_dwLastFireTime+m_pCurrentLevel->dwReloadTime)<=dwCurrentTime);
+    return ((m_dwNextFireTime)<=dwCurrentTime);
   }
   else
   {
