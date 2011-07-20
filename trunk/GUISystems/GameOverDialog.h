@@ -16,36 +16,29 @@
 //  
 
 
-#include "./stdafx.h"
-#include "GameRunTimeLib.h"
-#include "GameGUILib.h"
-#include "TimeOutDialog.h"
+#pragma once
 
-CTimeOutDialog::CTimeOutDialog(void)
+class CGameOverDialog: virtual public CGameDialogBase
 {
-	m_nStartTime=0;
-	m_bAlreadyFinished=false;
-}
-
-CTimeOutDialog::~CTimeOutDialog(void)
-{
-}
-
-int	CTimeOutDialog::Execute(IGameWindow *piParent)
-{
-	m_nStartTime=GetTimeStamp();
-	m_bAlreadyFinished=false;
-	return CGameDialogBase::Execute(piParent);
-}
-
-void CTimeOutDialog::OnDraw(IGenericRender *piRender)
-{
-	CGameDialogBase::OnDraw(piRender);
+	unsigned int m_nStartTime;
+	bool m_bAlreadyFinished;
 	
-	if(!m_bAlreadyFinished && (m_nStartTime+3*1000)<GetTimeStamp())
-	{
-		m_bAlreadyFinished=true;
-		EndDialog(0);
-	}
-}
+	CSoundTypeWrapper m_GameOverMusic;
+	ISound *m_piGameOverMusicSound;
+	
+	void OnDraw(IGenericRender *piRender);
+	
+	int	Execute(IGameWindow *piParent);
+	bool Unserialize(ISystemPersistencyNode *piNode);
+	void Destroy();
+	
+	BEGIN_PROP_MAP(CGameOverDialog)
+	PROP_CLASS_CHAIN(CGameDialogBase);
+	PROP_FLAGS(m_GameOverMusic,"Music",MRPF_NORMAL|MRPF_OPTIONAL)
+	END_PROP_MAP()
+	
+public:
 
+	CGameOverDialog(void);
+	~CGameOverDialog(void);
+};

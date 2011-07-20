@@ -48,7 +48,7 @@ class CLevelOptions: virtual public CGameDialogBase,virtual public IGameGUIButto
 public:
 	void OnInitDialog();
 
-	void SelectOptions(IGameWindow *piParent,EGameMode *pMode,EGameDifficulty *pDifficulty,unsigned int *pnSelectedLevel);
+	bool SelectOptions(IGameWindow *piParent,EGameMode *pMode,EGameDifficulty *pDifficulty,unsigned int *pnSelectedLevel);
 	
 	// IGameButtonEvents
 

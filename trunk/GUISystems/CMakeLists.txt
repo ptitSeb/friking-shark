@@ -12,7 +12,9 @@ SET (SRCS
 	./GUISystems/MainWindow.h
 	./GUISystems/resource.h
 	./GUISystems/stdafx.h
-	./GUISystems/TimeOutDialog.h
+	./GUISystems/GameOverDialog.h
+	./GUISystems/HighScoresDialog.h
+	./GUISystems/HighScoresTable.h
 
 	./GUISystems/ConfirmationDialog.cpp
 	./GUISystems/GameInterface.cpp
@@ -22,6 +24,8 @@ SET (SRCS
 	./GUISystems/MainMenu.cpp
 	./GUISystems/MainWindow.cpp
 	./GUISystems/stdafx.cpp
-	./GUISystems/TimeOutDialog.cpp
+	./GUISystems/GameOverDialog.cpp
+        ./GUISystems/HighScoresDialog.cpp
+        ./GUISystems/HighScoresTable.cpp 
 )
 

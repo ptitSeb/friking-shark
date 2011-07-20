@@ -13,13 +13,16 @@ INCLUDES = -I. \
 -I../GameGraphics \
 -I../GameManagers \
 -I../VectorLib \
+-I../SoundSystems \
 
 SOURCES = GUISystems.cpp \
 GameInterface.cpp \
 MainWindow.cpp \
 ConfirmationDialog.cpp \
 GameMenu.cpp \
-TimeOutDialog.cpp \
+GameOverDialog.cpp \
+HighScoresDialog.cpp \
+HighScoresTable.cpp \
 MainMenu.cpp \
 LevelOptions.cpp \
 stdafx.cpp

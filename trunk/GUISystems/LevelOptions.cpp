@@ -38,27 +38,27 @@ void CLevelOptions::OnButtonClicked(IGameGUIButton *piControl)
 	if(piControl==m_piBTLevel1)
 	{
 		m_nSelectedLevel=0;
-		EndDialog(0);
+		EndDialog(DIALOG_OK);
 	}
 	if(piControl==m_piBTLevel2)
 	{
 		m_nSelectedLevel=1;
-		EndDialog(0);
+		EndDialog(DIALOG_OK);
 	}
 	if(piControl==m_piBTLevel3)
 	{
 		m_nSelectedLevel=2;
-		EndDialog(0);
+		EndDialog(DIALOG_OK);
 	}	
 	if(piControl==m_piBTLevel4)
 	{
 		m_nSelectedLevel=3;
-		EndDialog(0);
+		EndDialog(DIALOG_OK);
 	}
 	if(piControl==m_piBTLevel5)
 	{
 		m_nSelectedLevel=4;
-		EndDialog(0);
+		EndDialog(DIALOG_OK);
 	}
 	if(piControl==m_piBTMode)
 	{
@@ -98,13 +98,14 @@ void CLevelOptions::OnInitDialog()
 	UpdateGUI();
 }
 
-void CLevelOptions::SelectOptions(IGameWindow *piParent,EGameMode *pMode,EGameDifficulty *pDifficulty,unsigned int *pnSelectedLevel)
+bool CLevelOptions::SelectOptions(IGameWindow *piParent,EGameMode *pMode,EGameDifficulty *pDifficulty,unsigned int *pnSelectedLevel)
 {
 	m_eMode=*pMode;
 	m_nSelectedLevel=*pnSelectedLevel;
 	m_eDifficulty=*pDifficulty;
-	Execute(piParent);
+	int nRes=Execute(piParent);
 	*pMode=m_eMode;
 	*pnSelectedLevel=m_nSelectedLevel;
 	*pDifficulty=m_eDifficulty;
+	return nRes==DIALOG_OK;
 }

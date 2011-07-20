@@ -57,11 +57,51 @@ public:
 	virtual ~IGameInterfaceWindow(){}
 };
 
+enum EHighScoresColumn
+{
+	eHighScoresColumn_Ranking,
+	eHighScoresColumn_Score,
+	eHighScoresColumn_Difficulty,
+	eHighScoresColumn_Name,
+	eHighScoresColumn_Count
+};
+
+struct SHighScoreRow
+{
+	std::string 	sName;
+	EGameDifficulty eDifficulty;
+	unsigned int	nScore;
+	
+	SHighScoreRow(){nScore=0;eDifficulty=eGameDifficulty_Easy;}
+	SHighScoreRow(std::string name,EGameDifficulty difficulty, unsigned int score){sName=name;eDifficulty=difficulty;nScore=score;}
+};
+
+class IHighScoresTable: virtual public ISystemUnknown
+{	
+public:
+	
+	virtual unsigned int	GetRowCount()=0;
+	virtual SHighScoreRow	GetRow(unsigned int nIndex)=0;
+	virtual int 			AddRow(SHighScoreRow &sRow)=0;
+	virtual void			SetRow(unsigned int nIndex,SHighScoreRow &sRow)=0;
+	
+	virtual ~IHighScoresTable(){}
+};
+
+class IHighScoresDialog: virtual public ISystemUnknown
+{	
+public:
+	
+	virtual void ShowScores(IGameWindow *piParent,IHighScoresTable *piTable,int nScoreToEdit/*-1 to only show the scores*/)=0;
+	
+	virtual ~IHighScoresDialog(){}
+};
+
 class ILevelOptions: virtual public IGameWindow
 {	
 public:
 	
-	virtual void SelectOptions(IGameWindow *piParent,EGameMode *pMode,EGameDifficulty *pDifficulty,unsigned int *pnSelectedLevel)=0;
+	virtual bool SelectOptions(IGameWindow *piParent,EGameMode *pMode,EGameDifficulty *pDifficulty,unsigned int *pnSelectedLevel)=0;
 	
 	virtual ~ILevelOptions(){}
 };
@@ -78,6 +118,7 @@ class IGameInterfaceWindowEvents
 public:
 
 	virtual void	OnScenarioFinished(eScenarioFinishedReason eReason,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel)=0;
-
+	virtual void	OnGameOverCourtainClosed()=0;
+	
 	virtual ~IGameInterfaceWindowEvents(){}
 };

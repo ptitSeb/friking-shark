@@ -28,7 +28,9 @@
 #include "GameMenu.h"
 #include "GameInterface.h"
 #include "ConfirmationDialog.h"
-#include "TimeOutDialog.h"
+#include "GameOverDialog.h"
+#include "HighScoresDialog.h"
+#include "HighScoresTable.h"
 #include "LevelOptions.h"
 
 BEGIN_SYSTEM_MODULE()
@@ -37,7 +39,9 @@ BEGIN_SYSTEM_MODULE()
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameMenu,"CGameMenu")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameInterface,"CGameInterface")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CConfirmationDialog,"CConfirmationDialog")
-	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CTimeOutDialog,"CTimeOutDialog")
+	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameOverDialog,"CGameOverDialog")
+	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CHighScoresDialog,"CHighScoresDialog")
+	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CHighScoresTable,"CHighScoresTable")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CLevelOptions,"CLevelOptions")
 END_SYSTEM_MODULE()
 
