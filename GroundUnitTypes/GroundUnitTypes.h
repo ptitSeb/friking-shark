@@ -17,3 +17,6 @@
 
 
 #include "GameRunTimeLib.h"
+
+#define CHECKPOINT_HOLD_FIRE_TIME 1000
+

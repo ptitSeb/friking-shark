@@ -17,6 +17,7 @@
 
 
 #include "./stdafx.h"
+#include "GroundUnitTypes.h"
 #include "TurretType.h"
 #include "GameGraphics.h"
 
@@ -53,7 +54,7 @@ CTurret::CTurret(CTurretType *pType,unsigned int dwCurrentTime)
 	m_bTargetLocked=false;
 	m_sClassName="CTurret";
 	m_pType=pType;
-	m_dwNextShotTime=0;
+	m_dwNextShotTime=CHECKPOINT_HOLD_FIRE_TIME;
 	m_dRadius=m_pType->DesignGetRadius();
 	m_piContainerBuilding=NULL;
 	m_nNextCheckContainerBuilding=0;

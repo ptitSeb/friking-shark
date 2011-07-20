@@ -17,6 +17,7 @@
 
 
 #include "./stdafx.h"
+#include "GroundUnitTypes.h"
 #include "GroundBossHatchType.h"
 
 CGroundBossHatchType::CGroundBossHatchType()
@@ -52,7 +53,7 @@ CGroundBossHatch::CGroundBossHatch(CGroundBossHatchType *pType,unsigned int dwCu
 	m_pType=pType;
 	m_bIsOpen=false;
 	m_bFirstTimeVisible=true;
-	m_dwNextShotTime=0;
+	m_dwNextShotTime=CHECKPOINT_HOLD_FIRE_TIME;
 	m_dRadius=m_pType->DesignGetRadius();
 	m_dwNextStateChange=dwCurrentTime+m_pType->m_nOpenTime;
 }
