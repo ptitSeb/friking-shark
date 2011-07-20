@@ -6,6 +6,7 @@ SET (SRCS
 	./GameManagers/FrameManager.h
 	./GameManagers/GameController.h
 	./GameManagers/GameManagers.h
+	./GameManagers/MusicManager.h
 	./GameManagers/PhysicsManager.h
 	./GameManagers/PlayAreaManager.h
 	./GameManagers/PlayerManager.h
@@ -20,6 +21,7 @@ SET (SRCS
 	./GameManagers/FrameManager.cpp
 	./GameManagers/GameController.cpp
 	./GameManagers/GameManagers.cpp
+	./GameManagers/MusicManager.cpp
 	./GameManagers/PhysicsManager.cpp
 	./GameManagers/PlayAreaManager.cpp
 	./GameManagers/PlayerManager.cpp
