@@ -177,7 +177,8 @@ public:
 	virtual void ReleaseMouseCapture()=0;
 
 	virtual bool IsKeyDown(unsigned int nKey)=0;
-
+	virtual bool GetKeyName(int nKey,std::string *psKey)=0;
+	
 	virtual bool IsActiveWindow()=0;
 
 	virtual bool IsMouseVisible()=0;

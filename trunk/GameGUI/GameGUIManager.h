@@ -88,6 +88,7 @@ public:
 
 	bool		IsKeyDown(int nKey);
 	bool		IsMouseDown(int nMouseButton);
+	bool		GetKeyName(int nKey,std::string *psKey);
 
 	void		SetFocus(IGameWindow *piWindow);
 	bool		HasFocus(IGameWindow *piWindow);

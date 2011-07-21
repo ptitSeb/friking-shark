@@ -104,7 +104,8 @@ public:
 
 	virtual bool				IsKeyDown(int nKey)=0;
 	virtual bool				IsMouseDown(int nMouseButton)=0;
-
+	virtual bool				GetKeyName(int nKey,std::string *psKey)=0;
+	
 	virtual void				SetFocus(IGameWindow *piWindow)=0;
 	virtual bool				HasFocus(IGameWindow *piWindow)=0;
 

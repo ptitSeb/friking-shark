@@ -342,6 +342,15 @@ bool CGameGUIManager::IsKeyDown(int nKey)
 	return m_Viewport.m_piViewport->IsKeyDown(nKey);
 }
 
+bool CGameGUIManager::GetKeyName(int nKey,std::string *psKey)
+{
+	if(m_Viewport.m_piViewport==NULL)
+	{
+		return false;
+	}
+	return m_Viewport.m_piViewport->GetKeyName(nKey,psKey);
+}
+
 bool CGameGUIManager::IsMouseDown(int nMouseButton)
 {
 	if(m_Viewport.m_piViewport==NULL || !m_Viewport.m_piViewport->IsActiveWindow())
