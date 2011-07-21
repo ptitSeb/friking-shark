@@ -15,6 +15,9 @@ SET (SRCS
 	./GUISystems/GameOverDialog.h
 	./GUISystems/HighScoresDialog.h
 	./GUISystems/HighScoresTable.h
+	./GUISystems/ControlsDialog.h
+	./GUISystems/KeyCaptureDialog.h
+	./GUISystems/CreditsDialog.h
 
 	./GUISystems/ConfirmationDialog.cpp
 	./GUISystems/GameInterface.cpp
@@ -27,5 +30,8 @@ SET (SRCS
 	./GUISystems/GameOverDialog.cpp
 	./GUISystems/HighScoresDialog.cpp
 	./GUISystems/HighScoresTable.cpp 
+	./GUISystems/ControlsDialog.cpp
+	./GUISystems/KeyCaptureDialog.cpp
+	./GUISystems/CreditsDialog.cpp
 )
 

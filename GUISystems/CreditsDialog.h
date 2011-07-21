@@ -16,26 +16,22 @@
 //  
 
 
-enum eMainMenuAction
-{
-	eMainMenuAction_UNKNOWN,
-	eMainMenuAction_NewGame=0x1000,
-	eMainMenuAction_Controls,
-	eMainMenuAction_HighScores,
-	eMainMenuAction_Credits,
-	eMainMenuAction_Exit
-};
+#pragma once
 
-enum eGameMenuAction
+class CCreditsDialog: virtual public CGameDialogBase,virtual public IGameGUIButtonEvents
 {
-	eGameMenuAction_UNKNOWN,
-	eGameMenuAction_Continue=0x1000,
-	eGameMenuAction_EndGame
-};
+IGameGUIButton *m_piBTOk;
+	
+	
+	BEGIN_CHILD_MAP()
+		CHILD_MAP_ENTRY_EX("Ok",m_piBTOk,IGameGUIButtonEvents);
+	END_CHILD_MAP()
 
-enum eConfirmationDialogAction
-{
-	eConfirmationDialogAction_UNKNOWN,
-	eConfirmationDialogAction_Yes=0x1000,
-	eConfirmationDialogAction_No
+public:
+	// IGameButtonEvents
+
+	void OnButtonClicked(IGameGUIButton *piControl);
+
+	CCreditsDialog(void);
+	~CCreditsDialog(void);
 };

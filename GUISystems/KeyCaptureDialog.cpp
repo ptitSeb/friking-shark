@@ -16,26 +16,37 @@
 //  
 
 
-enum eMainMenuAction
-{
-	eMainMenuAction_UNKNOWN,
-	eMainMenuAction_NewGame=0x1000,
-	eMainMenuAction_Controls,
-	eMainMenuAction_HighScores,
-	eMainMenuAction_Credits,
-	eMainMenuAction_Exit
-};
+#include "./stdafx.h"
+#include "GameRunTimeLib.h"
+#include "GameGUILib.h"
+#include "GUISystems.h"
+#include "KeyCaptureDialog.h"
 
-enum eGameMenuAction
+CKeyCaptureDialog::CKeyCaptureDialog(void)
 {
-	eGameMenuAction_UNKNOWN,
-	eGameMenuAction_Continue=0x1000,
-	eGameMenuAction_EndGame
-};
+	m_nKey=0;
+}
 
-enum eConfirmationDialogAction
+CKeyCaptureDialog::~CKeyCaptureDialog(void)
 {
-	eConfirmationDialogAction_UNKNOWN,
-	eConfirmationDialogAction_Yes=0x1000,
-	eConfirmationDialogAction_No
-};
+}
+
+void CKeyCaptureDialog::OnKeyDown(int nKey,bool *pbProcessed)
+{
+	if(nKey==GK_ESCAPE)
+	{
+		CGameDialogBase::OnKeyDown(nKey,pbProcessed);
+		return;	
+	}
+	
+	m_nKey=nKey;
+	EndDialog(DIALOG_OK);
+}
+
+bool CKeyCaptureDialog::CaptureKey(IGameWindow *piParent,unsigned int *pKey)
+{
+	m_nKey=0;
+	Execute(piParent);
+	*pKey=m_nKey;
+	return m_nKey!=0;
+}

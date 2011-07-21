@@ -19,25 +19,28 @@
 #pragma once
 
 
-class CHighScoresDialog: virtual public CGameDialogBase,virtual public IHighScoresDialog, virtual public IGameGUIEditEvents
+class CHighScoresDialog: virtual public CGameDialogBase,virtual public IHighScoresDialog, virtual public IGameGUIEditEvents, virtual public IGameGUIButtonEvents
 {
 	CSoundTypeWrapper m_HighScoresMusic;
 	ISound *m_piHighScoresMusicSound;
 	
 	IHighScoresTable *m_piTable;
 	
+	bool m_bFromMainMenu;
 	unsigned int m_nEditConfirmBlinkStart;
 	unsigned int m_nEditCommittedStart;
 	unsigned int m_nStartTime;
 	bool m_bAlreadyFinished;
 	
 	int          m_nScoreToEdit;
+	int          m_nFirstScoreVisible;
 	unsigned int m_nRowSize;
 	unsigned int m_nRowCount;
 		
 	IGameGUIEdit   *m_piEDName;
 	IGameWindow    *m_piGRColumns[eHighScoresColumn_Count];
 	IGameGUILabel  *m_piTitle;
+	IGameGUIButton *m_piBTOk;
 	
 	CGenericFontWrapper m_EditionFonts[3];
 	
@@ -57,6 +60,7 @@ class CHighScoresDialog: virtual public CGameDialogBase,virtual public IHighScor
 		CHILD_MAP_ENTRY("ColumnName",m_piGRColumns[eHighScoresColumn_Name]);
 		CHILD_MAP_ENTRY_EX("NameEditor",m_piEDName,IGameGUIEditEvents);
 		CHILD_MAP_ENTRY("Title",m_piTitle);
+		CHILD_MAP_ENTRY_EX("Ok",m_piBTOk,IGameGUIButtonEvents);
 	END_CHILD_MAP()
 	
 	
@@ -72,7 +76,10 @@ class CHighScoresDialog: virtual public CGameDialogBase,virtual public IHighScor
 		
 public:
 	
-	void ShowScores(IGameWindow *piParent,IHighScoresTable *piTable, int nScoreToEdit/*-1 to only show the scores*/);
+	void ShowScores(IGameWindow *piParent,IHighScoresTable *piTable, int nScoreToEdit/*-1 to only show the scores*/,bool bFromMainMenu);
+	
+	void OnButtonClicked(IGameGUIButton *piControl);
+	
 	
 	CHighScoresDialog(void);
 	~CHighScoresDialog(void);

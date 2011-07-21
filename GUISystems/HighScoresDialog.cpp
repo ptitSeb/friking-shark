@@ -25,7 +25,9 @@
 
 CHighScoresDialog::CHighScoresDialog(void)
 {
+	m_bFromMainMenu=false;
 	m_nScoreToEdit=-1;
+	m_nFirstScoreVisible=0;
 	m_nStartTime=0;
 	m_bAlreadyFinished=false;
 	m_piHighScoresMusicSound=NULL;
@@ -37,6 +39,7 @@ CHighScoresDialog::CHighScoresDialog(void)
 CHighScoresDialog::~CHighScoresDialog(void)
 {
 }
+
 void CHighScoresDialog::OnInitDialog()
 {
 	CGameDialogBase::OnInitDialog();
@@ -46,7 +49,18 @@ void CHighScoresDialog::OnInitDialog()
 	
 	if(m_piTitle)
 	{
-		m_piTitle->SetText(m_nScoreToEdit!=-1?"RESERVE YOUR NAME !":"EXCELLENT  PLAYERS");
+		m_piTitle->SetText(m_nScoreToEdit!=-1?"Reserve Your Name !":"High Scores");
+	}
+	if(m_piBTOk)
+	{
+		if(m_bFromMainMenu)
+		{
+			m_piBTOk->SetText("Back");
+		}
+		else
+		{
+			m_piBTOk->SetText("Done");
+		}
 	}
 	if(m_piEDName)
 	{
@@ -87,10 +101,14 @@ void CHighScoresDialog::Destroy()
 }
 
 
-void CHighScoresDialog::ShowScores(IGameWindow *piParent,IHighScoresTable *piTable, int nScoreToEdit)
+void CHighScoresDialog::ShowScores(IGameWindow *piParent,IHighScoresTable *piTable, int nScoreToEdit, bool bFromMainMenu)
 {
 	m_piTable=ADD(piTable);
+	m_bFromMainMenu=bFromMainMenu;
 	m_nScoreToEdit=nScoreToEdit;
+	m_nFirstScoreVisible=(m_nScoreToEdit-(int)m_nRowCount+1);
+	if(m_nFirstScoreVisible<0){m_nFirstScoreVisible=0;}
+	
 	Execute(piParent);
 	m_nScoreToEdit=-1;
 	REL(m_piTable);
@@ -100,9 +118,9 @@ int	CHighScoresDialog::Execute(IGameWindow *piParent)
 {
 	m_nStartTime=GetTimeStamp();
 	m_bAlreadyFinished=false;
-	if(m_piHighScoresMusicSound){m_piHighScoresMusicSound->Play();}
+	if(!m_bFromMainMenu && m_piHighScoresMusicSound){m_piHighScoresMusicSound->Play();}
 	int nRes=CGameDialogBase::Execute(piParent);
-	if(m_piHighScoresMusicSound){m_piHighScoresMusicSound->Stop();}
+	if(!m_bFromMainMenu && m_piHighScoresMusicSound){m_piHighScoresMusicSound->Stop();}
 	return nRes;
 }
 
@@ -120,6 +138,24 @@ void CHighScoresDialog::OnKeyDown(int nKey,bool *pbProcessed)
 	}
 	CGameDialogBase::OnKeyDown(nKey,pbProcessed);
 }
+
+void CHighScoresDialog::OnButtonClicked(IGameGUIButton* piControl)
+{
+	if(piControl==m_piBTOk)
+	{
+		if(m_nEditConfirmBlinkStart==0 &&
+			m_nEditCommittedStart==0 && 
+			m_nScoreToEdit!=-1)
+		{
+			if(m_piEDName){m_piEDName->Show(false);}
+			m_nEditConfirmBlinkStart=GetTimeStamp();
+			return;
+		}
+		
+		EndDialog(DIALOG_OK);
+	}
+}
+
 void CHighScoresDialog::OnDraw(IGenericRender *piRender)
 {
 	CGameDialogBase::OnDraw(piRender);
@@ -136,20 +172,38 @@ void CHighScoresDialog::OnDraw(IGenericRender *piRender)
 	}
 	else
 	{
-		if(m_piHighScoresMusicSound==NULL)
+		if(!m_bFromMainMenu)
 		{
-			if(!m_nEditCommittedStart && !m_nEditConfirmBlinkStart && (m_nStartTime+10*1000)<GetTimeStamp())
+			if(m_piHighScoresMusicSound==NULL)
 			{
-				m_nEditConfirmBlinkStart=GetTimeStamp();
-				if(m_piEDName){m_piEDName->Show(false);}	
+				if(!m_nEditCommittedStart && !m_nEditConfirmBlinkStart && (m_nStartTime+10*1000)<GetTimeStamp())
+				{
+					if(m_nScoreToEdit!=-1)
+					{
+						m_nEditConfirmBlinkStart=GetTimeStamp();
+						if(m_piEDName){m_piEDName->Show(false);}	
+					}
+					else
+					{
+						EndDialog(DIALOG_OK);
+					}
+				}
+					
 			}
-		}
-		else
-		{
-			if(!m_nEditCommittedStart && !m_nEditConfirmBlinkStart && !m_piHighScoresMusicSound->IsPlaying())
+			else
 			{
-				m_nEditConfirmBlinkStart=GetTimeStamp();
-				if(m_piEDName){m_piEDName->Show(false);}	
+				if(!m_nEditCommittedStart && !m_nEditConfirmBlinkStart && !m_piHighScoresMusicSound->IsPlaying())
+				{
+					if(m_nScoreToEdit!=-1)
+					{
+						m_nEditConfirmBlinkStart=GetTimeStamp();
+						if(m_piEDName){m_piEDName->Show(false);}	
+					}
+					else
+					{
+						EndDialog(DIALOG_OK);
+					}
+				}
 			}
 		}
 	}
@@ -175,12 +229,9 @@ void CHighScoresDialog::OnDraw(IGenericRender *piRender)
 		psRects[x].h=m_nRowSize;
 	}
 
-	int nInitialScore=(m_nScoreToEdit-(int)m_nRowCount+1);
-	if(nInitialScore<0){nInitialScore=0;}
-	
-	for(unsigned int x=0;x+nInitialScore<m_piTable->GetRowCount() && x<m_nRowCount;x++)
+	for(unsigned int x=0;x+m_nFirstScoreVisible<m_piTable->GetRowCount() && x<m_nRowCount;x++)
 	{
-		int nRow=x+nInitialScore;
+		int nRow=x+m_nFirstScoreVisible;
 		SHighScoreRow row=m_piTable->GetRow(nRow);
 		
 		char sRanking[100];
@@ -189,9 +240,9 @@ void CHighScoresDialog::OnDraw(IGenericRender *piRender)
 		sprintf(sRanking,"%2d",nRow+1);
 		sprintf(sScore,"%9d",row.nScore);
 		
-		if(nRow==0){strcat(sRanking,"st");}
-		else if(nRow==1){strcat(sRanking,"nd");}
-		else if(nRow==2){strcat(sRanking,"rd");}
+		if(nRow%10==0 && nRow!=10){strcat(sRanking,"st");}
+		else if(nRow%10==1 && nRow!=11){strcat(sRanking,"nd");}
+		else if(nRow%10==2 && nRow!=12){strcat(sRanking,"rd");}
 		else {strcat(sRanking,"th");}
 		
 		switch(row.eDifficulty)
@@ -254,3 +305,4 @@ void CHighScoresDialog::OnTextChanged(IGameGUIEdit *piControl,std::string sNewTe
 	sRow.sName=sNewText;
 	m_piTable->SetRow(m_nScoreToEdit,sRow);
 }
+

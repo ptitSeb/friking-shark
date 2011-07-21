@@ -22,9 +22,15 @@ class CMainMenu: virtual public CGameDialogBase,public IGameGUIButtonEvents
 {
 	IGameGUIButton *m_piBTNewGame;
 	IGameGUIButton *m_piBTExit;
-
+	IGameGUIButton *m_piBTControls;
+	IGameGUIButton *m_piBTHighScores;
+	IGameGUIButton *m_piBTCredits;
+	
 	BEGIN_CHILD_MAP()
 		CHILD_MAP_ENTRY_EX("NewGame",m_piBTNewGame,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("Controls",m_piBTControls,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("HighScores",m_piBTHighScores,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("Credits",m_piBTCredits,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Exit",m_piBTExit,IGameGUIButtonEvents);
 	END_CHILD_MAP()
 

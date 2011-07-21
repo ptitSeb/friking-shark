@@ -87,6 +87,9 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 
 	SGamePos m_InspectionMovementStartPoint;
 
+	IGameWindow		*m_piSTUpperIndicatorRow0;
+	IGameWindow		*m_piSTUpperIndicatorRow1;
+	IGameWindow		*m_piSTUpperIndicatorRow2;
 	IGameWindow		*m_piSTCentralPanel;
 	IGameGUILabel   *m_piSTPoints;
 	IGameGUILabel   *m_piSTEndPoints;
@@ -100,6 +103,9 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 		CHILD_MAP_ENTRY_FLAGS("GameTimeLabel",m_piSTGameTime,CMEF_OPTIONAL);
 		CHILD_MAP_ENTRY_FLAGS("EntityCountLabel",m_piSTEntityCount,CMEF_OPTIONAL);
 		CHILD_MAP_ENTRY_FLAGS("ObjectCountLabel",m_piSTObjectCount,CMEF_OPTIONAL);
+		CHILD_MAP_ENTRY("UpperIndicatorRow0",m_piSTUpperIndicatorRow0);
+		CHILD_MAP_ENTRY("UpperIndicatorRow1",m_piSTUpperIndicatorRow1);
+		CHILD_MAP_ENTRY("UpperIndicatorRow2",m_piSTUpperIndicatorRow2);
 		CHILD_MAP_ENTRY("CentralPanel",m_piSTCentralPanel);
 		CHILD_MAP_ENTRY("LevelEndPoints",m_piSTEndPoints);
 		CHILD_MAP_ENTRY("LevelEndBomb0",m_piSTEndBombs[0]);
@@ -126,7 +132,7 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	
 	void RenderCourtain(IGenericRender *piRender,unsigned int nCurrentTime);
 
-	void StartGame(EGameMode eMode,EGameDifficulty eDifficulty,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel);
+	void StartGame(IPlayerProfile *piProfile,EGameMode eMode,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel);
 	void StopGame();
 	void ResetGame(bool bGoToLastCheckPoint);
 
@@ -160,7 +166,7 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	void OpenCourtain(unsigned int nCurrentTime);
 	void CloseCourtain(unsigned int nCurrentTime);
 	
-	void StartGameInternal(EGameMode eMode,EGameDifficulty eDifficulty,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel, bool bGoToLastCheckPoint);
+	void StartGameInternal(EGameMode eMode,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel, bool bGoToLastCheckPoint);
 	
 public:
 

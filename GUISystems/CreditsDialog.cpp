@@ -16,26 +16,24 @@
 //  
 
 
-enum eMainMenuAction
-{
-	eMainMenuAction_UNKNOWN,
-	eMainMenuAction_NewGame=0x1000,
-	eMainMenuAction_Controls,
-	eMainMenuAction_HighScores,
-	eMainMenuAction_Credits,
-	eMainMenuAction_Exit
-};
+#include "./stdafx.h"
+#include "GameRunTimeLib.h"
+#include "GameGUILib.h"
+#include "GUISystems.h"
+#include "CreditsDialog.h"
 
-enum eGameMenuAction
+CCreditsDialog::CCreditsDialog(void)
 {
-	eGameMenuAction_UNKNOWN,
-	eGameMenuAction_Continue=0x1000,
-	eGameMenuAction_EndGame
-};
+}
 
-enum eConfirmationDialogAction
+CCreditsDialog::~CCreditsDialog(void)
 {
-	eConfirmationDialogAction_UNKNOWN,
-	eConfirmationDialogAction_Yes=0x1000,
-	eConfirmationDialogAction_No
-};
+}
+
+void CCreditsDialog::OnButtonClicked(IGameGUIButton *piControl)
+{
+	if(piControl==m_piBTOk)
+	{
+		EndDialog(DIALOG_OK);
+	}
+}
