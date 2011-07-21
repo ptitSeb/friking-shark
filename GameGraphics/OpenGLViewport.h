@@ -68,7 +68,12 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 		
 	SVideoMode  	m_OriginalVideoMode;
 
-	
+	std::map<unsigned int,std::string> m_mKeyNames;
+
+	void InitializeKeyNames();
+
+public:
+
 	bool  	m_bShowSystemMouseCursor;
 	bool  	m_bVerticalSync;
 	
@@ -128,7 +133,8 @@ public:
 	void ReleaseMouseCapture();
 
 	bool IsKeyDown(unsigned int nKey);
-
+	bool GetKeyName(int nKey,std::string *psKey);
+	
 	bool IsActiveWindow();
 
 	bool IsMouseVisible();

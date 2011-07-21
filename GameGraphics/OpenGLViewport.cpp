@@ -40,45 +40,85 @@ int TranslateKeyFromWindows(int nWindowsKey)
 
 	switch(nWindowsKey)
 	{
-	case VK_UP:return GK_UP;
-	case VK_DOWN:return GK_DOWN;
-	case VK_LEFT:return GK_LEFT;
-	case VK_RIGHT:return GK_RIGHT;
-	case VK_NUMPAD0:return GK_NUMPAD0;
-	case VK_NUMPAD1:return GK_NUMPAD1;
-	case VK_NUMPAD2:return GK_NUMPAD2;
-	case VK_NUMPAD3:return GK_NUMPAD3;
-	case VK_NUMPAD4:return GK_NUMPAD4;
-	case VK_NUMPAD5:return GK_NUMPAD5;
-	case VK_NUMPAD6:return GK_NUMPAD6;
-	case VK_NUMPAD7:return GK_NUMPAD7;
-	case VK_NUMPAD8:return GK_NUMPAD8;
-	case VK_NUMPAD9:return GK_NUMPAD9;
-	case VK_LCONTROL:return GK_LCONTROL;
-	case VK_HOME:return GK_HOME;
-	case VK_END:return GK_END;
-	case VK_BACK:return GK_BACK;
-	case VK_DELETE:return GK_DELETE;
-	case VK_ESCAPE:return GK_ESCAPE;
-	case VK_RETURN:return GK_RETURN;
-	case GK_LMENU:return GK_LMENU;
-	case VK_LSHIFT:return GK_LSHIFT;
-	case VK_INSERT:return GK_INSERT;
-	case VK_PRIOR:return GK_PAGEUP;
-	case VK_NEXT:return GK_PAGEDOWN;
-	case VK_F1:return GK_F1;
-	case VK_F2:return GK_F2;
-	case VK_F3:return GK_F3;
-	case VK_F4:return GK_F4;
-	case VK_F5:return GK_F5;
-	case VK_F6:return GK_F6;
-	case VK_F7:return GK_F7;
-	case VK_F8:return GK_F8;
-	case VK_F9:return GK_F9;
-	case VK_F10:return GK_F10;
-	case VK_F11:return GK_F11;
-	case VK_F12:return GK_F12;
-	case VK_PAUSE:return GK_PAUSE;
+		case VK_LBUTTON  :return GK_LBUTTON;
+		case VK_RBUTTON  :return GK_RBUTTON;
+		case VK_MBUTTON  :return GK_MBUTTON;
+		case VK_BACK     :return GK_BACK;
+		case VK_TAB      :return '\t';
+		case VK_SPACE    :return ' ';
+		case VK_CLEAR    :return GK_CLEAR;
+		case VK_RETURN   :return GK_RETURN;
+		case VK_SHIFT    :return GK_LSHIFT;
+		case VK_CONTROL  :return GK_LCONTROL;
+		case VK_MENU     :return GK_LMENU;
+		case VK_PAUSE    :return GK_PAUSE;
+		case VK_CAPITAL  :return GK_CAPITAL;
+		case VK_ESCAPE   :return GK_ESCAPE;
+		case VK_PRIOR    :return GK_PAGEUP;
+		case VK_NEXT     :return GK_PAGEDOWN;
+		case VK_END      :return GK_END;
+		case VK_HOME     :return GK_HOME;
+		case VK_LEFT     :return GK_LEFT;
+		case VK_UP       :return GK_UP;
+		case VK_RIGHT    :return GK_RIGHT;
+		case VK_DOWN     :return GK_DOWN;
+		case VK_SELECT   :return GK_SELECT;
+		case VK_PRINT    :return GK_PRINT;
+		case VK_EXECUTE  :return GK_EXECUTE;
+		case VK_INSERT   :return GK_INSERT;
+		case VK_DELETE   :return GK_DELETE;
+		case VK_HELP     :return GK_HELP;
+		case VK_LWIN     :return GK_LWIN;
+		case VK_RWIN     :return GK_RWIN;
+		case VK_NUMPAD0  :return GK_NUMPAD0;
+		case VK_NUMPAD1  :return GK_NUMPAD1;
+		case VK_NUMPAD2  :return GK_NUMPAD2;
+		case VK_NUMPAD3  :return GK_NUMPAD3;
+		case VK_NUMPAD4  :return GK_NUMPAD4;
+		case VK_NUMPAD5  :return GK_NUMPAD5;
+		case VK_NUMPAD6  :return GK_NUMPAD6;
+		case VK_NUMPAD7  :return GK_NUMPAD7;
+		case VK_NUMPAD8  :return GK_NUMPAD8;
+		case VK_NUMPAD9  :return GK_NUMPAD9;
+		case VK_MULTIPLY :return GK_MULTIPLY;
+		case VK_ADD      :return GK_ADD;
+		case VK_SEPARATOR:return GK_SEPARATOR;
+		case VK_SUBTRACT :return GK_SUBTRACT;
+		case VK_DECIMAL  :return GK_DECIMAL;
+		case VK_DIVIDE   :return GK_DIVIDE;
+		case VK_F1       :return GK_F1;
+		case VK_F2       :return GK_F2;
+		case VK_F3       :return GK_F3;
+		case VK_F4       :return GK_F4;
+		case VK_F5       :return GK_F5;
+		case VK_F6       :return GK_F6;
+		case VK_F7       :return GK_F7;
+		case VK_F8       :return GK_F8;
+		case VK_F9       :return GK_F9;
+		case VK_F10      :return GK_F10;
+		case VK_F11      :return GK_F11;
+		case VK_F12      :return GK_F12;
+		case VK_F13      :return GK_F13;
+		case VK_F14      :return GK_F14;
+		case VK_F15      :return GK_F15;
+		case VK_F16      :return GK_F16;
+		case VK_F17      :return GK_F17;
+		case VK_F18      :return GK_F18;
+		case VK_F19      :return GK_F19;
+		case VK_F20      :return GK_F20;
+		case VK_F21      :return GK_F21;
+		case VK_F22      :return GK_F22;
+		case VK_F23      :return GK_F23;
+		case VK_F24      :return GK_F24;
+		case VK_NUMLOCK  :return GK_NUMLOCK;
+		case VK_SCROLL   :return GK_SCROLL;
+		case VK_LSHIFT   :return GK_LSHIFT;
+		case VK_RSHIFT   :return GK_RSHIFT;
+		case VK_LCONTROL :return GK_LCONTROL;
+		case VK_RCONTROL :return GK_RCONTROL;
+		case VK_LMENU    :return GK_LMENU;
+		case VK_RMENU    :return GK_RMENU;
+		case VK_MENU     :return GK_MENU;
 	};
 	return 0;
 }
@@ -92,40 +132,80 @@ int TranslateKeyToWindows(int nGameKey)
 
 	switch(nGameKey)
 	{
-	case GK_UP:return VK_UP;
-	case GK_DOWN:return VK_DOWN;
-	case GK_LEFT:return VK_LEFT;
-	case GK_RIGHT:return VK_RIGHT;
-	case GK_NUMPAD0:return VK_NUMPAD0;
-	case GK_NUMPAD1:return VK_NUMPAD1;
-	case GK_NUMPAD2:return VK_NUMPAD2;
-	case GK_NUMPAD3:return VK_NUMPAD3;
-	case GK_NUMPAD4:return VK_NUMPAD4;
-	case GK_NUMPAD5:return VK_NUMPAD5;
-	case GK_NUMPAD6:return VK_NUMPAD6;
-	case GK_NUMPAD7:return VK_NUMPAD7;
-	case GK_NUMPAD8:return VK_NUMPAD8;
-	case GK_NUMPAD9:return VK_NUMPAD9;
-	case GK_LCONTROL:return VK_LCONTROL;
-	case GK_MENU:return VK_MENU;
-	case GK_HOME:return VK_HOME;
-	case GK_END:return VK_END;
-	case GK_BACK:return VK_BACK;
-	case GK_DELETE:return VK_DELETE;
-	case GK_ESCAPE:return VK_ESCAPE;
-	case GK_RETURN:return VK_RETURN;
-	case GK_LMENU:return VK_LMENU;
-	case GK_LSHIFT:return VK_LSHIFT;
-	case GK_INSERT:return VK_INSERT;
-	case GK_F1:return VK_F1;
-	case GK_F2:return VK_F2;
-	case GK_F3:return VK_F3;
-	case GK_F4:return VK_F4;
-	case GK_F5:return VK_F5;
-	case GK_PAUSE:return VK_PAUSE;
-	case GK_F10:return VK_F10;
-	case GK_PAGEUP:return VK_PRIOR;
-	case GK_PAGEDOWN:return VK_NEXT;
+		case GK_RBUTTON  :return VK_RBUTTON;
+		case GK_MBUTTON  :return VK_MBUTTON;
+		case GK_BACK     :return VK_BACK;
+		case GK_CLEAR    :return VK_CLEAR;
+		case GK_RETURN   :return VK_RETURN;
+		case GK_PAUSE    :return VK_PAUSE;
+		case GK_CAPITAL  :return VK_CAPITAL;
+		case GK_ESCAPE   :return VK_ESCAPE;
+		case GK_PAGEUP   :return VK_PRIOR;
+		case GK_PAGEDOWN :return VK_NEXT;
+		case GK_END      :return VK_END;
+		case GK_HOME     :return VK_HOME;
+		case GK_LEFT     :return VK_LEFT;
+		case GK_UP       :return VK_UP;
+		case GK_RIGHT    :return VK_RIGHT;
+		case GK_DOWN     :return VK_DOWN;
+		case GK_SELECT   :return VK_SELECT;
+		case GK_PRINT    :return VK_PRINT;
+		case GK_EXECUTE  :return VK_EXECUTE;
+		case GK_INSERT   :return VK_INSERT;
+		case GK_DELETE   :return VK_DELETE;
+		case GK_HELP     :return VK_HELP;
+		case GK_LWIN     :return VK_LWIN;
+		case GK_RWIN     :return VK_RWIN;
+		case GK_NUMPAD0  :return VK_NUMPAD0;
+		case GK_NUMPAD1  :return VK_NUMPAD1;
+		case GK_NUMPAD2  :return VK_NUMPAD2;
+		case GK_NUMPAD3  :return VK_NUMPAD3;
+		case GK_NUMPAD4  :return VK_NUMPAD4;
+		case GK_NUMPAD5  :return VK_NUMPAD5;
+		case GK_NUMPAD6  :return VK_NUMPAD6;
+		case GK_NUMPAD7  :return VK_NUMPAD7;
+		case GK_NUMPAD8  :return VK_NUMPAD8;
+		case GK_NUMPAD9  :return VK_NUMPAD9;
+		case GK_MULTIPLY :return VK_MULTIPLY;
+		case GK_ADD      :return VK_ADD;
+		case GK_SEPARATOR:return VK_SEPARATOR;
+		case GK_SUBTRACT :return VK_SUBTRACT;
+		case GK_DECIMAL  :return VK_DECIMAL;
+		case GK_DIVIDE   :return VK_DIVIDE;
+		case GK_F1       :return VK_F1;
+		case GK_F2       :return VK_F2;
+		case GK_F3       :return VK_F3;
+		case GK_F4       :return VK_F4;
+		case GK_F5       :return VK_F5;
+		case GK_F6       :return VK_F6;
+		case GK_F7       :return VK_F7;
+		case GK_F8       :return VK_F8;
+		case GK_F9       :return VK_F9;
+		case GK_F10      :return VK_F10;
+		case GK_F11      :return VK_F11;
+		case GK_F12      :return VK_F12;
+		case GK_F13      :return VK_F13;
+		case GK_F14      :return VK_F14;
+		case GK_F15      :return VK_F15;
+		case GK_F16      :return VK_F16;
+		case GK_F17      :return VK_F17;
+		case GK_F18      :return VK_F18;
+		case GK_F19      :return VK_F19;
+		case GK_F20      :return VK_F20;
+		case GK_F21      :return VK_F21;
+		case GK_F22      :return VK_F22;
+		case GK_F23      :return VK_F23;
+		case GK_F24      :return VK_F24;
+		case GK_NUMLOCK  :return VK_NUMLOCK;
+		case GK_SCROLL   :return VK_SCROLL;
+		case GK_LSHIFT   :return VK_LSHIFT;
+		case GK_RSHIFT   :return VK_RSHIFT;
+		case GK_LCONTROL :return VK_LCONTROL;
+		case GK_RCONTROL :return VK_RCONTROL;
+		case GK_LMENU    :return VK_LMENU;
+		case GK_RMENU    :return VK_RMENU;
+		case GK_MENU     :return VK_MENU;
+		case GK_ALTGR    :return VK_RMENU;
 	};
 	return 0;
 }
@@ -187,6 +267,43 @@ int TranslateKeyFromX11(int nX11Key)
 	case XK_Pause:return GK_PAUSE;
 	case XK_Page_Up:return GK_PAGEUP;
 	case XK_Page_Down:return GK_PAGEDOWN;
+	
+	case XK_Control_R:return GK_RCONTROL;
+	case XK_Alt_R:return GK_RMENU;
+	case XK_Shift_R:return GK_RSHIFT;
+	case XK_F13:return GK_F13;
+	case XK_F14:return GK_F14;
+	case XK_F15:return GK_F15;
+	case XK_F16:return GK_F16;
+	case XK_F17:return GK_F17;
+	case XK_F18:return GK_F18;
+	case XK_F19:return GK_F19;
+	case XK_F20:return GK_F20;
+	case XK_F21:return GK_F21;
+	case XK_F22:return GK_F22;
+	case XK_F23:return GK_F23;
+	case XK_F24:return GK_F24;
+	case XK_Pointer_Button1:return GK_LBUTTON;
+	case XK_Pointer_Button3:return GK_RBUTTON;
+	case XK_Pointer_Button2:return GK_MBUTTON;
+	case XK_Clear:return GK_CLEAR;
+	case XK_Caps_Lock:return GK_CAPITAL;
+	case XK_Select:return GK_SELECT;
+	case XK_Print:return GK_PRINT;
+	case XK_Execute:return GK_EXECUTE;
+	case XK_Help:return GK_HELP;
+	case XK_Super_L:return GK_LWIN;
+	case XK_Super_R:return GK_RWIN;
+	case XK_KP_Multiply:return GK_MULTIPLY;
+	case XK_KP_Add:return GK_ADD;
+	case XK_KP_Separator:return GK_SEPARATOR;
+	case XK_KP_Subtract:return GK_SUBTRACT;
+	case XK_KP_Decimal:return GK_DECIMAL;
+	case XK_KP_Divide:return GK_DIVIDE;
+	case XK_Num_Lock:return GK_NUMLOCK;
+	case XK_Scroll_Lock:return GK_SCROLL;
+	case XK_Menu: return GK_MENU;
+	case 0xfe03:return GK_ALTGR;
 	};
 	return 0;
 }
@@ -213,7 +330,6 @@ int TranslateKeyToX11(int nGameKey)
 	case GK_NUMPAD8:return XK_KP_8;
 	case GK_NUMPAD9:return XK_KP_9;
 	case GK_LCONTROL:return XK_Control_L;
-	case GK_MENU:return XK_Menu;
 	case GK_HOME:return XK_Home;
 	case GK_END:return XK_End;
 	case GK_BACK:return XK_BackSpace;
@@ -232,6 +348,43 @@ int TranslateKeyToX11(int nGameKey)
 	case GK_F10:return XK_F10;
 	case GK_PAGEUP:return XK_Page_Up;
 	case GK_PAGEDOWN:return XK_Page_Down;
+	
+	case GK_RCONTROL: return XK_Control_R;
+	case GK_RMENU: return XK_Alt_R;
+	case GK_RSHIFT: return XK_Shift_R;
+	case GK_F13: return XK_F13;
+	case GK_F14: return XK_F14;
+	case GK_F15: return XK_F15;
+	case GK_F16: return XK_F16;
+	case GK_F17: return XK_F17;
+	case GK_F18: return XK_F18;
+	case GK_F19: return XK_F19;
+	case GK_F20: return XK_F20;
+	case GK_F21: return XK_F21;
+	case GK_F22: return XK_F22;
+	case GK_F23: return XK_F23;
+	case GK_F24: return XK_F24;
+	case GK_LBUTTON: return XK_Pointer_Button1;
+	case GK_RBUTTON: return XK_Pointer_Button3;
+	case GK_MBUTTON: return XK_Pointer_Button2;
+	case GK_CLEAR: return XK_Clear;
+	case GK_CAPITAL: return XK_Caps_Lock;
+	case GK_SELECT: return XK_Select;
+	case GK_PRINT: return XK_Print;
+	case GK_EXECUTE: return XK_Execute;
+	case GK_HELP: return XK_Help;
+	case GK_LWIN: return XK_Super_L;
+	case GK_RWIN: return XK_Super_R;
+	case GK_MULTIPLY: return XK_KP_Multiply;
+	case GK_ADD: return XK_KP_Add;
+	case GK_SEPARATOR: return XK_KP_Separator;
+	case GK_SUBTRACT: return XK_KP_Subtract;
+	case GK_DECIMAL: return XK_KP_Decimal;
+	case GK_DIVIDE: return XK_KP_Divide;
+	case GK_NUMLOCK: return XK_Num_Lock;
+	case GK_SCROLL: return XK_Scroll_Lock;
+	case GK_MENU: return XK_Menu;
+	case GK_ALTGR: return 0xfe03;
 	};
 	return 0;
 }
@@ -283,10 +436,102 @@ COpenGLViewport::COpenGLViewport(void)
 	m_nDblClkDetectDistance=3;
 	
 #endif
+
+	InitializeKeyNames();
 }
 
 COpenGLViewport::~COpenGLViewport(void)
 {
+}
+
+void COpenGLViewport::InitializeKeyNames()
+{
+	for(int l=1;l<128;l++)
+	{
+		if(l=='\t' || l==' '){continue;}
+		char sTemp[2]={(char)l,0};m_mKeyNames[l]=sTemp;
+	}
+	m_mKeyNames['\t']="Tab";
+	m_mKeyNames[' ']="Space";
+	m_mKeyNames[GK_LBUTTON]="Left Mouse";
+	m_mKeyNames[GK_LBUTTON]="Left Mouse";
+	m_mKeyNames[GK_RBUTTON]="Right Mouse";
+	m_mKeyNames[GK_MBUTTON]="Middle Mouse";
+	m_mKeyNames[GK_BACK]="Backspace";
+	m_mKeyNames[GK_CLEAR]="Clear";
+	m_mKeyNames[GK_RETURN]="Return";
+	m_mKeyNames[GK_PAUSE]="Pause";
+	m_mKeyNames[GK_CAPITAL]="Caps Lock";
+	m_mKeyNames[GK_ESCAPE]="Escape";
+	m_mKeyNames[GK_PAGEUP]="Page Up";
+	m_mKeyNames[GK_PAGEDOWN]="Page Down";
+	m_mKeyNames[GK_END]="End";
+	m_mKeyNames[GK_HOME]="Home";
+	m_mKeyNames[GK_LEFT]="Left";
+	m_mKeyNames[GK_UP]="Up";
+	m_mKeyNames[GK_RIGHT]="Right";
+	m_mKeyNames[GK_DOWN]="Down";
+	m_mKeyNames[GK_SELECT]="Select";
+	m_mKeyNames[GK_PRINT]="Print";
+	m_mKeyNames[GK_EXECUTE]="Execute";
+	m_mKeyNames[GK_INSERT]="Insert";
+	m_mKeyNames[GK_DELETE]="Delete";
+	m_mKeyNames[GK_HELP]="Help";
+
+	m_mKeyNames[GK_LWIN]="Left Win";
+	m_mKeyNames[GK_RWIN]="Right Win";
+	
+	m_mKeyNames[GK_NUMPAD0]="Numpad 0";
+	m_mKeyNames[GK_NUMPAD1]="Numpad 1";
+	m_mKeyNames[GK_NUMPAD2]="Numpad 2";
+	m_mKeyNames[GK_NUMPAD3]="Numpad 3";
+	m_mKeyNames[GK_NUMPAD4]="Numpad 4";
+	m_mKeyNames[GK_NUMPAD5]="Numpad 5";
+	m_mKeyNames[GK_NUMPAD6]="Numpad 6";
+	m_mKeyNames[GK_NUMPAD7]="Numpad 7";
+	m_mKeyNames[GK_NUMPAD8]="Numpad 8";
+	m_mKeyNames[GK_NUMPAD9]="Numpad 9";
+	m_mKeyNames[GK_MULTIPLY]="Numpad *";
+	m_mKeyNames[GK_ADD]="Numpad +";
+	m_mKeyNames[GK_SEPARATOR]="Separator";
+	m_mKeyNames[GK_SUBTRACT]="Numpad -";
+	m_mKeyNames[GK_DECIMAL]="Numpad .";
+	m_mKeyNames[GK_DIVIDE]="Numpad /";
+	m_mKeyNames[GK_F1]="F1";
+	m_mKeyNames[GK_F2]="F2";
+	m_mKeyNames[GK_F3]="F3";
+	m_mKeyNames[GK_F4]="F4";
+	m_mKeyNames[GK_F5]="F5";
+	m_mKeyNames[GK_F6]="F6";
+	m_mKeyNames[GK_F7]="F7";
+	m_mKeyNames[GK_F8]="F8";
+	m_mKeyNames[GK_F9]="F9";
+	m_mKeyNames[GK_F10]="F10";
+	m_mKeyNames[GK_F11]="F11";
+	m_mKeyNames[GK_F12]="F12";
+	m_mKeyNames[GK_F13]="F13";
+	m_mKeyNames[GK_F14]="F14";
+	m_mKeyNames[GK_F15]="F15";
+	m_mKeyNames[GK_F16]="F16";
+	m_mKeyNames[GK_F17]="F17";
+	m_mKeyNames[GK_F18]="F18";
+	m_mKeyNames[GK_F19]="F19";
+	m_mKeyNames[GK_F20]="F20";
+	m_mKeyNames[GK_F21]="F21";
+	m_mKeyNames[GK_F22]="F22";
+	m_mKeyNames[GK_F23]="F23";
+	m_mKeyNames[GK_F24]="F24";
+
+	m_mKeyNames[GK_NUMLOCK]="Num Lock";
+	m_mKeyNames[GK_SCROLL]="Scroll Lock";
+	m_mKeyNames[GK_LSHIFT]="Left Shift";
+	m_mKeyNames[GK_RSHIFT]="Right Shift";
+	m_mKeyNames[GK_LCONTROL]="Left Control";
+	m_mKeyNames[GK_RCONTROL]="Right Control";
+	m_mKeyNames[GK_LMENU]="Left Alt";
+	m_mKeyNames[GK_RMENU]="Right Alt";
+	m_mKeyNames[GK_MENU]="Menu";
+	m_mKeyNames[GK_ALTGR]="Alt Gr";
 }
 #ifdef WIN32
 void COpenGLViewport::OnCreate(HWND hWnd)
@@ -919,6 +1164,15 @@ bool  COpenGLViewport::IsKeyDown(unsigned int nKey)
 	}
 	return false;
 #endif
+}
+
+bool COpenGLViewport::GetKeyName(int nKey,std::string *psKey)
+{
+	std::map<unsigned int,std::string>::iterator i;
+	i=m_mKeyNames.find(nKey);
+	if(i==m_mKeyNames.end()){*psKey="Unknown";return false;}
+	*psKey=i->second;
+	return true;
 }
 
 bool  COpenGLViewport::IsActiveWindow(){return true;}
