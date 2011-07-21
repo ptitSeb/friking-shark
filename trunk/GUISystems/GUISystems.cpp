@@ -29,9 +29,12 @@
 #include "GameInterface.h"
 #include "ConfirmationDialog.h"
 #include "GameOverDialog.h"
+#include "ControlsDialog.h"
+#include "KeyCaptureDialog.h"
 #include "HighScoresDialog.h"
 #include "HighScoresTable.h"
 #include "LevelOptions.h"
+#include "CreditsDialog.h"
 
 BEGIN_SYSTEM_MODULE()
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CMainWindow,"CMainWindow")
@@ -40,8 +43,11 @@ BEGIN_SYSTEM_MODULE()
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameInterface,"CGameInterface")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CConfirmationDialog,"CConfirmationDialog")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameOverDialog,"CGameOverDialog")
+	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CControlsDialog,"CControlsDialog")
+	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CKeyCaptureDialog,"CKeyCaptureDialog")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CHighScoresDialog,"CHighScoresDialog")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CHighScoresTable,"CHighScoresTable")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CLevelOptions,"CLevelOptions")
+	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CCreditsDialog,"CCreditsDialog")
 END_SYSTEM_MODULE()
 

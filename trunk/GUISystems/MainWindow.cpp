@@ -30,7 +30,6 @@ extern CSystemModuleHelper *g_pSystemModuleHelper;
 CMainWindow::CMainWindow(void)
 {
 	m_eGameMode=eGameMode_Normal;
-	m_eGameDifficulty=eGameDifficulty_Normal;
 	m_eStage=eInterfaceStage_MainMenu;
 	m_nCurrentLevel=0;
 	m_dBackgroundAlpha=0;
@@ -50,6 +49,8 @@ bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 	bool bResult=CGameWindowBase::InitWindow(piParent,bPopup);
 	if(bResult)
 	{
+		m_PlayerProfile.Create(m_piSystem,"CPlayerProfile","");
+		
 		CViewportWrapper viewport;
 		viewport.Attach("GameGUI","Viewport");
 		if(viewport.m_piViewport){viewport.m_piViewport->SetCaption("Friking Shark");}
@@ -63,21 +64,28 @@ bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 			m_ConfirmationDialog.Create("GameGUI","CConfirmationDialog","ConfirmationDialog");
 			m_GameOverDialog.Create("GameGUI","CGameOverDialog","GameOverDialog");
 			m_HighScoresDialog.Create("GameGUI","CHighScoresDialog","HighScoresDialog");
+			m_ControlsDialog.Create("GameGUI","CControlsDialog","ControlsDialog");			
 			m_LevelOptionsDialog.Create("GameGUI","CLevelOptions","LevelOptions");
 			m_HighScoresTable.Create("GameGUI","CHighScoresTable","HighScoreTable");
-
+			m_CreditsDialog.Create("GameGUI","CCreditsDialog","CreditsDialog");
+			
 			m_MainMenuDialog.m_piSerializable->Unserialize(m_GUIConfigFile.GetNode("GameDialogs\\MainMenu"));
 			m_GameMenuDialog.m_piSerializable->Unserialize(m_GUIConfigFile.GetNode("GameDialogs\\GameMenu"));
 			m_ConfirmationDialog.m_piSerializable->Unserialize(m_GUIConfigFile.GetNode("GameDialogs\\ConfirmationDialog"));
 			m_GameOverDialog.m_piSerializable->Unserialize(m_GUIConfigFile.GetNode("GameDialogs\\GameOverDialog"));
 			m_HighScoresDialog.m_piSerializable->Unserialize(m_GUIConfigFile.GetNode("GameDialogs\\HighScoresDialog"));
+			m_ControlsDialog.m_piSerializable->Unserialize(m_GUIConfigFile.GetNode("GameDialogs\\ControlsDialog"));
 			m_LevelOptionsDialog.m_piSerializable->Unserialize(m_GUIConfigFile.GetNode("GameDialogs\\LevelOptions"));
-		
+			m_CreditsDialog.m_piSerializable->Unserialize(m_GUIConfigFile.GetNode("GameDialogs\\CreditsDialog"));
+			
 			if(m_HighScoresConfigFile.Open("HighScores.cfg"))
 			{
-				m_HighScoresTable.m_piSerializable->Unserialize(m_HighScoresConfigFile.GetNode("HighScores"));
+				m_HighScoresTable.m_piSerializable->Unserialize(m_HighScoresConfigFile.GetNode("Local"));
 			}
-			
+			if(m_PlayerProfileConfigFile.Open("PlayerProfiles.cfg"))
+			{
+				m_PlayerProfile.m_piSerializable->Unserialize(m_PlayerProfileConfigFile.GetNode("Default"));
+			}
 		}
 
 		if(bResult)
@@ -95,10 +103,15 @@ void CMainWindow::Destroy()
 {
 	if(m_HighScoresTable.m_piSerializable)
 	{
-		m_HighScoresTable.m_piSerializable->Serialize(m_HighScoresConfigFile.AddNode("HighScores"));
+		m_HighScoresTable.m_piSerializable->Serialize(m_HighScoresConfigFile.AddNode("Local"));
+	}
+	if(m_PlayerProfile.m_piSerializable)
+	{
+		m_PlayerProfile.m_piSerializable->Serialize(m_PlayerProfileConfigFile.AddNode("Default"));
 	}
 	m_HighScoresConfigFile.Save("HighScores.cfg");
-	
+	m_PlayerProfileConfigFile.Save("PlayerProfiles.cfg");
+	m_PlayerProfile.Destroy();
 	CGameWindowBase::Destroy();
 }
 
@@ -109,21 +122,23 @@ void CMainWindow::OnDraw(IGenericRender *piRender)
 	if(m_eStage==eInterfaceStage_MainMenu 
 		&& !m_MainMenuDialog.m_piDialog->IsVisible()
 		&& !m_LevelOptionsDialog.m_piDialog->IsVisible()
-		&& !m_HighScoresDialog.m_piDialog->IsVisible())
+		&& !m_HighScoresDialog.m_piDialog->IsVisible()
+		&& !m_ControlsDialog.m_piDialog->IsVisible()
+		&& !m_CreditsDialog.m_piDialog->IsVisible())
 	{
 		bool bProcessed=false;
 		OnKeyDown(GK_ESCAPE,&bProcessed);
 	}
 	
 	if(m_eStage==eInterfaceStage_LaunchNextLevel)
-	{
+	{		
 		char sFile[200];
 		sprintf(sFile,"Level%d.ges",m_nCurrentLevel+1);
 		m_eStage=eInterfaceStage_Playing;
 		m_piGUIManager->ShowMouseCursor(false);
 		m_piSTBackground->Show(false);
 		m_piGameInterface->LoadScenario(sFile);
-		m_piGameInterface->StartGame(m_eGameMode,m_eGameDifficulty,m_nPoints,m_nLivesLeft,m_nWeaponLevel);
+		m_piGameInterface->StartGame(m_PlayerProfile.m_piPlayerProfile,m_eGameMode,m_nPoints,m_nLivesLeft,m_nWeaponLevel);
 		m_piGameInterface->Show(true);
 	}
 }
@@ -140,9 +155,30 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 			{
 				m_piGUIManager->ExitGUILoop();
 			}
+			else if(result==eMainMenuAction_HighScores)
+			{
+				m_HighScoresDialog.m_piHighScoresDialog->ShowScores(this,m_HighScoresTable.m_piHighScoresTable,-1,true);
+			}			
+			else if(result==eMainMenuAction_Credits)
+			{
+				m_CreditsDialog.m_piDialog->Execute(this);
+			}
+			else if(result==eMainMenuAction_Controls)
+			{
+				m_ControlsDialog.m_piControlsDialog->SelectControls(this,m_PlayerProfile.m_piPlayerProfile);
+			}
 			else if(result==eMainMenuAction_NewGame)
 			{
-				if(m_LevelOptionsDialog.m_piLevelOptions->SelectOptions(this,&m_eGameMode,&m_eGameDifficulty,&m_nCurrentLevel))
+				EGameDifficulty eDifficulty=eGameDifficulty_Normal;
+				if(m_PlayerProfile.m_piPlayerProfile)
+				{
+					double dDifficulty=m_PlayerProfile.m_piPlayerProfile->GetDifficulty();
+					if(dDifficulty>=6){eDifficulty=eGameDifficulty_VeryHard;}
+					else if(dDifficulty>=4){eDifficulty=eGameDifficulty_Hard;}
+					else if(dDifficulty>=2){eDifficulty=eGameDifficulty_Normal;}
+					else {eDifficulty=eGameDifficulty_Easy;}
+				}
+				if(m_LevelOptionsDialog.m_piLevelOptions->SelectOptions(this,&m_eGameMode,&eDifficulty,&m_nCurrentLevel))
 				{
 					char sFile[200];
 					sprintf(sFile,"Level%d.ges",m_nCurrentLevel+1);
@@ -150,6 +186,20 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 					m_nWeaponLevel=0;
 					m_nPoints=0;
 					m_nLivesLeft=3;
+					
+					if(m_PlayerProfile.m_piPlayerProfile)
+					{
+						double dDifficulty=0;
+						switch(eDifficulty)
+						{
+							case eGameDifficulty_Easy: dDifficulty=0;break;
+							case eGameDifficulty_Normal: dDifficulty=2;break;
+							case eGameDifficulty_Hard: dDifficulty=4;break;
+							case eGameDifficulty_VeryHard: dDifficulty=6;break;
+							default: dDifficulty=0;break;
+						}
+						m_PlayerProfile.m_piPlayerProfile->SetDifficulty(dDifficulty);
+					}
 					
 					SHighScoreRow sHighScore;
 					if(m_HighScoresTable.m_piHighScoresTable){sHighScore=m_HighScoresTable.m_piHighScoresTable->GetRow(0);}
@@ -159,7 +209,7 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 					m_piSTBackground->Show(false);
 					m_piGameInterface->SetHighScore(sHighScore.nScore);
 					m_piGameInterface->LoadScenario(sFile);
-					m_piGameInterface->StartGame(m_eGameMode,m_eGameDifficulty,m_nPoints,m_nLivesLeft,m_nWeaponLevel);
+					m_piGameInterface->StartGame(m_PlayerProfile.m_piPlayerProfile,m_eGameMode,m_nPoints,m_nLivesLeft,m_nWeaponLevel);
 					m_piGameInterface->Show(true);
 				}
 			}
@@ -207,13 +257,23 @@ void CMainWindow::OnScenarioFinished(eScenarioFinishedReason eReason,unsigned in
 		m_piGameInterface->Freeze(false);
 		m_eStage=eInterfaceStage_HighScores;
 		
+		EGameDifficulty eDifficulty=eGameDifficulty_Normal;
+		if(m_PlayerProfile.m_piPlayerProfile)
+		{
+			double dDifficulty=m_PlayerProfile.m_piPlayerProfile->GetDifficulty();
+			if(dDifficulty>=6){eDifficulty=eGameDifficulty_VeryHard;}
+			else if(dDifficulty>=4){eDifficulty=eGameDifficulty_Hard;}
+			else if(dDifficulty>=2){eDifficulty=eGameDifficulty_Normal;}
+			else {eDifficulty=eGameDifficulty_Easy;}
+		}
+		
 		SHighScoreRow row;
 		row.sName="<type your name>";
-		row.eDifficulty=m_eGameDifficulty;
+		row.eDifficulty=eDifficulty;
 		row.nScore=nPoints;
 		
 		unsigned int nRow=m_HighScoresTable.m_piHighScoresTable?m_HighScoresTable.m_piHighScoresTable->AddRow(row):-1;
-		m_HighScoresDialog.m_piHighScoresDialog->ShowScores(this,m_HighScoresTable.m_piHighScoresTable,nRow);
+		m_HighScoresDialog.m_piHighScoresDialog->ShowScores(this,m_HighScoresTable.m_piHighScoresTable,nRow,false);
 	}
 	else
 	{

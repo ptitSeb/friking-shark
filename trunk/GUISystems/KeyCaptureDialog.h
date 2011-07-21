@@ -16,26 +16,19 @@
 //  
 
 
-enum eMainMenuAction
-{
-	eMainMenuAction_UNKNOWN,
-	eMainMenuAction_NewGame=0x1000,
-	eMainMenuAction_Controls,
-	eMainMenuAction_HighScores,
-	eMainMenuAction_Credits,
-	eMainMenuAction_Exit
-};
+#pragma once
 
-enum eGameMenuAction
+class CKeyCaptureDialog: virtual public CGameDialogBase,virtual public IKeyCaptureDialog
 {
-	eGameMenuAction_UNKNOWN,
-	eGameMenuAction_Continue=0x1000,
-	eGameMenuAction_EndGame
-};
+	unsigned int m_nKey;
+	
+public:
 
-enum eConfirmationDialogAction
-{
-	eConfirmationDialogAction_UNKNOWN,
-	eConfirmationDialogAction_Yes=0x1000,
-	eConfirmationDialogAction_No
+	bool CaptureKey(IGameWindow *piParent,unsigned int *pKey);
+	
+	void OnKeyDown(int nKey,bool *pbProcessed);
+	
+
+	CKeyCaptureDialog(void);
+	~CKeyCaptureDialog(void);
 };

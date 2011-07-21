@@ -24,6 +24,7 @@ DECLARE_CUSTOM_WRAPPER1(CGameInterfaceWrapper,IGameInterfaceWindow,m_piInterface
 DECLARE_CUSTOM_WRAPPER2(CLevelOptionsDialogWrapper,IGameDialog,m_piDialog,ILevelOptions,m_piLevelOptions)
 DECLARE_CUSTOM_WRAPPER1(CHighScoresTableWrapper,IHighScoresTable,m_piHighScoresTable)
 DECLARE_CUSTOM_WRAPPER2(CHighScoresDialogWrapper,IGameDialog,m_piDialog,IHighScoresDialog,m_piHighScoresDialog)
+DECLARE_CUSTOM_WRAPPER2(CControlsDialogWrapper,IGameDialog,m_piDialog,IControlsDialog,m_piControlsDialog)
 
 enum eInterfaceStage
 {
@@ -40,9 +41,9 @@ class CMainWindow: virtual public CGameWindowBase,virtual public IGameInterfaceW
 
 	CConfigFile m_GUIConfigFile;
 	CConfigFile m_HighScoresConfigFile;
+	CConfigFile m_PlayerProfileConfigFile;
 
 	EGameMode 			  m_eGameMode;
-	EGameDifficulty       m_eGameDifficulty;
 	IGameGUILabel        *m_piSTBackground;
 	IGameInterfaceWindow *m_piGameInterface;
 
@@ -51,9 +52,12 @@ class CMainWindow: virtual public CGameWindowBase,virtual public IGameInterfaceW
 	CGameDialogWrapper m_MainMenuDialog;
 	CGameDialogWrapper m_GameMenuDialog;
 	CGameDialogWrapper m_ConfirmationDialog;
+	CGameDialogWrapper m_CreditsDialog;
+	CPlayerProfileWrapper m_PlayerProfile;
 	CLevelOptionsDialogWrapper m_LevelOptionsDialog;
 	CHighScoresDialogWrapper m_HighScoresDialog;
 	CHighScoresTableWrapper  m_HighScoresTable;
+	CControlsDialogWrapper   m_ControlsDialog;
 	
 	unsigned int m_nCurrentLevel;
 	unsigned int m_nPoints;

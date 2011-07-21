@@ -23,8 +23,11 @@ GameMenu.cpp \
 GameOverDialog.cpp \
 HighScoresDialog.cpp \
 HighScoresTable.cpp \
+ControlsDialog.cpp \
+KeyCaptureDialog.cpp \
 MainMenu.cpp \
 LevelOptions.cpp \
+CreditsDialog.cpp \
 stdafx.cpp
 
 

@@ -28,7 +28,6 @@ CGameInterface::CGameInterface(void)
 	m_eState=eGameInterfaceState_Idle;
 	m_bActive=false;
 	m_eGameMode=eGameMode_Normal;
-	m_eGameDifficulty=eGameDifficulty_Normal;
 	m_bCompleted=false;
 	m_piSystemManager   =NULL;
 	m_piGameSystem			=NULL;
@@ -94,35 +93,17 @@ bool CGameInterface::LoadScenario(std::string sScenario)
 	m_PlayAreaManagerWrapper.Attach("GameSystem","PlayAreaManager");
 	m_EntityManagerWrapper.Attach("GameSystem","EntityManager");
 	m_WorldManagerWrapper.Attach("GameSystem","WorldManager");
-	m_PlayerProfile.Create("GameSystem","CPlayerProfile","");
 	m_bCompleted=false;
 	return bResult;
 }
 
-void CGameInterface::StartGameInternal(EGameMode eMode,EGameDifficulty eDifficulty,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel, bool bGoToLastCheckPoint)
+void CGameInterface::StartGameInternal(EGameMode eMode,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel, bool bGoToLastCheckPoint)
 {
 	if(m_bGameStarted){return;}
 	if(m_bGameStarted){return;}
 	m_eGameMode=eMode;
-	m_eGameDifficulty=eDifficulty;
 	m_FrameManagerWrapper.m_piFrameManager->Reset();
 	m_bPlayerKilledOnPreviousFrame=false;
-	
-	
-	
-	if(m_PlayerProfile.m_piPlayerProfile)
-	{
-		double dDifficulty=0;
-		switch(m_eGameDifficulty)
-		{
-			case eGameDifficulty_Easy: dDifficulty=0;break;
-			case eGameDifficulty_Normal: dDifficulty=2;break;
-			case eGameDifficulty_Hard: dDifficulty=4;break;
-			case eGameDifficulty_VeryHard: dDifficulty=6;break;
-			default: dDifficulty=0;break;
-		}
-		m_PlayerProfile.m_piPlayerProfile->SetDifficulty(dDifficulty);
-	}
 	
 	CVector vStart,vEnd;
 	m_PlayerManagerWrapper.m_piPlayerManager->SetPlayerProfile(m_PlayerProfile.m_piPlayerProfile);
@@ -160,11 +141,16 @@ void CGameInterface::StartGameInternal(EGameMode eMode,EGameDifficulty eDifficul
 	unsigned int nCurrentTime=m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime();
 	OpenCourtain(nCurrentTime);
 	m_nLastCountTime=nCurrentTime;
+	
+	if(m_piSTUpperIndicatorRow0){m_piSTUpperIndicatorRow0->Show(true);}
+	if(m_piSTUpperIndicatorRow1){m_piSTUpperIndicatorRow1->Show(true);}
+	if(m_piSTUpperIndicatorRow2){m_piSTUpperIndicatorRow2->Show(true);}
 }
 
-void CGameInterface::StartGame(EGameMode eMode,EGameDifficulty eDifficulty,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel)
+void CGameInterface::StartGame(IPlayerProfile *piProfile,EGameMode eMode,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel)
 {
-	StartGameInternal(eMode,eDifficulty,nPoints,nLivesLeft,nWeaponLevel,false);
+	m_PlayerProfile.Attach(piProfile);
+	StartGameInternal(eMode,nPoints,nLivesLeft,nWeaponLevel,false);
 }
 
 void CGameInterface::StopGame()
@@ -201,7 +187,7 @@ void CGameInterface::ResetGame(bool bGoToLastCheckPoint)
 	unsigned int nWeapon=!bGoToLastCheckPoint && piWeapon?piWeapon->GetCurrentLevel():0;
 	
 	StopGame();
-	StartGameInternal(m_eGameMode,m_eGameDifficulty,nPoints,nLives,nWeapon,bGoToLastCheckPoint);
+	StartGameInternal(m_eGameMode,nPoints,nLives,nWeapon,bGoToLastCheckPoint);
 }
 
 void CGameInterface::ProcessEnumeratedPlayAreaElement(IPlayAreaElement *piElement,bool *pbStopEnumerating)
@@ -311,6 +297,9 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 	{
 		if(m_piPlayer->GetLivesLeft()==0)
 		{
+			if(m_piSTUpperIndicatorRow0){m_piSTUpperIndicatorRow0->Show(false);}
+			if(m_piSTUpperIndicatorRow1){m_piSTUpperIndicatorRow1->Show(false);}
+			if(m_piSTUpperIndicatorRow2){m_piSTUpperIndicatorRow2->Show(false);}
 			m_bPlayerKilledOnPreviousFrame=false;
 			NOTIFY_EVENT(IGameInterfaceWindowEvents,OnScenarioFinished(eScenarioFinishedReason_GameOver,m_piPlayer->GetPoints(),0,0));
 			m_eState=eGameInterfaceState_GameOverCourtain;

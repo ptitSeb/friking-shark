@@ -25,6 +25,9 @@ class CLevelOptions: virtual public CGameDialogBase,virtual public IGameGUIButto
 	
 	unsigned int m_nSelectedLevel;
 	
+	CGenericFontWrapper m_LevelUnselectedFont;
+	CGenericFontWrapper m_LevelSelectedFont;
+	
 	IGameGUIButton *m_piBTLevel1;
 	IGameGUIButton *m_piBTLevel2;
 	IGameGUIButton *m_piBTLevel3;
@@ -32,6 +35,14 @@ class CLevelOptions: virtual public CGameDialogBase,virtual public IGameGUIButto
 	IGameGUIButton *m_piBTLevel5;
 	IGameGUIButton *m_piBTMode;
 	IGameGUIButton *m_piBTDifficulty;
+	IGameGUIButton *m_piBTOk;
+	IGameGUIButton *m_piBTCancel;
+	
+	BEGIN_PROP_MAP(CLevelOptions)
+	PROP_CLASS_CHAIN(CGameDialogBase);
+		PROP(m_LevelUnselectedFont,"LevelUnselectedFont")
+		PROP(m_LevelSelectedFont,"LevelSelectedFont")
+	END_PROP_MAP()
 	
 	BEGIN_CHILD_MAP()
 		CHILD_MAP_ENTRY_EX("Level1",m_piBTLevel1,IGameGUIButtonEvents);
@@ -41,6 +52,8 @@ class CLevelOptions: virtual public CGameDialogBase,virtual public IGameGUIButto
 		CHILD_MAP_ENTRY_EX("Level5",m_piBTLevel5,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Difficulty",m_piBTDifficulty,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Mode",m_piBTMode,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("Ok",m_piBTOk,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("Cancel",m_piBTCancel,IGameGUIButtonEvents);
 	END_CHILD_MAP()
 
 	void UpdateGUI();

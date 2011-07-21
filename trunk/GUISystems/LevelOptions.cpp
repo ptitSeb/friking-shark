@@ -35,30 +35,38 @@ CLevelOptions::~CLevelOptions(void)
 
 void CLevelOptions::OnButtonClicked(IGameGUIButton *piControl)
 {
+	if(piControl==m_piBTOk)
+	{
+		EndDialog(DIALOG_OK);
+	}
+	if(piControl==m_piBTCancel)
+	{
+		EndDialog(DIALOG_CANCEL);
+	}
 	if(piControl==m_piBTLevel1)
 	{
 		m_nSelectedLevel=0;
-		EndDialog(DIALOG_OK);
+		UpdateGUI();
 	}
 	if(piControl==m_piBTLevel2)
 	{
 		m_nSelectedLevel=1;
-		EndDialog(DIALOG_OK);
+		UpdateGUI();
 	}
 	if(piControl==m_piBTLevel3)
 	{
 		m_nSelectedLevel=2;
-		EndDialog(DIALOG_OK);
+		UpdateGUI();
 	}	
 	if(piControl==m_piBTLevel4)
 	{
 		m_nSelectedLevel=3;
-		EndDialog(DIALOG_OK);
+		UpdateGUI();
 	}
 	if(piControl==m_piBTLevel5)
 	{
 		m_nSelectedLevel=4;
-		EndDialog(DIALOG_OK);
+		UpdateGUI();
 	}
 	if(piControl==m_piBTMode)
 	{
@@ -81,15 +89,25 @@ void CLevelOptions::OnButtonClicked(IGameGUIButton *piControl)
 
 void CLevelOptions::UpdateGUI()
 {
-	if(m_eMode==eGameMode_Normal){m_piBTMode->SetText("Mode: Normal");}
-	if(m_eMode==eGameMode_God){m_piBTMode->SetText("Mode: God");}
-	if(m_eMode==eGameMode_InfiniteLives){m_piBTMode->SetText("Mode: Infinite Lives");}
+	if(m_eMode==eGameMode_Normal){m_piBTMode->SetText("Normal");}
+	if(m_eMode==eGameMode_God){m_piBTMode->SetText("God");}
+	if(m_eMode==eGameMode_InfiniteLives){m_piBTMode->SetText("Infinite Lives");}
 
-	if(m_eDifficulty==eGameDifficulty_Easy){m_piBTDifficulty->SetText("Difficulty: Easy");}
-	if(m_eDifficulty==eGameDifficulty_Normal){m_piBTDifficulty->SetText("Difficulty: Normal");}
-	if(m_eDifficulty==eGameDifficulty_Hard){m_piBTDifficulty->SetText("Difficulty: Hard");}
-	if(m_eDifficulty==eGameDifficulty_VeryHard){m_piBTDifficulty->SetText("Difficulty: Very Hard");}
-		
+	if(m_eDifficulty==eGameDifficulty_Easy){m_piBTDifficulty->SetText("Easy");}
+	if(m_eDifficulty==eGameDifficulty_Normal){m_piBTDifficulty->SetText("Normal");}
+	if(m_eDifficulty==eGameDifficulty_Hard){m_piBTDifficulty->SetText("Hard");}
+	if(m_eDifficulty==eGameDifficulty_VeryHard){m_piBTDifficulty->SetText("Very Hard");}
+	
+	double dFontSize=0;
+	if(m_piBTLevel1 && m_piBTLevel2 && m_piBTLevel3 && m_piBTLevel4 && m_piBTLevel5)
+	{
+		m_piBTLevel1->GetFont(NULL,&dFontSize);
+		m_piBTLevel1->SetFont(m_nSelectedLevel==0?m_LevelSelectedFont.m_piFont:m_LevelUnselectedFont.m_piFont,dFontSize);
+		m_piBTLevel2->SetFont(m_nSelectedLevel==1?m_LevelSelectedFont.m_piFont:m_LevelUnselectedFont.m_piFont,dFontSize);
+		m_piBTLevel3->SetFont(m_nSelectedLevel==2?m_LevelSelectedFont.m_piFont:m_LevelUnselectedFont.m_piFont,dFontSize);
+		m_piBTLevel4->SetFont(m_nSelectedLevel==3?m_LevelSelectedFont.m_piFont:m_LevelUnselectedFont.m_piFont,dFontSize);
+		m_piBTLevel5->SetFont(m_nSelectedLevel==4?m_LevelSelectedFont.m_piFont:m_LevelUnselectedFont.m_piFont,dFontSize);
+	}
 }
 
 void CLevelOptions::OnInitDialog()

@@ -42,7 +42,7 @@ class IGameInterfaceWindow: virtual public IGameWindow
 {	
 public:
 
-	virtual void StartGame(EGameMode eMode,EGameDifficulty eDifficulty,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel)=0;
+	virtual void StartGame(IPlayerProfile *piProfile,EGameMode eMode, unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel)=0;
 	virtual void StopGame()=0;
 	
 	virtual void SetHighScore(unsigned int nScore)=0;
@@ -92,9 +92,18 @@ class IHighScoresDialog: virtual public ISystemUnknown
 {	
 public:
 	
-	virtual void ShowScores(IGameWindow *piParent,IHighScoresTable *piTable,int nScoreToEdit/*-1 to only show the scores*/)=0;
+	virtual void ShowScores(IGameWindow *piParent,IHighScoresTable *piTable,int nScoreToEdit/*-1 to only show the scores*/,bool bFromMainMenu)=0;
 	
 	virtual ~IHighScoresDialog(){}
+};
+
+class IKeyCaptureDialog: virtual public ISystemUnknown
+{	
+public:
+	
+	virtual bool CaptureKey(IGameWindow *piParent,unsigned int *pKey)=0;
+	
+	virtual ~IKeyCaptureDialog(){}
 };
 
 class ILevelOptions: virtual public IGameWindow
@@ -104,6 +113,16 @@ public:
 	virtual bool SelectOptions(IGameWindow *piParent,EGameMode *pMode,EGameDifficulty *pDifficulty,unsigned int *pnSelectedLevel)=0;
 	
 	virtual ~ILevelOptions(){}
+};
+
+struct IPlayerProfile;
+class IControlsDialog: virtual public IGameWindow
+{	
+public:
+	
+	virtual bool SelectControls(IGameWindow *piParent,IPlayerProfile *piProfile)=0;
+	
+	virtual ~IControlsDialog(){}
 };
 
 enum eScenarioFinishedReason
