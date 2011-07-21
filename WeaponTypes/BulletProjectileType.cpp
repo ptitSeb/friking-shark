@@ -196,7 +196,7 @@ bool CBulletProjectile::OnCollision(IEntity *piOther,CVector &vCollisionPos)
 	{ 
 		SetState(eBulletState_StructureHit);
 	}
-	if(m_pTypeBase->GetStateAnimations(eBulletState_Hit))
+	else if(m_pTypeBase->GetStateAnimations(eBulletState_Hit))
     {
 		SetState(eBulletState_Hit);
     }
