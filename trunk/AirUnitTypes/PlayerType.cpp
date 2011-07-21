@@ -125,7 +125,7 @@ bool CPlayer::OnCollision(IEntity *piOther,CVector &vCollisionPos)
 		}
 		Remove();
 	}
-	if(m_dHealth>0 && piOther->GetAlignment()==ENTITY_ALIGNMENT_ENEMIES)
+	if(m_dHealth>0 && piOther->GetAlignment()==ENTITY_ALIGNMENT_ENEMIES && piOther->GetDamageType()!=DAMAGE_TYPE_NONE )
 	{
 		double dMyDamage=piOther->GetHealth();
 		piOther->OnDamage(m_dHealth,this);
