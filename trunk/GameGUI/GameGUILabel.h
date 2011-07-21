@@ -32,7 +32,8 @@ protected:
 	bool m_bAutoResizeFont;
 
 	void DrawText(IGenericRender *piRender,CVector &vColor,double dAlpha);
-
+	void DrawText(IGenericFont *piFont,double dFontSize,IGenericRender *piRender,CVector &vColor,double dAlpha);
+	
 public:
 
 	BEGIN_PROP_MAP(CGameGUILabel)

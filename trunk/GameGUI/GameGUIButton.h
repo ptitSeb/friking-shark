@@ -23,6 +23,7 @@ class CGameGUIButton: virtual public CGameGUILabel, virtual public IGameGUIButto
 	bool m_bClickInProgress;
 
 	CGenericTextureWrapper m_HoverTexture;
+	CGenericFontWrapper m_HoverFont;
 	CVector		m_vHoverBackgroundColor;
 	double		m_dHoverBackgroundAlpha;
 	CVector		m_vHoverTextColor;
@@ -34,6 +35,7 @@ protected:
 	BEGIN_PROP_MAP(CGameGUIButton)
 		PROP_CLASS_CHAIN(CGameGUILabel)
 		PROP_FLAGS(m_HoverTexture,"HoverTexture",MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_FLAGS(m_HoverFont,"HoverFont",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_bHoverEnabled,"HoverEnabled",true,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_dHoverBackgroundAlpha,"HoverBkAlpha",1.0,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_vHoverBackgroundColor,"HoverBkColor",CVector(0.5,0.5,1.0),MRPF_NORMAL|MRPF_OPTIONAL)
