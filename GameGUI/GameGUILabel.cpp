@@ -53,18 +53,10 @@ std::string CGameGUILabel::GetText()
 	return m_sText;
 }
 
-void CGameGUILabel::DrawText(IGenericRender *piRender,CVector &vColor,double dAlpha)
+void CGameGUILabel::DrawText(IGenericFont *piFont,double dFontSize,IGenericRender *piRender,CVector &vColor,double dAlpha)
 {
 	if(m_sText.length())
 	{
-		std::string sFontName;
-		double			dFontSize=0;
-		
-		
-		//RTTRACE("CGameGUILabel::DrawText -> %s: %p %d",m_sText.c_str(),m_Font.m_piFont,(int)m_dFontSize);
-
-		IGenericFont *piFont=NULL;
-		GetFont(&piFont,&dFontSize);
 		if(piFont)
 		{
 			if(m_bAutoResizeFont)
@@ -73,6 +65,21 @@ void CGameGUILabel::DrawText(IGenericRender *piRender,CVector &vColor,double dAl
 			}
 			piRender->SetColor(vColor,dAlpha);
 			piFont->RenderTextEx(piRender,dFontSize,0,0,m_rRealRect.w,m_rRealRect.h,m_sText.c_str(),m_eHorizontalAlignment,m_eVerticalAlignment);
+		}
+	}
+}
+
+void CGameGUILabel::DrawText(IGenericRender *piRender,CVector &vColor,double dAlpha)
+{
+	if(m_sText.length())
+	{
+		std::string sFontName;
+		double			dFontSize=0;
+		IGenericFont *piFont=NULL;
+		GetFont(&piFont,&dFontSize);
+		if(piFont)
+		{
+			DrawText(piFont,dFontSize,piRender,vColor,dAlpha);
 		}
 		REL(piFont);
 	}

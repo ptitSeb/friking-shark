@@ -67,7 +67,14 @@ void CGameGUIButton::OnDraw(IGenericRender *piRender)
 {
 	if(m_piGUIManager->HasMouseCapture(this) && m_bHoverEnabled)
 	{
-		DrawText(piRender,m_vHoverTextColor,m_dHoverTextAlpha);
+		if(m_HoverFont.m_piFont)
+		{
+			DrawText(m_HoverFont.m_piFont,m_dFontSize,piRender,m_vHoverTextColor,m_dHoverTextAlpha);
+		}
+		else
+		{
+			DrawText(piRender,m_vHoverTextColor,m_dHoverTextAlpha);
+		}
 	}
 	else
 	{
