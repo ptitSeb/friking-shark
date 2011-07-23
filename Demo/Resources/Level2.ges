@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=199.907946
 			NearPlane=130.000000
-			Posicion=816.962035,198.441526,-4.716514
+			Posicion=773.906149,198.441526,5.404555
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -1812,7 +1812,7 @@ AreaDeJuego
 					System=EntityTypes
 				}
 				ConditionType=1
-				ConditionValue=1
+				ConditionValue=3
 				Posicion=-762.383304,-0.000000,58.441526
 				Tipo
 				{
@@ -2072,7 +2072,7 @@ AreaDeJuego
 					System=EntityTypes
 				}
 				ConditionType=1
-				ConditionValue=3
+				ConditionValue=4
 				Posicion=453.489612,-0.000000,58.441526
 				Tipo
 				{
@@ -4602,28 +4602,28 @@ Player
 				Absoluto=1
 				Pause=0
 				Posicion=1570.812921,58.441526,0.000000
-				SpeedFactor=0.70000
+				SpeedFactor=0.700000
 			}
 			Item1
 			{
 				Absoluto=1
 				Pause=0
 				Posicion=1614.343271,58.441526,0.000000
-				SpeedFactor=0.70000
+				SpeedFactor=0.700000
 			}
 			Item2
 			{
 				Absoluto=1
 				Pause=0
 				Posicion=1668.542100,26.446077,0.000000
-				SpeedFactor=0.70000
+				SpeedFactor=0.700000
 			}
 			Item3
 			{
 				Absoluto=1
 				Pause=0
 				Posicion=1714.643657,26.446296,0.000000
-				SpeedFactor=0.70000
+				SpeedFactor=0.700000
 			}
 		}
 	}
