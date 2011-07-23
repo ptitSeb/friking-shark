@@ -120,7 +120,7 @@ BEGIN_STRUCT_PROPS(STerrainWaterData)
 END_STRUCT_PROPS()
 
 BEGIN_STRUCT_PROPS(STerrainSkyData)
-	PROP(m_Texture,"Texture")
+	PROP_FLAGS(m_Texture,"Texture",MRPF_NORMAL|MRPF_OPTIONAL)
 	PROP(m_Config,"Config")
 END_STRUCT_PROPS()
 

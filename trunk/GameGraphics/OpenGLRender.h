@@ -52,6 +52,11 @@ struct SRenderState
 
 	int Compare(const SRenderState &otherState) const
 	{
+		if(bActiveBlending<otherState.bActiveBlending){return -1;}
+		if(bActiveBlending>otherState.bActiveBlending){return 1;}
+		if(nBlendingLayer<otherState.nBlendingLayer){return -1;}
+		if(nBlendingLayer>otherState.nBlendingLayer){return 1;}
+		
 		if(bActiveLighting<otherState.bActiveLighting){return -1;}
 		if(bActiveLighting>otherState.bActiveLighting){return 1;}
 
@@ -63,10 +68,6 @@ struct SRenderState
 		if(bActiveHeightFog<otherState.bActiveHeightFog){return -1;}
 		if(bActiveHeightFog>otherState.bActiveHeightFog){return 1;}
 
-		if(bActiveBlending<otherState.bActiveBlending){return -1;}
-		if(bActiveBlending>otherState.bActiveBlending){return 1;}
-		if(nBlendingLayer<otherState.nBlendingLayer){return -1;}
-		if(nBlendingLayer>otherState.nBlendingLayer){return 1;}
 		if(nBlendOperator1<otherState.nBlendOperator1){return 1;}
 		if(nBlendOperator1>otherState.nBlendOperator1){return -1;}
 		if(nBlendOperator2<otherState.nBlendOperator2){return 1;}

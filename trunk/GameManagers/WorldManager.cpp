@@ -155,7 +155,7 @@ void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCam
 		piRender->SetWaterMappingSize(m_TerrainWater.m_Config.dHorizontalResolution,m_TerrainWater.m_Config.dVerticalResolution);
 		piRender->SetWaterMappingOffset(dWaterOffset,0);
 		piRender->DeactivateShadowEmission();
-		piRender->ActivateLighting();
+		piRender->DeactivateLighting();
 		piRender->ActivateBlending();
 		piRender->ActivateWater();
 		piRender->SetDepthFunction(GL_LEQUAL);
