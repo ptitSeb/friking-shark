@@ -32,13 +32,22 @@
 
 #ifdef WIN32
 
-int TranslateKeyFromWindows(int nWindowsKey)
+int TranslateKeyFromWindows(unsigned int nVirtualKey,unsigned int nlparam)
 {
+	unsigned char nScanCode=(nlparam>>16)&0xff;
+	unsigned char bExtended=(nlparam>>24)&1;
+	unsigned char nRShiftScanCode=MapVirtualKey(VK_RSHIFT,0);
+	unsigned char nWindowsKey=MapVirtualKey(nScanCode,3);
+		
 	if( nWindowsKey=='\t' || nWindowsKey==' ' || 
 		(nWindowsKey>='A' && nWindowsKey<='Z') ||
 		(nWindowsKey>='0' && nWindowsKey<='9')){return nWindowsKey;}
 
-	switch(nWindowsKey)
+	if(nRShiftScanCode && nRShiftScanCode==nScanCode){return GK_RSHIFT;}
+	if(nWindowsKey==VK_LCONTROL && bExtended){return GK_RCONTROL;}
+	if(nWindowsKey==VK_LMENU && bExtended){return GK_RMENU;}
+
+	switch(nVirtualKey)
 	{
 		case VK_LBUTTON  :return GK_LBUTTON;
 		case VK_RBUTTON  :return GK_RBUTTON;
@@ -49,7 +58,6 @@ int TranslateKeyFromWindows(int nWindowsKey)
 		case VK_CLEAR    :return GK_CLEAR;
 		case VK_RETURN   :return GK_RETURN;
 		case VK_SHIFT    :return GK_LSHIFT;
-		case VK_CONTROL  :return GK_LCONTROL;
 		case VK_PAUSE    :return GK_PAUSE;
 		case VK_CAPITAL  :return GK_CAPITAL;
 		case VK_ESCAPE   :return GK_ESCAPE;
@@ -115,9 +123,10 @@ int TranslateKeyFromWindows(int nWindowsKey)
 		case VK_RSHIFT   :return GK_RSHIFT;
 		case VK_LCONTROL :return GK_LCONTROL;
 		case VK_RCONTROL :return GK_RCONTROL;
+		case VK_CONTROL  :return GK_LCONTROL;
 		case VK_LMENU    :return GK_LMENU;
 		case VK_RMENU    :return GK_RMENU;
-		case VK_MENU     :return GK_MENU;
+		case VK_MENU     :return GK_LMENU;
 	};
 	return 0;
 }
@@ -203,7 +212,7 @@ int TranslateKeyToWindows(int nGameKey)
 		case GK_RCONTROL :return VK_RCONTROL;
 		case GK_LMENU    :return VK_LMENU;
 		case GK_RMENU    :return VK_RMENU;
-		case GK_MENU     :return VK_MENU;
+		case GK_MENU     :return VK_LMENU;
 		case GK_ALTGR    :return VK_RMENU;
 	};
 	return 0;
@@ -613,11 +622,11 @@ LRESULT COpenGLViewport::ProcessMessage(HWND hWnd,UINT  uMsg, WPARAM  wParam,LPA
 		break;
 	case WM_KEYDOWN:
 	case WM_SYSKEYDOWN:
-		OnKeyDown(TranslateKeyFromWindows((unsigned short)wParam));
+		OnKeyDown(TranslateKeyFromWindows(wParam,lParam));
 		break;
 	case WM_KEYUP:
 	case WM_SYSKEYUP:
-		OnKeyUp(TranslateKeyFromWindows((unsigned short)wParam));
+		OnKeyUp(TranslateKeyFromWindows(wParam,lParam));
 		break;
 	case WM_MOUSEWHEEL:
 		if(GET_WHEEL_DELTA_WPARAM(wParam)>0)
