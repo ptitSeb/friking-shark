@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Friking Shark 3D
-AppVerName=Friking Shark 3D v0.91
+AppVerName=Friking Shark 3D v0.93
 AppPublisher=Javier Martin Garcia
 AppPublisherURL=http://kyanaprime.blogspot.com/
 AppSupportURL=http://kyanaprime.blogspot.com/
@@ -43,7 +43,8 @@ Source: ..\Resources\Textures\*.png; DestDir: {app}\Resources\Textures; Flags: i
 Source: ..\Resources\Models\*.gcm; DestDir: {app}\Resources\Models; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: ..\Resources\Models\*.gbs; DestDir: {app}\Resources\Models; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: ..\Resources\Level*.ges; DestDir: {app}\Resources; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: .\Redistributables\Windows\alut.dll; DestDir: {app}\Bin\Release; Flags: ignoreversion recursesubdirs createallsubdirs; 
+Source: ..\Resources\Background*.ges; DestDir: {app}\Resources; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: .\Redistributables\Windows\alut.dll; DestDir: {app}\Bin\Release; Flags: ignoreversion recursesubdirs createallsubdirs;
 Source: .\Redistributables\Windows\oalinst.exe; DestDir: {app}\Redistributables; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: .\Redistributables\Windows\msvcp90.dll; DestDir: {sys}; Flags: comparetimestamp onlyifdoesntexist 32bit
 Source: .\Redistributables\Windows\msvcr90.dll; DestDir: {sys}; Flags: comparetimestamp onlyifdoesntexist 32bit
