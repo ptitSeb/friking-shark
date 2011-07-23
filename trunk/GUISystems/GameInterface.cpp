@@ -444,10 +444,10 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 
 	m_FrameManagerWrapper.m_piFrameManager->ProcessFrame();
 	ProcessInput();
-	m_PlayerManagerWrapper.m_piPlayerManager->ProcessInput(m_piGUIManager,m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime(),m_FrameManagerWrapper.m_piFrameManager->GetTimeFraction());
-
+	
 	if(!m_FrameManagerWrapper.m_piFrameManager->IsPaused())
 	{
+		m_PlayerManagerWrapper.m_piPlayerManager->ProcessInput(m_piGUIManager,m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime(),m_FrameManagerWrapper.m_piFrameManager->GetTimeFraction());
 		m_GameControllerWrapper.m_piGameController->ProcessFrame(m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime(),m_FrameManagerWrapper.m_piFrameManager->GetTimeFraction());
 	}
 	
@@ -712,8 +712,6 @@ void CGameInterface::UpdateGUI(unsigned int dwCurrentTime)
 {
 	
 	char sTempText[512]={0};
-	
-	int nLivesLeft=0;
 	int nBombsLeft=0;
 
 	IEntity	*piPlayerEntity=NULL;
