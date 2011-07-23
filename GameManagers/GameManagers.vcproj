@@ -207,11 +207,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MusicManager.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\PhysicsManager.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\PlayAreaManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PlayerManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PlayerProfile.cpp"
 				>
 			</File>
 			<File
@@ -269,11 +281,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MusicManager.h"
+				>
+			</File>
+			<File
 				RelativePath=".\PhysicsManager.h"
 				>
 			</File>
 			<File
 				RelativePath=".\PlayAreaManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PlayerManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PlayerProfile.h"
 				>
 			</File>
 			<File
