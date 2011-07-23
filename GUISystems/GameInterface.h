@@ -90,9 +90,10 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	unsigned int		m_dwMovementType;
 	
 	bool m_bGameStarted;
+	bool m_bGameSystemInitialized;
 	CVector m_vLastCheckPointPosition;
 	bool m_bShowPerformanceIndicators;
-	
+
 	void SearchDemoCheckpoints(IPlayAreaElement *piElement,bool *pbStopEnumerating);
 	void SearchLastCheckpoint(IPlayAreaElement *piElement,bool *pbStopEnumerating);
 	
@@ -143,6 +144,7 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	
 	void RenderCourtain(IGenericRender *piRender);
 
+	void InitializeGameSystem();
 	void StartDemo();
 	void StartGame(IPlayerProfile *piProfile,EGameMode eMode,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel);
 	void StopGame();
@@ -165,7 +167,8 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 
 	void Freeze(bool bFreeze);
 	bool IsFrozen();
-	
+	bool IsPaused();
+
 	void SetHighScore(unsigned int nScore);
 	unsigned int GetScore();
 	
