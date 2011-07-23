@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=199.907946
 			NearPlane=130.000000
-			Posicion=773.906149,198.441526,5.404555
+			Posicion=325.357524,198.441526,4.995723
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -726,7 +726,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=161.984990,-35.682384,17.703819
+				Posicion=160.537470,-31.505689,17.703819
 				RouteDelay=0
 				Ruta
 				{
@@ -737,7 +737,7 @@ AreaDeJuego
 						{
 							Absoluto=1
 							Pause=0
-							Posicion=-36.036814,17.703819,35.682384
+							Posicion=-33.913222,17.703819,31.505689
 							SpeedFactor=1.000000
 						}
 					}
@@ -762,7 +762,7 @@ AreaDeJuego
 				Count=1
 				Delay=0
 				Interval=0
-				Posicion=176.956595,-51.813932,17.703819
+				Posicion=174.049225,-61.742278,17.703819
 				RouteDelay=0
 				Ruta
 				{
@@ -773,7 +773,7 @@ AreaDeJuego
 						{
 							Absoluto=1
 							Pause=0
-							Posicion=35.002053,17.703819,51.813932
+							Posicion=36.560505,17.703819,61.742278
 							SpeedFactor=1.000000
 						}
 					}
