@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGUI;..\GameGUILib;..\GameGraphics;..\PlayAreaElements"
+				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGUI;..\GameGUILib;..\GameGraphics;..\PlayAreaElements;..\SoundSystems"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;GUISystems_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -124,7 +124,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="..\GameRunTimeLib;..\GameRunTime;..\VectorLib;..\GameManagers;..\GameGUI;..\GameGUILib;..\GameGraphics;..\PlayAreaElements"
+				AdditionalIncludeDirectories="..\GameRunTimeLib;..\GameRunTime;..\VectorLib;..\GameManagers;..\GameGUI;..\GameGUILib;..\GameGraphics;..\PlayAreaElements;..\SoundSystems"
 				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;_USRDLL;GUISystems_EXPORTS"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="true"
@@ -194,6 +194,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ControlsDialog.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CreditsDialog.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\GameInterface.cpp"
 				>
 			</File>
@@ -202,7 +210,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GameOverDialog.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\GUISystems.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\HighScoresDialog.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\HighScoresTable.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\KeyCaptureDialog.cpp"
 				>
 			</File>
 			<File
@@ -237,10 +261,6 @@
 					/>
 				</FileConfiguration>
 			</File>
-			<File
-				RelativePath=".\TimeOutDialog.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -252,6 +272,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ControlsDialog.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CreditsDialog.h"
+				>
+			</File>
+			<File
 				RelativePath=".\GameInterface.h"
 				>
 			</File>
@@ -260,11 +288,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GameOverDialog.h"
+				>
+			</File>
+			<File
 				RelativePath=".\GUIDefs.h"
 				>
 			</File>
 			<File
 				RelativePath=".\GUISystems.h"
+				>
+			</File>
+			<File
+				RelativePath=".\HighScoresDialog.h"
+				>
+			</File>
+			<File
+				RelativePath=".\HighScoresTable.h"
+				>
+			</File>
+			<File
+				RelativePath=".\KeyCaptureDialog.h"
 				>
 			</File>
 			<File
@@ -285,10 +329,6 @@
 			</File>
 			<File
 				RelativePath=".\stdafx.h"
-				>
-			</File>
-			<File
-				RelativePath=".\TimeOutDialog.h"
 				>
 			</File>
 		</Filter>

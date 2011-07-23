@@ -50,7 +50,6 @@ int TranslateKeyFromWindows(int nWindowsKey)
 		case VK_RETURN   :return GK_RETURN;
 		case VK_SHIFT    :return GK_LSHIFT;
 		case VK_CONTROL  :return GK_LCONTROL;
-		case VK_MENU     :return GK_LMENU;
 		case VK_PAUSE    :return GK_PAUSE;
 		case VK_CAPITAL  :return GK_CAPITAL;
 		case VK_ESCAPE   :return GK_ESCAPE;
