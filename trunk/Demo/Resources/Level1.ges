@@ -1223,7 +1223,7 @@ AreaDeJuego
 			Class=CPlayAreaEntity
 			Data
 			{
-				Angulos=0.000000,0.000000,0.000000
+				Angulos=90.000000,0.000000,0.000000
 				Bonus
 				BonusOnChild=-1
 				Count=1
