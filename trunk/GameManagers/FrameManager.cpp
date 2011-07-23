@@ -54,6 +54,9 @@ void CFrameManager::Reset()
 
 bool CFrameManager::IsPaused()
 {
+	if(m_bTogglePauseOnNextFrame){return !m_bPaused;}
+	if(m_bSetPauseOnNextFrame){return true;}
+	if(m_bContinueOnNextFrame){return false;}
 	return m_bPaused;
 }
 
