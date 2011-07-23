@@ -31,7 +31,7 @@ CPlayAreaEntity::CPlayAreaEntity()
 	m_nLastEntityTime=0;
 	m_nCreatedEntities=0;
 	m_nKilledEntities=0;
-	m_nBonusOnChild=0;
+	m_nBonusOnChild=-1;
 	m_bFirstFrame=true;
 	m_bDoNotActivate=false;
 	m_bDynamic=false;
