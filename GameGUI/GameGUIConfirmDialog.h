@@ -37,7 +37,7 @@ class CGameGUIConfirmDialog: public CGameDialogBase, virtual public IGameGUIConf
 protected:
 
 	BEGIN_CHILD_MAP()
-		CHILD_MAP_ENTRY("Title",m_piSTTitle);
+		CHILD_MAP_ENTRY_FLAGS("Title",m_piSTTitle,CMEF_OPTIONAL);
 		CHILD_MAP_ENTRY("Text",m_piSTText);
 		CHILD_MAP_ENTRY_EX("Yes",m_piBTYes,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("No",m_piBTNo,IGameGUIButtonEvents);
