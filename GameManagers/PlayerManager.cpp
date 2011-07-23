@@ -422,6 +422,11 @@ void CPlayerManager::SetupPlayerStart(CVector vPosition)
 			m_PlayAreaManagerWrapper.m_piPlayAreaManager->StartMovingCamera();
 		}
 	}
+	else
+	{
+		m_eGameStage=ePlayerManagerGameStage_Moving;
+		m_PlayAreaManagerWrapper.m_piPlayAreaManager->StartMovingCamera();
+	}
 }
 
 void CPlayerManager::SetPlayerStart(CVector vPosition)
