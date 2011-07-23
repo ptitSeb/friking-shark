@@ -26,9 +26,10 @@ enum EGameInterfaceState
 	eGameInterfaceState_Idle,
 	eGameInterfaceState_StartCourtain,
 	eGameInterfaceState_Playing,
-	eGameInterfaceState_CountintWait,
+	eGameInterfaceState_CountingWait,
 	eGameInterfaceState_CountingBombs,
 	eGameInterfaceState_CountingPoints,
+	eGameInterfaceState_KilledCourtain,
 	eGameInterfaceState_EndWait,
 	eGameInterfaceState_EndCourtain,
 	eGameInterfaceState_StopManuallyWithCourtain,
@@ -45,6 +46,10 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	EGameDifficulty			 m_eGameDifficulty;
 	unsigned int             m_nEndBombs;
 	unsigned int             m_nEndPoints;
+	unsigned int             m_nPoints;
+	unsigned int			 m_nHighScore;
+	unsigned int			 m_nWeapon;
+	unsigned int             m_nLivesLeft;
 	unsigned int             m_nLastCountTime;
 	
 	CGameControllerWrapper   m_GameControllerWrapper;
@@ -83,9 +88,6 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	unsigned int		m_dwNextAcceptedControlKeyTime;
 	unsigned int		m_dwNextAcceptedPauseKeyTime;
 	unsigned int		m_dwMovementType;
-	
-	unsigned int m_nHighScore;
-	unsigned int m_nScore;
 	
 	bool m_bGameStarted;
 	CVector m_vLastCheckPointPosition;
