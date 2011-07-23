@@ -122,7 +122,7 @@ public:
 		PROP_VALUE(m_dLevelDifficultyWeight,"LevelDifficultyWeight",0.05);
 		PROP_VALUE(m_dPlayerDifficultyWeight,"PlayerDifficultyWeight",0.05);
 		BEGIN_PROP_SUBMAP("ScenarioProps")
-			PROP(m_PlayerEntityType,"EntityType");
+			PROP_FLAGS(m_PlayerEntityType,"EntityType",MRPF_NORMAL|MRPF_OPTIONAL);
 			PROP_FLAGS(m_PlayerTakeOffRoute,"TakeOffRoute",MRPF_NORMAL|MRPF_OPTIONAL);
 			PROP_FLAGS(m_PlayerLandingRoute,"LandingRoute",MRPF_NORMAL|MRPF_OPTIONAL);
 			PROP_VALUE_FLAGS(m_bPlayerLandingEnabled,"LandingEnabled",false,MRPF_NORMAL|MRPF_OPTIONAL);
