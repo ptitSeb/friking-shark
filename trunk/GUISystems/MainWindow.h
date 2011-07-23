@@ -32,7 +32,12 @@ enum eInterfaceStage
 	eInterfaceStage_MainMenu,
 	eInterfaceStage_Playing,
 	eInterfaceStage_LaunchNextLevel,
-	eInterfaceStage_HighScores
+	eInterfaceStage_HighScores,
+	eInterfaceStage_WaitingForDemoEndCourtain,
+	eInterfaceStage_WaitingForDemoEndCourtainLoading,
+	eInterfaceStage_WaitingForManualGameEndCourtain,
+	eInterfaceStage_WaitingForExitCourtain,
+	eInterfaceStage_Exit
 };
 
 class CMainWindow: virtual public CGameWindowBase,virtual public IGameInterfaceWindowEvents
@@ -86,6 +91,7 @@ public:
 	
 	void	OnScenarioFinished(eScenarioFinishedReason eReason,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel);
 	void	OnGameOverCourtainClosed();
+	void    OnManualStopCourtainClosed();
 	
 	CMainWindow(void);
 	~CMainWindow(void);

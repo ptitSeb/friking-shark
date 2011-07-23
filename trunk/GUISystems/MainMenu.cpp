@@ -29,6 +29,15 @@ CMainMenu::~CMainMenu(void)
 {
 }
 
+void CMainMenu::OnKeyDown(int nKey,bool *pbProcessed)
+{
+	if(nKey==GK_ESCAPE)
+	{
+		*pbProcessed=true;
+		return;
+	}
+}
+
 void CMainMenu::OnButtonClicked(IGameGUIButton *piControl)
 {
 	if(piControl==m_piBTNewGame)

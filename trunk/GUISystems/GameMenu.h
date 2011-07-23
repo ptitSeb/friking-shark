@@ -22,10 +22,12 @@ class CGameMenu: virtual public CGameDialogBase,public IGameGUIButtonEvents
 {
 	IGameGUIButton *m_piBTContinue;
 	IGameGUIButton *m_piBTEndGame;
-
+	IGameGUIButton *m_piBTControls;
+	
 	BEGIN_CHILD_MAP()
 		CHILD_MAP_ENTRY_EX("Continue",m_piBTContinue,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("EndGame",m_piBTEndGame,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("Controls",m_piBTControls,IGameGUIButtonEvents);
 	END_CHILD_MAP()
 
 public:
