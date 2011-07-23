@@ -39,7 +39,9 @@ CGameInterface::CGameInterface(void)
 	m_bResumeAfterFreeze=false;
 	m_bShowPerformanceIndicators=false;
 	m_bPlayerKilledOnPreviousFrame=false;
-
+	m_nDemoCheckpointsFound=0;
+	m_bDemoMode=true;
+	
 	m_piSTFrameRate=NULL;
 	m_piSTGameTime=NULL;
 	m_piSTObjectCount=NULL;
@@ -67,6 +69,19 @@ bool CGameInterface::InitWindow(IGameWindow *piParent,bool bPopup)
 	if(m_piSTFrameRate){m_piSTFrameRate->Show(m_bShowPerformanceIndicators);}
 	if(m_piSTObjectCount){m_piSTObjectCount->Show(m_bShowPerformanceIndicators);}
 	if(m_piSTEntityCount){m_piSTEntityCount->Show(m_bShowPerformanceIndicators);}
+	
+	CSystemLoaderHelper     systemLoader;
+	m_piGameSystem=systemLoader.LoadSystem("Scripts/GameSystem.cfg","GameSystem");
+	
+	m_GameControllerWrapper.Attach("GameSystem","GameController");
+	m_GameControllerWrapper.m_piGameController->SetupGame();
+	
+	m_FrameManagerWrapper.Attach("GameSystem","FrameManager");
+	m_PlayerManagerWrapper.Attach("GameSystem","PlayerManager");
+	m_PlayAreaManagerWrapper.Attach("GameSystem","PlayAreaManager");
+	m_EntityManagerWrapper.Attach("GameSystem","EntityManager");
+	m_WorldManagerWrapper.Attach("GameSystem","WorldManager");
+	
 	return bResult;
 }
 
@@ -74,33 +89,43 @@ void CGameInterface::DestroyWindow()
 {
 	StopGame();
 	CloseScenario();	
+	
+	if(m_GameControllerWrapper.m_piGameController)
+	{
+		m_GameControllerWrapper.m_piGameController->Stop();
+		m_GameControllerWrapper.m_piGameController->CloseScenario();
+		m_GameControllerWrapper.m_piGameController->EndGame();
+	}
+	
+	m_FrameManagerWrapper.Detach();
+	m_EntityManagerWrapper.Detach();
+	m_PlayerManagerWrapper.Detach();
+	m_PlayAreaManagerWrapper.Detach();
+	m_GameControllerWrapper.Detach();
+	m_WorldManagerWrapper.Detach();
+	m_PlayerProfile.Detach();
+	
+	if(m_piGameSystem){m_piGameSystem->DestroyAllObjects();}
+	if(m_piGameSystem){m_piGameSystem->Destroy();}
+	
+	REL(m_piGameSystem);
+	REL(m_piSystemManager);
+	
 	CGameWindowBase::DestroyWindow();
 }
 
 bool CGameInterface::LoadScenario(std::string sScenario)
 {
 	bool bResult=true;
-
-	CSystemLoaderHelper     systemLoader;
-	m_piGameSystem=systemLoader.LoadSystem("Scripts/GameSystem.cfg","GameSystem");
-
-	m_GameControllerWrapper.Attach("GameSystem","GameController");
-	m_GameControllerWrapper.m_piGameController->SetupGame();
 	m_GameControllerWrapper.m_piGameController->LoadScenario(sScenario);
-
-	m_FrameManagerWrapper.Attach("GameSystem","FrameManager");
-	m_PlayerManagerWrapper.Attach("GameSystem","PlayerManager");
-	m_PlayAreaManagerWrapper.Attach("GameSystem","PlayAreaManager");
-	m_EntityManagerWrapper.Attach("GameSystem","EntityManager");
-	m_WorldManagerWrapper.Attach("GameSystem","WorldManager");
 	m_bCompleted=false;
 	return bResult;
 }
 
 void CGameInterface::StartGameInternal(EGameMode eMode,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel, bool bGoToLastCheckPoint)
 {
-	if(m_bGameStarted){return;}
-	if(m_bGameStarted){return;}
+	if(m_bGameStarted){StopGame();}
+	
 	m_eGameMode=eMode;
 	m_FrameManagerWrapper.m_piFrameManager->Reset();
 	m_bPlayerKilledOnPreviousFrame=false;
@@ -109,15 +134,28 @@ void CGameInterface::StartGameInternal(EGameMode eMode,unsigned int nPoints, uns
 	m_PlayerManagerWrapper.m_piPlayerManager->SetPlayerProfile(m_PlayerProfile.m_piPlayerProfile);
 	m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
 	
-	if(bGoToLastCheckPoint)
+	if(m_bDemoMode)
 	{
-		m_PlayerManagerWrapper.m_piPlayerManager->SetPlayerStart(m_vLastCheckPointPosition);
+		if(m_PlayAreaManagerWrapper.m_piPlayAreaManager)
+		{
+			m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&m_vDemoStartPosition,&m_vDemoEndPosition);
+			m_PlayAreaManagerWrapper.m_piPlayAreaManager->EnumeratePlayAreaElements(this);
+		}
+		
+		m_PlayerManagerWrapper.m_piPlayerManager->SetPlayerStart(m_vDemoStartPosition);
 	}
 	else
 	{
-		CVector vStart,vEnd;
-		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
-		m_PlayerManagerWrapper.m_piPlayerManager->SetPlayerStart(vStart);
+		if(bGoToLastCheckPoint)
+		{
+			m_PlayerManagerWrapper.m_piPlayerManager->SetPlayerStart(m_vLastCheckPointPosition);
+		}
+		else
+		{
+			CVector vStart,vEnd;
+			m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
+			m_PlayerManagerWrapper.m_piPlayerManager->SetPlayerStart(vStart);
+		}
 	}
 	m_GameControllerWrapper.m_piGameController->Start();
 	m_piPlayerEntity=m_EntityManagerWrapper.m_piEntityManager->FindEntity("Player");
@@ -138,17 +176,28 @@ void CGameInterface::StartGameInternal(EGameMode eMode,unsigned int nPoints, uns
 	
 	m_bGameStarted=true;
 	m_eState=eGameInterfaceState_StartCourtain;
-	unsigned int nCurrentTime=m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime();
-	OpenCourtain(nCurrentTime);
-	m_nLastCountTime=nCurrentTime;
+	OpenCourtain();
+	m_nLastCountTime=m_FrameManagerWrapper.m_piFrameManager?m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime():0;
 	
-	if(m_piSTUpperIndicatorRow0){m_piSTUpperIndicatorRow0->Show(true);}
-	if(m_piSTUpperIndicatorRow1){m_piSTUpperIndicatorRow1->Show(true);}
-	if(m_piSTUpperIndicatorRow2){m_piSTUpperIndicatorRow2->Show(true);}
+	if(m_piSTUpperIndicatorRow0){m_piSTUpperIndicatorRow0->Show(!m_bDemoMode);}
+	if(m_piSTUpperIndicatorRow1){m_piSTUpperIndicatorRow1->Show(!m_bDemoMode);}
+	if(m_piSTUpperIndicatorRow2){m_piSTUpperIndicatorRow2->Show(!m_bDemoMode);}
+}
+
+void CGameInterface::StartDemo()
+{
+	m_nDemoCheckpointsFound=0;
+	m_bDemoMode=true;
+	
+	m_PlayerProfile.Detach();
+	StartGameInternal(eGameMode_God,0,3,0,true);
 }
 
 void CGameInterface::StartGame(IPlayerProfile *piProfile,EGameMode eMode,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel)
 {
+	m_nDemoCheckpointsFound=0;
+	m_bDemoMode=false;
+	
 	m_PlayerProfile.Attach(piProfile);
 	StartGameInternal(eMode,nPoints,nLivesLeft,nWeaponLevel,false);
 }
@@ -166,6 +215,12 @@ void CGameInterface::StopGame()
 	m_bGameStarted=false;
 	m_bPlayerKilledOnPreviousFrame=false;
 	m_eState=eGameInterfaceState_Idle;
+}
+
+void CGameInterface::StopManuallyWithCourtain()
+{
+	m_eState=eGameInterfaceState_StopManuallyWithCourtain;
+	CloseCourtain();
 }
 
 void CGameInterface::ResetGame(bool bGoToLastCheckPoint)
@@ -192,6 +247,18 @@ void CGameInterface::ResetGame(bool bGoToLastCheckPoint)
 
 void CGameInterface::ProcessEnumeratedPlayAreaElement(IPlayAreaElement *piElement,bool *pbStopEnumerating)
 {
+	if(m_bDemoMode)
+	{
+		SearchDemoCheckpoints(piElement,pbStopEnumerating);
+	}
+	else
+	{
+		SearchLastCheckpoint(piElement,pbStopEnumerating);
+	}
+}
+
+void CGameInterface::SearchLastCheckpoint(IPlayAreaElement *piElement,bool *pbStopEnumerating)
+{
 	IPlayAreaCheckPoint *piCheckPoint=QI(IPlayAreaCheckPoint,piElement);
 	if(piCheckPoint)
 	{
@@ -208,34 +275,46 @@ void CGameInterface::ProcessEnumeratedPlayAreaElement(IPlayAreaElement *piElemen
 	REL(piCheckPoint);
 }
 
+
+void CGameInterface::SearchDemoCheckpoints(IPlayAreaElement *piElement,bool *pbStopEnumerating)
+{
+	IPlayAreaCheckPoint *piCheckPoint=QI(IPlayAreaCheckPoint,piElement);
+	if(piCheckPoint)
+	{
+		CVector vStart,vEnd,vCheckPoint;
+		CVector vPos=m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayMovementPosition();
+		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
+		vCheckPoint=piCheckPoint->GetCheckPointPosition();
+		
+		if(m_nDemoCheckpointsFound==0)
+		{
+			m_nDemoCheckpointsFound++;
+			m_vDemoStartPosition=vCheckPoint;
+		}
+		else if(m_nDemoCheckpointsFound==1)
+		{
+			m_nDemoCheckpointsFound++;
+			m_vDemoEndPosition=vCheckPoint;
+			*pbStopEnumerating=true;
+		}
+	}
+	REL(piCheckPoint);
+}
+
 void CGameInterface::CloseScenario()
 {
 	if(m_GameControllerWrapper.m_piGameController)
 	{
 		m_GameControllerWrapper.m_piGameController->Stop();
 		m_GameControllerWrapper.m_piGameController->CloseScenario();
-		m_GameControllerWrapper.m_piGameController->EndGame();
 	}
-
-	m_FrameManagerWrapper.Detach();
-	m_EntityManagerWrapper.Detach();
-	m_PlayerManagerWrapper.Detach();
-	m_PlayAreaManagerWrapper.Detach();
-	m_GameControllerWrapper.Detach();
-	m_WorldManagerWrapper.Detach();
-	m_PlayerProfile.Detach();
-	
-	if(m_piGameSystem){m_piGameSystem->DestroyAllObjects();}
-	if(m_piGameSystem){m_piGameSystem->Destroy();}
-	
-	REL(m_piGameSystem);
-	REL(m_piSystemManager);
 	m_bCompleted=false;
 }
 
-void CGameInterface::RenderCourtain(IGenericRender *piRender,unsigned int dwCurrentTime)
+void CGameInterface::RenderCourtain(IGenericRender *piRender)
 {
 	double dCourtainPosition=0;
+	unsigned int dwCurrentTime=GetTimeStamp();
 	
 	if(m_bCourtainOpen){return;}
 	if(m_bCourtainClosing)
@@ -290,10 +369,18 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 			return;
 		}
 	}
+	if(m_eState==eGameInterfaceState_StopManuallyWithCourtain)
+	{
+		if(!m_bCourtainClosing)
+		{
+			m_eState=eGameInterfaceState_Idle;
+			m_bCompleted=true;
+			NOTIFY_EVENT(IGameInterfaceWindowEvents,OnManualStopCourtainClosed());
+			return;
+		}
+	}
 	
-	if(!m_piPlayerEntity){return;}
-	
-	if(m_bPlayerKilledOnPreviousFrame && m_eState!=eGameInterfaceState_GameOverCourtain)
+	if(m_piPlayerEntity && m_bPlayerKilledOnPreviousFrame && m_eState!=eGameInterfaceState_GameOverCourtain)
 	{
 		if(m_piPlayer->GetLivesLeft()==0)
 		{
@@ -303,8 +390,7 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 			m_bPlayerKilledOnPreviousFrame=false;
 			NOTIFY_EVENT(IGameInterfaceWindowEvents,OnScenarioFinished(eScenarioFinishedReason_GameOver,m_piPlayer->GetPoints(),0,0));
 			m_eState=eGameInterfaceState_GameOverCourtain;
-			dwCurrentTime=m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime();
-			CloseCourtain(dwCurrentTime);
+			CloseCourtain();
 		}
 		else
 		{
@@ -326,7 +412,7 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 			}
 			else if(!m_bCourtainClosing)
 			{
-				CloseCourtain(dwCurrentTime);
+				CloseCourtain();
 			}
 		}		
 	}	
@@ -351,12 +437,23 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 	
 	if(m_eState==eGameInterfaceState_Playing && m_PlayerManagerWrapper.m_piPlayerManager)
 	{
-		if(m_PlayerManagerWrapper.m_piPlayerManager->IsScenarioCompleted())
+		if(!m_bDemoMode)
 		{
-			m_eState=eGameInterfaceState_CountintWait;
-			m_nEndBombs=0;
-			m_nEndPoints=0;
-			m_nLastCountTime=dwCurrentTime;
+			if(m_PlayerManagerWrapper.m_piPlayerManager->IsScenarioCompleted())
+			{
+				m_eState=eGameInterfaceState_CountintWait;
+				m_nEndBombs=0;
+				m_nEndPoints=0;
+				m_nLastCountTime=dwCurrentTime;
+			}
+		}
+		else
+		{
+			CVector vPos=m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayMovementPosition();
+			if(vPos.c[0]>m_vDemoEndPosition.c[0])
+			{
+				m_PlayAreaManagerWrapper.m_piPlayAreaManager->SetPlayMovementPosition(m_vDemoStartPosition);
+			}
 		}
 	}
 	
@@ -412,7 +509,7 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 		{
 			m_eState=eGameInterfaceState_EndCourtain;
 			m_nLastCountTime=dwCurrentTime;
-			CloseCourtain(dwCurrentTime);
+			CloseCourtain();
 		}
 	}
 	
@@ -491,7 +588,7 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 		REL(piCamera);
 	}
 
-	RenderCourtain(piRender,dwCurrentTime);
+	RenderCourtain(piRender);
 	
 	UpdateGUI(dwCurrentTime);
 }
@@ -500,6 +597,10 @@ void CGameInterface::ProcessInput()
 {
 	bool bControlKeyPressed=false;
 	if(m_bFrozen)
+	{
+		return;
+	}
+	if(m_bDemoMode)
 	{
 		return;
 	}
@@ -673,20 +774,20 @@ void CGameInterface::UpdateGUI(unsigned int dwCurrentTime)
 void CGameInterface::SetHighScore(unsigned int nScore){m_nHighScore=nScore;}
 unsigned int CGameInterface::GetScore(){return m_nScore;}
 
-void CGameInterface::OpenCourtain(unsigned int nCurrentTime)
+void CGameInterface::OpenCourtain()
 {
 	m_bCourtainOpen=false;
 	m_bCourtainClosed=false;
 	m_bCourtainOpening=true;
 	m_bCourtainClosing=false;
-	m_nCourtainStartTime=nCurrentTime;
+	m_nCourtainStartTime=GetTimeStamp();
 }
 
-void CGameInterface::CloseCourtain(unsigned int nCurrentTime)
+void CGameInterface::CloseCourtain()
 {
 	m_bCourtainOpen=false;
 	m_bCourtainClosed=false;
 	m_bCourtainOpening=false;
 	m_bCourtainClosing=true;
-	m_nCourtainStartTime=nCurrentTime;
+	m_nCourtainStartTime=GetTimeStamp();
 }

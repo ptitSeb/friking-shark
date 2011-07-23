@@ -30,6 +30,7 @@ enum eGameMenuAction
 {
 	eGameMenuAction_UNKNOWN,
 	eGameMenuAction_Continue=0x1000,
+	eGameMenuAction_Controls,
 	eGameMenuAction_EndGame
 };
 

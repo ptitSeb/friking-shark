@@ -34,6 +34,8 @@ class CMainMenu: virtual public CGameDialogBase,public IGameGUIButtonEvents
 		CHILD_MAP_ENTRY_EX("Exit",m_piBTExit,IGameGUIButtonEvents);
 	END_CHILD_MAP()
 
+	void OnKeyDown(int nKey,bool *pbProcessed);
+	
 public:
 	void OnInitDialog();
 

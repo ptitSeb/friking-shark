@@ -88,10 +88,11 @@ bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 			}
 		}
 
-		if(bResult)
+		if(m_piSTBackground){m_piSTBackground->Show(true);}
+		if(m_piGameInterface)
 		{
-			m_piGameInterface->Show(false);
-			m_piSTBackground->Show(true);
+			m_piGameInterface->LoadScenario("./Background.ges");
+			m_piGameInterface->StartDemo();
 		}
 		
 		m_piGUIManager->SetFocus(this);
@@ -130,16 +131,33 @@ void CMainWindow::OnDraw(IGenericRender *piRender)
 		OnKeyDown(GK_ESCAPE,&bProcessed);
 	}
 	
-	if(m_eStage==eInterfaceStage_LaunchNextLevel)
-	{		
+	if(m_eStage==eInterfaceStage_WaitingForDemoEndCourtain)
+	{
+		m_piSTBackground->SetText("");
+		
+		char sFile[200];
+		sprintf(sFile,"Level%d.ges",m_nCurrentLevel+1);
+		
+		SHighScoreRow sHighScore;
+		if(m_HighScoresTable.m_piHighScoresTable){sHighScore=m_HighScoresTable.m_piHighScoresTable->GetRow(0);}
+		m_eStage=eInterfaceStage_Playing;
+		m_piGUIManager->ShowMouseCursor(false);
+		m_piSTBackground->Show(false);
+		m_piGameInterface->SetHighScore(sHighScore.nScore);
+		
+		m_piGameInterface->LoadScenario(sFile);
+		m_piGameInterface->StartGame(m_PlayerProfile.m_piPlayerProfile,m_eGameMode,m_nPoints,m_nLivesLeft,m_nWeaponLevel);
+	}
+	else if(m_eStage==eInterfaceStage_LaunchNextLevel)
+	{
 		char sFile[200];
 		sprintf(sFile,"Level%d.ges",m_nCurrentLevel+1);
 		m_eStage=eInterfaceStage_Playing;
 		m_piGUIManager->ShowMouseCursor(false);
+		m_piSTBackground->SetText("");
 		m_piSTBackground->Show(false);
 		m_piGameInterface->LoadScenario(sFile);
 		m_piGameInterface->StartGame(m_PlayerProfile.m_piPlayerProfile,m_eGameMode,m_nPoints,m_nLivesLeft,m_nWeaponLevel);
-		m_piGameInterface->Show(true);
 	}
 }
 
@@ -153,7 +171,8 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 			int result=m_MainMenuDialog.m_piDialog->Execute(this);
 			if(result==eMainMenuAction_Exit)
 			{
-				m_piGUIManager->ExitGUILoop();
+				m_eStage=eInterfaceStage_WaitingForExitCourtain;
+				m_piGameInterface->StopManuallyWithCourtain();
 			}
 			else if(result==eMainMenuAction_HighScores)
 			{
@@ -180,9 +199,7 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 				}
 				if(m_LevelOptionsDialog.m_piLevelOptions->SelectOptions(this,&m_eGameMode,&eDifficulty,&m_nCurrentLevel))
 				{
-					char sFile[200];
-					sprintf(sFile,"Level%d.ges",m_nCurrentLevel+1);
-					
+				
 					m_nWeaponLevel=0;
 					m_nPoints=0;
 					m_nLivesLeft=3;
@@ -200,39 +217,46 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 						}
 						m_PlayerProfile.m_piPlayerProfile->SetDifficulty(dDifficulty);
 					}
-					
-					SHighScoreRow sHighScore;
-					if(m_HighScoresTable.m_piHighScoresTable){sHighScore=m_HighScoresTable.m_piHighScoresTable->GetRow(0);}
-					
-					m_eStage=eInterfaceStage_Playing;
-					m_piGUIManager->ShowMouseCursor(false);
-					m_piSTBackground->Show(false);
-					m_piGameInterface->SetHighScore(sHighScore.nScore);
-					m_piGameInterface->LoadScenario(sFile);
-					m_piGameInterface->StartGame(m_PlayerProfile.m_piPlayerProfile,m_eGameMode,m_nPoints,m_nLivesLeft,m_nWeaponLevel);
-					m_piGameInterface->Show(true);
+					m_piGameInterface->StopManuallyWithCourtain();
+					m_eStage=eInterfaceStage_WaitingForDemoEndCourtainLoading;
 				}
 			}
 			m_piGUIManager->SetFocus(this);
 		}
 		else if(m_eStage==eInterfaceStage_Playing)
 		{
+			m_piSTBackground->Show(true);
 			m_piGUIManager->ShowMouseCursor(true);
 			m_piGameInterface->Freeze(true);
-			int result=m_GameMenuDialog.m_piDialog->Execute(this);
-			m_piGameInterface->Freeze(false);
-			if(result==eGameMenuAction_EndGame)
-			{
-				m_piGameInterface->StopGame();
-				m_piGameInterface->CloseScenario();
-				m_piGameInterface->Show(false);
-				m_piSTBackground->Show(true);
-				m_eStage=eInterfaceStage_MainMenu;
+			int result=eGameMenuAction_Continue;
+			
+			do
+			{			
+				result=m_GameMenuDialog.m_piDialog->Execute(this);
+				
+				if(result==eGameMenuAction_EndGame)
+				{
+					if(ConfirmDialog("End current game?","Friking shark",eMessageDialogType_Warning))
+					{
+						m_eStage=eInterfaceStage_WaitingForManualGameEndCourtain;
+						m_piGameInterface->StopManuallyWithCourtain();
+						break;
+					}
+				}
+				else if(result==eGameMenuAction_Controls)
+				{
+					m_ControlsDialog.m_piControlsDialog->SelectControls(this,m_PlayerProfile.m_piPlayerProfile);
+				}
+				else 
+				{
+					m_piGameInterface->Freeze(false);
+					m_piSTBackground->Show(false);
+					m_piGUIManager->ShowMouseCursor(false);
+					break;
+				}
 			}
-			else
-			{
-				m_piGUIManager->ShowMouseCursor(false);
-			}
+			while(true);
+			
 			m_piGUIManager->SetFocus(this);
 		}
 	}
@@ -241,10 +265,11 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 void CMainWindow::OnGameOverCourtainClosed()
 {
 	m_eStage=eInterfaceStage_MainMenu;
-	m_piGameInterface->Show(false);
-	m_piSTBackground->Show(true);
 	m_piGameInterface->StopGame();
 	m_piGameInterface->CloseScenario();
+	m_piGameInterface->LoadScenario("./Background.ges");
+	m_piGameInterface->StartDemo();
+	m_piSTBackground->Show(true);
 }
 
 void CMainWindow::OnScenarioFinished(eScenarioFinishedReason eReason,unsigned int nPoints, unsigned int nLivesLeft, unsigned int nWeaponLevel)
@@ -253,6 +278,7 @@ void CMainWindow::OnScenarioFinished(eScenarioFinishedReason eReason,unsigned in
 	m_piGameInterface->Freeze(true);
 	if(eReason!=eScenarioFinishedReason_Completed)
 	{
+		m_piSTBackground->Show(true);
 		m_GameOverDialog.m_piDialog->Execute(this);
 		m_piGameInterface->Freeze(false);
 		m_eStage=eInterfaceStage_HighScores;
@@ -273,6 +299,7 @@ void CMainWindow::OnScenarioFinished(eScenarioFinishedReason eReason,unsigned in
 		row.nScore=nPoints;
 		
 		unsigned int nRow=m_HighScoresTable.m_piHighScoresTable?m_HighScoresTable.m_piHighScoresTable->AddRow(row):-1;
+		m_piSTBackground->Show(false);
 		m_HighScoresDialog.m_piHighScoresDialog->ShowScores(this,m_HighScoresTable.m_piHighScoresTable,nRow,false);
 	}
 	else
@@ -288,10 +315,36 @@ void CMainWindow::OnScenarioFinished(eScenarioFinishedReason eReason,unsigned in
 			m_nCurrentLevel=0;
 		}
 		m_eStage=eInterfaceStage_LaunchNextLevel;
-		m_piGameInterface->Show(false);
+		m_piSTBackground->Show(true);
+		m_piSTBackground->SetText("Loading...");
 		m_piGameInterface->StopGame();
 		m_piGameInterface->CloseScenario();
 	}
 }
 
 void CMainWindow::OnWantFocus(bool *pbWant){*pbWant=true;}
+
+void CMainWindow::OnManualStopCourtainClosed()
+{
+	if(!m_piGameInterface){return;}
+	
+	if(m_eStage==eInterfaceStage_WaitingForDemoEndCourtainLoading)
+	{
+		m_piSTBackground->SetText("Loading...");
+		m_eStage=eInterfaceStage_WaitingForDemoEndCourtain;
+	}
+	else if(m_eStage==eInterfaceStage_WaitingForManualGameEndCourtain)
+	{
+		m_piGameInterface->Freeze(false);
+		m_piGameInterface->StopGame();
+		m_piGameInterface->CloseScenario();
+		m_piGameInterface->LoadScenario("./Background.ges");
+		m_piGameInterface->StartDemo();
+		m_eStage=eInterfaceStage_MainMenu;
+	}
+	else if(m_eStage==eInterfaceStage_WaitingForExitCourtain)
+	{
+		m_eStage=eInterfaceStage_Exit;
+		m_piGUIManager->ExitGUILoop();
+	}
+}

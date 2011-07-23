@@ -31,6 +31,7 @@ enum EGameInterfaceState
 	eGameInterfaceState_CountingPoints,
 	eGameInterfaceState_EndWait,
 	eGameInterfaceState_EndCourtain,
+	eGameInterfaceState_StopManuallyWithCourtain,
 	eGameInterfaceState_GameOverCourtain
 };
 
@@ -57,6 +58,11 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	IPlayer					*m_piPlayer;
 	IEntity					*m_piPlayerEntity;
 
+	unsigned int m_nDemoCheckpointsFound;
+	CVector m_vDemoStartPosition;
+	CVector m_vDemoEndPosition;
+	bool    m_bDemoMode;
+	
 	bool         m_bCourtainOpen;
 	bool         m_bCourtainClosed;
 	bool         m_bCourtainOpening;
@@ -84,7 +90,10 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	bool m_bGameStarted;
 	CVector m_vLastCheckPointPosition;
 	bool m_bShowPerformanceIndicators;
-
+	
+	void SearchDemoCheckpoints(IPlayAreaElement *piElement,bool *pbStopEnumerating);
+	void SearchLastCheckpoint(IPlayAreaElement *piElement,bool *pbStopEnumerating);
+	
 	SGamePos m_InspectionMovementStartPoint;
 
 	IGameWindow		*m_piSTUpperIndicatorRow0;
@@ -130,10 +139,12 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 		CHILD_MAP_ENTRY("PlayerBomb5",m_piSTBombs[5]);
 	END_CHILD_MAP()
 	
-	void RenderCourtain(IGenericRender *piRender,unsigned int nCurrentTime);
+	void RenderCourtain(IGenericRender *piRender);
 
+	void StartDemo();
 	void StartGame(IPlayerProfile *piProfile,EGameMode eMode,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel);
 	void StopGame();
+	void StopManuallyWithCourtain();
 	void ResetGame(bool bGoToLastCheckPoint);
 
 	bool LoadScenario(std::string sFileName);
@@ -147,7 +158,7 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	// IPlayAreaElementEnumerationCallback
 
 	void ProcessEnumeratedPlayAreaElement(IPlayAreaElement *piElement,bool *pbStopEnumerating);
-
+	
 	// IGameInterfaceWindow
 
 	void Freeze(bool bFreeze);
@@ -163,8 +174,8 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 
 	static void RenderEntity(IEntity *piEntity,void *pParam1,void *pParam2);
 
-	void OpenCourtain(unsigned int nCurrentTime);
-	void CloseCourtain(unsigned int nCurrentTime);
+	void OpenCourtain();
+	void CloseCourtain();
 	
 	void StartGameInternal(EGameMode eMode,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel, bool bGoToLastCheckPoint);
 	
