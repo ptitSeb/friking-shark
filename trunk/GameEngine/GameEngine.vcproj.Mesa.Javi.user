@@ -39,7 +39,7 @@
 			<DebugSettings
 				Command="$(ProjectDir)\..\Demo\Bin\$(ConfigurationName)\GameEngine.exe"
 				WorkingDirectory="$(ProjectDir)\..\Demo"
-				CommandArguments=" -config ScenarioEditor\ScenarioEditor.cfg -folder D:\Desarrollo\Game\Demo\Resources"
+				CommandArguments="-folder D:\Desarrollo\Game\Demo\Resources"
 				Attach="false"
 				DebuggerType="3"
 				Remote="1"

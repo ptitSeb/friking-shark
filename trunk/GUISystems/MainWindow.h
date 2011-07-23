@@ -29,7 +29,9 @@ DECLARE_CUSTOM_WRAPPER2(CControlsDialogWrapper,IGameDialog,m_piDialog,IControlsD
 enum eInterfaceStage
 {
 	eInterfaceStage_None,
+	eInterfaceStage_Initializing,
 	eInterfaceStage_MainMenu,
+	eInterfaceStage_GameMenu,
 	eInterfaceStage_Playing,
 	eInterfaceStage_LaunchNextLevel,
 	eInterfaceStage_HighScores,
@@ -92,7 +94,8 @@ public:
 	void	OnScenarioFinished(eScenarioFinishedReason eReason,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel);
 	void	OnGameOverCourtainClosed();
 	void    OnManualStopCourtainClosed();
-	
+	void	OnPaused(bool bPaused);
+
 	CMainWindow(void);
 	~CMainWindow(void);
 };

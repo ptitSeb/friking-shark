@@ -30,7 +30,7 @@ extern CSystemModuleHelper *g_pSystemModuleHelper;
 CMainWindow::CMainWindow(void)
 {
 	m_eGameMode=eGameMode_Normal;
-	m_eStage=eInterfaceStage_MainMenu;
+	m_eStage=eInterfaceStage_None;
 	m_nCurrentLevel=0;
 	m_dBackgroundAlpha=0;
 	m_bVisible=true;
@@ -88,11 +88,10 @@ bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 			}
 		}
 
-		if(m_piSTBackground){m_piSTBackground->Show(true);}
-		if(m_piGameInterface)
+		if(m_piSTBackground)
 		{
-			m_piGameInterface->LoadScenario("./Background.ges");
-			m_piGameInterface->StartDemo();
+			m_piSTBackground->Show(true);
+			m_piSTBackground->SetText("Loading...");
 		}
 		
 		m_piGUIManager->SetFocus(this);
@@ -119,8 +118,22 @@ void CMainWindow::Destroy()
 void CMainWindow::OnDraw(IGenericRender *piRender)
 {
 	CGameWindowBase::OnDraw(piRender);
-	
-	if(m_eStage==eInterfaceStage_MainMenu 
+	if(m_eStage==eInterfaceStage_None)
+	{
+		m_eStage=eInterfaceStage_Initializing;
+	}
+	else if(m_eStage==eInterfaceStage_Initializing)
+	{
+		if(m_piGameInterface)
+		{
+			m_piGameInterface->InitializeGameSystem();
+			m_piGameInterface->LoadScenario("./Background.ges");
+			m_piGameInterface->StartDemo();
+			m_piSTBackground->SetText("");
+		}
+		m_eStage=eInterfaceStage_MainMenu;
+	}
+	else if(m_eStage==eInterfaceStage_MainMenu 
 		&& !m_MainMenuDialog.m_piDialog->IsVisible()
 		&& !m_LevelOptionsDialog.m_piDialog->IsVisible()
 		&& !m_HighScoresDialog.m_piDialog->IsVisible()
@@ -130,8 +143,7 @@ void CMainWindow::OnDraw(IGenericRender *piRender)
 		bool bProcessed=false;
 		OnKeyDown(GK_ESCAPE,&bProcessed);
 	}
-	
-	if(m_eStage==eInterfaceStage_WaitingForDemoEndCourtain)
+	else if(m_eStage==eInterfaceStage_WaitingForDemoEndCourtain)
 	{
 		m_piSTBackground->SetText("");
 		
@@ -226,10 +238,13 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 		else if(m_eStage==eInterfaceStage_Playing)
 		{
 			m_piSTBackground->Show(true);
+			m_piSTBackground->SetText("");
 			m_piGUIManager->ShowMouseCursor(true);
 			m_piGameInterface->Freeze(true);
 			int result=eGameMenuAction_Continue;
 			
+			m_eStage=eInterfaceStage_GameMenu;
+
 			do
 			{			
 				result=m_GameMenuDialog.m_piDialog->Execute(this);
@@ -249,8 +264,10 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 				}
 				else 
 				{
+					m_eStage=eInterfaceStage_Playing;
 					m_piGameInterface->Freeze(false);
-					m_piSTBackground->Show(false);
+					m_piSTBackground->Show(m_piGameInterface->IsPaused());
+					m_piSTBackground->SetText(m_piGameInterface->IsPaused()?"Paused":"");
 					m_piGUIManager->ShowMouseCursor(false);
 					break;
 				}
@@ -346,5 +363,19 @@ void CMainWindow::OnManualStopCourtainClosed()
 	{
 		m_eStage=eInterfaceStage_Exit;
 		m_piGUIManager->ExitGUILoop();
+	}
+}
+
+void CMainWindow::OnPaused(bool bPaused)
+{
+	if(bPaused)
+	{
+		m_piSTBackground->SetText("Paused");
+		m_piSTBackground->Show(true);
+	}
+	else
+	{
+		m_piSTBackground->SetText("");
+		m_piSTBackground->Show(false);
 	}
 }

@@ -42,6 +42,7 @@ class IGameInterfaceWindow: virtual public IGameWindow
 {	
 public:
 
+	virtual void InitializeGameSystem()=0;
 	virtual void StartGame(IPlayerProfile *piProfile,EGameMode eMode, unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel)=0;
 	virtual void StartDemo()=0;
 	virtual void StopGame()=0;
@@ -55,6 +56,7 @@ public:
 	
 	virtual void	Freeze(bool bFreeze)=0;
 	virtual bool	IsFrozen()=0;
+	virtual bool	IsPaused()=0;
 
 	virtual ~IGameInterfaceWindow(){}
 };
@@ -141,6 +143,7 @@ public:
 	virtual void	OnScenarioFinished(eScenarioFinishedReason eReason,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel)=0;
 	virtual void	OnGameOverCourtainClosed()=0;
 	virtual void	OnManualStopCourtainClosed()=0;
-	
+	virtual void	OnPaused(bool bPaused)=0;
+
 	virtual ~IGameInterfaceWindowEvents(){}
 };

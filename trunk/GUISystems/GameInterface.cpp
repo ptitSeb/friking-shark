@@ -57,6 +57,7 @@ CGameInterface::CGameInterface(void)
 	m_nPoints=0;
 	m_nLivesLeft=0;
 	m_nWeapon=0;
+	m_bGameSystemInitialized=false;
 }
 
 CGameInterface::~CGameInterface(void)
@@ -71,19 +72,7 @@ bool CGameInterface::InitWindow(IGameWindow *piParent,bool bPopup)
 	if(m_piSTFrameRate){m_piSTFrameRate->Show(m_bShowPerformanceIndicators);}
 	if(m_piSTObjectCount){m_piSTObjectCount->Show(m_bShowPerformanceIndicators);}
 	if(m_piSTEntityCount){m_piSTEntityCount->Show(m_bShowPerformanceIndicators);}
-	
-	CSystemLoaderHelper     systemLoader;
-	m_piGameSystem=systemLoader.LoadSystem("Scripts/GameSystem.cfg","GameSystem");
-	
-	m_GameControllerWrapper.Attach("GameSystem","GameController");
-	m_GameControllerWrapper.m_piGameController->SetupGame();
-	
-	m_FrameManagerWrapper.Attach("GameSystem","FrameManager");
-	m_PlayerManagerWrapper.Attach("GameSystem","PlayerManager");
-	m_PlayAreaManagerWrapper.Attach("GameSystem","PlayAreaManager");
-	m_EntityManagerWrapper.Attach("GameSystem","EntityManager");
-	m_WorldManagerWrapper.Attach("GameSystem","WorldManager");
-	
+		
 	return bResult;
 }
 
@@ -116,8 +105,26 @@ void CGameInterface::DestroyWindow()
 	CGameWindowBase::DestroyWindow();
 }
 
+void CGameInterface::InitializeGameSystem()
+{
+	if(m_bGameSystemInitialized){return;}
+	CSystemLoaderHelper     systemLoader;
+	m_piGameSystem=systemLoader.LoadSystem("Scripts/GameSystem.cfg","GameSystem");
+
+	m_GameControllerWrapper.Attach("GameSystem","GameController");
+	m_GameControllerWrapper.m_piGameController->SetupGame();
+
+	m_FrameManagerWrapper.Attach("GameSystem","FrameManager");
+	m_PlayerManagerWrapper.Attach("GameSystem","PlayerManager");
+	m_PlayAreaManagerWrapper.Attach("GameSystem","PlayAreaManager");
+	m_EntityManagerWrapper.Attach("GameSystem","EntityManager");
+	m_WorldManagerWrapper.Attach("GameSystem","WorldManager");
+	m_bGameSystemInitialized=true;
+}
+
 bool CGameInterface::LoadScenario(std::string sScenario)
 {
+	if(!m_bGameSystemInitialized){return false;}
 	bool bResult=true;
 	m_GameControllerWrapper.m_piGameController->LoadScenario(sScenario);
 	m_bCompleted=false;
@@ -126,12 +133,17 @@ bool CGameInterface::LoadScenario(std::string sScenario)
 
 void CGameInterface::StartGameInternal(EGameMode eMode,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel, bool bGoToLastCheckPoint)
 {
+	if(!m_bGameSystemInitialized){return;}
 	if(m_bGameStarted){StopGame();}
 	m_nPoints=nPoints;
 	m_nLivesLeft=nLivesLeft;
 	m_nWeapon=nWeaponLevel;
 	m_eGameMode=eMode;
 	m_FrameManagerWrapper.m_piFrameManager->Reset();
+	if(m_FrameManagerWrapper.m_piFrameManager->IsPaused())
+	{
+		m_FrameManagerWrapper.m_piFrameManager->TogglePauseOnNextFrame();
+	}
 	m_bPlayerKilledOnPreviousFrame=false;
 	
 	CVector vStart,vEnd;
@@ -188,6 +200,7 @@ void CGameInterface::StartGameInternal(EGameMode eMode,unsigned int nPoints, uns
 
 void CGameInterface::StartDemo()
 {
+	if(!m_bGameSystemInitialized){return;}
 	m_nDemoCheckpointsFound=0;
 	m_bDemoMode=true;
 	m_nPoints=0;
@@ -199,6 +212,7 @@ void CGameInterface::StartDemo()
 
 void CGameInterface::StartGame(IPlayerProfile *piProfile,EGameMode eMode,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel)
 {
+	if(!m_bGameSystemInitialized){return;}
 	m_nDemoCheckpointsFound=0;
 	m_bDemoMode=false;
 	
@@ -208,6 +222,7 @@ void CGameInterface::StartGame(IPlayerProfile *piProfile,EGameMode eMode,unsigne
 
 void CGameInterface::StopGame()
 {
+	if(!m_bGameSystemInitialized){return;}
 	if(!m_bGameStarted){return;}
 	if(m_piPlayerEntity)
 	{
@@ -230,6 +245,8 @@ void CGameInterface::StopManuallyWithCourtain()
 
 void CGameInterface::ResetGame(bool bGoToLastCheckPoint)
 {
+	if(!m_bGameSystemInitialized){return;}
+
 	if(bGoToLastCheckPoint)
 	{
 		if(m_PlayAreaManagerWrapper.m_piPlayAreaManager)
@@ -303,6 +320,7 @@ void CGameInterface::SearchDemoCheckpoints(IPlayAreaElement *piElement,bool *pbS
 
 void CGameInterface::CloseScenario()
 {
+	if(!m_bGameSystemInitialized){return;}
 	if(m_GameControllerWrapper.m_piGameController)
 	{
 		m_GameControllerWrapper.m_piGameController->Stop();
@@ -354,9 +372,20 @@ void CGameInterface::RenderCourtain(IGenericRender *piRender)
 	}
 	piRender->PopState();
 }
-	
+
+bool CGameInterface::IsPaused()
+{
+	if(m_bFrozen){return !m_bResumeAfterFreeze;}
+	else {return m_FrameManagerWrapper.m_piFrameManager?m_FrameManagerWrapper.m_piFrameManager->IsPaused():false;}
+}
+
 void CGameInterface::OnDraw(IGenericRender *piRender)
 {
+	if(!m_bGameSystemInitialized)
+	{
+		UpdateGUI(0);
+		return;
+	}
 	unsigned int dwCurrentTime=m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime();
 
 	if(m_piPlayerEntity)
@@ -588,6 +617,7 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 
 void CGameInterface::ProcessInput()
 {
+	if(!m_bGameSystemInitialized){return;}
 	bool bControlKeyPressed=false;
 	if(m_bFrozen)
 	{
@@ -618,15 +648,15 @@ void CGameInterface::ProcessInput()
 
 void CGameInterface::ProcessKey(unsigned short nKey)
 {
-	// en modo de inspeccion todos los movimientos se calculan en tiempo realm no en el tiempo
-	// del sistema de entidades.
-
 	if(nKey==KEY_PAUSE)
 	{
 		if(m_FrameManagerWrapper.m_piFrameManager->GetCurrentRealTime()>m_dwNextAcceptedPauseKeyTime)
 		{
+			bool bWasPaused=m_FrameManagerWrapper.m_piFrameManager->IsPaused();
 			m_dwNextAcceptedPauseKeyTime=m_FrameManagerWrapper.m_piFrameManager->GetCurrentRealTime()+100;
 			m_FrameManagerWrapper.m_piFrameManager->TogglePauseOnNextFrame();
+
+			NOTIFY_EVENT(IGameInterfaceWindowEvents,OnPaused(!bWasPaused));
 		}
 	}
 }
@@ -680,8 +710,6 @@ void CGameInterface::RenderEntity(IEntity *piEntity,void *pParam1,void *pParam2)
 
 void CGameInterface::UpdateGUI(unsigned int dwCurrentTime)
 {
-	if(m_FrameManagerWrapper.m_piFrameManager==NULL){return;}
-	if(m_EntityManagerWrapper.m_piEntityManager==NULL){return;}
 	
 	char sTempText[512]={0};
 	
