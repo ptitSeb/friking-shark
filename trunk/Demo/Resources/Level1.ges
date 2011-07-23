@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=202.395636
 			NearPlane=130.000000
-			Posicion=2089.550103,228.678936,5.094002
+			Posicion=1373.611676,228.678936,-1.472174
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -2818,8 +2818,8 @@ AreaDeJuego
 					Name=WeaponBonus
 					System=EntityTypes
 				}
-				ConditionType=0
-				ConditionValue=0
+				ConditionType=1
+				ConditionValue=1
 				Posicion=308.905826,-4.859726,88.678936
 				Tipo
 				{
