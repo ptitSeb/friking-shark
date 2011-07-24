@@ -37,7 +37,7 @@ CTraceInfo CAnimationObjectBase::GetTrace( const CVector &vOrigin,const CVector 
 	info.m_vTracePos=p2;
 	return info;
 }
-void CAnimationObjectTypeBase::DesignGetBBox( CVector *pvMins,CVector *pvMaxs ){}
+void CAnimationObjectTypeBase::DesignGetAABBox(CVector &vPosition,CVector &vAngles, CVector *pvMins,CVector *pvMaxs ){}
 double CAnimationObjectTypeBase::DesignGetRadius(){return 0;}
 bool CAnimationObjectTypeBase::PrepareResources(){return true;}
 CTraceInfo CAnimationObjectTypeBase::DesignGetTrace( const CVector &vOrigin,const CVector &vAngles,const CVector &p1,const CVector &p2 )

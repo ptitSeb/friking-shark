@@ -81,20 +81,40 @@ void CModelAnimationObjectType::DesignRender( IGenericRender *piRender,CVector &
 	}
 }
 
-void CModelAnimationObjectType::DesignGetBBox( CVector *pvMins,CVector *pvMaxs )
+void CModelAnimationObjectType::DesignGetAABBox(CVector &vPosition,CVector &vAngles,CVector *pvMins,CVector *pvMaxs )
 {
 	if(m_ModelWrapper.m_piModel)
 	{
-		m_ModelWrapper.m_piModel->GetFrameBBox(0,0,pvMins,pvMaxs);
-		if(pvMins){*pvMins+=m_vPosition;}
-		if(pvMaxs){*pvMaxs+=m_vPosition;}
+		CVector vTempPos,vTempAngles;
+		ComputeReferenceSystem(vPosition,vAngles,m_vPosition,m_vAngles,&vTempPos,&vTempAngles);
+		
+		CVector pvVolume[8];
+		CVector vLocalMins,vLocalMaxs;
+		m_ModelWrapper.m_piModel->GetFrameBBox(0,0,&vLocalMins,&vLocalMaxs);
+		CalcBBoxVolume(vTempPos,vTempAngles,vLocalMins,vLocalMaxs,pvVolume);
+		
+		if(pvMins){*pvMins=pvVolume[0];}
+		if(pvMaxs){*pvMaxs+=pvVolume[0];}
+		for(int x=1;x<8;x++)
+		{
+			if(pvMins)
+			{
+				CVector vCurrentMins=*pvMins;
+				pvMins->Mins(vCurrentMins,pvVolume[x]);
+			}
+			if(pvMaxs)
+			{
+				CVector vCurrentMaxs=*pvMaxs;
+				pvMaxs->Maxs(vCurrentMaxs,pvVolume[x]);
+			}
+		}
 	}
 }
 
 double CModelAnimationObjectType::DesignGetRadius()
 {
 	CVector vMins,vMaxs;
-	DesignGetBBox(&vMins,&vMaxs);
+	DesignGetAABBox(Origin,Origin,&vMins,&vMaxs);
 	return GetBBoxRadius(vMins,vMaxs);
 }
 

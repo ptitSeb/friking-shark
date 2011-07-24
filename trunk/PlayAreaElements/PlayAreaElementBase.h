@@ -22,6 +22,7 @@ class CPlayAreaElementBase:virtual public CSystemObjectBase,virtual public IPlay
 {
 protected:
 
+	bool 	m_bStarted;
 	bool	m_bActive;
     unsigned int   m_nActivationTime;
 
@@ -29,10 +30,11 @@ public:
 
 	virtual bool PrepareResources();
 	
-    virtual void Activate(unsigned int dwCurrentTime);
+	virtual void Start();
+	virtual void Stop();
+	virtual void Activate(unsigned int dwCurrentTime);
     virtual void Deactivate();
     virtual bool IsActive();
-	virtual void Reset();
 
 		virtual bool ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pPlayAreaInfo,unsigned int dwCurrentTime,double dInterval);
 
@@ -42,4 +44,5 @@ public:
 
 bool Util_IsInPlayArea(CVector vPosition,SPlayAreaInfo *pInfo);
 bool Util_IsInPlayArea(CVector vPosition,double dRadius,SPlayAreaInfo *pInfo);
+bool Util_IsInPlayArea(CVector vPosition,double dMin,double dMax,SPlayAreaInfo *pInfo);
 

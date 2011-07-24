@@ -91,7 +91,7 @@ void CFormationType::DesignRender( IGenericRender *piRender,CVector &vPosition,C
 	}
 }
 
-void CFormationType::DesignGetBBox( CVector *pvMins,CVector *pvMaxs )
+void CFormationType::DesignGetAABBox(CVector &vPosition,CVector &vAngles, CVector *pvMins,CVector *pvMaxs )
 {
 	if(m_vElements.size())
 	{
@@ -124,7 +124,7 @@ void CFormationType::DesignGetBBox( CVector *pvMins,CVector *pvMaxs )
 double CFormationType::DesignGetRadius()
 {
 	CVector vMins,vMaxs;
-	DesignGetBBox(&vMins,&vMaxs);
+	DesignGetAABBox(Origin,Origin,&vMins,&vMaxs);
 	return GetBBoxRadius(vMins,vMaxs);
 }
 

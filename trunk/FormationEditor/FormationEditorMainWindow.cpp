@@ -1050,7 +1050,7 @@ void CFormationEditorMainWindow::CenterCamera(bool bForceWholeFormation)
 	if(!bForceWholeFormation && m_nSelectedEntity!=-1 && m_vEntityControls[m_nSelectedEntity]->m_piDesignObject)
 	{
 		SRoutePoint point;
-		m_vEntityControls[m_nSelectedEntity]->m_piDesignObject->DesignGetBBox(&vMins,&vMaxs);		
+		m_vEntityControls[m_nSelectedEntity]->m_piDesignObject->DesignGetAABBox(Origin,Origin,&vMins,&vMaxs);		
 		m_FormationType.m_piFormationTypeDesign->GetElementRoutePoint(m_nSelectedEntity,0,&point);
 		bCenter=true;
 		

@@ -88,13 +88,6 @@ void CPlayAreaManager::PrepareResources()
 		IPlayAreaElement *piElement=m_vElements[x].m_piElement;
 		piElement->PrepareResources();
 	}
-	CEntityTypeWrapper playerTypeWrapper;
-	playerTypeWrapper.Attach("EntityTypes","Player");
-	if(playerTypeWrapper.m_piEntityType)
-	{
-		playerTypeWrapper.m_piEntityType->PrepareResources();
-	}
-	
 }
 
 void CPlayAreaManager::SaveScenario(ISystemPersistencyNode *piNode)
@@ -118,7 +111,16 @@ void CPlayAreaManager::Start()
 	
 	UpdatePlayArea();
 	
-
+	for(unsigned x=0;x<m_vElements.size();x++)
+	{
+		IPlayAreaElement *piElement=m_vElements[x].m_piElement;
+		piElement->Start();
+	}
+	for(unsigned x=0;x<m_vEntityLayerElements.size();x++)
+	{
+		IPlayAreaElement *piElement=m_vEntityLayerElements[x].m_piElement;
+		piElement->Start();
+	}    
 }
 
 void CPlayAreaManager::Stop()
@@ -126,12 +128,12 @@ void CPlayAreaManager::Stop()
 	for(unsigned x=0;x<m_vElements.size();x++)
     {
         IPlayAreaElement *piElement=m_vElements[x].m_piElement;
-		piElement->Reset();
+		piElement->Stop();
     }
 	for(unsigned x=0;x<m_vEntityLayerElements.size();x++)
 	{
 		IPlayAreaElement *piElement=m_vEntityLayerElements[x].m_piElement;
-		piElement->Reset();
+		piElement->Stop();
 	}    
 	m_vDynamicElements.clear();
 

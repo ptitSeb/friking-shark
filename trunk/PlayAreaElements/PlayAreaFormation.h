@@ -51,12 +51,12 @@ public:
     //IPlayAreaElement
     void Activate(unsigned int dwCurrentTime);
     void Deactivate();
-	void Reset();
+	void Stop();
 
 	bool PrepareResources();
 	
 	void DesignRender(IGenericRender *piRender,bool bSelected);
-	void DesignGetBBox(CVector *pvMins,CVector *pvMaxs);
+	void DesignGetAABBox(CVector &vPosition,CVector &vAngles,CVector *pvMins,CVector *pvMaxs);
 	CTraceInfo DesignGetTrace(const CVector &p1,const CVector &p2);
 
     bool ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInfo,unsigned int dwCurrentTime,double dInterval);

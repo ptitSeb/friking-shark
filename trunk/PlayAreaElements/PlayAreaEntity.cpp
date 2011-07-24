@@ -23,7 +23,10 @@
 
 CPlayAreaEntity::CPlayAreaEntity()
 {
-	m_dRadius=0;
+	m_dRTRadius=0;
+	m_dRTActivationMin=0;
+	m_dRTActivationMax=0;
+	m_dRTShadowPreactivation=0;
     m_nDelay=0;
 	m_nRouteDelay=0;
 	m_nInterval=0;
@@ -37,6 +40,7 @@ CPlayAreaEntity::CPlayAreaEntity()
 	m_bDynamic=false;
 	g_FrameManagerSingleton.AddRef();
 	g_PlayAreaManagerWrapper.AddRef();
+	g_WorldManagerWrapper.AddRef();
 }
 
 CPlayAreaEntity::~CPlayAreaEntity()
@@ -44,11 +48,69 @@ CPlayAreaEntity::~CPlayAreaEntity()
     m_EntityType.Detach();
 	g_FrameManagerSingleton.Release();
 	g_PlayAreaManagerWrapper.Release();
+	g_WorldManagerWrapper.Release();
+}
+void CPlayAreaEntity::Start()
+{
+	CPlayAreaElementBase::Start();
+	if(m_EntityType.m_piEntityType)
+	{
+		/* 
+		Shadow preactivation is simply the estimated shadow lenght in the X axis. 
+		Shadow lenght is computed by intersecting the XZ plane at the entity min Y with a line from the sun passing throught
+		the entity highest height, that gaves us the ammount of X we have to show the entity in advance.
+		It can only be negative or zero, shadows lengths>0 are clamped to 0 as it means that the shadow falls below the
+		entity start (azimuth 90 - 270).
+		This computation takes into account both elevation and azimuth.
+		 
+		This computation fails when the entity shadow is projected below its min Y but works most of the times.
+		This problem can be fixed by tracing against the world, but it also creates problems in some other cases.
+		 
+		So, to keep things as simple as possible the cases not covered by this computation are
+		required to be fine tuned using a negative delay
+		*/
+		 
+		CVector pvRTVolume[8];
+		m_dRTRadius=m_EntityType.m_piEntityType->DesignGetRadius();
+		m_EntityType.m_piEntityType->DesignGetAABBox(Origin,Origin,&m_vRTMins,&m_vRTMaxs);
+		CalcBBoxVolume(Origin,m_vAngles,m_vRTMins,m_vRTMaxs,pvRTVolume);
+		
+		STerrainSun sSun;
+		CVector vSunDir;
+		
+		g_WorldManagerWrapper.m_piInterface->GetTerrainSun(&sSun);
+		VectorsFromAngles(CVector(sSun.dAzimuth,sSun.dElevation,0),&vSunDir,NULL,NULL);
+
+		CVector vSunLine[2];
+		vSunLine[0].c[1]=(m_vRTMaxs.c[1]-m_vRTMins.c[1]);
+		vSunLine[1].c[1]=(m_vRTMaxs.c[1]-m_vRTMins.c[1]);
+		vSunLine[0]+=vSunDir*10000.0;
+		vSunLine[1]-=vSunDir*10000.0;
+		
+		m_dRTShadowPreactivation=0;
+		
+		CVector vSunCutWithPlane;
+		CPlane plane(AxisPosY,0);
+		if(plane.Cut(vSunLine[0],vSunLine[1],&vSunCutWithPlane) && vSunCutWithPlane.c[0]<0)
+		{
+			m_dRTShadowPreactivation=vSunCutWithPlane.c[0];
+		}		
+		
+		double dMinx=pvRTVolume[0].c[0];
+		double dMaxx=pvRTVolume[0].c[0];
+		for(unsigned int x=1;x<8;x++)
+		{
+			if(pvRTVolume[x].c[0]<dMinx){dMinx=pvRTVolume[x].c[0];}
+			if(pvRTVolume[x].c[0]>dMaxx){dMaxx=pvRTVolume[x].c[0];}
+		}
+		
+		m_dRTActivationMin=dMinx;
+		m_dRTActivationMax=dMaxx;
+	}
 }
 
 bool CPlayAreaEntity::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInfo,unsigned int dwCurrentTime,double dInterval)
-{
-	if(m_EntityType.m_piEntityType && m_dRadius==0){m_dRadius=m_EntityType.m_piEntityType->DesignGetRadius();}
+{	
 	
 	CVector vActivationPosition=m_vPosition;
 	vActivationPosition.c[0]+=(m_nDelay && g_PlayAreaManagerWrapper.m_piInterface)?g_PlayAreaManagerWrapper.m_piInterface->GetCameraSpeed()*((double)m_nDelay)/1000.0:0;
@@ -56,9 +118,9 @@ bool CPlayAreaEntity::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInf
 	if(m_bFirstFrame)
 	{
 		m_bFirstFrame=false;
-		if(!m_bDynamic && Util_IsInPlayArea(vActivationPosition,m_dRadius,pAreaInfo))
+		if(!m_bDynamic && Util_IsInPlayArea(vActivationPosition+CVector(0,m_vRTMins.c[1],0),m_dRTActivationMin+m_dRTShadowPreactivation,m_dRTActivationMax,pAreaInfo))
 		{
-			SEntityTypeConfig sConfig;
+			 SEntityTypeConfig sConfig;
 			IEntityTypeDesign *piDesign=QI(IEntityTypeDesign,m_EntityType.m_piEntityType);
 			if(piDesign){piDesign->GetEntityTypeConfig(&sConfig);}
 			REL(piDesign);
@@ -68,7 +130,7 @@ bool CPlayAreaEntity::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInf
 	   
 	if(!m_bActive && !m_bDoNotActivate)
 	{
-		bool bCurrentlyInPlayArea=Util_IsInPlayArea(vActivationPosition,m_dRadius,pAreaInfo);
+		bool bCurrentlyInPlayArea=Util_IsInPlayArea(vActivationPosition+CVector(0,m_vRTMins.c[1],0),m_dRTActivationMin+m_dRTShadowPreactivation,m_dRTActivationMax,pAreaInfo);
 		if(bCurrentlyInPlayArea)
 		{
 			Activate(dwCurrentTime);
@@ -91,28 +153,33 @@ bool CPlayAreaEntity::ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pAreaInf
 				piEntity->GetPhysicInfo()->vAngles=AnglesFromVector(m_Route.GetAbsolutePoint(0)-m_vPosition);
 			}
 			SUBSCRIBE_TO(piEntity,IEntityEvents);
-			m_sEntities.insert(piEntity);
+			m_mEntities.insert(std::pair<IEntity*,bool>(piEntity,false));
 			m_nCreatedEntities++;
 			m_nLastEntityTime=dwCurrentTime;
 		}
 		
-		set<IEntity*>::iterator i;
-		for(i=m_sEntities.begin();i!=m_sEntities.end();)
+		map<IEntity*,bool>::iterator i;
+		for(i=m_mEntities.begin();i!=m_mEntities.end();)
 		{
-			IEntity *piEntity=*i;
-			bool bEntityCurrentlyInPlayArea=Util_IsInPlayArea(piEntity->GetPhysicInfo()->vPosition,m_dRadius,pAreaInfo);
-			if(!bEntityCurrentlyInPlayArea && piEntity->HasFinishedRoute())
+			IEntity *piEntity=i->first;
+			bool bHasBeenVisible=i->second;
+			bool bEntityCurrentlyInPlayArea=Util_IsInPlayArea(piEntity->GetPhysicInfo()->vPosition+CVector(0,m_vRTMins.c[1],0),m_dRTActivationMin+m_dRTShadowPreactivation,m_dRTActivationMax,pAreaInfo);
+			if(!bEntityCurrentlyInPlayArea && bHasBeenVisible &&  piEntity->HasFinishedRoute() )
 			{
-				m_sEntities.erase(i++);
+				m_mEntities.erase(i++);
 				UNSUBSCRIBE_FROM_CAST(piEntity,IEntityEvents);
 				piEntity->Remove();
 				piEntity=NULL;
 			}
-			else{i++;}
+			else
+			{
+				if(bEntityCurrentlyInPlayArea){i->second=true;}
+				i++;
+			}
 		}
-		if(m_nCreatedEntities==m_nEntityCount && m_sEntities.size()==0)
+		if(m_nCreatedEntities==m_nEntityCount && m_mEntities.size()==0)
 		{
-			bool bCurrentlyInPlayArea=Util_IsInPlayArea(vActivationPosition,m_dRadius,pAreaInfo);
+			bool bCurrentlyInPlayArea=Util_IsInPlayArea(vActivationPosition+CVector(0,m_vRTMins.c[1],0),m_dRTActivationMin+m_dRTShadowPreactivation,m_dRTActivationMax,pAreaInfo);
 			if(!bCurrentlyInPlayArea){Deactivate();}
 		}
 	}
@@ -128,7 +195,7 @@ bool CPlayAreaEntity::Init(std::string sClass,std::string sName,ISystem *piSyste
 void CPlayAreaEntity::Destroy()
 {
 	Deactivate();
-	m_dRadius=0;
+	m_dRTRadius=0;
 	m_EntityType.Detach();
 	CPlayAreaElementBase::Destroy();
 }
@@ -138,24 +205,27 @@ void CPlayAreaEntity::Activate(unsigned int dwCurrentTime)
     CPlayAreaElementBase::Activate(dwCurrentTime);
 }
 
-void CPlayAreaEntity::Reset()
+void CPlayAreaEntity::Stop()
 {
-	CPlayAreaElementBase::Reset();
+	CPlayAreaElementBase::Stop();
 	m_bFirstFrame=true;
 	m_bDoNotActivate=false;
+	m_dRTRadius=0;
+	m_dRTActivationMin=0;
+	m_dRTActivationMax=0;
 }
 
 void CPlayAreaEntity::Deactivate()
 {
-	set<IEntity*>::iterator i;
-	for(i=m_sEntities.begin();i!=m_sEntities.end();i++)
+	map<IEntity*,bool>::iterator i;
+	for(i=m_mEntities.begin();i!=m_mEntities.end();i++)
     {
-		IEntity *piEntity=*i;
+		IEntity *piEntity=i->first;
         UNSUBSCRIBE_FROM_CAST(piEntity,IEntityEvents);
         piEntity->Remove();
         piEntity=NULL;
     }
-	m_sEntities.clear();
+	m_mEntities.clear();
 	m_nCreatedEntities=0;
 	m_nLastEntityTime=0;
 	m_nKilledEntities=0;
@@ -188,7 +258,7 @@ void CPlayAreaEntity::OnKilled(IEntity *piEntity)
 void CPlayAreaEntity::OnRemoved(IEntity *piEntity)
 {
 	UNSUBSCRIBE_FROM_CAST(piEntity,IEntityEvents);
-	m_sEntities.erase(piEntity);
+	m_mEntities.erase(piEntity);
 }
 
 void CPlayAreaEntity::SetPosition(const CVector &vPosition)
@@ -196,10 +266,10 @@ void CPlayAreaEntity::SetPosition(const CVector &vPosition)
 	m_vPosition=vPosition;
 	if(m_bActive && m_Route.GetPointCount()==0)
 	{
-		set<IEntity*>::iterator i;
-		for(i=m_sEntities.begin();i!=m_sEntities.end();i++)
+		map<IEntity*,bool>::iterator i;
+		for(i=m_mEntities.begin();i!=m_mEntities.end();i++)
 	    {
-			IEntity *piEntity=*i;
+			IEntity *piEntity=i->first;
 			piEntity->GetPhysicInfo()->vPosition=m_vPosition;
 		}
 	}
@@ -210,10 +280,10 @@ void CPlayAreaEntity::SetAngles(const CVector &vAngles)
 	m_vAngles=vAngles;
 	if(m_bActive && m_Route.GetPointCount()==0)
 	{
-		set<IEntity*>::iterator i;
-		for(i=m_sEntities.begin();i!=m_sEntities.end();i++)
+		map<IEntity*,bool>::iterator i;
+		for(i=m_mEntities.begin();i!=m_mEntities.end();i++)
 	    {
-			IEntity *piEntity=*i;
+			IEntity *piEntity=i->first;
 			piEntity->GetPhysicInfo()->vAngles=m_vAngles;
 		}
 	}
@@ -221,10 +291,10 @@ void CPlayAreaEntity::SetAngles(const CVector &vAngles)
 void CPlayAreaEntity::SetEntityType(IEntityType *piEntityType)
 {
 	m_EntityType.Attach(piEntityType);
-	if(m_EntityType.m_piEntityType){m_dRadius=m_EntityType.m_piEntityType->DesignGetRadius();}
+	if(m_EntityType.m_piEntityType){m_dRTRadius=m_EntityType.m_piEntityType->DesignGetRadius();}
 }
 void CPlayAreaEntity::SetCount(unsigned int nCount){m_nEntityCount=nCount;}
-void CPlayAreaEntity::SetDelay(unsigned int nDelay){m_nDelay=nDelay;}
+void CPlayAreaEntity::SetDelay(int nDelay){m_nDelay=nDelay;}
 void CPlayAreaEntity::SetRouteDelay(unsigned int nDelay){m_nRouteDelay=nDelay;}
 void CPlayAreaEntity::SetInterval(unsigned int nInterval){m_nInterval=nInterval;}
 void CPlayAreaEntity::SetDynamic(bool bDynamic){m_bDynamic=bDynamic;}
@@ -234,7 +304,7 @@ CVector CPlayAreaEntity::GetAngles(){return m_vAngles;}
 void	CPlayAreaEntity::GetEntityType(IEntityType **ppiEntityType){if(ppiEntityType){*ppiEntityType=ADD(m_EntityType.m_piEntityType);}	}
 
 unsigned int CPlayAreaEntity::GetCount(){return m_nEntityCount;}
-unsigned int CPlayAreaEntity::GetDelay(){return m_nDelay;}
+int          CPlayAreaEntity::GetDelay(){return m_nDelay;}
 unsigned int CPlayAreaEntity::GetRouteDelay(){return m_nRouteDelay;}
 unsigned int CPlayAreaEntity::GetInterval(){return m_nInterval;}
 
@@ -245,7 +315,16 @@ void CPlayAreaEntity::DesignRender( IGenericRender *piRender,bool bSelected )
 	CVector vAngles=m_vAngles;
 	if(m_Route.GetPointCount()){vAngles=AnglesFromVector(m_Route.GetAbsolutePoint(0)-m_vPosition);}
 	m_EntityType.m_piEntityType->DesignRender(piRender,m_vPosition,vAngles,bSelected);
-	
+
+	/*
+	 * Draws hits on the estimated shadow length for shadow preactivation
+	CVector p1=m_vPosition+CVector(0+m_dRTActivationMin+m_dRTShadowPreactivation,m_vRTMins.c[1],0);
+	CVector p2=m_vPosition+CVector(0+m_dRTActivationMin,m_vRTMins.c[1],0);
+	piRender->RenderLine(p1,p2,CVector(1,0,0),0x8888);
+	p1=m_vPosition+CVector(0+m_dRTActivationMin,m_vRTMins.c[1],0);
+	p2=m_vPosition+CVector(0+m_dRTActivationMax,m_vRTMins.c[1],0);
+	piRender->RenderLine(p1,p2,CVector(0,1,0),0xFFFF);
+	*/
 }
 
 CTraceInfo CPlayAreaEntity::DesignGetTrace( const CVector &p1,const CVector &p2 )
