@@ -24,9 +24,14 @@ class CPlayAreaEntity: virtual public CPlayAreaElementBase,virtual public IPlayA
 {
     CEntityTypeWrapper   m_EntityType;
 	CEntityTypeWrapper   m_BonusType;
-	set<IEntity*>        m_sEntities;
-	double				 m_dRadius;
-
+	map<IEntity*,bool>   m_mEntities; // bool indicates if the entity has been visible anytime
+	double				 m_dRTRadius;
+	double 				 m_dRTActivationMin;
+	double 				 m_dRTActivationMax;
+	double				 m_dRTShadowPreactivation;
+	CVector				 m_vRTMins;
+	CVector				 m_vRTMaxs;
+	
     C3DSVector           m_vPosition;
     CVector              m_vAngles;
 	CRoute				 m_Route;
@@ -35,7 +40,7 @@ class CPlayAreaEntity: virtual public CPlayAreaElementBase,virtual public IPlayA
 	unsigned int         m_nKilledEntities;
 	unsigned int         m_nEntityCount;
     unsigned int         m_nInterval;
-	unsigned int         m_nDelay;
+	int                  m_nDelay;
 	unsigned int         m_nRouteDelay;
 	
 	unsigned int         m_nLastEntityTime;
@@ -44,7 +49,6 @@ class CPlayAreaEntity: virtual public CPlayAreaElementBase,virtual public IPlayA
 	bool                 m_bDynamic;
 	int					 m_nBonusOnChild;
 	
-	void 				 Reset();
 public:
     
     BEGIN_PROP_MAP(CPlayAreaEntity)
@@ -62,7 +66,10 @@ public:
 
     bool Init(std::string sClass,std::string sName,ISystem *piSystem);
     void Destroy();
-
+	
+	void Start();
+	void Stop();
+	
     void Activate(unsigned int dwCurrentTime);
     void Deactivate();
 
@@ -85,7 +92,7 @@ public:
 	void SetDynamic(bool bDynamic);
 	
 	void SetCount(unsigned int nCount);
-	void SetDelay(unsigned int nDelay);
+	void SetDelay(int nDelay);
 	void SetRouteDelay(unsigned int nDelay);
 	void SetInterval(unsigned int nInterval);
 
@@ -96,7 +103,7 @@ public:
 	int		GetBonusOnChild();
 	
 	unsigned int GetCount();
-	unsigned int GetDelay();
+	int          GetDelay();
 	unsigned int GetRouteDelay();
 	unsigned int GetInterval();
 	

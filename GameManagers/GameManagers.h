@@ -297,7 +297,7 @@ public:
 	// IDesign General settings
 
 	virtual void DesignRender(IGenericRender *piRender,CVector &vPosition,CVector &vAngles,bool bSelected)=0;
-	virtual void DesignGetBBox(CVector *pvMins,CVector *pvMaxs)=0;
+	virtual void DesignGetAABBox(CVector &vPosition,CVector &vAngles,CVector *pvMins,CVector *pvMaxs)=0;
 	virtual CTraceInfo DesignGetTrace( const CVector &vPosition,const CVector &vAngles,const CVector &p1,const CVector &p2 )=0;
 	virtual double DesignGetRadius()=0;
 };
@@ -507,10 +507,12 @@ struct SPlayAreaInfo
 
 struct IPlayAreaElement:virtual public ISystemUnknown
 {
-    virtual void Activate(unsigned int dwCurrentTime)=0;
+	virtual void Start()=0;
+	virtual void Stop()=0;
+	
+	virtual void Activate(unsigned int dwCurrentTime)=0;
     virtual void Deactivate()=0;
     virtual bool IsActive()=0;
-	virtual void Reset()=0;
 
     virtual bool ProcessFrame(CVector vPlayPosition,SPlayAreaInfo *pPlayAreaInfo,unsigned int dwCurrentTime,double dInterval)=0;
 
@@ -524,7 +526,7 @@ struct IPlayAreaElement:virtual public ISystemUnknown
 struct IPlayAreaEntity:virtual public IPlayAreaElement
 {
 	virtual void SetCount(unsigned int nCount)=0;
-	virtual void SetDelay(unsigned int nDelay)=0;
+	virtual void SetDelay(int nDelay)=0;
 	virtual void SetRouteDelay(unsigned int nDelay)=0;
 	virtual void SetInterval(unsigned int nInterval)=0;
 	virtual void SetDynamic(bool bDynamic)=0;
@@ -536,7 +538,7 @@ struct IPlayAreaEntity:virtual public IPlayAreaElement
 	virtual void SetBonusOnChild(int nChildIndex)=0;
 	
 	virtual unsigned int GetCount()=0;
-	virtual unsigned int GetDelay()=0;
+	virtual int          GetDelay()=0;
 	virtual unsigned int GetRouteDelay()=0;
 	virtual unsigned int GetInterval()=0;
 	

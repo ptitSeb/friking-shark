@@ -32,7 +32,7 @@ void CFormationEditorObjectLabel::OnDrawBackground( IGenericRender *piRender )
 {
 	piRender->Clear(m_vBackgroundColor,m_dBackgroundAlpha);
 	CVector vMaxs,vMins;
-	if(m_piDesignObject){m_piDesignObject->DesignGetBBox(&vMins,&vMaxs);}
+	if(m_piDesignObject){m_piDesignObject->DesignGetAABBox(Origin,Origin,&vMins,&vMaxs);}
 	CVector vSize=(vMaxs-vMins)*1.2;
 	CVector vCenter=(vMaxs+vMins)*0.5;
 	vCenter.c[1]=vMaxs.c[1]+10;

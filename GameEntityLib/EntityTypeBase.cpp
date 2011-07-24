@@ -122,7 +122,7 @@ void CEntityTypeBase::InitializeEntity(CEntityBase *pEntity,unsigned int dwCurre
 double CEntityTypeBase::DesignGetRadius()
 {
 	CVector vMins,vMaxs;
-	DesignGetBBox(&vMins,&vMaxs);
+	DesignGetAABBox(Origin,Origin,&vMins,&vMaxs);
 	return GetBBoxRadius(vMins,vMaxs);
 }
 
@@ -141,22 +141,24 @@ void CEntityTypeBase::DesignRender(IGenericRender *piRender,CVector &vPosition,C
 	}
 }
 
-void CEntityTypeBase::DesignGetBBox( CVector *pvMins,CVector *pvMaxs )
+void CEntityTypeBase::DesignGetAABBox( CVector &vPosition,CVector &vAngles,CVector *pvMins,CVector *pvMaxs )
 {
 	CVector vFakeMins(1000,1000,1000),vFakeMaxs(-1000,-1000,-1000);
 	CVector vMins(1000,1000,1000),vMaxs(-1000,-1000,-1000);
 
 	CAnimationTypeWrapper *pAnimation=GetStateAnimation(ENTITY_STATE_BASE,0);
-	if(pAnimation){pAnimation->m_piAnimationType->DesignGetBBox(&vMins,&vMaxs);}
+	if(pAnimation){pAnimation->m_piAnimationType->DesignGetAABBox(vPosition,vAngles,&vMins,&vMaxs);}
 
 	for(unsigned int x=0;x<m_vChildren.size();x++)
 	{
 		if(!m_vChildren[x].entityType.m_piEntityType){continue;}
 
+
 		CVector vTempMins,vTempMaxs;
-		m_vChildren[x].entityType.m_piEntityType->DesignGetBBox(&vTempMins,&vTempMaxs);
-		vTempMins+=m_vChildren[x].vPosition;
-		vTempMaxs+=m_vChildren[x].vPosition;
+		CVector vTempPos,vTempAngles;
+		ComputeReferenceSystem(vPosition,vAngles,m_vChildren[x].vPosition,m_vChildren[x].vAngles,&vTempPos,&vTempAngles);
+		
+		m_vChildren[x].entityType.m_piEntityType->DesignGetAABBox(vTempPos,vTempAngles,&vTempMins,&vTempMaxs);
 		for(unsigned int c=0;c<3;c++)
 		{
 			if(vTempMins.c[c]<vMins.c[c]){vMins.c[c]=vTempMins.c[c];}

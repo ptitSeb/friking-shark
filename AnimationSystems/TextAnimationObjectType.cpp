@@ -57,7 +57,7 @@ void CTextAnimationObjectType::DesignRender( IGenericRender *piRender,CVector &v
 	}
 }
 
-void CTextAnimationObjectType::DesignGetBBox( CVector *pvMins,CVector *pvMaxs )
+void CTextAnimationObjectType::DesignGetAABBox( CVector *pvMins,CVector *pvMaxs )
 {
 	double dSize=DesignGetRadius();
 	if(pvMins){*pvMins=CVector(-dSize*0.5,-dSize*0.5,-dSize*0.5);}

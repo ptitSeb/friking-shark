@@ -26,7 +26,7 @@ public:
 
 	bool PrepareResources();
 	void DesignRender(IGenericRender *pRender,CVector &vPosition,CVector &vAngles,bool bSelected);
-	void DesignGetBBox(CVector *pvMins,CVector *pvMaxs);
+	void DesignGetAABBox(CVector &vPosition,CVector &vAngles,CVector *pvMins,CVector *pvMaxs);
 	double DesignGetRadius();
 	CTraceInfo DesignGetTrace(const CVector &vOrigin,const CVector &vAngles,const CVector &p1,const CVector &p2 );
 

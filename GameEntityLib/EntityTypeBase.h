@@ -88,7 +88,7 @@ protected:
 public:
 	
 	virtual void	DesignRender(IGenericRender *piRender,CVector &vPosition,CVector &vAngles,bool bSelected);
-	virtual void    DesignGetBBox(CVector *pvMins,CVector *pvMaxs);
+	virtual void    DesignGetAABBox(CVector &vPosition,CVector &vAngles,CVector *pvMins,CVector *pvMaxs);
 	virtual CTraceInfo DesignGetTrace(const CVector &vPosition,const CVector &vAngles,const CVector &p1,const CVector &p2 );
 	virtual double  DesignGetRadius();
 	

@@ -26,3 +26,4 @@
 #endif
 
 CSingletonWrapper<IEntityManager> g_EntityManagerWrapper("GameSystem","EntityManager");
+CSingletonWrapper<ITerrainDesign> g_WorldManagerWrapper("GameSystem","WorldManager");

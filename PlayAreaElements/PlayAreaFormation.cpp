@@ -111,9 +111,9 @@ void CPlayAreaFormation::Deactivate()
 	CPlayAreaElementBase::Deactivate();
 }
 
-void CPlayAreaFormation::Reset()
+void CPlayAreaFormation::Stop()
 {
-	CPlayAreaElementBase::Reset();
+	CPlayAreaElementBase::Stop();
 	m_bAlreadyOverPoint=false;
 	m_bFirstFrame=true;
 }
@@ -139,9 +139,9 @@ void CPlayAreaFormation::DesignRender( IGenericRender *piRender ,bool bSelected)
 	if(m_FormationType.m_piFormationType){m_FormationType.m_piFormationType->DesignRender(piRender,m_vPosition,Origin,bSelected);}
 }
 
-void CPlayAreaFormation::DesignGetBBox( CVector *pvMins,CVector *pvMaxs )
+void CPlayAreaFormation::DesignGetAABBox(CVector &vPosition,CVector &vAngles, CVector *pvMins,CVector *pvMaxs )
 {
-	if(m_FormationType.m_piFormationType){m_FormationType.m_piFormationType->DesignGetBBox(pvMins,pvMaxs);}
+	if(m_FormationType.m_piFormationType){m_FormationType.m_piFormationType->DesignGetAABBox(vPosition,vAngles,pvMins,pvMaxs);}
 }
 
 CTraceInfo CPlayAreaFormation::DesignGetTrace( const CVector &p1,const CVector &p2 )

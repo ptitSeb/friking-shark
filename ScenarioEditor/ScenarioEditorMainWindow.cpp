@@ -476,7 +476,7 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 			char sDescr[128];
 			unsigned int nDescrLen=0;
 			unsigned int nCount=m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetCount();
-			unsigned int nDelay=m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetDelay();
+			int nDelay=m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetDelay();
 			if(nCount>1)
 			{
 				nDescrLen+=sprintf(sDescr+nDescrLen,"x%d",nCount);
@@ -1452,7 +1452,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			if(m_piGUIManager->IsKeyDown(GK_LCONTROL)){nIncrement=1000;}
 			if(m_piGUIManager->IsKeyDown(GK_LSHIFT)){nIncrement=5000;}
 			int nDelay=pEntity->m_piPlayAreaEntity->GetDelay();
-			pEntity->m_piPlayAreaEntity->SetDelay(nDelay>=nIncrement?nDelay-nIncrement:0);
+			pEntity->m_piPlayAreaEntity->SetDelay(nDelay-nIncrement);
 		}
 		else if(piControl==m_piBTEntityIncreaseBonusOnChild)
 		{
@@ -2710,7 +2710,7 @@ void CScenarioEditorMainWindow::CenterCamera()
 	if(m_nSelectedFormation!=-1 && m_vFormationControls[m_nSelectedFormation]->m_piDesignObject)
 	{
 		CVector vMins,vMaxs;
-		m_vFormationControls[m_nSelectedFormation]->m_piDesignObject->DesignGetBBox(&vMins,&vMaxs);
+		m_vFormationControls[m_nSelectedFormation]->m_piDesignObject->DesignGetAABBox(Origin,Origin,&vMins,&vMaxs);
 		CVector vPos=m_vFormationControls[m_nSelectedFormation]->m_piPlayAreaFormation->GetPosition();
 		bCenter=true;
 		vCenter=vPos+(vMaxs+vMins)*0.5;
@@ -2719,7 +2719,7 @@ void CScenarioEditorMainWindow::CenterCamera()
 	else if(m_nSelectedEntity!=-1 && m_vEntityControls[m_nSelectedEntity]->m_piDesignObject)
 	{
 		CVector vMins,vMaxs;
-		m_vEntityControls[m_nSelectedEntity]->m_piDesignObject->DesignGetBBox(&vMins,&vMaxs);
+		m_vEntityControls[m_nSelectedEntity]->m_piDesignObject->DesignGetAABBox(Origin,Origin,&vMins,&vMaxs);
 		CVector vPos=m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetPosition();
 		bCenter=true;
 		vCenter=vPos+(vMaxs+vMins)*0.5;

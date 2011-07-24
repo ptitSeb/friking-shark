@@ -1189,7 +1189,7 @@ void CEntityEditorMainWindow::UpdateInteractiveElementsSpeedsAndSizes()
 	if(m_EntityType.m_piEntityType)
 	{
 		CVector vMins,vMaxs;
-		m_EntityType.m_piEntityType->DesignGetBBox(&vMins,&vMaxs);
+		m_EntityType.m_piEntityType->DesignGetAABBox(Origin,Origin,&vMins,&vMaxs);
 		
 		CVector vSize=vMaxs-vMins;
 		double dMaxDimension=std::max(std::max(vSize.c[0],vSize.c[1]),vSize.c[2]);
@@ -1250,7 +1250,7 @@ void CEntityEditorMainWindow::CenterCamera(EEntityEditorView eView)
 	bool bCenter=false;
 	CVector vCenter,vSize;
 	CVector vMins,vMaxs;
-	m_vAnimations[nSelected].m_piAnimationType->DesignGetBBox(&vMins,&vMaxs);
+	m_vAnimations[nSelected].m_piAnimationType->DesignGetAABBox(Origin,Origin,&vMins,&vMaxs);
 	bCenter=true;
 	vCenter+=(vMaxs+vMins)*0.5;
 	vSize=(vMaxs-vMins);

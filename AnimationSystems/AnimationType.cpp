@@ -58,14 +58,14 @@ void CAnimationType::DesignRender( IGenericRender *piRender,CVector &vPosition,C
 	}
 }
 
-void CAnimationType::DesignGetBBox( CVector *pvMins,CVector *pvMaxs )
+void CAnimationType::DesignGetAABBox(CVector &vPosition,CVector &vAngles, CVector *pvMins,CVector *pvMaxs )
 {
 	CVector vFakeMins(1000,1000,1000),vFakeMaxs(-1000,-1000,-1000);
 	CVector vMins(1000,1000,1000),vMaxs(-1000,-1000,-1000);
 	for(unsigned x=0;x<m_vObjects.size();x++)
 	{
 		CVector vTempMins,vTempMaxs;
-		m_vObjects[x].m_piObjectType->DesignGetBBox(&vTempMins,&vTempMaxs);
+		m_vObjects[x].m_piObjectType->DesignGetAABBox(vPosition,vAngles,&vTempMins,&vTempMaxs);
 		for(unsigned int c=0;c<3;c++)
 		{
 			if(vTempMins.c[c]<vMins.c[c]){vMins.c[c]=vTempMins.c[c];}
@@ -82,7 +82,7 @@ void CAnimationType::DesignGetBBox( CVector *pvMins,CVector *pvMaxs )
 double CAnimationType::DesignGetRadius()
 {
 	CVector vMins,vMaxs;
-	DesignGetBBox(&vMins,&vMaxs);
+	DesignGetAABBox(Origin,Origin,&vMins,&vMaxs);
 	return GetBBoxRadius(vMins,vMaxs);
 }
 
