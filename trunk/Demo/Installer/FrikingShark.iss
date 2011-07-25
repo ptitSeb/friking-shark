@@ -49,6 +49,9 @@ Source: .\Redistributables\Windows\oalinst.exe; DestDir: {app}\Redistributables;
 Source: .\Redistributables\Windows\msvcp90.dll; DestDir: {sys}; Flags: comparetimestamp onlyifdoesntexist 32bit
 Source: .\Redistributables\Windows\msvcr90.dll; DestDir: {sys}; Flags: comparetimestamp onlyifdoesntexist 32bit
 
+[Dirs]
+Name: "{app}\Player"
+
 [Icons]
 Name: {group}\Friking Shark 3D; Filename: {app}\Bin\Release\GameEngine.exe; WorkingDir: {app}; IconIndex: 0
 Name: "{group}\Scenario Editor"; Filename: {app}\Bin\Release\GameEngine.exe; WorkingDir: {app}; Parameters: ScenarioEditor; 
