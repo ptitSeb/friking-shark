@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=230.435349
 			NearPlane=130.000000
-			Posicion=648.487981,228.570478,0.000023
+			Posicion=653.227616,228.570478,0.000023
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -35,7 +35,7 @@ AreaDeJuego
 			Class=CPlayAreaCheckPoint
 			Data
 			{
-				Posicion=634.848768,-0.000023,88.570478
+				Posicion=653.897466,-0.000023,88.570478
 			}
 			Name=""
 			System=GameSystem
@@ -49,7 +49,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=0
 				Count=1
-				Delay=44000
+				Delay=44500
 				Interval=0
 				Posicion=-586.974560,3.864337,17.706195
 				RouteDelay=0
@@ -85,7 +85,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=0
 				Count=1
-				Delay=40000
+				Delay=40500
 				Interval=0
 				Posicion=-944.847194,-49.998571,17.706195
 				RouteDelay=0
@@ -121,7 +121,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=0
 				Count=1
-				Delay=40000
+				Delay=40500
 				Interval=0
 				Posicion=-941.603887,60.576848,17.706195
 				RouteDelay=0
@@ -157,7 +157,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=0
 				Count=1
-				Delay=28000
+				Delay=28500
 				Interval=0
 				Posicion=-1056.108286,70.014517,17.706195
 				RouteDelay=0
@@ -193,7 +193,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=0
 				Count=1
-				Delay=28000
+				Delay=28500
 				Interval=0
 				Posicion=-1055.575257,-72.185887,17.706195
 				RouteDelay=0
@@ -229,7 +229,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=0
 				Count=1
-				Delay=22000
+				Delay=22500
 				Interval=0
 				Posicion=-958.490245,3.478018,17.706195
 				RouteDelay=0
@@ -265,7 +265,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=0
 				Count=1
-				Delay=17000
+				Delay=17500
 				Interval=0
 				Posicion=-1018.010531,29.210928,17.706195
 				RouteDelay=0
@@ -301,7 +301,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=0
 				Count=1
-				Delay=17000
+				Delay=17500
 				Interval=0
 				Posicion=-1049.387980,5.061575,17.706195
 				RouteDelay=0
@@ -337,7 +337,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=0
 				Count=1
-				Delay=17000
+				Delay=17500
 				Interval=0
 				Posicion=-1018.307145,-15.905158,17.706195
 				RouteDelay=0

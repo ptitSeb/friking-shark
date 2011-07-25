@@ -19,6 +19,7 @@
 #include "./stdafx.h"
 #include "GameRunTimeLib.h"
 #include "GameGUILib.h"
+#include "GUISystems.h"
 #include "GameMenu.h"
 
 CGameMenu::CGameMenu(void)
@@ -37,6 +38,10 @@ void CGameMenu::OnButtonClicked(IGameGUIButton *piControl)
 	{
 		EndDialog(eGameMenuAction_Continue);
 	}
+	if(piControl==m_piBTSave)
+	{
+		EndDialog(eGameMenuAction_Save);
+	}
 	if(piControl==m_piBTEndGame)
 	{
 		EndDialog(eGameMenuAction_EndGame);
@@ -48,4 +53,11 @@ void CGameMenu::OnButtonClicked(IGameGUIButton *piControl)
 }
 void CGameMenu::OnInitDialog()
 {
+	CGameDialogBase::OnInitDialog();
+}
+
+eGameMenuAction CGameMenu::Show(IGameWindow *piParent)
+{
+	int nRes=Execute(piParent);
+	return (eGameMenuAction)nRes;
 }

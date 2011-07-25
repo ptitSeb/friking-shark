@@ -51,6 +51,9 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	unsigned int			 m_nWeapon;
 	unsigned int             m_nLivesLeft;
 	unsigned int             m_nLastCountTime;
+	unsigned int 			 m_nBombs;
+	int 			 		 m_nCheckpoint;
+	std::set<double>		 m_sCheckpointPositions;
 	
 	CGameControllerWrapper   m_GameControllerWrapper;
 	CPlayAreaManagerWrapper  m_PlayAreaManagerWrapper;
@@ -63,7 +66,6 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	IPlayer					*m_piPlayer;
 	IEntity					*m_piPlayerEntity;
 
-	unsigned int m_nDemoCheckpointsFound;
 	CVector m_vDemoStartPosition;
 	CVector m_vDemoEndPosition;
 	bool    m_bDemoMode;
@@ -91,12 +93,8 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	
 	bool m_bGameStarted;
 	bool m_bGameSystemInitialized;
-	CVector m_vLastCheckPointPosition;
 	bool m_bShowPerformanceIndicators;
 
-	void SearchDemoCheckpoints(IPlayAreaElement *piElement,bool *pbStopEnumerating);
-	void SearchLastCheckpoint(IPlayAreaElement *piElement,bool *pbStopEnumerating);
-	
 	SGamePos m_InspectionMovementStartPoint;
 
 	IGameWindow		*m_piSTUpperIndicatorRow0;
@@ -146,11 +144,13 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 
 	void InitializeGameSystem();
 	void StartDemo();
-	void StartGame(IPlayerProfile *piProfile,EGameMode eMode,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel);
+	void StartGame(IPlayerProfile *piProfile,SGameState *pGame);
 	void StopGame();
 	void StopManuallyWithCourtain();
-	void ResetGame(bool bGoToLastCheckPoint);
-
+	void ResetGame();
+	
+	void GetGameState(SGameState *pState);
+	
 	bool LoadScenario(std::string sFileName);
 	void CloseScenario();
 
@@ -182,7 +182,7 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	void OpenCourtain();
 	void CloseCourtain();
 	
-	void StartGameInternal(EGameMode eMode,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel, bool bGoToLastCheckPoint);
+	void StartGameInternal(unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel, unsigned int nBombs, int nCheckpoint);
 	
 public:
 

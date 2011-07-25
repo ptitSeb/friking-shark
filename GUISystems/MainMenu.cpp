@@ -19,10 +19,13 @@
 #include "./stdafx.h"
 #include "GameRunTimeLib.h"
 #include "GameGUILib.h"
+#include "GUISystems.h"
 #include "MainMenu.h"
 
 CMainMenu::CMainMenu(void)
 {
+	m_bAllowLoad=false;
+	m_bAllowContinue=false;
 }
 
 CMainMenu::~CMainMenu(void)
@@ -44,6 +47,14 @@ void CMainMenu::OnButtonClicked(IGameGUIButton *piControl)
 	{
 		EndDialog(eMainMenuAction_NewGame);
 	}
+	if(piControl==m_piBTContinue)
+	{
+		EndDialog(eMainMenuAction_Continue);
+	}
+	if(piControl==m_piBTLoad)
+	{
+		EndDialog(eMainMenuAction_Load);
+	}
 	if(piControl==m_piBTControls)
 	{
 		EndDialog(eMainMenuAction_Controls);
@@ -63,5 +74,16 @@ void CMainMenu::OnButtonClicked(IGameGUIButton *piControl)
 }
 void CMainMenu::OnInitDialog()
 {
+	CGameDialogBase::OnInitDialog();
+	
+	if(m_piBTContinue){m_piBTContinue->Activate(m_bAllowContinue);}
+	if(m_piBTLoad){m_piBTLoad->Activate(m_bAllowLoad);}
+}
 
+eMainMenuAction CMainMenu::Show(IGameWindow *piParent,bool bAllowContinue, bool bAllowLoad)
+{
+	m_bAllowLoad=bAllowLoad;
+	m_bAllowContinue=bAllowContinue;
+	int nRes=Execute(piParent);
+	return (eMainMenuAction)nRes;
 }

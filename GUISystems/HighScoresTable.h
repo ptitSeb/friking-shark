@@ -18,8 +18,6 @@
 
 #pragma once
 
-DECLARE_SERIALIZABLE_ENUMERATION(EGameDifficulty)
-
 BEGIN_STRUCT_PROPS(SHighScoreRow)
 	PROP(sName,"Name")
 	PROP(eDifficulty,"Difficulty")
