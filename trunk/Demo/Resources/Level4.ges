@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=212.458680
 			NearPlane=130.000000
-			Posicion=1533.459901,203.483138,-5.101089
+			Posicion=1974.259733,203.483138,1.551256
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -1053,7 +1053,6 @@ AreaDeJuego
 					Name=HouseTypeD
 					System=EntityTypes
 				}
-
 			}
 			Name=""
 			System=GameSystem
@@ -1800,7 +1799,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=-1
 				Count=1
-				Delay=0
+				Delay=-100
 				Interval=0
 				Posicion=308.603698,30.356454,2.426796
 				RouteDelay=0
@@ -1854,7 +1853,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=-1
 				Count=1
-				Delay=0
+				Delay=-300
 				Interval=0
 				Posicion=-468.063431,-103.870092,5.386783
 				RouteDelay=0
@@ -1881,7 +1880,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=-1
 				Count=1
-				Delay=0
+				Delay=-300
 				Interval=0
 				Posicion=136.558526,-101.468647,5.386783
 				RouteDelay=0
