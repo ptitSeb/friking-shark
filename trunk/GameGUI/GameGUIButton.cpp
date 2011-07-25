@@ -38,7 +38,26 @@ CGameGUIButton::~CGameGUIButton(void)
 
 void CGameGUIButton::OnDrawBackground(IGenericRender *piRender)
 {
-	if(m_piGUIManager->HasMouseCapture(this) && m_bHoverEnabled)
+	if(m_bActive==false)
+	{
+		if(m_DeactivatedTexture.m_piTexture)
+		{
+			piRender->ActivateBlending();
+			piRender->SetColor(m_vDeactivatedBackgroundColor,m_dDeactivatedBackgroundAlpha);
+			piRender->SelectTexture(m_DeactivatedTexture.m_piTexture,0);
+			piRender->RenderTexture(CVector(m_rRealRect.w*0.5,m_rRealRect.h*0.5,0),m_rRealRect.w,m_rRealRect.h);
+			piRender->UnselectTexture(0);
+			piRender->DeactivateBlending();
+		}
+		else
+		{
+			if(m_dDeactivatedBackgroundAlpha!=0.0)
+			{
+				piRender->Clear(m_vDeactivatedBackgroundColor,m_dDeactivatedBackgroundAlpha);
+			}
+		}
+	}
+	else if(m_piGUIManager->HasMouseCapture(this) && m_bHoverEnabled)
 	{
 		if(m_HoverTexture.m_piTexture)
 		{
@@ -65,7 +84,18 @@ void CGameGUIButton::OnDrawBackground(IGenericRender *piRender)
 
 void CGameGUIButton::OnDraw(IGenericRender *piRender)
 {
-	if(m_piGUIManager->HasMouseCapture(this) && m_bHoverEnabled)
+	if(m_bActive==false)
+	{
+		if(m_DeactivatedFont.m_piFont)
+		{
+			DrawText(m_DeactivatedFont.m_piFont,m_dFontSize,piRender,m_vDeactivatedTextColor,m_dDeactivatedTextAlpha);
+		}
+		else
+		{
+			DrawText(piRender,m_vDeactivatedTextColor,m_dDeactivatedTextAlpha);
+		}
+	}
+	else if(m_piGUIManager->HasMouseCapture(this) && m_bHoverEnabled)
 	{
 		if(m_HoverFont.m_piFont)
 		{
