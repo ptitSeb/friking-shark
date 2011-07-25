@@ -129,7 +129,7 @@ template<typename T1> CMRPersistentSimpleReferenceT<T1> *MRCreateReference(T1 *p
 #define DECLARE_SERIALIZABLE_ENUMERATION(enumeration)\
 	__UNUSED_ATTRIB__ static bool MRPersistencyLoad(ISystemPersistencyNode *piParent,CMRPersistentReferenceT<enumeration>*pItem){return MRPersistencyLoad(piParent,(CMRPersistentReferenceT<int>*)pItem);}\
 	__UNUSED_ATTRIB__ static bool MRPersistencySave(ISystemPersistencyNode *piParent,CMRPersistentReferenceT<enumeration>*pItem){return MRPersistencySave(piParent,(CMRPersistentReferenceT<int>*)pItem);}\
-	__UNUSED_ATTRIB__ static bool MRPersistencyRemove(ISystemPersistencyNode *piParent,CMRPersistentReferenceT<enumeration>*pItem){piParent->DeleteNode(pItem->GetName());return true;}\
+	__UNUSED_ATTRIB__ static bool MRPersistencyRemove(ISystemPersistencyNode *piParent,CMRPersistentReferenceT<enumeration>*pItem){return MRPersistencyRemove(piParent,(CMRPersistentReferenceT<int>*)pItem);}\
 	__UNUSED_ATTRIB__ static void MRPersistencyInitialize(CMRPersistentReferenceT<enumeration>*pItem){return MRPersistencyInitialize((CMRPersistentReferenceT<int>*)pItem);}\
 	__UNUSED_ATTRIB__ static void MRPersistencyFree(CMRPersistentReferenceT<enumeration>*pItem){}
 
