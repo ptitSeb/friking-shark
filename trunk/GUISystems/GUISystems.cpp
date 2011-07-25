@@ -35,6 +35,9 @@
 #include "HighScoresTable.h"
 #include "LevelOptions.h"
 #include "CreditsDialog.h"
+#include "LoadDialog.h"
+#include "SaveDialog.h"
+#include "SavedGameRow.h"
 
 BEGIN_SYSTEM_MODULE()
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CMainWindow,"CMainWindow")
@@ -49,5 +52,8 @@ BEGIN_SYSTEM_MODULE()
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CHighScoresTable,"CHighScoresTable")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CLevelOptions,"CLevelOptions")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CCreditsDialog,"CCreditsDialog")
+	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CLoadDialog,"CLoadDialog")
+	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CSaveDialog,"CSaveDialog")
+	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CSavedGameRow,"CSavedGameRow")
 END_SYSTEM_MODULE()
 

@@ -25,6 +25,10 @@ DECLARE_CUSTOM_WRAPPER2(CLevelOptionsDialogWrapper,IGameDialog,m_piDialog,ILevel
 DECLARE_CUSTOM_WRAPPER1(CHighScoresTableWrapper,IHighScoresTable,m_piHighScoresTable)
 DECLARE_CUSTOM_WRAPPER2(CHighScoresDialogWrapper,IGameDialog,m_piDialog,IHighScoresDialog,m_piHighScoresDialog)
 DECLARE_CUSTOM_WRAPPER2(CControlsDialogWrapper,IGameDialog,m_piDialog,IControlsDialog,m_piControlsDialog)
+DECLARE_CUSTOM_WRAPPER2(CLoadDialogWrapper,IGameDialog,m_piDialog,ILoadDialog,m_piLoadDialog)
+DECLARE_CUSTOM_WRAPPER2(CSaveDialogWrapper,IGameDialog,m_piDialog,ISaveDialog,m_piSaveDialog)
+DECLARE_CUSTOM_WRAPPER2(CGameMenuWrapper,IGameDialog,m_piDialog,IGameMenu,m_piGameMenu)
+DECLARE_CUSTOM_WRAPPER2(CMainMenuWrapper,IGameDialog,m_piDialog,IMainMenu,m_piMainMenu)
 
 enum eInterfaceStage
 {
@@ -42,6 +46,41 @@ enum eInterfaceStage
 	eInterfaceStage_Exit
 };
 
+BEGIN_STRUCT_PROPS(SGameState)
+	PROP_VALUE(nPoints,"Points",0)
+	PROP_VALUE(nWeapon,"Weapon",0)
+	PROP_VALUE(nLevel,"Level",-1)
+	PROP_VALUE(nCheckpoint,"Checkpoint",-1)
+	PROP_VALUE(nBombs,"Bombs",0)
+	PROP_VALUE(nLivesLeft,"Lives",0)
+	PROP_VALUE(eMode,"Mode",eGameMode_Normal)
+	PROP_VALUE(eDifficulty,"Difficulty",eGameDifficulty_Easy)
+END_STRUCT_PROPS()
+
+class SPlayerData: public CSystemSerializableBase
+{
+public:
+	bool					m_bHasCurrentGame;
+	SGameState			  	m_CurrentGame;
+	std::vector<SGameState> m_vSavedGames;
+	CPlayerProfileWrapper 	m_PlayerProfile;
+	
+	EGameMode 			  m_eLastMode;
+	EGameDifficulty       m_eLastDifficulty;
+	unsigned int 		  m_nLastLevel;
+	
+	BEGIN_PROP_MAP(SPlayerData)
+		PROP_VALUE_FLAGS(m_eLastMode,"LastMode",eGameMode_Normal,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_VALUE_FLAGS(m_eLastDifficulty,"LastDifficulty",eGameDifficulty_Easy,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_VALUE_FLAGS(m_nLastLevel,"LastLevel",0,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_FLAGS(m_CurrentGame,"CurrentGame",MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_FLAGS(m_vSavedGames,"SavedGames",MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_FLAGS(m_PlayerProfile,"Profile",MRPF_NORMAL|MRPF_OPTIONAL);
+	END_PROP_MAP()
+	
+	SPlayerData(){PersistencyDefaultValue();}
+};
+
 class CMainWindow: virtual public CGameWindowBase,virtual public IGameInterfaceWindowEvents
 {
 	eInterfaceStage m_eStage;
@@ -50,26 +89,22 @@ class CMainWindow: virtual public CGameWindowBase,virtual public IGameInterfaceW
 	CConfigFile m_HighScoresConfigFile;
 	CConfigFile m_PlayerProfileConfigFile;
 
-	EGameMode 			  m_eGameMode;
 	IGameGUILabel        *m_piSTBackground;
 	IGameInterfaceWindow *m_piGameInterface;
 
 	CGameWindowWrapper m_BackgroundWindow;
 	CGameDialogWrapper m_GameOverDialog;
-	CGameDialogWrapper m_MainMenuDialog;
-	CGameDialogWrapper m_GameMenuDialog;
-	CGameDialogWrapper m_ConfirmationDialog;
+	CMainMenuWrapper m_MainMenuDialog;
+	CGameMenuWrapper m_GameMenuDialog;
 	CGameDialogWrapper m_CreditsDialog;
-	CPlayerProfileWrapper m_PlayerProfile;
 	CLevelOptionsDialogWrapper m_LevelOptionsDialog;
 	CHighScoresDialogWrapper m_HighScoresDialog;
 	CHighScoresTableWrapper  m_HighScoresTable;
 	CControlsDialogWrapper   m_ControlsDialog;
+	CLoadDialogWrapper   	 m_LoadDialog;
+	CSaveDialogWrapper   	 m_SaveDialog;
 	
-	unsigned int m_nCurrentLevel;
-	unsigned int m_nPoints;
-	unsigned int m_nLivesLeft;
-	unsigned int m_nWeaponLevel;
+	SPlayerData m_PlayerData;
 	
 	void Destroy();
 	
@@ -79,8 +114,7 @@ public:
 	BEGIN_PROP_MAP(CMainWindow)
 		PROP_CLASS_CHAIN(CGameWindowBase);
 		PROP_VALUE_FLAGS(m_eReferenceSystem,"ReferenceSystem",eGameGUIReferenceSystem_Relative,MRPF_NORMAL|MRPF_OPTIONAL)
-		END_PROP_MAP()
-
+	END_PROP_MAP()
 	BEGIN_CHILD_MAP()
 		CHILD_MAP_ENTRY("Background",m_piSTBackground);
 		CHILD_MAP_ENTRY_EX("GameInterface",m_piGameInterface,IGameInterfaceWindowEvents);
@@ -91,11 +125,13 @@ public:
 	void OnWantFocus(bool *pbWant);
 	void OnDraw(IGenericRender *piRender);
 	
-	void	OnScenarioFinished(eScenarioFinishedReason eReason,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel);
+	void	OnScenarioFinished(eScenarioFinishedReason eReason);
 	void	OnGameOverCourtainClosed();
 	void    OnManualStopCourtainClosed();
 	void	OnPaused(bool bPaused);
-
+	void	OnCheckpoint();
+	void	OnPlayerKilled();
+	
 	CMainWindow(void);
 	~CMainWindow(void);
 };

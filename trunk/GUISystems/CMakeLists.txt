@@ -18,6 +18,9 @@ SET (SRCS
 	./GUISystems/ControlsDialog.h
 	./GUISystems/KeyCaptureDialog.h
 	./GUISystems/CreditsDialog.h
+	./GUISystems/LoadDialog.h
+	./GUISystems/SaveDialog.h
+	./GUISystems/SavedGameRow.h
 
 	./GUISystems/ConfirmationDialog.cpp
 	./GUISystems/GameInterface.cpp
@@ -33,5 +36,8 @@ SET (SRCS
 	./GUISystems/ControlsDialog.cpp
 	./GUISystems/KeyCaptureDialog.cpp
 	./GUISystems/CreditsDialog.cpp
+	./GUISystems/LoadDialog.cpp
+	./GUISystems/SaveDialog.cpp
+	./GUISystems/SavedGameRow.cpp
 )
 

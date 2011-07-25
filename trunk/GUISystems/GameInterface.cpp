@@ -28,6 +28,7 @@ CGameInterface::CGameInterface(void)
 	m_eState=eGameInterfaceState_Idle;
 	m_bActive=false;
 	m_eGameMode=eGameMode_Normal;
+	m_eGameDifficulty=eGameDifficulty_Easy;
 	m_bCompleted=false;
 	m_piSystemManager   =NULL;
 	m_piGameSystem			=NULL;
@@ -39,7 +40,7 @@ CGameInterface::CGameInterface(void)
 	m_bResumeAfterFreeze=false;
 	m_bShowPerformanceIndicators=false;
 	m_bPlayerKilledOnPreviousFrame=false;
-	m_nDemoCheckpointsFound=0;
+	m_nCheckpoint=-1;
 	m_bDemoMode=true;
 	
 	m_piSTFrameRate=NULL;
@@ -57,6 +58,7 @@ CGameInterface::CGameInterface(void)
 	m_nPoints=0;
 	m_nLivesLeft=0;
 	m_nWeapon=0;
+	m_nBombs=0;
 	m_bGameSystemInitialized=false;
 }
 
@@ -127,18 +129,31 @@ bool CGameInterface::LoadScenario(std::string sScenario)
 	if(!m_bGameSystemInitialized){return false;}
 	bool bResult=true;
 	m_GameControllerWrapper.m_piGameController->LoadScenario(sScenario);
+	
+	if(m_PlayAreaManagerWrapper.m_piPlayAreaManager)
+	{
+		m_sCheckpointPositions.clear();
+		m_PlayAreaManagerWrapper.m_piPlayAreaManager->EnumeratePlayAreaElements(this);
+		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&m_vDemoStartPosition,&m_vDemoEndPosition);
+		
+		set<double>::iterator i=m_sCheckpointPositions.begin();
+		if(i!=m_sCheckpointPositions.end()){m_vDemoStartPosition.c[0]=*i;i++;}
+		if(i!=m_sCheckpointPositions.end()){m_vDemoEndPosition.c[0]=*i;i++;}
+	}
+		
 	m_bCompleted=false;
 	return bResult;
 }
 
-void CGameInterface::StartGameInternal(EGameMode eMode,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel, bool bGoToLastCheckPoint)
+void CGameInterface::StartGameInternal(unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel, unsigned int nBombs, int nCheckpoint)
 {
 	if(!m_bGameSystemInitialized){return;}
 	if(m_bGameStarted){StopGame();}
 	m_nPoints=nPoints;
 	m_nLivesLeft=nLivesLeft;
 	m_nWeapon=nWeaponLevel;
-	m_eGameMode=eMode;
+	m_nBombs=nBombs;
+	m_nCheckpoint=nCheckpoint;
 	m_FrameManagerWrapper.m_piFrameManager->Reset();
 	if(m_FrameManagerWrapper.m_piFrameManager->IsPaused())
 	{
@@ -152,26 +167,18 @@ void CGameInterface::StartGameInternal(EGameMode eMode,unsigned int nPoints, uns
 	
 	if(m_bDemoMode)
 	{
-		if(m_PlayAreaManagerWrapper.m_piPlayAreaManager)
-		{
-			m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&m_vDemoStartPosition,&m_vDemoEndPosition);
-			m_PlayAreaManagerWrapper.m_piPlayAreaManager->EnumeratePlayAreaElements(this);
-		}
-		
 		m_PlayerManagerWrapper.m_piPlayerManager->SetPlayerStart(m_vDemoStartPosition);
 	}
 	else
 	{
-		if(bGoToLastCheckPoint)
+		CVector vStart,vEnd;
+		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
+		if(m_nCheckpoint!=-1)
 		{
-			m_PlayerManagerWrapper.m_piPlayerManager->SetPlayerStart(m_vLastCheckPointPosition);
+			set<double>::iterator i=m_sCheckpointPositions.begin();
+			for(int x=0;x<=m_nCheckpoint;x++,i++){if(x==m_nCheckpoint){vStart.c[0]=*i;break;}}
 		}
-		else
-		{
-			CVector vStart,vEnd;
-			m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
-			m_PlayerManagerWrapper.m_piPlayerManager->SetPlayerStart(vStart);
-		}
+		m_PlayerManagerWrapper.m_piPlayerManager->SetPlayerStart(vStart);
 	}
 	m_GameControllerWrapper.m_piGameController->Start();
 	m_piPlayerEntity=m_EntityManagerWrapper.m_piEntityManager->FindEntity("Player");
@@ -188,6 +195,8 @@ void CGameInterface::StartGameInternal(EGameMode eMode,unsigned int nPoints, uns
 		m_piPlayer->SetGodMode(m_eGameMode==eGameMode_God);
 		IWeapon *piWeapon=m_piPlayerEntity->GetWeapon(0);
 		if(piWeapon){piWeapon->SetCurrentLevel(m_nWeapon);}
+		IWeapon *piBombs=m_piPlayerEntity->GetWeapon(1);
+		if(piBombs){piBombs->SetAmmo(m_nBombs);}
 	}
 	
 	m_bGameStarted=true;
@@ -201,23 +210,39 @@ void CGameInterface::StartGameInternal(EGameMode eMode,unsigned int nPoints, uns
 void CGameInterface::StartDemo()
 {
 	if(!m_bGameSystemInitialized){return;}
-	m_nDemoCheckpointsFound=0;
 	m_bDemoMode=true;
+	m_eGameMode=eGameMode_God;
+	m_eGameDifficulty=eGameDifficulty_Easy;
 	m_nPoints=0;
 	m_nLivesLeft=0;
 	m_nWeapon=0;
+	m_nCheckpoint=-1;
 	m_PlayerProfile.Detach();
-	StartGameInternal(eGameMode_God,0,3,0,true);
+	StartGameInternal(0,3,0,0,-1);
 }
 
-void CGameInterface::StartGame(IPlayerProfile *piProfile,EGameMode eMode,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel)
+void CGameInterface::StartGame(IPlayerProfile *piProfile,SGameState *pGame)
 {
 	if(!m_bGameSystemInitialized){return;}
-	m_nDemoCheckpointsFound=0;
 	m_bDemoMode=false;
+	m_eGameMode=pGame->eMode;
+	m_eGameDifficulty=pGame->eDifficulty;
 	
 	m_PlayerProfile.Attach(piProfile);
-	StartGameInternal(eMode,nPoints,nLivesLeft,nWeaponLevel,false);
+	if(m_PlayerProfile.m_piPlayerProfile)
+	{
+		double dDifficulty=0;
+		switch(pGame->eDifficulty)
+		{
+			 case eGameDifficulty_Easy: dDifficulty=0;break;
+			 case eGameDifficulty_Normal: dDifficulty=2;break;
+			 case eGameDifficulty_Hard: dDifficulty=4;break;
+			 case eGameDifficulty_VeryHard: dDifficulty=6;break;
+			 default: dDifficulty=0;break;
+		}
+		m_PlayerProfile.m_piPlayerProfile->SetDifficulty(dDifficulty);
+	}
+	StartGameInternal(pGame->nPoints,pGame->nLivesLeft,pGame->nWeapon,pGame->nBombs,pGame->nCheckpoint);
 }
 
 void CGameInterface::StopGame()
@@ -243,78 +268,18 @@ void CGameInterface::StopManuallyWithCourtain()
 	CloseCourtain();
 }
 
-void CGameInterface::ResetGame(bool bGoToLastCheckPoint)
+void CGameInterface::ResetGame()
 {
 	if(!m_bGameSystemInitialized){return;}
 
-	if(bGoToLastCheckPoint)
-	{
-		if(m_PlayAreaManagerWrapper.m_piPlayAreaManager)
-		{
-			CVector vStart,vEnd;
-			m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
-			m_vLastCheckPointPosition=vStart;
-			m_PlayAreaManagerWrapper.m_piPlayAreaManager->EnumeratePlayAreaElements(this);
-		}
-	}
-
 	StopGame();
-	StartGameInternal(m_eGameMode,m_nPoints,m_nLivesLeft,m_nWeapon,bGoToLastCheckPoint);
+	StartGameInternal(m_nPoints,m_nLivesLeft,m_nWeapon,3,m_nCheckpoint);
 }
 
 void CGameInterface::ProcessEnumeratedPlayAreaElement(IPlayAreaElement *piElement,bool *pbStopEnumerating)
 {
-	if(m_bDemoMode)
-	{
-		SearchDemoCheckpoints(piElement,pbStopEnumerating);
-	}
-	else
-	{
-		SearchLastCheckpoint(piElement,pbStopEnumerating);
-	}
-}
-
-void CGameInterface::SearchLastCheckpoint(IPlayAreaElement *piElement,bool *pbStopEnumerating)
-{
 	IPlayAreaCheckPoint *piCheckPoint=QI(IPlayAreaCheckPoint,piElement);
-	if(piCheckPoint)
-	{
-		CVector vStart,vEnd,vCheckPoint;
-		CVector vPos=m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayMovementPosition();
-		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
-		vCheckPoint=piCheckPoint->GetCheckPointPosition();
-		if((m_vLastCheckPointPosition-vStart)<(vCheckPoint-vStart) && 
-			(vCheckPoint-vStart)<=(vPos-vStart))
-		{
-			m_vLastCheckPointPosition=vCheckPoint;
-		}
-	}
-	REL(piCheckPoint);
-}
-
-
-void CGameInterface::SearchDemoCheckpoints(IPlayAreaElement *piElement,bool *pbStopEnumerating)
-{
-	IPlayAreaCheckPoint *piCheckPoint=QI(IPlayAreaCheckPoint,piElement);
-	if(piCheckPoint)
-	{
-		CVector vStart,vEnd,vCheckPoint;
-		CVector vPos=m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayMovementPosition();
-		m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
-		vCheckPoint=piCheckPoint->GetCheckPointPosition();
-		
-		if(m_nDemoCheckpointsFound==0)
-		{
-			m_nDemoCheckpointsFound++;
-			m_vDemoStartPosition=vCheckPoint;
-		}
-		else if(m_nDemoCheckpointsFound==1)
-		{
-			m_nDemoCheckpointsFound++;
-			m_vDemoEndPosition=vCheckPoint;
-			*pbStopEnumerating=true;
-		}
-	}
+	if(piCheckPoint){m_sCheckpointPositions.insert(piCheckPoint->GetCheckPointPosition().c[0]);}
 	REL(piCheckPoint);
 }
 
@@ -388,14 +353,46 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 	}
 	unsigned int dwCurrentTime=m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime();
 
-	if(m_piPlayerEntity)
+	if(!m_bDemoMode)
 	{
-		IWeapon *piWeapon=m_piPlayerEntity?m_piPlayerEntity->GetWeapon(0):NULL;
-		m_nWeapon=piWeapon?piWeapon->GetCurrentLevel():0;
-		m_nPoints=m_piPlayer->GetPoints();
-		m_nLivesLeft=m_piPlayer->GetLivesLeft();
+		// Update player data.
+		
+		if(m_piPlayerEntity)
+		{
+			IWeapon *piWeapon=m_piPlayerEntity->GetWeapon(0);
+			m_nWeapon=piWeapon?piWeapon->GetCurrentLevel():0;
+			
+			IWeapon *piBombWeapon=m_piPlayerEntity->GetWeapon(1);
+			m_nBombs=piBombWeapon?piBombWeapon->GetAmmo():0;
+			
+			m_nPoints=m_piPlayer->GetPoints();
+			m_nLivesLeft=m_piPlayer->GetLivesLeft();
+		}
+		
+		// Update current checkpoint.
+		
+		CVector vCameraPos=m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayMovementPosition();
+		
+		int nCurrentCheckpoint=-1;
+		for(set<double>::iterator i=m_sCheckpointPositions.begin();i!=m_sCheckpointPositions.end();i++)
+		{
+			if(*i<vCameraPos.c[0])
+			{
+				nCurrentCheckpoint++;
+			}
+			else
+			{
+				break;
+			}
+		}
+		if(nCurrentCheckpoint>m_nCheckpoint)
+		{
+			m_nCheckpoint=nCurrentCheckpoint;
+			NOTIFY_EVENT(IGameInterfaceWindowEvents,OnCheckpoint());
+		}
 	}
-
+	
+	
 	if(m_eState==eGameInterfaceState_GameOverCourtain)
 	{
 		if(!m_bCourtainClosing)
@@ -411,7 +408,7 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 	{
 		if(!m_bCourtainClosing)
 		{
-			ResetGame(true);
+			ResetGame();
 			return;
 		}
 	}
@@ -432,11 +429,12 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 		m_bPlayerKilledOnPreviousFrame=false;
 		if(m_nLivesLeft==0)
 		{
-			NOTIFY_EVENT(IGameInterfaceWindowEvents,OnScenarioFinished(eScenarioFinishedReason_GameOver,m_nPoints,0,0));
+			NOTIFY_EVENT(IGameInterfaceWindowEvents,OnScenarioFinished(eScenarioFinishedReason_GameOver));
 			m_eState=eGameInterfaceState_GameOverCourtain;
 		}
 		else
 		{
+			NOTIFY_EVENT(IGameInterfaceWindowEvents,OnPlayerKilled());
 			m_eState=eGameInterfaceState_KilledCourtain;
 		}		
 		CloseCourtain();
@@ -545,7 +543,7 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 			m_eState=eGameInterfaceState_Idle;
 			m_bCompleted=true;
 			
-			NOTIFY_EVENT(IGameInterfaceWindowEvents,OnScenarioFinished(eScenarioFinishedReason_Completed,m_nPoints,m_nLivesLeft,m_nWeapon));
+			NOTIFY_EVENT(IGameInterfaceWindowEvents,OnScenarioFinished(eScenarioFinishedReason_Completed));
 			m_nLastCountTime=dwCurrentTime;
 			return;
 		}
@@ -712,7 +710,6 @@ void CGameInterface::UpdateGUI(unsigned int dwCurrentTime)
 {
 	
 	char sTempText[512]={0};
-	int nBombsLeft=0;
 
 	IEntity	*piPlayerEntity=NULL;
 	IPlayer *piPlayer=NULL;
@@ -775,11 +772,6 @@ void CGameInterface::UpdateGUI(unsigned int dwCurrentTime)
 		}
 	}
 	
-	if(piPlayer)
-	{
-		IWeapon *piBombWeapon=piPlayerEntity->GetWeapon(1);
-		nBombsLeft=piBombWeapon?piBombWeapon->GetAmmo():0;
-	}
 	if(m_piSTPoints)
 	{
 		char sTemp[200]={0};
@@ -800,7 +792,7 @@ void CGameInterface::UpdateGUI(unsigned int dwCurrentTime)
 	}
 	for(int x=0;x<MAX_BOMBS_TO_DISPLAY;x++)
 	{
-		if(m_piSTBombs[x]){m_piSTBombs[x]->Show(bShowInterface  && x<nBombsLeft);}
+		if(m_piSTBombs[x]){m_piSTBombs[x]->Show(bShowInterface  && x<(int)m_nBombs);}
 	}
 }
 
@@ -823,4 +815,15 @@ void CGameInterface::CloseCourtain()
 	m_bCourtainOpening=false;
 	m_bCourtainClosing=true;
 	m_nCourtainStartTime=GetTimeStamp();
+}
+
+void CGameInterface::GetGameState(SGameState *pState)
+{
+	pState->nPoints=m_nPoints;
+	pState->nWeapon=m_nWeapon;
+	pState->nBombs=m_nBombs;
+	pState->nLivesLeft=m_nLivesLeft;
+	pState->eDifficulty=m_eGameDifficulty;
+	pState->eMode=m_eGameMode;
+	pState->nCheckpoint=m_nCheckpoint;
 }

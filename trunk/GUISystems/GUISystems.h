@@ -21,32 +21,18 @@
 #include "GameRunTimeLib.h"
 #include "GameGUILib.h"
 
-enum EGameMode 
-{
-	eGameMode_Normal=0,
-	eGameMode_God,
-	eGameMode_InfiniteLives,
-	eGameMode_Count
-};
-
-enum EGameDifficulty
-{
-	eGameDifficulty_Easy=0,
-	eGameDifficulty_Normal,
-	eGameDifficulty_Hard,
-	eGameDifficulty_VeryHard,
-	eGameDifficulty_Count
-};
 
 class IGameInterfaceWindow: virtual public IGameWindow
 {	
 public:
 
 	virtual void InitializeGameSystem()=0;
-	virtual void StartGame(IPlayerProfile *piProfile,EGameMode eMode, unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel)=0;
+	virtual void StartGame(IPlayerProfile *piProfile,SGameState *pState)=0;
 	virtual void StartDemo()=0;
 	virtual void StopGame()=0;
 	virtual void StopManuallyWithCourtain()=0;
+	
+	virtual void GetGameState(SGameState *pState)=0;
 	
 	virtual void SetHighScore(unsigned int nScore)=0;
 	virtual unsigned int GetScore()=0;
@@ -101,6 +87,24 @@ public:
 	virtual ~IHighScoresDialog(){}
 };
 
+class IMainMenu: virtual public ISystemUnknown
+{	
+public:
+	
+	virtual eMainMenuAction Show(IGameWindow *piParent,bool bAllowContinue, bool bAllowLoad)=0;
+	
+	virtual ~IMainMenu(){}
+};
+
+class IGameMenu: virtual public ISystemUnknown
+{	
+public:
+	
+	virtual eGameMenuAction Show(IGameWindow *piParent)=0;
+	
+	virtual ~IGameMenu(){}
+};
+
 class IKeyCaptureDialog: virtual public ISystemUnknown
 {	
 public:
@@ -117,6 +121,42 @@ public:
 	virtual bool SelectOptions(IGameWindow *piParent,EGameMode *pMode,EGameDifficulty *pDifficulty,unsigned int *pnSelectedLevel)=0;
 	
 	virtual ~ILevelOptions(){}
+};
+
+class ISavedGameRow: virtual public IGameWindow
+{	
+public:
+	
+	virtual void SetSavedGame(SGameState *pGame)=0;
+	
+	virtual ~ISavedGameRow(){}
+};
+
+class ISavedGameRowEvents: virtual public IGameWindow
+{	
+public:
+	
+	virtual void OnSavedGameSelected(ISavedGameRow *piControl)=0;
+	
+	virtual ~ISavedGameRowEvents(){}
+};
+
+class ILoadDialog: virtual public IGameWindow
+{	
+public:
+	
+	virtual bool LoadGame(IGameWindow *piParent,std::vector<SGameState> *pvSavedGames,SGameState *pSelected)=0;
+	
+	virtual ~ILoadDialog(){}
+};
+
+class ISaveDialog: virtual public IGameWindow
+{	
+public:
+	
+	virtual bool SaveGame(IGameWindow *piParent,SGameState *pCurrent,std::vector<SGameState> *pvSavedGames)=0;
+	
+	virtual ~ISaveDialog(){}
 };
 
 struct IPlayerProfile;
@@ -139,8 +179,9 @@ enum eScenarioFinishedReason
 class IGameInterfaceWindowEvents
 {	
 public:
-
-	virtual void	OnScenarioFinished(eScenarioFinishedReason eReason,unsigned int nPoints, unsigned int nLivesLeft,unsigned int nWeaponLevel)=0;
+	virtual void	OnScenarioFinished(eScenarioFinishedReason eReason)=0;
+	virtual void	OnPlayerKilled()=0;
+	virtual void	OnCheckpoint()=0;
 	virtual void	OnGameOverCourtainClosed()=0;
 	virtual void	OnManualStopCourtainClosed()=0;
 	virtual void	OnPaused(bool bPaused)=0;

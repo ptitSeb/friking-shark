@@ -18,31 +18,39 @@
 
 #pragma once
 
-class CGameMenu: virtual public CGameDialogBase,virtual public IGameMenu,virtual public IGameGUIButtonEvents
+class CSaveDialog: virtual public CGameDialogBase,virtual public IGameGUIButtonEvents,virtual public ISavedGameRowEvents, virtual public ISaveDialog
 {
-	IGameGUIButton *m_piBTContinue;
-	IGameGUIButton *m_piBTSave;
-	IGameGUIButton *m_piBTEndGame;
-	IGameGUIButton *m_piBTControls;
+	int m_nSelectedGame;
+	
+	ISavedGameRow *m_piRows[MAX_SAVEDGAMES];
+	IGameGUIButton *m_piBTCancel;
+	
+	std::vector<SGameState> *m_pvSavedGames;
 	
 	BEGIN_CHILD_MAP()
-		CHILD_MAP_ENTRY_EX("Continue",m_piBTContinue,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("Save",m_piBTSave,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("EndGame",m_piBTEndGame,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("Controls",m_piBTControls,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("Row0",m_piRows[0],ISavedGameRowEvents);
+		CHILD_MAP_ENTRY_EX("Row1",m_piRows[1],ISavedGameRowEvents);
+		CHILD_MAP_ENTRY_EX("Row2",m_piRows[2],ISavedGameRowEvents);
+		CHILD_MAP_ENTRY_EX("Row3",m_piRows[3],ISavedGameRowEvents);
+		CHILD_MAP_ENTRY_EX("Row4",m_piRows[4],ISavedGameRowEvents);
+		CHILD_MAP_ENTRY_EX("Cancel",m_piBTCancel,IGameGUIButtonEvents);
 	END_CHILD_MAP()
 
+	void UpdateGUI();
+	
 public:
 	void OnInitDialog();
-
-	// IGameMenu
+	void OnEndDialog();
 	
-	eGameMenuAction Show(IGameWindow *piParent);
+	bool SaveGame(IGameWindow *piParent,SGameState *pCurrent,std::vector<SGameState> *pvSavedGames);
 	
 	// IGameButtonEvents
-
 	void OnButtonClicked(IGameGUIButton *piControl);
+	
+	// ISavedGameRowEvents
+	void OnSavedGameSelected(ISavedGameRow *piControl);
+	
 
-	CGameMenu(void);
-	~CGameMenu(void);
+	CSaveDialog(void);
+	~CSaveDialog(void);
 };

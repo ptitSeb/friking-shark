@@ -15,11 +15,14 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //  
 
+#define MAX_SAVEDGAMES 5
 
 enum eMainMenuAction
 {
 	eMainMenuAction_UNKNOWN,
 	eMainMenuAction_NewGame=0x1000,
+	eMainMenuAction_Continue,
+	eMainMenuAction_Load,
 	eMainMenuAction_Controls,
 	eMainMenuAction_HighScores,
 	eMainMenuAction_Credits,
@@ -30,6 +33,7 @@ enum eGameMenuAction
 {
 	eGameMenuAction_UNKNOWN,
 	eGameMenuAction_Continue=0x1000,
+	eGameMenuAction_Save,
 	eGameMenuAction_Controls,
 	eGameMenuAction_EndGame
 };
@@ -40,3 +44,38 @@ enum eConfirmationDialogAction
 	eConfirmationDialogAction_Yes=0x1000,
 	eConfirmationDialogAction_No
 };
+
+enum EGameMode 
+{
+	eGameMode_Normal=0,
+	eGameMode_God,
+	eGameMode_InfiniteLives,
+	eGameMode_Count
+};
+
+enum EGameDifficulty
+{
+	eGameDifficulty_Easy=0,
+	eGameDifficulty_Normal,
+	eGameDifficulty_Hard,
+	eGameDifficulty_VeryHard,
+	eGameDifficulty_Count
+};
+
+DECLARE_SERIALIZABLE_ENUMERATION(EGameMode)
+DECLARE_SERIALIZABLE_ENUMERATION(EGameDifficulty)
+
+struct SGameState
+{
+	int nLevel;
+	int nCheckpoint;
+	unsigned int nPoints;
+	unsigned int nWeapon;
+	unsigned int nBombs;
+	unsigned int nLivesLeft;
+	EGameMode    eMode;
+	EGameDifficulty eDifficulty;
+	
+	SGameState(){nPoints=0;nWeapon=0;nLevel=-1;nCheckpoint=-1;nBombs=0;nLivesLeft=0;eMode=eGameMode_Normal;eDifficulty=eGameDifficulty_Easy;}
+};
+

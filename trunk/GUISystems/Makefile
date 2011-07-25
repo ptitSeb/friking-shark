@@ -28,6 +28,9 @@ KeyCaptureDialog.cpp \
 MainMenu.cpp \
 LevelOptions.cpp \
 CreditsDialog.cpp \
+LoadDialog.cpp \
+SaveDialog.cpp \
+SavedGameRow.cpp \
 stdafx.cpp
 
 

@@ -18,9 +18,14 @@
 
 #pragma once
 
-class CMainMenu: virtual public CGameDialogBase,public IGameGUIButtonEvents
+class CMainMenu: virtual public CGameDialogBase,virtual public IMainMenu,virtual public IGameGUIButtonEvents
 {
+	bool m_bAllowLoad;
+	bool m_bAllowContinue;
+	
 	IGameGUIButton *m_piBTNewGame;
+	IGameGUIButton *m_piBTLoad;
+	IGameGUIButton *m_piBTContinue;
 	IGameGUIButton *m_piBTExit;
 	IGameGUIButton *m_piBTControls;
 	IGameGUIButton *m_piBTHighScores;
@@ -28,6 +33,8 @@ class CMainMenu: virtual public CGameDialogBase,public IGameGUIButtonEvents
 	
 	BEGIN_CHILD_MAP()
 		CHILD_MAP_ENTRY_EX("NewGame",m_piBTNewGame,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("Continue",m_piBTContinue,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("Load",m_piBTLoad,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Controls",m_piBTControls,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("HighScores",m_piBTHighScores,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Credits",m_piBTCredits,IGameGUIButtonEvents);
@@ -39,6 +46,10 @@ class CMainMenu: virtual public CGameDialogBase,public IGameGUIButtonEvents
 public:
 	void OnInitDialog();
 
+	// IMainMenu
+	
+	eMainMenuAction Show(IGameWindow *piParent,bool bAllowContinue, bool bAllowLoad);
+	
 	// IGameButtonEvents
 
 	void OnButtonClicked(IGameGUIButton *piControl);
