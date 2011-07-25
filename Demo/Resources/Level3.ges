@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=200.435349
 			NearPlane=130.000000
-			Posicion=1420.881568,198.570478,-1.475770
+			Posicion=1820.355215,198.570478,0.489698
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -113,7 +113,7 @@ AreaDeJuego
 				Delay=0
 				Interval=0
 				Posicion=721.223400,-7.834653,17.706195
-				RouteDelay=30000
+				RouteDelay=28000
 				Ruta
 				{
 					Ciclica=0
@@ -568,7 +568,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=-1
 				Count=1
-				Delay=0
+				Delay=-1000
 				Interval=0
 				Posicion=-892.848596,-8.379648,17.706195
 				RouteDelay=0
@@ -595,7 +595,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=-1
 				Count=1
-				Delay=0
+				Delay=-1000
 				Interval=0
 				Posicion=-887.164455,-46.432683,17.706195
 				RouteDelay=0
@@ -622,7 +622,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=-1
 				Count=1
-				Delay=0
+				Delay=-1000
 				Interval=0
 				Posicion=-864.903152,28.300876,17.706195
 				RouteDelay=0
@@ -649,7 +649,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=-1
 				Count=1
-				Delay=0
+				Delay=-1000
 				Interval=0
 				Posicion=-842.231187,-12.778281,17.706195
 				RouteDelay=0
@@ -676,7 +676,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=-1
 				Count=1
-				Delay=0
+				Delay=-1000
 				Interval=0
 				Posicion=-810.968814,-76.066768,17.706195
 				RouteDelay=0
@@ -703,7 +703,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=-1
 				Count=1
-				Delay=0
+				Delay=-1000
 				Interval=0
 				Posicion=-780.246765,-31.101940,17.706195
 				RouteDelay=0
@@ -730,7 +730,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=-1
 				Count=1
-				Delay=0
+				Delay=-1000
 				Interval=0
 				Posicion=-734.452369,70.183176,17.706195
 				RouteDelay=0
@@ -757,7 +757,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=-1
 				Count=1
-				Delay=0
+				Delay=-1000
 				Interval=0
 				Posicion=-733.789189,35.103042,17.706195
 				RouteDelay=0
@@ -784,7 +784,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=-1
 				Count=1
-				Delay=0
+				Delay=-500
 				Interval=0
 				Posicion=-668.315529,4.677643,17.706195
 				RouteDelay=0
@@ -811,7 +811,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=-1
 				Count=1
-				Delay=0
+				Delay=-500
 				Interval=0
 				Posicion=-668.097533,-46.841860,17.706195
 				RouteDelay=0
@@ -1457,7 +1457,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=-1
 				Count=1
-				Delay=0
+				Delay=-1000
 				Interval=0
 				Posicion=1714.427429,-47.275618,23.570678
 				RouteDelay=0

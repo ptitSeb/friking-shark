@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=219.153680
 			NearPlane=130.000000
-			Posicion=2401.416859,199.234237,2.728116
+			Posicion=1961.701665,199.234237,6.438923
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -903,7 +903,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=-1
 				Count=1
-				Delay=0
+				Delay=-300
 				Interval=0
 				Posicion=-422.442490,53.183896,0.615682
 				RouteDelay=0
@@ -934,7 +934,7 @@ AreaDeJuego
 				}
 				BonusOnChild=2
 				Count=1
-				Delay=0
+				Delay=-100
 				Interval=0
 				Posicion=-581.918153,45.050755,-2.344304
 				RouteDelay=0
@@ -961,7 +961,7 @@ AreaDeJuego
 				Bonus
 				BonusOnChild=-1
 				Count=1
-				Delay=0
+				Delay=-100
 				Interval=0
 				Posicion=-516.267057,60.598083,-2.344304
 				RouteDelay=0
