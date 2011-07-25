@@ -43,9 +43,11 @@ void CSavedGameRow::UpdateGUI()
 	
 	if(m_pSavedGame)
 	{
-		sprintf(sLevel,"Level %d-%d",m_pSavedGame->nLevel+1,m_pSavedGame->nCheckpoint+1);
+		// nCheckpoint+2 -> level start must be shown as "1", first checkpoint as "2"
+		// nWeapon+1 -> first level must be shown as "1"
+		sprintf(sLevel,"Level %d-%d",m_pSavedGame->nLevel+1,m_pSavedGame->nCheckpoint+2);
 		sprintf(sLives,"x%d",m_pSavedGame->nLivesLeft);
-		sprintf(sWeapon,"x%d",m_pSavedGame->nWeapon);
+		sprintf(sWeapon,"x%d",m_pSavedGame->nWeapon+1);
 		sprintf(sBombs,"x%d",m_pSavedGame->nBombs);
 		sprintf(sPoints,"%d",m_pSavedGame->nPoints);
 		switch(m_pSavedGame->eMode)
