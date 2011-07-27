@@ -2442,7 +2442,7 @@ AreaDeJuego
 				}
 				AlternativeType
 				{
-					Name=WEAP-RIGHT-CIRCLE1-Splitted-yellow
+					Name=W-Delayed-yellow
 					System=FormationTypes
 				}
 				Bonus
@@ -2455,7 +2455,7 @@ AreaDeJuego
 				Posicion=541.302612,-0.000011,58.570478
 				Tipo
 				{
-					Name=WEAP-RIGHT-CIRCLE1-Splitted
+					Name=W-Delayed-red
 					System=FormationTypes
 				}
 			}
