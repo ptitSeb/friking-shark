@@ -61,7 +61,7 @@ void CLoadDialog::UpdateGUI()
 	for(unsigned int x=0;x<MAX_SAVEDGAMES;x++)
 	{
 		bool bExistsSaveGame=(m_pvSavedGames && x<m_pvSavedGames->size());
-		m_piRows[x]->Activate(bExistsSaveGame);
+		m_piRows[x]->Show(bExistsSaveGame);
 		m_piRows[x]->SetSavedGame(bExistsSaveGame?&(*m_pvSavedGames)[x]:NULL);
 	}
 }
@@ -76,7 +76,6 @@ void CLoadDialog::OnEndDialog()
 {
 	for(unsigned int x=0;x<MAX_SAVEDGAMES;x++)
 	{
-		m_piRows[x]->Activate(false);
 		m_piRows[x]->SetSavedGame(NULL);
 	}
 	CGameDialogBase::OnEndDialog();
