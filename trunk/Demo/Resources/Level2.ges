@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=199.907946
 			NearPlane=130.000000
-			Posicion=325.357524,198.441526,4.995723
+			Posicion=454.378387,198.441526,7.827628
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -2063,7 +2063,7 @@ AreaDeJuego
 				}
 				AlternativeType
 				{
-					Name=WEAP-RIGHT-CIRCLE1-Splitted-yellow
+					Name=W-Delayed-yellow
 					System=FormationTypes
 				}
 				Bonus
@@ -2076,7 +2076,7 @@ AreaDeJuego
 				Posicion=453.489612,-0.000000,58.441526
 				Tipo
 				{
-					Name=WEAP-RIGHT-CIRCLE1-Splitted
+					Name=W-Delayed-red
 					System=FormationTypes
 				}
 			}
