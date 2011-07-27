@@ -8,6 +8,7 @@ AppPublisher=Javier Martin Garcia
 AppPublisherURL=http://kyanaprime.blogspot.com/
 AppSupportURL=http://kyanaprime.blogspot.com/
 AppUpdatesURL=http://kyanaprime.blogspot.com/
+VersionInfoVersion=0.93
 DefaultDirName={pf}\Friking Shark 3D
 DefaultGroupName=Friking Shark 3D
 OutputDir=..\Installer\Output
@@ -44,13 +45,13 @@ Source: ..\Resources\Models\*.gcm; DestDir: {app}\Resources\Models; Flags: ignor
 Source: ..\Resources\Models\*.gbs; DestDir: {app}\Resources\Models; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: ..\Resources\Level*.ges; DestDir: {app}\Resources; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: ..\Resources\Background*.ges; DestDir: {app}\Resources; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: ..\Player\PlayerProfiles.cfg; DestDir: {app}\Player; Flags: onlyifdoesntexist recursesubdirs createallsubdirs
+Source: ..\Player\HighScores.cfg; DestDir: {app}\Player; Flags: onlyifdoesntexist recursesubdirs createallsubdirs
 Source: .\Redistributables\Windows\alut.dll; DestDir: {app}\Bin\Release; Flags: ignoreversion recursesubdirs createallsubdirs;
 Source: .\Redistributables\Windows\oalinst.exe; DestDir: {app}\Redistributables; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: .\Redistributables\Windows\msvcp90.dll; DestDir: {sys}; Flags: comparetimestamp onlyifdoesntexist 32bit
 Source: .\Redistributables\Windows\msvcr90.dll; DestDir: {sys}; Flags: comparetimestamp onlyifdoesntexist 32bit
 
-[Dirs]
-Name: "{app}\Player"
 
 [Icons]
 Name: {group}\Friking Shark 3D; Filename: {app}\Bin\Release\GameEngine.exe; WorkingDir: {app}; IconIndex: 0
