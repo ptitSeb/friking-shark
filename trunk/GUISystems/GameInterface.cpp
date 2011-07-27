@@ -406,7 +406,7 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 
 	if(m_eState==eGameInterfaceState_KilledCourtain)
 	{
-		if(!m_bCourtainClosing)
+		if(!m_bCourtainClosing && !m_bFrozen)
 		{
 			ResetGame();
 			return;
@@ -619,6 +619,7 @@ void CGameInterface::ProcessInput()
 	bool bControlKeyPressed=false;
 	if(m_bFrozen){return;}
 	if(m_bDemoMode){return;}
+	if(m_bCourtainOpening || m_bCourtainClosing){return;}
 	if(m_nLivesLeft==0){return;}
 	if(m_dwNextAcceptedControlKeyTime<m_FrameManagerWrapper.m_piFrameManager->GetCurrentRealTime())
 	{
@@ -796,6 +797,7 @@ unsigned int CGameInterface::GetScore(){return m_nPoints;}
 
 void CGameInterface::OpenCourtain()
 {
+	if(m_bCourtainOpen){return;}
 	m_bCourtainOpen=false;
 	m_bCourtainClosed=false;
 	m_bCourtainOpening=true;
@@ -805,6 +807,7 @@ void CGameInterface::OpenCourtain()
 
 void CGameInterface::CloseCourtain()
 {
+	if(m_bCourtainClosed){return;}
 	m_bCourtainOpen=false;
 	m_bCourtainClosed=false;
 	m_bCourtainOpening=false;
