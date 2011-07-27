@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=219.153680
 			NearPlane=130.000000
-			Posicion=2172.356845,199.234237,4.644054
+			Posicion=403.628751,199.234237,7.128367
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -2431,7 +2431,7 @@ AreaDeJuego
 				Bonus
 				ConditionType=0
 				ConditionValue=0
-				Posicion=52.433327,-4.644054,59.234237
+				Posicion=64.282750,-4.644054,59.234237
 				Tipo
 				{
 					Name=HeavyBombeRight
@@ -2451,7 +2451,7 @@ AreaDeJuego
 				Bonus
 				ConditionType=0
 				ConditionValue=0
-				Posicion=198.490490,-4.644054,59.234237
+				Posicion=203.720452,-4.644054,59.234237
 				Tipo
 				{
 					Name=HeavyBomberLeft
