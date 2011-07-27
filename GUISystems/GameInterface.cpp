@@ -617,14 +617,9 @@ void CGameInterface::ProcessInput()
 {
 	if(!m_bGameSystemInitialized){return;}
 	bool bControlKeyPressed=false;
-	if(m_bFrozen)
-	{
-		return;
-	}
-	if(m_bDemoMode)
-	{
-		return;
-	}
+	if(m_bFrozen){return;}
+	if(m_bDemoMode){return;}
+	if(m_nLivesLeft==0){return;}
 	if(m_dwNextAcceptedControlKeyTime<m_FrameManagerWrapper.m_piFrameManager->GetCurrentRealTime())
 	{
 		if(m_piGUIManager->IsKeyDown(GK_F4))
@@ -651,7 +646,7 @@ void CGameInterface::ProcessKey(unsigned short nKey)
 		if(m_FrameManagerWrapper.m_piFrameManager->GetCurrentRealTime()>m_dwNextAcceptedPauseKeyTime)
 		{
 			bool bWasPaused=m_FrameManagerWrapper.m_piFrameManager->IsPaused();
-			m_dwNextAcceptedPauseKeyTime=m_FrameManagerWrapper.m_piFrameManager->GetCurrentRealTime()+100;
+			m_dwNextAcceptedPauseKeyTime=m_FrameManagerWrapper.m_piFrameManager->GetCurrentRealTime()+200;
 			m_FrameManagerWrapper.m_piFrameManager->TogglePauseOnNextFrame();
 
 			NOTIFY_EVENT(IGameInterfaceWindowEvents,OnPaused(!bWasPaused));

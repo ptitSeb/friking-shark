@@ -299,17 +299,7 @@ void CMainWindow::OnScenarioFinished(eScenarioFinishedReason eReason)
 		m_GameOverDialog.m_piDialog->Execute(this);
 		m_piGameInterface->Freeze(false);
 		m_eStage=eInterfaceStage_HighScores;
-		
-		EGameDifficulty eDifficulty=eGameDifficulty_Normal;
-		if(m_PlayerData.m_PlayerProfile.m_piPlayerProfile)
-		{
-			double dDifficulty=m_PlayerData.m_PlayerProfile.m_piPlayerProfile->GetDifficulty();
-			if(dDifficulty>=6){eDifficulty=eGameDifficulty_VeryHard;}
-			else if(dDifficulty>=4){eDifficulty=eGameDifficulty_Hard;}
-			else if(dDifficulty>=2){eDifficulty=eGameDifficulty_Normal;}
-			else {eDifficulty=eGameDifficulty_Easy;}
-		}
-		
+
 		SHighScoreRow row;
 		row.sName="<type your name>";
 		row.eDifficulty=sGameState.eDifficulty;
@@ -331,7 +321,9 @@ void CMainWindow::OnScenarioFinished(eScenarioFinishedReason eReason)
 		
 		if(m_PlayerData.m_CurrentGame.nLevel>=AVAILABLE_LEVELS)
 		{
-			m_PlayerData.m_CurrentGame.nLevel=0;
+			m_PlayerData.m_CurrentGame.nLevel=1;
+			if(m_PlayerData.m_CurrentGame.eDifficulty<eGameDifficulty_VeryHard)
+				{m_PlayerData.m_CurrentGame.eDifficulty=(EGameDifficulty)((int)m_PlayerData.m_CurrentGame.eDifficulty+1);}
 		}
 		m_eStage=eInterfaceStage_LaunchNextLevel;
 		m_piSTBackground->Show(true);
