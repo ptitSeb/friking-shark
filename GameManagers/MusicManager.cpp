@@ -181,7 +181,7 @@ void CMusicManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction
 	{
 		ProcessFadeOut(m_piMusicSound,dwCurrentTime,&m_nMusicFadeStart);
 		ProcessFadeOut(m_piIntroMusicSound,dwCurrentTime,&m_nIntroFadeStart);
-		ProcessFadeOut(m_piIntermissionMusicSound,dwCurrentTime,&m_nIntermissionFadeStart);
+		//ProcessFadeOut(m_piIntermissionMusicSound,dwCurrentTime,&m_nIntermissionFadeStart);
 	}
 	else if(eStage==ePlayerManagerGameStage_Landing)
 	{
@@ -192,7 +192,6 @@ void CMusicManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction
 		{
 			m_piIntermissionMusicSound->Play();
 		}
-		
 	}
 	else
 	{
