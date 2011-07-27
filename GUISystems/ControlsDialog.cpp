@@ -67,6 +67,53 @@ void CControlsDialog::ProcessKeyChange(SKeyMapping *pKeyMapping, unsigned int nI
 	unsigned int nKey=0;
 	if(m_KeyCaptureDialog.m_piKeyCaptureDialog->CaptureKey(this,&nKey))
 	{
+		// Search for duplicates.
+		
+		bool bSameSelected=false;
+		
+		SKeyMapping *ppAllKeyMappings[]={&m_UpKeyMapping,&m_DownKeyMapping,&m_LeftKeyMapping,&m_RightKeyMapping,&m_FireKeyMapping,&m_BombKeyMapping,NULL};
+		SKeyMapping **ppCurrentKeyMapping=ppAllKeyMappings;
+		SKeyMapping *pInUse=NULL;
+		while(!pInUse && !bSameSelected && *ppCurrentKeyMapping!=NULL)
+		{
+			for(unsigned int x=0;x<(*ppCurrentKeyMapping)->vValidCombinations.size();x++)
+			{
+				if((*ppCurrentKeyMapping)->vValidCombinations[x].nKey==(int)nKey)
+				{
+					bSameSelected=((*ppCurrentKeyMapping)->sFriendlyName==pKeyMapping->sFriendlyName);
+					pInUse=(*ppCurrentKeyMapping);
+					break;
+				}
+			}
+			ppCurrentKeyMapping++;
+		}
+		
+		if(bSameSelected){return;}
+		if(pInUse)
+		{
+			std::string sText="Key assigned to ";
+			sText+=pInUse->sFriendlyName;
+			sText+=". Reassign?";
+			
+			if(!ConfirmDialog(sText,"Friking shark",eMessageDialogType_Warning))
+			{
+				return;
+			}
+			else
+			{
+				std::vector<SKeyCombination> vNewCombinations;
+				for(unsigned int x=0;x<pInUse->vValidCombinations.size();x++)
+				{
+					if(pInUse->vValidCombinations[x].nKey!=(int)nKey)
+					{
+						vNewCombinations.push_back(pInUse->vValidCombinations[x]);
+					}
+				}
+				pInUse->vValidCombinations=vNewCombinations;
+			}
+		}
+		
+		
 		if(nIndex<pKeyMapping->vValidCombinations.size())
 		{
 			pKeyMapping->vValidCombinations[nIndex].nKey=nKey;

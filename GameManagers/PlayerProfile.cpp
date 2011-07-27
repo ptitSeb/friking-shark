@@ -25,25 +25,21 @@ CPlayerProfile::CPlayerProfile(void)
 {
 	m_sPlayerName="Unknown";
 	m_dDifficulty=0;
-	m_KeyboardMapping["MoveForward"].sFriendlyName="Move forward";
+	m_KeyboardMapping["MoveForward"].sFriendlyName="Up";
 	m_KeyboardMapping["MoveForward"].vValidCombinations.push_back(SKeyCombination(GK_UP));
 	m_KeyboardMapping["MoveForward"].vValidCombinations.push_back(SKeyCombination('W'));
-	m_KeyboardMapping["MoveForward"].vValidCombinations.push_back(SKeyCombination(GK_NUMPAD8));
-	m_KeyboardMapping["MoveBackward"].sFriendlyName="Move backward";
+	m_KeyboardMapping["MoveBackward"].sFriendlyName="Down";
 	m_KeyboardMapping["MoveBackward"].vValidCombinations.push_back(SKeyCombination(GK_DOWN));
 	m_KeyboardMapping["MoveBackward"].vValidCombinations.push_back(SKeyCombination('S'));
-	m_KeyboardMapping["MoveBackward"].vValidCombinations.push_back(SKeyCombination(GK_NUMPAD2));
-	m_KeyboardMapping["MoveLeft"].sFriendlyName="Move left";
+	m_KeyboardMapping["MoveLeft"].sFriendlyName="Left";
 	m_KeyboardMapping["MoveLeft"].vValidCombinations.push_back(SKeyCombination(GK_LEFT));
 	m_KeyboardMapping["MoveLeft"].vValidCombinations.push_back(SKeyCombination('A'));
-	m_KeyboardMapping["MoveLeft"].vValidCombinations.push_back(SKeyCombination(GK_NUMPAD4));
-	m_KeyboardMapping["MoveRight"].sFriendlyName="Move right";
+	m_KeyboardMapping["MoveRight"].sFriendlyName="Right";
 	m_KeyboardMapping["MoveRight"].vValidCombinations.push_back(SKeyCombination(GK_RIGHT));
 	m_KeyboardMapping["MoveRight"].vValidCombinations.push_back(SKeyCombination('D'));
-	m_KeyboardMapping["MoveRight"].vValidCombinations.push_back(SKeyCombination(GK_NUMPAD6));
-	m_KeyboardMapping["FireBullets"].sFriendlyName="Fire bullets";
+	m_KeyboardMapping["FireBullets"].sFriendlyName="Fire";
 	m_KeyboardMapping["FireBullets"].vValidCombinations.push_back(SKeyCombination(GK_LCONTROL));
-	m_KeyboardMapping["FireBomb"].sFriendlyName="Fire bomb";
+	m_KeyboardMapping["FireBomb"].sFriendlyName="Bomb";
 	m_KeyboardMapping["FireBomb"].vValidCombinations.push_back(SKeyCombination(GK_LMENU));
 }
 
