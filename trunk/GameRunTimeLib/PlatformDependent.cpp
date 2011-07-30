@@ -161,9 +161,9 @@ void RTTRACE(const char *format, ...)
 {
 	va_list vargs;
 	va_start (vargs,format);
-	char pTempBuffer[2400];
-	int res=vsnprintf(pTempBuffer,1023,format,vargs);
-	if(res==-1){pTempBuffer[1022]=0;res=1022;}
+	char pTempBuffer[1024*16];
+	int res=vsnprintf(pTempBuffer,sizeof(pTempBuffer)-1,format,vargs);
+	if(res==-1){pTempBuffer[sizeof(pTempBuffer)-2]=0;res=sizeof(pTempBuffer)-2;}
 	va_end (vargs);
 
 	pTempBuffer[res]='\n';
@@ -285,9 +285,9 @@ void RTTRACE(const char *format, ...)
 {
 	va_list vargs;
 	va_start (vargs,format);
-	char pTempBuffer[2400];
-	int res=vsnprintf(pTempBuffer,1023,format,vargs);
-	if(res==-1){pTempBuffer[1022]=0;res=1022;}
+	char pTempBuffer[1024*16];
+	int res=vsnprintf(pTempBuffer,sizeof(pTempBuffer)-1,format,vargs);
+	if(res==-1){pTempBuffer[sizeof(pTempBuffer)-2]=0;res=sizeof(pTempBuffer)-2;}
 	va_end (vargs);
 
 	pTempBuffer[res]='\n';
