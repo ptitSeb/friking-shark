@@ -166,7 +166,6 @@ void main (void)
 	  
 	  finalcolor.rgb=clamp(g_ambdiffspec.rgb+g_sunambdiffspec.rgb*fShadowFactor,0.0,LIGHTING_SATURATION);
 	  finalcolor.rgb*=texcolor.rgb;
-	  finalcolor.rgb+=(amb.rgb+diff.rgb)*0.2;
 	  finalcolor.a=texcolor.a;
   #else
 	finalcolor=texcolor*fShadowFactor;
