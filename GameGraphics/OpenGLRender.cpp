@@ -187,19 +187,7 @@ void COpenGLRender::SetCamera(const CVector &vPosition,double dYaw, double dPitc
 
 		if(m_sHardwareSupport.bShaders)
 		{
-			for(int bHeightFog=0;bHeightFog<=1;bHeightFog++)
-			{
-				for(int bShadows=0;bShadows<=1;bShadows++)
-				{
-					for(int nTextures=0;nTextures<=m_sHardwareSupport.nMaxTextureUnits;nTextures++)
-					{
-						AddShader(SShaderKey(bHeightFog!=0,bShadows!=0,nTextures,true,true));
-						AddShader(SShaderKey(bHeightFog!=0,bShadows!=0,nTextures,true,false));
-						AddShader(SShaderKey(bHeightFog!=0,bShadows!=0,nTextures,false,true));
-						AddShader(SShaderKey(bHeightFog!=0,bShadows!=0,nTextures,false,false));
-					}
-				}
-			}
+			ReloadShaders();
 		}
 	}
 
@@ -1635,6 +1623,8 @@ void COpenGLRender::EndStagedRendering()
 {
 	if(!m_bStagedRendering){return;}
 
+	m_sStagedStats=SRenderStats();
+	
 	m_bStagedRendering=false;
 
 	if(m_sRenderOptions.bEnableShadows)
@@ -2031,12 +2021,25 @@ void COpenGLRender::EndStagedRendering()
 	if(m_pCurrentShader){m_pCurrentShader->m_piShader->Deactivate();m_pCurrentShader=NULL;}
 	m_bRenderingWithShader=false;
 }
+void 			COpenGLRender::SetShadingModel(EShadingModel eModel)
+{
+	SRenderState *pState=m_bStagedRendering?&m_sStagedRenderingState:&m_sRenderState;
+	pState->eShadingModel=eModel;
+}
+
+EShadingModel 	COpenGLRender::GetShadingModel(){return m_sRenderState.eShadingModel;}
+
+SRenderStats COpenGLRender::GetStagedRenderingStats()
+{
+	return m_sStagedStats;
+}
 
 void COpenGLRender::SetRenderState( const SRenderState &sNewState,bool bForce)
 {
 	m_sRenderState.bActiveShadowEmission=sNewState.bActiveShadowEmission;
 	m_sRenderState.bActiveShadowReception=sNewState.bActiveShadowReception;
 	m_sRenderState.bActiveWater=sNewState.bActiveWater;
+	m_sRenderState.eShadingModel=sNewState.eShadingModel;
 	
 	if(bForce || m_sRenderState.bActiveTextures!=sNewState.bActiveTextures)
 	{
@@ -2074,7 +2077,7 @@ void COpenGLRender::SetRenderState( const SRenderState &sNewState,bool bForce)
 	
 	if(m_bRenderingWithShader)
 	{
-		SShaderKey key(sNewState.bActiveHeightFog,m_sRenderOptions.bEnableShadows && m_bRenderingShadowReception,sNewState.bActiveTextures && m_sRenderOptions.bEnableTextures?m_mTextureLevels.size():0,m_sRenderOptions.bEnableLighting && sNewState.bActiveLighting,sNewState.bActiveWater);
+		SShaderKey key(sNewState.eShadingModel,sNewState.bActiveHeightFog,m_sRenderOptions.bEnableShadows && m_bRenderingShadowReception,sNewState.bActiveTextures && m_sRenderOptions.bEnableTextures?m_mTextureLevels.size():0,m_sRenderOptions.bEnableLighting && sNewState.bActiveLighting,sNewState.bActiveWater);
 		std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader=m_mShaders.find(key);
 		CGenericShaderWrapper *pNewShader=(iShader==m_mShaders.end())?NULL:&iShader->second;
 		if(m_pCurrentShader && m_pCurrentShader!=pNewShader)
@@ -2407,7 +2410,18 @@ void COpenGLRender::AddShader( const SShaderKey &key )
 	CGenericShaderWrapper wrapper;
 	if(wrapper.Create(m_piSystem,"Shader",""))
 	{
-		wrapper.m_piShader->Load("Shaders/RenderShader-Vertex.c","Shaders/RenderShader-Fragment.c",sPreprocessor);
+		if(key.eShadingModel==eShadingModel_Gouraud)
+		{
+			wrapper.m_piShader->Load("Shaders/RenderShader-Gouraud-Vertex.c","Shaders/RenderShader-Gouraud-Fragment.c",sPreprocessor);
+		}
+		else if(key.eShadingModel==eShadingModel_Balanced)
+		{
+			wrapper.m_piShader->Load("Shaders/RenderShader-Balanced-Vertex.c","Shaders/RenderShader-Balanced-Fragment.c",sPreprocessor);
+		}
+		else if(key.eShadingModel==eShadingModel_Phong)
+		{
+			wrapper.m_piShader->Load("Shaders/RenderShader-Phong-Vertex.c","Shaders/RenderShader-Phong-Fragment.c",sPreprocessor);
+		}
 		if(m_bPrecompileShaders){wrapper.m_piShader->Compile();}
 		if(key.nTextureUnits>=1){wrapper.m_piShader->AddUniform("Texture0",(int)0);}
 		if(key.nTextureUnits>=2){wrapper.m_piShader->AddUniform("Texture1",(int)1);}
@@ -2490,3 +2504,32 @@ int COpenGLRender::EndSelection()
 	return nNewIndex;
 }
 
+void COpenGLRender::ReloadShaders()
+{
+	std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader;
+	for(iShader=m_mShaders.begin();iShader!=m_mShaders.end();iShader++)
+	{
+		iShader->second.Destroy();
+	}
+	m_mShaders.clear();
+	
+	if(m_sHardwareSupport.bShaders)
+	{
+		for(unsigned int eShading=eShadingModel_Gouraud;eShading<=eShadingModel_Phong;eShading++)
+		{
+			for(int bHeightFog=0;bHeightFog<=1;bHeightFog++)
+			{
+				for(int bShadows=0;bShadows<=1;bShadows++)
+				{
+					for(int nTextures=0;nTextures<=m_sHardwareSupport.nMaxTextureUnits;nTextures++)
+					{
+						AddShader(SShaderKey((EShadingModel)eShading,bHeightFog!=0,bShadows!=0,nTextures,true,true));
+						AddShader(SShaderKey((EShadingModel)eShading,bHeightFog!=0,bShadows!=0,nTextures,true,false));
+						AddShader(SShaderKey((EShadingModel)eShading,bHeightFog!=0,bShadows!=0,nTextures,false,true));
+						AddShader(SShaderKey((EShadingModel)eShading,bHeightFog!=0,bShadows!=0,nTextures,false,false));
+					}
+				}
+			}
+		}
+	}
+}

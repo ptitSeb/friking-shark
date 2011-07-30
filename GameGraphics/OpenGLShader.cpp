@@ -100,6 +100,7 @@ bool COpenGLShader::Compile()
 		  glGetInfoLogARB(m_hVertexShader,sizeof(sOuputBuffer),&nLength,sOuputBuffer);
 		  if(!bOk){RTTRACE("COpenGLShader::Compile -> Vertex Shader compilation Failed");}
 		  if(sOuputBuffer[0]!=0){RTTRACE(sOuputBuffer);}
+		  if(sOuputBuffer[0]!=0){RTTRACE(m_sVertexShaderCode.c_str());}
 	  }
       if(bOk){glAttachObjectARB(m_hShaderProgram,m_hVertexShader);}
 	}
@@ -128,6 +129,7 @@ bool COpenGLShader::Compile()
 		  glGetInfoLogARB(m_hFragmentShader,sizeof(sOuputBuffer),&nLength,sOuputBuffer);
 		  if(!bOk){RTTRACE("COpenGLShader::Compile -> Fragment Shader compilation Failed");}
 		  if(sOuputBuffer[0]!=0){RTTRACE(sOuputBuffer);}
+		  if(sOuputBuffer[0]!=0){RTTRACE(m_sFragmentShaderCode.c_str());}
 	  }
       if(bOk){glAttachObjectARB(m_hShaderProgram,m_hFragmentShader);}
 

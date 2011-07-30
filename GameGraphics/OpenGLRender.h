@@ -44,7 +44,9 @@ struct SRenderState
 	CVector vHeightFogMins;
 	CVector vHeightFogMaxs;
 	CVector vHeightFogColor;
-
+	
+	EShadingModel eShadingModel;
+	
 	bool operator <(const SRenderState &otherState) const
 	{
 		return Compare(otherState)<0;
@@ -59,7 +61,10 @@ struct SRenderState
 		
 		if(bActiveLighting<otherState.bActiveLighting){return -1;}
 		if(bActiveLighting>otherState.bActiveLighting){return 1;}
-
+		
+		if(eShadingModel<otherState.eShadingModel){return -1;}
+		if(eShadingModel>otherState.eShadingModel){return 1;}
+		
 		if(bActiveDepth<otherState.bActiveDepth){return -1;}
 		if(bActiveDepth>otherState.bActiveDepth){return 1;}
 		if(nDepthFunction<otherState.nDepthFunction){return -1;}
@@ -95,6 +100,7 @@ struct SRenderState
 		bActiveSolid=true;
 		bActiveShadowEmission=true;
 		bActiveShadowReception=true;
+		eShadingModel=eShadingModel_Balanced;
 
 		bActiveDepth=true;
 		nDepthFunction=GL_LESS;
@@ -297,9 +303,12 @@ struct SShaderKey
 	int  nTextureUnits;
 	bool bLighting;
 	bool  bWater;
+	EShadingModel eShadingModel;
 	
 	bool operator <(const SShaderKey &otherKey) const
 	{
+		if(eShadingModel<otherKey.eShadingModel){return true;}
+		if(eShadingModel>otherKey.eShadingModel){return false;}
 		if(bHeightFog<otherKey.bHeightFog){return true;}
 		if(bHeightFog>otherKey.bHeightFog){return false;}
 		if(bShadows<otherKey.bShadows){return true;}
@@ -313,8 +322,8 @@ struct SShaderKey
 		return false;
 	}
 
-	SShaderKey(){bHeightFog=false;bShadows=false;nTextureUnits=0;bLighting=false;bWater=false;}
-	SShaderKey(bool heightFog,bool shadows,int textureUnits,bool lighting,bool water){bHeightFog=heightFog;bShadows=shadows;nTextureUnits=textureUnits;bLighting=lighting;bWater=water;}
+	SShaderKey(){eShadingModel=eShadingModel_Gouraud;bHeightFog=false;bShadows=false;nTextureUnits=0;bLighting=false;bWater=false;}
+	SShaderKey(EShadingModel shading,bool heightFog,bool shadows,int textureUnits,bool lighting,bool water){eShadingModel=shading;bHeightFog=heightFog;bShadows=shadows;nTextureUnits=textureUnits;bLighting=lighting;bWater=water;}
 };
 
 class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRender
@@ -405,6 +414,9 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	std::map<SLineStageKey,SLineStage>							m_mLineStages;
 	std::map<STextureParticleStageKey,STextureParticleStage>	m_mTextureParticleStages;
 	std::map<SModelStageKey,SModelStage>						m_mModelStages;
+	
+	SRenderStats m_sStagedStats;
+	
 	bool m_bRenderingShadowReception;
 	void UpdateProjectionMatrix();
 
@@ -562,6 +574,9 @@ public:
 	void DisableAutoShadowVolume();
 	bool IsAutoShadowVolumeEnabled();
 	
+	void 			SetShadingModel(EShadingModel eModel);
+	EShadingModel 	GetShadingModel();
+	
 	void PushOptions();
 	void PopOptions();
 
@@ -570,13 +585,16 @@ public:
 	void StartStagedRendering();
 	void EndStagedRendering();
 	bool IsRenderingWithShader();
-
+	SRenderStats GetStagedRenderingStats();
+	
 	// Selection
 
 	void StartSelection(SGameRect rWindowRect,IGenericCamera *piCamera,double dx,double dy,double dPrecision);
 	void SetSelectionId(unsigned int nId);
 	int EndSelection();
 
+	void ReloadShaders();
+	
 	BEGIN_PROP_MAP(COpenGLRender)
 	PROP_VALUE_FLAGS(m_bIgnoreShaderSupport,"IgnoreShaderSupport",false,MRPF_NORMAL|MRPF_OPTIONAL)
 	PROP_VALUE_FLAGS(m_dShadowAntiFlickeringMargin,"ShadowAntiFlickeringMargin",10,MRPF_NORMAL|MRPF_OPTIONAL)

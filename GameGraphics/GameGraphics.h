@@ -372,6 +372,60 @@ struct IGenericShader:virtual public ISystemUnknown
 	virtual bool Compile()=0;
 };
 
+enum EShadingModel
+{
+	eShadingModel_UNKNOWN=0,
+	eShadingModel_Gouraud,
+	eShadingModel_Balanced,
+	eShadingModel_Phong
+};
+
+struct SRenderStats
+{
+	unsigned int nTotalVertexes;
+	unsigned int nInmediateVertexes;
+	unsigned int nBufferedVertexes;
+	
+	unsigned int nTotalFaces;
+	unsigned int nInmediateFaces;
+	unsigned int nBufferedFaces;
+	
+	unsigned int nPoints;
+	unsigned int nLines;
+	unsigned int nParticles;
+	unsigned int nModels;
+	
+	unsigned int nStateChanges;
+	unsigned int nShaderChanges;
+	unsigned int nTextureChanges;
+	
+	unsigned int nRenderTime;
+	unsigned int nShadowTime;
+	
+	SRenderStats()
+	{
+		nTotalVertexes=0;
+		nInmediateVertexes=0;
+		nBufferedVertexes=0;
+		
+		nTotalFaces=0;
+		nInmediateFaces=0;
+		nBufferedFaces=0;
+		
+		nPoints=0;
+		nLines=0;
+		nParticles=0;
+		nModels=0;
+		
+		nStateChanges=0;
+		nShaderChanges=0;
+		nTextureChanges=0;
+		
+		nRenderTime=0;
+		nShadowTime=0;
+	}
+};
+
 class IGenericRender:virtual public ISystemUnknown
 {
 public:
@@ -381,11 +435,14 @@ public:
 
 	virtual void StartStagedRendering()=0;
 	virtual void EndStagedRendering()=0;
-
+	virtual SRenderStats GetStagedRenderingStats()=0;
+	
 	virtual void StartSelection(SGameRect rWindowRect,IGenericCamera *piCamera,double dx,double dy,double dPrecision)=0;
 	virtual void SetSelectionId(unsigned int nId)=0;
 	virtual int  EndSelection()=0;
 
+	virtual void ReloadShaders()=0;
+	
 	virtual bool IsRenderingWithShader()=0;
 
 	virtual IGenericViewport *GetViewPort()=0; // solo valido entre StartFrame y EndFrame.
@@ -515,8 +572,12 @@ public:
 	virtual void DisableAutoShadowVolume()=0;
 	virtual bool IsAutoShadowVolumeEnabled()=0;
 	
+	virtual void 			SetShadingModel(EShadingModel eModel)=0;
+	virtual EShadingModel 	GetShadingModel()=0;
+	
 	virtual void PushOptions()=0;
 	virtual void PopOptions()=0;
+
 };
 
 #endif
