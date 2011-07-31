@@ -15,16 +15,27 @@ uniform float CurrentRealTime;
 
 uniform sampler2D Texture0;
 uniform sampler2D Texture1;
-uniform sampler2D Texture2;
+#ifdef ENABLE_SHADOWS
 uniform sampler2DShadow ShadowMap;
+#endif
+#ifdef ENABLE_NORMAL_MAP
+uniform sampler2D NormalMap;
+#endif
+
 varying vec4 g_EyeVertexPos;
 
 #define LIGHTING_SATURATION 1.5
 
 varying vec3 g_WorldVertexPos;
 #ifdef ENABLE_LIGHTING
-varying vec3 g_normal;
 varying vec3 g_lightdirs[MAX_LIGHTS];
+#ifdef ENABLE_NORMAL_MAP
+	varying vec3 g_TangentSpaceX;
+	varying vec3 g_TangentSpaceY;
+	varying vec3 g_TangentSpaceZ;
+#else
+	varying vec3 g_normal;
+#endif
 
 void DirectionalLight(const in int  i,
 					  const in vec3 normal,
@@ -125,20 +136,10 @@ void main (void)
 		texcolor*= texture2D(Texture1, gl_TexCoord[1].xy);
 		#endif
 	#endif
-	#if TEXTURE_UNITS > 2
-		#ifdef ENABLE_WATER
-			vec3 temptexunit2;
-			ApplyWaterEffect(Texture2,gl_TexCoord[2].xy,temptexunit2);
-			texcolor.rgb*=temptexunit2;
-		#else
-			texcolor*= texture2D(Texture2, gl_TexCoord[2].xy);
-		#endif
-	#endif
 #endif
   
   #ifdef ENABLE_SHADOWS
-	  
-	  fShadowFactor=shadow2DProj(ShadowMap, gl_TexCoord[3]).r;
+	fShadowFactor=shadow2DProj(ShadowMap, gl_TexCoord[SHADOW_TEXTURE_LEVEL]).r;
   #endif
   #ifdef ENABLE_LIGHTING
 	  
@@ -150,10 +151,15 @@ void main (void)
 	  vec4 sunspec=vec4(0);
 	  vec4 g_ambdiffspec=vec4(0);
 	  vec4 g_sunambdiffspec=vec4(0);
-	  vec4 Idiff;
-	  vec4 Ispec;
 	  
-	  vec3 N = normalize(g_normal);
+	  #ifdef ENABLE_NORMAL_MAP
+	  // Compute final normal usign the normal map
+	  vec3 bump = normalize( texture2D(NormalMap, gl_TexCoord[NORMAL_MAP_TEXTURE_LEVEL].xy).xyz * 2.0 - 1.0);
+	  vec3 N=normalize(bump.x*normalize(g_TangentSpaceY)+bump.y*normalize(g_TangentSpaceX)+bump.z*normalize(g_TangentSpaceZ));
+	  #else
+	  vec3 N=normalize(g_normal);
+	  #endif
+	  
 	  
 	  DirectionalLight(0, N, sunamb, sundiff,sunspec);
 	  for(int x=1;x<g_ActiveLights;x++)

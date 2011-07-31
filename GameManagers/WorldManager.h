@@ -23,6 +23,7 @@
 struct STerrainHeightLayerData
 {
 	CGenericTextureWrapper				m_Texture;
+	CGenericTextureWrapper				m_NormalMap;
 	STerrainHeightLayer					m_LayerConfig;
 };
 
@@ -30,6 +31,7 @@ struct STerrainHeightLayerData
 struct STerrainColorLayerData
 {
 	CGenericTextureWrapper				m_Texture;
+	CGenericTextureWrapper				m_NormalMap;
 	STerrainColorLayer					m_LayerConfig;
 };
 
@@ -105,11 +107,13 @@ END_STRUCT_PROPS()
 
 BEGIN_STRUCT_PROPS(STerrainHeightLayerData)
 	PROP(m_Texture,"Texture")
+	PROP_FLAGS(m_NormalMap,"NormalMap",MRPF_NORMAL|MRPF_OPTIONAL)
 	PROP(m_LayerConfig,"Config")
 END_STRUCT_PROPS()
 
 BEGIN_STRUCT_PROPS(STerrainColorLayerData)
 	PROP(m_Texture,"Texture")
+	PROP_FLAGS(m_NormalMap,"NormalMap",MRPF_NORMAL|MRPF_OPTIONAL)
 	PROP(m_LayerConfig,"Config")
 END_STRUCT_PROPS()
 
@@ -238,7 +242,7 @@ public:
 	void			UpdateTerrainColorLayer(unsigned int nIndex,STerrainColorLayer *pLayer);
 	unsigned int	MoveTerrainColorLayer(unsigned int nIndex,bool bUp);
 	void			RemoveTerrainColorLayer(unsigned int nIndex);
-	void			GetTerrainColorLayer(unsigned int nIndex,STerrainColorLayer *pLayer,IGenericTexture **ppiTexture);
+	void			GetTerrainColorLayer(unsigned int nIndex,STerrainColorLayer *pLayer,IGenericTexture **ppiTexture,IGenericTexture **ppiNormalMap);
 	unsigned int	GetTerrainColorLayers();
 
 	// ITerrainDesign Height layers
@@ -247,7 +251,7 @@ public:
 	void			UpdateTerrainHeightLayer(unsigned int nIndex,STerrainHeightLayer *pLayer);
 	unsigned int	MoveTerrainHeightLayer(unsigned int nIndex,bool bUp);
 	void			RemoveTerrainHeightLayer(unsigned int nIndex);
-	void			GetTerrainHeightLayer(unsigned int nIndex,STerrainHeightLayer *pLayer,IGenericTexture **ppiTexture);
+	void			GetTerrainHeightLayer(unsigned int nIndex,STerrainHeightLayer *pLayer,IGenericTexture **ppiTexture,IGenericTexture **ppiNormalMap);
 	unsigned int	GetTerrainHeightLayers();
 
 	bool			GetTerrainStats(double *pdVertexOverhead,double *pdFaceOverhead);

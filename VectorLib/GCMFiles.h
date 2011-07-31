@@ -25,12 +25,14 @@
 #ifndef GCM_FILES
 #define GCM_FILES
 
-#define GCM_FILE_VERSION		0x100 // 1.00
+#define GCM_FILE_VERSION_V1		0x100 // 1.00
+#define GCM_FILE_VERSION		GCM_FILE_VERSION_V1
 #define GCM_FILE_MAGIC			"<GCM>"
 #define GCM_FILE_MAGIC_LENGTH	5
 
-#define GCM_BUFFER_FLAG_HAS_COLORS  0x0001
-#define GCM_BUFFER_FLAG_HAS_NORMALS 0x0002
+#define GCM_BUFFER_FLAG_HAS_COLORS  	0x0001
+#define GCM_BUFFER_FLAG_HAS_NORMALS 	0x0002
+#define GCM_BUFFER_FLAG_HAS_NORMAL_MAP  0x0004
 
 struct SGCMHeader
 {
@@ -71,8 +73,10 @@ struct SGCMBuffer
 	float			*pVertexArray;
 	float			*pNormalArray;
 	float			*pColorArray;
+	float			*pNormalMapArray;
 	unsigned int	*pFaceVertexIndexes;
 	
+	std::string 	 sNormalMap;
 	std::vector<SGCMTextureLevel *> vTextureLevels;
 	
 	SGCMBuffer();
@@ -134,6 +138,8 @@ public:
 	void		  SetBufferNormals(unsigned long nFrame,unsigned long nBuffer,float *pNormals);
 	void		  SetBufferColors(unsigned long nFrame,unsigned long nBuffer,float *pColors);
 	void		  SetBufferTextureCoords(unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,float *pTexVertexes);
+	void		  SetBufferNormalMap(unsigned long nFrame,unsigned long nBuffer,const std::string &sNormalMapFile);
+	void		  SetBufferNormalMapCoords(unsigned long nFrame,unsigned long nBuffer,float *pNormalMapVertexes);
 	
 	void		  GetBufferMaterial(unsigned long nFrame,unsigned long nBuffer,CVector *pvAmbientColor,CVector *pvDiffuseColor,CVector *pvSpecularColor, float *pfShininess, float *pfOpacity);
 	void		  GetBufferTexture(unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,std::string *psTextureFile);
@@ -143,6 +149,8 @@ public:
 	void		  GetBufferColors(unsigned long nFrame,unsigned long nBuffer,float **ppColors);
 	void		  GetBufferTextureCoords(unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,float **ppTexVertexes);
 	void		  GetBufferTextureLevels(unsigned long nFrame,unsigned long nBuffer,unsigned long *pnTextureLevels);
+	void		  GetBufferNormalMap(unsigned long nFrame,unsigned long nBuffer,std::string *psNormalMapFile);
+	void		  GetBufferNormalMapCoords(unsigned long nFrame,unsigned long nBuffer,float **ppNormalMapVertexes);
 	
 	void		  GetTextures(std::set<std::string> *pvTextures);
 

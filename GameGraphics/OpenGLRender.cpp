@@ -58,6 +58,9 @@ COpenGLRender::COpenGLRender(void)
 	m_bPrecompileShaders=true;
 	
 	m_nFirstTimeStamp=GetTimeStamp();
+	m_piNormalMap=NULL;
+	m_nNormalMapTextureLevel=2;
+	m_nShadowTextureLevel=3;
 }
 
 COpenGLRender::~COpenGLRender(void)
@@ -296,6 +299,21 @@ void COpenGLRender::UnselectTexture(int nTextureLevel)
 	if(!m_bStagedRendering && piTexture){piTexture->UnprepareTexture(this,nTextureLevel);}
 	REL(piTexture);
 	m_mTextureLevels.erase(nTextureLevel);
+}
+
+void COpenGLRender::SelectNormalMap(IGenericTexture *pNormalMap)
+{
+	if(!m_sRenderOptions.bEnableNormalMaps){return;}
+	REL(m_piNormalMap);
+	m_piNormalMap=ADD(pNormalMap);
+	if(!m_bStagedRendering){m_piNormalMap->PrepareTexture(this,m_nNormalMapTextureLevel);}
+}
+
+void COpenGLRender::UnselectNormalMap()
+{
+	if(!m_sRenderOptions.bEnableNormalMaps){return;}
+	if(!m_bStagedRendering && m_piNormalMap){m_piNormalMap->UnprepareTexture(this,m_nNormalMapTextureLevel);}
+	REL(m_piNormalMap);
 }
 
 void COpenGLRender::RenderTexture(const CVector &vOrigin,double s1,double s2)
@@ -1498,7 +1516,18 @@ void COpenGLRender::RenderModel(const CVector &vOrigin,const CVector &vOrientati
 		glRotated(vOrientation.c[YAW]	,0,1,0);
 		glRotated(vOrientation.c[PITCH]	,0,0,1);
 		glRotated(vOrientation.c[ROLL]	,1,0,0);
-		piModel->Render(this,nAnimation,nFrame);
+
+		IOpenGLModel *piGLModel=QI(IOpenGLModel,piModel);
+		if(piGLModel)
+		{
+			for(unsigned long x=0;x<piModel->GetFrameRenderBuffers(nAnimation,nFrame);x++)
+			{			
+				piGLModel->PrepareRenderBuffer(this,nAnimation,nFrame,x,false,m_nNormalMapTextureLevel);
+				piGLModel->CallRenderBuffer(this,nAnimation,nFrame,x);
+				piGLModel->UnPrepareRenderBuffer(this,nAnimation,nFrame,x,false,m_nNormalMapTextureLevel);
+			}
+		}
+		REL(piGLModel);
 		glPopMatrix();
 	}
 }
@@ -1862,7 +1891,7 @@ void COpenGLRender::EndStagedRendering()
 		double dTextureMatrix[16];
 		ToOpenGLMatrix(&textureMatrix,dTextureMatrix);
 
-		m_ShadowTexture.m_piTexture->PrepareTexture(this,m_bRenderingWithShader?3:1);
+		m_ShadowTexture.m_piTexture->PrepareTexture(this,m_bRenderingWithShader?m_nShadowTextureLevel:1);
 		//Set up texture coordinate generation.
 
 		glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
@@ -1940,7 +1969,7 @@ void COpenGLRender::EndStagedRendering()
 		}
 		RenderAllStages(false,true);
 		
-		m_ShadowTexture.m_piTexture->UnprepareTexture(this,m_bRenderingWithShader?3:1);
+		m_ShadowTexture.m_piTexture->UnprepareTexture(this,m_bRenderingWithShader?m_nShadowTextureLevel:1);
 		glDisable(GL_TEXTURE_GEN_S);
 		glDisable(GL_TEXTURE_GEN_T);
 		glDisable(GL_TEXTURE_GEN_R);
@@ -2077,7 +2106,7 @@ void COpenGLRender::SetRenderState( const SRenderState &sNewState,bool bForce)
 	
 	if(m_bRenderingWithShader)
 	{
-		SShaderKey key(sNewState.eShadingModel,sNewState.bActiveHeightFog,m_sRenderOptions.bEnableShadows && m_bRenderingShadowReception,sNewState.bActiveTextures && m_sRenderOptions.bEnableTextures?m_mTextureLevels.size():0,m_sRenderOptions.bEnableLighting && sNewState.bActiveLighting,sNewState.bActiveWater);
+		SShaderKey key(sNewState.eShadingModel,sNewState.bActiveHeightFog,m_sRenderOptions.bEnableShadows && m_bRenderingShadowReception,sNewState.bActiveTextures && m_sRenderOptions.bEnableTextures?m_mTextureLevels.size():0,m_sRenderOptions.bEnableLighting && sNewState.bActiveLighting,sNewState.bActiveWater,m_sRenderOptions.bEnableNormalMaps && m_piNormalMap);
 		std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader=m_mShaders.find(key);
 		CGenericShaderWrapper *pNewShader=(iShader==m_mShaders.end())?NULL:&iShader->second;
 		if(m_pCurrentShader && m_pCurrentShader!=pNewShader)
@@ -2101,6 +2130,10 @@ void COpenGLRender::SetRenderState( const SRenderState &sNewState,bool bForce)
 void COpenGLRender::EnableShaders(){m_sRenderOptions.bEnableShader=true;}
 void COpenGLRender::DisableShaders(){m_sRenderOptions.bEnableShader=false;}
 bool COpenGLRender::AreShadersEnabled(){return m_sRenderOptions.bEnableShader;}
+
+void COpenGLRender::EnableNormalMaps(){m_sRenderOptions.bEnableNormalMaps=true;}
+void COpenGLRender::DisableNormalMaps(){m_sRenderOptions.bEnableNormalMaps=false;}
+bool COpenGLRender::AreNormalMapsEnabled(){return m_sRenderOptions.bEnableNormalMaps;}
 
 void COpenGLRender::EnableTextures(){m_sRenderOptions.bEnableTextures=true;}
 void COpenGLRender::DisableTextures(){m_sRenderOptions.bEnableTextures=false;DeactivateTextures();}
@@ -2157,7 +2190,7 @@ void COpenGLRender::RenderModelStages(bool bRenderingShadow,bool bShadowReceptio
 				if(!bRenderBufferPrepared)
 				{
 					bRenderBufferPrepared=true;
-					pStage->piGLModel->PrepareRenderBuffer(this,pKey->nAnimation,pKey->nFrame,nBuffer,bRenderingShadow);
+					pStage->piGLModel->PrepareRenderBuffer(this,pKey->nAnimation,pKey->nFrame,nBuffer,bRenderingShadow,m_nNormalMapTextureLevel);
 					SetRenderState(pKey->sRenderState,false);
 				}
 
@@ -2172,7 +2205,7 @@ void COpenGLRender::RenderModelStages(bool bRenderingShadow,bool bShadowReceptio
 			
 			if(bRenderBufferPrepared)
 			{
-				pStage->piGLModel->UnPrepareRenderBuffer(this,pKey->nAnimation,pKey->nFrame,nBuffer,bRenderingShadow);
+				pStage->piGLModel->UnPrepareRenderBuffer(this,pKey->nAnimation,pKey->nFrame,nBuffer,bRenderingShadow,m_nNormalMapTextureLevel);
 			}
 		}
 	}
@@ -2392,14 +2425,25 @@ bool COpenGLRender::IsRenderingWithShader(){return m_bRenderingWithShader;}
 
 void COpenGLRender::AddShader( const SShaderKey &key )
 {
+	char sTemp[128];
 	std::string sPreprocessor;
 	if(key.bHeightFog){sPreprocessor+="#define ENABLE_FOG\n";}
-	if(key.bShadows){sPreprocessor+="#define ENABLE_SHADOWS\n";}
 	if(key.bWater){sPreprocessor+="#define ENABLE_WATER\n";}
+	if(key.bShadows)
+	{
+		sPreprocessor+="#define ENABLE_SHADOWS\n";
+		sprintf(sTemp,"#define SHADOW_TEXTURE_LEVEL %d\n",m_nShadowTextureLevel);
+		sPreprocessor+=sTemp;
+	}
+	if(key.bNormalMap)
+	{
+		sPreprocessor+="#define ENABLE_NORMAL_MAP\n";
+		sprintf(sTemp,"#define NORMAL_MAP_TEXTURE_LEVEL %d\n",m_nNormalMapTextureLevel);
+		sPreprocessor+=sTemp;
+	}
 	if(key.nTextureUnits)
 	{
 		sPreprocessor+="#define ENABLE_TEXTURES\n";
-		char sTemp[128];
 		sprintf(sTemp,"#define TEXTURE_UNITS %d\n",key.nTextureUnits);
 		sPreprocessor+=sTemp;
 	}
@@ -2425,7 +2469,7 @@ void COpenGLRender::AddShader( const SShaderKey &key )
 		if(m_bPrecompileShaders){wrapper.m_piShader->Compile();}
 		if(key.nTextureUnits>=1){wrapper.m_piShader->AddUniform("Texture0",(int)0);}
 		if(key.nTextureUnits>=2){wrapper.m_piShader->AddUniform("Texture1",(int)1);}
-		if(key.nTextureUnits>=3){wrapper.m_piShader->AddUniform("Texture2",(int)2);}
+		if(key.bNormalMap){wrapper.m_piShader->AddUniform("NormalMap",(int)m_nNormalMapTextureLevel);}
 		if(key.bShadows){wrapper.m_piShader->AddUniform("ShadowMap",(int)3);}
 		m_mShaders[key]=wrapper;
 	}
@@ -2521,12 +2565,15 @@ void COpenGLRender::ReloadShaders()
 			{
 				for(int bShadows=0;bShadows<=1;bShadows++)
 				{
-					for(int nTextures=0;nTextures<=m_sHardwareSupport.nMaxTextureUnits;nTextures++)
+					for(int bNormalMap=0;bNormalMap<=1;bNormalMap++)
 					{
-						AddShader(SShaderKey((EShadingModel)eShading,bHeightFog!=0,bShadows!=0,nTextures,true,true));
-						AddShader(SShaderKey((EShadingModel)eShading,bHeightFog!=0,bShadows!=0,nTextures,true,false));
-						AddShader(SShaderKey((EShadingModel)eShading,bHeightFog!=0,bShadows!=0,nTextures,false,true));
-						AddShader(SShaderKey((EShadingModel)eShading,bHeightFog!=0,bShadows!=0,nTextures,false,false));
+						for(int nTextures=0;nTextures<=m_sHardwareSupport.nMaxTextureUnits;nTextures++)
+						{
+							AddShader(SShaderKey((EShadingModel)eShading,bHeightFog!=0,bShadows!=0,nTextures,true,true,bNormalMap!=0));
+							AddShader(SShaderKey((EShadingModel)eShading,bHeightFog!=0,bShadows!=0,nTextures,true,false,bNormalMap!=0));
+							AddShader(SShaderKey((EShadingModel)eShading,bHeightFog!=0,bShadows!=0,nTextures,false,true,bNormalMap!=0));
+							AddShader(SShaderKey((EShadingModel)eShading,bHeightFog!=0,bShadows!=0,nTextures,false,false,bNormalMap!=0));
+						}
 					}
 				}
 			}

@@ -64,6 +64,7 @@ SGCMBuffer::SGCMBuffer()
 {
 	pVertexArray=NULL;
 	pNormalArray=NULL;
+	pNormalMapArray=NULL;
 	pColorArray=NULL;
 	pFaceVertexIndexes=NULL;
 }
@@ -72,11 +73,13 @@ SGCMBuffer::~SGCMBuffer()
 {
 	delete [] pVertexArray;
 	delete [] pNormalArray;
+	delete [] pNormalMapArray;
 	delete [] pColorArray;
 	delete [] pFaceVertexIndexes;
 	
 	pVertexArray=NULL;
 	pNormalArray=NULL;
+	pNormalMapArray=NULL;
 	pColorArray=NULL;
 	pFaceVertexIndexes=NULL;
 
@@ -149,6 +152,7 @@ bool CGCMFileType::Open(const char *psFileName)
 			if(bOk){bOk=(fread(&pBuffer->data,sizeof(pBuffer->data),1,pFile)==1);}
 			if(bOk){bOk=(fread(&nTextureLevels,sizeof(nTextureLevels),1,pFile)==1);}
 			if(bOk){bOk=(fread(&nFlags,sizeof(nFlags),1,pFile)==1);}
+
 			if(bOk)
 			{
 				pBuffer->pVertexArray=new float [pBuffer->data.nVertexes*3];
@@ -168,6 +172,25 @@ bool CGCMFileType::Open(const char *psFileName)
 			{
 				pBuffer->pNormalArray=new float [pBuffer->data.nVertexes*3];
 				bOk=(fread(pBuffer->pNormalArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);
+			}
+			if(bOk && nFlags&GCM_BUFFER_FLAG_HAS_NORMAL_MAP)
+			{
+				unsigned int nNormalMapFileSize=0;
+				if(bOk){bOk=(fread(&nNormalMapFileSize,sizeof(nNormalMapFileSize),1,pFile)==1);}
+				if(bOk)
+				{
+					char *pNormalMapFile=new char [nNormalMapFileSize+1];
+					if(nNormalMapFileSize){bOk=(fread(pNormalMapFile,nNormalMapFileSize,1,pFile)==1);}
+					pNormalMapFile[nNormalMapFileSize]=0;
+					pBuffer->sNormalMap=pNormalMapFile;
+					delete [] pNormalMapFile;
+					pNormalMapFile=NULL;
+				}
+				if(bOk)
+				{
+					pBuffer->pNormalMapArray=new float [pBuffer->data.nVertexes*2];
+					bOk=(fread(pBuffer->pNormalMapArray,sizeof(float)*pBuffer->data.nVertexes*2,1,pFile)==1);
+				}
 			}
 			
 			for(unsigned int l=0;bOk && l<nTextureLevels;l++)
@@ -238,9 +261,9 @@ bool CGCMFileType::Save(const char *psFileName)
 			unsigned int nFlags=0;
 			nFlags|=pBuffer->pColorArray?GCM_BUFFER_FLAG_HAS_COLORS:0;
 			nFlags|=pBuffer->pNormalArray?GCM_BUFFER_FLAG_HAS_NORMALS:0;
-
+			nFlags|=pBuffer->pNormalMapArray?GCM_BUFFER_FLAG_HAS_NORMAL_MAP:0;
 			
-			if(bOk){bOk=(fwrite(&pBuffer->data,sizeof(pBuffer->data),1,pFile)==1);}
+			if(bOk){bOk=(fwrite(&pBuffer->data,sizeof(pBuffer->data),1,pFile)==1);}			
 			if(bOk){bOk=(fwrite(&nTextureLevels,sizeof(nTextureLevels),1,pFile)==1);}
 			if(bOk){bOk=(fwrite(&nFlags,sizeof(nFlags),1,pFile)==1);}
 			if(bOk){bOk=(fwrite(pBuffer->pVertexArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);}
@@ -253,12 +276,19 @@ bool CGCMFileType::Save(const char *psFileName)
 			{
 				bOk=(fwrite(pBuffer->pNormalArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);
 			}
+			if(bOk && nFlags&GCM_BUFFER_FLAG_HAS_NORMAL_MAP)
+			{
+				unsigned int nNormalMapFileSize=pBuffer->sNormalMap.length();
+				if(bOk){bOk=(fwrite(&nNormalMapFileSize,sizeof(nNormalMapFileSize),1,pFile)==1);}
+				if(bOk && nNormalMapFileSize){bOk=(fwrite(pBuffer->sNormalMap.c_str(),nNormalMapFileSize,1,pFile)==1);}
+				if(bOk){bOk=(fwrite(pBuffer->pNormalMapArray,sizeof(float)*pBuffer->data.nVertexes*2,1,pFile)==1);}
+			}
 			for(unsigned int l=0;bOk && l<nTextureLevels;l++)
 			{
 				SGCMTextureLevel *pTextureLevel=pBuffer->vTextureLevels[l];
 				unsigned int nFileNameSize=pTextureLevel->sTexture.length();
 				if(bOk){bOk=(fwrite(&nFileNameSize,sizeof(nFileNameSize),1,pFile)==1);}
-				if(bOk){bOk=(fwrite(pTextureLevel->sTexture.c_str(),nFileNameSize,1,pFile)==1);}
+				if(bOk && nFileNameSize){bOk=(fwrite(pTextureLevel->sTexture.c_str(),nFileNameSize,1,pFile)==1);}
 				if(bOk){bOk=(fwrite(pTextureLevel->pTexVertexArray,sizeof(float)*pBuffer->data.nVertexes*2,1,pFile)==1);}
 			}
 		}
@@ -358,6 +388,13 @@ void CGCMFileType::SetBufferTexture(unsigned long nFrame,unsigned long nBuffer,u
 	pTextureLevel->sTexture=sTexture;
 }
 
+void CGCMFileType::SetBufferNormalMap(unsigned long nFrame,unsigned long nBuffer,const std::string &sTexture)
+{
+	SGCMBuffer *pBuffer=GetBuffer(nFrame, nBuffer);
+	if(pBuffer==NULL){return;}
+	pBuffer->sNormalMap=sTexture;
+}
+
 void CGCMFileType::SetBufferVertexes(unsigned long nFrame,unsigned long nBuffer,unsigned long nVertexes,float *pVertexes )
 {
 	SGCMBuffer *pBuffer=GetBuffer(nFrame, nBuffer);
@@ -402,6 +439,14 @@ void CGCMFileType::SetBufferTextureCoords(unsigned long nFrame,unsigned long nBu
 	pTextureLevel->pTexVertexArray=pTexVertexes;
 }
 
+void CGCMFileType::SetBufferNormalMapCoords(unsigned long nFrame,unsigned long nBuffer,float *pNormalMapArray)
+{
+	SGCMBuffer *pBuffer=GetBuffer(nFrame, nBuffer);
+	if(pBuffer==NULL){return;}
+	delete [] pBuffer->pNormalMapArray;
+	pBuffer->pNormalMapArray=pNormalMapArray;
+}
+
 void CGCMFileType::GetBufferMaterial(unsigned long nFrame,unsigned long nBuffer,CVector *pvAmbientColor,CVector *pvDiffuseColor,CVector *pvSpecularColor, float *pfShininess, float *pfOpacity )
 {
 	if(pvAmbientColor){*pvAmbientColor=Origin;}
@@ -430,6 +475,14 @@ void CGCMFileType::GetBufferTexture(unsigned long nFrame,unsigned long nBuffer,u
 	if(pBuffer==NULL){return;}
 	if(nTextureLevel>=pBuffer->vTextureLevels.size()){return;}
 	if(psTexture){*psTexture=pBuffer->vTextureLevels[nTextureLevel]->sTexture;}
+}
+
+void CGCMFileType::GetBufferNormalMap(unsigned long nFrame,unsigned long nBuffer,std::string *psTexture)
+{
+	if(psTexture){*psTexture="";}
+	SGCMBuffer *pBuffer=GetBuffer(nFrame, nBuffer);
+	if(pBuffer==NULL){return;}
+	if(psTexture){*psTexture=pBuffer->sNormalMap;}
 }
 
 void CGCMFileType::GetBufferTextureLevels(long unsigned int nFrame, long unsigned int nBuffer, long unsigned int* pnTextureLevels)
@@ -483,6 +536,14 @@ void CGCMFileType::GetBufferTextureCoords(unsigned long nFrame,unsigned long nBu
 	if(pBuffer==NULL){return;}
 	if(nTextureLevel>=pBuffer->vTextureLevels.size()){return;}
 	if(ppTexVertexes){*ppTexVertexes=pBuffer->vTextureLevels[nTextureLevel]->pTexVertexArray;}
+}
+
+void CGCMFileType::GetBufferNormalMapCoords(unsigned long nFrame,unsigned long nBuffer,float **ppNormalMapVertexes )
+{
+	if(ppNormalMapVertexes){*ppNormalMapVertexes=NULL;}
+	SGCMBuffer *pBuffer=GetBuffer(nFrame, nBuffer);
+	if(pBuffer==NULL){return;}
+	if(ppNormalMapVertexes){*ppNormalMapVertexes=pBuffer->pNormalMapArray;}
 }
 
 void CGCMFileType::RemoveFrames()

@@ -13,24 +13,52 @@ uniform mat4 CameraModelViewInverse;
 varying vec3 g_WorldVertexPos;
 varying vec4 g_EyeVertexPos;
 #ifdef ENABLE_LIGHTING
-varying vec3 g_normal; 
 varying vec3 g_lightdirs[MAX_LIGHTS];
+#ifdef ENABLE_NORMAL_MAP
+	varying vec3 g_TangentSpaceX;
+	varying vec3 g_TangentSpaceY;
+	varying vec3 g_TangentSpaceZ;
+#else
+	varying vec3 g_normal; 
 #endif
+#endif
+	
 #ifdef ENABLE_FOG
 varying float g_fFogFactor;
 #endif 
 
+void GetTagent(const in vec3 normal,
+			   out    vec3 tangent)
+{
+	vec3 c1 = cross(normal, vec3(0.0, 0.0, 1.0)); 
+	vec3 c2 = cross(normal, vec3(0.0, 1.0, 0.0)); 
+	tangent = normalize((length(c1)>length(c2))?c1:c2);
+}
 
 void main (void)
 {
-	#ifdef ENABLE_LIGHTING
-	g_normal=normalize(gl_NormalMatrix * gl_Normal);
-	#endif 
 	vec4 LocalVertexPos=gl_Vertex;
 	g_EyeVertexPos=gl_ModelViewMatrix * LocalVertexPos;
 	vec4 WorldVertexPos=CameraModelViewInverse * g_EyeVertexPos;
 	g_WorldVertexPos=WorldVertexPos.xyz;
 
+	#ifdef ENABLE_LIGHTING
+	#ifdef ENABLE_NORMAL_MAP
+	vec3 vTangent;
+	vec3 g_normal=normalize(gl_NormalMatrix * gl_Normal);
+	GetTagent(gl_Normal,vTangent);
+	vec3 n = g_normal;
+	vec3 t = normalize(gl_NormalMatrix * vTangent);
+	vec3 b = cross(n, t);
+	g_TangentSpaceX=t;
+	g_TangentSpaceY=b;
+	g_TangentSpaceZ=n;
+	#else
+	g_normal=normalize(gl_NormalMatrix * gl_Normal);
+	#endif 
+	#endif
+	
+	
 	gl_Position = ftransform();
 	#ifdef ENABLE_LIGHTING
 	for (int i=0; i<MAX_LIGHTS; ++i)
@@ -55,15 +83,16 @@ void main (void)
 	#if TEXTURE_UNITS > 1
 	gl_TexCoord[1]=gl_TextureMatrix[1]*gl_MultiTexCoord1;
 	#endif
-	#if TEXTURE_UNITS > 2
-	gl_TexCoord[2]=gl_TextureMatrix[2]*gl_MultiTexCoord2;
-	#endif
 #endif
-
+	
+#ifdef ENABLE_NORMAL_MAP
+	gl_TexCoord[NORMAL_MAP_TEXTURE_LEVEL]=gl_TextureMatrix[NORMAL_MAP_TEXTURE_LEVEL]*gl_MultiTexCoord2;
+#endif
+	
 #ifdef ENABLE_SHADOWS
-	gl_TexCoord[3].s = dot(g_EyeVertexPos, gl_EyePlaneS[3]);
-	gl_TexCoord[3].t = dot(g_EyeVertexPos, gl_EyePlaneT[3]);
-	gl_TexCoord[3].p = dot(g_EyeVertexPos, gl_EyePlaneR[3]);
-	gl_TexCoord[3].q = dot(g_EyeVertexPos, gl_EyePlaneQ[3]);
+	gl_TexCoord[SHADOW_TEXTURE_LEVEL].s = dot(g_EyeVertexPos, gl_EyePlaneS[SHADOW_TEXTURE_LEVEL]);
+	gl_TexCoord[SHADOW_TEXTURE_LEVEL].t = dot(g_EyeVertexPos, gl_EyePlaneT[SHADOW_TEXTURE_LEVEL]);
+	gl_TexCoord[SHADOW_TEXTURE_LEVEL].p = dot(g_EyeVertexPos, gl_EyePlaneR[SHADOW_TEXTURE_LEVEL]);
+	gl_TexCoord[SHADOW_TEXTURE_LEVEL].q = dot(g_EyeVertexPos, gl_EyePlaneQ[SHADOW_TEXTURE_LEVEL]);
 #endif
 }

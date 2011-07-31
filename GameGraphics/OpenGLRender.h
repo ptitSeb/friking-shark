@@ -126,6 +126,7 @@ struct SRenderOptions
 	bool bEnableBlending;
 	bool bEnableHeightFog;
 	bool bEnableShader;
+	bool bEnableNormalMaps;
 
 	SRenderOptions()
 	{
@@ -137,6 +138,7 @@ struct SRenderOptions
 		bEnableSolid=true;
 		bEnableBlending=true;
 		bEnableAutoShadowVolume=true;
+		bEnableNormalMaps=true;
 	}
 };
 
@@ -303,6 +305,8 @@ struct SShaderKey
 	int  nTextureUnits;
 	bool bLighting;
 	bool  bWater;
+	bool  bNormalMap;
+	
 	EShadingModel eShadingModel;
 	
 	bool operator <(const SShaderKey &otherKey) const
@@ -315,6 +319,8 @@ struct SShaderKey
 		if(bShadows>otherKey.bShadows){return false;}
 		if(nTextureUnits<otherKey.nTextureUnits){return true;}
 		if(nTextureUnits>otherKey.nTextureUnits){return false;}
+		if(bNormalMap<otherKey.bNormalMap){return true;}
+		if(bNormalMap>otherKey.bNormalMap){return false;}
 		if(bLighting<otherKey.bLighting){return true;}
 		if(bLighting>otherKey.bLighting){return false;}
 		if(bWater<otherKey.bWater){return true;}
@@ -322,8 +328,8 @@ struct SShaderKey
 		return false;
 	}
 
-	SShaderKey(){eShadingModel=eShadingModel_Gouraud;bHeightFog=false;bShadows=false;nTextureUnits=0;bLighting=false;bWater=false;}
-	SShaderKey(EShadingModel shading,bool heightFog,bool shadows,int textureUnits,bool lighting,bool water){eShadingModel=shading;bHeightFog=heightFog;bShadows=shadows;nTextureUnits=textureUnits;bLighting=lighting;bWater=water;}
+SShaderKey(){eShadingModel=eShadingModel_Gouraud;bHeightFog=false;bShadows=false;nTextureUnits=0;bLighting=false;bWater=false;bNormalMap=false;}
+	SShaderKey(EShadingModel shading,bool heightFog,bool shadows,int textureUnits,bool lighting,bool water,bool normalMap){eShadingModel=shading;bHeightFog=heightFog;bShadows=shadows;nTextureUnits=textureUnits;bLighting=lighting;bWater=water;bNormalMap=normalMap;}
 };
 
 class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRender
@@ -380,6 +386,9 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	double  m_dAlpha;
 	IGenericFont     *m_piSelectedFont;
 	IGenericViewport *m_piCurrentViewport;
+	IGenericTexture  *m_piNormalMap;
+	unsigned int 	  m_nNormalMapTextureLevel;
+	unsigned int 	  m_nShadowTextureLevel;
 
 	CGenericShaderWrapper m_ShadowShader;
 	CGenericShaderWrapper *m_pCurrentShader;
@@ -467,7 +476,10 @@ public:
 	void SelectTexture(IGenericTexture *pTexture,int nTextureLevel);
 	void SetTextureMatrix(CMatrix *pMatrix,int nTextureLevel);	
 	void UnselectTexture(int nTextureLevel);
-
+	
+	void SelectNormalMap(IGenericTexture *pTexture);
+	void UnselectNormalMap();
+	
 	void CalcTextSize(const char *pText,double *pdWidth,double *pdHeight);
 	virtual void RenderPoint(const CVector &vPosition,double dSize,const CVector &vColor,double dAlpha);
 	void RenderText(double x,double y,const char *pText);
@@ -545,7 +557,11 @@ public:
 	void EnableShaders();
 	void DisableShaders();
 	bool AreShadersEnabled();
-
+	
+	void EnableNormalMaps();
+	void DisableNormalMaps();
+	bool AreNormalMapsEnabled();
+	
 	void EnableTextures();
 	void DisableTextures();
 	bool AreTexturesEnabled();
