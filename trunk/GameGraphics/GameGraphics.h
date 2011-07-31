@@ -474,6 +474,10 @@ public:
 	virtual void SelectNormalMap(IGenericTexture *pTexture)=0;
 	virtual void UnselectNormalMap()=0;
 	
+	virtual void SetSkyShadowParameters(double dSpeed, double dXResolution, double dZResolution, double dOpacity)=0;
+	virtual void SelectSkyShadow(IGenericTexture *pTexture)=0;
+	virtual void UnselectSkyShadow()=0;
+	
 	virtual void RenderPoint(const CVector &vPosition,double dSize,const CVector &vColor,double dAlpha)=0;
 	virtual void RenderTexture(const CVector &vOrigin,double s1,double s2)=0;
 	virtual void RenderParticle(IGenericTexture *piTexture,const CVector &vOrigin,double dAngle,double s1,double s2,const CVector &vColor,double dAlpha,double dTextX,double dTextY,double dTextW,double dTextH)=0;
@@ -536,7 +540,11 @@ public:
 	virtual void ActivateShadowReception()=0;
 	virtual void DeactivateShadowReception()=0;
 	virtual bool IsShadowReceptionActive()=0;
-
+	
+	virtual void ActivateSkyShadow()=0;
+	virtual void DeactivateSkyShadow()=0;
+	virtual bool IsSkyShadowActive()=0;
+	
 	virtual void PushState()=0;
 	virtual void PopState()=0;
 	
@@ -554,6 +562,10 @@ public:
 	virtual void EnableNormalMaps()=0;
 	virtual void DisableNormalMaps()=0;
 	virtual bool AreNormalMapsEnabled()=0;
+	
+	virtual void EnableSkyShadow()=0;
+	virtual void DisableSkyShadow()=0;
+	virtual bool IsSkyShadowEnabled()=0;
 	
 	virtual void EnableTextures()=0;
 	virtual void DisableTextures()=0;

@@ -7,8 +7,6 @@
 //    JeGX's post at http://www.geeks3d.com/20110316/shader-library-simple-2d-effects-sphere-and-ripple-in-glsl/
 //    Adrian Boeing's post at http://adrianboeing.blogspot.com/2011/02/ripple-effect-in-webgl.html
 
-#define MAX_LIGHTS 8
-
 uniform int  g_ActiveLights;
 uniform mat4 CameraModelViewInverse;
 uniform float CurrentRealTime;
@@ -21,6 +19,10 @@ uniform sampler2DShadow ShadowMap;
 #ifdef ENABLE_NORMAL_MAP
 uniform sampler2D NormalMap;
 #endif
+#ifdef ENABLE_SKY_SHADOW
+uniform sampler2D SkyShadowMap;
+uniform vec4 SkyData;
+#endif
 
 varying vec4 g_EyeVertexPos;
 
@@ -28,7 +30,6 @@ varying vec4 g_EyeVertexPos;
 
 varying vec3 g_WorldVertexPos;
 #ifdef ENABLE_LIGHTING
-varying vec3 g_lightdirs[MAX_LIGHTS];
 #ifdef ENABLE_NORMAL_MAP
 	varying vec3 g_TangentSpaceX;
 	varying vec3 g_TangentSpaceY;
@@ -61,9 +62,10 @@ void PointLight(const in int  i,
 				inout    vec4 diffuse,
 				inout    vec4 specular)
 {
+	vec3 lightDir=gl_LightSource[i].position.xyz - g_EyeVertexPos.xyz;
 	// Compute distance between surface and light position
 	float d = length(vec3(gl_LightSource[i].position) - ecPosition3);
-	vec3 L = normalize(g_lightdirs[i]);
+	vec3 L = normalize(lightDir);
 	float attenuation = 1.0 / (gl_LightSource[i].constantAttenuation +gl_LightSource[i].linearAttenuation * d +gl_LightSource[i].quadraticAttenuation * d * d);
 	float lambertTerm = max(dot(normal,L),0.0);
 	
@@ -140,6 +142,14 @@ void main (void)
   
   #ifdef ENABLE_SHADOWS
 	fShadowFactor=shadow2DProj(ShadowMap, gl_TexCoord[SHADOW_TEXTURE_LEVEL]).r;
+	#ifdef ENABLE_SOFT_SHADOWS
+		float offset=3.0;
+		fShadowFactor+=shadow2DProj(ShadowMap,gl_TexCoord[SHADOW_TEXTURE_LEVEL]+vec4(-offset,-offset,0,0)).g;
+		fShadowFactor+=shadow2DProj(ShadowMap,gl_TexCoord[SHADOW_TEXTURE_LEVEL]+vec4(offset,-offset,0,0)).g;
+		fShadowFactor+=shadow2DProj(ShadowMap,gl_TexCoord[SHADOW_TEXTURE_LEVEL]+vec4(-offset,offset,0,0)).g;
+		fShadowFactor+=shadow2DProj(ShadowMap,gl_TexCoord[SHADOW_TEXTURE_LEVEL]+vec4(offset,offset,0,0)).g;
+		fShadowFactor/=5.0;
+	#endif
   #endif
   #ifdef ENABLE_LIGHTING
 	  
@@ -166,17 +176,22 @@ void main (void)
 	  {
 			PointLight(x, g_EyeVertexPos.xyz, N, amb, diff, spec);
 	  }
-	  
 	  g_ambdiffspec=gl_LightModel.ambient+amb+diff+spec*gl_FrontMaterial.specular;
 	  g_sunambdiffspec=sunamb+sundiff+sunspec*gl_FrontMaterial.specular;	
+	  
+	  #ifdef ENABLE_SKY_SHADOW
+	  g_sunambdiffspec*=1.0-(texture2D(SkyShadowMap, gl_TexCoord[SKY_TEXTURE_LEVEL].xy)*SkyData.a);
+	  #endif	
 	  
 	  finalcolor.rgb=clamp(g_ambdiffspec.rgb+g_sunambdiffspec.rgb*fShadowFactor,0.0,LIGHTING_SATURATION);
 	  finalcolor.rgb*=texcolor.rgb;
 	  finalcolor.a=texcolor.a;
   #else
+	#ifdef ENABLE_SKY_SHADOW
+	  fShadowFactor*=1.0-(texture2D(SkyShadowMap, gl_TexCoord[SKY_TEXTURE_LEVEL].xy)*SkyData.a).r;
+	#endif
 	finalcolor=texcolor*fShadowFactor;
   #endif
-	
   
   #ifdef ENABLE_FOG
 	finalcolor= vec4(clamp(finalcolor.rgb, 0.0, 1.0),finalcolor.a);

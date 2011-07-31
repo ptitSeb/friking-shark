@@ -40,6 +40,11 @@ COpenGLRender::COpenGLRender(void)
 	m_nViewportY=0;
 	m_nViewportW=1;
 	m_nViewportH=1;
+	m_dSKyShadowSpeed=0.0;
+	m_dSKyShadowXResolution=1.0;
+	m_dSKyShadowZResolution=1.0;
+	m_dSKyShadowOpacity=1.0;
+	
 
 	m_bPerspectiveProjection=false;
 	m_dPerspectiveNearPlane=1.0;
@@ -59,6 +64,8 @@ COpenGLRender::COpenGLRender(void)
 	
 	m_nFirstTimeStamp=GetTimeStamp();
 	m_piNormalMap=NULL;
+	m_piSkyShadow=NULL;
+	m_nSkyShadowTextureLevel=1;
 	m_nNormalMapTextureLevel=2;
 	m_nShadowTextureLevel=3;
 }
@@ -314,6 +321,34 @@ void COpenGLRender::UnselectNormalMap()
 	if(!m_sRenderOptions.bEnableNormalMaps){return;}
 	if(!m_bStagedRendering && m_piNormalMap){m_piNormalMap->UnprepareTexture(this,m_nNormalMapTextureLevel);}
 	REL(m_piNormalMap);
+}
+
+void COpenGLRender::SetSkyShadowParameters(double dSpeed, double dXResolution, double dZResolution, double dOpacity)
+{
+	m_dSKyShadowSpeed=dSpeed;
+	m_dSKyShadowXResolution=dXResolution;
+	m_dSKyShadowZResolution=dZResolution;
+	m_dSKyShadowOpacity=dOpacity;
+}
+
+void COpenGLRender::SelectSkyShadow(IGenericTexture *pSkyShadow)
+{
+	if(!m_sRenderOptions.bEnableSkyShadow){return;}
+	REL(m_piSkyShadow);
+	m_piSkyShadow=ADD(pSkyShadow);
+	if(!m_bStagedRendering && m_piSkyShadow && m_sRenderState.bActiveSkyShadow)
+	{
+		if(m_piSkyShadow){m_piSkyShadow->PrepareTexture(this,m_nSkyShadowTextureLevel);}
+	}
+}
+
+void COpenGLRender::UnselectSkyShadow()
+{
+	if(!m_bStagedRendering && m_piSkyShadow)
+	{
+		if(m_piSkyShadow){m_piSkyShadow->UnprepareTexture(this,m_nSkyShadowTextureLevel);}
+	}
+	REL(m_piSkyShadow);
 }
 
 void COpenGLRender::RenderTexture(const CVector &vOrigin,double s1,double s2)
@@ -958,7 +993,34 @@ bool COpenGLRender::IsShadowReceptionActive()
 	return pState->bActiveShadowReception;
 }
 
+void COpenGLRender::ActivateSkyShadow()
+{
+	if(!m_sRenderOptions.bEnableSkyShadow){return;}
+	SRenderState *pState=m_bStagedRendering?&m_sStagedRenderingState:&m_sRenderState;
+	pState->bActiveSkyShadow=true;
+	
+	if(!m_bStagedRendering && m_piSkyShadow)
+	{
+		if(m_piSkyShadow){m_piSkyShadow->PrepareTexture(this,m_nSkyShadowTextureLevel);}
+	}
+}
 
+void COpenGLRender::DeactivateSkyShadow()
+{
+	SRenderState *pState=m_bStagedRendering?&m_sStagedRenderingState:&m_sRenderState;
+	pState->bActiveSkyShadow=false;
+
+	if(!m_bStagedRendering && m_piSkyShadow && m_sRenderState.bActiveSkyShadow)
+	{
+		if(m_piSkyShadow){m_piSkyShadow->UnprepareTexture(this,m_nSkyShadowTextureLevel);}
+	}
+}
+
+bool COpenGLRender::IsSkyShadowActive()
+{
+	SRenderState *pState=m_bStagedRendering?&m_sStagedRenderingState:&m_sRenderState;
+	return pState->bActiveSkyShadow;
+}
 void COpenGLRender::ActivateDepth()
 {
 	SRenderState *pState=m_bStagedRendering?&m_sStagedRenderingState:&m_sRenderState;
@@ -1655,7 +1717,7 @@ void COpenGLRender::EndStagedRendering()
 	m_sStagedStats=SRenderStats();
 	
 	m_bStagedRendering=false;
-
+	
 	if(m_sRenderOptions.bEnableShadows)
 	{
 		if(m_ShadowTexture.m_piTexture==NULL)
@@ -1703,15 +1765,22 @@ void COpenGLRender::EndStagedRendering()
 	CMatrix invertedCameraMatrix=cameraModelViewMatrix;
 	invertedCameraMatrix.Inverse();
 
-	float nCurrentTime=((double)(GetTimeStamp()-m_nFirstTimeStamp))*0.001;
+	float fCurrentTime=((double)(GetTimeStamp()-m_nFirstTimeStamp))*0.001;
 	std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader;
 	for(iShader=m_mShaders.begin();iShader!=m_mShaders.end();iShader++)
 	{
-		if(iShader->first.bHeightFog)
+		if(iShader->first.bHeightFog || iShader->first.bSkyShadow)
 		{
 			iShader->second.m_piShader->AddUniform("CameraModelViewInverse",(double*)invertedCameraMatrix.e);
 		}
-		iShader->second.m_piShader->AddUniform("CurrentRealTime",nCurrentTime);
+		if(iShader->first.bSkyShadow)
+		{
+			iShader->second.m_piShader->AddUniform("SkyData",CVector(fCurrentTime*m_dSKyShadowSpeed,m_dSKyShadowXResolution,m_dSKyShadowZResolution),m_dSKyShadowOpacity);
+		}
+		if(iShader->first.bWater)
+		{
+			iShader->second.m_piShader->AddUniform("CurrentRealTime",fCurrentTime);
+		}
 	}
 
 	double dPreviousNear=m_dPerspectiveNearPlane;
@@ -1967,6 +2036,7 @@ void COpenGLRender::EndStagedRendering()
 			glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA, GL_PRIMARY_COLOR);
 			glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
 		}
+		if(m_piSkyShadow && m_sRenderOptions.bEnableSkyShadow){m_piSkyShadow->PrepareTexture(this,m_nSkyShadowTextureLevel);}
 		RenderAllStages(false,true);
 		
 		m_ShadowTexture.m_piTexture->UnprepareTexture(this,m_bRenderingWithShader?m_nShadowTextureLevel:1);
@@ -1994,11 +2064,12 @@ void COpenGLRender::EndStagedRendering()
 	else
 	{
 		//SetPerspectiveProjection(m_dPerspectiveViewAngle,m_dStagedRenderingMinZ>1.0?m_dStagedRenderingMinZ-1.0:m_dStagedRenderingMinZ,m_dStagedRenderingMaxZ+1.0);
+		if(m_piSkyShadow && m_sRenderOptions.bEnableSkyShadow){m_piSkyShadow->PrepareTexture(this,m_nSkyShadowTextureLevel);}
 		RenderAllStages(false,true);
 	}
 
 	RenderAllStages(false,false);
-
+	
 	std::map<SModelStageKey,SModelStage>::iterator iModelStage;
 	for(iModelStage=m_mModelStages.begin();iModelStage!=m_mModelStages.end();iModelStage++)
 	{
@@ -2039,7 +2110,8 @@ void COpenGLRender::EndStagedRendering()
 			delete pBuffer;
 		}
 	}
-
+	if(m_piSkyShadow && m_sRenderOptions.bEnableSkyShadow){m_piSkyShadow->UnprepareTexture(this,m_nSkyShadowTextureLevel);}
+	
 	m_mModelStages.clear();
 	m_mTextureParticleStages.clear();
 	m_mLineStages.clear();
@@ -2095,6 +2167,10 @@ void COpenGLRender::SetRenderState( const SRenderState &sNewState,bool bForce)
 	{
 		sNewState.bActiveDepth?ActivateDepth():DeactivateDepth();
 	}
+	if(bForce || m_sRenderState.bActiveSkyShadow!=sNewState.bActiveSkyShadow)
+	{
+		sNewState.bActiveSkyShadow?ActivateSkyShadow():DeactivateSkyShadow();
+	}
 	if(bForce || m_sRenderState.nDepthFunction!=sNewState.nDepthFunction)
 	{
 		SetDepthFunction(sNewState.nDepthFunction);
@@ -2106,7 +2182,8 @@ void COpenGLRender::SetRenderState( const SRenderState &sNewState,bool bForce)
 	
 	if(m_bRenderingWithShader)
 	{
-		SShaderKey key(sNewState.eShadingModel,sNewState.bActiveHeightFog,m_sRenderOptions.bEnableShadows && m_bRenderingShadowReception,sNewState.bActiveTextures && m_sRenderOptions.bEnableTextures?m_mTextureLevels.size():0,m_sRenderOptions.bEnableLighting && sNewState.bActiveLighting,sNewState.bActiveWater,m_sRenderOptions.bEnableNormalMaps && m_piNormalMap);
+		bool bTempSkyShadow=m_piSkyShadow && m_piSkyShadow && m_sRenderOptions.bEnableSkyShadow && sNewState.bActiveSkyShadow && sNewState.bActiveShadowReception;
+		SShaderKey key(sNewState.eShadingModel,sNewState.bActiveHeightFog,m_sRenderOptions.bEnableShadows && m_bRenderingShadowReception,sNewState.bActiveTextures && m_sRenderOptions.bEnableTextures?m_mTextureLevels.size():0,m_sRenderOptions.bEnableLighting && sNewState.bActiveLighting,sNewState.bActiveWater,m_sRenderOptions.bEnableNormalMaps && m_piNormalMap,bTempSkyShadow);
 		std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader=m_mShaders.find(key);
 		CGenericShaderWrapper *pNewShader=(iShader==m_mShaders.end())?NULL:&iShader->second;
 		if(m_pCurrentShader && m_pCurrentShader!=pNewShader)
@@ -2134,6 +2211,10 @@ bool COpenGLRender::AreShadersEnabled(){return m_sRenderOptions.bEnableShader;}
 void COpenGLRender::EnableNormalMaps(){m_sRenderOptions.bEnableNormalMaps=true;}
 void COpenGLRender::DisableNormalMaps(){m_sRenderOptions.bEnableNormalMaps=false;}
 bool COpenGLRender::AreNormalMapsEnabled(){return m_sRenderOptions.bEnableNormalMaps;}
+
+void COpenGLRender::EnableSkyShadow(){m_sRenderOptions.bEnableSkyShadow=true;}
+void COpenGLRender::DisableSkyShadow(){m_sRenderOptions.bEnableSkyShadow=false;}
+bool COpenGLRender::IsSkyShadowEnabled(){return m_sRenderOptions.bEnableSkyShadow;}
 
 void COpenGLRender::EnableTextures(){m_sRenderOptions.bEnableTextures=true;}
 void COpenGLRender::DisableTextures(){m_sRenderOptions.bEnableTextures=false;DeactivateTextures();}
@@ -2432,6 +2513,7 @@ void COpenGLRender::AddShader( const SShaderKey &key )
 	if(key.bShadows)
 	{
 		sPreprocessor+="#define ENABLE_SHADOWS\n";
+		sPreprocessor+="#define ENABLE_SOFT_SHADOWS\n";
 		sprintf(sTemp,"#define SHADOW_TEXTURE_LEVEL %d\n",m_nShadowTextureLevel);
 		sPreprocessor+=sTemp;
 	}
@@ -2439,6 +2521,12 @@ void COpenGLRender::AddShader( const SShaderKey &key )
 	{
 		sPreprocessor+="#define ENABLE_NORMAL_MAP\n";
 		sprintf(sTemp,"#define NORMAL_MAP_TEXTURE_LEVEL %d\n",m_nNormalMapTextureLevel);
+		sPreprocessor+=sTemp;
+	}
+	if(key.bSkyShadow)
+	{
+		sPreprocessor+="#define ENABLE_SKY_SHADOW\n";
+		sprintf(sTemp,"#define SKY_TEXTURE_LEVEL %d\n",m_nSkyShadowTextureLevel);
 		sPreprocessor+=sTemp;
 	}
 	if(key.nTextureUnits)
@@ -2469,8 +2557,9 @@ void COpenGLRender::AddShader( const SShaderKey &key )
 		if(m_bPrecompileShaders){wrapper.m_piShader->Compile();}
 		if(key.nTextureUnits>=1){wrapper.m_piShader->AddUniform("Texture0",(int)0);}
 		if(key.nTextureUnits>=2){wrapper.m_piShader->AddUniform("Texture1",(int)1);}
+		if(key.bSkyShadow){wrapper.m_piShader->AddUniform("SkyShadowMap",(int)m_nSkyShadowTextureLevel);}
 		if(key.bNormalMap){wrapper.m_piShader->AddUniform("NormalMap",(int)m_nNormalMapTextureLevel);}
-		if(key.bShadows){wrapper.m_piShader->AddUniform("ShadowMap",(int)3);}
+		if(key.bShadows){wrapper.m_piShader->AddUniform("ShadowMap",(int)m_nShadowTextureLevel);}
 		m_mShaders[key]=wrapper;
 	}
 }
@@ -2565,14 +2654,17 @@ void COpenGLRender::ReloadShaders()
 			{
 				for(int bShadows=0;bShadows<=1;bShadows++)
 				{
-					for(int bNormalMap=0;bNormalMap<=1;bNormalMap++)
+					for(int bSkyShadow=0;bSkyShadow<=1;bSkyShadow++)
 					{
-						for(int nTextures=0;nTextures<=m_sHardwareSupport.nMaxTextureUnits;nTextures++)
+						for(int bNormalMap=0;bNormalMap<=1;bNormalMap++)
 						{
-							AddShader(SShaderKey((EShadingModel)eShading,bHeightFog!=0,bShadows!=0,nTextures,true,true,bNormalMap!=0));
-							AddShader(SShaderKey((EShadingModel)eShading,bHeightFog!=0,bShadows!=0,nTextures,true,false,bNormalMap!=0));
-							AddShader(SShaderKey((EShadingModel)eShading,bHeightFog!=0,bShadows!=0,nTextures,false,true,bNormalMap!=0));
-							AddShader(SShaderKey((EShadingModel)eShading,bHeightFog!=0,bShadows!=0,nTextures,false,false,bNormalMap!=0));
+							for(int nTextures=0;nTextures<=m_sHardwareSupport.nMaxTextureUnits;nTextures++)
+							{
+								AddShader(SShaderKey((EShadingModel)eShading,bHeightFog!=0,bShadows!=0,nTextures,true,true,bNormalMap!=0,bSkyShadow!=0));
+								AddShader(SShaderKey((EShadingModel)eShading,bHeightFog!=0,bShadows!=0,nTextures,true,false,bNormalMap!=0,bSkyShadow!=0));
+								AddShader(SShaderKey((EShadingModel)eShading,bHeightFog!=0,bShadows!=0,nTextures,false,true,bNormalMap!=0,bSkyShadow!=0));
+								AddShader(SShaderKey((EShadingModel)eShading,bHeightFog!=0,bShadows!=0,nTextures,false,false,bNormalMap!=0,bSkyShadow!=0));
+							}
 						}
 					}
 				}
