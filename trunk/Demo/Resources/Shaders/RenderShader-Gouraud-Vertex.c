@@ -102,15 +102,12 @@ void main (void)
 	#if TEXTURE_UNITS > 1
 	gl_TexCoord[1]=gl_TextureMatrix[1]*gl_MultiTexCoord1;
 	#endif
-	#if TEXTURE_UNITS > 2
-	gl_TexCoord[2]=gl_TextureMatrix[2]*gl_MultiTexCoord2;
-	#endif
 #endif
 
 #ifdef ENABLE_SHADOWS
-	gl_TexCoord[3].s = dot(EyeVertexPos, gl_EyePlaneS[3]);
-	gl_TexCoord[3].t = dot(EyeVertexPos, gl_EyePlaneT[3]);
-	gl_TexCoord[3].p = dot(EyeVertexPos, gl_EyePlaneR[3]);
-	gl_TexCoord[3].q = dot(EyeVertexPos, gl_EyePlaneQ[3]);
+	gl_TexCoord[SHADOW_TEXTURE_LEVEL].s = dot(EyeVertexPos, gl_EyePlaneS[SHADOW_TEXTURE_LEVEL]);
+	gl_TexCoord[SHADOW_TEXTURE_LEVEL].t = dot(EyeVertexPos, gl_EyePlaneT[SHADOW_TEXTURE_LEVEL]);
+	gl_TexCoord[SHADOW_TEXTURE_LEVEL].p = dot(EyeVertexPos, gl_EyePlaneR[SHADOW_TEXTURE_LEVEL]);
+	gl_TexCoord[SHADOW_TEXTURE_LEVEL].q = dot(EyeVertexPos, gl_EyePlaneQ[SHADOW_TEXTURE_LEVEL]);
 #endif
 }

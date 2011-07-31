@@ -45,9 +45,12 @@ struct SModelRenderBuffer
 	int			nFaces;
 	GLfloat		*pVertexArray;
 	GLfloat		*pNormalArray;
+	GLfloat		*pNormalMapArray;
 	GLfloat		*pColorArray;
 	GLuint 		*pFaceVertexIndexes;
-
+	
+	CGenericTextureWrapper   normalMap;
+	
 	std::vector<SModelTextureLevel *> vTextureLevels;
 
 	SModelRenderBuffer();
@@ -124,7 +127,9 @@ public:
 	void		  SetRenderBufferNormals(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,float *pNormals);
 	void		  SetRenderBufferColors(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,float *pColors);
 	void		  SetRenderBufferTextureCoords(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,float *pTexVertexes);
-
+	void		  SetRenderBufferNormalMap(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,IGenericTexture *piTexture);
+	void		  SetRenderBufferNormalMapCoords(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,float *pNormalMapVertexes);
+	
 	void		  GetRenderBufferMaterial(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,CVector *pvAmbientColor,CVector *pvDiffuseColor,CVector *pvSpecularColor, float *pfShininess, float *pfOpacity);
 	void		  GetRenderBufferTexture(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,IGenericTexture **ppiTexture);
 	void		  GetRenderBufferTextureMatrix(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,CMatrix *pMatrix);
@@ -133,7 +138,9 @@ public:
 	void		  GetRenderBufferNormals(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,float **ppNormals);
 	void		  GetRenderBufferColors(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,float **ppColors);
 	void		  GetRenderBufferTextureCoords(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,float **ppTexVertexes);
-
+	void		  GetRenderBufferNormalMap(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,IGenericTexture **ppiTexture);
+	void		  GetRenderBufferNormalMapCoords(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,float **ppNormalMapVertexes);
+	
 	void		  Render(IGenericRender *piRender,unsigned long nAnimation,unsigned long nFrame);
 
 	CBSPNode	 *GetBSP();
@@ -148,9 +155,9 @@ public:
 
 	// IOpenGLModel
 
-	void PrepareRenderBuffer(IGenericRender *piRender,unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,bool bRenderingShadow);
+	void PrepareRenderBuffer(IGenericRender *piRender,unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,bool bRenderingShadow,unsigned int nNormalMapTextureIndex);
 	void CallRenderBuffer(IGenericRender *piRender,unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer);
-	void UnPrepareRenderBuffer(IGenericRender *piRender,unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,bool bRenderingShadow);
+	void UnPrepareRenderBuffer(IGenericRender *piRender,unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,bool bRenderingShadow,unsigned int nNormalMapTextureIndex);
 	
 	BEGIN_PROP_MAP(COpenGLModel)
 		PROP_FLAGS(m_sFileName,"Archivo",MRPF_NORMAL|MRPF_OPTIONAL)

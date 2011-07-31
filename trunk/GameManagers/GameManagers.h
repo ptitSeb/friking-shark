@@ -823,7 +823,8 @@ struct STerrainHeightLayer
 	double dDecayMargin;
 
 	std::string sTextureFile;
-
+	std::string sNormalMapFile;
+	
 	STerrainHeightLayer()
 	{
 		dMinHeight=0;
@@ -841,7 +842,8 @@ struct STerrainColorLayer
 	double dVerticalResolution;
 
 	std::string sTextureFile;
-
+	std::string sNormalMapFile;
+	
 	// Componentes Saturacion y Valor en HSV
 
 	double dColorSaturationMargin;
@@ -902,7 +904,7 @@ public:
 	virtual void			UpdateTerrainColorLayer(unsigned int nIndex,STerrainColorLayer *pLayer)=0;
 	virtual unsigned int	MoveTerrainColorLayer(unsigned int nIndex,bool bUp)=0;
 	virtual void			RemoveTerrainColorLayer(unsigned int nIndex)=0;
-	virtual void			GetTerrainColorLayer(unsigned int nIndex,STerrainColorLayer *pLayer,IGenericTexture **ppiTexture)=0;
+	virtual void			GetTerrainColorLayer(unsigned int nIndex,STerrainColorLayer *pLayer,IGenericTexture **ppiTexture,IGenericTexture **ppiNormalMap)=0;
 	virtual unsigned int	GetTerrainColorLayers()=0;
 
 	// ITerrainDesign Height layers
@@ -911,7 +913,7 @@ public:
 	virtual void			UpdateTerrainHeightLayer(unsigned int nIndex,STerrainHeightLayer *pLayer)=0;
 	virtual unsigned int	MoveTerrainHeightLayer(unsigned int nIndex,bool bUp)=0;
 	virtual void			RemoveTerrainHeightLayer(unsigned int nIndex)=0;
-	virtual void			GetTerrainHeightLayer(unsigned int nIndex,STerrainHeightLayer *pLayer,IGenericTexture **ppiTexture)=0;
+	virtual void			GetTerrainHeightLayer(unsigned int nIndex,STerrainHeightLayer *pLayer,IGenericTexture **ppiTexture,IGenericTexture **ppiNormalMap)=0;
 	virtual unsigned int	GetTerrainHeightLayers()=0;
 
 	virtual bool			UpdateTerrain()=0;

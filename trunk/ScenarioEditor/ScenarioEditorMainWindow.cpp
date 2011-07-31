@@ -76,6 +76,7 @@ CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 	m_bShadows=1;
 	m_bSolid=1;
 	m_bLighting=1;
+	m_bNormalMaps=1;
 	m_bBlend=1;
 	m_nSelectedHeightLayer=-1;
 	m_nSelectedColorLayer=-1;
@@ -424,6 +425,7 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 	m_bSolid?m_Render.m_piRender->EnableSolid():m_Render.m_piRender->DisableSolid();
 	m_bBlend?m_Render.m_piRender->EnableBlending():m_Render.m_piRender->DisableBlending();
 	m_bLighting?m_Render.m_piRender->EnableLighting():m_Render.m_piRender->DisableLighting();
+	m_bNormalMaps?m_Render.m_piRender->EnableNormalMaps():m_Render.m_piRender->DisableNormalMaps();
 	m_bShadows?m_Render.m_piRender->EnableShadows():m_Render.m_piRender->DisableShadows();
 	m_bShaders?m_Render.m_piRender->EnableShaders():m_Render.m_piRender->DisableShaders();
 	m_bFog?m_Render.m_piRender->EnableHeightFog():m_Render.m_piRender->DisableHeightFog();
@@ -1117,7 +1119,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	{
 		bool bChange=false;
 		STerrainHeightLayer heightLayer;
-		m_WorldManagerWrapper.m_piTerrain->GetTerrainHeightLayer(m_nSelectedHeightLayer,&heightLayer,NULL);
+		m_WorldManagerWrapper.m_piTerrain->GetTerrainHeightLayer(m_nSelectedHeightLayer,&heightLayer,NULL,NULL);
 
 		if(piControl==m_piBTHeightLayerRemove)
 		{
@@ -1151,6 +1153,15 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp;.png",&sTexture))
 			{
 				heightLayer.sTextureFile=sTexture;
+				bChange=true;
+			}
+		}
+		else if(piControl==m_piBTHeightLayerNormalMapSample)
+		{
+			std::string sNormalMap="./Textures/";
+			if(OpenFileDialog("Open normal map...",".jpg;.jpeg;.bmp;.png",&sNormalMap))
+			{
+				heightLayer.sNormalMapFile=sNormalMap;
 				bChange=true;
 			}
 		}
@@ -1226,7 +1237,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	{
 		bool bChange=false;
 		STerrainColorLayer colorLayer;
-		m_WorldManagerWrapper.m_piTerrain->GetTerrainColorLayer(m_nSelectedColorLayer,&colorLayer,NULL);
+		m_WorldManagerWrapper.m_piTerrain->GetTerrainColorLayer(m_nSelectedColorLayer,&colorLayer,NULL,NULL);
 
 		if(piControl==m_piBTColorLayerRemove)
 		{
@@ -1260,6 +1271,15 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 			if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp;.png",&sTexture))
 			{
 				colorLayer.sTextureFile=sTexture;
+				bChange=true;
+			}
+		}
+		else if(piControl==m_piBTColorLayerNormalMapSample)
+		{
+			std::string sNormalMap="./Textures/";
+			if(OpenFileDialog("Open normal map...",".jpg;.jpeg;.bmp;.png",&sNormalMap))
+			{
+				colorLayer.sNormalMapFile=sNormalMap;
 				bChange=true;
 			}
 		}
@@ -2193,8 +2213,10 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 	{
 		STerrainHeightLayer layer;
 		IGenericTexture *piTexture=NULL;
-		m_WorldManagerWrapper.m_piTerrain->GetTerrainHeightLayer(m_nSelectedHeightLayer,&layer,&piTexture);
+		IGenericTexture *piNormalMap=NULL;
+		m_WorldManagerWrapper.m_piTerrain->GetTerrainHeightLayer(m_nSelectedHeightLayer,&layer,&piTexture,&piNormalMap);
 		m_piBTHeightLayerSample->SetBackgroundTexture(piTexture);
+		m_piBTHeightLayerNormalMapSample->SetBackgroundTexture(piNormalMap);
 		m_piGRHeightLayerPanel->Show(m_bShowTerrainPanel);
 
 		unsigned int nWidth=0,nHeight=0;
@@ -2225,13 +2247,16 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 		m_piBTHeightLayerDecreaseMaxHeight->Show(m_nSelectedHeightLayer<(int)(m_vHeightLayerControls.size()-1));
 
 		REL(piTexture);
+		REL(piNormalMap);
 	}
 	else if(m_nSelectedColorLayer!=-1)
 	{
 		STerrainColorLayer layer;
 		IGenericTexture *piTexture=NULL;
-		m_WorldManagerWrapper.m_piTerrain->GetTerrainColorLayer(m_nSelectedColorLayer,&layer,&piTexture);
+		IGenericTexture *piNormalMap=NULL;
+		m_WorldManagerWrapper.m_piTerrain->GetTerrainColorLayer(m_nSelectedColorLayer,&layer,&piTexture,&piNormalMap);
 		m_piBTColorLayerSample->SetBackgroundTexture(piTexture);
+		m_piBTColorLayerNormalMapSample->SetBackgroundTexture(piNormalMap);
 		m_piBTColorLayerAbruptEnd->SetText(layer.bAbruptEnd?"Sharp Mix":"Soft Mix");
 		m_piBTColorLayerColorSample->SetBackgroundColor(layer.vColor,1.0);
 
@@ -2250,6 +2275,7 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 		sprintf(A,"V.Res : %.02f",layer.dVerticalResolution);
 		m_piSTColorLayerVertResolution->SetText(A);
 		REL(piTexture);
+		REL(piNormalMap);
 	}
 
 	if(m_nSelectedEntityLayer!=-1)
@@ -2528,7 +2554,7 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 		SColorLayerControls *pData=m_vColorLayerControls[x];
 		IGenericTexture *piTexture=NULL;
 		STerrainColorLayer layer;
-		m_WorldManagerWrapper.m_piTerrain->GetTerrainColorLayer(x,&layer,&piTexture);
+		m_WorldManagerWrapper.m_piTerrain->GetTerrainColorLayer(x,&layer,&piTexture,NULL);
 
 		if(pData->m_BTListRow.m_piButton)
 		{
@@ -2568,7 +2594,7 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 		dCurrentY-=38;
 		IGenericTexture *piTexture=NULL;
 		STerrainHeightLayer layer;
-		m_WorldManagerWrapper.m_piTerrain->GetTerrainHeightLayer(x,&layer,&piTexture);
+		m_WorldManagerWrapper.m_piTerrain->GetTerrainHeightLayer(x,&layer,&piTexture,NULL);
 
 		SGameRect sRowRect(3,dCurrentY,sListRect.w-6,38);
 		SHeightLayerControls *pData=m_vHeightLayerControls[x];
@@ -2768,6 +2794,7 @@ void CScenarioEditorMainWindow::OnCharacter(int nKey,bool *pbProcessed)
 	else if(nKey=='G'|| nKey=='g'){m_bFog=!m_bFog;*pbProcessed=true;}
 	else if(nKey=='L'|| nKey=='l'){m_bSolid=!m_bSolid;*pbProcessed=true;}
 	else if(nKey=='I'|| nKey=='i'){m_bLighting=!m_bLighting;*pbProcessed=true;}
+	else if(nKey=='N'|| nKey=='n'){m_bNormalMaps=!m_bNormalMaps;*pbProcessed=true;}
 	else if(nKey=='O'|| nKey=='o'){m_bShadows=!m_bShadows;*pbProcessed=true;}
 	else if(nKey=='H'|| nKey=='h'){m_bShaders=!m_bShaders;*pbProcessed=true;}
 	else if(nKey=='B'|| nKey=='b'){m_bBlend=!m_bBlend;*pbProcessed=true;}
@@ -2780,9 +2807,9 @@ void CScenarioEditorMainWindow::OnCharacter(int nKey,bool *pbProcessed)
 	else if(nKey==' '){m_FrameManager.m_piFrameManager->SetPauseOnNextFrame(false);m_bPauseOnNextFrame=true;*pbProcessed=true;}
 	else if(nKey=='M'|| nKey=='m')
 	{
-		if(m_eShadingModel==eShadingModel_Gouraud){m_eShadingModel=eShadingModel_Balanced;RTTRACE("Balanced");}
-		else if(m_eShadingModel==eShadingModel_Balanced){m_eShadingModel=eShadingModel_Phong;RTTRACE("Phong");}
-		else if(m_eShadingModel==eShadingModel_Phong){m_eShadingModel=eShadingModel_Gouraud;RTTRACE("Gouraud");}
+		if(m_eShadingModel==eShadingModel_Gouraud){m_eShadingModel=eShadingModel_Balanced;}
+		else if(m_eShadingModel==eShadingModel_Balanced){m_eShadingModel=eShadingModel_Phong;}
+		else if(m_eShadingModel==eShadingModel_Phong){m_eShadingModel=eShadingModel_Gouraud;}
 		*pbProcessed=true;
 	}
 	
@@ -3698,7 +3725,7 @@ void CScenarioEditorMainWindow::UpdateColorLayerControls()
 		for(x=0;x<m_WorldManagerWrapper.m_piTerrain->GetTerrainColorLayers();x++)
 		{
 			STerrainColorLayer sLayer;
-			m_WorldManagerWrapper.m_piTerrain->GetTerrainColorLayer(x,&sLayer,NULL);
+			m_WorldManagerWrapper.m_piTerrain->GetTerrainColorLayer(x,&sLayer,NULL,NULL);
 
 			SColorLayerControls *pControls=new SColorLayerControls;
 			pControls->m_BTListRow.Create(m_piSystem,"CGameGUIButton","");
@@ -3763,7 +3790,7 @@ void CScenarioEditorMainWindow::UpdateHeightLayerControls()
 		for(x=0;x<m_WorldManagerWrapper.m_piTerrain->GetTerrainHeightLayers();x++)
 		{
 			STerrainHeightLayer sLayer;
-			m_WorldManagerWrapper.m_piTerrain->GetTerrainHeightLayer(x,&sLayer,NULL);
+			m_WorldManagerWrapper.m_piTerrain->GetTerrainHeightLayer(x,&sLayer,NULL,NULL);
 			SHeightLayerControls *pData=new SHeightLayerControls;
 			pData->m_BTListRow.Create(m_piSystem,"CGameGUIButton","");
 			if(pData->m_BTListRow.m_piButton)

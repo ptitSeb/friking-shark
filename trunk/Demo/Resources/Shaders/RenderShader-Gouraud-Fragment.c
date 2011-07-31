@@ -12,7 +12,6 @@ uniform float CurrentRealTime;
 
 uniform sampler2D Texture0;
 uniform sampler2D Texture1;
-uniform sampler2D Texture2;
 uniform sampler2DShadow ShadowMap;
 
 #define LIGHTING_SATURATION 1.5
@@ -80,29 +79,19 @@ void main (void)
 		texcolor*= texture2D(Texture1, gl_TexCoord[1].xy);
 		#endif
 	#endif
-	#if TEXTURE_UNITS > 2
-		#ifdef ENABLE_WATER
-			vec3 temptexunit2;
-			ApplyWaterEffect(Texture2,gl_TexCoord[2].xy,temptexunit2);
-			texcolor.rgb*=temptexunit2;
-		#else
-			texcolor*= texture2D(Texture2, gl_TexCoord[2].xy);
-		#endif
-	#endif
 #endif
   
   #ifdef ENABLE_SHADOWS
-	  
-	  fShadowFactor=shadow2DProj(ShadowMap, gl_TexCoord[3]).r;
+	fShadowFactor=shadow2DProj(ShadowMap, gl_TexCoord[SHADOW_TEXTURE_LEVEL]).r;
   #endif
+	
   #ifdef ENABLE_LIGHTING
 	  finalcolor.rgb=clamp(g_ambdiffspec.rgb+g_sunambdiffspec.rgb*fShadowFactor,0.0,LIGHTING_SATURATION);
 	  finalcolor.rgb*=texcolor.rgb;
 	  finalcolor.a=texcolor.a;
   #else
 	finalcolor=texcolor*fShadowFactor;
-  #endif
-	
+  #endif	
   
   #ifdef ENABLE_FOG
 	finalcolor= vec4(clamp(finalcolor.rgb, 0.0, 1.0),finalcolor.a);

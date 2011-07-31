@@ -34,6 +34,7 @@ struct S3DSMaterial
 	CVector 		vSpecularColor;
 	char			sName[MAX_PATH];
 	char			sFile[MAX_PATH];
+	char			sNormalFile[MAX_PATH];
 	char			sAlphaFile[MAX_PATH];
 	float			fShininess;
 	float			fShininessStrength;

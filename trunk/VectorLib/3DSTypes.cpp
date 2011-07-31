@@ -82,6 +82,7 @@ S3DSMaterial::S3DSMaterial()
 	fTranparency=0;
 	sName[0]=0;
 	sFile[0]=0;
+	sNormalFile[0]=0;
 	sAlphaFile[0]=0;
 	vAmbientColor=CVector(0.5,0.5,0.5);
 	vDiffuseColor=CVector(0.5,0.5,0.5);

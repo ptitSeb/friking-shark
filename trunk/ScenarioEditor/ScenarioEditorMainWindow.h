@@ -128,6 +128,7 @@ public:
 	bool				m_bShaders;
 	bool				m_bShadows;
 	bool				m_bLighting;
+	bool				m_bNormalMaps;
 	EShadingModel 		m_eShadingModel;
 	bool				m_bShowFilePanel;
 	bool				m_bShowEntitiesPanel;
@@ -216,6 +217,7 @@ public:
 	IGameGUIButton *m_piBTNewHeightLayer;
 	IGameGUILabel  *m_piSTHeightLayerName;
 	IGameGUIButton *m_piBTHeightLayerSample;
+	IGameGUIButton *m_piBTHeightLayerNormalMapSample;
 	IGameGUILabel  *m_piSTHeightLayerMaxHeight;
 	IGameGUIButton *m_piBTHeightLayerDecreaseMaxHeight;
 	IGameGUIButton *m_piBTHeightLayerIncreaseMaxHeight;
@@ -240,6 +242,7 @@ public:
 	IGameGUIButton *m_piBTNewColorLayer;
 	IGameGUILabel  *m_piSTColorLayerName;
 	IGameGUIButton *m_piBTColorLayerSample;
+	IGameGUIButton *m_piBTColorLayerNormalMapSample;
 	IGameGUIButton *m_piBTColorLayerColorSample;
 	IGameGUIButton *m_piBTColorLayerAbruptEnd;
 	IGameGUILabel  *m_piSTColorLayerHorzResolution;
@@ -532,6 +535,7 @@ public:
 		CHILD_MAP_ENTRY("HeightLayerTextureHorzResolution",m_piSTHeightLayerHorzResolution);
 		CHILD_MAP_ENTRY("HeightLayerTextureVertResolution",m_piSTHeightLayerVertResolution);
 		CHILD_MAP_ENTRY_EX("HeightLayerTextureSample",m_piBTHeightLayerSample,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("HeightLayerNormalMapSample",m_piBTHeightLayerNormalMapSample,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("HeightLayerDecreaseMaxHeight",m_piBTHeightLayerDecreaseMaxHeight,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("HeightLayerIncreaseMaxHeight",m_piBTHeightLayerIncreaseMaxHeight,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("HeightLayerDecreaseMinHeight",m_piBTHeightLayerDecreaseMinHeight,IGameGUIButtonEvents);
@@ -552,6 +556,7 @@ public:
 		CHILD_MAP_ENTRY("ColorLayerTextureVertResolution",m_piSTColorLayerVertResolution);
 		CHILD_MAP_ENTRY_EX("ColorLayerAbruptEnd",m_piBTColorLayerAbruptEnd,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("ColorLayerTextureSample",m_piBTColorLayerSample,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("ColorLayerNormalMapSample",m_piBTColorLayerNormalMapSample,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("ColorLayerColorSample",m_piBTColorLayerColorSample,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("ColorLayerDecreaseHorzResolution",m_piBTColorLayerDecreaseHorzResolution,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("ColorLayerIncreaseHorzResolution",m_piBTColorLayerIncreaseHorzResolution,IGameGUIButtonEvents);

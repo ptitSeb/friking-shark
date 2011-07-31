@@ -269,7 +269,9 @@ public:
 	virtual void		  SetRenderBufferNormals(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,float *pNormals)=0;
 	virtual void		  SetRenderBufferColors(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,float *pColors)=0;
 	virtual void		  SetRenderBufferTextureCoords(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,float *pTexVertexes)=0;
-
+	virtual void		  SetRenderBufferNormalMap(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,IGenericTexture *piTexture)=0;
+	virtual void		  SetRenderBufferNormalMapCoords(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,float *pNormalMapVertexes)=0;
+	
 	virtual void		  GetRenderBufferMaterial(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,CVector *pvAmbientColor,CVector *pvDiffuseColor,CVector *pvSpecularColor, float *pfShininess, float *pfOpacity)=0;
 	virtual void		  GetRenderBufferTexture(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,IGenericTexture **ppiTexture)=0;
 	virtual void		  GetRenderBufferTextureMatrix(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,CMatrix *pMatrix)=0;
@@ -278,7 +280,9 @@ public:
 	virtual void		  GetRenderBufferNormals(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,float **ppNormals)=0;
 	virtual void		  GetRenderBufferColors(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,float **ppColors)=0;
 	virtual void		  GetRenderBufferTextureCoords(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,float **ppTexVertexes)=0;
-
+	virtual void		  GetRenderBufferNormalMap(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,IGenericTexture **ppiTexture)=0;
+	virtual void		  GetRenderBufferNormalMapCoords(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,float **ppNormalMapVertexes)=0;
+	
 	// Method to ensure that the model is resident.
 	virtual bool 		  Prepare()=0;
 	
@@ -451,10 +455,10 @@ public:
 	virtual void SetPerspectiveProjection(double dViewAngle,double dNearPlane,double dFarPlane)=0;
 	virtual void SetViewport(double x,double y,double cx, double cy)=0;
 	virtual void SetCamera(const CVector &vPosition,double dYaw, double dPitch, double dRoll)=0;
-        virtual CVector GetCameraPosition()=0;
-        virtual CVector GetCameraForward()=0;
-        virtual CVector GetCameraRight()=0;
-        virtual CVector GetCameraUp()=0;
+	virtual CVector GetCameraPosition()=0;
+	virtual CVector GetCameraForward()=0;
+	virtual CVector GetCameraRight()=0;
+	virtual CVector GetCameraUp()=0;
 
 
 	virtual void ActivateClipping(bool bActivate)=0;
@@ -466,7 +470,10 @@ public:
 	virtual void SelectTexture(IGenericTexture *pTexture,int nTextureLevel)=0;
 	virtual void SetTextureMatrix(CMatrix *pMatrix,int nTextureLevel)=0;
 	virtual void UnselectTexture(int nTextureLevel)=0;
-
+	
+	virtual void SelectNormalMap(IGenericTexture *pTexture)=0;
+	virtual void UnselectNormalMap()=0;
+	
 	virtual void RenderPoint(const CVector &vPosition,double dSize,const CVector &vColor,double dAlpha)=0;
 	virtual void RenderTexture(const CVector &vOrigin,double s1,double s2)=0;
 	virtual void RenderParticle(IGenericTexture *piTexture,const CVector &vOrigin,double dAngle,double s1,double s2,const CVector &vColor,double dAlpha,double dTextX,double dTextY,double dTextW,double dTextH)=0;
@@ -543,7 +550,11 @@ public:
 	virtual void EnableShaders()=0;
 	virtual void DisableShaders()=0;
 	virtual bool AreShadersEnabled()=0;
-
+	
+	virtual void EnableNormalMaps()=0;
+	virtual void DisableNormalMaps()=0;
+	virtual bool AreNormalMapsEnabled()=0;
+	
 	virtual void EnableTextures()=0;
 	virtual void DisableTextures()=0;
 	virtual bool AreTexturesEnabled()=0;

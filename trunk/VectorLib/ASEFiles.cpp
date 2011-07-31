@@ -117,6 +117,7 @@ using namespace std;
 #define	ASE_MESH_ANIMATION			77
 #define ASE_MESH_SMOOTHING			78
 #define ASE_MESH_FACENORMAL			79
+#define ASE_MAP_BUMP				80
 
 
 char *FindNodeEnd(char *pBuffer)
@@ -236,6 +237,7 @@ bool CASEFileType::Open(const char *sFileName)
 	mKeyNames["*MATERIAL_REF"]			=ASE_MATERIAL_REF;
 	mKeyNames["*SUBMATERIAL"]			=ASE_SUBMATERIAL;
 	mKeyNames["*MAP_DIFFUSE"]			=ASE_MAP_DIFFUSE;
+	mKeyNames["*MAP_BUMP"]				=ASE_MAP_BUMP;
 	mKeyNames["*MAP_OPACITY"]			=ASE_MAP_OPACITY;
 	mKeyNames["*BITMAP"]				=ASE_BITMAP;
 	mKeyNames["*MESH_TVERTLIST"]		=ASE_MESH_TVERTLIST;
@@ -578,6 +580,12 @@ bool CASEFileType::Open(const char *sFileName)
 					dwCurrentBitmap=ASE_MAP_DIFFUSE;
 				}
 			break;
+			case ASE_MAP_BUMP: 
+			{
+				SKIP_ASE_TOKEN(); // Skip '{'
+				dwCurrentBitmap=ASE_MAP_BUMP;
+			}
+			break;
 			case ASE_MAP_OPACITY:
  				{
 					SKIP_ASE_TOKEN(); // Skip '{'
@@ -592,6 +600,11 @@ bool CASEFileType::Open(const char *sFileName)
 					{
 						GetFileName(fileName.c_str(),sFileName);
 						strcpy(pMaterial->sFile,sFileName);
+					}
+					if(dwCurrentBitmap==ASE_MAP_BUMP)
+					{
+						GetFileName(fileName.c_str(),sFileName);
+						strcpy(pMaterial->sNormalFile,sFileName);
 					}
 					if(dwCurrentBitmap==ASE_MAP_OPACITY)
 					{
@@ -1138,6 +1151,15 @@ void CASEFileType::ToGCM(CGCMFileType *pFile)
 				{
 					pFile->SetBufferTexture(nFrame,nBuffer,0,p3DSMaterial->sFile);
 					pFile->SetBufferTextureCoords(nFrame,nBuffer,0,pTexVertexArray);
+				
+					if(p3DSMaterial->sNormalFile[0]!=0)
+					{
+						float *pNormalMapTexArray=new float[nVertexes*2];
+						memcpy(pNormalMapTexArray,pTexVertexArray,sizeof(float)*nVertexes*2);
+						
+						pFile->SetBufferNormalMap(nFrame,nBuffer,p3DSMaterial->sNormalFile);
+						pFile->SetBufferNormalMapCoords(nFrame,nBuffer,pNormalMapTexArray);
+					}
 				}
 			}
 			else

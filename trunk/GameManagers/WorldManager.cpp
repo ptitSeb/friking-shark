@@ -232,6 +232,14 @@ unsigned long CWorldManager::AddTerrainColorLayer( STerrainColorLayer *pLayer )
 	{
 		pData->m_Texture.m_piTexture->Load(pLayer->sTextureFile);
 	}
+	if(pData->m_LayerConfig.sNormalMapFile!="")
+	{
+		pData->m_NormalMap.Create("GameResources","Texture","");
+		if(pData->m_NormalMap.m_piTexture)
+		{
+			pData->m_NormalMap.m_piTexture->Load(pLayer->sNormalMapFile);
+		}
+	}
 	return nIndex;
 }
 
@@ -241,6 +249,18 @@ void CWorldManager::UpdateTerrainColorLayer( unsigned int nIndex,STerrainColorLa
 	STerrainColorLayerData *pData=&m_vTerrainColorLayers[nIndex];
 	pData->m_LayerConfig=*pLayer;
 	pData->m_Texture.m_piTexture->Load(pLayer->sTextureFile);
+	if(pData->m_LayerConfig.sNormalMapFile=="")
+	{
+		pData->m_NormalMap.Detach();
+	}
+	else 
+	{
+		if(pData->m_NormalMap.m_piTexture==NULL){pData->m_NormalMap.Create("GameResources","Texture","");}
+		if(pData->m_NormalMap.m_piTexture)
+		{
+			pData->m_NormalMap.m_piTexture->Load(pLayer->sNormalMapFile);
+		}
+	}
 }
 
 unsigned int CWorldManager::MoveTerrainColorLayer( unsigned int nIndex,bool bUp )
@@ -291,7 +311,7 @@ void CWorldManager::RemoveTerrainColorLayer( unsigned int nIndex )
 	}
 }
 
-void CWorldManager::GetTerrainColorLayer( unsigned int nIndex,STerrainColorLayer *pLayer,IGenericTexture **ppiTexture )
+void CWorldManager::GetTerrainColorLayer( unsigned int nIndex,STerrainColorLayer *pLayer,IGenericTexture **ppiTexture,IGenericTexture **ppiNormalMap)
 {
 	if(ppiTexture){*ppiTexture=NULL;}
 
@@ -299,6 +319,7 @@ void CWorldManager::GetTerrainColorLayer( unsigned int nIndex,STerrainColorLayer
 	STerrainColorLayerData *pData=&m_vTerrainColorLayers[nIndex];
 	if(pLayer){*pLayer=pData->m_LayerConfig;}
 	if(ppiTexture){*ppiTexture=ADD(pData->m_Texture.m_piTexture);}
+	if(ppiNormalMap){*ppiNormalMap=ADD(pData->m_NormalMap.m_piTexture);}
 }
 
 unsigned int CWorldManager::GetTerrainColorLayers()
@@ -321,6 +342,14 @@ unsigned long CWorldManager::AddTerrainHeightLayer( STerrainHeightLayer *pLayer 
 	{
 		pData->m_Texture.m_piTexture->Load(pLayer->sTextureFile);
 	}
+	if(pData->m_LayerConfig.sNormalMapFile!="")
+	{
+		pData->m_NormalMap.Create("GameResources","Texture","");
+		if(pData->m_NormalMap.m_piTexture)
+		{
+			pData->m_NormalMap.m_piTexture->Load(pLayer->sNormalMapFile);
+		}
+	}
 	return nIndex;
 }
 
@@ -330,6 +359,18 @@ void CWorldManager::UpdateTerrainHeightLayer( unsigned int nIndex,STerrainHeight
 	STerrainHeightLayerData *pData=&m_vTerrainHeightLayers[nIndex];
 	pData->m_LayerConfig=*pLayer;
 	pData->m_Texture.m_piTexture->Load(pLayer->sTextureFile);
+	if(pData->m_LayerConfig.sNormalMapFile=="")
+	{
+		pData->m_NormalMap.Detach();
+	}
+	else 
+	{
+		if(pData->m_NormalMap.m_piTexture==NULL){pData->m_NormalMap.Create("GameResources","Texture","");}
+		if(pData->m_NormalMap.m_piTexture)
+		{
+			pData->m_NormalMap.m_piTexture->Load(pLayer->sNormalMapFile);
+		}
+	}
 }
 
 unsigned int CWorldManager::MoveTerrainHeightLayer( unsigned int nIndex,bool bUp )
@@ -394,7 +435,7 @@ void CWorldManager::RemoveTerrainHeightLayer( unsigned int nIndex )
 	}
 }
 
-void CWorldManager::GetTerrainHeightLayer( unsigned int nIndex,STerrainHeightLayer *pLayer,IGenericTexture **ppiTexture )
+void CWorldManager::GetTerrainHeightLayer( unsigned int nIndex,STerrainHeightLayer *pLayer,IGenericTexture **ppiTexture,IGenericTexture **ppiNormalMap)
 {
 	if(ppiTexture){*ppiTexture=NULL;}
 
@@ -402,6 +443,7 @@ void CWorldManager::GetTerrainHeightLayer( unsigned int nIndex,STerrainHeightLay
 	STerrainHeightLayerData *pData=&m_vTerrainHeightLayers[nIndex];
 	if(pLayer){*pLayer=pData->m_LayerConfig;}
 	if(ppiTexture){*ppiTexture=ADD(pData->m_Texture.m_piTexture);}
+	if(ppiNormalMap){*ppiNormalMap=ADD(pData->m_NormalMap.m_piTexture);}
 }
 
 unsigned int CWorldManager::GetTerrainHeightLayers()
@@ -510,6 +552,7 @@ bool CWorldManager::UpdateTerrain()
 		unsigned long nBuffer=m_TerrainModel.m_piModel->AddRenderBuffer(nAnimation,nFrame);
 		m_TerrainModel.m_piModel->SetRenderBufferTexture(nAnimation,nFrame,nBuffer,0,m_vTerrainHeightLayers[x].m_Texture.m_piTexture);
 		m_TerrainModel.m_piModel->SetRenderBufferMaterial(nAnimation,nFrame,nBuffer,CVector(1,1,1),CVector(1,1,1),CVector(0,0,0),0,1);
+		m_TerrainModel.m_piModel->SetRenderBufferNormalMap(nAnimation,nFrame,nBuffer,m_vTerrainHeightLayers[x].m_NormalMap.m_piTexture);
 	}
 
 	// Load color layers 
@@ -536,6 +579,7 @@ bool CWorldManager::UpdateTerrain()
 		unsigned long nBuffer=m_TerrainModel.m_piModel->AddRenderBuffer(nAnimation,nFrame);
 		m_TerrainModel.m_piModel->SetRenderBufferTexture(nAnimation,nFrame,nBuffer,0,m_vTerrainColorLayers[x].m_Texture.m_piTexture);
 		m_TerrainModel.m_piModel->SetRenderBufferMaterial(nAnimation,nFrame,nBuffer,CVector(1,1,1),CVector(1,1,1),CVector(0,0,0),0,1);
+		m_TerrainModel.m_piModel->SetRenderBufferNormalMap(nAnimation,nFrame,nBuffer,m_vTerrainColorLayers[x].m_NormalMap.m_piTexture);
 	}
 
 	if(!bOk)
@@ -787,6 +831,11 @@ bool CWorldManager::UpdateTerrain()
 		m_TerrainModel.m_piModel->SetRenderBufferNormals(nAnimation,nFrame,x,BufferFromVector(&vTempBuffers[x].vNormalArray));
 		m_TerrainModel.m_piModel->SetRenderBufferTextureCoords(nAnimation,nFrame,x,0,BufferFromVector(&vTempBuffers[x].vTexVertexArray));
 		m_TerrainModel.m_piModel->SetRenderBufferTextureCoords(nAnimation,nFrame,x,1,BufferFromVector(&vTempBuffers[x].vShadowTexVertexArray));
+		
+		IGenericTexture *piNormalMap=NULL;
+		m_TerrainModel.m_piModel->GetRenderBufferNormalMap(nAnimation,nFrame,x,&piNormalMap);
+		if(piNormalMap){m_TerrainModel.m_piModel->SetRenderBufferNormalMapCoords(nAnimation,nFrame,x,BufferFromVector(&vTempBuffers[x].vTexVertexArray));}
+		REL(piNormalMap);
 	}
 	if(m_WaterModel.m_piModel)
 	{
@@ -808,23 +857,7 @@ bool CWorldManager::UpdateTerrain()
 
 				float *pWaterVertexBuffer=new GLfloat[12];
 				float *pCursor=pWaterVertexBuffer;
-				/*
-				*pCursor++=(float)vWaterMins.c[0];
-				*pCursor++=(float)dAbsWaterHeight;
-				*pCursor++=(float)vWaterMins.c[2];
-
-				*pCursor++=(float)vWaterMins.c[0];
-				*pCursor++=(float)dAbsWaterHeight;
-				*pCursor++=(float)vWaterMaxs.c[2];
-
-				*pCursor++=(float)vWaterMaxs.c[0];
-				*pCursor++=(float)dAbsWaterHeight;
-				*pCursor++=(float)vWaterMaxs.c[2];
-
-				*pCursor++=(float)vWaterMaxs.c[0];
-				*pCursor++=(float)dAbsWaterHeight;
-				*pCursor++=(float)vWaterMins.c[2];
-				*/
+				
 				*pCursor++=(float)m_TerrainWater.m_Config.vMins.c[0];
 				*pCursor++=(float)m_TerrainWater.m_Config.vMaxs.c[1];
 				*pCursor++=(float)m_TerrainWater.m_Config.vMins.c[2];
