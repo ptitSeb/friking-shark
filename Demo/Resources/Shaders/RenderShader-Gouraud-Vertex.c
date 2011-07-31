@@ -9,6 +9,10 @@ uniform vec3 g_vHeightFogMins;
 uniform vec3 g_vHeightFogMaxs;
 uniform mat4 CameraModelViewInverse;
 varying vec3 g_WorldVertexPos;
+
+#ifdef ENABLE_SKY_SHADOW
+uniform vec4 SkyData;
+#endif
 #ifdef ENABLE_LIGHTING
 varying vec4 g_ambdiffspec;
 varying vec4 g_sunambdiffspec;
@@ -104,6 +108,13 @@ void main (void)
 	#endif
 #endif
 
+#ifdef ENABLE_SKY_SHADOW
+	gl_TexCoord[SKY_TEXTURE_LEVEL].s = (g_WorldVertexPos.x/SkyData.y)+SkyData.x;
+	gl_TexCoord[SKY_TEXTURE_LEVEL].t = (g_WorldVertexPos.z/SkyData.z);
+	gl_TexCoord[SKY_TEXTURE_LEVEL].p = 0.0;
+	gl_TexCoord[SKY_TEXTURE_LEVEL].q = 0.0;
+#endif
+	
 #ifdef ENABLE_SHADOWS
 	gl_TexCoord[SHADOW_TEXTURE_LEVEL].s = dot(EyeVertexPos, gl_EyePlaneS[SHADOW_TEXTURE_LEVEL]);
 	gl_TexCoord[SHADOW_TEXTURE_LEVEL].t = dot(EyeVertexPos, gl_EyePlaneT[SHADOW_TEXTURE_LEVEL]);

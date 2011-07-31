@@ -12,7 +12,6 @@ uniform float CurrentRealTime;
 
 uniform sampler2D Texture0;
 uniform sampler2D Texture1;
-uniform sampler2DShadow ShadowMap;
 
 #define LIGHTING_SATURATION 1.5
 
@@ -20,6 +19,13 @@ varying vec3 g_WorldVertexPos;
 #ifdef ENABLE_LIGHTING
 varying vec4 g_ambdiffspec;
 varying vec4 g_sunambdiffspec;
+#endif
+#ifdef ENABLE_SHADOWS
+uniform sampler2DShadow ShadowMap;
+#endif
+#ifdef ENABLE_SKY_SHADOW
+uniform sampler2D SkyShadowMap;
+uniform vec4 SkyData;
 #endif
 
 #ifdef ENABLE_FOG
@@ -83,13 +89,28 @@ void main (void)
   
   #ifdef ENABLE_SHADOWS
 	fShadowFactor=shadow2DProj(ShadowMap, gl_TexCoord[SHADOW_TEXTURE_LEVEL]).r;
+	#ifdef ENABLE_SOFT_SHADOWS
+		float offset=3.0;
+		fShadowFactor+=shadow2DProj(ShadowMap,gl_TexCoord[SHADOW_TEXTURE_LEVEL]+vec4(-offset,-offset,0,0)).g;
+		fShadowFactor+=shadow2DProj(ShadowMap,gl_TexCoord[SHADOW_TEXTURE_LEVEL]+vec4(offset,-offset,0,0)).g;
+		fShadowFactor+=shadow2DProj(ShadowMap,gl_TexCoord[SHADOW_TEXTURE_LEVEL]+vec4(-offset,offset,0,0)).g;
+		fShadowFactor+=shadow2DProj(ShadowMap,gl_TexCoord[SHADOW_TEXTURE_LEVEL]+vec4(offset,offset,0,0)).g;
+		fShadowFactor/=5.0;
+	#endif
   #endif
 	
   #ifdef ENABLE_LIGHTING
-	  finalcolor.rgb=clamp(g_ambdiffspec.rgb+g_sunambdiffspec.rgb*fShadowFactor,0.0,LIGHTING_SATURATION);
+	  vec4 sunambdiffspec=g_sunambdiffspec;
+      #ifdef ENABLE_SKY_SHADOW
+		sunambdiffspec*=1.0-(texture2D(SkyShadowMap, gl_TexCoord[SKY_TEXTURE_LEVEL].xy)*SkyData.a);
+	  #endif
+	  finalcolor.rgb=clamp(g_ambdiffspec.rgb+sunambdiffspec.rgb*fShadowFactor,0.0,LIGHTING_SATURATION);
 	  finalcolor.rgb*=texcolor.rgb;
 	  finalcolor.a=texcolor.a;
   #else
+	#ifdef ENABLE_SKY_SHADOW
+	  fShadowFactor*=1.0-(texture2D(SkyShadowMap, gl_TexCoord[SKY_TEXTURE_LEVEL].xy)*SkyData.a).r;
+	#endif
 	finalcolor=texcolor*fShadowFactor;
   #endif	
   

@@ -7,8 +7,6 @@
 //    JeGX's post at http://www.geeks3d.com/20110316/shader-library-simple-2d-effects-sphere-and-ripple-in-glsl/
 //    Adrian Boeing's post at http://adrianboeing.blogspot.com/2011/02/ripple-effect-in-webgl.html
 
-#define MAX_LIGHTS 8
-
 uniform int  g_ActiveLights;
 uniform mat4 CameraModelViewInverse;
 uniform float CurrentRealTime;
@@ -20,6 +18,10 @@ uniform sampler2DShadow ShadowMap;
 #endif
 #ifdef ENABLE_NORMAL_MAP
 uniform sampler2D NormalMap;
+#endif
+#ifdef ENABLE_SKY_SHADOW
+uniform sampler2D SkyShadowMap;
+uniform vec4 SkyData;
 #endif
 
 varying vec4 g_EyeVertexPos;
@@ -114,9 +116,17 @@ void main (void)
 		#endif
 	#endif
 #endif
-  
+			
   #ifdef ENABLE_SHADOWS
-	fShadowFactor=shadow2DProj(ShadowMap, gl_TexCoord[SHADOW_TEXTURE_LEVEL]).r;
+	fShadowFactor=shadow2DProj(ShadowMap,gl_TexCoord[SHADOW_TEXTURE_LEVEL]).g;
+	#ifdef ENABLE_SOFT_SHADOWS
+		float offset=3.0;
+		fShadowFactor+=shadow2DProj(ShadowMap,gl_TexCoord[SHADOW_TEXTURE_LEVEL]+vec4(-offset,-offset,0,0)).g;
+		fShadowFactor+=shadow2DProj(ShadowMap,gl_TexCoord[SHADOW_TEXTURE_LEVEL]+vec4(offset,-offset,0,0)).g;
+		fShadowFactor+=shadow2DProj(ShadowMap,gl_TexCoord[SHADOW_TEXTURE_LEVEL]+vec4(-offset,offset,0,0)).g;
+		fShadowFactor+=shadow2DProj(ShadowMap,gl_TexCoord[SHADOW_TEXTURE_LEVEL]+vec4(offset,offset,0,0)).g;
+		fShadowFactor/=5.0;
+	#endif
   #endif
   #ifdef ENABLE_LIGHTING
 	  
@@ -136,10 +146,17 @@ void main (void)
 	  DirectionalLight(0, N, sunamb, sundiff,sunspec);
 	  g_sunambdiffspec=sunamb+sundiff+sunspec*gl_FrontMaterial.specular;	
 	  
+	  #ifdef ENABLE_SKY_SHADOW
+		g_sunambdiffspec*=1.0-(texture2D(SkyShadowMap, gl_TexCoord[SKY_TEXTURE_LEVEL].xy)*SkyData.a);
+	  #endif	
+	  
 	  finalcolor.rgb=clamp(g_ambdiffspec.rgb+g_sunambdiffspec.rgb*fShadowFactor,0.0,LIGHTING_SATURATION);
 	  finalcolor.rgb*=texcolor.rgb;
 	  finalcolor.a=texcolor.a;
   #else
+	#ifdef ENABLE_SKY_SHADOW
+	  fShadowFactor*=1.0-(texture2D(SkyShadowMap, gl_TexCoord[SKY_TEXTURE_LEVEL].xy)*SkyData.a).r;
+	#endif	
 	finalcolor=texcolor*fShadowFactor;
   #endif
 	

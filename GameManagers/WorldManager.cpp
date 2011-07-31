@@ -1091,4 +1091,17 @@ void CWorldManager::SetupRenderingEnvironment( IGenericRender *piRender )
 		piRender->SetSunLight(vSunPos,vForward,vBlack,m_TerrainSun.vColor,m_TerrainSun.vColor);
 	}
 	piRender->SetAmbientLight(m_vTerrainAmbientColor);
+	if(m_TerrainSky.m_Config.bEnabled && m_TerrainSky.m_Texture.m_piTexture)
+	{
+		piRender->ActivateSkyShadow();
+		
+		unsigned int nWidth=0,nHeight=0;
+		m_TerrainSky.m_Texture.m_piTexture->GetSize(&nWidth,&nHeight);
+		piRender->SelectSkyShadow(m_TerrainSky.m_Texture.m_piTexture);
+		piRender->SetSkyShadowParameters(m_TerrainSky.m_Config.dSpeed,((double)nWidth)/m_TerrainSky.m_Config.dHorizontalResolution,((double)nHeight)/m_TerrainSky.m_Config.dVerticalResolution,m_TerrainSky.m_Config.dOpacity);
+	}
+	else
+	{
+		piRender->DeactivateSkyShadow();
+	}
 }

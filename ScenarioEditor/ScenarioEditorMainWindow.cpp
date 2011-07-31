@@ -77,6 +77,7 @@ CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 	m_bSolid=1;
 	m_bLighting=1;
 	m_bNormalMaps=1;
+	m_bSkyShadow=1;
 	m_bBlend=1;
 	m_nSelectedHeightLayer=-1;
 	m_nSelectedColorLayer=-1;
@@ -426,6 +427,7 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 	m_bBlend?m_Render.m_piRender->EnableBlending():m_Render.m_piRender->DisableBlending();
 	m_bLighting?m_Render.m_piRender->EnableLighting():m_Render.m_piRender->DisableLighting();
 	m_bNormalMaps?m_Render.m_piRender->EnableNormalMaps():m_Render.m_piRender->DisableNormalMaps();
+	m_bSkyShadow?m_Render.m_piRender->EnableSkyShadow():m_Render.m_piRender->DisableSkyShadow();
 	m_bShadows?m_Render.m_piRender->EnableShadows():m_Render.m_piRender->DisableShadows();
 	m_bShaders?m_Render.m_piRender->EnableShaders():m_Render.m_piRender->DisableShaders();
 	m_bFog?m_Render.m_piRender->EnableHeightFog():m_Render.m_piRender->DisableHeightFog();
@@ -1768,7 +1770,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	else if(piControl==m_piBTSkySample)
 	{
 		std::string sTexture="./Textures/";
-		if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp;.png",&sSky.sTextureFile))
+		if(OpenFileDialog("Open texture...",".jpg;.jpeg;.bmp;.png",&sTexture))
 		{
 			sSky.sTextureFile=sTexture;
 			bSkyChanged=true;
@@ -2795,6 +2797,7 @@ void CScenarioEditorMainWindow::OnCharacter(int nKey,bool *pbProcessed)
 	else if(nKey=='L'|| nKey=='l'){m_bSolid=!m_bSolid;*pbProcessed=true;}
 	else if(nKey=='I'|| nKey=='i'){m_bLighting=!m_bLighting;*pbProcessed=true;}
 	else if(nKey=='N'|| nKey=='n'){m_bNormalMaps=!m_bNormalMaps;*pbProcessed=true;}
+	else if(nKey=='Y'|| nKey=='y'){m_bSkyShadow=!m_bSkyShadow;*pbProcessed=true;}
 	else if(nKey=='O'|| nKey=='o'){m_bShadows=!m_bShadows;*pbProcessed=true;}
 	else if(nKey=='H'|| nKey=='h'){m_bShaders=!m_bShaders;*pbProcessed=true;}
 	else if(nKey=='B'|| nKey=='b'){m_bBlend=!m_bBlend;*pbProcessed=true;}

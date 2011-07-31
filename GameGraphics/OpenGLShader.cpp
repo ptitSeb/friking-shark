@@ -224,6 +224,15 @@ void COpenGLShader::AddUniform( std::string sUniformName,int nValue )
 		SUniformData data;
 		i=m_mUniforms.insert(std::pair<std::string,SUniformData>(sUniformName,data)).first;
 	}
+	else
+	{
+		SUniformData *pData=&i->second;
+		if(pData->eType==eUniformType_Int && pData->nValue==nValue)
+		{
+			// Not mofidied
+			return;
+		}
+	}
 	
 	SUniformData *pData=&i->second;
 	pData->eType=eUniformType_Int;
@@ -240,7 +249,15 @@ void COpenGLShader::AddUniform( std::string sUniformName,int nValue )
 		  SUniformData data;
 		  i=m_mUniforms.insert(std::pair<std::string,SUniformData>(sUniformName,data)).first;
 	  }
-	  
+	  else
+	  {
+		  SUniformData *pData=&i->second;
+		  if(pData->eType==eUniformType_Float && pData->fValue==fValue)
+		  {
+			  // Not mofidied
+			  return;
+		  }
+	  }	  
 	  SUniformData *pData=&i->second;
 	  pData->eType=eUniformType_Float;
 	  pData->fValue=fValue;
@@ -256,7 +273,15 @@ void COpenGLShader::AddUniform( std::string sUniformName,int nValue )
 		  SUniformData data;
 		  i=m_mUniforms.insert(std::pair<std::string,SUniformData>(sUniformName,data)).first;
 	  }
-	  
+	  else
+	  {
+		  SUniformData *pData=&i->second;
+		  if(pData->eType==eUniformType_Vector2 && pData->vVector.c[0]==fValue1 && pData->vVector.c[1]==fValue2)
+		  {
+			  // Not mofidied
+			  return;
+		  }
+	  }	  
 	  SUniformData *pData=&i->second;
 	  pData->eType=eUniformType_Vector2;
 	  pData->vVector.c[0]=fValue1;
@@ -273,6 +298,15 @@ void COpenGLShader::AddUniform( std::string sUniformName,int nValue )
 		  SUniformData data;
 		  i=m_mUniforms.insert(std::pair<std::string,SUniformData>(sUniformName,data)).first;
 	  }
+	  else
+	  {
+		  SUniformData *pData=&i->second;
+		  if(pData->eType==eUniformType_Vector3 && pData->vVector==vVector)
+		  {
+			  // Not mofidied
+			  return;
+		  }
+	  }	  
 	  
 	  SUniformData *pData=&i->second;
 	  pData->eType=eUniformType_Vector3;
@@ -290,7 +324,15 @@ void COpenGLShader::AddUniform( std::string sUniformName,const CVector &vColor, 
 		  SUniformData data;
 		  i=m_mUniforms.insert(std::pair<std::string,SUniformData>(sUniformName,data)).first;
 	  }
-	  
+	  else
+	  {
+		  SUniformData *pData=&i->second;
+		  if(pData->eType==eUniformType_Color && pData->vColor==vColor && pData->fAlpha==fAlpha)
+		  {
+			  // Not mofidied
+			  return;
+		  }
+	  }	  
 	  SUniformData *pData=&i->second;
 	  pData->eType=eUniformType_Color;
 	  pData->vColor=vColor;

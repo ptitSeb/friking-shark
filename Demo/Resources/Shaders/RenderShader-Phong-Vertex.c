@@ -4,16 +4,17 @@
 //    OpenGLShading Language Third Edition
 //
 
-#define MAX_LIGHTS 8
-
 uniform int  g_ActiveLights;
 uniform vec3 g_vHeightFogMins;
 uniform vec3 g_vHeightFogMaxs;
 uniform mat4 CameraModelViewInverse;
 varying vec3 g_WorldVertexPos;
 varying vec4 g_EyeVertexPos;
+
+#ifdef ENABLE_SKY_SHADOW
+uniform vec4 SkyData;
+#endif
 #ifdef ENABLE_LIGHTING
-varying vec3 g_lightdirs[MAX_LIGHTS];
 #ifdef ENABLE_NORMAL_MAP
 	varying vec3 g_TangentSpaceX;
 	varying vec3 g_TangentSpaceY;
@@ -58,14 +59,7 @@ void main (void)
 	#endif 
 	#endif
 	
-	
 	gl_Position = ftransform();
-	#ifdef ENABLE_LIGHTING
-	for (int i=0; i<MAX_LIGHTS; ++i)
-	{
-		g_lightdirs[i] =vec3(gl_LightSource[i].position.xyz - g_EyeVertexPos.xyz);
-	}
-	#endif
 
 #ifdef ENABLE_FOG
 	float fFogSize=g_vHeightFogMaxs.y-g_vHeightFogMins.y;
@@ -87,6 +81,13 @@ void main (void)
 	
 #ifdef ENABLE_NORMAL_MAP
 	gl_TexCoord[NORMAL_MAP_TEXTURE_LEVEL]=gl_TextureMatrix[NORMAL_MAP_TEXTURE_LEVEL]*gl_MultiTexCoord2;
+#endif
+	
+#ifdef ENABLE_SKY_SHADOW
+	gl_TexCoord[SKY_TEXTURE_LEVEL].s = (g_WorldVertexPos.x/SkyData.y)+SkyData.x;
+	gl_TexCoord[SKY_TEXTURE_LEVEL].t = (g_WorldVertexPos.z/SkyData.z);
+	gl_TexCoord[SKY_TEXTURE_LEVEL].p = 0.0;
+	gl_TexCoord[SKY_TEXTURE_LEVEL].q = 0.0;
 #endif
 	
 #ifdef ENABLE_SHADOWS

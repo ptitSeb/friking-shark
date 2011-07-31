@@ -31,7 +31,8 @@ struct SRenderState
 	bool bActiveShadowEmission;
 	bool bActiveWater;
 	bool bActiveShadowReception;
-
+	bool bActiveSkyShadow;
+	
 	bool bActiveDepth;
 	unsigned long nDepthFunction;
 
@@ -90,6 +91,8 @@ struct SRenderState
 		if(bActiveShadowReception>otherState.bActiveShadowReception){return 1;}
 		if(bActiveWater<otherState.bActiveWater){return -1;}
 		if(bActiveWater>otherState.bActiveWater){return 1;}
+		if(bActiveSkyShadow<otherState.bActiveSkyShadow){return -1;}
+		if(bActiveSkyShadow>otherState.bActiveSkyShadow){return 1;}
 		return 0;
 	}
 
@@ -100,6 +103,7 @@ struct SRenderState
 		bActiveSolid=true;
 		bActiveShadowEmission=true;
 		bActiveShadowReception=true;
+		bActiveSkyShadow=false;
 		eShadingModel=eShadingModel_Balanced;
 
 		bActiveDepth=true;
@@ -127,6 +131,7 @@ struct SRenderOptions
 	bool bEnableHeightFog;
 	bool bEnableShader;
 	bool bEnableNormalMaps;
+	bool bEnableSkyShadow;
 
 	SRenderOptions()
 	{
@@ -139,6 +144,7 @@ struct SRenderOptions
 		bEnableBlending=true;
 		bEnableAutoShadowVolume=true;
 		bEnableNormalMaps=true;
+		bEnableSkyShadow=true;
 	}
 };
 
@@ -306,6 +312,7 @@ struct SShaderKey
 	bool bLighting;
 	bool  bWater;
 	bool  bNormalMap;
+	bool  bSkyShadow;
 	
 	EShadingModel eShadingModel;
 	
@@ -317,6 +324,8 @@ struct SShaderKey
 		if(bHeightFog>otherKey.bHeightFog){return false;}
 		if(bShadows<otherKey.bShadows){return true;}
 		if(bShadows>otherKey.bShadows){return false;}
+		if(bSkyShadow<otherKey.bSkyShadow){return true;}
+		if(bSkyShadow>otherKey.bSkyShadow){return false;}
 		if(nTextureUnits<otherKey.nTextureUnits){return true;}
 		if(nTextureUnits>otherKey.nTextureUnits){return false;}
 		if(bNormalMap<otherKey.bNormalMap){return true;}
@@ -328,8 +337,8 @@ struct SShaderKey
 		return false;
 	}
 
-SShaderKey(){eShadingModel=eShadingModel_Gouraud;bHeightFog=false;bShadows=false;nTextureUnits=0;bLighting=false;bWater=false;bNormalMap=false;}
-	SShaderKey(EShadingModel shading,bool heightFog,bool shadows,int textureUnits,bool lighting,bool water,bool normalMap){eShadingModel=shading;bHeightFog=heightFog;bShadows=shadows;nTextureUnits=textureUnits;bLighting=lighting;bWater=water;bNormalMap=normalMap;}
+SShaderKey(){eShadingModel=eShadingModel_Gouraud;bHeightFog=false;bShadows=false;nTextureUnits=0;bLighting=false;bWater=false;bNormalMap=false;bSkyShadow=false;}
+SShaderKey(EShadingModel shading,bool heightFog,bool shadows,int textureUnits,bool lighting,bool water,bool normalMap,bool sky){eShadingModel=shading;bHeightFog=heightFog;bShadows=shadows;nTextureUnits=textureUnits;bLighting=lighting;bWater=water;bNormalMap=normalMap;bSkyShadow=sky;}
 };
 
 class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRender
@@ -387,9 +396,16 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	IGenericFont     *m_piSelectedFont;
 	IGenericViewport *m_piCurrentViewport;
 	IGenericTexture  *m_piNormalMap;
+	IGenericTexture  *m_piSkyShadow;
+	unsigned int	  m_nSkyShadowTextureLevel;
 	unsigned int 	  m_nNormalMapTextureLevel;
 	unsigned int 	  m_nShadowTextureLevel;
 
+	double m_dSKyShadowSpeed;
+	double m_dSKyShadowXResolution;
+	double m_dSKyShadowZResolution;
+	double m_dSKyShadowOpacity;
+	
 	CGenericShaderWrapper m_ShadowShader;
 	CGenericShaderWrapper *m_pCurrentShader;
 	
@@ -480,6 +496,10 @@ public:
 	void SelectNormalMap(IGenericTexture *pTexture);
 	void UnselectNormalMap();
 	
+	void SetSkyShadowParameters(double dSpeed, double dXResolution, double dZResolution, double dOpacity);
+	void SelectSkyShadow(IGenericTexture *pTexture);
+	void UnselectSkyShadow();
+	
 	void CalcTextSize(const char *pText,double *pdWidth,double *pdHeight);
 	virtual void RenderPoint(const CVector &vPosition,double dSize,const CVector &vColor,double dAlpha);
 	void RenderText(double x,double y,const char *pText);
@@ -541,6 +561,10 @@ public:
 	void DeactivateDepth();
 	void SetDepthFunction(unsigned int nDepthFunc);
 
+	void ActivateSkyShadow();
+	void DeactivateSkyShadow();
+	bool IsSkyShadowActive();
+	
 	void ActivateShadowEmission();
 	void DeactivateShadowEmission();
 	bool IsShadowEmissionActive();
@@ -561,6 +585,10 @@ public:
 	void EnableNormalMaps();
 	void DisableNormalMaps();
 	bool AreNormalMapsEnabled();
+	
+	void EnableSkyShadow();
+	void DisableSkyShadow();
+	bool IsSkyShadowEnabled();
 	
 	void EnableTextures();
 	void DisableTextures();

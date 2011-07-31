@@ -129,6 +129,7 @@ public:
 	bool				m_bShadows;
 	bool				m_bLighting;
 	bool				m_bNormalMaps;
+	bool				m_bSkyShadow;
 	EShadingModel 		m_eShadingModel;
 	bool				m_bShowFilePanel;
 	bool				m_bShowEntitiesPanel;
