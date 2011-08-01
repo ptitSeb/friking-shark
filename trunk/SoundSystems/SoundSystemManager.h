@@ -22,6 +22,7 @@ class CSoundSystemManager:virtual public CSystemObjectBase, virtual public ISoun
 {
 	unsigned int m_nMasterVolume;// 0,100
 	bool m_bEnable3DSound;
+	bool m_bMuted;
 
 	ALCcontext *m_pContext;
 	ALCdevice *m_pDevice;
@@ -29,6 +30,8 @@ class CSoundSystemManager:virtual public CSystemObjectBase, virtual public ISoun
 	CVector m_vListenerPosition;
 	CVector m_vListenerOrientation;
 	CVector m_vListenerVelocity;
+
+	std::map<std::string, unsigned int> m_mGroupVolumes;
 	
 	void UpdateListener();
 	
@@ -42,8 +45,13 @@ public:
 
 	bool Is3DSoundEnabled();
 
+	void		  SetMute(bool bOn);
+
 	unsigned int  GetMasterVolume();
-	void SetMasterVolume(unsigned int dVolume);
+	void 		  SetMasterVolume(unsigned int dVolume);
+
+	unsigned int  GetGroupVolume(const std::string &sName);
+	void		  SetGroupVolume(const std::string &sName,unsigned int nVolume);
 
 	BEGIN_PROP_MAP(CSoundSystemManager)
 		PROP_VALUE_FLAGS(m_nMasterVolume,"Volume",100,MRPF_NORMAL|MRPF_OPTIONAL)

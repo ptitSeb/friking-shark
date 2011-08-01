@@ -46,9 +46,10 @@ bool CSoundType::Unserialize(ISystemPersistencyNode *piNode)
 	return bOk;
 }
 
-bool CSoundType::Load(std::string sFileName)
+bool CSoundType::Load(std::string sFileName,std::string sGroup)
 {
 	m_sFileName=sFileName;
+	m_sGroup=sGroup;
 	return LoadFromFile();
 }
 
@@ -220,6 +221,7 @@ bool CSoundType::LoadWav()
 }
 
 std::string CSoundType::GetFileName(){return m_sFileName;}
+std::string CSoundType::GetGroup(){return m_sGroup;}
 
 bool CSoundType::Init(std::string sClass,std::string sName,ISystem *piSystem)
 {
@@ -292,7 +294,8 @@ CSound::CSound(CSoundType *pType)
   m_pType=pType;
   m_bLoop=false;
   m_dVolume=100;
-  
+  m_dGroupVolume=pType->m_piSoundManager?pType->m_piSoundManager->GetGroupVolume(pType->m_sGroup):100;
+
   SUBSCRIBE_TO_CAST(pType->m_piSoundManager,ISoundManagerEvents);
 }
 
@@ -344,16 +347,21 @@ void CSound::UpdateSource()
 	if(m_nSource==AL_NONE){return;}
 	
 	alSourcei(m_nSource,AL_LOOPING,m_bLoop?AL_TRUE:AL_FALSE);
-	alSourcef(m_nSource,AL_GAIN,(float)(m_dVolume/100.0));
+	alSourcef(m_nSource,AL_GAIN,(float)((m_dVolume*m_dGroupVolume)/(100.0*100.0)));
 	
 	if(m_pType->m_piSoundManager->Is3DSoundEnabled())
 	{
+		alSourcei(m_nSource,AL_ROLLOFF_FACTOR,1);
 		alSourcei(m_nSource,AL_CONE_INNER_ANGLE,360);
 		alSourcei(m_nSource,AL_CONE_OUTER_ANGLE,360);
 		alSourcei(m_nSource,AL_SOURCE_RELATIVE,AL_FALSE);
 		alSource3f(m_nSource,AL_POSITION,(float)m_vPosition.c[0],(float)m_vPosition.c[1],(float)m_vPosition.c[2]);
 		alSource3f(m_nSource,AL_VELOCITY,(float)m_vVelocity.c[0],(float)m_vVelocity.c[1],(float)m_vVelocity.c[2]);
 		alSource3f(m_nSource,AL_DIRECTION,(float)m_vOrientation.c[0],(float)m_vOrientation.c[1],(float)m_vOrientation.c[2]);
+	}
+	else
+	{
+		alSourcei(m_nSource,AL_ROLLOFF_FACTOR,0);
 	}
 }
 
@@ -364,4 +372,16 @@ double CSound::GetVolume(){return m_dVolume;}
 void CSound::SetPosition(CVector vPosition){m_vPosition=vPosition;UpdateSource();}
 void CSound::SetOrientation(CVector vOrientation){m_vOrientation=vOrientation;UpdateSource();}
 void CSound::SetVelocity(CVector vVelocity){m_vVelocity=vVelocity;UpdateSource();}
+
+void CSound::OnMasterVolumeChanged(unsigned int dMasterVolume){}
+void CSound::OnMute(bool bOn){}
+
+void CSound::OnGroupVolumeChanged(const std::string &sName,unsigned int dGroupVolume)
+{
+	if(sName==m_pType->m_sGroup)
+	{
+		m_dGroupVolume=m_pType->m_piSoundManager?m_pType->m_piSoundManager->GetGroupVolume(m_pType->m_sGroup):100;
+		UpdateSource();
+	}
+}
 

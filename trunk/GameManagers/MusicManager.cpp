@@ -214,7 +214,7 @@ bool CMusicManager::SetIntroMusic(std::string sMusicFile)
 	
 	m_IntroMusic.Destroy();
 	bool bOk=m_IntroMusic.Create(m_piSystem,"SoundType","");
-	if(bOk){m_IntroMusic.m_piSoundType->Load(sMusicFile);}
+	if(bOk){m_IntroMusic.m_piSoundType->Load(sMusicFile,"Music");}
 	if(bOk && m_bStarted && m_IntroMusic.m_piSoundType)
 	{
 		m_piIntroMusicSound=m_IntroMusic.m_piSoundType->CreateInstance();
@@ -253,7 +253,7 @@ bool CMusicManager::SetMusic(std::string sMusicFile)
 	
 	m_Music.Destroy();
 	bool bOk=m_Music.Create(m_piSystem,"SoundType","");
-	if(bOk){bOk=m_Music.m_piSoundType->Load(sMusicFile);}
+	if(bOk){bOk=m_Music.m_piSoundType->Load(sMusicFile,"Music");}
 	if(bOk && m_bStarted && m_Music.m_piSoundType)
 	{
 		m_piMusicSound=m_Music.m_piSoundType->CreateInstance();

@@ -339,6 +339,12 @@ public:
 	IGameGUILabel  *m_piSTOptionsVolume;
 	IGameGUIButton *m_piBTOptionsDecreaseVolume;
 	IGameGUIButton *m_piBTOptionsIncreaseVolume;
+	IGameGUILabel  *m_piSTOptionsSoundFxVolume;
+	IGameGUIButton *m_piBTOptionsDecreaseSoundFxVolume;
+	IGameGUIButton *m_piBTOptionsIncreaseSoundFxVolume;
+	IGameGUILabel  *m_piSTOptionsMusicVolume;
+	IGameGUIButton *m_piBTOptionsDecreaseMusicVolume;
+	IGameGUIButton *m_piBTOptionsIncreaseMusicVolume;
 	IGameGUILabel  *m_piSTOptionsDifficulty;
 	IGameGUIButton *m_piBTOptionsDecreaseDifficulty;
 	IGameGUIButton *m_piBTOptionsIncreaseDifficulty;
@@ -639,6 +645,12 @@ public:
 		CHILD_MAP_ENTRY("OptionVolume",m_piSTOptionsVolume);
 		CHILD_MAP_ENTRY_EX("OptionDecreaseVolume",m_piBTOptionsDecreaseVolume,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("OptionIncreaseVolume",m_piBTOptionsIncreaseVolume,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY("OptionSoundFxVolume",m_piSTOptionsSoundFxVolume);
+		CHILD_MAP_ENTRY_EX("OptionDecreaseSoundFxVolume",m_piBTOptionsDecreaseSoundFxVolume,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("OptionIncreaseSoundFxVolume",m_piBTOptionsIncreaseSoundFxVolume,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY("OptionMusicVolume",m_piSTOptionsMusicVolume);
+		CHILD_MAP_ENTRY_EX("OptionDecreaseMusicVolume",m_piBTOptionsDecreaseMusicVolume,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("OptionIncreaseMusicVolume",m_piBTOptionsIncreaseMusicVolume,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY("OptionDifficulty",m_piSTOptionsDifficulty);
 		CHILD_MAP_ENTRY_EX("OptionDecreaseDifficulty",m_piBTOptionsDecreaseDifficulty,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("OptionIncreaseDifficulty",m_piBTOptionsIncreaseDifficulty,IGameGUIButtonEvents);
