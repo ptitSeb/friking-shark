@@ -132,6 +132,7 @@ class CWorldManager:virtual public CSystemObjectBase, virtual public IGameManage
 {
  
     CWorldEntity            *m_pWorldEntity;
+	unsigned int 			m_nSectorsToGenerate;
    
 	CEntityManagerWrapper   m_EntityManagerWrapper;
 	CGameControllerWrapper  m_GameControllerWrapper;
@@ -154,17 +155,20 @@ class CWorldManager:virtual public CSystemObjectBase, virtual public IGameManage
 	std::vector<STerrainHeightLayerData> m_vTerrainHeightLayers;
 	std::vector<STerrainColorLayerData>  m_vTerrainColorLayers;
 
-	CGenericModelWrapper	m_TerrainModel;
-	CGenericModelWrapper	m_WaterModel;
+	std::vector<CGenericModelWrapper> m_TerrainSectors;
+	CGenericModelWrapper			  m_WaterModel;
 	
 	int m_pnWaterRenderBuffers[2];
-
+	
+	void Render(IGenericRender *piRender,IGenericCamera *piCurrentCamera,bool bAllSectors);
+	
 public:
 
 	CBSPNode			   *m_pTerrainBSP;
 
     BEGIN_PROP_MAP(CWorldManager)
-      BEGIN_PROP_SUBMAP("Terrain")
+		PROP_VALUE_FLAGS(m_nSectorsToGenerate,"SectorsToGenerate",20,MRPF_NORMAL|MRPF_OPTIONAL)
+     BEGIN_PROP_SUBMAP("Terrain")
 		PROP(m_vTerrainHeightLayers,"HeightLayers")
 		PROP(m_vTerrainColorLayers,"ColorLayers")
 		PROP(m_sTerrainColorMap,"ColorMapFile")
@@ -209,8 +213,8 @@ public:
 	void GetTerrainBaseModel(std::string *psModel,IGenericModel **ppiModel);
 	void GetTerrainColorMap(std::string *psColorMap,IGenericTexture **ppiTexture);
 
-	void GetTerrainModel(IGenericModel **ppiModel);
-
+	void GetTerrainBBox(CVector *pvMins,CVector *pvMaxs);
+	
 	// ITerrainDesign Water
 
 	bool SetTerrainWater(STerrainWater *pWater);

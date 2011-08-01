@@ -190,7 +190,7 @@ bool COpenGLModel::LoadFromFile()
 	}
 	
 	if(m_bLoadBSP){LoadBSP(sFileName.c_str());}
-	UpdateFrameBuffers();
+	UpdateBufferObjects();
 	
 	m_bLoadResult=true;
 	
@@ -306,7 +306,7 @@ void COpenGLModel::Render(IGenericRender *piRender,unsigned long nAnimation,unsi
 	piRender->RenderModel(Origin,Origin,this,nAnimation,nFrame);
 }
 
-void COpenGLModel::UpdateFrameBuffers()
+void COpenGLModel::UpdateBufferObjects()
 {
 	for(unsigned long x=0;x<m_vAnimations.size();x++)
 	{
