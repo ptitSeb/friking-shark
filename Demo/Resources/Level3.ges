@@ -4047,6 +4047,7 @@ Music
 			File=./Sounds/level3music.ogg
 			Loop=0
 			Volume=100.000000
+			Group=Music
 		}
 		Name=""
 		System=GameSystem

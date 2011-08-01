@@ -570,6 +570,18 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 		sprintf(A,"Volume: %d%%",m_SoundManagerWrapper.m_piSoundManager->GetMasterVolume());
 		m_piSTOptionsVolume->SetText(A);
 	}	
+	if(m_piSTOptionsSoundFxVolume && m_SoundManagerWrapper.m_piSoundManager)
+	{
+		char A[200];
+		sprintf(A," FX:    %d%%",m_SoundManagerWrapper.m_piSoundManager->GetGroupVolume("SoundFX"));
+		m_piSTOptionsSoundFxVolume->SetText(A);
+	}	
+	if(m_piSTOptionsMusicVolume && m_SoundManagerWrapper.m_piSoundManager)
+	{
+		char A[200];
+		sprintf(A," Music: %d%%",m_SoundManagerWrapper.m_piSoundManager->GetGroupVolume("Music"));
+		m_piSTOptionsMusicVolume->SetText(A);
+	}	
 	if(m_piSTOptionsDifficulty && m_SoundManagerWrapper.m_piSoundManager)
 	{
 		char A[200];
@@ -727,6 +739,32 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	  volume-=5;
 	  if(volume<0){volume=0;}
 	  m_SoundManagerWrapper.m_piSoundManager->SetMasterVolume(volume);
+	}
+	if(m_piBTOptionsIncreaseSoundFxVolume==piControl && m_SoundManagerWrapper.m_piSoundManager)
+	{
+		int volume=m_SoundManagerWrapper.m_piSoundManager->GetGroupVolume("SoundFX");
+		volume+=5;
+		m_SoundManagerWrapper.m_piSoundManager->SetGroupVolume("SoundFX",volume);
+	}
+	if(m_piBTOptionsDecreaseSoundFxVolume==piControl && m_SoundManagerWrapper.m_piSoundManager)
+	{
+		int volume=m_SoundManagerWrapper.m_piSoundManager->GetGroupVolume("SoundFX");
+		volume-=5;
+		if(volume<0){volume=0;}
+		m_SoundManagerWrapper.m_piSoundManager->SetGroupVolume("SoundFX",volume);
+	}
+	if(m_piBTOptionsIncreaseMusicVolume==piControl && m_SoundManagerWrapper.m_piSoundManager)
+	{
+		int volume=m_SoundManagerWrapper.m_piSoundManager->GetGroupVolume("Music");
+		volume+=5;
+		m_SoundManagerWrapper.m_piSoundManager->SetGroupVolume("Music",volume);
+	}
+	if(m_piBTOptionsDecreaseMusicVolume==piControl && m_SoundManagerWrapper.m_piSoundManager)
+	{
+		int volume=m_SoundManagerWrapper.m_piSoundManager->GetGroupVolume("Music");
+		volume-=5;
+		if(volume<0){volume=0;}
+		m_SoundManagerWrapper.m_piSoundManager->SetGroupVolume("Music",volume);
 	}
 	if(m_piBTOptionsIncreaseDifficulty==piControl && m_SoundManagerWrapper.m_piSoundManager)
 	{

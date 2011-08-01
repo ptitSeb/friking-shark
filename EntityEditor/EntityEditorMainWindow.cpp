@@ -1466,7 +1466,7 @@ void CEntityEditorMainWindow::ProcessNewSound()
 			{
 				if(model.Create("GameResources","SoundType",sBaseSound))
 				{
-					if(model.m_piSound->Load(sBaseSound))
+					if(model.m_piSound->Load(sBaseSound,"SoundFX"))
 					{
 						CSystemSaverHelper helper;
 						bOk=helper.SaveSystemNamedObjects("Scripts/GameResources.cfg","GameResources");

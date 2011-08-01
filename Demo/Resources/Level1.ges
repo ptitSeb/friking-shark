@@ -3779,6 +3779,7 @@ Music
 			File=./Sounds/level1intro.ogg
 			Loop=0
 			Volume=100.000000
+			Group=Music
 		}
 		Name=""
 		System=GameSystem
@@ -3792,6 +3793,7 @@ Music
 			File=./Sounds/level1music.ogg
 			Loop=0
 			Volume=100.000000
+			Group=Music
 		}
 		Name=""
 		System=GameSystem

@@ -27,8 +27,9 @@ class ISoundType:virtual public ISystemUnknown
 public:
 	virtual ISound *CreateInstance()=0;
 
-	virtual bool        Load(std::string sFileName)=0;
+	virtual bool        Load(std::string sFileName,std::string sGroup)=0;
 	virtual std::string GetFileName()=0;
+	virtual std::string GetGroup()=0;
 };
 
 class ISound
@@ -57,6 +58,11 @@ public:
   virtual unsigned int  GetMasterVolume()=0;
   virtual void			SetMasterVolume(unsigned int dVolume)=0;
   
+  virtual unsigned int  GetGroupVolume(const std::string &sName)=0;
+  virtual void			SetGroupVolume(const std::string &sName,unsigned int nVolume)=0;
+
+  virtual void			SetMute(bool bOn)=0;
+
   virtual void SetListenerPosition(CVector vPosition)=0;
   virtual void SetListenerOrientation(CVector vOrientation)=0;
   virtual void SetListenerVelocity(CVector vVelocity)=0;
@@ -67,7 +73,10 @@ public:
 class ISoundManagerEvents : virtual public ISystemUnknown
 {
 public:
+
   virtual void OnMasterVolumeChanged(unsigned int dMasterVolume)=0;
+  virtual void OnGroupVolumeChanged(const std::string &sName,unsigned int dGroupVolume)=0;
+  virtual void OnMute(bool bOn)=0;
 
   virtual ~ISoundManagerEvents(){}
 };
