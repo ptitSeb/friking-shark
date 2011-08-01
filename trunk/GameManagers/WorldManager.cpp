@@ -27,6 +27,7 @@ CWorldManager::CWorldManager()
 	m_pTerrainBSP=NULL;
 	m_pnWaterRenderBuffers[0]=-1;
 	m_pnWaterRenderBuffers[1]=-1;
+	m_nSectorsToGenerate=20;
 }
 
 CWorldManager::~CWorldManager()
@@ -62,7 +63,6 @@ void CWorldManager::CreateScenario()
 {
 	CloseScenario();
 	m_pTerrainBSP=NULL;
-	m_TerrainModel.Create("GameResources","Model","");
 	m_WaterModel.Create("GameResources","Model","");
 	UpdateTerrain();
 }
@@ -70,7 +70,6 @@ void CWorldManager::CreateScenario()
 void CWorldManager::LoadScenario(ISystemPersistencyNode *piNode)
 {
 	CloseScenario();
-	m_TerrainModel.Create("GameResources","Model","");
 	m_WaterModel.Create("GameResources","Model","");
 	PersistencyLoad(piNode->GetNode("Terrain"),"Terrain");
 	UpdateTerrain();
@@ -87,7 +86,7 @@ void CWorldManager::CloseScenario()
 	m_TerrainColorMap.Destroy();
 	m_vTerrainHeightLayers.clear();
 	m_vTerrainColorLayers.clear();
-	m_TerrainModel.Destroy();
+	m_TerrainSectors.clear();
 	m_WaterModel.Destroy();
 	m_TerrainWater.m_Texture1.Destroy();
 	m_TerrainWater.m_Texture2.Destroy();
@@ -124,7 +123,7 @@ void CWorldManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction
 }
 
 
-void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCamera)
+void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCamera,bool bAllSectors)
 {
 	double dWaterOffset=0;
 	if(m_WaterModel.m_piModel && m_pnWaterRenderBuffers[0]!=-1  && m_pnWaterRenderBuffers[1]!=-1 && m_TerrainWater.m_Config.dSpeed!=0)
@@ -136,48 +135,91 @@ void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCam
 		m_WaterModel.m_piModel->SetRenderBufferTextureMatrix(0,0,m_pnWaterRenderBuffers[1],0,&m);
 	}
 	
-	if(m_TerrainModel.m_piModel)
+	if(m_TerrainSectors.size()==0)
 	{
-		piRender->PushState();
-		bool bUseBaseFrame=(m_TerrainBaseModel.m_piModel!=NULL && m_TerrainModel.m_piModel->GetFrameRenderBuffers(0,0)==0);
-		if(bUseBaseFrame){piRender->DeactivateTextures();}
-		piRender->DeactivateShadowEmission();
-		piRender->ActivateLighting();
-		piRender->ActivateBlending();
-		piRender->SetDepthFunction(GL_LEQUAL);
-		piRender->RenderModel(Origin,Origin,bUseBaseFrame?m_TerrainBaseModel.m_piModel:m_TerrainModel.m_piModel);
-		piRender->PopState();
+		if(m_TerrainBaseModel.m_piModel)
+		{
+			piRender->PushState();
+			piRender->DeactivateTextures();
+			piRender->DeactivateShadowEmission();
+			piRender->DeactivateLighting();
+			piRender->ActivateBlending();
+			piRender->SetDepthFunction(GL_LEQUAL);
+			piRender->RenderModel(Origin,Origin,m_TerrainBaseModel.m_piModel);
+			piRender->PopState();
+		}
+	}
+	else
+	{
+		for(unsigned int s=0;s<m_TerrainSectors.size();s++)
+		{
+			IGenericModel *piModel=m_TerrainSectors[s].m_piModel;
+			bool bRenderSector=true;
+			if(!bAllSectors && m_PlayAreaManagerWrapper.m_piPlayAreaManager)
+			{
+				CVector vMins,vMaxs;
+				piModel->GetFrameBBox(0,0,&vMins,&vMaxs);
+				CVector vCenter=(vMins+vMaxs)*0.5;
+				CVector vSize=vMaxs-vMins;
+				CVector vPos=CVector(vCenter.c[0],vMins.c[1],vCenter.c[2]);
+				bRenderSector=m_PlayAreaManagerWrapper.m_piPlayAreaManager->IsVisible(vPos,vSize.c[0]*0.5);
+			}
+			if(bRenderSector)
+			{
+				piRender->PushState();
+				piRender->DeactivateShadowEmission();
+				piRender->ActivateLighting();
+				piRender->ActivateBlending();
+				piRender->SetDepthFunction(GL_LEQUAL);
+				piRender->RenderModel(Origin,Origin,piModel);
+				piRender->PopState();
+			}
+		}
 	}
 	
 	if(m_WaterModel.m_piModel)
 	{
-		piRender->PushState();
-		piRender->SetWaterMappingSize(m_TerrainWater.m_Config.dHorizontalResolution,m_TerrainWater.m_Config.dVerticalResolution);
-		piRender->SetWaterMappingOffset(dWaterOffset,0);
-		piRender->DeactivateShadowEmission();
-		if(piRender->GetShadingModel()==eShadingModel_Phong)
+		bool bRenderWater=true;
+		if(!bAllSectors && m_PlayAreaManagerWrapper.m_piPlayAreaManager)
 		{
-			piRender->ActivateLighting();
+			CVector vMins,vMaxs;
+			m_WaterModel.m_piModel->GetFrameBBox(0,0,&vMins,&vMaxs);
+			CVector vCenter=(vMins+vMaxs)*0.5;
+			CVector vSize=vMaxs-vMins;
+			CVector vPos=CVector(vCenter.c[0],vMins.c[1],vCenter.c[2]);
+			bRenderWater=m_PlayAreaManagerWrapper.m_piPlayAreaManager->IsVisible(vPos,vSize.c[0]*0.5);
 		}
-		else
+		if(bRenderWater)
 		{
-			piRender->DeactivateLighting();			
+			piRender->PushState();
+			piRender->SetWaterMappingSize(m_TerrainWater.m_Config.dHorizontalResolution,m_TerrainWater.m_Config.dVerticalResolution);
+			piRender->SetWaterMappingOffset(dWaterOffset,0);
+			piRender->DeactivateShadowEmission();
+			if(piRender->GetShadingModel()==eShadingModel_Phong)
+			{
+				piRender->ActivateLighting();
+			}
+			else
+			{
+				piRender->DeactivateLighting();			
+			}
+			piRender->ActivateBlending();
+			piRender->ActivateWater();
+			piRender->SetDepthFunction(GL_LEQUAL);
+			piRender->SetBlendingLayer(1);
+			piRender->RenderModel(Origin,Origin,m_WaterModel.m_piModel);
+			piRender->PopState();
 		}
-		piRender->ActivateBlending();
-		piRender->ActivateWater();
-		piRender->SetDepthFunction(GL_LEQUAL);
-		piRender->SetBlendingLayer(1);
-		piRender->RenderModel(Origin,Origin,m_WaterModel.m_piModel);
-		piRender->PopState();
 	}
+}
+void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCamera)
+{
+	Render(piRender,piCurrentCamera,false);
 }
 
 void CWorldManager::DesignRender(IGenericRender *piRender)
 {
-	if(m_TerrainModel.m_piModel || m_WaterModel.m_piModel)
-	{
-		Render(piRender,NULL);
-	}
+	Render(piRender,NULL,true);
 }
 
 bool CWorldManager::SetTerrainBaseModel( std::string sModel )
@@ -211,10 +253,9 @@ void CWorldManager::GetTerrainColorMap( std::string *psColorMap,IGenericTexture 
 	if(ppiTexture){*ppiTexture=ADD(m_TerrainColorMap.m_piTexture);}
 }
 
-void CWorldManager::GetTerrainModel( IGenericModel **ppiModel )
+void CWorldManager::GetTerrainBBox(CVector *pvMins,CVector *pvMaxs)
 {
-	bool bUseBaseFrame=(m_TerrainBaseModel.m_piModel!=NULL && m_TerrainModel.m_piModel->GetFrameRenderBuffers(0,0)==0);
-	if(ppiModel){*ppiModel=ADD(bUseBaseFrame?m_TerrainBaseModel.m_piModel:m_TerrainModel.m_piModel);}
+	if(m_TerrainBaseModel.m_piModel){m_TerrainBaseModel.m_piModel->GetFrameBBox(0,0,pvMins,pvMaxs);}
 }
 
 // Color Layers
@@ -481,7 +522,6 @@ struct STemporalRenderBuffer
 	vector<GLfloat> vVertexArray; // por vertice
 	vector<GLfloat> vNormalArray;// por vertice
 	vector<GLfloat> vTexVertexArray;// por vertice
-	vector<GLfloat> vShadowTexVertexArray;// por vertice
 	vector<GLfloat> vColorMapTexVertexArray; // por vertice
 	vector<GLfloat> vColorArray; // por vertice
 	vector<GLuint>	vTriangleVertexes; // 3 por cara
@@ -506,15 +546,36 @@ struct STemporalRenderBuffer
 	double			dColorSaturationMargin;
 	double			dColorValueMargin;
 	bool			bColorAbruptEnd;
+	
+	IGenericTexture *piTexture;
+	IGenericTexture *piNormalMap;
+	
+	STemporalRenderBuffer()
+	{
+		eType=eTerrainTexturizationLayer_None;
+		nTextureWidth=0;
+		nTextureHeight=0;
+		dHorizontalResolution=0;
+		dVerticalResolution=0;
+		dMinAbsHeight=0;
+		dMaxAbsHeight=0;
+		dMinDecayAbsHeight=0;
+		dMaxDecayAbsHeight=0;
+		dColorSaturationMargin=0;
+		dColorValueMargin=0;
+		bColorAbruptEnd=0;
+		piTexture=NULL;
+		piNormalMap=NULL;
+	}
 };
 
 bool CWorldManager::UpdateTerrain()
 {
 	if(m_TerrainBaseModel.m_piModel==NULL){return false;}
-	if(m_TerrainModel.m_piModel==NULL){return false;}
 
 	m_pTerrainBSP=m_TerrainBaseModel.m_piModel->GetBSP();
 
+	
 	bool bOk=true;
 
 	unsigned int nColorMapWidth=0,nColorMapHeight=0;
@@ -523,63 +584,61 @@ bool CWorldManager::UpdateTerrain()
 	m_TerrainBaseModel.m_piModel->GetFrameBBox(0,0,&vBaseModelMins,&vBaseModelMaxs);
 	if(m_TerrainColorMap.m_piTexture){m_TerrainColorMap.m_piTexture->GetSize(&nColorMapWidth,&nColorMapHeight);}
 
-	m_TerrainModel.m_piModel->RemoveAnimations();
-	int nAnimation=m_TerrainModel.m_piModel->AddAnimation();
-	int nFrame=m_TerrainModel.m_piModel->AddAnimationFrame(nAnimation);
-
-	std::vector<STemporalRenderBuffer> vTempBuffers;
+	double dSectorSize=vModelSize.c[0]/(double)m_nSectorsToGenerate;
+	
+	m_TerrainSectors.clear();
+	
+	std::vector<STemporalRenderBuffer> *pvTempBuffers=new std::vector<STemporalRenderBuffer>[m_nSectorsToGenerate];
+	
 	// Load height layers 
 
-	for(unsigned long x=0;bOk && x<m_vTerrainHeightLayers.size();x++)
+	for(unsigned long s=0;bOk && s<m_nSectorsToGenerate;s++)
 	{
-
-		STemporalRenderBuffer buffer;
-		buffer.eType=eTerrainTexturizationLayer_Height;
-		buffer.dHorizontalResolution=m_vTerrainHeightLayers[x].m_LayerConfig.dHorizontalResolution;
-		buffer.dVerticalResolution=m_vTerrainHeightLayers[x].m_LayerConfig.dVerticalResolution;
-		buffer.dMinAbsHeight=vModelSize.c[1]*m_vTerrainHeightLayers[x].m_LayerConfig.dMinHeight+vBaseModelMins.c[1];
-		buffer.dMaxAbsHeight=vModelSize.c[1]*m_vTerrainHeightLayers[x].m_LayerConfig.dMaxHeight+vBaseModelMins.c[1];
-		buffer.dMinDecayAbsHeight=buffer.dMinAbsHeight-vModelSize.c[1]*(m_vTerrainHeightLayers[x].m_LayerConfig.dDecayMargin);
-		buffer.dMaxDecayAbsHeight=buffer.dMaxAbsHeight+vModelSize.c[1]*(m_vTerrainHeightLayers[x].m_LayerConfig.dDecayMargin);
-		buffer.nTextureWidth=0;
-		buffer.nTextureHeight=0;
-		if(m_vTerrainHeightLayers[x].m_Texture.m_piTexture)
+		for(unsigned long x=0;bOk && x<m_vTerrainHeightLayers.size();x++)
 		{
-			m_vTerrainHeightLayers[x].m_Texture.m_piTexture->GetSize(&buffer.nTextureWidth,&buffer.nTextureHeight);
+			STemporalRenderBuffer buffer;
+			buffer.eType=eTerrainTexturizationLayer_Height;
+			buffer.dHorizontalResolution=m_vTerrainHeightLayers[x].m_LayerConfig.dHorizontalResolution;
+			buffer.dVerticalResolution=m_vTerrainHeightLayers[x].m_LayerConfig.dVerticalResolution;
+			buffer.dMinAbsHeight=vModelSize.c[1]*m_vTerrainHeightLayers[x].m_LayerConfig.dMinHeight+vBaseModelMins.c[1];
+			buffer.dMaxAbsHeight=vModelSize.c[1]*m_vTerrainHeightLayers[x].m_LayerConfig.dMaxHeight+vBaseModelMins.c[1];
+			buffer.dMinDecayAbsHeight=buffer.dMinAbsHeight-vModelSize.c[1]*(m_vTerrainHeightLayers[x].m_LayerConfig.dDecayMargin);
+			buffer.dMaxDecayAbsHeight=buffer.dMaxAbsHeight+vModelSize.c[1]*(m_vTerrainHeightLayers[x].m_LayerConfig.dDecayMargin);
+			buffer.nTextureWidth=0;
+			buffer.nTextureHeight=0;
+			buffer.piTexture=ADD(m_vTerrainHeightLayers[x].m_Texture.m_piTexture);
+			buffer.piNormalMap=ADD(m_vTerrainHeightLayers[x].m_NormalMap.m_piTexture);
+			if(m_vTerrainHeightLayers[x].m_Texture.m_piTexture)
+			{
+				m_vTerrainHeightLayers[x].m_Texture.m_piTexture->GetSize(&buffer.nTextureWidth,&buffer.nTextureHeight);
+			}
+			pvTempBuffers[s].push_back(buffer);
 		}
-		vTempBuffers.push_back(buffer);
 
-		unsigned long nBuffer=m_TerrainModel.m_piModel->AddRenderBuffer(nAnimation,nFrame);
-		m_TerrainModel.m_piModel->SetRenderBufferTexture(nAnimation,nFrame,nBuffer,0,m_vTerrainHeightLayers[x].m_Texture.m_piTexture);
-		m_TerrainModel.m_piModel->SetRenderBufferMaterial(nAnimation,nFrame,nBuffer,CVector(1,1,1),CVector(1,1,1),CVector(0,0,0),0,1);
-		m_TerrainModel.m_piModel->SetRenderBufferNormalMap(nAnimation,nFrame,nBuffer,m_vTerrainHeightLayers[x].m_NormalMap.m_piTexture);
-	}
+		// Load color layers 
+		// Las capas de color tienen mayor prioridad 
 
-	// Load color layers 
-	// Las capas de color tienen mayor prioridad 
-
-	for(unsigned long x=0;bOk && x<m_vTerrainColorLayers.size();x++)
-	{
-		STemporalRenderBuffer buffer;
-		buffer.eType=eTerrainTexturizationLayer_ColorMap;
-		buffer.dHorizontalResolution=m_vTerrainColorLayers[x].m_LayerConfig.dHorizontalResolution;
-		buffer.dVerticalResolution=m_vTerrainColorLayers[x].m_LayerConfig.dVerticalResolution;
-		buffer.vColor=m_vTerrainColorLayers[x].m_LayerConfig.vColor;
-		buffer.dColorSaturationMargin=m_vTerrainColorLayers[x].m_LayerConfig.dColorSaturationMargin;
-		buffer.dColorValueMargin=m_vTerrainColorLayers[x].m_LayerConfig.dColorValueMargin;
-		buffer.bColorAbruptEnd=m_vTerrainColorLayers[x].m_LayerConfig.bAbruptEnd;
-		buffer.nTextureWidth=0;
-		buffer.nTextureHeight=0;
-		if(m_vTerrainColorLayers[x].m_Texture.m_piTexture)
+		for(unsigned long x=0;bOk && x<m_vTerrainColorLayers.size();x++)
 		{
-			m_vTerrainColorLayers[x].m_Texture.m_piTexture->GetSize(&buffer.nTextureWidth,&buffer.nTextureHeight);
+			STemporalRenderBuffer buffer;
+			buffer.eType=eTerrainTexturizationLayer_ColorMap;
+			buffer.dHorizontalResolution=m_vTerrainColorLayers[x].m_LayerConfig.dHorizontalResolution;
+			buffer.dVerticalResolution=m_vTerrainColorLayers[x].m_LayerConfig.dVerticalResolution;
+			buffer.vColor=m_vTerrainColorLayers[x].m_LayerConfig.vColor;
+			buffer.dColorSaturationMargin=m_vTerrainColorLayers[x].m_LayerConfig.dColorSaturationMargin;
+			buffer.dColorValueMargin=m_vTerrainColorLayers[x].m_LayerConfig.dColorValueMargin;
+			buffer.bColorAbruptEnd=m_vTerrainColorLayers[x].m_LayerConfig.bAbruptEnd;
+			buffer.nTextureWidth=0;
+			buffer.nTextureHeight=0;
+			buffer.piTexture=ADD(m_vTerrainColorLayers[x].m_Texture.m_piTexture);
+			buffer.piNormalMap=ADD(m_vTerrainColorLayers[x].m_NormalMap.m_piTexture);
+			
+			if(m_vTerrainColorLayers[x].m_Texture.m_piTexture)
+			{
+				m_vTerrainColorLayers[x].m_Texture.m_piTexture->GetSize(&buffer.nTextureWidth,&buffer.nTextureHeight);
+			}
+			pvTempBuffers[s].push_back(buffer);
 		}
-		vTempBuffers.push_back(buffer);
-
-		unsigned long nBuffer=m_TerrainModel.m_piModel->AddRenderBuffer(nAnimation,nFrame);
-		m_TerrainModel.m_piModel->SetRenderBufferTexture(nAnimation,nFrame,nBuffer,0,m_vTerrainColorLayers[x].m_Texture.m_piTexture);
-		m_TerrainModel.m_piModel->SetRenderBufferMaterial(nAnimation,nFrame,nBuffer,CVector(1,1,1),CVector(1,1,1),CVector(0,0,0),0,1);
-		m_TerrainModel.m_piModel->SetRenderBufferNormalMap(nAnimation,nFrame,nBuffer,m_vTerrainColorLayers[x].m_NormalMap.m_piTexture);
 	}
 
 	if(!bOk)
@@ -611,7 +670,6 @@ bool CWorldManager::UpdateTerrain()
 			// 
 			CVector vVertexes[3];
 			CVector vNormals[3];
-			CVector vShadow[3];
 			CVector vColorMapTexture[3];
 			CVector vColors[3];
 			double dColorAlpha[3]={0,0,0};
@@ -639,23 +697,28 @@ bool CWorldManager::UpdateTerrain()
 				vRelativeVertex.c[2]/=vSize.c[2];
 				vColorMapTexture[nVertex].c[0]=vRelativeVertex.c[0];
 				vColorMapTexture[nVertex].c[1]=1.0-vRelativeVertex.c[2];
-				vShadow[nVertex].c[0]=(vVertexes[nVertex].c[0]-vMins.c[0])/vSize.c[0];
-				vShadow[nVertex].c[1]=(vVertexes[nVertex].c[2]-vMins.c[2])/vSize.c[2];
 			}
+
+
+			// Determine the destination sector based on the x coordinates of the face
+			double dMinX=std::min(vVertexes[0].c[0],std::min(vVertexes[1].c[0],vVertexes[2].c[0]));
+			int nDestSector=(dMinX-vMins.c[0])/dSectorSize;
+			if(nDestSector>=(int)m_nSectorsToGenerate){nDestSector=m_nSectorsToGenerate-1;}
+			if(nDestSector<0){nDestSector=0;}
 
 			CVector vTexture[3];
 
 			// Deduccion de las texturas a utilizar
 			nDestBufs=0;
 
-			for(int x=vTempBuffers.size()-1;x>=0;x--)
+			for(int x=pvTempBuffers[nDestSector].size()-1;x>=0;x--)
 			{
-				if(vTempBuffers[x].eType==eTerrainTexturizationLayer_Height)
+				if(pvTempBuffers[nDestSector][x].eType==eTerrainTexturizationLayer_Height)
 				{
 					for(unsigned long nVertex=0;nVertex<3;nVertex++)
 					{
-						if(vVertexes[nVertex].c[1]>=vTempBuffers[x].dMinDecayAbsHeight && 
-							vVertexes[nVertex].c[1]<=vTempBuffers[x].dMaxDecayAbsHeight)
+						if(vVertexes[nVertex].c[1]>=pvTempBuffers[nDestSector][x].dMinDecayAbsHeight && 
+							vVertexes[nVertex].c[1]<=pvTempBuffers[nDestSector][x].dMaxDecayAbsHeight)
 						{
 							pnDestBuf[nDestBufs]=x;
 							nDestBufs++;
@@ -663,7 +726,7 @@ bool CWorldManager::UpdateTerrain()
 						}
 					}
 				}
-				else if(vTempBuffers[x].eType==eTerrainTexturizationLayer_ColorMap && m_TerrainColorMap.m_piTexture)
+				else if(pvTempBuffers[nDestSector][x].eType==eTerrainTexturizationLayer_ColorMap && m_TerrainColorMap.m_piTexture)
 				{
 					for(unsigned long nVertex=0;nVertex<3;nVertex++)
 					{
@@ -673,9 +736,9 @@ bool CWorldManager::UpdateTerrain()
 
 						CVector vColor=m_TerrainColorMap.m_piTexture->GetPixelColor((unsigned long)vPixel.c[0],(unsigned long)vPixel.c[1]);
 
-						CVector vYUVDiffence=HSVDifference(vTempBuffers[x].vColor,vColor);
-						if( fabs(vYUVDiffence.c[1])<=vTempBuffers[x].dColorSaturationMargin&& 
-							fabs(vYUVDiffence.c[0])<=vTempBuffers[x].dColorValueMargin)
+						CVector vYUVDiffence=HSVDifference(pvTempBuffers[nDestSector][x].vColor,vColor);
+						if( fabs(vYUVDiffence.c[1])<=pvTempBuffers[nDestSector][x].dColorSaturationMargin&& 
+							fabs(vYUVDiffence.c[0])<=pvTempBuffers[nDestSector][x].dColorValueMargin)
 						{
 							pnDestBuf[nDestBufs]=x;
 							nDestBufs++;
@@ -690,7 +753,7 @@ bool CWorldManager::UpdateTerrain()
 			for (int nDestBuf=0;nDestBuf<nDestBufs;nDestBuf++)
 			{
 				int nDestinationBuffer=pnDestBuf[nDestBuf];
-				STemporalRenderBuffer *pDestBuffer=&vTempBuffers[nDestinationBuffer];
+				STemporalRenderBuffer *pDestBuffer=&pvTempBuffers[nDestSector][nDestinationBuffer];
 				// Generacion de coordenadas de texturas
 				// y calculo del alpha
 
@@ -791,7 +854,6 @@ bool CWorldManager::UpdateTerrain()
 						// por cada coordenada del vertice
 						for(unsigned long nCoord=0;nCoord<2;nCoord++)
 						{
-							pDestBuffer->vShadowTexVertexArray.push_back((GLfloat)vShadow[nVertex].c[nCoord]);
 							pDestBuffer->vTexVertexArray.push_back((GLfloat)vTexture[nVertex].c[nCoord]);
 							pDestBuffer->vColorMapTexVertexArray.push_back((GLfloat)vColorMapTexture[nVertex].c[nCoord]);
 						}
@@ -815,28 +877,48 @@ bool CWorldManager::UpdateTerrain()
 		}
 	}
 
-	// Generamos los render buffers a partir de los temporales
-
-	// Cambiamos el orden para introducir primero las capas por altura y despues las capas por color
-	// para que se pinten correctamente
-
-	for(unsigned long x=0;x<m_TerrainModel.m_piModel->GetFrameRenderBuffers(nAnimation,nFrame);x++)
+	for(unsigned long s=0;bOk && s<m_nSectorsToGenerate;s++)
 	{
-		unsigned long nFaces=vTempBuffers[x].vTriangleVertexes.size()/3;
-		unsigned long nVertexes=vTempBuffers[x].vVertexArray.size()/3;
-			
-		m_TerrainModel.m_piModel->SetRenderBufferVertexes(nAnimation,nFrame,x,nVertexes,BufferFromVector(&vTempBuffers[x].vVertexArray));
-		m_TerrainModel.m_piModel->SetRenderBufferFaces(nAnimation,nFrame,x,nFaces,BufferFromVector(&vTempBuffers[x].vTriangleVertexes));
-		m_TerrainModel.m_piModel->SetRenderBufferColors(nAnimation,nFrame,x,BufferFromVector(&vTempBuffers[x].vColorArray));
-		m_TerrainModel.m_piModel->SetRenderBufferNormals(nAnimation,nFrame,x,BufferFromVector(&vTempBuffers[x].vNormalArray));
-		m_TerrainModel.m_piModel->SetRenderBufferTextureCoords(nAnimation,nFrame,x,0,BufferFromVector(&vTempBuffers[x].vTexVertexArray));
-		m_TerrainModel.m_piModel->SetRenderBufferTextureCoords(nAnimation,nFrame,x,1,BufferFromVector(&vTempBuffers[x].vShadowTexVertexArray));
-		
-		IGenericTexture *piNormalMap=NULL;
-		m_TerrainModel.m_piModel->GetRenderBufferNormalMap(nAnimation,nFrame,x,&piNormalMap);
-		if(piNormalMap){m_TerrainModel.m_piModel->SetRenderBufferNormalMapCoords(nAnimation,nFrame,x,BufferFromVector(&vTempBuffers[x].vTexVertexArray));}
-		REL(piNormalMap);
-	}
+		CGenericModelWrapper model;
+		bOk=model.Create("GameResources","Model","");
+		if(bOk)
+		{
+			int nAnimation=model.m_piModel->AddAnimation();
+			int nFrame=model.m_piModel->AddAnimationFrame(nAnimation);
+			bool bAddModel=false;
+
+			for(unsigned int b=0;b<pvTempBuffers[s].size();b++)
+			{
+				STemporalRenderBuffer *pBuffer=&pvTempBuffers[s][b];
+				if(pBuffer->vVertexArray.size()==0)
+				{
+					continue;
+				}
+				bAddModel=true;
+				
+				unsigned long nFaces=pBuffer->vTriangleVertexes.size()/3;
+				unsigned long nVertexes=pBuffer->vVertexArray.size()/3;
+				unsigned long nBuffer=model.m_piModel->AddRenderBuffer(nAnimation,nFrame);
+				
+				model.m_piModel->SetRenderBufferTexture(nAnimation,nFrame,nBuffer,0,pBuffer->piTexture);
+				model.m_piModel->SetRenderBufferMaterial(nAnimation,nFrame,nBuffer,CVector(1,1,1),CVector(1,1,1),CVector(0,0,0),0,1);
+				model.m_piModel->SetRenderBufferNormalMap(nAnimation,nFrame,nBuffer,pBuffer->piNormalMap);
+				model.m_piModel->SetRenderBufferVertexes(nAnimation,nFrame,nBuffer,nVertexes,BufferFromVector(&pBuffer->vVertexArray));
+				model.m_piModel->SetRenderBufferFaces(nAnimation,nFrame,nBuffer,nFaces,BufferFromVector(&pBuffer->vTriangleVertexes));
+				model.m_piModel->SetRenderBufferColors(nAnimation,nFrame,nBuffer,BufferFromVector(&pBuffer->vColorArray));
+				model.m_piModel->SetRenderBufferNormals(nAnimation,nFrame,nBuffer,BufferFromVector(&pBuffer->vNormalArray));
+				model.m_piModel->SetRenderBufferTextureCoords(nAnimation,nFrame,nBuffer,0,BufferFromVector(&pBuffer->vTexVertexArray));
+				if(pBuffer->piNormalMap){model.m_piModel->SetRenderBufferNormalMapCoords(nAnimation,nFrame,nBuffer,BufferFromVector(&pBuffer->vTexVertexArray));}
+			}
+			if(bAddModel)
+			{
+				model.m_piModel->UpdateBufferObjects();
+				m_TerrainSectors.push_back(model);
+			}
+		}
+	}	
+ 
+	
 	if(m_WaterModel.m_piModel)
 	{
 		m_WaterModel.m_piModel->RemoveAnimations();
@@ -911,10 +993,24 @@ bool CWorldManager::UpdateTerrain()
 				m_WaterModel.m_piModel->SetRenderBufferFaces(nWaterAnimation,nWaterFrame,m_pnWaterRenderBuffers[x],2,pWaterFaces);
 			}
 		}
-		m_WaterModel.m_piModel->UpdateFrameBuffers();
+		m_WaterModel.m_piModel->UpdateBufferObjects();
 	}
-
-	m_TerrainModel.m_piModel->UpdateFrameBuffers();
+	
+	for(unsigned long s=0;s<m_nSectorsToGenerate;s++)
+	{
+		for(unsigned long b=0;b<pvTempBuffers[s].size();b++)
+		{
+			IGenericTexture *piTexture=pvTempBuffers[s][b].piTexture;
+			IGenericTexture *piNormalMap=pvTempBuffers[s][b].piNormalMap;
+			REL(piTexture);
+			REL(piNormalMap);
+		}
+	}
+		
+	delete [] pvTempBuffers;
+	pvTempBuffers=NULL;
+	
+	//m_TerrainModel.m_piModel->UpdateBufferObjects();
 	return true;
 }
 
@@ -924,7 +1020,7 @@ bool CWorldManager::GetTerrainStats( double *pdVertexOverhead,double *pdFaceOver
 	if(pdFaceOverhead){*pdFaceOverhead=0;}
 
 	if(m_TerrainBaseModel.m_piModel==NULL){return false;}
-	if(m_TerrainModel.m_piModel==NULL){return false;}
+	if(m_TerrainSectors.size()==0){return false;}
 
 	// Trace stats
 
@@ -941,13 +1037,17 @@ bool CWorldManager::GetTerrainStats( double *pdVertexOverhead,double *pdFaceOver
 		nOriginalVertexes+=nBufferVertexes;
 		nOriginalFaces+=nBufferFaces;
 	}
-	for(unsigned int x=0;x<m_TerrainModel.m_piModel->GetFrameRenderBuffers(0,0);x++)
+	for(unsigned int s=0;s<m_TerrainSectors.size();s++)
 	{
-		unsigned long nBufferVertexes=0,nBufferFaces=0;
-		m_TerrainModel.m_piModel->GetRenderBufferVertexes(0,0,x,&nBufferVertexes,NULL);
-		m_TerrainModel.m_piModel->GetRenderBufferFaces(0,0,x,&nBufferFaces,NULL);
-		nNewVertexes+=nBufferVertexes;
-		nNewFaces+=nBufferFaces;
+		IGenericModel *piModel=m_TerrainSectors[s].m_piModel;
+		for(unsigned int x=0;x<piModel->GetFrameRenderBuffers(0,0);x++)
+		{
+			unsigned long nBufferVertexes=0,nBufferFaces=0;
+			piModel->GetRenderBufferVertexes(0,0,x,&nBufferVertexes,NULL);
+			piModel->GetRenderBufferFaces(0,0,x,&nBufferFaces,NULL);
+			nNewVertexes+=nBufferVertexes;
+			nNewFaces+=nBufferFaces;
+		}
 	}
 	if(pdVertexOverhead){*pdVertexOverhead=nOriginalVertexes?((double)nNewVertexes*100.0/(double)nOriginalVertexes)-100.0:0;}
 	if(pdFaceOverhead){*pdFaceOverhead=nOriginalFaces?((double)nNewFaces*100.0/(double)nOriginalFaces)-100.0:0;}
@@ -1066,21 +1166,12 @@ void CWorldManager::SetupRenderingEnvironment( IGenericRender *piRender )
 		piRender->DeactivateHeightFog();
 	}
 
-	if(m_TerrainModel.m_piModel)
+	if(m_TerrainBaseModel.m_piModel && m_TerrainSectors.size())
 	{
-		bool bUseBaseFrame=(m_TerrainBaseModel.m_piModel!=NULL && m_TerrainModel.m_piModel->GetFrameRenderBuffers(0,0)==0);
 		CVector vTerrainMaxs,vTerrainMins,vTerrainSize;
 
-		if(bUseBaseFrame)
-		{
-			m_TerrainBaseModel.m_piModel->GetFrameBBox(0,0,&vTerrainMins,&vTerrainMaxs);
-			vTerrainSize=m_TerrainBaseModel.m_piModel->GetFrameSize(0,0);
-		}
-		else
-		{
-			m_TerrainModel.m_piModel->GetFrameBBox(0,0,&vTerrainMins,&vTerrainMaxs);
-			vTerrainSize=m_TerrainModel.m_piModel->GetFrameSize(0,0);
-		}
+		m_TerrainBaseModel.m_piModel->GetFrameBBox(0,0,&vTerrainMins,&vTerrainMaxs);
+		vTerrainSize=m_TerrainBaseModel.m_piModel->GetFrameSize(0,0);
 
 		CVector vSunAngles(m_TerrainSun.dAzimuth,m_TerrainSun.dElevation,0);
 		CVector vForward;

@@ -24,7 +24,6 @@ PlayerProfile.cpp\
 MusicManager.cpp\
 WorldManager.cpp\
 WorldEntity.cpp\
-WorldSector.cpp\
 stdafx.cpp
 
 

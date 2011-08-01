@@ -15,7 +15,6 @@ SET (SRCS
 	./GameManagers/stdafx.h
 	./GameManagers/WorldEntity.h
 	./GameManagers/WorldManager.h
-	./GameManagers/WorldSector.h
 
 	./GameManagers/EntityManager.cpp
 	./GameManagers/FrameManager.cpp
@@ -29,6 +28,5 @@ SET (SRCS
 	./GameManagers/stdafx.cpp
 	./GameManagers/WorldEntity.cpp
 	./GameManagers/WorldManager.cpp
-	./GameManagers/WorldSector.cpp
 )
 

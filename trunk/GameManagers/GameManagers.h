@@ -871,8 +871,8 @@ public:
 	virtual void GetTerrainBaseModel(std::string *psModel,IGenericModel **ppiModel)=0;
 	virtual void GetTerrainColorMap(std::string *psColorMap,IGenericTexture **ppiTexture)=0;
 
-	virtual void GetTerrainModel(IGenericModel **ppiModel)=0;
-
+	virtual void GetTerrainBBox(CVector *pvMins,CVector *pvMaxs)=0;
+	
 	// Water
 
 	virtual bool SetTerrainWater(STerrainWater *pWater)=0;

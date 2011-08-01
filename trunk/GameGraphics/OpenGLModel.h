@@ -148,7 +148,7 @@ public:
 	void		  SetBSPOptions(bool bLoad);
 	CTraceInfo	  GetTrace(const CVector &vOrigin,const CVector &vAngles,const CVector &p1,const CVector &p2 );
 
-	void UpdateFrameBuffers();
+	void UpdateBufferObjects();
 	
 	bool Prepare();
 

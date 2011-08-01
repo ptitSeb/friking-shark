@@ -1874,14 +1874,10 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	{
 		STerrainWater sWaterConfig;
 		SPlayAreaConfig sPlayAreaConfig;
-		CVector vMins,vMaxs,vSize;
-		IGenericModel *piModel;
-		m_WorldManagerWrapper.m_piTerrain->GetTerrainModel(&piModel);
+		CVector vMins,vMaxs;
+		m_WorldManagerWrapper.m_piTerrain->GetTerrainBBox(&vMins,&vMaxs);
 		m_WorldManagerWrapper.m_piTerrain->GetTerrainWater(&sWaterConfig,NULL,NULL);
 		m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sPlayAreaConfig);
-		if(piModel){piModel->GetFrameBBox(0,0,&vMins,&vMaxs);}
-		if(piModel){vSize=piModel->GetFrameSize(0,0);}
-		REL(piModel);
 
 		sFog.vMins=sWaterConfig.vMins;
 		sFog.vMaxs=sWaterConfig.vMaxs;
@@ -1892,14 +1888,10 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	{
 		STerrainWater sWaterConfig;
 		SPlayAreaConfig sPlayAreaConfig;
-		CVector vMins,vMaxs,vSize;
-		IGenericModel *piModel;
-		m_WorldManagerWrapper.m_piTerrain->GetTerrainModel(&piModel);
+		CVector vMins,vMaxs;
+		m_WorldManagerWrapper.m_piTerrain->GetTerrainBBox(&vMins,&vMaxs);
 		m_WorldManagerWrapper.m_piTerrain->GetTerrainWater(&sWaterConfig,NULL,NULL);
 		m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sPlayAreaConfig);
-		if(piModel){piModel->GetFrameBBox(0,0,&vMins,&vMaxs);}
-		if(piModel){vSize=piModel->GetFrameSize(0,0);}
-		REL(piModel);
 
 		sFog.vMins=sWaterConfig.vMins;
 		sFog.vMaxs=sWaterConfig.vMaxs;
@@ -2801,11 +2793,7 @@ void CScenarioEditorMainWindow::CenterCamera()
 	else 
 	{
 		CVector vMins,vMaxs;
-		IGenericModel *piModel=NULL;
-		m_WorldManagerWrapper.m_piTerrain->GetTerrainModel(&piModel);
-		if(piModel){piModel->GetFrameBBox(0,0,&vMins,&vMaxs);}
-		REL(piModel);
-
+		m_WorldManagerWrapper.m_piTerrain->GetTerrainBBox(&vMins,&vMaxs);
 		bCenter=true;
 		vCenter=(vMaxs+vMins)*0.5;
 		vSize=(vMaxs-vMins);
@@ -3920,21 +3908,16 @@ void CScenarioEditorMainWindow::UpdateFormationsHeight()
 double CScenarioEditorMainWindow::GetAirPlaneAbsoluteHeight()
 {
 	double dAirPlaneHeight=0;
-	IGenericModel *piModel=NULL;
-	m_WorldManagerWrapper.m_piTerrain->GetTerrainModel(&piModel);
-	if(piModel)
-	{
-		CVector vMins,vMaxs;
-		piModel->GetFrameBBox(0,0,&vMins,&vMaxs);
-		dAirPlaneHeight=vMaxs.c[1];
-	}
+	CVector vMins,vMaxs;
+	m_WorldManagerWrapper.m_piTerrain->GetTerrainBBox(&vMins,&vMaxs);
+	dAirPlaneHeight=vMaxs.c[1];
+	
 	SPlayAreaConfig sPlayAreaConfig;
 	if(m_PlayAreaManagerWrapper.m_piPlayAreaDesign)
 	{
 		m_PlayAreaManagerWrapper.m_piPlayAreaDesign->GetPlayAreaConfig(&sPlayAreaConfig);
 		dAirPlaneHeight+=sPlayAreaConfig.dAirPlaneHeight;
 	}
-	REL(piModel);
 	return dAirPlaneHeight;
 }
 

@@ -354,22 +354,19 @@ bool CPlayAreaManager::UpdateEntityLayers()
 	CWorldManagerWrapper worldManager;
 	worldManager.Attach("GameSystem","WorldManager");
 
-	IGenericModel   *piTerrainModel=NULL;
+	CVector vTerrainMins,vTerrainMaxs;	
 	IGenericTexture *piColorMap=NULL;
 	if(worldManager.m_piTerrain){worldManager.m_piTerrain->GetTerrainColorMap(NULL,&piColorMap);}
-	if(worldManager.m_piTerrain){worldManager.m_piTerrain->GetTerrainModel(&piTerrainModel);}
-	if(piColorMap==NULL || piTerrainModel==NULL)
+	if(worldManager.m_piTerrain){worldManager.m_piTerrain->GetTerrainBBox(&vTerrainMins,&vTerrainMaxs);}
+	if(piColorMap==NULL)
 	{
 		REL(piColorMap);
-		REL(piTerrainModel);
 		return false;
 	}
 
+	CVector vTerrainSize=vTerrainMaxs-vTerrainMins;
 	unsigned int nTextureWidth=0,nTextureHeight=0;
-	CVector vTerrainSize,vTerrainMins,vTerrainMaxs;
 	piColorMap->GetSize(&nTextureWidth,&nTextureHeight);
-	piTerrainModel->GetFrameBBox(0,0,&vTerrainMins,&vTerrainMaxs);
-	vTerrainSize=piTerrainModel->GetFrameSize(0,0);
 
 
 	//	Generacion de objetos basada directamente en ColorMap
@@ -451,7 +448,6 @@ bool CPlayAreaManager::UpdateEntityLayers()
 		}
 		RTTRACE("Generated %d entities",vEntities.size());
 	}
-	REL(piTerrainModel);
 	REL(piColorMap);
 	return true;
 }
@@ -498,15 +494,9 @@ void CPlayAreaManager::UpdatePlayArea()
 	CWorldManagerWrapper worldManager;
 	worldManager.Attach("GameSystem","WorldManager");
 
-	IGenericModel   *piTerrainModel=NULL;
-	if(worldManager.m_piTerrain){worldManager.m_piTerrain->GetTerrainModel(&piTerrainModel);}
 	CVector vTerrainSize,vTerrainMins,vTerrainMaxs;
-	if(piTerrainModel)
-	{
-		piTerrainModel->GetFrameBBox(0,0,&vTerrainMins,&vTerrainMaxs);
-		vTerrainSize=piTerrainModel->GetFrameSize(0,0);
-	}
-	REL(piTerrainModel);
+	if(worldManager.m_piTerrain){worldManager.m_piTerrain->GetTerrainBBox(&vTerrainMins,&vTerrainMaxs);}
+	vTerrainSize=vTerrainMaxs-vTerrainMins;
 
 	m_vPlayMovementPos.c[1]=vTerrainMaxs.c[1]+m_dPlayAreaHeight;
 

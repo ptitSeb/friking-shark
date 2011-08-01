@@ -286,7 +286,7 @@ public:
 	// Method to ensure that the model is resident.
 	virtual bool 		  Prepare()=0;
 	
-	virtual void UpdateFrameBuffers()=0;
+	virtual void UpdateBufferObjects()=0;
 
 	// for the render only
 	virtual void		  Render(IGenericRender *piRender,unsigned long nAnimation,unsigned long nFrame)=0;
