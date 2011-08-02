@@ -45,7 +45,6 @@ COpenGLRender::COpenGLRender(void)
 	m_dSKyShadowZResolution=1.0;
 	m_dSKyShadowOpacity=1.0;
 	
-
 	m_bPerspectiveProjection=false;
 	m_dPerspectiveNearPlane=1.0;
 	m_dPerspectiveFarPlane=10000.0;
@@ -275,6 +274,8 @@ void COpenGLRender::SelectTexture(IGenericTexture *pTexture,int nTextureLevel)
 
 	m_mTextureLevels[nTextureLevel]=ADD(pTexture);
 	if(!m_bStagedRendering){pTexture->PrepareTexture(this,nTextureLevel);}
+	
+	if(m_sRenderOptions.bEnableStagedRenderingStats){m_sStagedStats.nTextureChanges++;}
 }
 
 void COpenGLRender::SetTextureMatrix(CMatrix *pMatrix,int nTextureLevel)
@@ -1714,7 +1715,8 @@ void COpenGLRender::EndStagedRendering()
 {
 	if(!m_bStagedRendering){return;}
 
-	m_sStagedStats=SRenderStats();
+	unsigned int nRenderStart=0;
+	if(m_sRenderOptions.bEnableStagedRenderingStats){nRenderStart=GetTimeStamp();m_sStagedStats=SRenderStats();}
 	
 	m_bStagedRendering=false;
 	
@@ -1789,6 +1791,9 @@ void COpenGLRender::EndStagedRendering()
 	
 	if(m_sRenderOptions.bEnableShadows && m_ShadowTexture.m_piTexture && m_sHardwareSupport.nMaxTextureUnits>1)
 	{
+		unsigned int nShadowStart=0;
+		if(m_sRenderOptions.bEnableStagedRenderingStats){nShadowStart=GetTimeStamp();}
+		
 		int nPreviousViewportX=m_nViewportX;
 		int nPreviousViewportY=m_nViewportY;
 		int nPreviousViewportW=m_nViewportW;
@@ -1868,9 +1873,6 @@ void COpenGLRender::EndStagedRendering()
 
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
 		
-		glEnable( GL_POLYGON_OFFSET_FILL );
-		glPolygonOffset( 2, 1.0 );
-
 		// Render Shadows
 		glMatrixMode(GL_PROJECTION);
 		glPushMatrix();
@@ -1905,9 +1907,6 @@ void COpenGLRender::EndStagedRendering()
 		glMatrixMode(GL_MODELVIEW);
 		glPopMatrix();
 
-		glDisable( GL_POLYGON_OFFSET_FILL );
-		glPolygonOffset( 0.0, 0.0 );
-		
 		glPopAttrib();
 		m_ShadowTexture.m_piTexture->StopRenderingToTexture();
 
@@ -1953,10 +1952,13 @@ void COpenGLRender::EndStagedRendering()
 		FromOpenGLMatrix(pLightProjectionMatrix,&lightProjectionMatrix);
 
 		CMatrix textureMatrix;
+		CMatrix polyoffsetmatrix;
+		polyoffsetmatrix.T(Origin-m_vCameraForward);
+		textureMatrix*=polyoffsetmatrix;
 		textureMatrix*=lightModelViewMatrix;
 		textureMatrix*=lightProjectionMatrix;
 		textureMatrix*=biasMatrix;
-
+		
 		double dTextureMatrix[16];
 		ToOpenGLMatrix(&textureMatrix,dTextureMatrix);
 
@@ -2036,6 +2038,12 @@ void COpenGLRender::EndStagedRendering()
 			glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA, GL_PRIMARY_COLOR);
 			glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
 		}
+		if(m_sRenderOptions.bEnableStagedRenderingStats)
+		{
+			glFinish();
+			m_sStagedStats.nShadowTime=GetTimeStamp()-nShadowStart;
+		}
+		
 		if(m_piSkyShadow && m_sRenderOptions.bEnableSkyShadow){m_piSkyShadow->PrepareTexture(this,m_nSkyShadowTextureLevel);}
 		RenderAllStages(false,true);
 		
@@ -2117,6 +2125,13 @@ void COpenGLRender::EndStagedRendering()
 	m_mLineStages.clear();
 	m_mPointStages.clear();
 
+	if(m_sRenderOptions.bEnableStagedRenderingStats)
+	{
+		glFinish();
+		m_sStagedStats.nRenderTime=GetTimeStamp()-nRenderStart;
+	}
+	
+	
 	//SetPerspectiveProjection(dPreviousViewAngle,dPreviousNear,dPreviousFar);
 	SetRenderState(m_sPreStagedRenderingState,true);
 	if(m_pCurrentShader){m_pCurrentShader->m_piShader->Deactivate();m_pCurrentShader=NULL;}
@@ -2142,30 +2157,37 @@ void COpenGLRender::SetRenderState( const SRenderState &sNewState,bool bForce)
 	m_sRenderState.bActiveWater=sNewState.bActiveWater;
 	m_sRenderState.eShadingModel=sNewState.eShadingModel;
 	
+	bool bStateChange=false;
 	if(bForce || m_sRenderState.bActiveTextures!=sNewState.bActiveTextures)
 	{
 		sNewState.bActiveTextures?ActivateTextures():DeactivateTextures();
+		bStateChange=true;
 	}
 	if(bForce || m_sRenderState.bActiveSolid!=sNewState.bActiveSolid)
 	{
 		sNewState.bActiveSolid?ActivateSolid():DeactivateSolid();
+		bStateChange=true;
 	}
 	if(bForce || m_sRenderState.bActiveLighting!=sNewState.bActiveLighting)
 	{
 		sNewState.bActiveLighting?ActivateLighting():DeactivateLighting();
+		bStateChange=true;
 	}
 	if(bForce || m_sRenderState.bActiveBlending!=sNewState.bActiveBlending)
 	{
 		sNewState.bActiveBlending?ActivateBlending():DeactivateBlending();
+		bStateChange=true;
 	}
 	if(bForce || m_sRenderState.nBlendOperator1!=sNewState.nBlendOperator1 ||
 		m_sRenderState.nBlendOperator2!=sNewState.nBlendOperator2)
 	{
 		SetBlendingFunction(sNewState.nBlendOperator1,sNewState.nBlendOperator2);
+		bStateChange=true;
 	}
 	if(bForce || m_sRenderState.bActiveDepth!=sNewState.bActiveDepth)
 	{
 		sNewState.bActiveDepth?ActivateDepth():DeactivateDepth();
+		bStateChange=true;
 	}
 	if(bForce || m_sRenderState.bActiveSkyShadow!=sNewState.bActiveSkyShadow)
 	{
@@ -2174,11 +2196,14 @@ void COpenGLRender::SetRenderState( const SRenderState &sNewState,bool bForce)
 	if(bForce || m_sRenderState.nDepthFunction!=sNewState.nDepthFunction)
 	{
 		SetDepthFunction(sNewState.nDepthFunction);
+		bStateChange=true;
 	}
 	if(bForce || m_sRenderState.bActiveHeightFog!=sNewState.bActiveHeightFog)
 	{
 		sNewState.bActiveHeightFog?ActivateHeightFog(sNewState.vHeightFogMins,sNewState.vHeightFogMaxs,sNewState.vHeightFogColor):DeactivateHeightFog();
 	}
+	if(bStateChange && m_sRenderOptions.bEnableStagedRenderingStats){m_sStagedStats.nStateChanges++;}
+	   
 	
 	if(m_bRenderingWithShader)
 	{
@@ -2186,19 +2211,21 @@ void COpenGLRender::SetRenderState( const SRenderState &sNewState,bool bForce)
 		SShaderKey key(sNewState.eShadingModel,sNewState.bActiveHeightFog,m_sRenderOptions.bEnableShadows && m_bRenderingShadowReception,sNewState.bActiveTextures && m_sRenderOptions.bEnableTextures?m_mTextureLevels.size():0,m_sRenderOptions.bEnableLighting && sNewState.bActiveLighting,sNewState.bActiveWater,m_sRenderOptions.bEnableNormalMaps && m_piNormalMap,bTempSkyShadow);
 		std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader=m_mShaders.find(key);
 		CGenericShaderWrapper *pNewShader=(iShader==m_mShaders.end())?NULL:&iShader->second;
-		if(m_pCurrentShader && m_pCurrentShader!=pNewShader)
+		if(m_pCurrentShader!=pNewShader)
 		{
-			m_pCurrentShader->m_piShader->Deactivate();
-		}
-		m_pCurrentShader=pNewShader;
-		if(m_pCurrentShader)
-		{
-			m_pCurrentShader->m_piShader->Activate();
-			if(key.bLighting){m_pCurrentShader->m_piShader->AddUniform("g_ActiveLights",(int)m_nActiveLights);}
-			if(key.bHeightFog)
+			if(m_sRenderOptions.bEnableStagedRenderingStats){m_sStagedStats.nShaderChanges++;}
+			if(m_pCurrentShader){m_pCurrentShader->m_piShader->Deactivate();}
+			m_pCurrentShader=pNewShader;
+
+			if(m_pCurrentShader)
 			{
-				m_pCurrentShader->m_piShader->AddUniform("g_vHeightFogMins",m_sRenderState.vHeightFogMins);
-				m_pCurrentShader->m_piShader->AddUniform("g_vHeightFogMaxs",m_sRenderState.vHeightFogMaxs);
+				m_pCurrentShader->m_piShader->Activate();
+				if(key.bLighting){m_pCurrentShader->m_piShader->AddUniform("g_ActiveLights",(int)m_nActiveLights);}
+				if(key.bHeightFog)
+				{
+					m_pCurrentShader->m_piShader->AddUniform("g_vHeightFogMins",m_sRenderState.vHeightFogMins);
+					m_pCurrentShader->m_piShader->AddUniform("g_vHeightFogMaxs",m_sRenderState.vHeightFogMaxs);
+				}
 			}
 		}
 	}
@@ -2244,6 +2271,32 @@ void COpenGLRender::EnableAutoShadowVolume(){m_sRenderOptions.bEnableAutoShadowV
 void COpenGLRender::DisableAutoShadowVolume(){m_sRenderOptions.bEnableAutoShadowVolume=false;}
 bool COpenGLRender::IsAutoShadowVolumeEnabled(){return m_sRenderOptions.bEnableAutoShadowVolume;}
 
+void COpenGLRender::EnableStagedRenderingStats(){m_sRenderOptions.bEnableStagedRenderingStats=true;}
+void COpenGLRender::DisableStagedRenderingStats(){m_sRenderOptions.bEnableStagedRenderingStats=false;}
+bool COpenGLRender::AreStagedRenderingStatsEnabled(){return m_sRenderOptions.bEnableStagedRenderingStats;}
+void COpenGLRender::DumpStagedRenderingStats()
+{
+	RTTRACE("--- Render Stats ---");
+	RTTRACE("Vertexes  : %d ",m_sStagedStats.nTotalVertexes);
+	RTTRACE("                      %d Buffered",m_sStagedStats.nBufferedVertexes);
+	RTTRACE("                      %d Inmediate",m_sStagedStats.nInmediateVertexes);
+	RTTRACE("Faces     : %d ",m_sStagedStats.nTotalFaces);
+	RTTRACE("                      %d Buffered",m_sStagedStats.nBufferedFaces);
+	RTTRACE("                      %d Inmediate",m_sStagedStats.nInmediateFaces);
+	RTTRACE("Objects");
+	RTTRACE("                      %d Models",m_sStagedStats.nModels);
+	RTTRACE("                      %d Particles",m_sStagedStats.nParticles);
+	RTTRACE("                      %d Lines",m_sStagedStats.nLines);
+	RTTRACE("                      %d Points",m_sStagedStats.nPoints);
+	RTTRACE("Changes");
+	RTTRACE("                      %d State",m_sStagedStats.nStateChanges);
+	RTTRACE("                      %d Shader",m_sStagedStats.nShaderChanges);
+	RTTRACE("                      %d Texture",m_sStagedStats.nTextureChanges);
+	RTTRACE("Time");
+	RTTRACE("                      %d ms Render",m_sStagedStats.nRenderTime);
+	RTTRACE("                      %d ms Shadow",m_sStagedStats.nShadowTime);
+}
+
 void COpenGLRender::RenderModelStages(bool bRenderingShadow,bool bShadowReceptionState)
 {
 	// Flush Model Stages
@@ -2256,11 +2309,27 @@ void COpenGLRender::RenderModelStages(bool bRenderingShadow,bool bShadowReceptio
 		if(bRenderingShadow && !pKey->sRenderState.bActiveShadowEmission){continue;}
 		if(bShadowReceptionState!=pKey->sRenderState.bActiveShadowReception){continue;}
 
-		// For each render buffer
+		if(!bRenderingShadow && m_sRenderOptions.bEnableStagedRenderingStats){m_sStagedStats.nModels+=pStage->vInstances.size();}
+		
+// For each render buffer
 		unsigned int nBuffers=pStage->piModel->GetFrameRenderBuffers(pKey->nAnimation,pKey->nFrame);
 		for(unsigned int nBuffer=0;nBuffer<nBuffers;nBuffer++)
 		{
 			bool bRenderBufferPrepared=false;
+			if(!bRenderingShadow)
+			{
+				unsigned long nFaces=0,nVertexes=0;
+				pStage->piModel->GetRenderBufferFaces(pKey->nAnimation,pKey->nFrame,nBuffer,&nFaces,0);
+				pStage->piModel->GetRenderBufferVertexes(pKey->nAnimation,pKey->nFrame,nBuffer,&nVertexes,0);
+				if(m_sRenderOptions.bEnableStagedRenderingStats)
+				{
+					m_sStagedStats.nTotalFaces+=nFaces;
+					m_sStagedStats.nTotalVertexes+=nVertexes;
+					m_sStagedStats.nBufferedFaces+=nFaces;
+					m_sStagedStats.nBufferedVertexes+=nVertexes;
+				}
+			}
+			
 			// For each instance
 			for(unsigned int nInstance=0;nInstance<pStage->vInstances.size();nInstance++)
 			{
@@ -2274,7 +2343,7 @@ void COpenGLRender::RenderModelStages(bool bRenderingShadow,bool bShadowReceptio
 					pStage->piGLModel->PrepareRenderBuffer(this,pKey->nAnimation,pKey->nFrame,nBuffer,bRenderingShadow,m_nNormalMapTextureLevel);
 					SetRenderState(pKey->sRenderState,false);
 				}
-
+				
 				glPushMatrix();
 				glTranslated(vPos.c[0],vPos.c[1],vPos.c[2]);
 				if(vAngles.c[YAW]){glRotated(vAngles.c[YAW]	,0,1,0);}
@@ -2300,7 +2369,6 @@ void COpenGLRender::RenderParticleStages(bool bRenderingShadow,bool bShadowRecep
 	glClientActiveTextureARB(GL_TEXTURE0_ARB+0);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	int nParticles=0;
 	std::map<STextureParticleStageKey,STextureParticleStage>::iterator iParticleStage;
 	for(iParticleStage=m_mTextureParticleStages.begin();iParticleStage!=m_mTextureParticleStages.end();iParticleStage++)
 	{
@@ -2316,12 +2384,20 @@ void COpenGLRender::RenderParticleStages(bool bRenderingShadow,bool bShadowRecep
 
 		for(unsigned int x=0;x<pStage->vBuffers.size();x++)
 		{
+			
 			STextureParticleBuffer *pBuffer=pStage->vBuffers[x];
 			glVertexPointer(3,GL_FLOAT,0,pBuffer->pVertexBuffer);
 			glColorPointer(4,GL_FLOAT,0,pBuffer->pColorBuffer);
 			glTexCoordPointer(2,GL_FLOAT,0,pBuffer->pTexBuffers);
 			glDrawArrays(GL_QUADS,0,pBuffer->nUsedElements*4);
-			nParticles+=pBuffer->nUsedElements;
+			if(!bRenderingShadow && m_sRenderOptions.bEnableStagedRenderingStats)
+			{
+				m_sStagedStats.nParticles+=pBuffer->nUsedElements;
+				m_sStagedStats.nTotalFaces+=pBuffer->nUsedElements;
+				m_sStagedStats.nTotalVertexes+=pBuffer->nUsedElements*4;
+				m_sStagedStats.nInmediateFaces+=pBuffer->nUsedElements;
+				m_sStagedStats.nInmediateVertexes+=pBuffer->nUsedElements*4;
+			}
 		}
 		if(piTexture){UnselectTexture(0);}
 	}
@@ -2354,6 +2430,12 @@ void COpenGLRender::RenderLineStages(bool bRenderingShadow,bool bShadowReception
 			glVertexPointer(3,GL_FLOAT,0,pBuffer->pVertexBuffer);
 			glColorPointer(4,GL_FLOAT,0,pBuffer->pColorBuffer);
 			glDrawArrays(GL_LINES,0,pBuffer->nUsedElements*2);
+			if(!bRenderingShadow && m_sRenderOptions.bEnableStagedRenderingStats)
+			{
+				m_sStagedStats.nLines+=pBuffer->nUsedElements;
+				m_sStagedStats.nTotalVertexes+=pBuffer->nUsedElements*2;
+				m_sStagedStats.nInmediateVertexes+=pBuffer->nUsedElements*2;				
+			}
 		}
 	}
 	glDisable(GL_LINE_SMOOTH);
@@ -2362,7 +2444,6 @@ void COpenGLRender::RenderLineStages(bool bRenderingShadow,bool bShadowReception
 
 void COpenGLRender::RenderPointStages(bool bRenderingShadow,bool bShadowReceptionState)
 {
-	int nPoints=0;
 	std::map<SPointStageKey,SPointStage>::iterator iPointStage;
 	for(iPointStage=m_mPointStages.begin();iPointStage!=m_mPointStages.end();iPointStage++)
 	{
@@ -2381,7 +2462,12 @@ void COpenGLRender::RenderPointStages(bool bRenderingShadow,bool bShadowReceptio
 			glVertexPointer(3,GL_FLOAT,0,pBuffer->pVertexBuffer);
 			glColorPointer(4,GL_FLOAT,0,pBuffer->pColorBuffer);
 			glDrawArrays(GL_POINTS,0,pBuffer->nUsedElements);
-			nPoints+=pBuffer->nUsedElements;
+			if(!bRenderingShadow && m_sRenderOptions.bEnableStagedRenderingStats)
+			{
+				m_sStagedStats.nPoints+=pBuffer->nUsedElements;
+				m_sStagedStats.nTotalVertexes+=pBuffer->nUsedElements;
+				m_sStagedStats.nInmediateVertexes+=pBuffer->nUsedElements;				
+			}
 		}
 	}
 }

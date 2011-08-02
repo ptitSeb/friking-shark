@@ -130,6 +130,7 @@ public:
 	bool				m_bLighting;
 	bool				m_bNormalMaps;
 	bool				m_bSkyShadow;
+	bool				m_bStats;
 	EShadingModel 		m_eShadingModel;
 	bool				m_bShowFilePanel;
 	bool				m_bShowEntitiesPanel;
@@ -150,6 +151,8 @@ public:
 	bool				m_bGodMode;
 	bool				m_bUseAmmo;
 	double				m_dDifficulty;
+	
+	unsigned int        m_nLastStatsTime;
 
 	int					m_nSelectedRoutePoint;
 	int					m_nSelectedLandingRoutePoint;
