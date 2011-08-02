@@ -35,46 +35,22 @@ class CControlsDialog: virtual public CGameDialogBase,virtual public IGameGUIBut
 	SKeyMapping m_BombKeyMapping;
 	
 	IGameGUIButton *m_piBTUpA;
-	IGameGUIButton *m_piBTUpB;
-	IGameGUIButton *m_piBTUpClear;
 	IGameGUIButton *m_piBTDownA;
-	IGameGUIButton *m_piBTDownB;
-	IGameGUIButton *m_piBTDownClear;
 	IGameGUIButton *m_piBTLeftA;
-	IGameGUIButton *m_piBTLeftB;
-	IGameGUIButton *m_piBTLeftClear;
 	IGameGUIButton *m_piBTRightA;
-	IGameGUIButton *m_piBTRightB;
-	IGameGUIButton *m_piBTRightClear;
 	IGameGUIButton *m_piBTBombA;
-	IGameGUIButton *m_piBTBombB;
-	IGameGUIButton *m_piBTBombClear;
 	IGameGUIButton *m_piBTFireA;
-	IGameGUIButton *m_piBTFireB;
-	IGameGUIButton *m_piBTFireClear;
 	IGameGUIButton *m_piBTOk;
 	IGameGUIButton *m_piBTCancel;
 	
 	
 	BEGIN_CHILD_MAP()
 		CHILD_MAP_ENTRY_EX("UpA",m_piBTUpA,IGameGUIButtonEvents);	
-		CHILD_MAP_ENTRY_EX("UpB",m_piBTUpB,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("UpClear",m_piBTUpClear,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("DownA",m_piBTDownA,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("DownB",m_piBTDownB,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("DownClear",m_piBTDownClear,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("LeftA",m_piBTLeftA,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("LeftB",m_piBTLeftB,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("LeftClear",m_piBTLeftClear,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("RightA",m_piBTRightA,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("RightB",m_piBTRightB,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("RightClear",m_piBTRightClear,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("BombA",m_piBTBombA,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("BombB",m_piBTBombB,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("BombClear",m_piBTBombClear,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("FireA",m_piBTFireA,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("FireB",m_piBTFireB,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("FireClear",m_piBTFireClear,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Ok",m_piBTOk,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Cancel",m_piBTCancel,IGameGUIButtonEvents);
 	END_CHILD_MAP()
@@ -84,7 +60,7 @@ class CControlsDialog: virtual public CGameDialogBase,virtual public IGameGUIBut
 		PROP(m_KeyCaptureDialog,"KeyCaptureDialog")
 	END_PROP_MAP()
 	
-	void UpdateRow(IGameGUIButton *piKey1Button,IGameGUIButton *piKey2Button, SKeyMapping *pKeyMapping);
+	void UpdateRow(IGameGUIButton *piKey1Button, SKeyMapping *pKeyMapping);
 	void UpdateGUI();
 	
 	void ProcessKeyChange(SKeyMapping *pKeyMapping, unsigned int nIndex);
