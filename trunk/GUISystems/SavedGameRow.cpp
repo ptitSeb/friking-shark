@@ -45,15 +45,15 @@ void CSavedGameRow::UpdateGUI()
 	{
 		// nCheckpoint+2 -> level start must be shown as "1", first checkpoint as "2"
 		// nWeapon+1 -> first level must be shown as "1"
-		sprintf(sLevel,"Level %d-%d",m_pSavedGame->nLevel+1,m_pSavedGame->nCheckpoint+2);
+		sprintf(sLevel,"%d-%d",m_pSavedGame->nLevel+1,m_pSavedGame->nCheckpoint+2);
 		sprintf(sLives,"x%d",m_pSavedGame->nLivesLeft);
 		sprintf(sWeapon,"x%d",m_pSavedGame->nWeapon+1);
 		sprintf(sBombs,"x%d",m_pSavedGame->nBombs);
-		sprintf(sPoints,"%d",m_pSavedGame->nPoints);
+		sprintf(sPoints,"%d Points",m_pSavedGame->nPoints);
 		switch(m_pSavedGame->eMode)
 		{
 			case eGameMode_God:pMode="God";break;
-			case eGameMode_Normal:pMode="Normal";break;
+			case eGameMode_Normal:pMode="Classic";break;
 			case eGameMode_InfiniteLives:pMode="Infinite Lives";break;
 			default:pMode="Unknown";break;
 		}
@@ -65,6 +65,18 @@ void CSavedGameRow::UpdateGUI()
 			case eGameDifficulty_VeryHard:pDifficulty="Very Hard";break;
 			default:pDifficulty="Unknown";break;
 		}
+	}
+	if(m_pSavedGame)
+	{
+		char sLevelIcon[128]={0};
+		CGenericTextureWrapper texture; 
+		sprintf(sLevelIcon,"Level%dIcon",m_pSavedGame->nLevel+1);
+		texture.Attach("GameGUI",sLevelIcon);
+		m_piSTLevel->SetBackgroundTexture(texture.m_piTexture);
+	}
+	else
+	{
+		m_piSTLevel->SetBackgroundTexture(NULL);
 	}
 	m_piBTButton->Activate(m_bActive);
 	m_piBTButton->Show(m_pSavedGame!=NULL);

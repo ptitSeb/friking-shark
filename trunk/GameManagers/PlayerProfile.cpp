@@ -27,16 +27,12 @@ CPlayerProfile::CPlayerProfile(void)
 	m_dDifficulty=0;
 	m_KeyboardMapping["MoveForward"].sFriendlyName="Up";
 	m_KeyboardMapping["MoveForward"].vValidCombinations.push_back(SKeyCombination(GK_UP));
-	m_KeyboardMapping["MoveForward"].vValidCombinations.push_back(SKeyCombination('W'));
 	m_KeyboardMapping["MoveBackward"].sFriendlyName="Down";
 	m_KeyboardMapping["MoveBackward"].vValidCombinations.push_back(SKeyCombination(GK_DOWN));
-	m_KeyboardMapping["MoveBackward"].vValidCombinations.push_back(SKeyCombination('S'));
 	m_KeyboardMapping["MoveLeft"].sFriendlyName="Left";
 	m_KeyboardMapping["MoveLeft"].vValidCombinations.push_back(SKeyCombination(GK_LEFT));
-	m_KeyboardMapping["MoveLeft"].vValidCombinations.push_back(SKeyCombination('A'));
 	m_KeyboardMapping["MoveRight"].sFriendlyName="Right";
 	m_KeyboardMapping["MoveRight"].vValidCombinations.push_back(SKeyCombination(GK_RIGHT));
-	m_KeyboardMapping["MoveRight"].vValidCombinations.push_back(SKeyCombination('D'));
 	m_KeyboardMapping["FireBullets"].sFriendlyName="Fire";
 	m_KeyboardMapping["FireBullets"].vValidCombinations.push_back(SKeyCombination(GK_LCONTROL));
 	m_KeyboardMapping["FireBomb"].sFriendlyName="Bomb";

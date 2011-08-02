@@ -89,7 +89,7 @@ void CLevelOptions::OnButtonClicked(IGameGUIButton *piControl)
 
 void CLevelOptions::UpdateGUI()
 {
-	if(m_eMode==eGameMode_Normal){m_piBTMode->SetText("Normal");}
+	if(m_eMode==eGameMode_Normal){m_piBTMode->SetText("Classic (3 Lives)");}
 	if(m_eMode==eGameMode_God){m_piBTMode->SetText("God");}
 	if(m_eMode==eGameMode_InfiniteLives){m_piBTMode->SetText("Infinite Lives");}
 
@@ -107,6 +107,16 @@ void CLevelOptions::UpdateGUI()
 		m_piBTLevel3->SetFont(m_nSelectedLevel==2?m_LevelSelectedFont.m_piFont:m_LevelUnselectedFont.m_piFont,dFontSize);
 		m_piBTLevel4->SetFont(m_nSelectedLevel==3?m_LevelSelectedFont.m_piFont:m_LevelUnselectedFont.m_piFont,dFontSize);
 		m_piBTLevel5->SetFont(m_nSelectedLevel==4?m_LevelSelectedFont.m_piFont:m_LevelUnselectedFont.m_piFont,dFontSize);
+		m_piBTLevel1->SetTextColor(m_nSelectedLevel==0?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==0?1.0:0.5);
+		m_piBTLevel2->SetTextColor(m_nSelectedLevel==1?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==1?1.0:0.5);
+		m_piBTLevel3->SetTextColor(m_nSelectedLevel==2?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==2?1.0:0.5);
+		m_piBTLevel4->SetTextColor(m_nSelectedLevel==3?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==3?1.0:0.5);
+		m_piBTLevel5->SetTextColor(m_nSelectedLevel==4?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==4?1.0:0.5);
+		m_piBTLevel1->SetBackgroundColor(m_nSelectedLevel==0?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==0?1.0:0.5);
+		m_piBTLevel2->SetBackgroundColor(m_nSelectedLevel==1?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==1?1.0:0.5);
+		m_piBTLevel3->SetBackgroundColor(m_nSelectedLevel==2?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==2?1.0:0.5);
+		m_piBTLevel4->SetBackgroundColor(m_nSelectedLevel==3?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==3?1.0:0.5);
+		m_piBTLevel5->SetBackgroundColor(m_nSelectedLevel==4?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==4?1.0:0.5);
 	}
 }
 
