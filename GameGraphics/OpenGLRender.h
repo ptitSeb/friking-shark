@@ -132,6 +132,7 @@ struct SRenderOptions
 	bool bEnableShader;
 	bool bEnableNormalMaps;
 	bool bEnableSkyShadow;
+	bool bEnableStagedRenderingStats;
 
 	SRenderOptions()
 	{
@@ -145,6 +146,7 @@ struct SRenderOptions
 		bEnableAutoShadowVolume=true;
 		bEnableNormalMaps=true;
 		bEnableSkyShadow=true;
+		bEnableStagedRenderingStats=false;
 	}
 };
 
@@ -617,6 +619,11 @@ public:
 	void EnableAutoShadowVolume();
 	void DisableAutoShadowVolume();
 	bool IsAutoShadowVolumeEnabled();
+	
+	void EnableStagedRenderingStats();
+	void DisableStagedRenderingStats();
+	bool AreStagedRenderingStatsEnabled();
+	void DumpStagedRenderingStats();
 	
 	void 			SetShadingModel(EShadingModel eModel);
 	EShadingModel 	GetShadingModel();

@@ -595,6 +595,12 @@ public:
 	virtual void DisableAutoShadowVolume()=0;
 	virtual bool IsAutoShadowVolumeEnabled()=0;
 	
+	virtual void EnableStagedRenderingStats()=0;
+	virtual void DisableStagedRenderingStats()=0;
+	virtual bool AreStagedRenderingStatsEnabled()=0;
+	
+	virtual void DumpStagedRenderingStats()=0;
+	
 	virtual void 			SetShadingModel(EShadingModel eModel)=0;
 	virtual EShadingModel 	GetShadingModel()=0;
 	

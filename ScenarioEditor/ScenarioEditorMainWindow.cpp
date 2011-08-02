@@ -49,6 +49,8 @@ CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 	m_dDifficulty=0;
 	m_bGodMode=true;
 	m_bUseAmmo=false;
+	m_bStats=false;
+	m_nLastStatsTime=0;
 	
 	m_bInspectionMode=false;
 	m_bShowTerrainPanel=true;
@@ -431,6 +433,7 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 	m_bShadows?m_Render.m_piRender->EnableShadows():m_Render.m_piRender->DisableShadows();
 	m_bShaders?m_Render.m_piRender->EnableShaders():m_Render.m_piRender->DisableShaders();
 	m_bFog?m_Render.m_piRender->EnableHeightFog():m_Render.m_piRender->DisableHeightFog();
+	m_bStats?m_Render.m_piRender->EnableStagedRenderingStats():m_Render.m_piRender->DisableStagedRenderingStats();
 
 	if(m_bSimulationStarted)
 	{		
@@ -606,6 +609,11 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 		char A[200];
 		sprintf(A,"Trace Dist: %.f",m_dMouseTraceDistance);
 		m_piSTOptionsMouseTraceDistance->SetText(A);
+	}
+	if(m_bStats && m_nLastStatsTime+1000<GetTimeStamp())
+	{
+		m_Render.m_piRender->DumpStagedRenderingStats();
+		m_nLastStatsTime=GetTimeStamp();		
 	}
 	UpdateLayerPanel();
 }
@@ -2855,6 +2863,7 @@ void CScenarioEditorMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 	if(nKey==GK_F1 && m_bSimulationStarted){m_bInspectionMode=!m_bInspectionMode;*pbProcessed=true;}
 	else if(nKey==GK_F2){ProcessFileSave();*pbProcessed=true;}
 	else if(nKey==GK_F3){ProcessFileOpen();*pbProcessed=true;}
+	else if(nKey==GK_F4){m_bStats=!m_bStats;*pbProcessed=true;}
 	else if(nKey==GK_F5){if(m_piGUIManager->IsKeyDown(GK_LSHIFT)){StopGameSimulation();}else{StartGameSimulation();}*pbProcessed=true;}
 	else if(nKey==GK_F12){m_Render.m_piRender->ReloadShaders();*pbProcessed=true;}
 	else if(nKey==GK_PAUSE){m_FrameManager.m_piFrameManager->TogglePauseOnNextFrame();*pbProcessed=true;}
