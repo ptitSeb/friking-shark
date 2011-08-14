@@ -41,7 +41,7 @@ IEntity *CDreadnoughtTowerType::CreateInstance(IEntity *piParent,unsigned int dw
 void CDreadnoughtTowerType::InitializeEntity( CEntityBase *piEntity,unsigned int dwCurrentTime )
 {
 	CEntityTypeBase::InitializeEntity(piEntity,dwCurrentTime);
-	piEntity->SetState(eDreadnoughtTowerState_Normal);
+	piEntity->SetState(eDreadnoughtTowerState_Normal,0);
 }
 
 CDreadnoughtTower::CDreadnoughtTower(CDreadnoughtTowerType *pType,unsigned int dwCurrentTime)
