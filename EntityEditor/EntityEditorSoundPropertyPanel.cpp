@@ -57,13 +57,17 @@ void CEntityEditorSoundPropertyPanel::OnButtonClicked(IGameGUIButton *piControl)
 	SSoundAnimationObjectTypeConfig sConfig;
 	m_Object.m_piDesign->GetConfig(&sConfig);
 
+	unsigned int nIncrement=10;
+	if(m_piGUIManager->IsKeyDown(GK_LCONTROL)){nIncrement=100;}
+	if(m_piGUIManager->IsKeyDown(GK_LSHIFT)){nIncrement=500;}
+	
 	if(m_piBTLoop==piControl){bUpdateConfig=true;sConfig.bLoop=!sConfig.bLoop;}
 	if(m_piBTIncreaseVolume==piControl){bUpdateConfig=true;sConfig.nVolume+=5;if(sConfig.nVolume>100){sConfig.nVolume=100;}}
 	if(m_piBTDecreaseVolume==piControl){bUpdateConfig=true;sConfig.nVolume-=5;if(sConfig.nVolume<0){sConfig.nVolume=0;}}
-	if(m_piBTIncreaseStartTime==piControl){bUpdateConfig=true;sConfig.nStartTime+=100;}
-	if(m_piBTDecreaseStartTime==piControl){bUpdateConfig=true;sConfig.nStartTime=(sConfig.nStartTime<100)?0:sConfig.nStartTime-100;}
-	if(m_piBTIncreaseEndTime==piControl){bUpdateConfig=true;sConfig.nEndTime+=100;}
-	if(m_piBTDecreaseEndTime==piControl){bUpdateConfig=true;sConfig.nEndTime=(sConfig.nEndTime<100)?0:sConfig.nEndTime-100;}
+	if(m_piBTIncreaseStartTime==piControl){bUpdateConfig=true;sConfig.nStartTime+=nIncrement;}
+	if(m_piBTDecreaseStartTime==piControl){bUpdateConfig=true;sConfig.nStartTime=(sConfig.nStartTime<nIncrement)?0:sConfig.nStartTime-nIncrement;}
+	if(m_piBTIncreaseEndTime==piControl){bUpdateConfig=true;sConfig.nEndTime+=nIncrement;}
+	if(m_piBTDecreaseEndTime==piControl){bUpdateConfig=true;sConfig.nEndTime=(sConfig.nEndTime<nIncrement)?0:sConfig.nEndTime-nIncrement;}
 
 	if(bUpdateConfig)
 	{
