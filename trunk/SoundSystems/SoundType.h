@@ -20,11 +20,13 @@
 
 #include "SoundSystemManager.h"
 #include <deque>
+#include <map>
 
 
 class CSoundType: virtual public CSystemObjectBase,virtual public ISoundType
 {
   std::deque<ALuint>   m_dAvailableSources;
+  std::map<ALuint,ISound *> m_mBusySources;
   bool            m_bSoundsAcquired;
   ALuint		  m_iSoundBuffer;
   
@@ -46,7 +48,7 @@ public:
 	std::string  	m_sGroup;
     double  		m_dVolume;
 
-    ALuint AcquireSoundSource();
+    ALuint AcquireSoundSource(ISound *piSound);
     void   ReleaseSoundSource(ALuint nSource);
 
     ISound *CreateInstance();
@@ -61,8 +63,8 @@ public:
     BEGIN_PROP_MAP(CSoundType);
         PROP(m_sFileName,"File");
 		PROP_VALUE_FLAGS(m_sGroup,"Group","General",MRPF_NORMAL|MRPF_OPTIONAL);
-        PROP_VALUE_FLAGS(m_nChannels,"Channels",5,MRPF_NORMAL|MRPF_OPTIONAL);
-        PROP_VALUE_FLAGS(m_bLoop,"Loop",false,MRPF_NORMAL|MRPF_OPTIONAL);
+        PROP_VALUE_FLAGS(m_nChannels,"Channels",1,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_VALUE_FLAGS(m_bLoop,"Loop",false,MRPF_NORMAL|MRPF_OPTIONAL);
         PROP_VALUE_FLAGS(m_dVolume,"Volume",100,MRPF_NORMAL|MRPF_OPTIONAL);
     END_PROP_MAP();
 
@@ -94,6 +96,7 @@ public:
     void Play();
     void Stop();
     bool IsPlaying();
+	void DetachSource();
 	
 	void SetLoop(bool bLoop);
 	void SetVolume(double nVolume);
