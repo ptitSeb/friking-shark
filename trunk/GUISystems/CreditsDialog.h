@@ -27,6 +27,8 @@ IGameGUIButton *m_piBTOk;
 		CHILD_MAP_ENTRY_EX("Ok",m_piBTOk,IGameGUIButtonEvents);
 	END_CHILD_MAP()
 
+	void OnInitDialog();
+	
 public:
 	// IGameButtonEvents
 

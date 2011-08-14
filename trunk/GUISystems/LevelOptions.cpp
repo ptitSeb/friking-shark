@@ -124,6 +124,12 @@ void CLevelOptions::OnInitDialog()
 {
 	CGameDialogBase::OnInitDialog();
 	UpdateGUI();
+	if(m_piBTOk)
+	{
+		m_piBTOk->DisableSounds();
+		m_piGUIManager->SetFocus(m_piBTOk);
+		m_piBTOk->EnableSounds();
+	}
 }
 
 bool CLevelOptions::SelectOptions(IGameWindow *piParent,EGameMode *pMode,EGameDifficulty *pDifficulty,unsigned int *pnSelectedLevel)
@@ -136,4 +142,10 @@ bool CLevelOptions::SelectOptions(IGameWindow *piParent,EGameMode *pMode,EGameDi
 	*pnSelectedLevel=m_nSelectedLevel;
 	*pDifficulty=m_eDifficulty;
 	return nRes==DIALOG_OK;
+}
+
+void CLevelOptions::OnKeyDown(int nKey,bool *pbProcessed)
+{
+	if(nKey==GK_RETURN){return;}
+	CGameDialogBase::OnKeyDown(nKey,pbProcessed);
 }

@@ -71,7 +71,13 @@ void CHighScoresDialog::OnInitDialog()
 			SHighScoreRow row=m_piTable->GetRow(m_nScoreToEdit);
 			m_piEDName->SetText(row.sName);
 			m_piGUIManager->SetFocus(m_piEDName);
-		}		
+		}
+		else
+		{
+			m_piBTOk->DisableSounds();
+			m_piGUIManager->SetFocus(m_piBTOk);
+			m_piBTOk->EnableSounds();
+		}
 	}
 }
 

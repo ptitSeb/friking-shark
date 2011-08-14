@@ -60,6 +60,8 @@ CGameInterface::CGameInterface(void)
 	m_nWeapon=0;
 	m_nBombs=0;
 	m_bGameSystemInitialized=false;
+	m_piPointCountSound=NULL;
+	m_piBombCountSound=NULL;
 }
 
 CGameInterface::~CGameInterface(void)
@@ -74,12 +76,18 @@ bool CGameInterface::InitWindow(IGameWindow *piParent,bool bPopup)
 	if(m_piSTFrameRate){m_piSTFrameRate->Show(m_bShowPerformanceIndicators);}
 	if(m_piSTObjectCount){m_piSTObjectCount->Show(m_bShowPerformanceIndicators);}
 	if(m_piSTEntityCount){m_piSTEntityCount->Show(m_bShowPerformanceIndicators);}
-		
 	return bResult;
 }
 
 void CGameInterface::DestroyWindow()
 {
+	delete m_piPointCountSound;
+	delete m_piBombCountSound;
+	m_piPointCountSound=NULL;
+	m_piBombCountSound=NULL;
+	m_PointCountSoundWrapper.Destroy();
+	m_BombCountSoundWrapper.Destroy();
+	
 	StopGame();
 	CloseScenario();	
 	
@@ -122,6 +130,15 @@ void CGameInterface::InitializeGameSystem()
 	m_EntityManagerWrapper.Attach("GameSystem","EntityManager");
 	m_WorldManagerWrapper.Attach("GameSystem","WorldManager");
 	m_bGameSystemInitialized=true;
+	
+	if(m_PointCountSoundWrapper.m_piSoundType)
+	{
+		m_piPointCountSound=m_PointCountSoundWrapper.m_piSoundType->CreateInstance();
+	}
+	if(m_BombCountSoundWrapper.m_piSoundType)
+	{
+		m_piBombCountSound=m_BombCountSoundWrapper.m_piSoundType->CreateInstance();
+	}
 }
 
 bool CGameInterface::LoadScenario(std::string sScenario)
@@ -203,6 +220,7 @@ void CGameInterface::StartGameInternal(unsigned int nPoints, unsigned int nLives
 	m_eState=eGameInterfaceState_StartCourtain;
 	OpenCourtain();
 	m_nLastCountTime=m_FrameManagerWrapper.m_piFrameManager?m_FrameManagerWrapper.m_piFrameManager->GetCurrentTime():0;
+	m_nLastCountSoundTime=0;
 
 	UpdateGUI(0);
 }
@@ -497,6 +515,7 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 			unsigned int nBombsLeft=piWeapon?piWeapon->GetAmmo():0;
 			if(nBombsLeft)
 			{
+				if(m_piBombCountSound){m_piBombCountSound->Stop();m_piBombCountSound->Play();}
 				if(piWeapon){piWeapon->SetAmmo(nBombsLeft-1);}
 				m_nEndBombs++;
 				m_nEndPoints+=3000;
@@ -504,6 +523,7 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 			else
 			{
 				m_eState=eGameInterfaceState_CountingPoints;
+				m_nLastCountSoundTime=0;
 			}
 			m_nLastCountTime=dwCurrentTime;
 		}
@@ -511,12 +531,22 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 	
 	if(m_eState==eGameInterfaceState_CountingPoints)
 	{
+		if(m_nLastCountSoundTime+20<dwCurrentTime)
+		{
+			if(m_nEndPoints)
+			{
+				if(m_piPointCountSound){m_piPointCountSound->Stop();m_piPointCountSound->Play();}
+			}
+			m_nLastCountSoundTime=dwCurrentTime;
+		}
 		if(m_nLastCountTime+10<dwCurrentTime)
 		{
 			if(m_nEndPoints)
 			{
-				if(m_piPlayer){m_piPlayer->AddPoints(50);}
-				m_nEndPoints-=50;
+				int nPoints=m_nEndPoints<50?m_nEndPoints:50;
+				if(m_piPointCountSound){m_piPointCountSound->Stop();m_piPointCountSound->Play();}
+				if(m_piPlayer){m_piPlayer->AddPoints(nPoints);}
+				m_nEndPoints-=nPoints;
 			}
 			else
 			{

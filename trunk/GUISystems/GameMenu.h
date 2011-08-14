@@ -34,7 +34,8 @@ class CGameMenu: virtual public CGameDialogBase,virtual public IGameMenu,virtual
 
 public:
 	void OnInitDialog();
-
+	void OnKeyDown(int nKey,bool *pbProcessed);
+	
 	// IGameMenu
 	
 	eGameMenuAction Show(IGameWindow *piParent);

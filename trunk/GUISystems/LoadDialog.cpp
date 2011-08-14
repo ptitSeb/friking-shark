@@ -26,6 +26,7 @@ CLoadDialog::CLoadDialog(void)
 {
 	m_nSelectedGame=0;
 	m_pvSavedGames=NULL;
+	m_piLastFocusedWindow=NULL;
 }
 
 CLoadDialog::~CLoadDialog(void)
@@ -70,10 +71,31 @@ void CLoadDialog::OnInitDialog()
 {
 	CGameDialogBase::OnInitDialog();
 	UpdateGUI();
+	
+	if(m_piLastFocusedWindow && m_piLastFocusedWindow->IsActive())
+	{
+		IGameGUIButton *piButton=QI(IGameGUIButton,m_piLastFocusedWindow);
+		if(piButton){piButton->DisableSounds();}
+		m_piGUIManager->SetFocus(m_piLastFocusedWindow);
+		if(piButton){piButton->EnableSounds();}
+		REL(piButton);
+	}
+	else 
+	{
+		IGameWindow *piWindow=FindNextFocusableWindow(NULL);
+		IGameGUIButton *piButton=QI(IGameGUIButton,piWindow);
+		if(piButton){piButton->DisableSounds();}
+		if(piWindow){m_piGUIManager->SetFocus(piWindow);}
+		if(piButton){piButton->EnableSounds();}
+		REL(piWindow);
+		REL(piButton);
+	}
 }
 
 void CLoadDialog::OnEndDialog()
 {
+	REL(m_piLastFocusedWindow);
+	m_piLastFocusedWindow=GetFocusedDescendant();
 	for(unsigned int x=0;x<MAX_SAVEDGAMES;x++)
 	{
 		m_piRows[x]->SetSavedGame(NULL);
@@ -93,4 +115,10 @@ bool CLoadDialog::LoadGame(IGameWindow *piParent,std::vector<SGameState> *pvSave
 	m_pvSavedGames=NULL;
 	m_nSelectedGame=0;
 	return nRes==DIALOG_OK;
+}
+
+void CLoadDialog::OnKeyDown(int nKey,bool *pbProcessed)
+{
+	if(nKey==GK_RETURN){return;}
+	CGameDialogBase::OnKeyDown(nKey,pbProcessed);
 }

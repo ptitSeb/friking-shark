@@ -126,6 +126,12 @@ void CControlsDialog::OnInitDialog()
 {
 	CGameDialogBase::OnInitDialog();
 	UpdateGUI();
+	if(m_piBTUpA)
+	{
+		m_piBTUpA->DisableSounds();
+		m_piGUIManager->SetFocus(m_piBTUpA);
+		m_piBTUpA->EnableSounds();		
+	}
 }
 
 bool CControlsDialog::SelectControls(IGameWindow *piParent,IPlayerProfile *piProfile)
@@ -150,4 +156,10 @@ bool CControlsDialog::SelectControls(IGameWindow *piParent,IPlayerProfile *piPro
 		piProfile->SetKeyMapping("FireBomb",&m_BombKeyMapping);
 	}
 	return nRes==DIALOG_OK;
+}
+
+void CControlsDialog::OnKeyDown(int nKey,bool *pbProcessed)
+{
+	if(nKey==GK_RETURN){return;}
+	CGameDialogBase::OnKeyDown(nKey,pbProcessed);
 }

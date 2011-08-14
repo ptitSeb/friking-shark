@@ -67,7 +67,8 @@ class CControlsDialog: virtual public CGameDialogBase,virtual public IGameGUIBut
 	
 public:
 	void OnInitDialog();
-
+	void OnKeyDown(int nKey,bool *pbProcessed);
+	
 	bool SelectControls(IGameWindow *piParent,IPlayerProfile *piProfile);
 	
 	// IGameButtonEvents
