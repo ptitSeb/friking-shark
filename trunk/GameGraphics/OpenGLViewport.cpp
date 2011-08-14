@@ -352,8 +352,14 @@ int TranslateKeyToX11(int nGameKey)
 	case GK_F3:return XK_F3;
 	case GK_F4:return XK_F4;
 	case GK_F5:return XK_F5;
-	case GK_PAUSE:return XK_Pause;
+	case GK_F6:return XK_F6;
+	case GK_F7:return XK_F7;
+	case GK_F8:return XK_F8;
+	case GK_F9:return XK_F9;
 	case GK_F10:return XK_F10;
+	case GK_F11:return XK_F11;
+	case GK_F12:return XK_F12;
+	case GK_PAUSE:return XK_Pause;
 	case GK_PAGEUP:return XK_Page_Up;
 	case GK_PAGEDOWN:return XK_Page_Down;
 	
@@ -882,14 +888,14 @@ void COpenGLViewport::Render()
 {
 	glFrontFace(GL_CCW);
 	glEnable(GL_POINT_SMOOTH);
-	glEnable(GL_POLYGON_SMOOTH);
+	glDisable(GL_POLYGON_SMOOTH);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_TEXTURE_2D);
 	glCullFace(GL_BACK);
-	glHint(GL_LINE_SMOOTH_HINT,GL_NICEST);
 	glHint(GL_POINT_SMOOTH_HINT,GL_NICEST);
-	glHint(GL_POLYGON_SMOOTH_HINT,GL_NICEST);
+	glHint(GL_LINE_SMOOTH_HINT,GL_NICEST);
+	//glHint(GL_POLYGON_SMOOTH_HINT,GL_NICEST);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
 	glPolygonMode(GL_FRONT,GL_FILL);
 
