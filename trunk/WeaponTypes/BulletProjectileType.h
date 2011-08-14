@@ -22,7 +22,8 @@ enum EBulletState
 {
 	eBulletState_Normal=ENTITY_STATE_BASE,
 	eBulletState_Hit,
-	eBulletState_StructureHit
+	eBulletState_StructureHit,
+	eBulletState_KillHit
 };
 
 class CBulletProjectileType: public CEntityTypeBase
@@ -43,6 +44,7 @@ public:
   BEGIN_ENTITY_STATE_MAP()
 	ENTITY_STATE_CHAIN(CEntityTypeBase)
 	ENTITY_STATE(eBulletState_Hit,"Hit")
+	ENTITY_STATE(eBulletState_KillHit,"KillHit")
 	ENTITY_STATE(eBulletState_StructureHit,"StructureHit")
   END_ENTITY_STATE_MAP()
   
