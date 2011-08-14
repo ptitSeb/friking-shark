@@ -108,7 +108,8 @@ public:
 	
 	virtual void				SetFocus(IGameWindow *piWindow)=0;
 	virtual bool				HasFocus(IGameWindow *piWindow)=0;
-
+	virtual IGameWindow 		*GetFocusedWindow()=0;
+	
 	virtual void				SetMouseCapture(IGameWindow *piWindow)=0;
 	virtual void				ReleaseMouseCapture()=0;
 	virtual bool				HasMouseCapture(IGameWindow *piWindow)=0;
@@ -257,6 +258,8 @@ public:
 class IGameGUIButton : virtual public IGameGUILabel
 {
 public:
+	virtual void EnableSounds()=0;
+	virtual void DisableSounds()=0;
 };
 
 class IGameGUIButtonEvents

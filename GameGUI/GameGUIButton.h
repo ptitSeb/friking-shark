@@ -18,9 +18,16 @@
 
 #pragma once
 
+#include <SoundSystems.h>
+
+DECLARE_CUSTOM_WRAPPER1(CGenericSoundTypeWrapper,ISoundType,m_piSoundType)
+
 class CGameGUIButton: virtual public CGameGUILabel, virtual public IGameGUIButton
 {
 	bool m_bClickInProgress;
+	bool m_bWantFocus;
+	bool m_bFocusOnHover;
+	bool m_bSoundsEnabled;
 
 	CGenericTextureWrapper m_DeactivatedTexture;
 	CGenericFontWrapper m_DeactivatedFont;
@@ -37,10 +44,18 @@ class CGameGUIButton: virtual public CGameGUILabel, virtual public IGameGUIButto
 	double		m_dHoverTextAlpha;
 	bool		m_bHoverEnabled;
 
+	CGenericSoundTypeWrapper m_HoverSound;
+	CGenericSoundTypeWrapper m_ClickSound;
+	
+	ISound *m_piHoverSound;
+	ISound *m_piClickSound;
+	
 protected:
 
 	BEGIN_PROP_MAP(CGameGUIButton)
 		PROP_CLASS_CHAIN(CGameGUILabel)
+		PROP_VALUE_FLAGS(m_bWantFocus,"WantFocus",false,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_bFocusOnHover,"FocusOnHover",false,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_DeactivatedTexture,"DeactivatedTexture",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_DeactivatedFont,"DeactivatedFont",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_dDeactivatedBackgroundAlpha,"DeactivatedBkAlpha",0.8,MRPF_NORMAL|MRPF_OPTIONAL)
@@ -54,15 +69,28 @@ protected:
 		PROP_VALUE_FLAGS(m_vHoverBackgroundColor,"HoverBkColor",CVector(0.5,0.5,1.0),MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_dHoverTextAlpha,"HoverTextAlpha",1.0,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_vHoverTextColor,"HoverTextColor",CVector(0,0,0),MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_FLAGS(m_HoverSound,"HoverSound",MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_FLAGS(m_ClickSound,"ClickSound",MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP()
 
+	bool Unserialize(ISystemPersistencyNode *piNode);
+	void Destroy();
+	
 	void OnMouseMove(double x,double y);
 	void OnMouseDown(int nButton,double x,double y);
 	void OnMouseUp(int nButton,double x,double y);
-
+	void OnKeyDown(int nKey,bool *pbProcessed);
+	void OnWantFocus(bool *pbWant);
+	
+	void OnSetFocus();
+	void OnKillFocus(IGameWindow *piFocusedWindow);
+	
 public:
 	// IGameGUIButton
-
+	
+	void EnableSounds();
+	void DisableSounds();
+	
 	void OnDrawBackground(IGenericRender *piRender);
 	void OnDraw(IGenericRender *piRender);
 

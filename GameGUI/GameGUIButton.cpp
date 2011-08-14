@@ -24,16 +24,75 @@
 CGameGUIButton::CGameGUIButton(void)
 {
   	m_bActive=true;
+	m_bWantFocus=true;
+	m_bFocusOnHover=false;
 	m_bClickInProgress=false;
 	m_bHoverEnabled=true;
 	m_dHoverBackgroundAlpha=1.0;
 	m_vHoverBackgroundColor=CVector(0.5,0.5,1.0);
 	m_dHoverTextAlpha=1.0;
 	m_vHoverTextColor=CVector(0,0,0);
+	m_piClickSound=NULL;
+	m_piHoverSound=NULL;
+	m_bSoundsEnabled=true;
 }
 
 CGameGUIButton::~CGameGUIButton(void)
 {
+}
+
+bool CGameGUIButton::Unserialize(ISystemPersistencyNode *piNode)
+{
+	bool bOk=CGameWindowBase::Unserialize(piNode);
+	if(bOk && m_HoverSound.m_piSoundType){m_piHoverSound=m_HoverSound.m_piSoundType->CreateInstance();}
+	if(bOk && m_ClickSound.m_piSoundType){m_piClickSound=m_ClickSound.m_piSoundType->CreateInstance();}
+	return bOk;
+}
+
+void CGameGUIButton::Destroy()
+{
+	delete m_piClickSound;
+	delete m_piHoverSound;
+	m_piClickSound=NULL;
+	m_piHoverSound=NULL;
+	CGameWindowBase::Destroy();
+}
+void CGameGUIButton::EnableSounds(){m_bSoundsEnabled=true;}
+void CGameGUIButton::DisableSounds(){m_bSoundsEnabled=false;}
+
+void CGameGUIButton::OnKeyDown(int nKey,bool *pbProcessed)
+{
+	if(m_bWantFocus && (nKey==' ' || nKey==GK_RETURN))
+	{
+		*pbProcessed=true;
+		if(m_bSoundsEnabled && m_piClickSound){m_piClickSound->Play();}
+		NOTIFY_EVENT(IGameGUIButtonEvents,OnButtonClicked(this))
+	}
+}
+
+void CGameGUIButton::OnWantFocus(bool *pbWant)
+{
+	*pbWant=m_bWantFocus;
+}
+
+void CGameGUIButton::OnSetFocus()
+{
+	if(m_bHoverEnabled && m_bFocusOnHover)
+	{
+		m_piGUIManager->SetMouseCapture(this);
+		if(m_bSoundsEnabled && m_piHoverSound){m_piHoverSound->Play();}
+	}
+}
+
+void CGameGUIButton::OnKillFocus(IGameWindow *piFocusedWindow)
+{
+	if(m_bHoverEnabled &&m_bFocusOnHover)
+	{
+		if(m_piGUIManager->HasMouseCapture(this))
+		{
+			m_piGUIManager->ReleaseMouseCapture();
+		}
+	}
 }
 
 void CGameGUIButton::OnDrawBackground(IGenericRender *piRender)
@@ -57,7 +116,8 @@ void CGameGUIButton::OnDrawBackground(IGenericRender *piRender)
 			}
 		}
 	}
-	else if(m_piGUIManager->HasMouseCapture(this) && m_bHoverEnabled)
+	else if((m_piGUIManager->HasMouseCapture(this) && m_bHoverEnabled) ||
+			(m_bWantFocus && m_piGUIManager->HasFocus(this)))
 	{
 		if(m_HoverTexture.m_piTexture)
 		{
@@ -95,7 +155,8 @@ void CGameGUIButton::OnDraw(IGenericRender *piRender)
 			DrawText(piRender,m_vDeactivatedTextColor,m_dDeactivatedTextAlpha);
 		}
 	}
-	else if(m_piGUIManager->HasMouseCapture(this) && m_bHoverEnabled)
+	else if((m_piGUIManager->HasMouseCapture(this) && m_bHoverEnabled) ||
+			(m_bWantFocus && m_piGUIManager->HasFocus(this)))
 	{
 		if(m_HoverFont.m_piFont)
 		{
@@ -117,12 +178,20 @@ void CGameGUIButton::OnMouseMove(double x,double y)
 	if(m_piGUIManager->HasMouseCapture(NULL))
 	{
 		m_piGUIManager->SetMouseCapture(this);
+		if(m_bSoundsEnabled && m_piHoverSound){m_piHoverSound->Stop();m_piHoverSound->Play();}
+		if(m_bFocusOnHover){m_piGUIManager->SetFocus(this);}
 	}
 	else if(m_piGUIManager->HasMouseCapture(this) && !m_bClickInProgress)
 	{
 		if(x<0 || x>m_rRealRect.w || y<0 || y>m_rRealRect.h)
 		{
 			m_piGUIManager->ReleaseMouseCapture();
+			if(m_bFocusOnHover && m_piGUIManager->HasFocus(this))
+			{
+				IGameWindow *piAncestor=GetFocusableAncestor();
+				m_piGUIManager->SetFocus(piAncestor);
+				REL(piAncestor);
+			}
 		}
 	}
 }
@@ -145,11 +214,21 @@ void CGameGUIButton::OnMouseUp(int nButton,double x,double y)
 		SGamePos pos;
 		pos.x=x+m_rRealRect.x;
 		pos.y=y+m_rRealRect.y;
-		m_piGUIManager->ReleaseMouseCapture();
 
 		if(m_rRealRect.Contains(pos))
 		{
+			if(m_bSoundsEnabled && m_piClickSound){m_piClickSound->Play();}
 			NOTIFY_EVENT(IGameGUIButtonEvents,OnButtonClicked(this))
+		}
+		else
+		{
+			m_piGUIManager->ReleaseMouseCapture();
+			if(m_bFocusOnHover && m_piGUIManager->HasFocus(this))
+			{
+				IGameWindow *piAncestor=GetFocusableAncestor();
+				m_piGUIManager->SetFocus(piAncestor);
+				REL(piAncestor);
+			}
 		}
 	}
 }

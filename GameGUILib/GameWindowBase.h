@@ -42,6 +42,14 @@ DECLARE_CUSTOM_WRAPPER1(CColorDialogWrapper,IGameGUIColorDialog,m_piColorDialog)
 DECLARE_CUSTOM_WRAPPER1(CFileDialogWrapper,IGameGUIFileDialog,m_piFileDialog)
 DECLARE_CUSTOM_WRAPPER1(CInputDialogWrapper,IGameGUIInputDialog,m_piInputDialog)
 
+enum EFocusableSearchDirection
+{
+	eFocusableSearchRight,
+	eFocusableSearchLeft,
+	eFocusableSearchUp,
+	eFocusableSearchDown
+};
+
 class CGameWindowBase :	virtual public CSystemObjectBase, virtual public IGameWindow
 {
 protected:
@@ -70,6 +78,7 @@ protected:
 	double 					m_dLayoutSeparation; // Entre los hijos
 
 	bool m_bRegisterOnCreation;
+	bool m_bNavigateChildren;
 
 protected:
 
@@ -94,11 +103,19 @@ protected:
 
 	CLine GetMouseRay(double x,double y,double dLength,IGenericCamera *piCamera);
 
-
+	void 		 GetFocusableDescendants(IGameWindow *piParent,std::vector<IGameWindow *> *pvFocusableWindows);
+	IGameWindow *GetFocusableAncestor();
+	IGameWindow *GetFocusedDescendant();
+	
+	IGameWindow *FindNextFocusableWindow(IGameWindow *pReference);
+	IGameWindow *FindPreviousFocusableWindow(IGameWindow *pReference);
+	IGameWindow *FindClosestFocusableWindow(IGameWindow *pReference,EFocusableSearchDirection eDirection);
+	
 public:
 
 	BEGIN_PROP_MAP(CGameWindowBase)
 		PROP_VALUE_FLAGS(m_bRegisterOnCreation,"RegisterOnCreation",false,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_bNavigateChildren,"NavigateChildren",false,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_rRect,"Position",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_vLoadedChildrenList,"Children",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_Font,"Font",MRPF_NORMAL|MRPF_OPTIONAL)

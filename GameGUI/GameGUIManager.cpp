@@ -382,6 +382,12 @@ bool CGameGUIManager::HasFocus(IGameWindow *piWindow)
 	return m_piFocusedWindow==piWindow;
 }
 
+IGameWindow *CGameGUIManager::GetFocusedWindow()
+{
+	return ADD(m_piFocusedWindow);
+}
+
+
 void CGameGUIManager::SetMouseCapture(IGameWindow *piWindow)
 {
 	ReleaseMouseCapture();
