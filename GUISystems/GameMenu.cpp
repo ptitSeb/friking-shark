@@ -54,10 +54,22 @@ void CGameMenu::OnButtonClicked(IGameGUIButton *piControl)
 void CGameMenu::OnInitDialog()
 {
 	CGameDialogBase::OnInitDialog();
+	if(m_piBTContinue)
+	{
+		m_piBTContinue->EnableSounds();
+		m_piGUIManager->SetFocus(m_piBTContinue);
+		m_piBTContinue->DisableSounds();
+	}
 }
 
 eGameMenuAction CGameMenu::Show(IGameWindow *piParent)
 {
 	int nRes=Execute(piParent);
 	return (eGameMenuAction)nRes;
+}
+
+void CGameMenu::OnKeyDown(int nKey,bool *pbProcessed)
+{
+	if(nKey==GK_RETURN){return;}
+	CGameDialogBase::OnKeyDown(nKey,pbProcessed);
 }

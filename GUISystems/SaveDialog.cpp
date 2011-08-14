@@ -115,3 +115,9 @@ bool CSaveDialog::SaveGame(IGameWindow *piParent,SGameState *pCurrent,std::vecto
 	m_nSelectedGame=0;
 	return nRes==DIALOG_OK;
 }
+
+void CSaveDialog::OnKeyDown(int nKey,bool *pbProcessed)
+{
+	if(nKey==GK_RETURN){return;}
+	CGameDialogBase::OnKeyDown(nKey,pbProcessed);
+}

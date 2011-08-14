@@ -26,6 +26,7 @@ class CLoadDialog: virtual public CGameDialogBase,virtual public IGameGUIButtonE
 	
 	ISavedGameRow *m_piRows[MAX_SAVEDGAMES];
 	IGameGUIButton *m_piBTCancel;
+	IGameWindow    *m_piLastFocusedWindow;
 	
 	std::vector<SGameState> *m_pvSavedGames;
 	
@@ -43,6 +44,7 @@ class CLoadDialog: virtual public CGameDialogBase,virtual public IGameGUIButtonE
 public:
 	void OnInitDialog();
 	void OnEndDialog();
+	void OnKeyDown(int nKey,bool *pbProcessed);
 	
 	bool LoadGame(IGameWindow *piParent,std::vector<SGameState> *pvSavedGames,SGameState *pSelected);
 	

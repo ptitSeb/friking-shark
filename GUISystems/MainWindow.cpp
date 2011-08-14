@@ -74,7 +74,7 @@ bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 				m_PlayerData.m_PlayerProfile.Create(m_piSystem,"CPlayerProfile","");
 			}
 		}
-
+		
 		if(m_piSTBackground)
 		{
 			m_piSTBackground->Show(true);

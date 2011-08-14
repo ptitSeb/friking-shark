@@ -30,6 +30,7 @@ class CMainMenu: virtual public CGameDialogBase,virtual public IMainMenu,virtual
 	IGameGUIButton *m_piBTControls;
 	IGameGUIButton *m_piBTHighScores;
 	IGameGUIButton *m_piBTCredits;
+	IGameWindow    *m_piLastFocusedWindow;
 	
 	BEGIN_CHILD_MAP()
 		CHILD_MAP_ENTRY_EX("NewGame",m_piBTNewGame,IGameGUIButtonEvents);
@@ -45,7 +46,8 @@ class CMainMenu: virtual public CGameDialogBase,virtual public IMainMenu,virtual
 	
 public:
 	void OnInitDialog();
-
+	void OnEndDialog();
+	
 	// IMainMenu
 	
 	eMainMenuAction Show(IGameWindow *piParent,bool bAllowContinue, bool bAllowLoad);

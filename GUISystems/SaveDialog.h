@@ -41,6 +41,7 @@ class CSaveDialog: virtual public CGameDialogBase,virtual public IGameGUIButtonE
 public:
 	void OnInitDialog();
 	void OnEndDialog();
+	void OnKeyDown(int nKey,bool *pbProcessed);
 	
 	bool SaveGame(IGameWindow *piParent,SGameState *pCurrent,std::vector<SGameState> *pvSavedGames);
 	

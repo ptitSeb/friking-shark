@@ -21,6 +21,8 @@
 #define MAX_LIVES_TO_DISPLAY 6
 #define MAX_BOMBS_TO_DISPLAY 6
 
+#include <SoundSystems.h>
+
 enum EGameInterfaceState
 {
 	eGameInterfaceState_Idle,
@@ -51,6 +53,7 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	unsigned int			 m_nWeapon;
 	unsigned int             m_nLivesLeft;
 	unsigned int             m_nLastCountTime;
+	unsigned int             m_nLastCountSoundTime;
 	unsigned int 			 m_nBombs;
 	int 			 		 m_nCheckpoint;
 	std::set<double>		 m_sCheckpointPositions;
@@ -62,7 +65,11 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	CFrameManagerWrapper	 m_FrameManagerWrapper;
 	CWorldManagerWrapper	 m_WorldManagerWrapper;
 	CPlayerProfileWrapper	 m_PlayerProfile;
-	
+	CSoundTypeWrapper	 	 m_PointCountSoundWrapper;
+	CSoundTypeWrapper	 	 m_BombCountSoundWrapper;
+
+	ISound                   *m_piPointCountSound;
+	ISound                   *m_piBombCountSound;
 	IPlayer					*m_piPlayer;
 	IEntity					*m_piPlayerEntity;
 
@@ -139,6 +146,12 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 		CHILD_MAP_ENTRY("PlayerBomb4",m_piSTBombs[4]);
 		CHILD_MAP_ENTRY("PlayerBomb5",m_piSTBombs[5]);
 	END_CHILD_MAP()
+	
+	BEGIN_PROP_MAP(CGameInterface)
+		PROP_CLASS_CHAIN(CGameWindowBase);
+		PROP_FLAGS(m_PointCountSoundWrapper,"PointCountSound",MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_FLAGS(m_BombCountSoundWrapper,"BombCountSound",MRPF_NORMAL|MRPF_OPTIONAL)
+	END_PROP_MAP()
 	
 	void RenderCourtain(IGenericRender *piRender);
 

@@ -39,6 +39,8 @@ void CMainMenu::OnKeyDown(int nKey,bool *pbProcessed)
 		*pbProcessed=true;
 		return;
 	}
+	if(nKey==GK_RETURN){return;}
+	CGameDialogBase::OnKeyDown(nKey,pbProcessed);
 }
 
 void CMainMenu::OnButtonClicked(IGameGUIButton *piControl)
@@ -78,6 +80,27 @@ void CMainMenu::OnInitDialog()
 	
 	if(m_piBTContinue){m_piBTContinue->Activate(m_bAllowContinue);}
 	if(m_piBTLoad){m_piBTLoad->Activate(m_bAllowLoad);}
+	if(m_piLastFocusedWindow && m_piLastFocusedWindow->IsActive())
+	{
+		IGameGUIButton *piButton=QI(IGameGUIButton,m_piLastFocusedWindow);
+		if(piButton){piButton->DisableSounds();}
+		m_piGUIManager->SetFocus(m_piLastFocusedWindow);
+		if(piButton){piButton->EnableSounds();}
+		REL(piButton);
+	}
+	else if(m_piBTNewGame)
+	{
+		m_piBTNewGame->DisableSounds();
+		m_piGUIManager->SetFocus(m_piBTNewGame);
+		m_piBTNewGame->EnableSounds();
+	}
+}
+
+void CMainMenu::OnEndDialog()
+{
+	REL(m_piLastFocusedWindow);
+	m_piLastFocusedWindow=GetFocusedDescendant();
+	CGameDialogBase::OnEndDialog();
 }
 
 eMainMenuAction CMainMenu::Show(IGameWindow *piParent,bool bAllowContinue, bool bAllowLoad)

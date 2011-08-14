@@ -30,6 +30,17 @@ CCreditsDialog::~CCreditsDialog(void)
 {
 }
 
+void CCreditsDialog::OnInitDialog()
+{
+	CGameDialogBase::OnInitDialog();
+	if(m_piBTOk)
+	{
+		m_piBTOk->DisableSounds();
+		m_piGUIManager->SetFocus(m_piBTOk);
+		m_piBTOk->EnableSounds();
+	}
+}
+
 void CCreditsDialog::OnButtonClicked(IGameGUIButton *piControl)
 {
 	if(piControl==m_piBTOk)
