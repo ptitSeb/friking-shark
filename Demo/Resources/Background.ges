@@ -543,6 +543,7 @@ Terrain
 				Texture=./Textures/sandPeq.png
 				VertResolution=4.000000
 			}
+			NormalMap
 			Texture
 			{
 				Class=Texture
@@ -562,14 +563,26 @@ Terrain
 	{
 		Config
 		{
-			Enabled=0
-			HorzResolution=1.000000
-			Opacity=1.000000
-			Speed=0.000000
-			Texture=""
-			VertResolution=1.000000
+			Enabled=1
+			HorzResolution=2.000000
+			Opacity=0.200000
+			Speed=0.020000
+			Texture=./Textures/Clouds.png
+			VertResolution=2.000000
 		}
 		Texture
+		{
+			Class=Texture
+			Data
+			{
+				Archivo=./Textures/Clouds.png
+				ArchivoAlpha=""
+				ColorKey=0.000000,0.000000,0.000000
+				UsarColorKey=0
+			}
+			Name=""
+			System=GameResources
+		}
 	}
 	Sun
 	{

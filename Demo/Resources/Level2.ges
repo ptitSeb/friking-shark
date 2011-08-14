@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=199.907946
 			NearPlane=130.000000
-			Posicion=454.378387,198.441526,7.827628
+			Posicion=1685.480757,198.441526,0.075212
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -4576,9 +4576,9 @@ Music
 		{
 			Channels=1
 			File=./Sounds/level2music.ogg
+			Group=Music
 			Loop=0
 			Volume=100.000000
-			Group=Music
 		}
 		Name=""
 		System=GameSystem
@@ -4694,6 +4694,7 @@ Terrain
 				Texture=./Textures/ArenaOscura.png
 				VertResolution=4.000000
 			}
+			NormalMap
 			Texture
 			{
 				Class=Texture
@@ -4720,6 +4721,7 @@ Terrain
 				Texture=./Textures/ArenaOscura.png
 				VertResolution=4.000000
 			}
+			NormalMap
 			Texture
 			{
 				Class=Texture
@@ -4746,6 +4748,7 @@ Terrain
 				Texture=./Textures/SandGrey.png
 				VertResolution=3.000000
 			}
+			NormalMap
 			Texture
 			{
 				Class=Texture
@@ -4795,6 +4798,7 @@ Terrain
 				Texture=./Textures/sandPeq.png
 				VertResolution=3.000000
 			}
+			NormalMap
 			Texture
 			{
 				Class=Texture
@@ -4814,14 +4818,26 @@ Terrain
 	{
 		Config
 		{
-			Enabled=0
-			HorzResolution=1.000000
-			Opacity=1.000000
-			Speed=0.000000
-			Texture=""
-			VertResolution=1.000000
+			Enabled=1
+			HorzResolution=2.000000
+			Opacity=0.200000
+			Speed=0.020000
+			Texture=./Textures/Clouds.png
+			VertResolution=2.000000
 		}
 		Texture
+		{
+			Class=Texture
+			Data
+			{
+				Archivo=./Textures/Clouds.png
+				ArchivoAlpha=""
+				ColorKey=0.000000,0.000000,0.000000
+				UsarColorKey=0
+			}
+			Name=""
+			System=GameResources
+		}
 	}
 	Sun
 	{
