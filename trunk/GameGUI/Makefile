@@ -9,7 +9,8 @@ INCLUDES = -I. \
 -I../VectorLib \
 -I../GameGUI \
 -I../GameGUILib \
--I../GameGraphics
+-I../GameGraphics \
+-I../SoundSystems
 
 SOURCES = GameGUIButton.cpp\
 GameGUILabel.cpp\

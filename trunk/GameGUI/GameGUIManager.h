@@ -92,7 +92,8 @@ public:
 
 	void		SetFocus(IGameWindow *piWindow);
 	bool		HasFocus(IGameWindow *piWindow);
-
+	IGameWindow *GetFocusedWindow();
+	
 	void		SetMouseCapture(IGameWindow *piWindow);
 	void		ReleaseMouseCapture();
 	bool		HasMouseCapture(IGameWindow *piWindow);

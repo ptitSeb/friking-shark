@@ -32,21 +32,29 @@ CGameDialogBase::~CGameDialogBase(void)
 
 int	CGameDialogBase::Execute(IGameWindow *piParent)
 {
+	IGameGUIManager *piManager=piParent?piParent->GetGUIManager():NULL;
+	IGameWindow *piOldFocus=piManager?piManager->GetFocusedWindow():NULL;
+	
+	int nResult=DIALOG_CANCEL;
+	
 	if(CGameWindowBase::InitWindow(piParent,true))
 	{
 		m_piGUIManager->SetFocus(this);
+		
 		OnInitDialog();
 		Show(true);
 		m_piGUIManager->EnterGUILoop();
 		Show(false);
 		OnEndDialog();
+		
 		CGameWindowBase::DestroyWindow();
-		return m_nDialogResult;
+		nResult=m_nDialogResult;
 	}
-	else
-	{
-		return DIALOG_CANCEL;
-	}
+	
+	if(piManager){piManager->SetFocus(piOldFocus);}
+	REL(piOldFocus);
+	REL(piManager);
+	return nResult;
 }
 
 void CGameDialogBase::EndDialog(int nResult)
@@ -76,5 +84,9 @@ void CGameDialogBase::OnKeyDown(int nKey,bool *pbProcessed)
 	{
 		EndDialog(DIALOG_OK);
 		(*pbProcessed)=true;
+	}
+	else
+	{
+		CGameWindowBase::OnKeyDown(nKey,pbProcessed);
 	}
 }

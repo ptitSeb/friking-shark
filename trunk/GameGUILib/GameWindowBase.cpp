@@ -37,6 +37,7 @@ CGameWindowBase::CGameWindowBase(void)
 	m_dSizeInLayout=0;
 	m_dLayoutMargin=0;
 	m_dLayoutSeparation=0;
+	m_bNavigateChildren=false;
 }
 
 CGameWindowBase::~CGameWindowBase(void)
@@ -460,8 +461,219 @@ void CGameWindowBase::EnumerateChildren(IGameWindowEnumerationCallback *piCallba
 void CGameWindowBase::OnCharacter(int nCharacter,bool *pbProcessed)
 {
 }
+
+void CGameWindowBase::GetFocusableDescendants(IGameWindow *piParent,std::vector<IGameWindow *> *pvFocusableWindows)
+{
+	std::vector<IGameWindow *> vChildren;
+	piParent->GetChildren(&vChildren);
+	for(unsigned int x=0;x<vChildren.size();x++)
+	{
+		IGameWindow *piChild=vChildren[x];
+		bool bFocusable=false;
+		piChild->OnWantFocus(&bFocusable);
+		if(bFocusable && piChild->IsActive() && piChild->IsVisible())
+		{
+			pvFocusableWindows->push_back(piChild);
+		}
+		else
+		{
+			GetFocusableDescendants(piChild,pvFocusableWindows);
+			REL(piChild);
+		}
+	}
+}
+
+IGameWindow *CGameWindowBase::GetFocusableAncestor()
+{
+	IGameWindow *piCurrentAncestor=ADD(m_piParent);
+	while(piCurrentAncestor)
+	{
+		bool bFocusable=false;
+		piCurrentAncestor->OnWantFocus(&bFocusable);
+		if(bFocusable){break;}
+		IGameWindow *piNewAncestor=piCurrentAncestor->GetParent();
+		REL(piCurrentAncestor);
+		piCurrentAncestor=piNewAncestor;
+	}
+	return piCurrentAncestor;
+}
+
+IGameWindow *CGameWindowBase::FindClosestFocusableWindow(IGameWindow *pReference,EFocusableSearchDirection eDirection)
+{
+	if(pReference==NULL){return FindNextFocusableWindow(NULL);}
+	
+	IGameWindow *piResult=NULL;
+	std::vector<IGameWindow *> vFocusableWindows;
+	GetFocusableDescendants(this,&vFocusableWindows);
+
+	SGameRect sRect;
+	pReference->GetRealRect(&sRect);
+	SGamePos sMid;
+	sMid.x=sRect.x+sRect.w*0.5;
+	sMid.y=sRect.y+sRect.h*0.5;
+	double dCurrentDistance=0;
+	
+	unsigned int x=0;
+	for(x=0;x<vFocusableWindows.size();x++)
+	{
+		IGameWindow *piWindow=vFocusableWindows[x];
+		if(pReference==piWindow){continue;}
+		
+		SGameRect sCandidateRect;
+		piWindow->GetRealRect(&sCandidateRect);
+		SGamePos sCandidateMid;
+		sCandidateMid.x=sCandidateRect.x+sCandidateRect.w*0.5;
+		sCandidateMid.y=sCandidateRect.y+sCandidateRect.h*0.5;
+		
+		bool bHorzOverlap=(sCandidateMid.y>=sRect.y && sCandidateMid.y<=sRect.y+sRect.h)||
+						  (sMid.y>=sCandidateRect.y && sMid.y<=sCandidateRect.y+sCandidateRect.h);
+		
+		bool bValidCandidate=false;
+		switch(eDirection)
+		{
+			case eFocusableSearchLeft:  bValidCandidate=(sCandidateMid.x<sMid.x && bHorzOverlap);break;
+			case eFocusableSearchRight: bValidCandidate=(sCandidateMid.x>sMid.x && bHorzOverlap);break;
+			case eFocusableSearchUp:    bValidCandidate=(sCandidateMid.y>sMid.y && !bHorzOverlap);break;
+			case eFocusableSearchDown:  bValidCandidate=(sCandidateMid.y<sMid.y && !bHorzOverlap);break;
+		};
+		double dDist=CVector(sCandidateMid.x,sCandidateMid.y,0)-CVector(sMid.x,sMid.y,0);
+		if(bValidCandidate && (piResult==NULL || dDist<dCurrentDistance))
+		{
+			dCurrentDistance=dDist;
+			piResult=ADD(piWindow);
+		}		
+		REL(piWindow);
+	}
+	return piResult?piResult:ADD(pReference);
+}
+
+IGameWindow *CGameWindowBase::FindNextFocusableWindow(IGameWindow *pReference)
+{
+	IGameWindow *piResult=NULL;
+	bool bReferenceWasPrevious=false;
+	std::vector<IGameWindow *> vFocusableWindows;
+	GetFocusableDescendants(this,&vFocusableWindows);
+	
+	unsigned int x=0;
+	for(x=0;x<vFocusableWindows.size();x++)
+	{
+		IGameWindow *piWindow=vFocusableWindows[x];
+		if(pReference==piWindow)
+		{
+			bReferenceWasPrevious=true;
+		}
+		else if((pReference==NULL && x==0) || bReferenceWasPrevious)
+		{
+			bReferenceWasPrevious=false;
+			piResult=ADD(piWindow);
+		}		
+		REL(piWindow);
+	}
+	return piResult;
+}
+
+IGameWindow *CGameWindowBase::FindPreviousFocusableWindow(IGameWindow *pReference)
+{
+	IGameWindow *piResult=NULL;
+	std::vector<IGameWindow *> vFocusableWindows;
+	GetFocusableDescendants(this,&vFocusableWindows);
+	bool bReferenceWasNext=false;
+	int x=0;
+	for(x=vFocusableWindows.size()-1;x>=0;x--)
+	{
+		IGameWindow *piWindow=vFocusableWindows[x];
+		if(pReference==piWindow)
+		{
+			bReferenceWasNext=true;
+		}
+		else if((pReference==NULL && x==(int)(vFocusableWindows.size()-1)) || bReferenceWasNext)
+		{
+			bReferenceWasNext=false;
+			piResult=ADD(piWindow);
+		}		
+		REL(piWindow);
+	}
+	return piResult;
+}
+
+IGameWindow *CGameWindowBase::GetFocusedDescendant()
+{
+	IGameWindow *piResult=NULL;
+	std::vector<IGameWindow *> vFocusableWindows;
+	GetFocusableDescendants(this,&vFocusableWindows);
+	
+	unsigned int x=0;
+	for(x=0;x<vFocusableWindows.size();x++)
+	{
+		IGameWindow *piWindow=vFocusableWindows[x];
+		if(m_piGUIManager->HasFocus(piWindow))
+		{
+			piResult=ADD(piWindow);
+			REL(piWindow);
+		}
+	}
+	return piResult;
+}
+
 void CGameWindowBase::OnKeyDown(int nKey,bool *pbProcessed)
 {
+	if(m_bNavigateChildren)
+	{
+		if(nKey==GK_HOME)
+		{
+			*pbProcessed=true;
+			IGameWindow *piNew=FindNextFocusableWindow(NULL);
+			if(piNew){m_piGUIManager->SetFocus(piNew);}
+			REL(piNew);
+		}
+		else if(nKey==GK_END)
+		{
+			*pbProcessed=true;
+			IGameWindow *piNew=FindPreviousFocusableWindow(NULL);
+			if(piNew){m_piGUIManager->SetFocus(piNew);}
+			REL(piNew);
+		}
+		else if(nKey==GK_RIGHT || nKey==GK_DOWN)
+		{
+			*pbProcessed=true;
+			IGameWindow *piCurrentFocusedWindow=GetFocusedDescendant();
+			IGameWindow *piNew=FindClosestFocusableWindow(piCurrentFocusedWindow,nKey==GK_RIGHT?eFocusableSearchRight:eFocusableSearchDown);
+			if(piNew==NULL){piNew=FindNextFocusableWindow(NULL);}
+			if(piNew){m_piGUIManager->SetFocus(piNew);}
+			REL(piNew);
+			REL(piCurrentFocusedWindow);
+		}
+		else if(nKey==GK_LEFT || nKey==GK_UP)
+		{
+			*pbProcessed=true;
+			IGameWindow *piCurrentFocusedWindow=GetFocusedDescendant();
+			IGameWindow *piNew=FindClosestFocusableWindow(piCurrentFocusedWindow,nKey==GK_LEFT?eFocusableSearchLeft:eFocusableSearchUp);
+			if(piNew==NULL){piNew=FindPreviousFocusableWindow(NULL);}
+			if(piNew){m_piGUIManager->SetFocus(piNew);}
+			REL(piNew);
+			REL(piCurrentFocusedWindow);
+		}
+		else if(nKey=='\t' && (m_piGUIManager->IsKeyDown(GK_LSHIFT) || m_piGUIManager->IsKeyDown(GK_RSHIFT)))
+		{
+			*pbProcessed=true;
+			IGameWindow *piCurrentFocusedWindow=GetFocusedDescendant();
+			IGameWindow *piNew=FindPreviousFocusableWindow(piCurrentFocusedWindow);
+			if(piNew==NULL){piNew=FindPreviousFocusableWindow(NULL);}
+			if(piNew){m_piGUIManager->SetFocus(piNew);}
+			REL(piNew);
+			REL(piCurrentFocusedWindow);
+		}
+		else if(nKey=='\t' && !m_piGUIManager->IsKeyDown(GK_LSHIFT) && !m_piGUIManager->IsKeyDown(GK_RSHIFT))
+		{
+			*pbProcessed=true;
+			IGameWindow *piCurrentFocusedWindow=GetFocusedDescendant();
+			IGameWindow *piNew=FindNextFocusableWindow(piCurrentFocusedWindow);
+			if(piNew==NULL){piNew=FindNextFocusableWindow(NULL);}
+			if(piNew){m_piGUIManager->SetFocus(piNew);}
+			REL(piNew);
+			REL(piCurrentFocusedWindow);
+		}
+	}
 }
 void CGameWindowBase::OnKeyUp(int nKey,bool *pbProcessed)
 {
@@ -526,7 +738,7 @@ void CGameWindowBase::OnDraw(IGenericRender *piRender){}
 void CGameWindowBase::OnSetFocus(){}
 void CGameWindowBase::OnKillFocus(IGameWindow *piFocusedWindow){}
 void CGameWindowBase::OnReleaseMouseCapture(){}
-void CGameWindowBase::OnWantFocus(bool *pbWant){*pbWant=false;}
+void CGameWindowBase::OnWantFocus(bool *pbWant){*pbWant=m_bNavigateChildren;}
 
 IGenericTexture *CGameWindowBase::GetBackgroundTexture()
 {

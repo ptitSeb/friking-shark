@@ -49,6 +49,12 @@ void CGameGUIConfirmDialog::OnInitDialog()
 	  m_piSTTitle->SetText(m_sTitle);
 	}
 	if(m_piSTText){m_piSTText->SetText(m_sText);}	
+	if(m_piBTYes && m_bNavigateChildren)
+	{
+		bool bWantFocus=false;
+		m_piBTYes->OnWantFocus(&bWantFocus);
+		if(bWantFocus){m_piGUIManager->SetFocus(m_piBTYes);}
+	}
 }
 
 void CGameGUIConfirmDialog::OnEndDialog()
@@ -64,8 +70,9 @@ void CGameGUIConfirmDialog::OnButtonClicked(IGameGUIButton *piControl)
 
 void CGameGUIConfirmDialog::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(nKey==GK_ESCAPE){EndDialog(DIALOG_CANCEL);*pbProcessed=true;}
-	if(nKey==GK_RETURN){EndDialog(DIALOG_OK);*pbProcessed=true;}
+	if(nKey==GK_ESCAPE){EndDialog(DIALOG_CANCEL);*pbProcessed=true;return;}
+	if(nKey==GK_RETURN && !m_bNavigateChildren){EndDialog(DIALOG_OK);*pbProcessed=true;return;}
+	CGameDialogBase::OnKeyDown(nKey,pbProcessed);
 }
 
 bool CGameGUIConfirmDialog::Confirm(IGameWindow *piParent,std::string sText,std::string sTitle,EMessageDialogType eType)
