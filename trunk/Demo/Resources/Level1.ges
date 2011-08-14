@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=202.395636
 			NearPlane=130.000000
-			Posicion=1373.611676,228.678936,-1.472174
+			Posicion=1883.473696,228.678936,9.365432
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -3777,9 +3777,9 @@ Music
 		{
 			Channels=1
 			File=./Sounds/level1intro.ogg
+			Group=Music
 			Loop=0
 			Volume=100.000000
-			Group=Music
 		}
 		Name=""
 		System=GameSystem
@@ -3791,9 +3791,9 @@ Music
 		{
 			Channels=1
 			File=./Sounds/level1music.ogg
+			Group=Music
 			Loop=0
 			Volume=100.000000
-			Group=Music
 		}
 		Name=""
 		System=GameSystem
@@ -3909,6 +3909,7 @@ Terrain
 				Texture=hiervsPeq.png
 				VertResolution=4.000000
 			}
+			NormalMap
 			Texture
 			{
 				Class=Texture
@@ -3935,6 +3936,7 @@ Terrain
 				Texture=./Textures/Tiles.png
 				VertResolution=3.000000
 			}
+			NormalMap
 			Texture
 			{
 				Class=Texture
@@ -3961,6 +3963,7 @@ Terrain
 				Texture=sandPeq.png
 				VertResolution=3.500000
 			}
+			NormalMap
 			Texture
 			{
 				Class=Texture
@@ -3987,6 +3990,7 @@ Terrain
 				Texture=./Textures/Tiles.png
 				VertResolution=3.000000
 			}
+			NormalMap
 			Texture
 			{
 				Class=Texture
@@ -4013,6 +4017,7 @@ Terrain
 				Texture=./Textures/LechoSuperior.png
 				VertResolution=5.000000
 			}
+			NormalMap
 			Texture
 			{
 				Class=Texture
@@ -4062,6 +4067,7 @@ Terrain
 				Texture=LechoInferior.png
 				VertResolution=4.000000
 			}
+			NormalMap
 			Texture
 			{
 				Class=Texture
@@ -4087,6 +4093,7 @@ Terrain
 				Texture=LechoSuperior.png
 				VertResolution=4.500000
 			}
+			NormalMap
 			Texture
 			{
 				Class=Texture
@@ -4112,6 +4119,7 @@ Terrain
 				Texture=ArenaOscura.png
 				VertResolution=5.500000
 			}
+			NormalMap
 			Texture
 			{
 				Class=Texture
@@ -4131,14 +4139,26 @@ Terrain
 	{
 		Config
 		{
-			Enabled=0
-			HorzResolution=1.000000
-			Opacity=1.000000
-			Speed=0.000000
-			Texture=""
-			VertResolution=1.000000
+			Enabled=1
+			HorzResolution=2.000000
+			Opacity=0.200000
+			Speed=0.020000
+			Texture=./Textures/Clouds.png
+			VertResolution=2.000000
 		}
 		Texture
+		{
+			Class=Texture
+			Data
+			{
+				Archivo=./Textures/Clouds.png
+				ArchivoAlpha=""
+				ColorKey=0.000000,0.000000,0.000000
+				UsarColorKey=0
+			}
+			Name=""
+			System=GameResources
+		}
 	}
 	Sun
 	{

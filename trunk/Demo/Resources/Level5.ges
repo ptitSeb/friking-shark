@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=219.153680
 			NearPlane=130.000000
-			Posicion=403.628751,199.234237,7.128367
+			Posicion=1269.709589,199.234237,8.302183
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -6479,9 +6479,9 @@ Music
 		{
 			Channels=1
 			File=./Sounds/level5music.ogg
+			Group=Music
 			Loop=0
 			Volume=100.000000
-			Group=Music
 		}
 		Name=""
 		System=GameSystem
@@ -6597,6 +6597,7 @@ Terrain
 				Texture=./Textures/DirtRocky.png
 				VertResolution=8.000000
 			}
+			NormalMap
 			Texture
 			{
 				Class=Texture
@@ -6623,6 +6624,7 @@ Terrain
 				Texture=./Textures/BricksBlue.png
 				VertResolution=4.000000
 			}
+			NormalMap
 			Texture
 			{
 				Class=Texture
@@ -6649,6 +6651,7 @@ Terrain
 				Texture=./Textures/LightWood.png
 				VertResolution=9.500000
 			}
+			NormalMap
 			Texture
 			{
 				Class=Texture
@@ -6675,6 +6678,7 @@ Terrain
 				Texture=./Textures/ConcreteTypeA.png
 				VertResolution=4.000000
 			}
+			NormalMap
 			Texture
 			{
 				Class=Texture
@@ -6701,6 +6705,7 @@ Terrain
 				Texture=./Textures/ArenaOscura.png
 				VertResolution=5.500000
 			}
+			NormalMap
 			Texture
 			{
 				Class=Texture
@@ -6727,6 +6732,7 @@ Terrain
 				Texture=./Textures/ArenaOscura.png
 				VertResolution=6.000000
 			}
+			NormalMap
 			Texture
 			{
 				Class=Texture
@@ -6753,6 +6759,7 @@ Terrain
 				Texture=./Textures/Dirt.png
 				VertResolution=4.000000
 			}
+			NormalMap
 			Texture
 			{
 				Class=Texture
@@ -6779,6 +6786,7 @@ Terrain
 				Texture=./Textures/Dirt.png
 				VertResolution=4.000000
 			}
+			NormalMap
 			Texture
 			{
 				Class=Texture
@@ -6805,6 +6813,7 @@ Terrain
 				Texture=./Textures/Dirt.png
 				VertResolution=4.000000
 			}
+			NormalMap
 			Texture
 			{
 				Class=Texture
@@ -6854,6 +6863,7 @@ Terrain
 				Texture=./Textures/sandPeq.png
 				VertResolution=7.000000
 			}
+			NormalMap
 			Texture
 			{
 				Class=Texture
@@ -6873,14 +6883,26 @@ Terrain
 	{
 		Config
 		{
-			Enabled=0
-			HorzResolution=1.000000
-			Opacity=1.000000
-			Speed=0.000000
-			Texture=""
-			VertResolution=1.000000
+			Enabled=1
+			HorzResolution=2.000000
+			Opacity=0.200000
+			Speed=0.020000
+			Texture=./Textures/Clouds.png
+			VertResolution=2.000000
 		}
 		Texture
+		{
+			Class=Texture
+			Data
+			{
+				Archivo=./Textures/Clouds.png
+				ArchivoAlpha=""
+				ColorKey=0.000000,0.000000,0.000000
+				UsarColorKey=0
+			}
+			Name=""
+			System=GameResources
+		}
 	}
 	Sun
 	{
