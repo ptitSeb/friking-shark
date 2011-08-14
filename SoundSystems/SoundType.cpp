@@ -27,7 +27,7 @@
 CSoundType::CSoundType(void)
 {
   m_bLoop=false;
-  m_nChannels=5;
+  m_nChannels=1;
   m_piSoundManager=NULL;
   m_iSoundBuffer=AL_NONE;
   m_dVolume=100;
@@ -268,12 +268,18 @@ ISound *CSoundType::CreateInstance()
   return pSound;
 }
 
-ALuint CSoundType::AcquireSoundSource()
+ALuint CSoundType::AcquireSoundSource(ISound *piSound)
 {
+  if(m_dAvailableSources.size()==0 && m_mBusySources.size()!=0)
+  {
+	  ISound *piSound=m_mBusySources.begin()->second;
+	  piSound->DetachSource();
+  }
   if(m_dAvailableSources.size())
   {
     ALuint nSource=m_dAvailableSources.front();
     m_dAvailableSources.pop_front();
+	m_mBusySources[nSource]=piSound;
     return nSource;
   }
   return AL_NONE;
@@ -284,6 +290,7 @@ void CSoundType::ReleaseSoundSource(ALuint nSource)
   if(nSource!=AL_NONE)
   {
 	m_dAvailableSources.push_back(nSource);
+	m_mBusySources.erase(nSource);
   }
 }
 
@@ -304,8 +311,7 @@ CSound::~CSound()
     if(m_nSource!=AL_NONE)
     {
 	  alSourceStop(m_nSource);
-      m_pType->ReleaseSoundSource(m_nSource);
-	  m_nSource=AL_NONE;
+	  DetachSource();
     }
     UNSUBSCRIBE_FROM_CAST(m_pType->m_piSoundManager,ISoundManagerEvents);
 }
@@ -314,13 +320,23 @@ void CSound::Play()
 {
   if(m_nSource==AL_NONE)
   {
-    m_nSource=m_pType->AcquireSoundSource();
+    m_nSource=m_pType->AcquireSoundSource(this);
     if(m_nSource!=AL_NONE)
 	{
 		UpdateSource();
 		alSourcePlay(m_nSource);
     }
   }
+  else
+  {
+	alSourcePlay(m_nSource);
+  }
+}
+
+void CSound::DetachSource()
+{
+	m_pType->ReleaseSoundSource(m_nSource);
+	m_nSource=AL_NONE;
 }
 
 void CSound::Stop()
@@ -328,8 +344,7 @@ void CSound::Stop()
 	if(m_nSource!=AL_NONE)
 	{
 		alSourceStop(m_nSource);
-		m_pType->ReleaseSoundSource(m_nSource);
-		m_nSource=AL_NONE;
+		DetachSource();
 	}
 }
 
@@ -346,8 +361,9 @@ void CSound::UpdateSource()
 {
 	if(m_nSource==AL_NONE){return;}
 	
+	double dEffectiveVolume=(float)((m_dVolume*m_pType->m_dVolume)/(100.0));
 	alSourcei(m_nSource,AL_LOOPING,m_bLoop?AL_TRUE:AL_FALSE);
-	alSourcef(m_nSource,AL_GAIN,(float)((m_dVolume*m_dGroupVolume)/(100.0*100.0)));
+	alSourcef(m_nSource,AL_GAIN,(float)((dEffectiveVolume*m_dGroupVolume)/(100.0*100.0)));
 	
 	if(m_pType->m_piSoundManager->Is3DSoundEnabled())
 	{
