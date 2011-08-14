@@ -192,7 +192,11 @@ bool CBulletProjectile::OnCollision(IEntity *piOther,CVector &vCollisionPos)
   {
     piOther->OnDamage(m_pType->m_dDamage,m_piParent);
 
-	if(m_pTypeBase->GetStateAnimations(eBulletState_StructureHit) && *piOther->GetEntityClass()=="CStaticStructure")
+	if(m_pTypeBase->GetStateAnimations(eBulletState_KillHit) &&  piOther->GetHealth()<=0.0)
+	{ 
+		SetState(eBulletState_KillHit);
+	}
+	else if(m_pTypeBase->GetStateAnimations(eBulletState_StructureHit) && *piOther->GetEntityClass()=="CStaticStructure")
 	{ 
 		SetState(eBulletState_StructureHit);
 	}
