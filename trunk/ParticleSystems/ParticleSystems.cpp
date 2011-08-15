@@ -56,4 +56,7 @@ IParticle::IParticle()
     m_vColor=CVector(1,1,1);
     m_dAlpha=1.0;
     m_dSize=1.0;
+	m_ePositionOnParentReferenceSystem=eParticlePositionReferenceSystem_Relative;
+	m_bFixedPositionOnParent=false;
 }
+
