@@ -94,8 +94,11 @@ public:
     // ISound
 
     void Play();
-    void Stop();
+	void Pause();
+	void Resume();
+	void Stop();
     bool IsPlaying();
+	bool IsPaused();
 	void DetachSource();
 	
 	void SetLoop(bool bLoop);
