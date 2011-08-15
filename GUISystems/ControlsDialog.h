@@ -41,7 +41,6 @@ class CControlsDialog: virtual public CGameDialogBase,virtual public IGameGUIBut
 	IGameGUIButton *m_piBTBombA;
 	IGameGUIButton *m_piBTFireA;
 	IGameGUIButton *m_piBTOk;
-	IGameGUIButton *m_piBTCancel;
 	
 	
 	BEGIN_CHILD_MAP()
@@ -52,7 +51,6 @@ class CControlsDialog: virtual public CGameDialogBase,virtual public IGameGUIBut
 		CHILD_MAP_ENTRY_EX("BombA",m_piBTBombA,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("FireA",m_piBTFireA,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Ok",m_piBTOk,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("Cancel",m_piBTCancel,IGameGUIButtonEvents);
 	END_CHILD_MAP()
 	
 	BEGIN_PROP_MAP(CControlsDialog)
