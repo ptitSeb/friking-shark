@@ -24,6 +24,7 @@ DECLARE_CUSTOM_WRAPPER1(CGenericSoundTypeWrapper,ISoundType,m_piSoundType)
 
 class CGameGUIButton: virtual public CGameGUILabel, virtual public IGameGUIButton
 {
+protected:
 	bool m_bClickInProgress;
 	bool m_bWantFocus;
 	bool m_bFocusOnHover;
@@ -50,8 +51,6 @@ class CGameGUIButton: virtual public CGameGUILabel, virtual public IGameGUIButto
 	ISound *m_piHoverSound;
 	ISound *m_piClickSound;
 	
-protected:
-
 	BEGIN_PROP_MAP(CGameGUIButton)
 		PROP_CLASS_CHAIN(CGameGUILabel)
 		PROP_VALUE_FLAGS(m_bWantFocus,"WantFocus",false,MRPF_NORMAL|MRPF_OPTIONAL)
