@@ -18,28 +18,17 @@
 
 #pragma once
 
-class CMainMenu: virtual public CGameDialogBase,virtual public IMainMenu,virtual public IGameGUIButtonEvents
+class COptionsMenu: virtual public CGameDialogBase,virtual public IOptionsMenu,virtual public IGameGUIButtonEvents
 {
-	bool m_bAllowLoad;
-	bool m_bAllowContinue;
-	
-	IGameGUIButton *m_piBTNewGame;
-	IGameGUIButton *m_piBTLoad;
-	IGameGUIButton *m_piBTContinue;
-	IGameGUIButton *m_piBTExit;
-	IGameGUIButton *m_piBTOptions;
-	IGameGUIButton *m_piBTHighScores;
-	IGameGUIButton *m_piBTCredits;
+	IGameGUIButton *m_piBTControls;
+	IGameGUIButton *m_piBTAudio;
+	IGameGUIButton *m_piBTBack;
 	IGameWindow    *m_piLastFocusedWindow;
 	
 	BEGIN_CHILD_MAP()
-		CHILD_MAP_ENTRY_EX("NewGame",m_piBTNewGame,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("Continue",m_piBTContinue,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("Load",m_piBTLoad,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("Options",m_piBTOptions,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("HighScores",m_piBTHighScores,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("Credits",m_piBTCredits,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("Exit",m_piBTExit,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("Controls",m_piBTControls,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("Audio",m_piBTAudio,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("Back",m_piBTBack,IGameGUIButtonEvents);
 	END_CHILD_MAP()
 
 	void OnKeyDown(int nKey,bool *pbProcessed);
@@ -48,14 +37,14 @@ public:
 	void OnInitDialog();
 	void OnEndDialog();
 	
-	// IMainMenu
+	// IOptionsMenu
 	
-	eMainMenuAction Show(IGameWindow *piParent,bool bAllowContinue, bool bAllowLoad);
+	eOptionsMenuAction Show(IGameWindow *piParent);
 	
 	// IGameButtonEvents
 
 	void OnButtonClicked(IGameGUIButton *piControl);
 
-	 CMainMenu(void);
-	~CMainMenu(void);
+	 COptionsMenu(void);
+	~COptionsMenu(void);
 };

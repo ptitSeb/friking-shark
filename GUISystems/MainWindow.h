@@ -22,6 +22,7 @@ DECLARE_CUSTOM_WRAPPER1(CViewportWrapper,IGenericViewport,m_piViewport)
 DECLARE_CUSTOM_WRAPPER1(CGameDialogWrapper,IGameDialog,m_piDialog)
 DECLARE_CUSTOM_WRAPPER1(CGameInterfaceWrapper,IGameInterfaceWindow,m_piInterfaceWindow)
 DECLARE_CUSTOM_WRAPPER2(CLevelOptionsDialogWrapper,IGameDialog,m_piDialog,ILevelOptions,m_piLevelOptions)
+DECLARE_CUSTOM_WRAPPER2(CAudioOptionsDialogWrapper,IGameDialog,m_piDialog,IAudioOptions,m_piAudioOptions)
 DECLARE_CUSTOM_WRAPPER1(CHighScoresTableWrapper,IHighScoresTable,m_piHighScoresTable)
 DECLARE_CUSTOM_WRAPPER2(CHighScoresDialogWrapper,IGameDialog,m_piDialog,IHighScoresDialog,m_piHighScoresDialog)
 DECLARE_CUSTOM_WRAPPER2(CControlsDialogWrapper,IGameDialog,m_piDialog,IControlsDialog,m_piControlsDialog)
@@ -29,6 +30,7 @@ DECLARE_CUSTOM_WRAPPER2(CLoadDialogWrapper,IGameDialog,m_piDialog,ILoadDialog,m_
 DECLARE_CUSTOM_WRAPPER2(CSaveDialogWrapper,IGameDialog,m_piDialog,ISaveDialog,m_piSaveDialog)
 DECLARE_CUSTOM_WRAPPER2(CGameMenuWrapper,IGameDialog,m_piDialog,IGameMenu,m_piGameMenu)
 DECLARE_CUSTOM_WRAPPER2(CMainMenuWrapper,IGameDialog,m_piDialog,IMainMenu,m_piMainMenu)
+DECLARE_CUSTOM_WRAPPER2(COptionsMenuWrapper,IGameDialog,m_piDialog,IOptionsMenu,m_piOptionsMenu)
 
 enum eInterfaceStage
 {
@@ -36,6 +38,7 @@ enum eInterfaceStage
 	eInterfaceStage_Initializing,
 	eInterfaceStage_MainMenu,
 	eInterfaceStage_GameMenu,
+	eInterfaceStage_OptionsMenu,
 	eInterfaceStage_Playing,
 	eInterfaceStage_LaunchNextLevel,
 	eInterfaceStage_HighScores,
@@ -69,10 +72,17 @@ public:
 	EGameDifficulty       m_eLastDifficulty;
 	unsigned int 		  m_nLastLevel;
 	
+	unsigned int 		  m_nMasterVolume;
+	unsigned int 		  m_nMusicVolume;
+	unsigned int 		  m_nSoundFXVolume;
+	
 	BEGIN_PROP_MAP(SPlayerData)
 		PROP_VALUE_FLAGS(m_eLastMode,"LastMode",eGameMode_Normal,MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_VALUE_FLAGS(m_eLastDifficulty,"LastDifficulty",eGameDifficulty_Easy,MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_VALUE_FLAGS(m_nLastLevel,"LastLevel",0,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_VALUE_FLAGS(m_nMasterVolume,"MasterVolume",100,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_VALUE_FLAGS(m_nMusicVolume,"MusicVolume",100,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_VALUE_FLAGS(m_nSoundFXVolume,"SoundFXVolume",100,MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_FLAGS(m_CurrentGame,"CurrentGame",MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_FLAGS(m_vSavedGames,"SavedGames",MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_FLAGS(m_PlayerProfile,"Profile",MRPF_NORMAL|MRPF_OPTIONAL);
@@ -92,12 +102,16 @@ class CMainWindow: virtual public CGameWindowBase,virtual public IGameInterfaceW
 	IGameGUILabel        *m_piSTBackground;
 	IGameInterfaceWindow *m_piGameInterface;
 
+	CSoundManagerWrapper m_SoundManager;
+	
 	CGameWindowWrapper m_BackgroundWindow;
 	CGameDialogWrapper m_GameOverDialog;
 	CMainMenuWrapper m_MainMenuDialog;
 	CGameMenuWrapper m_GameMenuDialog;
+	COptionsMenuWrapper   m_OptionsMenuDialog;
 	CGameDialogWrapper m_CreditsDialog;
 	CLevelOptionsDialogWrapper m_LevelOptionsDialog;
+	CAudioOptionsDialogWrapper m_AudioOptionsDialog;
 	CHighScoresDialogWrapper m_HighScoresDialog;
 	CHighScoresTableWrapper  m_HighScoresTable;
 	CControlsDialogWrapper   m_ControlsDialog;

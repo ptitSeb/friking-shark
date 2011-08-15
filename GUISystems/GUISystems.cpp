@@ -26,6 +26,7 @@
 #include "MainWindow.h"
 #include "MainMenu.h"
 #include "GameMenu.h"
+#include "OptionsMenu.h"
 #include "GameInterface.h"
 #include "ConfirmationDialog.h"
 #include "GameOverDialog.h"
@@ -34,6 +35,7 @@
 #include "HighScoresDialog.h"
 #include "HighScoresTable.h"
 #include "LevelOptions.h"
+#include "AudioOptions.h"
 #include "CreditsDialog.h"
 #include "LoadDialog.h"
 #include "SaveDialog.h"
@@ -43,6 +45,7 @@ BEGIN_SYSTEM_MODULE()
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CMainWindow,"CMainWindow")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CMainMenu,"CMainMenu")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameMenu,"CGameMenu")
+	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(COptionsMenu,"COptionsMenu")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameInterface,"CGameInterface")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CConfirmationDialog,"CConfirmationDialog")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameOverDialog,"CGameOverDialog")
@@ -51,6 +54,7 @@ BEGIN_SYSTEM_MODULE()
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CHighScoresDialog,"CHighScoresDialog")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CHighScoresTable,"CHighScoresTable")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CLevelOptions,"CLevelOptions")
+	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CAudioOptions,"CAudioOptions")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CCreditsDialog,"CCreditsDialog")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CLoadDialog,"CLoadDialog")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CSaveDialog,"CSaveDialog")

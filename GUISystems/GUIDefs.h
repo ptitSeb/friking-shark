@@ -23,10 +23,18 @@ enum eMainMenuAction
 	eMainMenuAction_NewGame=0x1000,
 	eMainMenuAction_Continue,
 	eMainMenuAction_Load,
-	eMainMenuAction_Controls,
+	eMainMenuAction_Options,
 	eMainMenuAction_HighScores,
 	eMainMenuAction_Credits,
 	eMainMenuAction_Exit
+};
+
+enum eOptionsMenuAction
+{
+	eOptionsMenuAction_UNKNOWN,
+	eOptionsMenuAction_Controls=0x1000,
+	eOptionsMenuAction_Audio,
+	eOptionsMenuAction_Back
 };
 
 enum eGameMenuAction
@@ -34,7 +42,7 @@ enum eGameMenuAction
 	eGameMenuAction_UNKNOWN,
 	eGameMenuAction_Continue=0x1000,
 	eGameMenuAction_Save,
-	eGameMenuAction_Controls,
+	eGameMenuAction_Options,
 	eGameMenuAction_EndGame
 };
 
