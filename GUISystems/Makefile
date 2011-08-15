@@ -18,7 +18,6 @@ INCLUDES = -I. \
 SOURCES = GUISystems.cpp \
 GameInterface.cpp \
 MainWindow.cpp \
-ConfirmationDialog.cpp \
 GameMenu.cpp \
 GameOverDialog.cpp \
 HighScoresDialog.cpp \
