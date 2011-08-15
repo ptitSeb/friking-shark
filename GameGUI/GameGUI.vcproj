@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGUILib;..\GameGraphics"
+				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\VectorLib;..\GameManagers;..\GameGUILib;..\GameGraphics;..\SoundSystems"
 				PreprocessorDefinitions="NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;GameGUI_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -124,7 +124,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="..\GameRunTimeLib;..\GameRunTime;..\VectorLib;..\GameManagers;..\GameGUILib;..\GameGraphics"
+				AdditionalIncludeDirectories="..\GameRunTimeLib;..\GameRunTime;..\VectorLib;..\GameManagers;..\GameGUILib;..\GameGraphics;..\SoundSystems"
 				PreprocessorDefinitions="NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;_USRDLL;GameGUI_EXPORTS"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="true"
@@ -238,6 +238,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GameGUISlider.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\GameMainWindow.cpp"
 				>
 			</File>
@@ -313,6 +317,10 @@
 			</File>
 			<File
 				RelativePath=".\GameGUIMessageDialog.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GameGUISlider.h"
 				>
 			</File>
 			<File

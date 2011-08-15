@@ -126,7 +126,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\GameEntityLib;..\ParticleSystems;..\AnimationSystems;..\VectorLib;..\GameManagers;..\GameGraphics;..\GameGUI;..\SoundSystems"
-				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;_USRDLL;GAMEMANAGERS_EXPORTS"
+				PreprocessorDefinitions="NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;_USRDLL;GAMEMANAGERS_EXPORTS"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="2"
@@ -254,10 +254,6 @@
 				RelativePath=".\WorldManager.cpp"
 				>
 			</File>
-			<File
-				RelativePath=".\WorldSector.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -314,10 +310,6 @@
 			</File>
 			<File
 				RelativePath=".\WorldManager.h"
-				>
-			</File>
-			<File
-				RelativePath=".\WorldSector.h"
 				>
 			</File>
 		</Filter>
