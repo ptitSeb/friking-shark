@@ -104,6 +104,12 @@ void CMainMenu::OnEndDialog()
 	CGameDialogBase::OnEndDialog();
 }
 
+void CMainMenu::Destroy()
+{
+	REL(m_piLastFocusedWindow);
+	CGameDialogBase::Destroy();
+}
+
 eMainMenuAction CMainMenu::Show(IGameWindow *piParent,bool bAllowContinue, bool bAllowLoad)
 {
 	m_bAllowLoad=bAllowLoad;

@@ -105,6 +105,12 @@ void CLoadDialog::OnEndDialog()
 	CGameDialogBase::OnEndDialog();
 }
 
+void CLoadDialog::Destroy()
+{
+	REL(m_piLastFocusedWindow);
+	CGameDialogBase::Destroy();
+}
+
 bool CLoadDialog::LoadGame(IGameWindow *piParent,std::vector<SGameState> *pvSavedGames,SGameState *pSelected)
 {
 	m_pvSavedGames=pvSavedGames;

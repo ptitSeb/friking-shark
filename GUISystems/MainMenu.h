@@ -47,6 +47,7 @@ class CMainMenu: virtual public CGameDialogBase,virtual public IMainMenu,virtual
 public:
 	void OnInitDialog();
 	void OnEndDialog();
+	void Destroy();
 	
 	// IMainMenu
 	

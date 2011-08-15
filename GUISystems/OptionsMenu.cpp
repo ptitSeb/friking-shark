@@ -86,6 +86,12 @@ void COptionsMenu::OnEndDialog()
 	CGameDialogBase::OnEndDialog();
 }
 
+void COptionsMenu::Destroy()
+{
+	REL(m_piLastFocusedWindow);
+	CGameDialogBase::Destroy();
+}
+
 eOptionsMenuAction COptionsMenu::Show(IGameWindow *piParent)
 {
 	int nRes=Execute(piParent);
