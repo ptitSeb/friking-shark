@@ -24,24 +24,14 @@ class CAudioOptions: virtual public CGameDialogBase,virtual public IGameGUIButto
 	IGameGUISlider *m_piSLMusic;
 	IGameGUISlider *m_piSLSounds;
 	IGameGUIButton *m_piBTOk;
-	IGameGUIButton *m_piBTCancel;
-	
-	unsigned int m_nOriginalMaster;
-	unsigned int m_nOriginalMusic;
-	unsigned int m_nOriginalSound;
 	
 	CSoundManagerWrapper m_SoundManager;
-	/*
-	BEGIN_PROP_MAP(CAudioOptions)
-	PROP_CLASS_CHAIN(CGameDialogBase);
-	END_PROP_MAP()*/
 	
 	BEGIN_CHILD_MAP()
 		CHILD_MAP_ENTRY_EX("Master",m_piSLMaster,IGameGUISliderEvents);
 		CHILD_MAP_ENTRY_EX("Music",m_piSLMusic,IGameGUISliderEvents);
 		CHILD_MAP_ENTRY_EX("Sounds",m_piSLSounds,IGameGUISliderEvents);
 		CHILD_MAP_ENTRY_EX("Ok",m_piBTOk,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("Cancel",m_piBTCancel,IGameGUIButtonEvents);
 	END_CHILD_MAP()
 
 	void UpdateGUI();

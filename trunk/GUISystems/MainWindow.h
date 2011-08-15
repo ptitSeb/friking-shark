@@ -40,6 +40,7 @@ enum eInterfaceStage
 	eInterfaceStage_GameMenu,
 	eInterfaceStage_OptionsMenu,
 	eInterfaceStage_Playing,
+	eInterfaceStage_WaitingForContinuePause,
 	eInterfaceStage_LaunchNextLevel,
 	eInterfaceStage_HighScores,
 	eInterfaceStage_WaitingForDemoEndCourtain,
@@ -117,6 +118,8 @@ class CMainWindow: virtual public CGameWindowBase,virtual public IGameInterfaceW
 	CControlsDialogWrapper   m_ControlsDialog;
 	CLoadDialogWrapper   	 m_LoadDialog;
 	CSaveDialogWrapper   	 m_SaveDialog;
+	
+	unsigned int m_nContinuePauseStartTime;
 	
 	SPlayerData m_PlayerData;
 	

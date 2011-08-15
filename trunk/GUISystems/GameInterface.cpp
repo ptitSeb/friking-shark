@@ -362,6 +362,12 @@ bool CGameInterface::IsPaused()
 	else {return m_FrameManagerWrapper.m_piFrameManager?m_FrameManagerWrapper.m_piFrameManager->IsPaused():false;}
 }
 
+bool CGameInterface::IsPlayerInControl()
+{
+	if(m_PlayerManagerWrapper.m_piPlayerManager==NULL){return false;}
+	return m_PlayerManagerWrapper.m_piPlayerManager->GetStage()==ePlayerManagerGameStage_Moving;
+}
+
 void CGameInterface::OnDraw(IGenericRender *piRender)
 {
 	if(!m_bGameSystemInitialized)
@@ -762,6 +768,27 @@ void CGameInterface::UpdateGUI(unsigned int dwCurrentTime)
 		for(unsigned int x=0;x<MAX_BOMBS_TO_DISPLAY;x++)
 		{
 			if(m_piSTEndBombs[x]){m_piSTEndBombs[x]->Show(x<m_nEndBombs);}
+		}
+	}
+	if(m_piSTDifficulty)
+	{
+		switch(m_eGameDifficulty)
+		{
+			case eGameDifficulty_Easy: m_piSTDifficulty->SetText("Easy");break;
+			case eGameDifficulty_Normal: m_piSTDifficulty->SetText("Normal");break;
+			case eGameDifficulty_Hard: m_piSTDifficulty->SetText("Hard");break;
+			case eGameDifficulty_VeryHard: m_piSTDifficulty->SetText("Very Hard");break;
+			default: m_piSTDifficulty->SetText("Easy");break;
+		}
+	}
+	if(m_piSTMode)
+	{
+		switch(m_eGameMode)
+		{
+			case eGameMode_God: m_piSTMode->SetText("God");break;
+			case eGameMode_InfiniteLives: m_piSTMode->SetText("Infinite Lives");break;
+			case eGameMode_Normal: m_piSTMode->SetText("Classic");break;
+			default: m_piSTMode->SetText("Classic");break;
 		}
 	}
 	if(m_EntityManagerWrapper.m_piEntityManager!=NULL)

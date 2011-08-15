@@ -31,6 +31,7 @@ CMainWindow::CMainWindow(void)
 {
 	m_eStage=eInterfaceStage_None;
 	m_dBackgroundAlpha=0;
+	m_nContinuePauseStartTime=0;
 	m_bVisible=true;
 }
 
@@ -118,7 +119,6 @@ void CMainWindow::Destroy()
 
 void CMainWindow::OnDraw(IGenericRender *piRender)
 {
-	CGameWindowBase::OnDraw(piRender);
 	if(m_eStage==eInterfaceStage_None)
 	{
 		m_eStage=eInterfaceStage_Initializing;
@@ -176,10 +176,39 @@ void CMainWindow::OnDraw(IGenericRender *piRender)
 		m_piGameInterface->LoadScenario(sFile);
 		m_piGameInterface->StartGame(m_PlayerData.m_PlayerProfile.m_piPlayerProfile,&m_PlayerData.m_CurrentGame);
 	}
+	else if(m_eStage==eInterfaceStage_WaitingForContinuePause)
+	{
+		if(m_nContinuePauseStartTime+3000<GetTimeStamp())
+		{
+			m_eStage=eInterfaceStage_Playing;
+			m_piGameInterface->Freeze(false);
+			m_piSTBackground->Show(false);
+			m_piSTBackground->SetText("");
+		}
+		else if(m_nContinuePauseStartTime+2000<GetTimeStamp())
+		{
+			m_piSTBackground->SetText("Ready in 1");
+		}
+		else if(m_nContinuePauseStartTime+1000<GetTimeStamp())
+		{
+			m_piSTBackground->SetText("Ready in 2");
+		}
+	}
+	CGameWindowBase::OnDraw(piRender);
 }
 
 void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 {
+	if(m_eStage==eInterfaceStage_WaitingForContinuePause)
+	{
+		m_eStage=eInterfaceStage_Playing;
+		m_piGameInterface->Freeze(false);
+		m_piSTBackground->Show(false);
+		m_piSTBackground->SetText("");
+		
+		if(nKey==GK_ESCAPE){*pbProcessed=true;return;}
+	}
+	
 	if(nKey==GK_ESCAPE)
 	{
 		*pbProcessed=true;
@@ -306,13 +335,23 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 				}
 			}
 			while(true);
-			
+
 			if(bContinue)
 			{
-				m_eStage=eInterfaceStage_Playing;
-				m_piGameInterface->Freeze(false);
-				m_piSTBackground->Show(m_piGameInterface->IsPaused());
-				m_piSTBackground->SetText(m_piGameInterface->IsPaused()?"Paused":"");
+				if(!m_piGameInterface->IsPaused() && m_piGameInterface->IsPlayerInControl())
+				{
+					m_eStage=eInterfaceStage_WaitingForContinuePause;
+					m_piSTBackground->Show(true);
+					m_piSTBackground->SetText("Ready in 3");
+					m_nContinuePauseStartTime=GetTimeStamp();
+				}
+				else
+				{
+					m_eStage=eInterfaceStage_Playing;
+					m_piGameInterface->Freeze(false);
+					m_piSTBackground->Show(m_piGameInterface->IsPaused());
+					m_piSTBackground->SetText(m_piGameInterface->IsPaused()?"Paused":"");
+				}
 				m_piGUIManager->ShowMouseCursor(false);
 			}
 			

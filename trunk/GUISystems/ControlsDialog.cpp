@@ -36,10 +36,6 @@ void CControlsDialog::OnButtonClicked(IGameGUIButton *piControl)
 	{
 		EndDialog(DIALOG_OK);
 	}
-	else if(piControl==m_piBTCancel)
-	{
-		EndDialog(DIALOG_CANCEL);
-	}
 	else if(piControl==m_piBTUpA){ProcessKeyChange(&m_UpKeyMapping,0);UpdateGUI();}
 	else if(piControl==m_piBTDownA){ProcessKeyChange(&m_DownKeyMapping,0);UpdateGUI();}
 	else if(piControl==m_piBTLeftA){ProcessKeyChange(&m_LeftKeyMapping,0);UpdateGUI();}
@@ -145,17 +141,17 @@ bool CControlsDialog::SelectControls(IGameWindow *piParent,IPlayerProfile *piPro
 		piProfile->GetKeyMapping("FireBullets",&m_FireKeyMapping);
 		piProfile->GetKeyMapping("FireBomb",&m_BombKeyMapping);
 	}
-	int nRes=Execute(piParent);
-	if(nRes==DIALOG_OK)
-	{
-		piProfile->SetKeyMapping("MoveForward",&m_UpKeyMapping);
-		piProfile->SetKeyMapping("MoveBackward",&m_DownKeyMapping);
-		piProfile->SetKeyMapping("MoveLeft",&m_LeftKeyMapping);
-		piProfile->SetKeyMapping("MoveRight",&m_RightKeyMapping);
-		piProfile->SetKeyMapping("FireBullets",&m_FireKeyMapping);
-		piProfile->SetKeyMapping("FireBomb",&m_BombKeyMapping);
-	}
-	return nRes==DIALOG_OK;
+
+	Execute(piParent);
+	
+	piProfile->SetKeyMapping("MoveForward",&m_UpKeyMapping);
+	piProfile->SetKeyMapping("MoveBackward",&m_DownKeyMapping);
+	piProfile->SetKeyMapping("MoveLeft",&m_LeftKeyMapping);
+	piProfile->SetKeyMapping("MoveRight",&m_RightKeyMapping);
+	piProfile->SetKeyMapping("FireBullets",&m_FireKeyMapping);
+	piProfile->SetKeyMapping("FireBomb",&m_BombKeyMapping);
+	
+	return true;
 }
 
 void CControlsDialog::OnKeyDown(int nKey,bool *pbProcessed)

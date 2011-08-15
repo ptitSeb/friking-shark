@@ -43,6 +43,7 @@ public:
 	virtual void	Freeze(bool bFreeze)=0;
 	virtual bool	IsFrozen()=0;
 	virtual bool	IsPaused()=0;
+	virtual bool	IsPlayerInControl()=0;
 
 	virtual ~IGameInterfaceWindow(){}
 };

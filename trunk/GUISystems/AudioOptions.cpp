@@ -24,9 +24,6 @@
 
 CAudioOptions::CAudioOptions(void)
 {
-	m_nOriginalMaster=0;
-	m_nOriginalMusic=0;
-	m_nOriginalSound=0;
 }
 
 CAudioOptions::~CAudioOptions(void)
@@ -48,9 +45,9 @@ void CAudioOptions::OnInitDialog()
 	
 	if(m_SoundManager.m_piSoundManager)
 	{
-		m_piSLMaster->SetValue(((double)m_nOriginalMaster)/100.0);
-		m_piSLMusic->SetValue(((double)m_nOriginalMusic)/100.0);
-		m_piSLSounds->SetValue(((double)m_nOriginalSound)/100.0);
+		m_piSLMaster->SetValue(((double)m_SoundManager.m_piSoundManager->GetMasterVolume())/100.0);
+		m_piSLMusic->SetValue(((double)m_SoundManager.m_piSoundManager->GetGroupVolume("Music"))/100.0);
+		m_piSLSounds->SetValue(((double)m_SoundManager.m_piSoundManager->GetGroupVolume("SoundFX"))/100.0);
 	}
 	UpdateGUI();
 }
@@ -70,10 +67,6 @@ void CAudioOptions::OnButtonClicked(IGameGUIButton *piControl)
 	{
 		EndDialog(DIALOG_OK);
 	}
-	if(piControl==m_piBTCancel)
-	{
-		EndDialog(DIALOG_CANCEL);
-	}
 }
 
 void CAudioOptions::OnSliderValueChanged(IGameGUISlider *piControl,double dValue)
@@ -81,15 +74,6 @@ void CAudioOptions::OnSliderValueChanged(IGameGUISlider *piControl,double dValue
 	if(piControl==m_piSLMaster){m_SoundManager.m_piSoundManager->SetMasterVolume(dValue*100.0);UpdateGUI();}
 	if(piControl==m_piSLMusic){m_SoundManager.m_piSoundManager->SetGroupVolume("Music",dValue*100.0);UpdateGUI();}
 	if(piControl==m_piSLSounds){m_SoundManager.m_piSoundManager->SetGroupVolume("SoundFX",dValue*100.0);UpdateGUI();}
-		
-	if(piControl==m_piBTOk)
-	{
-		EndDialog(DIALOG_OK);
-	}
-	if(piControl==m_piBTCancel)
-	{
-		EndDialog(DIALOG_CANCEL);
-	}
 }
 
 void CAudioOptions::UpdateGUI()
@@ -109,24 +93,11 @@ bool CAudioOptions::Show(IGameWindow *piParent)
 	{
 		m_SoundManager.Attach("GameGUI","SoundManager");
 	}
-	if(m_SoundManager.m_piSoundManager!=NULL)
-	{
-		m_nOriginalMaster=m_SoundManager.m_piSoundManager->GetMasterVolume();
-		m_nOriginalMusic=m_SoundManager.m_piSoundManager->GetGroupVolume("Music");
-		m_nOriginalSound=m_SoundManager.m_piSoundManager->GetGroupVolume("SoundFX");
-	}
+	Execute(piParent);
 	
-	int nRes=Execute(piParent);
-	
-	if(nRes!=DIALOG_OK && m_SoundManager.m_piSoundManager!=NULL)
-	{
-		m_SoundManager.m_piSoundManager->SetMasterVolume(m_nOriginalMaster);
-		m_SoundManager.m_piSoundManager->SetGroupVolume("Music",m_nOriginalMusic);
-		m_SoundManager.m_piSoundManager->SetGroupVolume("SoundFX",m_nOriginalSound);
-	}
 	m_SoundManager.Detach();
 	
-	return nRes==DIALOG_OK;
+	return true;
 }
 
 void CAudioOptions::OnKeyDown(int nKey,bool *pbProcessed)

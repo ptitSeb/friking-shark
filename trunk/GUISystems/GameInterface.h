@@ -109,6 +109,8 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	IGameGUILabel   *m_piSTPoints;
 	IGameGUILabel   *m_piSTEndPoints;
 	IGameGUILabel   *m_piSTHighScore;
+	IGameGUILabel   *m_piSTDifficulty;
+	IGameGUILabel   *m_piSTMode;
 	IGameWindow		*m_piSTLives[MAX_LIVES_TO_DISPLAY];
 	IGameWindow		*m_piSTBombs[MAX_BOMBS_TO_DISPLAY];
 	IGameWindow		*m_piSTEndBombs[MAX_BOMBS_TO_DISPLAY];
@@ -130,6 +132,8 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 		CHILD_MAP_ENTRY("LevelEndBomb4",m_piSTEndBombs[4]);
 		CHILD_MAP_ENTRY("LevelEndBomb5",m_piSTEndBombs[5]);
 		CHILD_MAP_ENTRY("PlayerPoints",m_piSTPoints);
+		CHILD_MAP_ENTRY("Difficulty",m_piSTDifficulty);
+		CHILD_MAP_ENTRY("Mode",m_piSTMode);
 		CHILD_MAP_ENTRY("HighScore",m_piSTHighScore);
 		CHILD_MAP_ENTRY("PlayerLive0",m_piSTLives[0]);
 		CHILD_MAP_ENTRY("PlayerLive1",m_piSTLives[1]);
@@ -179,6 +183,7 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	void Freeze(bool bFreeze);
 	bool IsFrozen();
 	bool IsPaused();
+	bool IsPlayerInControl();
 
 	void SetHighScore(unsigned int nScore);
 	unsigned int GetScore();
