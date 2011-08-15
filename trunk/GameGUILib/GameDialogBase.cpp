@@ -51,7 +51,15 @@ int	CGameDialogBase::Execute(IGameWindow *piParent)
 		nResult=m_nDialogResult;
 	}
 	
-	if(piManager){piManager->SetFocus(piOldFocus);}
+	if(piManager)
+	{
+		IGameGUIButton *piButton=QI(IGameGUIButton,piOldFocus);
+		bool bSoundsEnabled=piButton?piButton->AreSoundsEnabled():false;
+		if(piButton){piButton->DisableSounds();}
+		piManager->SetFocus(piOldFocus);
+		if(piButton && bSoundsEnabled){piButton->EnableSounds();}
+		REL(piButton);
+	}
 	REL(piOldFocus);
 	REL(piManager);
 	return nResult;

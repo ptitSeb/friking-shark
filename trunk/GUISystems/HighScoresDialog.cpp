@@ -132,6 +132,8 @@ int	CHighScoresDialog::Execute(IGameWindow *piParent)
 
 void CHighScoresDialog::OnKeyDown(int nKey,bool *pbProcessed)
 {
+	if(nKey==GK_ESCAPE){m_piBTOk->PlayClickSound();}
+	
 	if(m_nEditConfirmBlinkStart==0 &&
 		m_nEditCommittedStart==0 && 
 		m_nScoreToEdit!=-1 &&

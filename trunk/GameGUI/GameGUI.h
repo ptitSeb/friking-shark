@@ -260,6 +260,10 @@ class IGameGUIButton : virtual public IGameGUILabel
 public:
 	virtual void EnableSounds()=0;
 	virtual void DisableSounds()=0;
+	virtual bool AreSoundsEnabled()=0;
+	
+	virtual void PlayClickSound()=0;
+	virtual void PlayHoverSound()=0;
 };
 
 class IGameGUIButtonEvents

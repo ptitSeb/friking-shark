@@ -21,6 +21,9 @@
 #define MAX_LIVES_TO_DISPLAY 6
 #define MAX_BOMBS_TO_DISPLAY 6
 
+#define DEFAULT_FIRST_EXTRA_LIVE_POINTS 50000
+#define DEFAULT_NEXT_EXTRA_LIVE_POINTS 150000
+
 enum EGameInterfaceState
 {
 	eGameInterfaceState_Idle,
@@ -56,6 +59,9 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	int 			 		 m_nCheckpoint;
 	std::set<double>		 m_sCheckpointPositions;
 	
+	unsigned int             m_nFirstExtraLivePoints;
+	unsigned int             m_nNextExtraLivePoints;
+	
 	CGameControllerWrapper   m_GameControllerWrapper;
 	CPlayAreaManagerWrapper  m_PlayAreaManagerWrapper;
 	CPlayerManagerWrapper	 m_PlayerManagerWrapper;
@@ -65,9 +71,11 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	CPlayerProfileWrapper	 m_PlayerProfile;
 	CSoundTypeWrapper	 	 m_PointCountSoundWrapper;
 	CSoundTypeWrapper	 	 m_BombCountSoundWrapper;
-
+	CSoundTypeWrapper	 	 m_LiveSoundWrapper;
+	
 	ISound                   *m_piPointCountSound;
 	ISound                   *m_piBombCountSound;
+	ISound                   *m_piLiveSound;
 	IPlayer					*m_piPlayer;
 	IEntity					*m_piPlayerEntity;
 
@@ -153,6 +161,9 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 		PROP_CLASS_CHAIN(CGameWindowBase);
 		PROP_FLAGS(m_PointCountSoundWrapper,"PointCountSound",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_BombCountSoundWrapper,"BombCountSound",MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_FLAGS(m_LiveSoundWrapper,"LiveSound",MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_nFirstExtraLivePoints,"FirstExtraLivePoints",DEFAULT_FIRST_EXTRA_LIVE_POINTS,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_nNextExtraLivePoints,"NextExtraLivePoints",DEFAULT_NEXT_EXTRA_LIVE_POINTS,MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP()
 	
 	void RenderCourtain(IGenericRender *piRender);

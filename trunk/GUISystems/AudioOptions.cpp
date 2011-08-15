@@ -65,6 +65,7 @@ void CAudioOptions::OnButtonClicked(IGameGUIButton *piControl)
 {
 	if(piControl==m_piBTOk)
 	{
+		m_piBTOk->PlayClickSound();
 		EndDialog(DIALOG_OK);
 	}
 }
@@ -103,5 +104,6 @@ bool CAudioOptions::Show(IGameWindow *piParent)
 void CAudioOptions::OnKeyDown(int nKey,bool *pbProcessed)
 {
 	if(nKey==GK_RETURN){return;}
+	if(nKey==GK_ESCAPE){m_piBTOk->PlayClickSound();}
 	CGameDialogBase::OnKeyDown(nKey,pbProcessed);
 }

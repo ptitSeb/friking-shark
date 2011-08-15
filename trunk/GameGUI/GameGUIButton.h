@@ -89,6 +89,10 @@ public:
 	
 	void EnableSounds();
 	void DisableSounds();
+	bool AreSoundsEnabled();
+	
+	void PlayClickSound();
+	void PlayHoverSound();
 	
 	void OnDrawBackground(IGenericRender *piRender);
 	void OnDraw(IGenericRender *piRender);

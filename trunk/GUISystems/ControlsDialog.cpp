@@ -34,6 +34,7 @@ void CControlsDialog::OnButtonClicked(IGameGUIButton *piControl)
 {
 	if(piControl==m_piBTOk)
 	{
+		m_piBTOk->PlayClickSound();
 		EndDialog(DIALOG_OK);
 	}
 	else if(piControl==m_piBTUpA){ProcessKeyChange(&m_UpKeyMapping,0);UpdateGUI();}
@@ -157,5 +158,6 @@ bool CControlsDialog::SelectControls(IGameWindow *piParent,IPlayerProfile *piPro
 void CControlsDialog::OnKeyDown(int nKey,bool *pbProcessed)
 {
 	if(nKey==GK_RETURN){return;}
+	if(nKey==GK_ESCAPE){m_piBTOk->PlayClickSound();}
 	CGameDialogBase::OnKeyDown(nKey,pbProcessed);
 }

@@ -45,6 +45,14 @@ void CCreditsDialog::OnButtonClicked(IGameGUIButton *piControl)
 {
 	if(piControl==m_piBTOk)
 	{
+		m_piBTOk->PlayClickSound();
 		EndDialog(DIALOG_OK);
 	}
+}
+
+void CCreditsDialog::OnKeyDown(int nKey,bool *pbProcessed)
+{
+	if(nKey==GK_RETURN){return;}
+	if(nKey==GK_ESCAPE){m_piBTOk->PlayClickSound();}
+	CGameDialogBase::OnKeyDown(nKey,pbProcessed);
 }
