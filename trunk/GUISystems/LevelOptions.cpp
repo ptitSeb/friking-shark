@@ -147,5 +147,49 @@ bool CLevelOptions::SelectOptions(IGameWindow *piParent,EGameMode *pMode,EGameDi
 void CLevelOptions::OnKeyDown(int nKey,bool *pbProcessed)
 {
 	if(nKey==GK_RETURN){return;}
+	if(nKey==GK_LEFT && m_piGUIManager->HasFocus(m_piBTDifficulty))
+	{
+		int nDifficulty=m_eDifficulty;
+		nDifficulty--;
+		if(nDifficulty<0){nDifficulty=((int)eGameDifficulty_Count)-1;}
+		m_eDifficulty=(EGameDifficulty)nDifficulty;
+		UpdateGUI();
+		
+		*pbProcessed=true;
+		return;
+	}
+	if(nKey==GK_RIGHT && m_piGUIManager->HasFocus(m_piBTDifficulty))
+	{
+		unsigned int nDifficulty=m_eDifficulty;
+		nDifficulty++;
+		if(nDifficulty>=eGameDifficulty_Count){nDifficulty=0;}
+		m_eDifficulty=(EGameDifficulty)nDifficulty;
+		UpdateGUI();
+		
+		*pbProcessed=true;
+		return;
+	}
+	if(nKey==GK_LEFT && m_piGUIManager->HasFocus(m_piBTMode))
+	{
+		int nMode=m_eMode;
+		nMode--;
+		if(nMode<0){nMode=((int)eGameMode_Count)-1;}
+		m_eMode=(EGameMode)nMode;
+		UpdateGUI();
+		
+		*pbProcessed=true;
+		return;
+	}
+	if(nKey==GK_RIGHT && m_piGUIManager->HasFocus(m_piBTMode))
+	{
+		unsigned int nMode=m_eMode;
+		nMode++;
+		if(nMode>=eGameMode_Count){nMode=0;}
+		m_eMode=(EGameMode)nMode;
+		UpdateGUI();
+		
+		*pbProcessed=true;
+		return;
+	}
 	CGameDialogBase::OnKeyDown(nKey,pbProcessed);
 }
