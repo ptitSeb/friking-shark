@@ -36,6 +36,7 @@ CParticleEmitterType::CParticleEmitterType()
     m_dMaxAngle=0;
     m_dwParticleCount=0;
     m_bFixedPositionOnParent=false;
+	m_ePositionReferenceSystem=eParticlePositionReferenceSystem_Relative;
 }
 
 CParticleEmitterType::~CParticleEmitterType(void)
@@ -131,13 +132,21 @@ void CParticleEmitter::ProcessFrame(IParticleSystem *piSystem,unsigned int dwCur
 			pParticle->m_vPositionOnParent.c[1]=m_pType->m_vMinPosition.c[1]+(m_pType->m_vMaxPosition.c[1]-m_pType->m_vMinPosition.c[1])*drand();
 			pParticle->m_vPositionOnParent.c[2]=m_pType->m_vMinPosition.c[2]+(m_pType->m_vMaxPosition.c[2]-m_pType->m_vMinPosition.c[2])*drand();
 			pParticle->m_bFixedPositionOnParent=m_pType->m_bFixedPositionOnParent;
+			pParticle->m_ePositionOnParentReferenceSystem=m_pType->m_ePositionReferenceSystem;
 			pParticle->m_PhysicInfo.dwMoveType=m_pType->m_dwMovementType;
 			pParticle->m_PhysicInfo.dwBoundsType=PHYSIC_BOUNDS_TYPE_NONE;
 			pParticle->m_PhysicInfo.vPosition=vCurrentWorldPosition;
 			pParticle->m_PhysicInfo.vPosition+=vParticleOffset;
-			pParticle->m_PhysicInfo.vPosition+=vForward*pParticle->m_vPositionOnParent.c[0];
-			pParticle->m_PhysicInfo.vPosition+=vUp*pParticle->m_vPositionOnParent.c[1];
-			pParticle->m_PhysicInfo.vPosition+=vRight*pParticle->m_vPositionOnParent.c[2];
+			if(pParticle->m_ePositionOnParentReferenceSystem==eParticlePositionReferenceSystem_Absolute)
+			{
+				pParticle->m_PhysicInfo.vPosition+=pParticle->m_vPositionOnParent;
+			}
+			else
+			{
+				pParticle->m_PhysicInfo.vPosition+=vForward*pParticle->m_vPositionOnParent.c[0];
+				pParticle->m_PhysicInfo.vPosition+=vUp*pParticle->m_vPositionOnParent.c[1];
+				pParticle->m_PhysicInfo.vPosition+=vRight*pParticle->m_vPositionOnParent.c[2];
+			}
 			vParticleOffset+=vEmitterPositionIncrement;
 			
 			int c;

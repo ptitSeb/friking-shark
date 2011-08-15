@@ -57,6 +57,13 @@ struct IParticleModifierType:virtual public ISystemUnknown
     virtual string             GetEmitterName(unsigned index)=0;
 };
 
+enum EParticlePositionReferenceSystem
+{
+	eParticlePositionReferenceSystem_UNKNOWN,
+	eParticlePositionReferenceSystem_Absolute,
+	eParticlePositionReferenceSystem_Relative
+};
+
 struct IParticle
 {
     SPhysicInfo m_PhysicInfo;
@@ -71,6 +78,7 @@ struct IParticle
 
     CVector     m_vPositionOnParent; // Posicion inicial en el sistema de referencia del padre
     bool        m_bFixedPositionOnParent; // Mantiene la posicion inicial en el sistema de referencia del padre, pensado para fuentes de luz y efectos estaticos respecto a la entidad
+    EParticlePositionReferenceSystem m_ePositionOnParentReferenceSystem;
 
     IParticleEmitter *m_piEmiter; // emisor que genero la particula.
 

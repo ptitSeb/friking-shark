@@ -154,13 +154,23 @@ bool CParticleSystem::ProcessFrame(IPhysicManager *piPhysicManager,unsigned int 
         {
             if(pParticle->m_bFixedPositionOnParent)
             {
-              CVector vForward,vRight,vUp;
-              GetVectors(vForward,vRight,vUp);
-              pParticle->m_PhysicInfo.vPosition=GetPosition();
-              pParticle->m_PhysicInfo.vPosition+=vForward*pParticle->m_vPositionOnParent.c[0];
-              pParticle->m_PhysicInfo.vPosition+=vUp*pParticle->m_vPositionOnParent.c[1];
-              pParticle->m_PhysicInfo.vPosition+=vRight*pParticle->m_vPositionOnParent.c[2];
-            }
+				if(pParticle->m_ePositionOnParentReferenceSystem==eParticlePositionReferenceSystem_Absolute)
+				{
+					CVector vForward,vRight,vUp;
+					GetVectors(vForward,vRight,vUp);
+					pParticle->m_PhysicInfo.vPosition=GetPosition();
+					pParticle->m_PhysicInfo.vPosition+=pParticle->m_vPositionOnParent;
+				}
+				else
+				{
+					CVector vForward,vRight,vUp;
+					GetVectors(vForward,vRight,vUp);
+					pParticle->m_PhysicInfo.vPosition=GetPosition();
+					pParticle->m_PhysicInfo.vPosition+=vForward*pParticle->m_vPositionOnParent.c[0];
+					pParticle->m_PhysicInfo.vPosition+=vUp*pParticle->m_vPositionOnParent.c[1];
+					pParticle->m_PhysicInfo.vPosition+=vRight*pParticle->m_vPositionOnParent.c[2];
+				}
+			}
             else
             {
               pParticle->m_PhysicInfo.vPosition=piPhysicManager->ProcessPhysicInfo(&pParticle->m_PhysicInfo,dInterval);

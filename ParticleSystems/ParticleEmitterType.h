@@ -18,6 +18,8 @@
 
 #pragma once
 
+DECLARE_SERIALIZABLE_ENUMERATION(EParticlePositionReferenceSystem)
+
 class CParticleEmitterType: virtual public CSystemObjectBase,virtual public IParticleEmitterType
 {
 public:
@@ -49,7 +51,8 @@ public:
     unsigned int       m_dwParticleDuration;    // cuanto duran las particulas emitidas
     unsigned int       m_dwParticleCount;      // numero de particulas (si m_dwEmitEndTime es cero o igual a m_dwEmitStartTime se emiten instantaneamente, en caso contrario se distribuyen en el tiempo)
     unsigned int       m_dwMovementType;
-    bool        m_bFixedPositionOnParent; // Mantiene la posicion inicial en el sistema de referencia del padre, pensado para fuentes de luz y efectos estaticos respecto a la entidad
+    bool               m_bFixedPositionOnParent; // Mantiene la posicion inicial en el sistema de referencia del padre, pensado para fuentes de luz y efectos estaticos respecto a la entidad
+    EParticlePositionReferenceSystem m_ePositionReferenceSystem;
 
     CParticleTypeWrapper m_ParticleType;
 
@@ -78,7 +81,9 @@ public:
         PROP_VALUE_FLAGS(m_dMaxAngle,"AnguloInicialMaximo",0,MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_VALUE_FLAGS(m_dwParticleDuration,"DuracionParticulas",0,MRPF_NORMAL|MRPF_OPTIONAL)
         PROP_VALUE_FLAGS(m_dwMovementType,"TipoMovimiento",PHYSIC_MOVE_TYPE_NORMAL,MRPF_NORMAL|MRPF_OPTIONAL)
-        PROP_VALUE_FLAGS(m_bFixedPositionOnParent,"PosicionFijaEnPadre",false,MRPF_NORMAL|MRPF_OPTIONAL) 
+		PROP_VALUE_FLAGS(m_bFixedPositionOnParent,"PosicionFijaEnPadre",false,MRPF_NORMAL|MRPF_OPTIONAL) 
+		PROP_VALUE_FLAGS(m_ePositionReferenceSystem,"PositionReferenceSystem",eParticlePositionReferenceSystem_Relative,MRPF_NORMAL|MRPF_OPTIONAL)
+		
     END_PROP_MAP();
     CParticleEmitterType();
     ~CParticleEmitterType();
