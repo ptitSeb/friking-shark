@@ -270,6 +270,21 @@ public:
 	 virtual ~IGameGUIButtonEvents(){}
 };
 
+class IGameGUISlider: virtual public IGameGUIButton
+{
+public:
+	virtual void   SetValue(double dValue)=0;
+	virtual double GetValue()=0;
+};
+
+class IGameGUISliderEvents
+{
+public:
+	virtual void OnSliderValueChanged(IGameGUISlider *piControl,double dValue)=0;
+	
+	virtual ~IGameGUISliderEvents(){}
+};
+
 class IGameGUIList: virtual public IGameWindow
 {
 public:

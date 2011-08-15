@@ -24,6 +24,7 @@
 #include "GameGUILib.h"
 #include "GameGUILabel.h"
 #include "GameGUIButton.h"
+#include "GameGUISlider.h"
 #include "GameGUIGroup.h"
 #include "GameGUIEdit.h"
 #include "GameGUIList.h"
@@ -37,6 +38,7 @@
 BEGIN_SYSTEM_MODULE()
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameGUIManager,"CGameGUIManager")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameGUIButton,"CGameGUIButton")
+	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameGUISlider,"CGameGUISlider")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameGUILabel,"CGameGUILabel")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameGUIGroup,"CGameGUIGroup")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameGUIEdit,"CGameGUIEdit")

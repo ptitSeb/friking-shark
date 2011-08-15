@@ -12,7 +12,8 @@ INCLUDES = -I. \
 -I../GameGraphics \
 -I../SoundSystems
 
-SOURCES = GameGUIButton.cpp\
+SOURCES = GameGUISlider.cpp\
+GameGUIButton.cpp\
 GameGUILabel.cpp\
 GameGUIEdit.cpp\
 GameGUIGroup.cpp\
