@@ -23,13 +23,13 @@ class CGameMenu: virtual public CGameDialogBase,virtual public IGameMenu,virtual
 	IGameGUIButton *m_piBTContinue;
 	IGameGUIButton *m_piBTSave;
 	IGameGUIButton *m_piBTEndGame;
-	IGameGUIButton *m_piBTControls;
+	IGameGUIButton *m_piBTOptions;
 	
 	BEGIN_CHILD_MAP()
 		CHILD_MAP_ENTRY_EX("Continue",m_piBTContinue,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Save",m_piBTSave,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("EndGame",m_piBTEndGame,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("Controls",m_piBTControls,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("Options",m_piBTOptions,IGameGUIButtonEvents);
 	END_CHILD_MAP()
 
 public:

@@ -51,8 +51,11 @@ bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 
 		if(bResult)
 		{
+			m_SoundManager.Attach("GameGUI","SoundManager");
 			m_MainMenuDialog.Attach("GameGUI","MainMenu");
 			m_GameMenuDialog.Attach("GameGUI","GameMenu");
+			m_OptionsMenuDialog.Attach("GameGUI","OptionsMenu");
+			m_AudioOptionsDialog.Attach("GameGUI","AudioOptions");
 			m_GameOverDialog.Attach("GameGUI","GameOverDialog");
 			m_HighScoresDialog.Attach("GameGUI","HighScoresDialog");
 			m_ControlsDialog.Attach("GameGUI","ControlsDialog");			
@@ -73,6 +76,12 @@ bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 			{
 				m_PlayerData.m_PlayerProfile.Create(m_piSystem,"CPlayerProfile","");
 			}
+			if(m_SoundManager.m_piSoundManager)
+			{
+				m_SoundManager.m_piSoundManager->SetMasterVolume(m_PlayerData.m_nMasterVolume);
+				m_SoundManager.m_piSoundManager->SetGroupVolume("Music",m_PlayerData.m_nMusicVolume);
+				m_SoundManager.m_piSoundManager->SetGroupVolume("SoundFX",m_PlayerData.m_nSoundFXVolume);
+			}
 		}
 		
 		if(m_piSTBackground)
@@ -88,6 +97,13 @@ bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 
 void CMainWindow::Destroy()
 {
+	if(m_SoundManager.m_piSoundManager)
+	{
+		m_PlayerData.m_nMasterVolume=m_SoundManager.m_piSoundManager->GetMasterVolume();
+		m_PlayerData.m_nMusicVolume=m_SoundManager.m_piSoundManager->GetGroupVolume("Music");
+		m_PlayerData.m_nSoundFXVolume=m_SoundManager.m_piSoundManager->GetGroupVolume("SoundFX");
+	}
+	
 	if(m_HighScoresTable.m_piSerializable)
 	{
 		m_HighScoresTable.m_piSerializable->Serialize(m_HighScoresConfigFile.AddNode("Local"));
@@ -96,6 +112,7 @@ void CMainWindow::Destroy()
 	
 	m_HighScoresConfigFile.Save("../Player/HighScores.cfg");
 	m_PlayerProfileConfigFile.Save("../Player/PlayerProfiles.cfg");
+	m_SoundManager.Detach();
 	CGameWindowBase::Destroy();
 }
 
@@ -119,6 +136,8 @@ void CMainWindow::OnDraw(IGenericRender *piRender)
 	}
 	else if(m_eStage==eInterfaceStage_MainMenu 
 		&& !m_MainMenuDialog.m_piDialog->IsVisible()
+		&& !m_OptionsMenuDialog.m_piDialog->IsVisible()
+		&& !m_AudioOptionsDialog.m_piDialog->IsVisible()
 		&& !m_LevelOptionsDialog.m_piDialog->IsVisible()
 		&& !m_HighScoresDialog.m_piDialog->IsVisible()
 		&& !m_ControlsDialog.m_piDialog->IsVisible()
@@ -195,9 +214,22 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 			{
 				m_CreditsDialog.m_piDialog->Execute(this);
 			}
-			else if(result==eMainMenuAction_Controls)
+			else if(result==eMainMenuAction_Options)
 			{
-				m_ControlsDialog.m_piControlsDialog->SelectControls(this,m_PlayerData.m_PlayerProfile.m_piPlayerProfile);
+				eOptionsMenuAction eOptionsResult=eOptionsMenuAction_Back;
+				do
+				{
+					eOptionsResult=m_OptionsMenuDialog.m_piOptionsMenu->Show(this);
+					if(eOptionsResult==eOptionsMenuAction_Controls)
+					{
+						m_ControlsDialog.m_piControlsDialog->SelectControls(this,m_PlayerData.m_PlayerProfile.m_piPlayerProfile);
+					}
+					else if(eOptionsResult==eOptionsMenuAction_Audio)
+					{
+						m_AudioOptionsDialog.m_piAudioOptions->Show(this);
+					}
+				}
+				while(eOptionsResult!=eOptionsMenuAction_Back);
 			}
 			else if(result==eMainMenuAction_NewGame)
 			{
@@ -250,9 +282,22 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 						break;
 					}
 				}
-				else if(result==eGameMenuAction_Controls)
+				else if(result==eGameMenuAction_Options)
 				{
-					m_ControlsDialog.m_piControlsDialog->SelectControls(this,m_PlayerData.m_PlayerProfile.m_piPlayerProfile);
+					eOptionsMenuAction eOptionsResult=eOptionsMenuAction_Back;
+					do
+					{
+						eOptionsResult=m_OptionsMenuDialog.m_piOptionsMenu->Show(this);
+						if(eOptionsResult==eOptionsMenuAction_Controls)
+						{
+							m_ControlsDialog.m_piControlsDialog->SelectControls(this,m_PlayerData.m_PlayerProfile.m_piPlayerProfile);
+						}
+						else if(eOptionsResult==eOptionsMenuAction_Audio)
+						{
+							m_AudioOptionsDialog.m_piAudioOptions->Show(this);
+						}
+					}
+					while(eOptionsResult!=eOptionsMenuAction_Back);
 				}
 				else 
 				{

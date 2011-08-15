@@ -21,8 +21,6 @@
 #define MAX_LIVES_TO_DISPLAY 6
 #define MAX_BOMBS_TO_DISPLAY 6
 
-#include <SoundSystems.h>
-
 enum EGameInterfaceState
 {
 	eGameInterfaceState_Idle,

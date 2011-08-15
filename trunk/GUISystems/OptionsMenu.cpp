@@ -20,23 +20,22 @@
 #include "GameRunTimeLib.h"
 #include "GameGUILib.h"
 #include "GUISystems.h"
-#include "MainMenu.h"
+#include "OptionsMenu.h"
 
-CMainMenu::CMainMenu(void)
+COptionsMenu::COptionsMenu(void)
 {
-	m_bAllowLoad=false;
-	m_bAllowContinue=false;
 	m_piLastFocusedWindow=NULL;
 }
 
-CMainMenu::~CMainMenu(void)
+COptionsMenu::~COptionsMenu(void)
 {
 }
 
-void CMainMenu::OnKeyDown(int nKey,bool *pbProcessed)
+void COptionsMenu::OnKeyDown(int nKey,bool *pbProcessed)
 {
 	if(nKey==GK_ESCAPE)
 	{
+		EndDialog(eOptionsMenuAction_Back);
 		*pbProcessed=true;
 		return;
 	}
@@ -44,43 +43,25 @@ void CMainMenu::OnKeyDown(int nKey,bool *pbProcessed)
 	CGameDialogBase::OnKeyDown(nKey,pbProcessed);
 }
 
-void CMainMenu::OnButtonClicked(IGameGUIButton *piControl)
+void COptionsMenu::OnButtonClicked(IGameGUIButton *piControl)
 {
-	if(piControl==m_piBTNewGame)
+	if(piControl==m_piBTControls)
 	{
-		EndDialog(eMainMenuAction_NewGame);
+		EndDialog(eOptionsMenuAction_Controls);
 	}
-	if(piControl==m_piBTContinue)
+	if(piControl==m_piBTAudio)
 	{
-		EndDialog(eMainMenuAction_Continue);
+		EndDialog(eOptionsMenuAction_Audio);
 	}
-	if(piControl==m_piBTLoad)
+	if(piControl==m_piBTBack)
 	{
-		EndDialog(eMainMenuAction_Load);
-	}
-	if(piControl==m_piBTOptions)
-	{
-		EndDialog(eMainMenuAction_Options);
-	}
-	if(piControl==m_piBTHighScores)
-	{
-		EndDialog(eMainMenuAction_HighScores);
-	}
-	if(piControl==m_piBTCredits)
-	{
-		EndDialog(eMainMenuAction_Credits);
-	}
-	if(piControl==m_piBTExit)
-	{
-		EndDialog(eMainMenuAction_Exit);
+		EndDialog(eOptionsMenuAction_Back);
 	}
 }
-void CMainMenu::OnInitDialog()
+void COptionsMenu::OnInitDialog()
 {
 	CGameDialogBase::OnInitDialog();
 	
-	if(m_piBTContinue){m_piBTContinue->Activate(m_bAllowContinue);}
-	if(m_piBTLoad){m_piBTLoad->Activate(m_bAllowLoad);}
 	if(m_piLastFocusedWindow && m_piLastFocusedWindow->IsActive())
 	{
 		IGameGUIButton *piButton=QI(IGameGUIButton,m_piLastFocusedWindow);
@@ -89,25 +70,24 @@ void CMainMenu::OnInitDialog()
 		if(piButton){piButton->EnableSounds();}
 		REL(piButton);
 	}
-	else if(m_piBTNewGame)
+	else if(m_piBTControls)
 	{
-		m_piBTNewGame->DisableSounds();
-		m_piGUIManager->SetFocus(m_piBTNewGame);
-		m_piBTNewGame->EnableSounds();
+		m_piBTControls->DisableSounds();
+		m_piGUIManager->SetFocus(m_piBTControls);
+		m_piBTControls->EnableSounds();
 	}
 }
 
-void CMainMenu::OnEndDialog()
+void COptionsMenu::OnEndDialog()
 {
 	REL(m_piLastFocusedWindow);
 	m_piLastFocusedWindow=GetFocusedDescendant();
+	if(m_piLastFocusedWindow==m_piBTBack){REL(m_piLastFocusedWindow);}
 	CGameDialogBase::OnEndDialog();
 }
 
-eMainMenuAction CMainMenu::Show(IGameWindow *piParent,bool bAllowContinue, bool bAllowLoad)
+eOptionsMenuAction COptionsMenu::Show(IGameWindow *piParent)
 {
-	m_bAllowLoad=bAllowLoad;
-	m_bAllowContinue=bAllowContinue;
 	int nRes=Execute(piParent);
-	return (eMainMenuAction)nRes;
+	return (eOptionsMenuAction)nRes;
 }

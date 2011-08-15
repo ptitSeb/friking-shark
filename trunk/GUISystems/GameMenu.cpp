@@ -46,9 +46,9 @@ void CGameMenu::OnButtonClicked(IGameGUIButton *piControl)
 	{
 		EndDialog(eGameMenuAction_EndGame);
 	}
-	if(piControl==m_piBTControls)
+	if(piControl==m_piBTOptions)
 	{
-		EndDialog(eGameMenuAction_Controls);
+		EndDialog(eGameMenuAction_Options);
 	}
 }
 void CGameMenu::OnInitDialog()

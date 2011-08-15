@@ -96,6 +96,15 @@ public:
 	virtual ~IMainMenu(){}
 };
 
+class IOptionsMenu: virtual public ISystemUnknown
+{	
+public:
+	
+	virtual eOptionsMenuAction Show(IGameWindow *piParent)=0;
+	
+	virtual ~IOptionsMenu(){}
+};
+
 class IGameMenu: virtual public ISystemUnknown
 {	
 public:
@@ -121,6 +130,15 @@ public:
 	virtual bool SelectOptions(IGameWindow *piParent,EGameMode *pMode,EGameDifficulty *pDifficulty,unsigned int *pnSelectedLevel)=0;
 	
 	virtual ~ILevelOptions(){}
+};
+
+class IAudioOptions: virtual public IGameWindow
+{	
+public:
+	
+	virtual bool Show(IGameWindow *piParent)=0;
+	
+	virtual ~IAudioOptions(){}
 };
 
 class ISavedGameRow: virtual public IGameWindow

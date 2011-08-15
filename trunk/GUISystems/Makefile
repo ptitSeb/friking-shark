@@ -26,7 +26,9 @@ HighScoresTable.cpp \
 ControlsDialog.cpp \
 KeyCaptureDialog.cpp \
 MainMenu.cpp \
+OptionsMenu.cpp \
 LevelOptions.cpp \
+AudioOptions.cpp \
 CreditsDialog.cpp \
 LoadDialog.cpp \
 SaveDialog.cpp \
