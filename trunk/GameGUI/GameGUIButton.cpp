@@ -57,8 +57,14 @@ void CGameGUIButton::Destroy()
 	m_piHoverSound=NULL;
 	CGameWindowBase::Destroy();
 }
+
 void CGameGUIButton::EnableSounds(){m_bSoundsEnabled=true;}
-void CGameGUIButton::DisableSounds(){m_bSoundsEnabled=false;}
+void CGameGUIButton::DisableSounds()
+{
+	m_bSoundsEnabled=false;
+	if(m_piClickSound){m_piClickSound->Stop();}
+	if(m_piHoverSound){m_piHoverSound->Stop();}
+}
 
 void CGameGUIButton::OnKeyDown(int nKey,bool *pbProcessed)
 {
