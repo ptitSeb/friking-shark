@@ -28,7 +28,6 @@
 #include "GameMenu.h"
 #include "OptionsMenu.h"
 #include "GameInterface.h"
-#include "ConfirmationDialog.h"
 #include "GameOverDialog.h"
 #include "ControlsDialog.h"
 #include "KeyCaptureDialog.h"
@@ -47,7 +46,6 @@ BEGIN_SYSTEM_MODULE()
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameMenu,"CGameMenu")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(COptionsMenu,"COptionsMenu")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameInterface,"CGameInterface")
-	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CConfirmationDialog,"CConfirmationDialog")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameOverDialog,"CGameOverDialog")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CControlsDialog,"CControlsDialog")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CKeyCaptureDialog,"CKeyCaptureDialog")
