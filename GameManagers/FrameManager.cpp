@@ -77,11 +77,13 @@ void CFrameManager::ExecuteTogglePause()
 	{
 		m_bPaused=false;
 		m_dwTimeBase+=(m_dwCurrentRealTime-m_dwTimeBase)-m_dwPauseStartTime;
+		NOTIFY_EVENT(IFrameManagerEvents,OnResumed());
 	}
 	else
 	{
 		m_bPaused=true;
 		m_dwPauseStartTime=m_dwCurrentTime;
+		NOTIFY_EVENT(IFrameManagerEvents,OnPaused());
 	}
 }
 

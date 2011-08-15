@@ -27,12 +27,14 @@ class CMusicManager: virtual public CSystemObjectBase,
 						virtual public CSystemSerializableBase,
 						virtual public IGameManager,
                         virtual public IMusicManager,
-						virtual public IMusicDesign
+						virtual public IMusicDesign,
+						virtual public IFrameManagerEvents
 {
 	bool m_bStarted;
 	
 	CGameControllerWrapper  m_GameControllerWrapper;
-	CPlayerManagerWrapper m_PlayerManagerWrapper;
+	CPlayerManagerWrapper   m_PlayerManagerWrapper;
+	CFrameManagerWrapper   m_FrameManagerWrapper;
 	
 	ISound *m_piMusicSound;
 	ISound *m_piIntroMusicSound;
@@ -74,7 +76,9 @@ public:
     void Stop();
     void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
 
-
+	void OnResumed();
+	void OnPaused();
+	
 	BEGIN_PROP_MAP(CMusicManager)
 		PROP_FLAGS(m_IntermissionMusic,"IntermissionMusic",MRPF_NORMAL|MRPF_OPTIONAL)
 		BEGIN_PROP_SUBMAP("ScenarioProps")

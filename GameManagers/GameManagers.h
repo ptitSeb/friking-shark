@@ -959,6 +959,13 @@ public:
 		virtual double GetCurrentFps()=0;
 };
 
+struct IFrameManagerEvents:virtual public ISystemUnknown
+{
+public:
+	virtual void OnPaused()=0;
+	virtual void OnResumed()=0;
+};
+
 
 enum EEntityAttributeType
 {
