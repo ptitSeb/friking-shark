@@ -44,6 +44,8 @@ class CLoadDialog: virtual public CGameDialogBase,virtual public IGameGUIButtonE
 public:
 	void OnInitDialog();
 	void OnEndDialog();
+	void Destroy();
+	
 	void OnKeyDown(int nKey,bool *pbProcessed);
 	
 	bool LoadGame(IGameWindow *piParent,std::vector<SGameState> *pvSavedGames,SGameState *pSelected);

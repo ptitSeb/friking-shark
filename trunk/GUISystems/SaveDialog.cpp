@@ -119,6 +119,12 @@ void CSaveDialog::OnEndDialog()
 	CGameDialogBase::OnEndDialog();
 }
 
+void CSaveDialog::Destroy()
+{
+	REL(m_piLastFocusedWindow);
+	CGameDialogBase::Destroy();
+}
+
 bool CSaveDialog::SaveGame(IGameWindow *piParent,SGameState *pCurrent,std::vector<SGameState> *pvSavedGames)
 {
 	m_pvSavedGames=pvSavedGames;

@@ -36,6 +36,7 @@ class COptionsMenu: virtual public CGameDialogBase,virtual public IOptionsMenu,v
 public:
 	void OnInitDialog();
 	void OnEndDialog();
+	void Destroy();
 	
 	// IOptionsMenu
 	
