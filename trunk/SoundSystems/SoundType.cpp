@@ -333,6 +333,22 @@ void CSound::Play()
   }
 }
 
+void CSound::Pause()
+{
+	if(m_nSource!=AL_NONE)
+	{	
+		alSourcePause(m_nSource);
+	}
+}
+
+void CSound::Resume()
+{
+	if(m_nSource!=AL_NONE)
+	{	
+		alSourcePlay(m_nSource);
+	}
+}
+
 void CSound::DetachSource()
 {
 	m_pType->ReleaseSoundSource(m_nSource);
@@ -355,6 +371,15 @@ bool CSound::IsPlaying()
   alGetSourcei(m_nSource,AL_SOURCE_STATE,&nState);
   if(nState==AL_PLAYING || nState==AL_INITIAL){return true;}
   return false;
+}
+
+bool CSound::IsPaused()
+{
+	if(m_nSource==AL_NONE){return false;}
+	ALint nState=AL_STOPPED;
+	alGetSourcei(m_nSource,AL_SOURCE_STATE,&nState);
+	if(nState==AL_PAUSED){return true;}
+	return false;
 }
 
 void CSound::UpdateSource()

@@ -95,8 +95,8 @@ void CSoundSystemManager::SetMasterVolume(unsigned int nVolume)
 {	
 	if(m_pContext)
 	{
-		alListenerf(AL_GAIN ,m_bMuted?0:((float)m_nMasterVolume)/(float)100.0);
 		m_nMasterVolume=nVolume;
+		alListenerf(AL_GAIN ,m_bMuted?0:((float)m_nMasterVolume)/(float)100.0);
 		NOTIFY_EVENT(ISoundManagerEvents,OnMasterVolumeChanged(m_nMasterVolume));
 	}
 }
