@@ -24,6 +24,7 @@ class CSaveDialog: virtual public CGameDialogBase,virtual public IGameGUIButtonE
 	
 	ISavedGameRow *m_piRows[MAX_SAVEDGAMES];
 	IGameGUIButton *m_piBTCancel;
+	IGameWindow    *m_piLastFocusedWindow;
 	
 	std::vector<SGameState> *m_pvSavedGames;
 	
