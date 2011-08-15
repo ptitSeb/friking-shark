@@ -44,16 +44,20 @@ bool CMusicManager::Init(std::string sClass,std::string sName,ISystem *piSystem)
     bool bOk=CSystemObjectBase::Init(sClass,sName,piSystem);
     if(bOk){bOk=m_GameControllerWrapper.Attach("GameSystem","GameController");}
     if(bOk){bOk=m_PlayerManagerWrapper.Attach("GameSystem","PlayerManager");}
+    if(bOk){bOk=m_FrameManagerWrapper.Attach("GameSystem","FrameManager");}
     if(bOk){m_GameControllerWrapper.m_piGameController->RegisterManager(1000,this);}
+    if(m_FrameManagerWrapper.m_piFrameManager){SUBSCRIBE_TO_CAST(m_FrameManagerWrapper.m_piFrameManager,IFrameManagerEvents);}
 	return bOk;
 }
 
 void CMusicManager::Destroy()
 {
+	if(m_FrameManagerWrapper.m_piFrameManager){UNSUBSCRIBE_FROM_CAST(m_FrameManagerWrapper.m_piFrameManager,IFrameManagerEvents);}
 	if(m_GameControllerWrapper.m_piGameController){m_GameControllerWrapper.m_piGameController->UnregisterManager(this);}
 	m_IntermissionMusic.Destroy();
 	m_GameControllerWrapper.Detach();
 	m_PlayerManagerWrapper.Detach();
+	m_FrameManagerWrapper.Detach();
 	CSystemObjectBase::Destroy();
 }
 
@@ -164,10 +168,23 @@ void CMusicManager::ProcessFadeOut(ISound *piSound, unsigned int nCurrentTime,un
 	}
 }
 
+void CMusicManager::OnResumed()
+{
+	if(m_piMusicSound && m_piMusicSound->IsPaused()){m_piMusicSound->Resume();}
+	if(m_piIntroMusicSound && m_piIntroMusicSound->IsPaused()){m_piIntroMusicSound->Resume();}
+	if(m_piIntermissionMusicSound && m_piIntermissionMusicSound->IsPaused()){m_piIntermissionMusicSound->Resume();}
+}
+
+void CMusicManager::OnPaused()
+{
+	if(m_piMusicSound && m_piMusicSound->IsPlaying()){m_piMusicSound->Pause();}
+	if(m_piIntroMusicSound && m_piIntroMusicSound->IsPlaying()){m_piIntroMusicSound->Pause();}
+	if(m_piIntermissionMusicSound && m_piIntermissionMusicSound->IsPlaying()){m_piIntermissionMusicSound->Pause();}
+}
+
 void CMusicManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	if(!m_bStarted){return;}
-	
 	
 	EPlayerManagerGameStage eStage=m_PlayerManagerWrapper.m_piPlayerManager->GetStage();
 	
