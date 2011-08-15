@@ -190,7 +190,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\ConfirmationDialog.cpp"
+				RelativePath=".\AudioOptions.cpp"
 				>
 			</File>
 			<File
@@ -246,6 +246,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OptionsMenu.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SavedGameRow.cpp"
 				>
 			</File>
@@ -280,7 +284,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\ConfirmationDialog.h"
+				RelativePath=".\AudioOptions.h"
 				>
 			</File>
 			<File
@@ -337,6 +341,10 @@
 			</File>
 			<File
 				RelativePath=".\MainWindow.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OptionsMenu.h"
 				>
 			</File>
 			<File
