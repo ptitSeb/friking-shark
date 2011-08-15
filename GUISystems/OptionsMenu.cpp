@@ -35,6 +35,7 @@ void COptionsMenu::OnKeyDown(int nKey,bool *pbProcessed)
 {
 	if(nKey==GK_ESCAPE)
 	{
+		m_piBTBack->PlayClickSound();
 		EndDialog(eOptionsMenuAction_Back);
 		*pbProcessed=true;
 		return;

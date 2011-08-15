@@ -62,6 +62,7 @@ CGameInterface::CGameInterface(void)
 	m_bGameSystemInitialized=false;
 	m_piPointCountSound=NULL;
 	m_piBombCountSound=NULL;
+	m_piLiveSound=NULL;
 }
 
 CGameInterface::~CGameInterface(void)
@@ -83,10 +84,13 @@ void CGameInterface::DestroyWindow()
 {
 	delete m_piPointCountSound;
 	delete m_piBombCountSound;
+	delete m_piLiveSound;
 	m_piPointCountSound=NULL;
 	m_piBombCountSound=NULL;
-	m_PointCountSoundWrapper.Destroy();
-	m_BombCountSoundWrapper.Destroy();
+	m_piLiveSound=NULL;
+	m_PointCountSoundWrapper.Detach();
+	m_BombCountSoundWrapper.Detach();
+	m_LiveSoundWrapper.Detach();
 	
 	StopGame();
 	CloseScenario();	
@@ -139,6 +143,11 @@ void CGameInterface::InitializeGameSystem()
 	{
 		m_piBombCountSound=m_BombCountSoundWrapper.m_piSoundType->CreateInstance();
 	}
+	if(m_LiveSoundWrapper.m_piSoundType)
+	{
+		m_piLiveSound=m_LiveSoundWrapper.m_piSoundType->CreateInstance();
+	}
+	
 }
 
 bool CGameInterface::LoadScenario(std::string sScenario)
@@ -389,8 +398,29 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 			IWeapon *piBombWeapon=m_piPlayerEntity->GetWeapon(1);
 			m_nBombs=piBombWeapon?piBombWeapon->GetAmmo():0;
 			
+			bool bGiveLife=false;
+			unsigned int nNewPoints=m_piPlayer->GetPoints();
+			if(m_nPoints<m_nFirstExtraLivePoints && nNewPoints>=m_nFirstExtraLivePoints)
+			{
+				bGiveLife=true;
+			}
+			else if(nNewPoints>=m_nFirstExtraLivePoints)
+			{
+				unsigned int nLastInterval=(m_nPoints-m_nFirstExtraLivePoints)/m_nNextExtraLivePoints;
+				unsigned int nCurrentInterval=(nNewPoints-m_nFirstExtraLivePoints)/m_nNextExtraLivePoints;
+				
+				bGiveLife=(nCurrentInterval>nLastInterval);
+			}
+			
+			if(bGiveLife)
+			{
+				m_piPlayer->AddLivesLeft(1);
+				if(m_piLiveSound){m_piLiveSound->Play();}
+			}
+			
 			m_nPoints=m_piPlayer->GetPoints();
 			m_nLivesLeft=m_piPlayer->GetLivesLeft();
+			
 		}
 		
 		// Update current checkpoint.

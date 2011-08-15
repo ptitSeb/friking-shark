@@ -53,7 +53,12 @@ void CGameGUIConfirmDialog::OnInitDialog()
 	{
 		bool bWantFocus=false;
 		m_piBTYes->OnWantFocus(&bWantFocus);
-		if(bWantFocus){m_piGUIManager->SetFocus(m_piBTYes);}
+		if(bWantFocus)
+		{
+			m_piBTYes->DisableSounds();
+			m_piGUIManager->SetFocus(m_piBTYes);
+			m_piBTYes->EnableSounds();
+		}
 	}
 }
 
@@ -70,8 +75,8 @@ void CGameGUIConfirmDialog::OnButtonClicked(IGameGUIButton *piControl)
 
 void CGameGUIConfirmDialog::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(nKey==GK_ESCAPE){EndDialog(DIALOG_CANCEL);*pbProcessed=true;return;}
-	if(nKey==GK_RETURN && !m_bNavigateChildren){EndDialog(DIALOG_OK);*pbProcessed=true;return;}
+	if(nKey==GK_ESCAPE){EndDialog(DIALOG_CANCEL);if(m_piBTNo){m_piBTNo->PlayClickSound();}*pbProcessed=true;return;}
+	if(nKey==GK_RETURN && !m_bNavigateChildren){if(m_piBTYes){m_piBTYes->PlayClickSound();}EndDialog(DIALOG_OK);*pbProcessed=true;return;}
 	CGameDialogBase::OnKeyDown(nKey,pbProcessed);
 }
 

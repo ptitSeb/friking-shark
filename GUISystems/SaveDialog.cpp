@@ -149,5 +149,6 @@ bool CSaveDialog::SaveGame(IGameWindow *piParent,SGameState *pCurrent,std::vecto
 void CSaveDialog::OnKeyDown(int nKey,bool *pbProcessed)
 {
 	if(nKey==GK_RETURN){return;}
+	if(nKey==GK_ESCAPE){m_piBTCancel->PlayClickSound();}
 	CGameDialogBase::OnKeyDown(nKey,pbProcessed);
 }

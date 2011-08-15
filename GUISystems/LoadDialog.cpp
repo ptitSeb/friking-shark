@@ -128,5 +128,6 @@ bool CLoadDialog::LoadGame(IGameWindow *piParent,std::vector<SGameState> *pvSave
 void CLoadDialog::OnKeyDown(int nKey,bool *pbProcessed)
 {
 	if(nKey==GK_RETURN){return;}
+	if(nKey==GK_ESCAPE){m_piBTCancel->PlayClickSound();}
 	CGameDialogBase::OnKeyDown(nKey,pbProcessed);
 }

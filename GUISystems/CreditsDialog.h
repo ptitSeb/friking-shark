@@ -20,7 +20,7 @@
 
 class CCreditsDialog: virtual public CGameDialogBase,virtual public IGameGUIButtonEvents
 {
-IGameGUIButton *m_piBTOk;
+	IGameGUIButton *m_piBTOk;
 	
 	
 	BEGIN_CHILD_MAP()
@@ -28,6 +28,7 @@ IGameGUIButton *m_piBTOk;
 	END_CHILD_MAP()
 
 	void OnInitDialog();
+	void OnKeyDown(int nKey,bool *pbProcessed);
 	
 public:
 	// IGameButtonEvents
