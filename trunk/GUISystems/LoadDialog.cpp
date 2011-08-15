@@ -96,6 +96,8 @@ void CLoadDialog::OnEndDialog()
 {
 	REL(m_piLastFocusedWindow);
 	m_piLastFocusedWindow=GetFocusedDescendant();
+	if(m_piLastFocusedWindow==m_piBTCancel){REL(m_piLastFocusedWindow);}
+	
 	for(unsigned int x=0;x<MAX_SAVEDGAMES;x++)
 	{
 		m_piRows[x]->SetSavedGame(NULL);

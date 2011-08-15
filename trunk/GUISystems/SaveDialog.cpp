@@ -26,6 +26,7 @@ CSaveDialog::CSaveDialog(void)
 {
 	m_nSelectedGame=-1;
 	m_pvSavedGames=NULL;
+	m_piLastFocusedWindow=NULL;
 }
 
 CSaveDialog::~CSaveDialog(void)
@@ -84,10 +85,33 @@ void CSaveDialog::OnInitDialog()
 {
 	CGameDialogBase::OnInitDialog();
 	UpdateGUI();
+	
+	if(m_piLastFocusedWindow && m_piLastFocusedWindow->IsActive())
+	{
+		IGameGUIButton *piButton=QI(IGameGUIButton,m_piLastFocusedWindow);
+		if(piButton){piButton->DisableSounds();}
+		m_piGUIManager->SetFocus(m_piLastFocusedWindow);
+		if(piButton){piButton->EnableSounds();}
+		REL(piButton);
+	}
+	else 
+	{
+		IGameWindow *piWindow=FindNextFocusableWindow(NULL);
+		IGameGUIButton *piButton=QI(IGameGUIButton,piWindow);
+		if(piButton){piButton->DisableSounds();}
+		if(piWindow){m_piGUIManager->SetFocus(piWindow);}
+		if(piButton){piButton->EnableSounds();}
+		REL(piWindow);
+		REL(piButton);
+	}
 }
 
 void CSaveDialog::OnEndDialog()
 {
+	REL(m_piLastFocusedWindow);
+	m_piLastFocusedWindow=GetFocusedDescendant();
+	if(m_piLastFocusedWindow==m_piBTCancel){REL(m_piLastFocusedWindow);}
+	
 	for(unsigned int x=0;x<MAX_SAVEDGAMES;x++)
 	{
 		m_piRows[x]->SetSavedGame(NULL);
