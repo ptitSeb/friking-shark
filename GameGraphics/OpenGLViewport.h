@@ -31,6 +31,8 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 		HGLRC		m_hRenderContext;
 		HWND		m_hWnd;
 		int			m_nPixelFormatIndex;
+		int			m_nLastMouseMoveX;
+		int			m_nLastMouseMoveY;
 
 		void OnCreate(HWND hWnd);
 		void OnDestroy();

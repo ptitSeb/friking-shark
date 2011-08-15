@@ -419,6 +419,8 @@ COpenGLViewport::COpenGLViewport(void)
 	GetCurrentVideoMode(&m_OriginalVideoMode);
 	
 #ifdef WIN32
+	m_nLastMouseMoveX=-100000;
+	m_nLastMouseMoveY=-100000;
 	m_hDC=NULL;
 	m_hWnd=NULL;
 	m_hRenderContext=NULL;
@@ -671,7 +673,13 @@ LRESULT COpenGLViewport::ProcessMessage(HWND hWnd,UINT  uMsg, WPARAM  wParam,LPA
 		OnRButtonUp(pointX,pointY);
 		break;
 	case WM_MOUSEMOVE:
-		OnMouseMove(pointX,pointY);
+		// Avoid spurious WM_MOUSEMOVE messages from windows (ex when the cursor keys are pressed)
+		if(m_nLastMouseMoveX!=pointX || m_nLastMouseMoveY!=pointY)
+		{
+			m_nLastMouseMoveX=pointX;
+			m_nLastMouseMoveY=pointY;
+			OnMouseMove(pointX,pointY);
+		}
 		break;
 	case WM_SIZE:
 		OnSize(LOWORD(lParam),HIWORD(lParam));
