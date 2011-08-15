@@ -485,8 +485,11 @@ public:
 	CVector GetCameraUp();
 
 	void ActivateClipping(bool bActivate);
+	bool IsClippingActive();
+	
 	void SetClipRect(double x,double y,double cx, double cy);
-
+	void GetClipRect(double *px,double *py,double *pcx, double *pcy);
+	
 	void Clear(const CVector &vColor,double dAlpha);
 	void SetColor(const CVector &vColor,double dAlpha);
 

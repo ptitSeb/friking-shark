@@ -462,8 +462,10 @@ public:
 
 
 	virtual void ActivateClipping(bool bActivate)=0;
+	virtual bool IsClippingActive()=0;
 	virtual void SetClipRect(double x,double y,double cx, double cy)=0;
-
+	virtual void GetClipRect(double *px,double *py,double *pcx, double *pcy)=0;
+	
 	virtual void Clear(const CVector &vColor,double dAlpha)=0;
 	virtual void SetColor(const CVector &vColor,double dAlpha)=0;
 

@@ -232,6 +232,24 @@ void COpenGLRender::SetClipRect(double x,double y,double cx, double cy)
 	glScissor((int)x,(int)y,(int)cx,(int)cy);
 }
 
+void COpenGLRender::GetClipRect(double *px,double *py,double *pcx, double *pcy)
+{
+	GLdouble pdScissorBox[4];
+	glGetDoublev(GL_SCISSOR_BOX,pdScissorBox);
+	*px=pdScissorBox[0];
+	*py=pdScissorBox[1];
+	*pcx=pdScissorBox[2];
+	*pcy=pdScissorBox[3];
+}
+
+bool COpenGLRender::IsClippingActive()
+{
+	GLboolean bActive=0;
+	glGetBooleanv(GL_SCISSOR_TEST,&bActive);
+	return bActive!=0;
+}
+
+
 void COpenGLRender::Clear(const CVector &vColor,double dAlpha)
 {
 	CVector vOrigin(m_dProyectionWidth*0.5,m_dProyectionHeight*0.5,0);
