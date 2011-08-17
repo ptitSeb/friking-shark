@@ -1,6 +1,4 @@
-SET (SRCS
-
-	${SRCS}
+SET (SRCS_PLAYAREAELEMENTS
 
 	./PlayAreaElements/FormationType.h
 	./PlayAreaElements/PlayAreaCheckPoint.h
@@ -18,5 +16,19 @@ SET (SRCS
 	./PlayAreaElements/PlayAreaEntity.cpp
 	./PlayAreaElements/PlayAreaFormation.cpp
 	./PlayAreaElements/stdafx.cpp
+)
+
+
+ADD_LIBRARY ( PlayAreaElements SHARED ${SRCS_PLAYAREAELEMENTS} )
+
+TARGET_LINK_LIBRARIES (
+         PlayAreaElements
+	GameGUILib
+	GameRunTimeLib
+	VectorLib
+	GameEntityLib
+	${PNG_LIBRARY}
+	${OPENAL_LIBRARY}
+	${OPENGL_LIBRARY}
 )
 

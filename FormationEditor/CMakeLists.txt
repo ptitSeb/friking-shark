@@ -1,6 +1,4 @@
-SET (SRCS
-
-	${SRCS}
+SET (SRCS_FORMATIONEDITOR
 
 	./FormationEditor/FormationEditor.h
 	./FormationEditor/FormationEditorMainWindow.h
@@ -15,3 +13,20 @@ SET (SRCS
 	./FormationEditor/stdafx.cpp
 )
 
+
+link_libraries (
+	${INCLUDED_LIBRARIES}
+)
+
+ADD_LIBRARY ( FormationEditor SHARED ${SRCS_FORMATIONEDITOR} )
+
+TARGET_LINK_LIBRARIES (
+         FormationEditor
+	GameGUILib
+	GameRunTimeLib
+	VectorLib
+	GameEntityLib
+	${PNG_LIBRARY}
+	${OPENAL_LIBRARY}
+	${OPENGL_LIBRARY}
+)

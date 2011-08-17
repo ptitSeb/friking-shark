@@ -1,8 +1,8 @@
 # $Revision$ $Date$ $Author$
 
-PROJECT (FrikingShark)
+PROJECT (frikingshark)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.1)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.4)
 
 if(COMMAND cmake_policy)
 	cmake_policy(SET CMP0003 NEW)
@@ -12,10 +12,17 @@ FIND_PACKAGE ( X11 REQUIRED )
 FIND_PACKAGE ( OpenGL REQUIRED )
 FIND_PACKAGE ( OpenAL REQUIRED )
 FIND_PACKAGE ( PNG REQUIRED )
+FIND_LIBRARY (ALUT_LIBRARY alut /usr/local/lib /usr/lib /sw/lib)
+FIND_LIBRARY (VORBISFILE_LIBRARY vorbisfile /usr/local/lib /usr/lib /sw/lib)
+FIND_LIBRARY (VORBIS_LIBRARY vorbis /usr/local/lib /usr/lib /sw/lib)
+FIND_LIBRARY (OGG_LIBRARY ogg /usr/local/lib /usr/lib /sw/lib)
+
 # FIND_PACKAGE ( Vorbis REQUIRED )
+set(CMAKE_SHARED_LIBRARY_PREFIX )
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/Demo/Bin/Release/)
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/Demo/Bin/Release/)
 
 # Libraries
-
 INCLUDE_DIRECTORIES (
 	./VectorLib 
 	./GameManagers
@@ -59,10 +66,6 @@ INCLUDE ( ./WeaponTypes/CMakeLists.txt )
 #	ADD_DEFINITIONS(-D_SCL_SECURE_NO_WARNINGS )
 #ENDIF (NOT WINDOWS)
 
-link_libraries (
-	${INCLUDED_LIBRARIES}
-)
-
 # Main build details.
 
 ADD_SUBDIRECTORY (
@@ -78,15 +81,35 @@ ADD_SUBDIRECTORY (
 ./GameEntityLib
 )
 
-ADD_EXECUTABLE ( ./Demo/Bin/GameEngine MACOSX_BUNDLE ${SRCS} )
+install(TARGETS GameEngine ./GameRunTime GameGraphics GameGUI AirUnitTypes AnimationSystems BonusTypes GameManagers GroundUnitTypes GUISystems ParticleSystems PlayAreaElements SoundSystems WeaponTypes EntityEditor FormationEditor ScenarioEditor DESTINATION share/frikingshark/Bin/Release)
+install(DIRECTORY Demo/Resources/Models/ DESTINATION share/frikingshark/Resources/Models/ FILES_MATCHING PATTERN "*.gbs")
+install(DIRECTORY Demo/Resources/Models/ DESTINATION share/frikingshark/Resources/Models/ FILES_MATCHING PATTERN "*.gcm")
+install(DIRECTORY Demo/Resources/Sounds/ DESTINATION share/frikingshark/Resources/Sounds/ FILES_MATCHING PATTERN "*.ogg")
+install(DIRECTORY Demo/Resources/Textures/ DESTINATION share/frikingshark/Resources/Textures/ FILES_MATCHING PATTERN "*.png")
+install(DIRECTORY Demo/Resources/Scripts/ DESTINATION share/frikingshark/Resources/Scripts/ FILES_MATCHING PATTERN "*.cfg")
+install(DIRECTORY Demo/Resources/Shaders/ DESTINATION share/frikingshark/Resources/Shaders/ FILES_MATCHING PATTERN "*.c")
+install(DIRECTORY Demo/Resources/GUI/ DESTINATION share/frikingshark/Resources/GUI/ FILES_MATCHING PATTERN "*.cfg")
+install(DIRECTORY Demo/Resources/GUI/ DESTINATION share/frikingshark/Resources/GUI/ FILES_MATCHING PATTERN "*.png")
+install(DIRECTORY Demo/Resources/ScenarioEditor/ DESTINATION share/frikingshark/Resources/ScenarioEditor/ FILES_MATCHING PATTERN "*.cfg")
+install(DIRECTORY Demo/Resources/ScenarioEditor/ DESTINATION share/frikingshark/Resources/ScenarioEditor/ FILES_MATCHING PATTERN "*.png")
+install(DIRECTORY Demo/Resources/FormationEditor/ DESTINATION share/frikingshark/Resources/FormationEditor/ FILES_MATCHING PATTERN "*.cfg")
+install(DIRECTORY Demo/Resources/FormationEditor/ DESTINATION share/frikingshark/Resources/FormationEditor/ FILES_MATCHING PATTERN "*.png")
+install(DIRECTORY Demo/Resources/EntityEditor/ DESTINATION share/frikingshark/Resources/EntityEditor/ FILES_MATCHING PATTERN "*.cfg")
+install(DIRECTORY Demo/Resources/EntityEditor/ DESTINATION share/frikingshark/Resources/EntityEditor/ FILES_MATCHING PATTERN "*.png")
+install(DIRECTORY Demo/Resources/ DESTINATION share/frikingshark/Resources/ FILES_MATCHING PATTERN "Level*.ges")
+install(DIRECTORY Demo/Resources/ DESTINATION share/frikingshark/Resources/ FILES_MATCHING PATTERN "Background.ges")
+install(DIRECTORY Demo/Player/ DESTINATION share/frikingshark/Player/ FILES_MATCHING PATTERN "*.cfg")
+install(FILES     License.txt DESTINATION share/doc/frikingshark/ RENAME copyright)
+install(FILES     Demo/Linux/frikingshark DESTINATION games PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE)
+install(FILES     Demo/Linux/frikingshark.xpm DESTINATION share/pixmaps/)
+install(FILES     Demo/Linux/frikingshark.desktop DESTINATION share/applications/)
+install(FILES     Demo/Linux/menu DESTINATION share/menu/ RENAME frikingshark )
 
-TARGET_LINK_LIBRARIES (
-         ./Demo/Bin/GameEngine
-	GameGUILib
-	GameRunTimeLib
-	VectorLib
-	GameEntityLib
-	${PNG_LIBRARY}
-	${OPENAL_LIBRARY}
-	${OPENGL_LIBRARY}
-)
+include (InstallRequiredSystemLibraries)
+set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/License.txt")
+set (CPACK_PACKAGE_VERSION_MAJOR "1")
+set (CPACK_PACKAGE_VERSION_MINOR "0")
+set (CPACK_PACKAGE_CONTACT "javiermartingarcia@gmail.com")
+set (CPACK_PACKAGE_INSTALL_DIRECTORY "frikingshark")
+set (CPACK_GENERATOR "DEB")
+include (CPack)

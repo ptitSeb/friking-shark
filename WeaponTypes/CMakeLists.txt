@@ -1,6 +1,4 @@
-SET (SRCS
-
-	${SRCS}
+SET (SRCS_SOUNDSYSTEMS
 
 	./WeaponTypes/BombProjectileType.h
 	./WeaponTypes/BulletProjectileType.h
@@ -16,5 +14,18 @@ SET (SRCS
 	./WeaponTypes/ProjectileLauncherType.cpp
 	./WeaponTypes/stdafx.cpp
 	./WeaponTypes/WeaponTypes.cpp
+)
+
+ADD_LIBRARY ( WeaponTypes SHARED ${SRCS_SOUNDSYSTEMS} )
+
+TARGET_LINK_LIBRARIES (
+         WeaponTypes
+	GameGUILib
+	GameRunTimeLib
+	VectorLib
+	GameEntityLib
+	${PNG_LIBRARY}
+	${OPENAL_LIBRARY}
+	${OPENGL_LIBRARY}
 )
 

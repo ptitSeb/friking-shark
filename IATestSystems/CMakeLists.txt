@@ -1,6 +1,4 @@
-SET (SRCS
-
-	${SRCS}
+SET (SRCS_IATESTSYSTEMS
 
 	./IATestSystems/IAEntityBase.h
 	./IATestSystems/IATestMainWindow.h
@@ -18,5 +16,15 @@ SET (SRCS
 	./IATestSystems/stdafx.cpp
 	./IATestSystems/SteeringBehaviours.cpp
 	./IATestSystems/TestScenarios.cpp
+)
+
+
+ADD_LIBRARY ( IATestSystems SHARED ${SRCS_IATESTSYSTEMS} )
+
+TARGET_LINK_LIBRARIES (
+         IATestSystems
+	GameGUILib
+	GameRunTimeLib
+	VectorLib
 )
 

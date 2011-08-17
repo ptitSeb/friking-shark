@@ -1,8 +1,4 @@
-SET (SRCS
-
-	${SRCS}
-
-	"./GameRunTime/Borrador Tipos de Entidad.h"
+SET (SRCS_GAMERUNTIME
 	./GameRunTime/GameRunTime.h
 	./GameRunTime/InterfaceLeakAPI.h
 	./GameRunTime/resource.h
@@ -17,5 +13,15 @@ SET (SRCS
 	./GameRunTime/System.cpp
 	./GameRunTime/SystemManager.cpp
 	./GameRunTime/SystemModule.cpp
+)
+
+
+ADD_LIBRARY ( ./GameRunTime SHARED ${SRCS_GAMERUNTIME} )
+
+TARGET_LINK_LIBRARIES (
+         ./GameRunTime
+	GameGUILib
+	GameRunTimeLib
+	VectorLib
 )
 

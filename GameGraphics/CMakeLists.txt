@@ -1,6 +1,4 @@
-SET (SRCS
-
-	${SRCS}
+SET (SRCS_GAMEGRAPHICS
 
 	./GameGraphics/GameGraphics.h
 	./GameGraphics/GameKeys.h
@@ -17,6 +15,7 @@ SET (SRCS
 	./GameGraphics/resource.h
 	./GameGraphics/stdafx.h
 
+	./GameGraphics/GLee.c
 	./GameGraphics/GameGraphics.cpp
 	./GameGraphics/OpenGLCamera.cpp
 	./GameGraphics/OpenGLFont.cpp
@@ -27,5 +26,18 @@ SET (SRCS
 	./GameGraphics/OpenGLTexture.cpp
 	./GameGraphics/OpenGLViewport.cpp
 	./GameGraphics/stdafx.cpp
+)
+
+ADD_LIBRARY ( GameGraphics SHARED ${SRCS_GAMEGRAPHICS} )
+
+TARGET_LINK_LIBRARIES (
+         GameGraphics
+	GameGUILib
+	GameRunTimeLib
+	VectorLib
+	GameEntityLib
+	${PNG_LIBRARY}
+	${OPENAL_LIBRARY}
+	${OPENGL_LIBRARY}
 )
 

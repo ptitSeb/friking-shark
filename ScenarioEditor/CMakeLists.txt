@@ -1,6 +1,4 @@
-SET (SRCS
-
-	${SRCS}
+SET (SRCS_FORMATIONEDITOR
 
 	./ScenarioEditor/ScenarioEditorColorSelector.h
 	./ScenarioEditor/ScenarioEditor.h
@@ -19,3 +17,19 @@ SET (SRCS
 	./ScenarioEditor/stdafx.cpp
 )
 
+link_libraries (
+	${INCLUDED_LIBRARIES}
+)
+
+ADD_LIBRARY ( ScenarioEditor SHARED ${SRCS_FORMATIONEDITOR} )
+
+TARGET_LINK_LIBRARIES (
+         ScenarioEditor
+	GameGUILib
+	GameRunTimeLib
+	VectorLib
+	GameEntityLib
+	${PNG_LIBRARY}
+	${OPENAL_LIBRARY}
+	${OPENGL_LIBRARY}
+)

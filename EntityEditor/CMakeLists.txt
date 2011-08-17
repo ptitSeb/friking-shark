@@ -1,6 +1,4 @@
-SET (SRCS
-
-	${SRCS}
+SET (SRCS_ENTITYEDITOR
 
 	./EntityEditor/EntityEditorAnimationPropertyPanel.h
 	./EntityEditor/EntityEditorClassSelector.h
@@ -31,3 +29,19 @@ SET (SRCS
 	./EntityEditor/stdafx.cpp
 )
 
+link_libraries (
+	${INCLUDED_LIBRARIES}
+)
+
+ADD_LIBRARY ( EntityEditor SHARED ${SRCS_ENTITYEDITOR} )
+
+TARGET_LINK_LIBRARIES (
+         EntityEditor
+	GameGUILib
+	GameRunTimeLib
+	VectorLib
+	GameEntityLib
+	${PNG_LIBRARY}
+	${OPENAL_LIBRARY}
+	${OPENGL_LIBRARY}
+)
