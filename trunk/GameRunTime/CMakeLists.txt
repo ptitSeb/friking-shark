@@ -15,7 +15,6 @@ SET (SRCS_GAMERUNTIME
 	./GameRunTime/SystemModule.cpp
 )
 
-
 ADD_LIBRARY ( ./GameRunTime SHARED ${SRCS_GAMERUNTIME} )
 
 TARGET_LINK_LIBRARIES (
