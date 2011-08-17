@@ -1,6 +1,4 @@
-SET (SRCS
-
-	${SRCS}	
+SET (SRCS_BONUSTYPES
 
 	./BonusTypes/BombBonusType.h
 	./BonusTypes/BonusTypes.h
@@ -16,5 +14,19 @@ SET (SRCS
 	./BonusTypes/PointBonusType.cpp
 	./BonusTypes/stdafx.cpp
 	./BonusTypes/WeaponUpgradeBonusType.cpp
+)
+
+
+ADD_LIBRARY ( BonusTypes SHARED ${SRCS_BONUSTYPES} )
+
+TARGET_LINK_LIBRARIES (
+         BonusTypes
+	GameGUILib
+	GameRunTimeLib
+	VectorLib
+	GameEntityLib
+	${PNG_LIBRARY}
+	${OPENAL_LIBRARY}
+	${OPENGL_LIBRARY}
 )
 

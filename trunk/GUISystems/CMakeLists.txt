@@ -1,8 +1,5 @@
-SET (SRCS
+SET (SRCS_GUISYSTEMS
 
-	${SRCS}
-
-	./GUISystems/ConfirmationDialog.h
 	./GUISystems/GameInterface.h
 	./GUISystems/GameMenu.h
 	./GUISystems/GUIDefs.h
@@ -21,8 +18,9 @@ SET (SRCS
 	./GUISystems/LoadDialog.h
 	./GUISystems/SaveDialog.h
 	./GUISystems/SavedGameRow.h
+	./GUISystems/OptionsMenu.h
+	./GUISystems/AudioOptions.h
 
-	./GUISystems/ConfirmationDialog.cpp
 	./GUISystems/GameInterface.cpp
 	./GUISystems/GameMenu.cpp
 	./GUISystems/GUISystems.cpp
@@ -39,5 +37,21 @@ SET (SRCS
 	./GUISystems/LoadDialog.cpp
 	./GUISystems/SaveDialog.cpp
 	./GUISystems/SavedGameRow.cpp
+	./GUISystems/OptionsMenu.cpp
+	./GUISystems/AudioOptions.cpp
+)
+
+
+ADD_LIBRARY ( GUISystems SHARED ${SRCS_GUISYSTEMS} )
+
+TARGET_LINK_LIBRARIES (
+         GUISystems
+	GameGUILib
+	GameRunTimeLib
+	VectorLib
+	GameEntityLib
+	${PNG_LIBRARY}
+	${OPENAL_LIBRARY}
+	${OPENGL_LIBRARY}
 )
 

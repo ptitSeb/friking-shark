@@ -1,6 +1,4 @@
-SET (SRCS
-
-	${SRCS}
+SET (SRCS_AIRUNITTYPES
 
 	./AirUnitTypes/AirUnitTypes.h
 	./AirUnitTypes/BomberType.h
@@ -14,5 +12,19 @@ SET (SRCS
 	./AirUnitTypes/FighterType.cpp
 	./AirUnitTypes/PlayerType.cpp
 	./AirUnitTypes/stdafx.cpp
+)
+
+
+ADD_LIBRARY ( AirUnitTypes SHARED ${SRCS_AIRUNITTYPES} )
+
+TARGET_LINK_LIBRARIES (
+         AirUnitTypes
+	GameGUILib
+	GameRunTimeLib
+	VectorLib
+	GameEntityLib
+	${PNG_LIBRARY}
+	${OPENAL_LIBRARY}
+	${OPENGL_LIBRARY}
 )
 

@@ -1,6 +1,5 @@
-SET (SRCS
+SET (SRCS_ANIMATIONSYSTEMS
 
-	${SRCS}
 
 	./AnimationSystems/AnimationObjectBase.h
 	./AnimationSystems/AnimationSystems.h
@@ -24,5 +23,19 @@ SET (SRCS
 	./AnimationSystems/SoundAnimationObjectType.cpp
 	./AnimationSystems/stdafx.cpp
 	./AnimationSystems/TextAnimationObjectType.cpp
+)
+
+
+ADD_LIBRARY ( AnimationSystems SHARED ${SRCS_ANIMATIONSYSTEMS} )
+
+TARGET_LINK_LIBRARIES (
+         AnimationSystems
+	GameGUILib
+	GameRunTimeLib
+	VectorLib
+	GameEntityLib
+	${PNG_LIBRARY}
+	${OPENAL_LIBRARY}
+	${OPENGL_LIBRARY}
 )
 

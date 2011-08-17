@@ -1,6 +1,5 @@
-SET (SRCS
+SET (SRCS_PARTICLESYSTEMS
 
-	${SRCS}
 
 	./ParticleSystems/LightParticleType.h
 	./ParticleSystems/ParticleColorModifierType.h
@@ -30,5 +29,18 @@ SET (SRCS
 	./ParticleSystems/PointParticleType.cpp
 	./ParticleSystems/stdafx.cpp
 	./ParticleSystems/TextureParticleType.cpp
+)
+
+ADD_LIBRARY ( ParticleSystems SHARED ${SRCS_PARTICLESYSTEMS} )
+
+TARGET_LINK_LIBRARIES (
+         ParticleSystems
+	GameGUILib
+	GameRunTimeLib
+	VectorLib
+	GameEntityLib
+	${PNG_LIBRARY}
+	${OPENAL_LIBRARY}
+	${OPENGL_LIBRARY}
 )
 

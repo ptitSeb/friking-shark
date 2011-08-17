@@ -1,6 +1,4 @@
-SET (SRCS
-
-	${SRCS}
+SET (SRCS_GAMEMANAGERS
 
 	./GameManagers/EntityManager.h
 	./GameManagers/FrameManager.h
@@ -28,5 +26,17 @@ SET (SRCS
 	./GameManagers/stdafx.cpp
 	./GameManagers/WorldEntity.cpp
 	./GameManagers/WorldManager.cpp
+)
+ADD_LIBRARY ( GameManagers SHARED ${SRCS_GAMEMANAGERS} )
+
+TARGET_LINK_LIBRARIES (
+         GameManagers
+	GameGUILib
+	GameRunTimeLib
+	VectorLib
+	GameEntityLib
+	${PNG_LIBRARY}
+	${OPENAL_LIBRARY}
+	${OPENGL_LIBRARY}
 )
 

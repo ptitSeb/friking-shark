@@ -1,6 +1,4 @@
-SET (SRCS
-
-	${SRCS}
+SET (SRCS_GROUNDUNITTYPES
 
 	./GroundUnitTypes/DreadnoughtTowerType.h
 	./GroundUnitTypes/GroundBossHatchType.h
@@ -22,5 +20,19 @@ SET (SRCS
 	./GroundUnitTypes/stdafx.cpp
 	./GroundUnitTypes/TurretType.cpp
 	./GroundUnitTypes/VehicleType.cpp
+)
+
+
+ADD_LIBRARY ( GroundUnitTypes SHARED ${SRCS_GROUNDUNITTYPES} )
+
+TARGET_LINK_LIBRARIES (
+         GroundUnitTypes
+	GameGUILib
+	GameRunTimeLib
+	VectorLib
+	GameEntityLib
+	${PNG_LIBRARY}
+	${OPENAL_LIBRARY}
+	${OPENGL_LIBRARY}
 )
 

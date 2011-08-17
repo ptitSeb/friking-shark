@@ -1,7 +1,6 @@
-SET (SRCS
+SET (SRCS_GAMEGUI
 
-	${SRCS}
-
+	./GameGUI/GameGUISlider.h
 	./GameGUI/GameGUIButton.h
 	./GameGUI/GameGUIColorDialog.h
 	./GameGUI/GameGUIConfirmDialog.h
@@ -18,6 +17,7 @@ SET (SRCS
 	./GameGUI/resource.h
 	./GameGUI/stdafx.h
 
+	./GameGUI/GameGUISlider.cpp
 	./GameGUI/GameGUIButton.cpp
 	./GameGUI/GameGUIColorDialog.cpp
 	./GameGUI/GameGUIConfirmDialog.cpp
@@ -32,5 +32,18 @@ SET (SRCS
 	./GameGUI/GameGUIMessageDialog.cpp
 	./GameGUI/GameMainWindow.cpp
 	./GameGUI/stdafx.cpp
+)
+
+ADD_LIBRARY ( GameGUI SHARED ${SRCS_GAMEGUI} )
+
+TARGET_LINK_LIBRARIES (
+         GameGUI
+	GameGUILib
+	GameRunTimeLib
+	VectorLib
+	GameEntityLib
+	${PNG_LIBRARY}
+	${OPENAL_LIBRARY}
+	${OPENGL_LIBRARY}
 )
 
