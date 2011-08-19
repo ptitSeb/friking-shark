@@ -30,6 +30,11 @@ public:
 	virtual bool        Load(std::string sFileName,std::string sGroup)=0;
 	virtual std::string GetFileName()=0;
 	virtual std::string GetGroup()=0;
+
+	virtual unsigned int AcquireSoundSource(ISound *piSound)=0;
+	virtual void         ReleaseSoundSource(unsigned int nSource)=0;
+
+	virtual void		ReclaimSource(unsigned int nSource)=0;
 };
 
 class ISound
@@ -41,7 +46,7 @@ public:
 	virtual void Resume()=0;
 	virtual bool IsPlaying()=0;
 	virtual bool IsPaused()=0;
-	virtual void DetachSource()=0;
+	virtual void ReclaimSource()=0;
 	
 	virtual void SetLoop(bool bLoop)=0;
 	virtual void SetVolume(double nVolume)=0;
@@ -71,6 +76,9 @@ public:
   virtual void SetListenerOrientation(CVector vOrientation)=0;
   virtual void SetListenerVelocity(CVector vVelocity)=0;
   
+  virtual unsigned int AcquireSource(ISoundType *piType)=0;
+  virtual void         ReleaseSource(unsigned int nSource)=0;
+
   virtual ~ISoundManager(){}
 };
 

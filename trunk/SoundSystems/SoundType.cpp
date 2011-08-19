@@ -75,13 +75,9 @@ bool CSoundType::LoadOgg()
 {
 	bool bOk=true;
 	
-	for(size_t x=0;x<m_dAvailableSources.size();x++)
-	{
-		ALuint nSource=m_dAvailableSources[x];
-		if(nSource){alDeleteSources(1,&nSource);}
-	}
-	m_dAvailableSources.clear();
+	ReleaseAllSources();
 	if(m_iSoundBuffer){alDeleteBuffers(1,&m_iSoundBuffer);m_iSoundBuffer=AL_NONE;}
+
 	char *pBuffer=NULL;
 	unsigned int nBufferSize=0;
 	unsigned int nFileFormat=0;
@@ -136,41 +132,24 @@ bool CSoundType::LoadOgg()
 
 		alGetError();
 		alGenBuffers(1, &m_iSoundBuffer);
-		if(m_iSoundBuffer!=AL_NONE)
+		ALenum error=alGetError();
+		if(error==AL_NO_ERROR)
 		{
 			alBufferData(m_iSoundBuffer, nFileFormat, pBuffer, nBufferSize, nFrequency);
-			
-			ALuint *pSources=new ALuint [m_nChannels];
-			alGenSources(m_nChannels,pSources);
-			if(alGetError()==AL_NO_ERROR)
-			{
-				for(unsigned int x=0;x<m_nChannels;x++)
-				{
-					alSourcei(pSources[x],AL_BUFFER,m_iSoundBuffer);
-					alSourcef(pSources[x],AL_GAIN,(float)(m_dVolume/100.0));
-					
-					m_dAvailableSources.push_back(pSources[x]);
-				}
-			}
-			else
-			{
-				RTTRACE("CSoundType::LoadOgg -> Failed to create sources. Error %d",alGetError());
-			}
-			delete [] pSources;
-			pSources=NULL;
 		}
 		else
 		{
-			RTTRACE("CSoundType::LoadOgg -> Failed to create buffer for file %s: Error %d",m_sFileName.c_str(),alGetError());
+			bOk=false;
+			RTTRACE("CSoundType::LoadOgg -> Failed to create buffer for file %s: Error %x:%s",m_sFileName.c_str(),error,alutGetErrorString(error));
 		}
+		
 	}
 	free(pBuffer);
 	pBuffer=NULL;
 	
-	bOk=(m_dAvailableSources.size()!=0);
 	if(!bOk)
 	{
-		RTTRACE("CSoundType::LoadFromFile -> Failed to load sound %s. Error %d:%s",m_sFileName.c_str(),alutGetError(),alutGetErrorString(alutGetError()));
+		RTTRACE("CSoundType::LoadFromFile -> Failed to load sound %s.",m_sFileName.c_str());
 	}
 	return bOk;
 }
@@ -178,44 +157,20 @@ bool CSoundType::LoadOgg()
 bool CSoundType::LoadWav()
 {
 	bool bOk=true;
-	
-	for(size_t x=0;x<m_dAvailableSources.size();x++)
-	{
-		ALuint nSource=m_dAvailableSources[x];
-		if(nSource){alDeleteSources(1,&nSource);}
-	}
-	m_dAvailableSources.clear();
+
+	ReleaseAllSources();
 	if(m_iSoundBuffer){alDeleteBuffers(1,&m_iSoundBuffer);m_iSoundBuffer=AL_NONE;}
 	
 	m_iSoundBuffer=alutCreateBufferFromFile(m_sFileName.c_str());
-	if(m_iSoundBuffer!=AL_NONE)
+	if(m_iSoundBuffer==AL_NONE)
 	{
-		RTTRACE("CSoundType::LoadWav -> Loaded Sound %s",m_sFileName.c_str());
-		
-		ALuint *pSources=new ALuint [m_nChannels];
-		alGetError();
-		alGenSources(m_nChannels,pSources);
-		if(alGetError()==AL_NO_ERROR)
-		{
-			for(unsigned int x=0;x<m_nChannels;x++)
-			{
-				alSourcei(pSources[x],AL_BUFFER,m_iSoundBuffer);
-				alSourcef(pSources[x],AL_GAIN,(float)(m_dVolume/100.0));
-				
-				m_dAvailableSources.push_back(pSources[x]);
-			}
-		}
-		else
-		{
-			RTTRACE("CSoundType::LoadWav -> Failed to create sources. Error %d",alGetError());
-		}
-		delete [] pSources;
-		pSources=NULL;
+		ALenum aluterror=alutGetError();
+		RTTRACE("CSoundType::LoadWav -> Failed to create sound buffer from file %s. Error %x:%s",m_sFileName.c_str(),aluterror,alutGetErrorString(aluterror));
+		bOk=false;
 	}
-	bOk=(m_dAvailableSources.size()!=0);
 	if(!bOk)
 	{
-		RTTRACE("CSoundType::LoadWav -> Failed to load sound %s. Error %d:%s",m_sFileName.c_str(),alutGetError(),alutGetErrorString(alutGetError()));
+		RTTRACE("CSoundType::LoadWav -> Failed to load sound %s.",m_sFileName.c_str());
 	}
 	return bOk;
 }
@@ -242,14 +197,22 @@ bool CSoundType::Init(std::string sClass,std::string sName,ISystem *piSystem)
   return bOk;
 }
 
+void CSoundType::ReleaseAllSources()
+{
+	if(m_piSoundManager==NULL){return;}
+
+	std::list<SSourceData>::iterator i;
+	for(i=m_vCurrentSources.begin();i!=m_vCurrentSources.end();i++)
+	{
+		SSourceData sourceData=*i;
+		m_piSoundManager->ReleaseSource(sourceData.nSource);
+	}
+	m_vCurrentSources.clear();
+}
+
 void CSoundType::Destroy()
 {
-  for(size_t x=0;x<m_dAvailableSources.size();x++)
-  {
-	ALuint nSource=m_dAvailableSources[x];
-	if(nSource){alDeleteSources(1,&nSource);}
-  }
-  m_dAvailableSources.clear();
+  ReleaseAllSources();
   
   if(m_iSoundBuffer){alDeleteBuffers(1,&m_iSoundBuffer);m_iSoundBuffer=AL_NONE;}
 
@@ -268,32 +231,71 @@ ISound *CSoundType::CreateInstance()
   return pSound;
 }
 
-ALuint CSoundType::AcquireSoundSource(ISound *piSound)
+unsigned int CSoundType::AcquireSoundSource(ISound *piSound)
 {
-  if(m_dAvailableSources.size()==0 && m_mBusySources.size()!=0)
+  if(m_piSoundManager==NULL){return AL_NONE;}
+  if(piSound==NULL){return AL_NONE;}
+  if(m_vCurrentSources.size() && m_vCurrentSources.size()>=m_nChannels)
   {
-	  ISound *piSound=m_mBusySources.begin()->second;
-	  piSound->DetachSource();
+	  SSourceData sourceData=m_vCurrentSources.front();
+	  sourceData.piSound->ReclaimSource();
+	  m_vCurrentSources.pop_front();
+
+	  sourceData.piSound=piSound;
+	  m_vCurrentSources.push_back(sourceData);
+	  return sourceData.nSource;
   }
-  if(m_dAvailableSources.size())
+  else
   {
-    ALuint nSource=m_dAvailableSources.front();
-    m_dAvailableSources.pop_front();
-	m_mBusySources[nSource]=piSound;
-    return nSource;
+	  unsigned int nSource=m_piSoundManager->AcquireSource(this);
+	  if(nSource!=AL_NONE)
+	  {
+		   alSourceStop(nSource);
+		  alSourcei(nSource,AL_BUFFER,m_iSoundBuffer);
+		  SSourceData sourceData;
+		  sourceData.piSound=piSound;
+		  sourceData.nSource=nSource;
+		  m_vCurrentSources.push_back(sourceData);
+	  }
+	  return nSource;
   }
-  return AL_NONE;
 }
 
-void CSoundType::ReleaseSoundSource(ALuint nSource)
+void CSoundType::ReleaseSoundSource(unsigned int nSource)
 {
+  if(m_piSoundManager==NULL){return;}
   if(nSource!=AL_NONE)
   {
-	m_dAvailableSources.push_back(nSource);
-	m_mBusySources.erase(nSource);
+	  std::list<SSourceData>::iterator i;
+	  for(i=m_vCurrentSources.begin();i!=m_vCurrentSources.end();i++){if(nSource==i->nSource){break;}}
+	  if(i!=m_vCurrentSources.end())
+	  {
+		  SSourceData sourceData=*i;
+		  alSourceStop(nSource);
+		  alSourcei(nSource,AL_BUFFER,AL_NONE);
+		  m_piSoundManager->ReleaseSource(nSource);
+		  m_vCurrentSources.erase(i);
+	  }
   }
 }
 
+void CSoundType::ReclaimSource(unsigned int nSource)
+{
+	if(m_piSoundManager==NULL){return;}
+	if(nSource!=AL_NONE)
+	{
+		std::list<SSourceData>::iterator i;
+		for(i=m_vCurrentSources.begin();i!=m_vCurrentSources.end();i++){if(nSource==i->nSource){break;}}
+		if(i!=m_vCurrentSources.end())
+		{
+			SSourceData sourceData=*i;
+			sourceData.piSound->ReclaimSource();
+			alSourceStop(nSource);
+			alSourcei(nSource,AL_BUFFER,AL_NONE);
+			m_vCurrentSources.erase(i);
+		}
+	}
+}
 
 CSound::CSound(CSoundType *pType)
 {
@@ -311,7 +313,8 @@ CSound::~CSound()
     if(m_nSource!=AL_NONE)
     {
 	  alSourceStop(m_nSource);
-	  DetachSource();
+	  m_pType->ReleaseSoundSource(m_nSource);
+	  m_nSource=AL_NONE;
     }
     UNSUBSCRIBE_FROM_CAST(m_pType->m_piSoundManager,ISoundManagerEvents);
 }
@@ -349,9 +352,8 @@ void CSound::Resume()
 	}
 }
 
-void CSound::DetachSource()
+void CSound::ReclaimSource()
 {
-	m_pType->ReleaseSoundSource(m_nSource);
 	m_nSource=AL_NONE;
 }
 
@@ -360,7 +362,8 @@ void CSound::Stop()
 	if(m_nSource!=AL_NONE)
 	{
 		alSourceStop(m_nSource);
-		DetachSource();
+		m_pType->ReleaseSoundSource(m_nSource);
+		m_nSource=AL_NONE;
 	}
 }
 
