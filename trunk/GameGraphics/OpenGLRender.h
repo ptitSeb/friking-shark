@@ -399,9 +399,9 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	IGenericViewport *m_piCurrentViewport;
 	IGenericTexture  *m_piNormalMap;
 	IGenericTexture  *m_piSkyShadow;
-	unsigned int	  m_nSkyShadowTextureLevel;
-	unsigned int 	  m_nNormalMapTextureLevel;
-	unsigned int 	  m_nShadowTextureLevel;
+	int	              m_nSkyShadowTextureLevel;
+	int 	          m_nNormalMapTextureLevel;
+	int 	          m_nShadowTextureLevel;
 
 	double m_dSKyShadowSpeed;
 	double m_dSKyShadowXResolution;
