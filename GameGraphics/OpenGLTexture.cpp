@@ -507,7 +507,7 @@ bool COpenGLTexture::CreateFrameBuffer(bool bDepth)
 		return false;
 	}
 }
-bool COpenGLTexture::CreateBackBuffer(bool bDepth)
+bool COpenGLTexture::CreateBackBuffer(bool bDepth,IGenericViewport *piViewport)
 {
 	bool bOk=true;
 	// BackBuffer Implementation
@@ -515,10 +515,11 @@ bool COpenGLTexture::CreateBackBuffer(bool bDepth)
 	bOk=(m_nTextureIndex!=0);
 	if(bOk)
 	{
-		int pViewPort[4];
-		glGetIntegerv(GL_VIEWPORT,pViewPort);
-		while((int)m_dwWidth>pViewPort[2]){m_dwWidth/=2;}
-		while((int)m_dwHeight>pViewPort[3]){m_dwHeight/=2;}
+		SVideoMode mode;
+		piViewport->GetCurrentVideoMode(&mode);
+		
+		while(m_dwWidth>(mode.w/2)){m_dwWidth/=2;}
+		while(m_dwHeight>(mode.h/2)){m_dwHeight/=2;}
 		m_bRenderTarget=true;
 
 		glBindTexture(GL_TEXTURE_2D,m_nTextureIndex);
@@ -638,7 +639,7 @@ bool COpenGLTexture::CreatePBuffer(bool bDepth)
 #endif
 }
 
-bool COpenGLTexture::Create( unsigned nWidth,unsigned nHeight )
+bool COpenGLTexture::Create( unsigned nWidth,unsigned nHeight,IGenericViewport *piViewport)
 {
 	Clear();
 
@@ -658,12 +659,12 @@ bool COpenGLTexture::Create( unsigned nWidth,unsigned nHeight )
 	bool bOk=false;
 	if(!bOk){bOk=CreateFrameBuffer(false);}
 	if(!bOk){bOk=CreatePBuffer(false);}
-	if(!bOk){bOk=CreateBackBuffer(false);}
+	if(!bOk){bOk=CreateBackBuffer(false,piViewport);}
 	if(!bOk){Clear();}
 	return bOk;
 }
 
-bool COpenGLTexture::CreateDepth( unsigned nWidth,unsigned nHeight )
+bool COpenGLTexture::CreateDepth( unsigned nWidth,unsigned nHeight,IGenericViewport *piViewport)
 {
 	Clear();
 
@@ -678,7 +679,7 @@ bool COpenGLTexture::CreateDepth( unsigned nWidth,unsigned nHeight )
 	bool bOk=false;
 	if(!bOk){bOk=CreateFrameBuffer(true);}
 	if(!bOk){bOk=CreatePBuffer(true);}
-	if(!bOk){bOk=CreateBackBuffer(true);}
+	if(!bOk){bOk=CreateBackBuffer(true,piViewport);}
 	if(!bOk){Clear();}
 	return bOk;
 }

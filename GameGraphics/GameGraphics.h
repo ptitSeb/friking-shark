@@ -220,8 +220,8 @@ public:
 	virtual double		GetPixelAlpha(unsigned long x, unsigned long y)=0;
 	
 	virtual bool		Load(std::string sFileName,CVector *pColorKey=NULL,std::string *pAlphaFile=NULL,float fOpacity=1.0)=0;
-	virtual bool		Create( unsigned nWidth,unsigned nHeight )=0;
-	virtual bool		CreateDepth( unsigned nWidth,unsigned nHeight )=0;
+	virtual bool		Create( unsigned nWidth,unsigned nHeight,IGenericViewport *piViewport)=0;
+	virtual bool		CreateDepth( unsigned nWidth,unsigned nHeight,IGenericViewport *piViewport)=0;
 
 	virtual bool		StartRenderingToTexture()=0;
 	virtual void		StopRenderingToTexture()=0;

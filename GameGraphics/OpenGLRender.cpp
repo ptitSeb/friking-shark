@@ -64,9 +64,9 @@ COpenGLRender::COpenGLRender(void)
 	m_nFirstTimeStamp=GetTimeStamp();
 	m_piNormalMap=NULL;
 	m_piSkyShadow=NULL;
-	m_nSkyShadowTextureLevel=1;
-	m_nNormalMapTextureLevel=2;
-	m_nShadowTextureLevel=3;
+	m_nShadowTextureLevel=1;
+	m_nSkyShadowTextureLevel=2;
+	m_nNormalMapTextureLevel=3;
 }
 
 COpenGLRender::~COpenGLRender(void)
@@ -198,6 +198,10 @@ void COpenGLRender::SetCamera(const CVector &vPosition,double dYaw, double dPitc
 		{
 			ReloadShaders();
 		}
+		m_sRenderOptions.bEnableShadows&=(m_nShadowTextureLevel<m_sHardwareSupport.nMaxTextureUnits);
+		m_sRenderOptions.bEnableSkyShadow&=(m_nSkyShadowTextureLevel<m_sHardwareSupport.nMaxTextureUnits);
+		m_sRenderOptions.bEnableNormalMaps&=(m_nNormalMapTextureLevel<m_sHardwareSupport.nMaxTextureUnits);
+		m_sRenderOptions.bEnableShader&=m_sHardwareSupport.bShaders;
 	}
 
 	glMatrixMode(GL_MODELVIEW);
@@ -887,12 +891,24 @@ void COpenGLRender::ActivateHeightFog(const CVector &vMins,const CVector &vMaxs,
 	pState->vHeightFogMins=vMins;
 	pState->vHeightFogMaxs=vMaxs;
 	pState->vHeightFogColor=vColor;
-
-	if(!m_bStagedRendering && m_bRenderingWithShader)
+	
+	if(!m_bStagedRendering)
 	{
-		glFogf(GL_FOG_MODE,GL_LINEAR);
-		float vHeightFogColor[3]={(float)vColor.c[0],(float)vColor.c[1],(float)vColor.c[2]};
-		glFogfv(GL_FOG_COLOR,vHeightFogColor);
+		if(!m_bRenderingWithShader)
+		{
+			if(m_vCameraForward==AxisNegY)
+			{
+			glEnable(GL_FOG);
+			glFogf(GL_FOG_START,m_vCameraPos.c[1]-vMaxs.c[1]);
+			glFogf(GL_FOG_END,m_vCameraPos.c[1]-vMins.c[1]);
+			}
+		}
+		else
+		{
+			float vHeightFogColor[3]={(float)vColor.c[0],(float)vColor.c[1],(float)vColor.c[2]};
+			glFogfv(GL_FOG_COLOR,vHeightFogColor);
+			glFogf(GL_FOG_MODE,GL_LINEAR);
+		}
 	}
 }
 
@@ -936,6 +952,10 @@ void COpenGLRender::DeactivateHeightFog()
 {
 	SRenderState *pState=m_bStagedRendering?&m_sStagedRenderingState:&m_sRenderState;
 	pState->bActiveHeightFog=false;
+	if(!m_bRenderingWithShader && !m_bStagedRendering && m_vCameraForward==AxisNegY)
+	{
+		glDisable(GL_FOG);
+	}
 }
 bool COpenGLRender::IsHeightFogActive(){return m_bActiveHeightFog=false;}
 
@@ -1744,7 +1764,7 @@ void COpenGLRender::EndStagedRendering()
 		{
 			if(m_ShadowTexture.Create(m_piSystem,"Texture",""))
 			{
-				if(!m_ShadowTexture.m_piTexture->CreateDepth(1024,1024))
+				if(!m_ShadowTexture.m_piTexture->CreateDepth(1024,1024,m_piCurrentViewport))
 				{
 					m_ShadowTexture.Destroy();
 				}
@@ -1887,6 +1907,9 @@ void COpenGLRender::EndStagedRendering()
 		double pLightModelViewMatrix[16];
 		double pLightProjectionMatrix[16];
 
+		PushOptions();
+		m_sRenderOptions.bEnableHeightFog=false;
+
 		m_ShadowTexture.m_piTexture->StartRenderingToTexture();
 
 		glPushAttrib(GL_ALL_ATTRIB_BITS);
@@ -1916,8 +1939,6 @@ void COpenGLRender::EndStagedRendering()
 		if(m_sRenderOptions.bEnableShader && m_ShadowShader.m_piShader){m_ShadowShader.m_piShader->Activate();}
 		RenderModelStages(true,false);
 		RenderModelStages(true,true);
-		RenderParticleStages(true,false);
-		RenderParticleStages(true,true);
 		if(m_sRenderOptions.bEnableShader && m_ShadowShader.m_piShader){m_ShadowShader.m_piShader->Deactivate();}
 
 		glMatrixMode(GL_PROJECTION);
@@ -1927,15 +1948,16 @@ void COpenGLRender::EndStagedRendering()
 
 		glPopAttrib();
 		m_ShadowTexture.m_piTexture->StopRenderingToTexture();
+		PopOptions();
+
+		SetViewport(nPreviousViewportX, nPreviousViewportY,nPreviousViewportW, nPreviousViewportH);
+		SetPerspectiveProjection(dPreviousViewAngle,dPreviousNear,dPreviousFar);//m_dStagedRenderingMinZ>1.0?m_dStagedRenderingMinZ-1.0:m_dStagedRenderingMinZ,m_dStagedRenderingMaxZ+1.0);
+		SetCamera(vPreviousCameraPosition,vPreviousCameraAngles.c[YAW],vPreviousCameraAngles.c[PITCH],vPreviousCameraAngles.c[ROLL]);
 
 		// Se hace esto porque el inicio y fin del pintado a textura hace un push attrib y pop attrib
 		// ya que pueden estar en otro contexto de render dependiendo de la tecnica usada.
 		SetRenderState(m_sStagedRenderingState,true);
 
-		SetViewport(nPreviousViewportX, nPreviousViewportY,nPreviousViewportW, nPreviousViewportH);
-		SetPerspectiveProjection(dPreviousViewAngle,dPreviousNear,dPreviousFar);//m_dStagedRenderingMinZ>1.0?m_dStagedRenderingMinZ-1.0:m_dStagedRenderingMinZ,m_dStagedRenderingMaxZ+1.0);
-		SetCamera(vPreviousCameraPosition,vPreviousCameraAngles.c[YAW],vPreviousCameraAngles.c[PITCH],vPreviousCameraAngles.c[ROLL]);
-	
 		//glPushAttrib(GL_ALL_ATTRIB_BITS);
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
@@ -2062,7 +2084,7 @@ void COpenGLRender::EndStagedRendering()
 			m_sStagedStats.nShadowTime=GetTimeStamp()-nShadowStart;
 		}
 		
-		if(m_piSkyShadow && m_sRenderOptions.bEnableSkyShadow){m_piSkyShadow->PrepareTexture(this,m_nSkyShadowTextureLevel);}
+		if(m_bRenderingWithShader && m_piSkyShadow && m_sRenderOptions.bEnableSkyShadow){m_piSkyShadow->PrepareTexture(this,m_nSkyShadowTextureLevel);}
 		RenderAllStages(false,true);
 		
 		m_ShadowTexture.m_piTexture->UnprepareTexture(this,m_bRenderingWithShader?m_nShadowTextureLevel:1);
@@ -2090,7 +2112,7 @@ void COpenGLRender::EndStagedRendering()
 	else
 	{
 		//SetPerspectiveProjection(m_dPerspectiveViewAngle,m_dStagedRenderingMinZ>1.0?m_dStagedRenderingMinZ-1.0:m_dStagedRenderingMinZ,m_dStagedRenderingMaxZ+1.0);
-		if(m_piSkyShadow && m_sRenderOptions.bEnableSkyShadow){m_piSkyShadow->PrepareTexture(this,m_nSkyShadowTextureLevel);}
+		if(m_bRenderingWithShader && m_piSkyShadow && m_sRenderOptions.bEnableSkyShadow){m_piSkyShadow->PrepareTexture(this,m_nSkyShadowTextureLevel);}
 		RenderAllStages(false,true);
 	}
 
@@ -2136,7 +2158,7 @@ void COpenGLRender::EndStagedRendering()
 			delete pBuffer;
 		}
 	}
-	if(m_piSkyShadow && m_sRenderOptions.bEnableSkyShadow){m_piSkyShadow->UnprepareTexture(this,m_nSkyShadowTextureLevel);}
+	if(m_bRenderingWithShader && m_piSkyShadow && m_sRenderOptions.bEnableSkyShadow){m_piSkyShadow->UnprepareTexture(this,m_nSkyShadowTextureLevel);}
 	
 	m_mModelStages.clear();
 	m_mTextureParticleStages.clear();
@@ -2249,15 +2271,27 @@ void COpenGLRender::SetRenderState( const SRenderState &sNewState,bool bForce)
 	}
 }
 
-void COpenGLRender::EnableShaders(){m_sRenderOptions.bEnableShader=true;}
+void COpenGLRender::EnableShaders()
+{
+	if(!m_sHardwareSupport.bShaders){return;}
+	m_sRenderOptions.bEnableShader=true;
+}
 void COpenGLRender::DisableShaders(){m_sRenderOptions.bEnableShader=false;}
 bool COpenGLRender::AreShadersEnabled(){return m_sRenderOptions.bEnableShader;}
 
-void COpenGLRender::EnableNormalMaps(){m_sRenderOptions.bEnableNormalMaps=true;}
+void COpenGLRender::EnableNormalMaps()
+{
+	if(m_nNormalMapTextureLevel>=m_sHardwareSupport.nMaxTextureUnits){return;}
+	m_sRenderOptions.bEnableNormalMaps=true;
+}
 void COpenGLRender::DisableNormalMaps(){m_sRenderOptions.bEnableNormalMaps=false;}
 bool COpenGLRender::AreNormalMapsEnabled(){return m_sRenderOptions.bEnableNormalMaps;}
 
-void COpenGLRender::EnableSkyShadow(){m_sRenderOptions.bEnableSkyShadow=true;}
+void COpenGLRender::EnableSkyShadow()
+{
+	if(m_nSkyShadowTextureLevel>=m_sHardwareSupport.nMaxTextureUnits){return;}
+	m_sRenderOptions.bEnableSkyShadow=true;
+}
 void COpenGLRender::DisableSkyShadow(){m_sRenderOptions.bEnableSkyShadow=false;}
 bool COpenGLRender::IsSkyShadowEnabled(){return m_sRenderOptions.bEnableSkyShadow;}
 
@@ -2281,7 +2315,11 @@ void COpenGLRender::EnableBlending(){m_sRenderOptions.bEnableBlending=true;}
 void COpenGLRender::DisableBlending(){m_sRenderOptions.bEnableBlending=false;DeactivateBlending();}
 bool COpenGLRender::IsBlendingEnabled(){return m_sRenderOptions.bEnableBlending;}
 
-void COpenGLRender::EnableShadows(){m_sRenderOptions.bEnableShadows=true;}
+void COpenGLRender::EnableShadows()
+{
+	if(m_nSkyShadowTextureLevel>=m_sHardwareSupport.nMaxTextureUnits){return;}
+	m_sRenderOptions.bEnableShadows=true;
+}
 void COpenGLRender::DisableShadows(){m_sRenderOptions.bEnableShadows=false;}
 bool COpenGLRender::AreShadowsEnabled(){return m_sRenderOptions.bEnableShadows;}
 

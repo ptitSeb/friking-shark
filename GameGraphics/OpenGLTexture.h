@@ -57,7 +57,7 @@ class COpenGLTexture : virtual public CSystemObjectBase,virtual public IGenericT
 	bool LoadFromFile();
 	bool Unserialize(ISystemPersistencyNode *piNode);
 
-	bool CreateBackBuffer(bool bDepth);
+	bool CreateBackBuffer(bool bDepth,IGenericViewport *piViewport);
 	bool CreatePBuffer(bool bDepth);
 	bool CreateFrameBuffer(bool bDepth);
 
@@ -90,8 +90,8 @@ public:
 	double		GetPixelAlpha(unsigned long x, unsigned long y);
 	
 	virtual bool Load(std::string sFileName,CVector *pColorKey,std::string *pAlphaFile,float fOpacity);
-	virtual bool Create( unsigned nWidth,unsigned nHeight );
-	virtual bool CreateDepth( unsigned nWidth,unsigned nHeight );
+	virtual bool Create( unsigned nWidth,unsigned nHeight,IGenericViewport *piViewport );
+	virtual bool CreateDepth( unsigned nWidth,unsigned nHeight ,IGenericViewport *piViewport);
 	virtual bool StartRenderingToTexture();
 	virtual void StopRenderingToTexture();
 
