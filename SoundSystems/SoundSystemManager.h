@@ -21,6 +21,11 @@
 class CSoundSystemManager:virtual public CSystemObjectBase, virtual public ISoundManager
 {
 	unsigned int m_nMasterVolume;// 0,100
+	unsigned int m_nMaxSources;
+
+	std::vector<ALuint> m_vFreeSources;
+	std::map<ALuint,ISoundType *> m_mBusySources;
+
 	bool m_bEnable3DSound;
 	bool m_bMuted;
 
@@ -53,9 +58,13 @@ public:
 	unsigned int  GetGroupVolume(const std::string &sName);
 	void		  SetGroupVolume(const std::string &sName,unsigned int nVolume);
 
+	unsigned int  AcquireSource(ISoundType *piType);
+	void 		  ReleaseSource(unsigned int nSource);
+
 	BEGIN_PROP_MAP(CSoundSystemManager)
 		PROP_VALUE_FLAGS(m_nMasterVolume,"Volume",100,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_bEnable3DSound,"3DSound",false,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_nMaxSources,"MaxSources",16,MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP();
 
 	bool Init(std::string sClass,std::string sName,ISystem *piSystem);

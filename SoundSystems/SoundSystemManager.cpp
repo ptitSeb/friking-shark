@@ -56,12 +56,47 @@ bool CSoundSystemManager::Unserialize(ISystemPersistencyNode *piNode)
 	if(bOk && m_pContext)
 	{
 		alListenerf(AL_GAIN ,m_bMuted?0:((float)m_nMasterVolume)/(float)100.0);
+	
+		for(unsigned int x=0;x<m_nMaxSources;x++)
+		{
+			alGetError();
+			ALuint nSource=AL_NONE;
+			alGenSources(1,&nSource);
+			ALenum error=alGetError();
+			if(error==AL_NO_ERROR)
+			{
+				m_vFreeSources.push_back(nSource);
+			}
+			else
+			{
+				RTTRACE("CSoundSystemManager::Unserialize -> Warning: Only %d of %d sources can be created. Error %x:%s",x,m_nMaxSources);
+				break;
+			}
+		}
 	}
 	return bOk;
 }
 
 void CSoundSystemManager::Destroy()
 {
+	for(unsigned int x=0;x<m_vFreeSources.size();x++)
+	{
+		ALuint nSource=m_vFreeSources[x];
+		alDeleteSources(1,&nSource);
+	}
+	m_vFreeSources.clear();
+	
+	std::map<ALuint,ISoundType *>::iterator i;
+	for(i=m_mBusySources.begin();i!=m_mBusySources.end();i++)
+	{
+		ALuint nSource=i->first;
+		ISoundType *piType=i->second;
+		piType->ReclaimSource(nSource);
+		alDeleteSources(1,&nSource);
+		REL(piType);
+	}
+	m_mBusySources.clear();
+
   if(m_pContext){alutExit();}
   if(m_pContext){alcMakeContextCurrent(NULL);alcDestroyContext(m_pContext);m_pContext=NULL;}
   if(m_pDevice){alcCloseDevice(m_pDevice);m_pDevice=NULL;}
@@ -127,3 +162,48 @@ void CSoundSystemManager::SetMute(bool bOn)
 	}
 	NOTIFY_EVENT(ISoundManagerEvents,OnMute(m_bMuted));
 }
+
+unsigned int CSoundSystemManager::AcquireSource(ISoundType *piSoundType)
+{
+	std::map<ALuint,ISoundType *>::iterator i;
+	for(i=m_mBusySources.begin();i!=m_mBusySources.end();i++)
+	{
+		ALuint nSource=i->first;
+		ISoundType *piType=i->second;
+
+		ALint nState=AL_STOPPED;
+		alGetSourcei(nSource,AL_SOURCE_STATE,&nState);
+		if(nState==AL_STOPPED)
+		{
+			piType->ReclaimSource(nSource);
+			REL(piType);
+			m_mBusySources.erase(i);
+			m_vFreeSources.push_back(nSource);
+		}
+	}
+
+	if(m_vFreeSources.size())
+	{
+		ALuint nSource=*m_vFreeSources.begin();
+		m_vFreeSources.erase(m_vFreeSources.begin());
+		m_mBusySources[nSource]=ADD(piSoundType);
+		return nSource;
+	}
+	return AL_NONE;
+}
+
+void CSoundSystemManager::ReleaseSource(unsigned int nSource)
+{
+	if(nSource==AL_NONE){return;}
+
+	std::map<ALuint,ISoundType *>::iterator i;
+	i=m_mBusySources.find(nSource);
+	if(i!=m_mBusySources.end())
+	{
+		ISoundType *piType=i->second;
+		m_vFreeSources.push_back(nSource);
+		m_mBusySources.erase(i);
+		REL(piType);
+	}
+}
+

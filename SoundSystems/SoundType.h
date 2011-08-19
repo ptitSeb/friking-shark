@@ -25,11 +25,19 @@
 
 class CSoundType: virtual public CSystemObjectBase,virtual public ISoundType
 {
-  std::deque<ALuint>   m_dAvailableSources;
-  std::map<ALuint,ISound *> m_mBusySources;
-  bool            m_bSoundsAcquired;
+  struct SSourceData
+  {
+  	ISound *piSound;
+	unsigned int nSource;
+
+	SSourceData(){nSource=AL_NONE;piSound=NULL;}
+  };
+  std::list<SSourceData> m_vCurrentSources;
+
   ALuint		  m_iSoundBuffer;
   
+  void ReleaseAllSources();
+
   bool Unserialize(ISystemPersistencyNode *piNode);
   
   bool LoadFromFile();
@@ -48,8 +56,9 @@ public:
 	std::string  	m_sGroup;
     double  		m_dVolume;
 
-    ALuint AcquireSoundSource(ISound *piSound);
-    void   ReleaseSoundSource(ALuint nSource);
+    unsigned int AcquireSoundSource(ISound *piSound);
+    void         ReleaseSoundSource(unsigned int nSource);
+	void         ReclaimSource(unsigned int nSource);
 
     ISound *CreateInstance();
 
@@ -99,7 +108,7 @@ public:
 	void Stop();
     bool IsPlaying();
 	bool IsPaused();
-	void DetachSource();
+	void ReclaimSource();
 	
 	void SetLoop(bool bLoop);
 	void SetVolume(double nVolume);
