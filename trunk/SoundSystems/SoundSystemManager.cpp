@@ -167,7 +167,8 @@ void CSoundSystemManager::SetMute(bool bOn)
 unsigned int CSoundSystemManager::AcquireSource(ISoundType *piSoundType)
 {
 	std::map<ALuint,ISoundType *>::iterator i;
-	for(i=m_mBusySources.begin();i!=m_mBusySources.end();)
+	std::set<ALuint> sSourcesToDelete;
+	for(i=m_mBusySources.begin();i!=m_mBusySources.end();i++)
 	{
 		ALuint nSource=i->first;
 		ISoundType *piType=i->second;
@@ -178,13 +179,14 @@ unsigned int CSoundSystemManager::AcquireSource(ISoundType *piSoundType)
 		{
 			piType->ReclaimSource(nSource);
 			REL(piType);
-			i=m_mBusySources.erase(i);
+			sSourcesToDelete.insert(nSource);
 			m_vFreeSources.push_back(nSource);
 		}
-		else
-		{
-			i++;
-		}
+	}
+	std::set<ALuint>::iterator d;
+	for(d=sSourcesToDelete.begin();d!=sSourcesToDelete.end();d++)
+	{
+		m_mBusySources.erase(*d);
 	}
 
 	if(m_vFreeSources.size())
