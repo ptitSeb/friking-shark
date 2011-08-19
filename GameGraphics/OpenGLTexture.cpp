@@ -450,6 +450,7 @@ double COpenGLTexture::GetPixelAlpha( unsigned long x, unsigned long y )
 bool COpenGLTexture::CreateFrameBuffer(bool bDepth)
 {
 	// FrameBuffer Implementation
+	
 	glGenTextures(1,&m_nTextureIndex);
 	if(!bDepth)
 	{

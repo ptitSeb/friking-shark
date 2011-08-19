@@ -93,6 +93,8 @@ bool COpenGLRender::Init(std::string sClass,std::string sName,ISystem *piSystem)
 
 void COpenGLRender::Destroy()
 {
+	REL(m_piCurrentViewport);
+
 	RemoveLight(m_SunLight.m_piLight);
 	m_SunLight.Destroy();
 	m_ShadowTexture.Destroy();
@@ -108,7 +110,7 @@ void COpenGLRender::Destroy()
 
 void COpenGLRender::StartFrame(IGenericViewport *piViewport)
 {
-	m_piCurrentViewport=piViewport;
+	m_piCurrentViewport=ADD(piViewport);
 
 	glDisable(GL_NORMALIZE);
 	glDisable(GL_AUTO_NORMAL);
@@ -119,13 +121,12 @@ void COpenGLRender::StartFrame(IGenericViewport *piViewport)
 
 void COpenGLRender::EndFrame()
 {
-	EndStagedRendering();
-	m_piCurrentViewport=NULL;
+	REL(m_piCurrentViewport);
 }
 
 IGenericViewport *COpenGLRender::GetViewPort()
 {
-	return m_piCurrentViewport;
+	return ADD(m_piCurrentViewport);
 }
 
 void COpenGLRender::SetOrthographicProjection(double cx,double cy)
@@ -898,17 +899,14 @@ void COpenGLRender::ActivateHeightFog(const CVector &vMins,const CVector &vMaxs,
 		{
 			if(m_vCameraForward==AxisNegY)
 			{
-			glEnable(GL_FOG);
-			glFogf(GL_FOG_START,m_vCameraPos.c[1]-vMaxs.c[1]);
-			glFogf(GL_FOG_END,m_vCameraPos.c[1]-vMins.c[1]);
+				glEnable(GL_FOG);
+				glFogf(GL_FOG_START,m_vCameraPos.c[1]-vMaxs.c[1]);
+				glFogf(GL_FOG_END,m_vCameraPos.c[1]-vMins.c[1]);
 			}
 		}
-		else
-		{
-			float vHeightFogColor[3]={(float)vColor.c[0],(float)vColor.c[1],(float)vColor.c[2]};
-			glFogfv(GL_FOG_COLOR,vHeightFogColor);
-			glFogf(GL_FOG_MODE,GL_LINEAR);
-		}
+		float vHeightFogColor[3]={(float)vColor.c[0],(float)vColor.c[1],(float)vColor.c[2]};
+		glFogfv(GL_FOG_COLOR,vHeightFogColor);
+		glFogf(GL_FOG_MODE,GL_LINEAR);
 	}
 }
 

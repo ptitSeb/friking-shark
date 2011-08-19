@@ -23,7 +23,7 @@ class CSoundSystemManager:virtual public CSystemObjectBase, virtual public ISoun
 	unsigned int m_nMasterVolume;// 0,100
 	unsigned int m_nMaxSources;
 
-	std::vector<ALuint> m_vFreeSources;
+	std::list<ALuint> m_vFreeSources;
 	std::map<ALuint,ISoundType *> m_mBusySources;
 
 	bool m_bEnable3DSound;

@@ -79,9 +79,10 @@ bool CSoundSystemManager::Unserialize(ISystemPersistencyNode *piNode)
 
 void CSoundSystemManager::Destroy()
 {
-	for(unsigned int x=0;x<m_vFreeSources.size();x++)
+	std::list<ALuint>::iterator f;
+	for(f=m_vFreeSources.begin();f!=m_vFreeSources.end();f++)
 	{
-		ALuint nSource=m_vFreeSources[x];
+		ALuint nSource=*f;
 		alDeleteSources(1,&nSource);
 	}
 	m_vFreeSources.clear();
@@ -166,7 +167,7 @@ void CSoundSystemManager::SetMute(bool bOn)
 unsigned int CSoundSystemManager::AcquireSource(ISoundType *piSoundType)
 {
 	std::map<ALuint,ISoundType *>::iterator i;
-	for(i=m_mBusySources.begin();i!=m_mBusySources.end();i++)
+	for(i=m_mBusySources.begin();i!=m_mBusySources.end();)
 	{
 		ALuint nSource=i->first;
 		ISoundType *piType=i->second;
@@ -177,15 +178,19 @@ unsigned int CSoundSystemManager::AcquireSource(ISoundType *piSoundType)
 		{
 			piType->ReclaimSource(nSource);
 			REL(piType);
-			m_mBusySources.erase(i);
+			i=m_mBusySources.erase(i);
 			m_vFreeSources.push_back(nSource);
+		}
+		else
+		{
+			i++;
 		}
 	}
 
 	if(m_vFreeSources.size())
 	{
-		ALuint nSource=*m_vFreeSources.begin();
-		m_vFreeSources.erase(m_vFreeSources.begin());
+		ALuint nSource=m_vFreeSources.front();
+		m_vFreeSources.pop_front();
 		m_mBusySources[nSource]=ADD(piSoundType);
 		return nSource;
 	}
