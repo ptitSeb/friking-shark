@@ -253,7 +253,10 @@ void CGameGUIManager::OnRender()
 	GetWindowSize(&size);
 	sClipRect.w=size.w;
 	sClipRect.h=size.h;
-	
+
+	m_Render.m_piRender->StartFrame(m_Viewport.m_piViewport);
+	m_Render.m_piRender->SetClipRect(0,0,sClipRect.w,sClipRect.h);
+
 	RenderWindow(m_Render.m_piRender,m_piMainWindow,sClipRect);
 	for(unsigned x=0;x<m_vPopups.size();x++)
 	{
@@ -264,6 +267,7 @@ void CGameGUIManager::OnRender()
 	}
 	if(m_bShowMouseCursor)
 	{
+		m_Render.m_piRender->SetClipRect(0,0,sClipRect.w,sClipRect.h);
 		m_Render.m_piRender->SetOrthographicProjection(size.w,size.h);
 		m_Render.m_piRender->SetViewport(0,0,size.w,size.h);
 		m_Render.m_piRender->SetCamera(CVector(size.w*0.5,size.h*0.5,200),90,0,0);
@@ -285,6 +289,8 @@ void CGameGUIManager::OnRender()
 		}
 		REL(piWindow);
 	}
+	m_Render.m_piRender->EndFrame();
+
 }
 
 void CGameGUIManager::GetWindowSize(SGameSize *pSize)
