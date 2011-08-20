@@ -798,9 +798,12 @@ void COpenGLViewport::Destroy()
 	{
 		SetVideoMode(&m_OriginalVideoMode);
 	}
-	if(m_pXHollowCursor && !m_bShowSystemMouseCursor)
+	if(m_pXHollowCursor)
 	{
-	  XUndefineCursor(m_pXDisplay,m_XWindow);
+	  if(m_bShowSystemMouseCursor)
+	  {
+	  	XUndefineCursor(m_pXDisplay,m_XWindow);
+	  }
 	  XFreeCursor(m_pXDisplay,m_pXHollowCursor);
 	  m_pXHollowCursor=0;
 	}

@@ -35,7 +35,6 @@ CSoundType::CSoundType(void)
 
 CSoundType::~CSoundType(void)
 {
-  REL(m_piSoundManager);
 }
 
 bool CSoundType::Unserialize(ISystemPersistencyNode *piNode)
@@ -214,6 +213,7 @@ void CSoundType::Destroy()
 {
   ReleaseAllSources();
   
+  REL(m_piSoundManager);
   if(m_iSoundBuffer){alDeleteBuffers(1,&m_iSoundBuffer);m_iSoundBuffer=AL_NONE;}
 
   CSystemObjectBase::Destroy();

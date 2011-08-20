@@ -52,6 +52,7 @@ bool CMusicManager::Init(std::string sClass,std::string sName,ISystem *piSystem)
 
 void CMusicManager::Destroy()
 {
+	CloseScenario();
 	if(m_FrameManagerWrapper.m_piFrameManager){UNSUBSCRIBE_FROM_CAST(m_FrameManagerWrapper.m_piFrameManager,IFrameManagerEvents);}
 	if(m_GameControllerWrapper.m_piGameController){m_GameControllerWrapper.m_piGameController->UnregisterManager(this);}
 	m_IntermissionMusic.Destroy();

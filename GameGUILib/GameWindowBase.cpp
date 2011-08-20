@@ -517,7 +517,11 @@ IGameWindow *CGameWindowBase::FindClosestFocusableWindow(IGameWindow *pReference
 	for(x=0;x<vFocusableWindows.size();x++)
 	{
 		IGameWindow *piWindow=vFocusableWindows[x];
-		if(pReference==piWindow){continue;}
+		if(pReference==piWindow)
+		{
+			REL(piWindow);
+			continue;
+		}
 		
 		SGameRect sCandidateRect;
 		piWindow->GetRealRect(&sCandidateRect);
@@ -539,12 +543,22 @@ IGameWindow *CGameWindowBase::FindClosestFocusableWindow(IGameWindow *pReference
 		double dDist=CVector(sCandidateMid.x,sCandidateMid.y,0)-CVector(sMid.x,sMid.y,0);
 		if(bValidCandidate && (piResult==NULL || dDist<dCurrentDistance))
 		{
+			if(piResult){REL(piResult);}
+			
 			dCurrentDistance=dDist;
 			piResult=ADD(piWindow);
 		}		
 		REL(piWindow);
 	}
-	return piResult?piResult:ADD(pReference);
+	
+	if(piResult)
+	{
+		return piResult;
+	}
+	else
+	{
+		return ADD(pReference);
+	}
 }
 
 IGameWindow *CGameWindowBase::FindNextFocusableWindow(IGameWindow *pReference)
@@ -562,7 +576,7 @@ IGameWindow *CGameWindowBase::FindNextFocusableWindow(IGameWindow *pReference)
 		{
 			bReferenceWasPrevious=true;
 		}
-		else if((pReference==NULL && x==0) || bReferenceWasPrevious)
+		else if(piResult==NULL && (pReference==NULL || bReferenceWasPrevious))
 		{
 			bReferenceWasPrevious=false;
 			piResult=ADD(piWindow);
@@ -586,7 +600,7 @@ IGameWindow *CGameWindowBase::FindPreviousFocusableWindow(IGameWindow *pReferenc
 		{
 			bReferenceWasNext=true;
 		}
-		else if((pReference==NULL && x==(int)(vFocusableWindows.size()-1)) || bReferenceWasNext)
+		else if(piResult==NULL && (pReference==NULL || bReferenceWasNext))
 		{
 			bReferenceWasNext=false;
 			piResult=ADD(piWindow);
@@ -609,8 +623,8 @@ IGameWindow *CGameWindowBase::GetFocusedDescendant()
 		if(m_piGUIManager->HasFocus(piWindow))
 		{
 			piResult=ADD(piWindow);
-			REL(piWindow);
 		}
+		REL(piWindow);
 	}
 	return piResult;
 }

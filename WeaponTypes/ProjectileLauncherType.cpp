@@ -252,6 +252,7 @@ CVector CProjectileLauncher::ProjectToAirPlane(CVector vPos)
 	g_PlayAreaManagerWrapper.m_piInterface->GetCameraRoute(&vPlayerStart,&vPlayerEnd);
 	IGenericCamera *piCamera=g_PlayAreaManagerWrapper.m_piInterface->GetCamera();
 	CVector vCameraPos=piCamera?piCamera->GetPosition():Origin;
+	REL(piCamera);
 
 	CVector cut;
 	CPlane plane(AxisPosY,vPlayerStart.c[1]);

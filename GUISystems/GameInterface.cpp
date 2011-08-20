@@ -63,6 +63,8 @@ CGameInterface::CGameInterface(void)
 	m_piPointCountSound=NULL;
 	m_piBombCountSound=NULL;
 	m_piLiveSound=NULL;
+	m_nEndPoints=0;
+	m_nEndBombs=0;
 }
 
 CGameInterface::~CGameInterface(void)

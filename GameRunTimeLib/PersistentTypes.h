@@ -237,6 +237,34 @@ bool MRSaveToContainer(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<T1
 	return bFinalOk;
 }
 
+template<>
+class CMRPersistentValueReferenceT<std::string>:public CMRPersistentReferenceT<std::string>
+{
+protected:
+	const char *m_pDefValue;
+	
+public:
+	CMRPersistentValueReferenceT<std::string> *SetDefaultValueAndReturnThis(const char *pString)
+	{
+		m_pDefValue=pString;
+		return this;
+	}
+	
+	CMRPersistentValueReferenceT<std::string>(std::string *pValue,const char *pName,unsigned int flags)
+	:CMRPersistentReferenceT<std::string>(pValue,pName,flags)
+	{
+	}
+	void Initialize(){MRPersistencyInitialize(this);}
+	void Free(){MRPersistencyFree(this);}
+	void SetDefaultValue(){(*this->m_pValue)=m_pDefValue;}
+	
+	bool Load(ISystemPersistencyNode *piNode){bool bOk=true;if(this->m_dwFlags&MRPF_READ){bOk=MRPersistencyLoad(piNode,this);}if(this->m_dwFlags&MRPF_OPTIONAL){return true;}return bOk;}
+	bool Save(ISystemPersistencyNode *piNode){bool bOk=true;if(this->m_dwFlags&MRPF_WRITE){bOk=MRPersistencySave(piNode,this);}if(this->m_dwFlags&MRPF_OPTIONAL){return true;}return bOk;}
+	bool Remove(ISystemPersistencyNode *piNode){bool bOk=true;if(this->m_dwFlags&MRPF_WRITE){bOk=MRPersistencyRemove(piNode,this);}if(this->m_dwFlags&MRPF_OPTIONAL){return true;}return bOk;}
+	
+	~CMRPersistentValueReferenceT(){}
+};
+
 /////////////////////////////////////////////////////
 // Funciones para guardar contenedores, usan las funciones anteriores
 // para guardar todos los contenedores de la misma manera.

@@ -94,7 +94,9 @@ bool COpenGLRender::Init(std::string sClass,std::string sName,ISystem *piSystem)
 void COpenGLRender::Destroy()
 {
 	REL(m_piCurrentViewport);
-
+	REL(m_piSkyShadow);
+	REL(m_piNormalMap);
+	
 	RemoveLight(m_SunLight.m_piLight);
 	m_SunLight.Destroy();
 	m_ShadowTexture.Destroy();
@@ -108,20 +110,10 @@ void COpenGLRender::Destroy()
 	CSystemObjectBase::Destroy();
 }
 
-void COpenGLRender::StartFrame(IGenericViewport *piViewport)
-{
-	m_piCurrentViewport=ADD(piViewport);
-
-	glDisable(GL_NORMALIZE);
-	glDisable(GL_AUTO_NORMAL);
-
-	SRenderState sDefault;
-	SetRenderState(sDefault,true);
-}
-
-void COpenGLRender::EndFrame()
+void COpenGLRender::SetViewport(IGenericViewport *piViewPort)
 {
 	REL(m_piCurrentViewport);
+	m_piCurrentViewport=ADD(piViewPort);
 }
 
 IGenericViewport *COpenGLRender::GetViewPort()
