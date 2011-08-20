@@ -55,6 +55,8 @@ void CGameGUIButton::Destroy()
 	delete m_piHoverSound;
 	m_piClickSound=NULL;
 	m_piHoverSound=NULL;
+	m_HoverSound.Detach();
+	m_ClickSound.Detach();
 	CGameWindowBase::Destroy();
 }
 

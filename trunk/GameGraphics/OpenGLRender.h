@@ -395,7 +395,6 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 
 	CVector m_vColor;
 	double  m_dAlpha;
-	IGenericFont     *m_piSelectedFont;
 	IGenericViewport *m_piCurrentViewport;
 	IGenericTexture  *m_piNormalMap;
 	IGenericTexture  *m_piSkyShadow;
@@ -469,8 +468,7 @@ public:
 
 	// IGenericRender
 
-	void StartFrame(IGenericViewport *piViewport);
-	void EndFrame();
+	void SetViewport(IGenericViewport *piViewport);
 
 	IGenericViewport *GetViewPort(); // solo valido entre StartFrame y EndFrame.
 

@@ -181,7 +181,8 @@ void CScenarioEditorMainWindow::DestroyWindow()
 	m_ObjectSelector.Detach();
 	m_ObjectListSelector.Detach();	
 	m_Viewport.Detach();
-	m_Viewport.Detach();
+	m_Render.Detach();
+	m_Camera.Detach();
 
 	UNSUBSCRIBE_FROM_ALL();
 	CGameWindowBase::DestroyWindow();
@@ -2974,7 +2975,7 @@ void CScenarioEditorMainWindow::OnMouseDoubleClick(int nButton,double dx,double 
 	}
 	else
 	{
-		piCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager?m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera():m_Camera.m_piCamera;
+		piCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager?m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera():ADD(m_Camera.m_piCamera);
 	}
 	
 	if(m_bRenderPlayArea)
@@ -3000,7 +3001,7 @@ void CScenarioEditorMainWindow::OnMouseDown( int nButton,double dx,double dy )
 	}
 	else
 	{
-		piCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager?m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera():m_Camera.m_piCamera;
+		piCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager?m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera():ADD(m_Camera.m_piCamera);
 	}
 	
 	if(m_bRenderPlayArea)
@@ -3262,7 +3263,7 @@ bool CScenarioEditorMainWindow::GetAirPlaneCoordinatesFromCursorPos(double x,dou
 	}
 	else
 	{
-		piCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager?m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera():m_Camera.m_piCamera;
+		piCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager?m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera():ADD(m_Camera.m_piCamera);
 	}
 	CLine mouseRay=GetMouseRay(x,y,10000.0,piCamera);
 
@@ -3329,7 +3330,7 @@ bool CScenarioEditorMainWindow::GetTerrainCoordinatesFromCursorPos(double x,doub
 	}
 	else
 	{
-		piCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager?m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera():m_Camera.m_piCamera;
+		piCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager?m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera():ADD(m_Camera.m_piCamera);
 	}
 	CLine mouseRay=GetMouseRay(x,y,10000.0,piCamera);
 	if(m_dMouseTraceDistance>0)

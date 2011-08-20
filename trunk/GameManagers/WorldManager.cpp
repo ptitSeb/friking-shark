@@ -1193,6 +1193,7 @@ void CWorldManager::SetupRenderingEnvironment( IGenericRender *piRender )
 	}
 	else
 	{
+		piRender->UnselectSkyShadow();
 		piRender->DeactivateSkyShadow();
 	}
 }

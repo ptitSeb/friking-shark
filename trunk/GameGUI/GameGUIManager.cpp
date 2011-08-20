@@ -46,6 +46,8 @@ bool CGameGUIManager::Init(std::string sClass,std::string sName,ISystem *piSyste
 	m_piFocusedWindow=ADD(m_piMainWindow);
 
 	if(m_Viewport.m_piViewport){m_Viewport.m_piViewport->SetCallBack(this);}
+	if(m_Render.m_piRender){m_Render.m_piRender->SetViewport(m_Viewport.m_piViewport);}
+	
 	return true;
 }
 void CGameGUIManager::Destroy()
@@ -68,6 +70,7 @@ void CGameGUIManager::Destroy()
 		REL(piWindow);
 	}
 
+	if(m_Render.m_piRender){m_Render.m_piRender->SetViewport(NULL);}
 	REL(m_piMainWindow);
 	REL(m_piFocusedWindow);
 	m_Viewport.Detach();
@@ -254,7 +257,6 @@ void CGameGUIManager::OnRender()
 	sClipRect.w=size.w;
 	sClipRect.h=size.h;
 
-	m_Render.m_piRender->StartFrame(m_Viewport.m_piViewport);
 	m_Render.m_piRender->SetClipRect(0,0,sClipRect.w,sClipRect.h);
 
 	RenderWindow(m_Render.m_piRender,m_piMainWindow,sClipRect);
@@ -289,8 +291,6 @@ void CGameGUIManager::OnRender()
 		}
 		REL(piWindow);
 	}
-	m_Render.m_piRender->EndFrame();
-
 }
 
 void CGameGUIManager::GetWindowSize(SGameSize *pSize)

@@ -434,9 +434,6 @@ class IGenericRender:virtual public ISystemUnknown
 {
 public:
 
-	virtual void StartFrame(IGenericViewport *piViewport)=0;
-	virtual void EndFrame()=0;
-
 	virtual void StartStagedRendering()=0;
 	virtual void EndStagedRendering()=0;
 	virtual SRenderStats GetStagedRenderingStats()=0;
@@ -449,6 +446,7 @@ public:
 	
 	virtual bool IsRenderingWithShader()=0;
 
+	virtual void              SetViewport(IGenericViewport *piViewport)=0;
 	virtual IGenericViewport *GetViewPort()=0; // solo valido entre StartFrame y EndFrame.
 
 	virtual void SetOrthographicProjection(double cx,double cy)=0;

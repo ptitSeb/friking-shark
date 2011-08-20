@@ -22,6 +22,7 @@
 
 #ifndef WIN32
 	#include <dlfcn.h>
+	#include "valgrind.h"
 #endif
 
 CSystemModule::CSystemModule(void)
@@ -148,7 +149,11 @@ void CSystemModule::Destroy()
 #ifdef WIN32
     if(m_hModule){FreeLibrary(m_hModule);m_hModule=NULL;}
 #else
-    if(m_pLibrary){dlclose(m_pLibrary);m_pLibrary=NULL;}
+	if(!RUNNING_ON_VALGRIND)
+	{
+		// Do not release shared libraries if running on valgrind, otherwise symbols are not available when dumping memory leaks.
+		if(m_pLibrary){dlclose(m_pLibrary);m_pLibrary=NULL;}
+	}
 #endif
     REL(m_piSystem);
 }
