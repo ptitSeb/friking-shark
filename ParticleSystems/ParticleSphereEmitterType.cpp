@@ -80,7 +80,16 @@ void CParticleSphereEmitter::ProcessFrame(IParticleSystem *piSystem,unsigned int
 {
     if(!m_bActive){return;}
     if(m_dwEmitStartTime && dwCurrentTime<m_dwEmitStartTime){return;}
-    if(m_dwEmitEndTime && dwCurrentTime>m_dwEmitEndTime){m_bActive=false;return;}
+    if(m_dwEmitEndTime && dwCurrentTime>m_dwEmitEndTime)
+	{
+		// Fixes Issue 6. Sometimes sphere particle emitter emits no particle
+		bool bMinimunEmissionPending=(m_dwEmittedCycles==0 && (m_pType->m_dStartRate>0 || m_pType->m_dEndRate>0));
+		if(!bMinimunEmissionPending)
+		{
+			m_bActive=false;
+			return;
+		}
+	}
     if(m_pType->m_dwParticleCount!=0 && m_dwEmittedCycles>=m_pType->m_dwParticleCount){m_bActive=false;return;}
 
     double dLifeSpent=((double)dwCurrentTime-(double)m_dwEmitStartTime)/((double)m_dwEmitEndTime-(double)m_dwEmitStartTime);
