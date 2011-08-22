@@ -1,3 +1,5 @@
 #labels Featured
-=||Level 1||Level 2||=
-||<wiki:video url="http://www.youtube.com/watch?v=G5MTn3vIdgY"/> ||<wiki:video url="http://www.youtube.com/watch?v=0ugN9RhcGt0"/>||
+=Level 1=
+<wiki:video url="http://www.youtube.com/watch?v=G5MTn3vIdgY"/>
+=Level 2=
+<wiki:video url="http://www.youtube.com/watch?v=0ugN9RhcGt0"/>
