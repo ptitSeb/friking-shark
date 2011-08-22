@@ -1,0 +1,27 @@
+/////////////////////////////////////////////////////////////////////////////////////////
+//	Editor v0.20.0.0				31-10-2006
+/////////////////////////////////////////////////////////////////////////////////////////
+// 
+//  Versiones Relacionadas:
+//
+//	engine	v0.20.0.0 - v0.20.0.3
+//	.gbs	v1.0
+//	.ges	v1.2
+
+	- Soporte de edicion de escenarios por sectores
+	- Soporte para editar elementos del escenario y ruta de juego
+			- Ruta de juego
+			- Camara de inspeccion
+			- Camara de juego
+			- Velocidad de inspeccion
+			
+	- Se ha introducido una barra inferior 
+		- Para la edicion por coordenadas
+		- Para bloquear la seleccion
+		- Para ocultar y bloquear elementos
+
+	
+/////////////////////////////////////////////////////////////////////////////////////////
+//  Editor sin version (antes de control de versiones)
+
+	Funcionalidad base

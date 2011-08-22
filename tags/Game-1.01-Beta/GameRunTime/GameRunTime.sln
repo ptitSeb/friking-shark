@@ -1,0 +1,53 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameRunTime", "GameRunTime.vcproj", "{BE131682-BAEB-4D76-8947-4F334C9DE3EB}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameRunTimeLib", "..\GameRunTimeLib\GameRunTimeLib.vcproj", "{1ACA288E-6E1A-4FE5-BDBF-D9C06A26C298}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RunTimeTest", "..\RunTimeTest\RunTimeTest.vcproj", "{45DBD66A-5387-4220-9FC7-22BA0FE53E25}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestModule", "..\TestModule\TestModule.vcproj", "{C4A97BA7-5A1E-4081-A27A-801AE6007DA9}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameManagers", "..\GameManagers\GameManagers.vcproj", "{1D4A1C4C-9DFC-42CD-9130-46E1AF644ADC}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{BE131682-BAEB-4D76-8947-4F334C9DE3EB}.Debug.ActiveCfg = Debug|Win32
+		{BE131682-BAEB-4D76-8947-4F334C9DE3EB}.Debug.Build.0 = Debug|Win32
+		{BE131682-BAEB-4D76-8947-4F334C9DE3EB}.Release.ActiveCfg = Release|Win32
+		{BE131682-BAEB-4D76-8947-4F334C9DE3EB}.Release.Build.0 = Release|Win32
+		{1ACA288E-6E1A-4FE5-BDBF-D9C06A26C298}.Debug.ActiveCfg = Debug|Win32
+		{1ACA288E-6E1A-4FE5-BDBF-D9C06A26C298}.Debug.Build.0 = Debug|Win32
+		{1ACA288E-6E1A-4FE5-BDBF-D9C06A26C298}.Release.ActiveCfg = Release|Win32
+		{1ACA288E-6E1A-4FE5-BDBF-D9C06A26C298}.Release.Build.0 = Release|Win32
+		{45DBD66A-5387-4220-9FC7-22BA0FE53E25}.Debug.ActiveCfg = Debug|Win32
+		{45DBD66A-5387-4220-9FC7-22BA0FE53E25}.Debug.Build.0 = Debug|Win32
+		{45DBD66A-5387-4220-9FC7-22BA0FE53E25}.Release.ActiveCfg = Release|Win32
+		{45DBD66A-5387-4220-9FC7-22BA0FE53E25}.Release.Build.0 = Release|Win32
+		{C4A97BA7-5A1E-4081-A27A-801AE6007DA9}.Debug.ActiveCfg = Debug|Win32
+		{C4A97BA7-5A1E-4081-A27A-801AE6007DA9}.Debug.Build.0 = Debug|Win32
+		{C4A97BA7-5A1E-4081-A27A-801AE6007DA9}.Release.ActiveCfg = Release|Win32
+		{C4A97BA7-5A1E-4081-A27A-801AE6007DA9}.Release.Build.0 = Release|Win32
+		{1D4A1C4C-9DFC-42CD-9130-46E1AF644ADC}.Debug.ActiveCfg = Debug|Win32
+		{1D4A1C4C-9DFC-42CD-9130-46E1AF644ADC}.Debug.Build.0 = Debug|Win32
+		{1D4A1C4C-9DFC-42CD-9130-46E1AF644ADC}.Release.ActiveCfg = Release|Win32
+		{1D4A1C4C-9DFC-42CD-9130-46E1AF644ADC}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
