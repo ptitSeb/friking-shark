@@ -6,6 +6,6 @@
 =Level 3=
 <wiki:video url="http://www.youtube.com/watch?v=6dMNq-WxgXw"/>
 =Level 4=
-<wiki:video url="http://www.youtube.com/watch?v=DI2pWZP3gKU"/>
+<wiki:video url="http://www.youtube.com/watch?v=LH23MSBtxmw"/>
 =Level 5=
 <wiki:video url="http://www.youtube.com/watch?v=nLbXoUK0vaM"/>
