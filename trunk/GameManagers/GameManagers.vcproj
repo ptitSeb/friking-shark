@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\GameRunTime;..\GameRunTimeLib;..\GameEntityLib;..\ParticleSystems;..\AnimationSystems;..\VectorLib;..\GameManagers;..\GameGraphics;..\GameGUI;..\SoundSystems"
-				PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;GAMEMANAGERS_EXPORTS"
+				PreprocessorDefinitions="NOMINMAX;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;_USRDLL;GAMEMANAGERS_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"

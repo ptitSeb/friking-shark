@@ -74,8 +74,8 @@ IDR_MAINFRAME           ICON                    "res\\GameEngine.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,0
- PRODUCTVERSION 1,0,0,0
+ FILEVERSION 1,1,0,0
+ PRODUCTVERSION 1,1,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -91,12 +91,12 @@ BEGIN
         BLOCK "0c0a04b0"
         BEGIN
             VALUE "FileDescription", "Friking Shark Beta"
-            VALUE "FileVersion", "1, 0, 0, 0"
+            VALUE "FileVersion", "1, 1, 0, 0"
             VALUE "InternalName", "Friking Shark Beta"
             VALUE "LegalCopyright", "Copyright (C) 2011"
             VALUE "OriginalFilename", "FrikingShark.EXE"
             VALUE "ProductName", "Friking Shark Beta"
-            VALUE "ProductVersion", "1, 0, 0, 0"
+            VALUE "ProductVersion", "1, 1, 0, 0"
         END
     END
     BLOCK "VarFileInfo"
