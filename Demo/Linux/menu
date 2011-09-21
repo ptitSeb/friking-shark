@@ -1,0 +1,7 @@
+?package(frikingshark):needs="X11" \
+        section="Games/Action" \
+        title="Friking Shark" \
+        icon="/usr/share/pixmaps/frikingshark.xpm" \
+        longtitle="Flying Shark arcade remake." \
+        command="/usr/games/friking shark"
+
