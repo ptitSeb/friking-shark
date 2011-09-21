@@ -5,3 +5,6 @@ export DH_OPTIONS
 
 %:
 	dh $@
+
+override_dh_shlibdeps:
+	dh_shlibdeps  -- --ignore-missing-info
