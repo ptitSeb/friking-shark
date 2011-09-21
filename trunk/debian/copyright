@@ -13,6 +13,7 @@ License: GPL-3.0+
 Files: debian/*
 Copyright: 2011 Cleto Martín <cleto.martin@gmail.com>
 License: GPL-3.0+
+Note: This is a *extremely* quick and dirty package.
 
 License: GPL-3.0+
  This program is free software: you can redistribute it and/or modify

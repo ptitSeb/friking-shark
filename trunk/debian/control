@@ -10,9 +10,4 @@ Package: friking-shark
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Flying Shark arcade video game remake
- <insert long description, indented with spaces>
-
-Package: friking-shark-data
-Architecture: all
-Description: Flying Shark arcade video game remake (data files)
- <insert long description, indented with spaces>
+ Flying Shark arcade video game remake
