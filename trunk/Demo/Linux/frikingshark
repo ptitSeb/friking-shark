@@ -1,0 +1,4 @@
+#!/bin/sh
+cd /usr/share/frikingshark/Bin/Release/
+./GameEngine "$@"
+cd -
