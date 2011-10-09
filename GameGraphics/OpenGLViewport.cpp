@@ -128,6 +128,11 @@ int TranslateKeyFromWindows(unsigned int nVirtualKey,unsigned int nlparam)
 		case VK_RMENU    :return GK_RMENU;
 		case VK_MENU     :return GK_LMENU;
 	};
+
+	WORD nCharacter=0;
+	static const BYTE keyboardstate[256]={0};
+	if(ToAscii(nVirtualKey,nScanCode,keyboardstate,&nCharacter,0)){return nCharacter;}
+
 	return 0;
 }
 
@@ -215,6 +220,15 @@ int TranslateKeyToWindows(int nGameKey)
 		case GK_MENU     :return VK_LMENU;
 		case GK_ALTGR    :return VK_RMENU;
 	};
+
+	SHORT code=VkKeyScan(nGameKey);
+	BYTE  vk=LOBYTE(code);
+	BYTE  state=HIBYTE(code);
+	if(vk!=0xFF || state!=0xFF)
+	{
+		return vk;
+	}
+
 	return 0;
 }
 #else
