@@ -162,9 +162,6 @@ public:
 	virtual bool CreateFullScreen(unsigned int w,unsigned int h,unsigned int bpp,unsigned int rate)=0;
 	virtual bool CreateWindowed(unsigned x, unsigned y, unsigned w, unsigned h)=0;
 	
-	virtual bool IsMaximized()=0;
-	virtual void SetMaximized(bool bMaximized)=0;
-
 	virtual void GetSize(unsigned *pdwWidth,unsigned *pdwHeight)=0;
 
 	virtual void SetVSync(bool bVSync)=0;

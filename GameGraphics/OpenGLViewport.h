@@ -38,7 +38,7 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 		void OnDestroy();
 		LRESULT ProcessMessage(HWND hWnd,UINT  uMsg, WPARAM  wParam,LPARAM  lParam);
 		static LRESULT WindowProc(HWND  hWnd,UINT  uMsg, WPARAM  wParam,LPARAM  lParam);
-
+		static BOOL CALLBACK PrimaryMonitorEnumerationCallBack(HMONITOR hMonitor,HDC hdcMonitor,LPRECT lprcMonitor,LPARAM dwData);
 	#else
 		
 		static int CustomXIOErrorHandler(Display*);
@@ -119,9 +119,6 @@ public:
 	bool CreateFullScreen(unsigned int w,unsigned int h,unsigned int bpp,unsigned int rate);
 	bool CreateWindowed(unsigned x, unsigned y, unsigned w, unsigned h);
 	void Destroy();
-
-	bool IsMaximized();
-	void SetMaximized(bool bMaximized);
 
 	void GetSize(unsigned *pdwWidth,unsigned *pdwHeight);
 	
