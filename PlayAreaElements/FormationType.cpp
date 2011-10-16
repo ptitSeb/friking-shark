@@ -183,6 +183,8 @@ CFormation::CFormation(CFormationType *pType,CVector vPosition)
 	m_pType=pType;
 	m_vPosition=vPosition;
 	m_nActivationTime=0;
+	m_nCreatedUnits=0;
+	m_nKilledUnits=0;
 	
 	m_vElementRunTimeInfo.resize(m_pType->m_vElements.size());
 	for(unsigned x=0;x<m_pType->m_vElements.size();x++)
@@ -224,8 +226,9 @@ void CFormation::OnKilled(IEntity *piEntity)
 {
 	UNSUBSCRIBE_FROM_CAST(piEntity,IEntityEvents);
 	m_sEntities.erase(piEntity);
+	m_nKilledUnits++;
 	// La referencia de mas esta para evitar que se borre este objeto al liberarlo el CPlayAreaFormation
-	if(m_sEntities.size()==0 && m_bAllUnitsCreated){AddReference();NOTIFY_EVENT(IFormationEvents,OnFormationKilled(this,piEntity));ReleaseReference();}
+	if(m_nCreatedUnits==m_nKilledUnits && m_bAllUnitsCreated){AddReference();NOTIFY_EVENT(IFormationEvents,OnFormationKilled(this,piEntity));ReleaseReference();}
 }
 
 bool CFormation::ProcessFrame(unsigned int dwCurrentTime,double dInterval)
@@ -264,6 +267,7 @@ bool CFormation::ProcessFrame(unsigned int dwCurrentTime,double dInterval)
 			AddEntity(piEntity);
 			pElement->m_dwLastEntityTime=dwCurrentTime;
 			pElement->m_dwCreatedEntities++;
+			m_nCreatedUnits++;
 		}
 		if(pElement->m_dwCreatedEntities<pElement->m_pFormationTypeElement->m_nEntityCount)
 		{

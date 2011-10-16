@@ -104,7 +104,9 @@ class CFormation:virtual public CSystemObjectBase,virtual public IFormation,virt
     set<IEntity*>                         m_sEntities;
     bool                                  m_bAllUnitsCreated;
 	unsigned int						  m_nActivationTime;
-
+	unsigned int						  m_nCreatedUnits;
+	unsigned int						  m_nKilledUnits;
+	
 public:
     void AddEntity(IEntity *piEntity);
 
