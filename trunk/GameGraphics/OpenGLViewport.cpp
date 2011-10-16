@@ -783,9 +783,17 @@ bool COpenGLViewport::CreateFullScreen(unsigned int w,unsigned int h,unsigned in
 		wc.hInstance		= GetModuleHandle(NULL);
 		RegisterClass(&wc);
 	}
-	
+	SVideoMode mode;
+	mode.bpp=bpp;
+	mode.h=h;
+	mode.w=w;
+	mode.rate=rate;
+
+	SetVideoMode(&mode);
+	GetCurrentVideoMode(&mode);
+
 	unsigned int dwStyle=WS_POPUP;
-	m_hWnd = CreateWindowEx(WS_EX_DLGMODALFRAME,VIEWPORT_CLASSNAME,"Loading...",dwStyle,0,0,w,h,NULL,NULL,NULL,(void *)this);
+	m_hWnd = CreateWindowEx(WS_EX_DLGMODALFRAME,VIEWPORT_CLASSNAME,"Loading...",dwStyle,mode.fullscreenX,mode.fullscreenY,mode.fullscreenW,mode.fullscreenH,NULL,NULL,NULL,(void *)this);
 	if(m_hWnd)
 	{
 		unsigned int dwStyle=GetWindowLong(m_hWnd,GWL_STYLE);
@@ -864,38 +872,6 @@ void COpenGLViewport::Destroy()
 #endif
 	
 	CSystemObjectBase::Destroy();
-}
-
-bool COpenGLViewport::IsMaximized()
-{
-#ifdef WIN32
-	WINDOWPLACEMENT placement={0};
-	placement.length=sizeof(placement);
-	GetWindowPlacement(m_hWnd,&placement);
-	return (placement.showCmd==SW_MAXIMIZE);
-#else
-	return false;
-#endif
-}
-
-void COpenGLViewport::SetMaximized(bool bMaximized)
-{
-#ifdef WIN32
-	unsigned int dwStyle=GetWindowLong(m_hWnd,GWL_STYLE);
-	if(bMaximized)
-	{
-		dwStyle&=~(WS_CAPTION|WS_MINIMIZEBOX|WS_MAXIMIZEBOX|WS_THICKFRAME|WS_VISIBLE|WS_OVERLAPPED);
-		dwStyle|=WS_POPUP;
-	}
-	else
-	{
-		dwStyle|=WS_CAPTION|WS_MINIMIZEBOX|WS_MAXIMIZEBOX|WS_THICKFRAME|WS_VISIBLE|WS_OVERLAPPED;
-		dwStyle&=~WS_POPUP;
-	}
-	SetWindowLong(m_hWnd,GWL_STYLE,dwStyle);
-	ShowWindow(m_hWnd,bMaximized?SW_MAXIMIZE:SW_SHOWNORMAL);
-#else
-#endif
 }
 
 void COpenGLViewport::GetSize(unsigned *pdwWidth,unsigned *pdwHeight)
@@ -1192,6 +1168,25 @@ bool COpenGLViewport::DetectDrag(double dx,double dy)
 #endif  
 }
 
+#ifdef WIN32
+BOOL CALLBACK COpenGLViewport::PrimaryMonitorEnumerationCallBack(HMONITOR hMonitor,HDC hdcMonitor,LPRECT lprcMonitor,LPARAM dwData)
+{
+	RECT *pRect=(RECT *)dwData;
+	MONITORINFOEX info;
+	memset(&info,0,sizeof(info));
+	info.cbSize=sizeof(info);
+	if(GetMonitorInfo(hMonitor,&info) && info.dwFlags&MONITORINFOF_PRIMARY)
+	{
+		*pRect=info.rcMonitor;
+		return FALSE;
+	}
+	else
+	{
+		return TRUE;
+	}
+}
+#endif
+
 void COpenGLViewport::GetCurrentVideoMode(SVideoMode *pMode)
 {
 #ifdef WIN32
@@ -1206,6 +1201,20 @@ void COpenGLViewport::GetCurrentVideoMode(SVideoMode *pMode)
 	pMode->fullscreenW=mode.dmPelsWidth;
 	pMode->fullscreenH=mode.dmPelsHeight;
 	pMode->rate=60;
+
+	RECT sMonitorRect;
+	EnumDisplayMonitors(NULL,NULL,PrimaryMonitorEnumerationCallBack,(LPARAM)&sMonitorRect);
+	
+	pMode->fullscreenX=sMonitorRect.left;
+	pMode->fullscreenY=sMonitorRect.top;
+	pMode->fullscreenW=sMonitorRect.right-sMonitorRect.left;
+	pMode->fullscreenH=sMonitorRect.bottom-sMonitorRect.top;
+
+	if(pMode->fullscreenW==0 || pMode->fullscreenH==0)
+	{
+		pMode->fullscreenW=pMode->w;
+		pMode->fullscreenH=pMode->h;
+	}
 #else
 	Display *pDisplay=XOpenDisplay(NULL);
 	if(pDisplay)
@@ -1498,7 +1507,13 @@ bool COpenGLViewport::SetFullScreen(unsigned int w,unsigned int h,unsigned int b
 
 #ifdef WIN32
 	SetVideoMode(&mode);
-	SetMaximized(true);
+	GetCurrentVideoMode(&mode);
+	unsigned int dwStyle=GetWindowLong(m_hWnd,GWL_STYLE);
+	dwStyle&=~(WS_CAPTION|WS_MINIMIZEBOX|WS_MAXIMIZEBOX|WS_THICKFRAME|WS_VISIBLE|WS_OVERLAPPED);
+	dwStyle|=WS_POPUP;
+	SetWindowLong(m_hWnd,GWL_STYLE,dwStyle);
+	SetWindowPos(m_hWnd,NULL,mode.fullscreenX,mode.fullscreenY,mode.fullscreenW,mode.fullscreenH,SWP_NOZORDER);
+	ShowWindow(m_hWnd,SW_MAXIMIZE);
 	return true;
 #else
 	
@@ -1561,7 +1576,12 @@ bool COpenGLViewport::SetWindowed(unsigned int x,unsigned int y,unsigned int w,u
 	// de pantalla.
 	SetVideoMode(&m_OriginalVideoMode);
 
-	SetMaximized(false);
+	unsigned int dwStyle=GetWindowLong(m_hWnd,GWL_STYLE);
+	dwStyle|=WS_CAPTION|WS_MINIMIZEBOX|WS_MAXIMIZEBOX|WS_THICKFRAME|WS_VISIBLE|WS_OVERLAPPED;
+	dwStyle&=~WS_POPUP;
+	SetWindowLong(m_hWnd,GWL_STYLE,dwStyle);
+	ShowWindow(m_hWnd,SW_SHOWNORMAL);
+
 	RECT wr={0},cr={0};
 	GetWindowRect(m_hWnd,&wr);
 	GetClientRect(m_hWnd,&cr);
