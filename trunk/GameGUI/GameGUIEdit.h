@@ -56,6 +56,10 @@ public:
 
 	void	SetText(std::string sText);
 	void 	SetCursor(int nIndex);
+	
+	void	GetSelection(int *pnFirst,int *pnLast);
+	void	SetSelection(int nFirst,int nLast);
+	
 	// Base
 
 	void 	OnCharacter( int nKey,bool *pbProcessed );

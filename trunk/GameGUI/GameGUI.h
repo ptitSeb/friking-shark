@@ -245,6 +245,9 @@ public:
 	virtual void	GetBorderColor(CVector *pvColor,double *pdAlpha)=0;
 	virtual void	SetBorderColor(CVector vColor,double dAlpha)=0;
 	virtual void	SetCursor(int nIndex)=0;
+
+	virtual void	GetSelection(int *pnFirst,int *pnLast)=0;
+	virtual void	SetSelection(int nFirst,int nLast)=0;
 };
 
 class IGameGUIEditEvents

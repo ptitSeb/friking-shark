@@ -70,6 +70,7 @@ void CHighScoresDialog::OnInitDialog()
 		{
 			SHighScoreRow row=m_piTable->GetRow(m_nScoreToEdit);
 			m_piEDName->SetText(row.sName);
+			m_piEDName->SetSelection(0,row.sName.length());
 			m_piGUIManager->SetFocus(m_piEDName);
 		}
 		else
