@@ -363,3 +363,20 @@ void CGameGUIEdit::OnMouseUp(int nButton,double x,double y)
 }
 
 void CGameGUIEdit::OnWantFocus(bool *pbWant){*pbWant=true;}
+
+void CGameGUIEdit::GetSelection(int *pnFirst,int *pnLast)
+{
+	*pnFirst=std::min(m_nEditionPos,m_nSelectionPos);
+	*pnLast=std::max(m_nEditionPos,m_nSelectionPos);
+}
+
+void CGameGUIEdit::SetSelection(int nFirst,int nLast)
+{
+	m_nEditionPos=std::max(0,std::min(nFirst,(int)m_sText.length()));
+	m_nSelectionPos=std::max(0,std::min(nLast,(int)m_sText.length()));
+}
+
+
+
+
+
