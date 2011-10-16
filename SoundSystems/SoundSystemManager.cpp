@@ -37,13 +37,6 @@ CSoundSystemManager::~CSoundSystemManager()
 bool CSoundSystemManager::Init(std::string sClass,std::string sName,ISystem *piSystem)
 {
   bool bOk=CSystemObjectBase::Init(sClass,sName,piSystem);;
-  if(bOk) {m_pDevice=alcOpenDevice(NULL);bOk=(m_pDevice!=NULL);}
-  if(bOk) {m_pContext=alcCreateContext(m_pDevice,NULL);bOk=(m_pContext!=NULL);}
-  if(bOk) {bOk=(alcMakeContextCurrent(m_pContext)==ALC_TRUE);}
-  if(!bOk)
-  {
-	  RTTRACE("CSoundSystemManager::Init -> Failed to create sound context %d",alGetError());
-  }
   m_vListenerOrientation=m_vListenerPosition=m_vListenerVelocity=Origin;
   return bOk;
 }
@@ -52,6 +45,18 @@ bool CSoundSystemManager::Init(std::string sClass,std::string sName,ISystem *piS
 bool CSoundSystemManager::Unserialize(ISystemPersistencyNode *piNode)
 {
 	bool bOk=CSystemObjectBase::Unserialize(piNode);
+	if(bOk) {m_pDevice=alcOpenDevice(m_sDeviceName==""?NULL:m_sDeviceName.c_str());bOk=(m_pDevice!=NULL);}
+	if(bOk) {m_pContext=alcCreateContext(m_pDevice,NULL);bOk=(m_pContext!=NULL);}
+	if(bOk) {bOk=(alcMakeContextCurrent(m_pContext)==ALC_TRUE);}
+	if(!bOk)
+	{
+		RTTRACE("CSoundSystemManager::Init -> Failed to create sound context %d",alGetError());
+	}
+	else
+	{
+		RTTRACE("CSoundSystemManager::Init -> Sound system initialized using device '%s'",m_sDeviceName==""?"default":m_sDeviceName.c_str());
+	}
+	
 	if(bOk && m_pContext)
 	{
 		alListenerf(AL_GAIN ,m_bMuted?0:((float)m_nMasterVolume)/(float)100.0);
