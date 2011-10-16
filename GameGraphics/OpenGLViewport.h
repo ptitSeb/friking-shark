@@ -44,6 +44,7 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 		static int CustomXIOErrorHandler(Display*);
 		
 		Display 	*m_pXDisplay;
+		XVisualInfo *m_pXVisualInfo;
 		Colormap 	 m_pXColorMap;
 		GLXContext   m_pGLXContext;
 		Cursor 		 m_pXHollowCursor;
@@ -66,6 +67,12 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 		int 		 m_nDetectDragY;
 		unsigned int m_nDetectDragButton;
 		bool 		 m_bDetectedDrag;
+		
+		bool GetFirstXineramaScreen(int *pX,int *pY,int *pW,int *pH);
+		void SetupXWindowParameters();
+		bool WaitForXEvent(int nEventType);
+		void ProcessXEvent(XEvent &event,bool *pbBreakLoop);
+		
 	#endif
 		
 	SVideoMode  	m_OriginalVideoMode;
@@ -82,7 +89,6 @@ public:
 	std::string m_sCaption;
 	IGenericViewportCallBack *m_piCallBack;
 	
-
 	// Virtuales de COpenGLViewPortBase
 
 	void Render();
@@ -110,7 +116,8 @@ public:
 
 	//IGenericViewport
 
-	bool Create(unsigned x, unsigned y, unsigned w,unsigned h,bool bMaximized);
+	bool CreateFullScreen(unsigned int w,unsigned int h,unsigned int bpp,unsigned int rate);
+	bool CreateWindowed(unsigned x, unsigned y, unsigned w, unsigned h);
 	void Destroy();
 
 	bool IsMaximized();

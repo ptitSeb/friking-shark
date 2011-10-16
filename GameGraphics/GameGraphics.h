@@ -70,7 +70,13 @@ struct SVideoMode
 	unsigned int bpp;
 	unsigned int rate;
 	
-	SVideoMode(){w=h=bpp=rate=0;}
+	// Fullscreen size and position should not match the resolution if there are various monitors
+	int fullscreenX;
+	int fullscreenY;
+	int fullscreenW;
+	int fullscreenH;
+	
+	SVideoMode(){w=h=bpp=rate=0;fullscreenX=fullscreenY=0;fullscreenW=fullscreenH=0;}
 };
 
 BEGIN_STRUCT_PROPS(SGameRect)
@@ -153,8 +159,9 @@ class IGenericViewport:virtual public ISystemUnknown
 {
 public:
 
-	virtual bool Create(unsigned x,unsigned y, unsigned w, unsigned h,bool bMaximized)=0;
-
+	virtual bool CreateFullScreen(unsigned int w,unsigned int h,unsigned int bpp,unsigned int rate)=0;
+	virtual bool CreateWindowed(unsigned x, unsigned y, unsigned w, unsigned h)=0;
+	
 	virtual bool IsMaximized()=0;
 	virtual void SetMaximized(bool bMaximized)=0;
 

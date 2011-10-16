@@ -24,11 +24,11 @@
   #define VIEWPORT_CLASSNAME "OpenGLViewport"
   #define WM_GL_VIEWPORT_END_LOOP WM_USER+0x001
 #else
-  #include <X11/extensions/Xrandr.h>
-  #define DETECT_DRAG_SIZE 3
-  #define X_WINDOWS_EVENT_MASK ExposureMask|ButtonPressMask|ButtonReleaseMask|PointerMotionMask|KeyPressMask|KeyReleaseMask|StructureNotifyMask
+	#include <X11/extensions/Xrandr.h>
+	#include <X11/extensions/Xinerama.h>
+	#define DETECT_DRAG_SIZE 3
+	#define X_WINDOWS_EVENT_MASK ExposureMask|ButtonPressMask|ButtonReleaseMask|PointerMotionMask|KeyPressMask|KeyReleaseMask|StructureNotifyMask
 #endif
-
 
 #ifdef WIN32
 
@@ -430,8 +430,6 @@ COpenGLViewport::COpenGLViewport(void)
 	m_piCallBack=NULL;
 	m_bVerticalSync=false;
 
-	GetCurrentVideoMode(&m_OriginalVideoMode);
-	
 #ifdef WIN32
 	m_nLastMouseMoveX=-100000;
 	m_nLastMouseMoveY=-100000;
@@ -442,6 +440,7 @@ COpenGLViewport::COpenGLViewport(void)
 #else
 	m_bShowSystemMouseCursor=true;
 	m_pXDisplay=NULL;
+	m_pXVisualInfo=NULL;	
 	m_pGLXContext=NULL;
 	m_pXColorMap=0;
 	m_pXHollowCursor=0;
@@ -466,7 +465,9 @@ COpenGLViewport::COpenGLViewport(void)
 	m_nDblClkDetectDistance=3;
 	
 #endif
-
+	
+	GetCurrentVideoMode(&m_OriginalVideoMode);
+	
 	InitializeKeyNames();
 }
 
@@ -717,7 +718,7 @@ LRESULT COpenGLViewport::WindowProc(HWND  hWnd,UINT  uMsg, WPARAM  wParam,LPARAM
 }
 #endif
 
-bool COpenGLViewport::Create(unsigned x, unsigned y, unsigned w, unsigned h, bool bMaximized)
+bool COpenGLViewport::CreateWindowed(unsigned x, unsigned y, unsigned w, unsigned h)
 {
 	bool bOk=false;
 #ifdef WIN32
@@ -740,64 +741,79 @@ bool COpenGLViewport::Create(unsigned x, unsigned y, unsigned w, unsigned h, boo
 	{
 		unsigned int dwStyle=GetWindowLong(m_hWnd,GWL_STYLE);
 		SetWindowLong(m_hWnd,GWL_STYLE,dwStyle);
-		ShowWindow(m_hWnd,bMaximized?SW_MAXIMIZE:SW_SHOW);
+		ShowWindow(m_hWnd,SW_SHOW);
 		EnableWindow(m_hWnd,TRUE);
 		UpdateWindow(m_hWnd);
 	}
 	bOk=(m_hRenderContext!=NULL);
 	if(!bOk){RTTRACE("COpenGLViewport::Create -> Failed to get OpenGL render context");}
 #else
-	XVisualInfo *pVisualInfo=NULL;
-	
 	m_pXDisplay=XOpenDisplay(NULL);
 	if(m_pXDisplay)
 	{
 	  XSetIOErrorHandler(CustomXIOErrorHandler);
 	  int nScreen = DefaultScreen( m_pXDisplay );
 	  int pVisualAttribs[] = {GLX_RGBA,GLX_RED_SIZE,8,GLX_GREEN_SIZE,8,GLX_BLUE_SIZE,8,GLX_ALPHA_SIZE,8,GLX_DEPTH_SIZE,8,GLX_DOUBLEBUFFER,None};
-	  pVisualInfo = glXChooseVisual( m_pXDisplay, nScreen,pVisualAttribs);
+	  m_pXVisualInfo = glXChooseVisual( m_pXDisplay, nScreen,pVisualAttribs);
 	}	  
-	if(pVisualInfo){m_pGLXContext = glXCreateContext(m_pXDisplay, pVisualInfo,NULL, GL_TRUE);}
-	if(m_pGLXContext){m_pXColorMap = XCreateColormap(m_pXDisplay, RootWindow(m_pXDisplay, pVisualInfo->screen),pVisualInfo->visual, AllocNone);}
+	if(m_pXVisualInfo){m_pGLXContext = glXCreateContext(m_pXDisplay, m_pXVisualInfo,NULL, GL_TRUE);}
+	if(m_pGLXContext){m_pXColorMap = XCreateColormap(m_pXDisplay, RootWindow(m_pXDisplay, m_pXVisualInfo->screen),m_pXVisualInfo->visual, AllocNone);}
 	if(m_pXColorMap)
 	{
-		XSetWindowAttributes windowAttribs;
-		windowAttribs.colormap = m_pXColorMap;
-		windowAttribs.border_pixel = 0;
-		windowAttribs.event_mask = X_WINDOWS_EVENT_MASK;
-  
-		m_XWindow = XCreateWindow(m_pXDisplay,RootWindow(m_pXDisplay,pVisualInfo->screen),
-								x,y,w,h, 0, 
-								pVisualInfo->depth,InputOutput,pVisualInfo->visual,
-								CWBorderPixel|CWColormap|CWEventMask,&windowAttribs);
+		SetWindowed(x,y,w,h);
+		bOk=(m_XWindow!=None);
 	}
-	if(m_XWindow!=None)
-	{
-		XSetStandardProperties(m_pXDisplay,m_XWindow,"Loading...","Loading...",None,NULL,0,NULL);
-	  XMapWindow(m_pXDisplay,m_XWindow);
-	  glXMakeCurrent(m_pXDisplay,m_XWindow,m_pGLXContext);
-	  
-	  bOk=true;
-	}
-	
-	if(bOk)
-	{
-	  // Se crea un cursor transparente, ya que no hay forma de ocultarlo
-	  Pixmap emptyBitmap;
-	  XColor black;
-	  static char pContent[] = { 0,0,0,0,0,0,0,0 };
-	  black.red = black.green = black.blue = 0;
-
-	  emptyBitmap = XCreateBitmapFromData(m_pXDisplay, m_XWindow, pContent, 8, 8);
-	  m_pXHollowCursor= XCreatePixmapCursor(m_pXDisplay, emptyBitmap,emptyBitmap,&black, &black, 0, 0);
-	  XFreePixmap(m_pXDisplay,emptyBitmap );
-	}
-
 	if(!bOk){RTTRACE("COpenGLViewport::Create -> Failed to get OpenGL render context");}
-	
-	if(pVisualInfo){XFree(pVisualInfo);pVisualInfo=NULL;}
-	
 #endif
+	return bOk;
+}
+
+bool COpenGLViewport::CreateFullScreen(unsigned int w,unsigned int h,unsigned int bpp,unsigned int rate)
+{
+	bool bOk=false;
+	#ifdef WIN32
+	WNDCLASSEX		wcex={0};
+	wcex.cbSize=sizeof(wcex);
+	if(!GetClassInfoEx(NULL,VIEWPORT_CLASSNAME,&wcex))
+	{
+		WNDCLASS wc={0};
+		wc.style			= CS_HREDRAW | CS_VREDRAW|CS_DBLCLKS;
+		wc.lpfnWndProc      = (WNDPROC) COpenGLViewport::WindowProc;
+		wc.lpszClassName    = VIEWPORT_CLASSNAME;
+		wc.hInstance		= GetModuleHandle(NULL);
+		RegisterClass(&wc);
+	}
+	
+	unsigned int dwStyle=WS_POPUP;
+	m_hWnd = CreateWindowEx(WS_EX_DLGMODALFRAME,VIEWPORT_CLASSNAME,"Loading...",dwStyle,0,0,w,h,NULL,NULL,NULL,(void *)this);
+	if(m_hWnd)
+	{
+		unsigned int dwStyle=GetWindowLong(m_hWnd,GWL_STYLE);
+		SetWindowLong(m_hWnd,GWL_STYLE,dwStyle);
+		ShowWindow(m_hWnd,SW_MAXIMIZE);
+		EnableWindow(m_hWnd,TRUE);
+		UpdateWindow(m_hWnd);
+	}
+	bOk=(m_hRenderContext!=NULL);
+	if(!bOk){RTTRACE("COpenGLViewport::Create -> Failed to get OpenGL render context");}
+	#else
+	m_pXDisplay=XOpenDisplay(NULL);
+	if(m_pXDisplay)
+	{
+		XSetIOErrorHandler(CustomXIOErrorHandler);
+		int nScreen = DefaultScreen( m_pXDisplay );
+		int pVisualAttribs[] = {GLX_RGBA,GLX_RED_SIZE,8,GLX_GREEN_SIZE,8,GLX_BLUE_SIZE,8,GLX_ALPHA_SIZE,8,GLX_DEPTH_SIZE,8,GLX_DOUBLEBUFFER,None};
+		m_pXVisualInfo = glXChooseVisual( m_pXDisplay, nScreen,pVisualAttribs);
+	}	  
+	if(m_pXVisualInfo){m_pGLXContext = glXCreateContext(m_pXDisplay, m_pXVisualInfo,NULL, GL_TRUE);}
+	if(m_pGLXContext){m_pXColorMap = XCreateColormap(m_pXDisplay, RootWindow(m_pXDisplay, m_pXVisualInfo->screen),m_pXVisualInfo->visual, AllocNone);}
+	if(m_pXColorMap)
+	{
+		SetFullScreen(w,h,bpp,rate);
+		bOk=(m_XWindow!=None);
+	}
+	if(!bOk){RTTRACE("COpenGLViewport::Create -> Failed to get OpenGL render context");}
+	#endif
 	return bOk;
 }
 
@@ -814,14 +830,13 @@ void COpenGLViewport::Destroy()
 	}
 	if(m_pXHollowCursor)
 	{
-	  if(m_bShowSystemMouseCursor)
-	  {
-	  	XUndefineCursor(m_pXDisplay,m_XWindow);
-	  }
-	  XFreeCursor(m_pXDisplay,m_pXHollowCursor);
-	  m_pXHollowCursor=0;
+		if(m_bShowSystemMouseCursor)
+		{
+			XUndefineCursor(m_pXDisplay,m_XWindow);
+		}
+		XFreeCursor(m_pXDisplay,m_pXHollowCursor);
+		m_pXHollowCursor=0;
 	}
-
 	if(m_XWindow!=None)
 	{
 	  glXMakeCurrent(m_pXDisplay,None,NULL);	  
@@ -844,6 +859,8 @@ void COpenGLViewport::Destroy()
 	  XCloseDisplay(m_pXDisplay);
 	  m_pXDisplay=NULL;
 	}
+	if(m_pXVisualInfo){XFree(m_pXVisualInfo);m_pXVisualInfo=NULL;}
+	
 #endif
 	
 	CSystemObjectBase::Destroy();
@@ -1019,103 +1036,9 @@ void COpenGLViewport::EnterLoop()
 	{	
 		while(m_XWindow!=None && XCheckWindowEvent(m_pXDisplay,m_XWindow,X_WINDOWS_EVENT_MASK,&event))
 		{
-		  if (event.type==KeyPress) 
-		  {
-			KeySym key=XLookupKeysym(&event.xkey,0);
-			if(key!=None)
-			{
-				OnKeyDown(TranslateKeyFromX11(key));
-			}
-			char cKey=0;
-			XLookupString(&event.xkey, &cKey,1, &key, NULL);  
-			if(cKey>=32 && cKey<127){OnCharacter(cKey);}
-		  }
-		  else if (event.type==KeyRelease) 
-		  {
-			KeySym key=XLookupKeysym(&event.xkey,0);
-			if(key!=None)
-			{
-				OnKeyUp(TranslateKeyFromX11(key));
-			}
-		  }
-		  else if (event.type==ButtonPress) 
-		  {
-			int nCurrentTime=GetTimeStamp();
-			
-			// Regular click processing
-			if(event.xbutton.button==Button1){OnLButtonDown(event.xbutton.x,event.xbutton.y);}
-			else if(event.xbutton.button==Button3){OnRButtonDown(event.xbutton.x,event.xbutton.y);}
-			else if(event.xbutton.button==Button4){OnMouseWheelUp(event.xbutton.x,event.xbutton.y);}
-			else if(event.xbutton.button==Button5){OnMouseWheelDown(event.xbutton.x,event.xbutton.y);}
-			// Double click Detection
-			if((event.xbutton.button==Button1 || event.xbutton.button==Button3) &&
-			   m_nDblClkDetectLastButton==event.xbutton.button && 
-			   (nCurrentTime-m_nDblClkDetectLastTime)<=m_nDblClkDetectMilliseconds &&
-			   fabs(m_nDblClkDetectLastX-event.xbutton.x)<=m_nDblClkDetectDistance &&
-			   fabs(m_nDblClkDetectLastY-event.xbutton.y)<=m_nDblClkDetectDistance)
-			{
-				m_nDblClkDetectLastButton=0;
-				m_nDblClkDetectLastX=0;
-				m_nDblClkDetectLastY=0;
-				m_nDblClkDetectLastTime=0;
-
-				if(event.xbutton.button==Button1){OnLButtonDoubleClick(event.xbutton.x,event.xbutton.y);}
-				else if(event.xbutton.button==Button3){OnRButtonDoubleClick(event.xbutton.x,event.xbutton.y);}
-			}
-			else
-			{
-			    m_nDblClkDetectLastButton=event.xbutton.button;
-				m_nDblClkDetectLastX=event.xbutton.x;
-				m_nDblClkDetectLastY=event.xbutton.y;
-				m_nDblClkDetectLastTime=nCurrentTime;
-			}
-		  }
-		  else if (event.type==ButtonRelease) 
-		  {
-			  if(event.xbutton.button==Button1){OnLButtonUp(event.xbutton.x,event.xbutton.y);}
-			  else if(event.xbutton.button==Button3){OnRButtonUp(event.xbutton.x,event.xbutton.y);}
-			  
-			  if(m_nDetectDragButton==event.xbutton.button)
-			  {
-				m_nLoopDepth--;
-				return;
-			  }			  
-		  }
-		  else if (event.type==MotionNotify) 
-		  {
-			  OnMouseMove(event.xmotion.x,event.xmotion.y);
-			  
-			  if(m_nDetectDragButton!=0)
-			  {
-				int nXDist=event.xmotion.x-m_nDetectDragX;
-				int nYDist=event.xmotion.y-m_nDetectDragY;
-				
-				if(nXDist>DETECT_DRAG_SIZE || nXDist<(0-DETECT_DRAG_SIZE) ||
-					nYDist>DETECT_DRAG_SIZE || nYDist<(0-DETECT_DRAG_SIZE))
-				{
-				  m_bDetectedDrag=true;
-				  m_nLoopDepth--;
-				  return;
-				}
-			  }
-		  }
-		  else if (event.type==ConfigureNotify) 
-		  {
-			if(m_XLastX!=event.xconfigure.x || 
-			   m_XLastY!=event.xconfigure.y)
-			{
-			  OnMove(event.xconfigure.x,event.xconfigure.y);
-			}
-			if(m_XLastWidth!=event.xconfigure.width || 
-			   m_XLastHeight!=event.xconfigure.height)
-			{
-			  OnSize(event.xconfigure.width,event.xconfigure.height);
-			}
-		  }
-		  else if (event.type==DestroyNotify) 
-		  {
-			m_bXExit=true;
-		  }
+			bool bBreakLoop=false;
+			ProcessXEvent(event,&bBreakLoop);
+			if(bBreakLoop){return;}
 		}
 		glXMakeCurrent(m_pXDisplay,m_XWindow,m_pGLXContext);
 		Render();
@@ -1278,6 +1201,10 @@ void COpenGLViewport::GetCurrentVideoMode(SVideoMode *pMode)
 	pMode->bpp=mode.dmBitsPerPel;
 	pMode->w=mode.dmPelsWidth;
 	pMode->h=mode.dmPelsHeight;
+	pMode->fullscreenX=0;
+	pMode->fullscreenY=0;
+	pMode->fullscreenW=mode.dmPelsWidth;
+	pMode->fullscreenH=mode.dmPelsHeight;
 	pMode->rate=60;
 #else
 	Display *pDisplay=XOpenDisplay(NULL);
@@ -1288,11 +1215,18 @@ void COpenGLViewport::GetCurrentVideoMode(SVideoMode *pMode)
 	  pMode->h = DisplayHeight(pDisplay,nScreen);
 	  pMode->bpp = DefaultDepth(pDisplay,nScreen);
 	  pMode->rate=60;
+	  if(!GetFirstXineramaScreen(&pMode->fullscreenX,&pMode->fullscreenY,&pMode->fullscreenW,&pMode->fullscreenH))
+	  {
+		  pMode->fullscreenX=0;
+		  pMode->fullscreenY=0;
+		  pMode->fullscreenW=pMode->w;
+		  pMode->fullscreenH=pMode->h;
+	  }
 	  
 	  XCloseDisplay(pDisplay);
 	  pDisplay=NULL;
 	}	
-	//RTTRACE("GetCurrentVideoMode : %dx%d : %d",pMode->w,pMode->h,pMode->bpp);
+	//RTTRACE("GetCurrentVideoMode : %dx%d : %d : full: %d,%d %dx%d",pMode->w,pMode->h,pMode->bpp,pMode->fullscreenX,pMode->fullscreenY,pMode->fullscreenW,pMode->fullscreenH);
 #endif
 }
 
@@ -1371,6 +1305,189 @@ bool COpenGLViewport::SetVideoMode(SVideoMode *pMode)
 #endif
 }
 
+#ifndef WIN32
+bool COpenGLViewport::GetFirstXineramaScreen(int *pX,int *pY,int *pW,int *pH)
+{
+	*pX=*pY=*pW=*pH=0;
+	
+	bool bRet=false;
+	Display *pDisplay=XOpenDisplay(NULL);
+	if(pDisplay==NULL){return bRet;}
+	
+	int nXinEventBase=0, nXinErrorBase=0;
+	if (XineramaQueryExtension(pDisplay, &nXinEventBase, &nXinErrorBase) && XineramaIsActive(pDisplay))
+	{
+		int nXinScreens=0;
+		XineramaScreenInfo *pXinScreenInfo=XineramaQueryScreens(pDisplay, &nXinScreens);
+		if(nXinScreens)
+		{
+			*pX=pXinScreenInfo[0].x_org;
+			*pY=pXinScreenInfo[0].y_org;
+			*pW=pXinScreenInfo[0].width;
+			*pH=pXinScreenInfo[0].height;
+			bRet=true;
+		}
+		
+		XFree(pXinScreenInfo);
+		pXinScreenInfo=NULL;
+	}
+	XCloseDisplay(pDisplay);
+	return bRet;
+}
+
+bool COpenGLViewport::WaitForXEvent(int nEventType)
+{
+	XEvent event;
+	do
+	{
+		XNextEvent(m_pXDisplay, &event);
+		{
+			bool bBreakLoop=false;
+			ProcessXEvent(event,&bBreakLoop);
+		}
+	}while(event.type!=nEventType);
+}
+
+void COpenGLViewport::ProcessXEvent(XEvent &event,bool *pbBreakLoop)
+{
+	(*pbBreakLoop)=false;
+	if(event.xany.display!=m_pXDisplay || event.xany.window!=m_XWindow){return;}
+	
+	if (event.type==KeyPress) 
+	{
+		KeySym key=XLookupKeysym(&event.xkey,0);
+		if(key!=None)
+		{
+			OnKeyDown(TranslateKeyFromX11(key));
+		}
+		char cKey=0;
+		XLookupString(&event.xkey, &cKey,1, &key, NULL);  
+		if(cKey>=32 && cKey<127){OnCharacter(cKey);}
+	}
+	else if (event.type==KeyRelease) 
+	{
+		KeySym key=XLookupKeysym(&event.xkey,0);
+		if(key!=None)
+		{
+			OnKeyUp(TranslateKeyFromX11(key));
+		}
+	}
+	else if (event.type==ButtonPress) 
+	{
+		int nCurrentTime=GetTimeStamp();
+		
+		// Regular click processing
+		if(event.xbutton.button==Button1){OnLButtonDown(event.xbutton.x,event.xbutton.y);}
+		else if(event.xbutton.button==Button3){OnRButtonDown(event.xbutton.x,event.xbutton.y);}
+		else if(event.xbutton.button==Button4){OnMouseWheelUp(event.xbutton.x,event.xbutton.y);}
+		else if(event.xbutton.button==Button5){OnMouseWheelDown(event.xbutton.x,event.xbutton.y);}
+		// Double click Detection
+		if((event.xbutton.button==Button1 || event.xbutton.button==Button3) &&
+			m_nDblClkDetectLastButton==event.xbutton.button && 
+			(nCurrentTime-m_nDblClkDetectLastTime)<=m_nDblClkDetectMilliseconds &&
+			fabs(m_nDblClkDetectLastX-event.xbutton.x)<=m_nDblClkDetectDistance &&
+			fabs(m_nDblClkDetectLastY-event.xbutton.y)<=m_nDblClkDetectDistance)
+		{
+			m_nDblClkDetectLastButton=0;
+			m_nDblClkDetectLastX=0;
+			m_nDblClkDetectLastY=0;
+			m_nDblClkDetectLastTime=0;
+			
+			if(event.xbutton.button==Button1){OnLButtonDoubleClick(event.xbutton.x,event.xbutton.y);}
+			else if(event.xbutton.button==Button3){OnRButtonDoubleClick(event.xbutton.x,event.xbutton.y);}
+		}
+		else
+		{
+			m_nDblClkDetectLastButton=event.xbutton.button;
+			m_nDblClkDetectLastX=event.xbutton.x;
+			m_nDblClkDetectLastY=event.xbutton.y;
+			m_nDblClkDetectLastTime=nCurrentTime;
+		}
+	}
+	else if (event.type==ButtonRelease) 
+	{
+		if(event.xbutton.button==Button1){OnLButtonUp(event.xbutton.x,event.xbutton.y);}
+		else if(event.xbutton.button==Button3){OnRButtonUp(event.xbutton.x,event.xbutton.y);}
+		
+		if(m_nDetectDragButton==event.xbutton.button)
+		{
+			m_nLoopDepth--;
+			*pbBreakLoop=true;
+			return;
+		}			  
+	}
+	else if (event.type==MotionNotify) 
+	{
+		OnMouseMove(event.xmotion.x,event.xmotion.y);
+		
+		if(m_nDetectDragButton!=0)
+		{
+			int nXDist=event.xmotion.x-m_nDetectDragX;
+			int nYDist=event.xmotion.y-m_nDetectDragY;
+			
+			if(nXDist>DETECT_DRAG_SIZE || nXDist<(0-DETECT_DRAG_SIZE) ||
+				nYDist>DETECT_DRAG_SIZE || nYDist<(0-DETECT_DRAG_SIZE))
+			{
+				m_bDetectedDrag=true;
+				m_nLoopDepth--;
+				*pbBreakLoop=true;
+				return;
+			}
+		}
+	}
+	else if (event.type==ConfigureNotify) 
+	{
+		if(m_XLastX!=event.xconfigure.x || 
+			m_XLastY!=event.xconfigure.y)
+		{
+			OnMove(event.xconfigure.x,event.xconfigure.y);
+		}
+		if(m_XLastWidth!=event.xconfigure.width || 
+			m_XLastHeight!=event.xconfigure.height)
+		{
+			OnSize(event.xconfigure.width,event.xconfigure.height);
+		}
+	}
+	else if (event.type==DestroyNotify) 
+	{
+		m_bXExit=true;
+	}
+	*pbBreakLoop=false;
+	return;
+}
+
+void COpenGLViewport::SetupXWindowParameters()
+{
+	// Free previous cursor
+	if(m_pXHollowCursor)
+	{
+		if(m_bShowSystemMouseCursor)
+		{
+			XUndefineCursor(m_pXDisplay,m_XWindow);
+		}
+		XFreeCursor(m_pXDisplay,m_pXHollowCursor);
+		m_pXHollowCursor=0;
+	}
+
+	if(m_pXDisplay!=NULL && m_XWindow!=None)
+	{
+		// Setup transparent cursor (i do not know of any other way to hide it)
+		Pixmap emptyBitmap;
+		XColor black;
+		static char pContent[] = { 0,0,0,0,0,0,0,0 };
+		black.red = black.green = black.blue = 0;
+
+		emptyBitmap = XCreateBitmapFromData(m_pXDisplay, m_XWindow, pContent, 8, 8);
+		m_pXHollowCursor= XCreatePixmapCursor(m_pXDisplay, emptyBitmap,emptyBitmap,&black, &black, 0, 0);
+		XFreePixmap(m_pXDisplay,emptyBitmap );
+
+		// Set window caption
+		XSetStandardProperties(m_pXDisplay,m_XWindow,m_sCaption.c_str(),m_sCaption.c_str(),None,NULL,0,NULL);
+	}	
+}
+#endif
+
+
 bool COpenGLViewport::SetFullScreen(unsigned int w,unsigned int h,unsigned int bpp,unsigned int rate)
 {
 	SVideoMode mode;
@@ -1384,29 +1501,57 @@ bool COpenGLViewport::SetFullScreen(unsigned int w,unsigned int h,unsigned int b
 	SetMaximized(true);
 	return true;
 #else
-	//RTTRACE("COpenGLViewport::SetFullScreen -> Enter %dx%d",w,h);
-		
-	SetVideoMode(&mode);
 	
-	XSetWindowAttributes attributes;
-	attributes.override_redirect=true;
-	XChangeWindowAttributes(m_pXDisplay,m_XWindow,CWOverrideRedirect,&attributes);
+	SVideoMode oldMode;
+	GetCurrentVideoMode(&oldMode);// Get mode to get the fullscreen rect.
+	
+	if(m_XWindow!=None)
+	{
+		glXMakeCurrent(m_pXDisplay,None,NULL);	  
+		XUnmapWindow(m_pXDisplay,m_XWindow);
+		XDestroyWindow(m_pXDisplay,m_XWindow);
+		m_XWindow=None;
+	}
+	
+	XSetWindowAttributes windowAttribs;
+	windowAttribs.colormap = m_pXColorMap;
+	windowAttribs.border_pixel = 0;
+	windowAttribs.event_mask = X_WINDOWS_EVENT_MASK;
+	windowAttribs.override_redirect=true;
+	
+	m_XWindow = XCreateWindow(m_pXDisplay,RootWindow(m_pXDisplay,m_pXVisualInfo->screen),
+					oldMode.fullscreenX,oldMode.fullscreenY,oldMode.fullscreenW,oldMode.fullscreenH, 0, 
+					m_pXVisualInfo->depth,InputOutput,m_pXVisualInfo->visual,
+					CWBorderPixel|CWColormap|CWEventMask|CWOverrideRedirect,&windowAttribs);
+	
+	XMapWindow(m_pXDisplay,m_XWindow);
+	WaitForXEvent(MapNotify);
+	glXMakeCurrent(m_pXDisplay,m_XWindow,m_pGLXContext);
 
+	SetVideoMode(&mode);
+	GetCurrentVideoMode(&mode);// Get mode to get the fullscreen rect.
+	
 	XWindowChanges changes;
-	changes.width=w;
-	changes.height=h;
-	changes.x=0;
-	changes.y=0;
+	changes.width=mode.fullscreenW;
+	changes.height=mode.fullscreenH;
+	changes.x=mode.fullscreenX;
+	changes.y=mode.fullscreenY;
 	changes.border_width=0;
 	XConfigureWindow(m_pXDisplay,m_XWindow,CWX|CWY|CWWidth|CWHeight|CWBorderWidth,&changes);
+	OnMove(changes.x,changes.y);
+	OnSize(changes.width,changes.height);
+	
 	XRaiseWindow(m_pXDisplay,m_XWindow);
 	XSetInputFocus(m_pXDisplay,m_XWindow,RevertToPointerRoot,CurrentTime);
 	XGrabKeyboard( m_pXDisplay,m_XWindow, True, GrabModeAsync, GrabModeAsync, CurrentTime );
+	
+	SetupXWindowParameters();
 	
 	//RTTRACE("COpenGLViewport::SetFullScreen -> %dx%d:%d",w,h,bpp);
 	return true;
 #endif
 }
+
 bool COpenGLViewport::SetWindowed(unsigned int x,unsigned int y,unsigned int w,unsigned int h)
 {
 
@@ -1434,16 +1579,32 @@ bool COpenGLViewport::SetWindowed(unsigned int x,unsigned int y,unsigned int w,u
 	SetWindowPos(m_hWnd,NULL,x-(p.x-wr.left),y-(p.y-wr.top),w+nonclientsize.cx,h+nonclientsize.cy,SWP_NOZORDER);
 	return true;
 #else
-
-	//RTTRACE("COpenGLViewport::SetWindowed -> Enter %dx%d",w,h);
 	
-	if(m_pXDisplay==NULL || m_XWindow==None){return false;}
-	SetVideoMode(&m_OriginalVideoMode);
+	if(m_pXDisplay!=NULL && m_XWindow!=None)
+	{
+		SetVideoMode(&m_OriginalVideoMode);
+		
+		XUngrabKeyboard( m_pXDisplay,CurrentTime);
+		glXMakeCurrent(m_pXDisplay,None,NULL);	  
+		XUnmapWindow(m_pXDisplay,m_XWindow);
+		XDestroyWindow(m_pXDisplay,m_XWindow);
+		m_XWindow=None;
+	}
 	
-	XUngrabKeyboard( m_pXDisplay,CurrentTime);
-	XSetWindowAttributes attributes;
-	attributes.override_redirect=false;
-	XChangeWindowAttributes(m_pXDisplay,m_XWindow,CWOverrideRedirect,&attributes);
+	XSetWindowAttributes windowAttribs;
+	windowAttribs.colormap = m_pXColorMap;
+	windowAttribs.border_pixel = 0;
+	windowAttribs.event_mask = X_WINDOWS_EVENT_MASK;
+	windowAttribs.override_redirect=false;
+	
+	m_XWindow = XCreateWindow(m_pXDisplay,RootWindow(m_pXDisplay,m_pXVisualInfo->screen),
+							 x,y,w,h, 0, 
+							  m_pXVisualInfo->depth,InputOutput,m_pXVisualInfo->visual,
+							  CWBorderPixel|CWColormap|CWEventMask|CWOverrideRedirect,&windowAttribs);
+	
+	XMapWindow(m_pXDisplay,m_XWindow);
+	WaitForXEvent(MapNotify);
+	glXMakeCurrent(m_pXDisplay,m_XWindow,m_pGLXContext);	
 	
 	XWindowChanges changes;
 	changes.width=w;
@@ -1452,8 +1613,14 @@ bool COpenGLViewport::SetWindowed(unsigned int x,unsigned int y,unsigned int w,u
 	changes.y=y;
 	changes.border_width=0;
 	XConfigureWindow(m_pXDisplay,m_XWindow,CWX|CWY|CWWidth|CWHeight|CWBorderWidth,&changes);
-		
-	//RTTRACE("COpenGLViewport::SetWindowed -> Exit %dx%d",w,h);
+	OnMove(changes.x,changes.y);
+	OnSize(changes.width,changes.height);
+	
+	XRaiseWindow(m_pXDisplay,m_XWindow);
+	XSetInputFocus(m_pXDisplay,m_XWindow,RevertToPointerRoot,CurrentTime);
+	
+	SetupXWindowParameters();
+	
 	return true;
 #endif
 }
