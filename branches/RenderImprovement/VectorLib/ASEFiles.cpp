@@ -842,8 +842,71 @@ public:
 	CASEToGCMKey(CVector vc,CVector vt,CVector vn,CVector vcol,int vi){int x;for(x=0;x<3;x++){c[x]=vc.c[x];}for(x=0;x<2;x++){t[x]=vt.c[x];}for(x=0;x<3;x++){n[x]=vn.c[x];}for(x=0;x<3;x++){col[x]=vcol.c[x];}i=vi;}
 	CASEToGCMKey(){memset(t,0,sizeof(t));i=0;}
 };
+/*
+void CalculateTangentArray(long vertexCount, const Point3D *vertex, const Vector3D *normal,
+	const Point2D *texcoord, long triangleCount, const Triangle *triangle, Vector4D *tangent)
+{
+	Vector3D *tan1 = new Vector3D[vertexCount * 2];
+	Vector3D *tan2 = tan1 + vertexCount;
+	ZeroMemory(tan1, vertexCount * sizeof(Vector3D) * 2);
 
+	for (long a = 0; a < triangleCount; a++)
+	{
+		long i1 = triangle->index[0];
+		long i2 = triangle->index[1];
+		long i3 = triangle->index[2];
 
+		const Point3D& v1 = vertex[i1];
+		const Point3D& v2 = vertex[i2];
+		const Point3D& v3 = vertex[i3];
+
+		const Point2D& w1 = texcoord[i1];
+		const Point2D& w2 = texcoord[i2];
+		const Point2D& w3 = texcoord[i3];
+
+		float x1 = v2.x - v1.x;
+		float x2 = v3.x - v1.x;
+		float y1 = v2.y - v1.y;
+		float y2 = v3.y - v1.y;
+		float z1 = v2.z - v1.z;
+		float z2 = v3.z - v1.z;
+
+		float s1 = w2.x - w1.x;
+		float s2 = w3.x - w1.x;
+		float t1 = w2.y - w1.y;
+		float t2 = w3.y - w1.y;
+
+		float r = 1.0F / (s1 * t2 - s2 * t1);
+		Vector3D sdir((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r,
+			(t2 * z1 - t1 * z2) * r);
+		Vector3D tdir((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r,
+			(s1 * z2 - s2 * z1) * r);
+
+		tan1[i1] += sdir;
+		tan1[i2] += sdir;
+		tan1[i3] += sdir;
+
+		tan2[i1] += tdir;
+		tan2[i2] += tdir;
+		tan2[i3] += tdir;
+
+		triangle++;
+	}
+
+	for (long a = 0; a < vertexCount; a++)
+	{
+		const Vector3D& n = normal[a];
+		const Vector3D& t = tan1[a];
+
+		// Gram-Schmidt orthogonalize
+		tangent[a] = (t - n * Dot(n, t)).Normalize();
+
+		// Calculate handedness
+		tangent[a].w = (Dot(Cross(n, t), tan2[a]) < 0.0F) ? -1.0F : 1.0F;
+	}
+
+	delete[] tan1;
+}*/
 
 void CASEFileType::ToGCM(CGCMFileType *pFile)
 {
@@ -1155,10 +1218,21 @@ void CASEFileType::ToGCM(CGCMFileType *pFile)
 					if(p3DSMaterial->sNormalFile[0]!=0)
 					{
 						float *pNormalMapTexArray=new float[nVertexes*2];
+						float *pTangentArray=new float[nVertexes*3];
+						float *pBitangentArray=new float[nVertexes*3];
 						memcpy(pNormalMapTexArray,pTexVertexArray,sizeof(float)*nVertexes*2);
 						
+						ComputeTangentBasis(nVertexes,pVertexArray,nFaces,pFaceVertexIndexes,pNormalMapTexArray,pNormalArray,pTangentArray,pBitangentArray);
+
 						pFile->SetBufferNormalMap(nFrame,nBuffer,p3DSMaterial->sNormalFile);
 						pFile->SetBufferNormalMapCoords(nFrame,nBuffer,pNormalMapTexArray);
+
+						// Calculo de la tangente y bitangente para el normal mapping
+						pFile->SetBufferTangents(nFrame,nBuffer,pTangentArray);
+						pFile->SetBufferBitangents(nFrame,nBuffer,pBitangentArray);
+
+						delete [] pTangentArray;
+						delete [] pBitangentArray;
 					}
 				}
 			}

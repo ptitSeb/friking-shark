@@ -5,6 +5,7 @@ SET (SRCS_VECTORLIB
 	./ASEFiles.h
 	./GBSFiles.h
 	./GCMFiles.h
+	./OBJFiles.h
 	./StdAfx.h
 	./VectorLib.h
 
@@ -13,6 +14,7 @@ SET (SRCS_VECTORLIB
 	./ASEFiles.cpp
 	./GBSFiles.cpp
 	./GCMFiles.cpp
+	./OBJFiles.cpp
 	./StdAfx.cpp
 	./VectorLib.cpp
 )

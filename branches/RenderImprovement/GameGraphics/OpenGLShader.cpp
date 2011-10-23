@@ -26,10 +26,18 @@ COpenGLShader::COpenGLShader(void)
   m_hFragmentShader=0;
   m_hShaderProgram=0;
   m_bTriedToCompile=false;
+  m_bActive=false;
 }
 
 COpenGLShader::~COpenGLShader(void)
-{
+{	
+	std::map<std::string,SUniformData*>::iterator i;
+	for(i=m_mUniforms.begin();i!=m_mUniforms.end();i++)
+	{
+		SUniformData *pData=i->second;
+		delete pData;
+	}
+	m_mUniforms.clear();
 }
 
 bool COpenGLShader::LoadCodeFile(std::string sSourceFile,std::string *psSourceCode)
@@ -100,7 +108,7 @@ bool COpenGLShader::Compile()
 		  glGetInfoLogARB(m_hVertexShader,sizeof(sOuputBuffer),&nLength,sOuputBuffer);
 		  if(!bOk){RTTRACE("COpenGLShader::Compile -> Vertex Shader compilation Failed");}
 		  if(sOuputBuffer[0]!=0){RTTRACE(sOuputBuffer);}
-		  if(sOuputBuffer[0]!=0){RTTRACE(m_sVertexShaderCode.c_str());}
+		  //if(sOuputBuffer[0]!=0){RTTRACE(m_sVertexShaderCode.c_str());}
 	  }
       if(bOk){glAttachObjectARB(m_hShaderProgram,m_hVertexShader);}
 	}
@@ -129,7 +137,7 @@ bool COpenGLShader::Compile()
 		  glGetInfoLogARB(m_hFragmentShader,sizeof(sOuputBuffer),&nLength,sOuputBuffer);
 		  if(!bOk){RTTRACE("COpenGLShader::Compile -> Fragment Shader compilation Failed");}
 		  if(sOuputBuffer[0]!=0){RTTRACE(sOuputBuffer);}
-		  if(sOuputBuffer[0]!=0){RTTRACE(m_sFragmentShaderCode.c_str());}
+		  //if(sOuputBuffer[0]!=0){RTTRACE(m_sFragmentShaderCode.c_str());}
 	  }
       if(bOk){glAttachObjectARB(m_hShaderProgram,m_hFragmentShader);}
 
@@ -139,6 +147,15 @@ bool COpenGLShader::Compile()
       bOk=false;
     }
   }
+  
+  std::map<std::string,SAttributeData>::iterator iAttribute;
+  for(iAttribute=m_mAttributes.begin();iAttribute!=m_mAttributes.end();iAttribute++)
+  {
+	  SAttributeData *pData=&iAttribute->second;
+	  glBindAttribLocation(m_hShaderProgram,pData->nIndex,iAttribute->first.c_str());
+	  pData->bModified=false;
+  }
+  
   if(bOk)
   {
     GLint glResult=0;
@@ -158,15 +175,17 @@ bool COpenGLShader::Compile()
 
 void COpenGLShader::FreeShader()
 {
-  if(m_hVertexShader){glDetachObjectARB(m_hShaderProgram,m_hVertexShader);glDeleteObjectARB(m_hVertexShader);m_hVertexShader=0;}
-  if(m_hFragmentShader){glDetachObjectARB(m_hShaderProgram,m_hFragmentShader);glDeleteObjectARB(m_hFragmentShader);m_hFragmentShader=0;}
-  if(m_hShaderProgram){glDeleteObjectARB(m_hShaderProgram);m_hShaderProgram=0;}
-  std::map<std::string,SUniformData>::iterator i;
-  for(i=m_mUniforms.begin();i!=m_mUniforms.end();i++)
-  {
-	  i->second.bModified=true;
-	  i->second.nLocation=-1;
-  }
+	if(m_hVertexShader){glDetachObjectARB(m_hShaderProgram,m_hVertexShader);glDeleteObjectARB(m_hVertexShader);m_hVertexShader=0;}
+	if(m_hFragmentShader){glDetachObjectARB(m_hShaderProgram,m_hFragmentShader);glDeleteObjectARB(m_hFragmentShader);m_hFragmentShader=0;}
+	if(m_hShaderProgram){glDeleteObjectARB(m_hShaderProgram);m_hShaderProgram=0;}
+	
+	std::map<std::string,SUniformData*>::iterator i;
+	for(i=m_mUniforms.begin();i!=m_mUniforms.end();i++)
+	{
+		SUniformData *pData=i->second;
+		pData->bModified=!pData->bTemporal;
+		pData->nLocation=-1;
+	}
 }
 
 bool COpenGLShader::Activate()
@@ -178,203 +197,510 @@ bool COpenGLShader::Activate()
   
 	glUseProgramObjectARB(m_hShaderProgram);
   
-	std::map<std::string,SUniformData>::iterator i;
-	for(i=m_mUniforms.begin();i!=m_mUniforms.end();i++)
+	std::map<std::string,SUniformData*>::iterator iUniform;
+	for(iUniform=m_mUniforms.begin();iUniform!=m_mUniforms.end();iUniform++)
 	{
-		SUniformData *pData=&i->second;
-		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, i->first.c_str());}
+		SUniformData *pData=iUniform->second;
+		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, iUniform->first.c_str());}
 		if(!pData->bModified){continue;}
+		if(pData->bTemporal){continue;}
 		pData->bModified=false;
 		
-		switch(i->second.eType)
+		switch(pData->eType)
 		{
 			case eUniformType_Int:
-				glUniform1iARB(pData->nLocation, pData->nValue);
+				glUniform1iARB(pData->nLocation,pData->data.nInteger);
 			break;
 			case eUniformType_Float:
-				glUniform1fARB(pData->nLocation, pData->fValue);
+				glUniform1fARB(pData->nLocation,pData->data.fFloats[0]);
 			break;
 			case eUniformType_Vector2:
-				glUniform2fARB(pData->nLocation, (float)pData->vVector.c[0],(float)pData->vVector.c[1]);
+				glUniform2fvARB(pData->nLocation,1,pData->data.fFloats);
 			break;
 			case eUniformType_Vector3:
-				glUniform3fARB(pData->nLocation, (float)pData->vVector.c[0],(float)pData->vVector.c[1],(float)pData->vVector.c[2]);
-				break;
+				glUniform3fvARB(pData->nLocation,1,pData->data.fFloats);
+			break;
 			case eUniformType_Color:
-				glUniform4fARB(pData->nLocation, (float)pData->vColor.c[0],(float)pData->vColor.c[1],(float)pData->vColor.c[2],(float)pData->fAlpha);
+				glUniform4fvARB(pData->nLocation,1,pData->data.fFloats);
 			break;
 			case eUniformType_Matrix:
-				glUniformMatrix4fvARB(pData->nLocation,  1,true,pData->matrix);
+				glUniformMatrix4fvARB(pData->nLocation,1,true,pData->data.fFloats);
+			break;
+			case eUniformType_IntArray:
+				glUniform1ivARB(pData->nLocation,pData->nElements,(int*)pData->pBuffer);
+			break;
+			case eUniformType_FloatArray:
+				glUniform1fvARB(pData->nLocation,pData->nElements,(float*)pData->pBuffer);
+			break;
+			case eUniformType_Vector3Array:
+				glUniform3fvARB(pData->nLocation,pData->nElements,(float*)pData->pBuffer);
+			break;
+			case eUniformType_ColorArray:
+				glUniform4fvARB(pData->nLocation,pData->nElements,(float*)pData->pBuffer);
+			break;
+			case eUniformType_MatrixArray:
+				glUniformMatrix4fvARB(pData->nLocation,pData->nElements,true,(float*)pData->pBuffer);
 			break;
 			default:
 				break;
 		}
 	}
 	
+	m_bActive=true;
 	
 	return true;
 }
 
-void COpenGLShader::AddUniform( std::string sUniformName,int nValue )
+void COpenGLShader::AddUniform( std::string sUniformName,int nValue,bool bTemporal )
 {
-	std::map<std::string,SUniformData>::iterator i;
+	std::map<std::string,SUniformData*>::iterator i;
 	i=m_mUniforms.find(sUniformName);
 	if(i==m_mUniforms.end())
 	{
-		SUniformData data;
-		i=m_mUniforms.insert(std::pair<std::string,SUniformData>(sUniformName,data)).first;
+		SUniformData *pData=new SUniformData;
+		i=m_mUniforms.insert(std::pair<std::string,SUniformData*>(sUniformName,pData)).first;
 	}
 	else
 	{
-		SUniformData *pData=&i->second;
-		if(pData->eType==eUniformType_Int && pData->nValue==nValue)
+		SUniformData *pData=i->second;
+		if(pData->eType==eUniformType_Int && pData->data.nInteger==nValue)
 		{
 			// Not mofidied
 			return;
 		}
 	}
 	
-	SUniformData *pData=&i->second;
+	SUniformData *pData=i->second;
 	pData->eType=eUniformType_Int;
-	pData->nValue=nValue;
-	pData->bModified=true;
+	pData->data.nInteger=nValue;
+	pData->bTemporal=bTemporal;
+	pData->bModified=!bTemporal;
+	pData->nElements=0;
+	if(pData->pBuffer){delete [] pData->pBuffer;pData->pBuffer=NULL;}
+	
+	if(m_bActive)
+	{
+		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());}
+		if(pData->nLocation!=-1){pData->bModified=false;glUniform1iARB(pData->nLocation,pData->data.nInteger);}
+	}
 }
 
-  void COpenGLShader::AddUniform( std::string sUniformName,float fValue )
-  {
-	  std::map<std::string,SUniformData>::iterator i;
-	  i=m_mUniforms.find(sUniformName);
-	  if(i==m_mUniforms.end())
-	  {
-		  SUniformData data;
-		  i=m_mUniforms.insert(std::pair<std::string,SUniformData>(sUniformName,data)).first;
-	  }
-	  else
-	  {
-		  SUniformData *pData=&i->second;
-		  if(pData->eType==eUniformType_Float && pData->fValue==fValue)
-		  {
-			  // Not mofidied
-			  return;
-		  }
-	  }	  
-	  SUniformData *pData=&i->second;
-	  pData->eType=eUniformType_Float;
-	  pData->fValue=fValue;
-	  pData->bModified=true;
-  }
-  
-  void COpenGLShader::AddUniform( std::string sUniformName,float fValue1,float fValue2)
-  {
-	  std::map<std::string,SUniformData>::iterator i;
-	  i=m_mUniforms.find(sUniformName);
-	  if(i==m_mUniforms.end())
-	  {
-		  SUniformData data;
-		  i=m_mUniforms.insert(std::pair<std::string,SUniformData>(sUniformName,data)).first;
-	  }
-	  else
-	  {
-		  SUniformData *pData=&i->second;
-		  if(pData->eType==eUniformType_Vector2 && pData->vVector.c[0]==fValue1 && pData->vVector.c[1]==fValue2)
-		  {
-			  // Not mofidied
-			  return;
-		  }
-	  }	  
-	  SUniformData *pData=&i->second;
-	  pData->eType=eUniformType_Vector2;
-	  pData->vVector.c[0]=fValue1;
-	  pData->vVector.c[1]=fValue2;
-	  pData->bModified=true;
-  }
-  
-  void COpenGLShader::AddUniform( std::string sUniformName,const CVector &vVector )
-  {
-	  std::map<std::string,SUniformData>::iterator i;
-	  i=m_mUniforms.find(sUniformName);
-	  if(i==m_mUniforms.end())
-	  {
-		  SUniformData data;
-		  i=m_mUniforms.insert(std::pair<std::string,SUniformData>(sUniformName,data)).first;
-	  }
-	  else
-	  {
-		  SUniformData *pData=&i->second;
-		  if(pData->eType==eUniformType_Vector3 && pData->vVector==vVector)
-		  {
-			  // Not mofidied
-			  return;
-		  }
-	  }	  
-	  
-	  SUniformData *pData=&i->second;
-	  pData->eType=eUniformType_Vector3;
-	  pData->vVector=vVector;
-	  pData->bModified=true;
-	  
-}
-  
-void COpenGLShader::AddUniform( std::string sUniformName,const CVector &vColor, float fAlpha )
+void COpenGLShader::AddUniform( std::string sUniformName,float fValue,bool bTemporal )
 {
-	  std::map<std::string,SUniformData>::iterator i;
-	  i=m_mUniforms.find(sUniformName);
-	  if(i==m_mUniforms.end())
-	  {
-		  SUniformData data;
-		  i=m_mUniforms.insert(std::pair<std::string,SUniformData>(sUniformName,data)).first;
-	  }
-	  else
-	  {
-		  SUniformData *pData=&i->second;
-		  if(pData->eType==eUniformType_Color && pData->vColor==vColor && pData->fAlpha==fAlpha)
-		  {
-			  // Not mofidied
-			  return;
-		  }
-	  }	  
-	  SUniformData *pData=&i->second;
-	  pData->eType=eUniformType_Color;
-	  pData->vColor=vColor;
-	  pData->fAlpha=fAlpha;
-	  pData->bModified=true;
+	std::map<std::string,SUniformData*>::iterator i;
+	i=m_mUniforms.find(sUniformName);
+	if(i==m_mUniforms.end())
+	{
+		SUniformData *pData=new SUniformData;
+		i=m_mUniforms.insert(std::pair<std::string,SUniformData*>(sUniformName,pData)).first;
+	}
+	else
+	{
+		SUniformData *pData=i->second;
+		if(pData->eType==eUniformType_Float && pData->data.fFloats[0]==fValue)
+		{
+			// Not mofidied
+			return;
+		}
+	}	  
+	SUniformData *pData=i->second;
+	pData->eType=eUniformType_Float;
+	pData->data.fFloats[0]=fValue;
+	pData->bTemporal=bTemporal;
+	pData->bModified=!bTemporal;
+	pData->nElements=0;
+	if(pData->pBuffer){delete [] pData->pBuffer;pData->pBuffer=NULL;}
+	
+	if(m_bActive)
+	{
+		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());}
+		if(pData->nLocation!=-1){pData->bModified=false;glUniform1fARB(pData->nLocation,pData->data.fFloats[0]);}
+	}
 }
   
-  void COpenGLShader::AddUniform( std::string sUniformName,double *pMatrix)
-  {
-	  std::map<std::string,SUniformData>::iterator i;
-	  i=m_mUniforms.find(sUniformName);
-	  if(i==m_mUniforms.end())
-	  {
-		  SUniformData data;
-		  i=m_mUniforms.insert(std::pair<std::string,SUniformData>(sUniformName,data)).first;
-	  }
-	  
-	  SUniformData *pData=&i->second;
-	  pData->eType=eUniformType_Matrix;
-	  pData->bModified=true;
-	  for(int x=0;x<16;x++)
-	  {
-		  pData->matrix[x]=(float)pMatrix[x];
-	  }
-  }  
+void COpenGLShader::AddUniform( std::string sUniformName,float fValue1,float fValue2,bool bTemporal)
+{
+	std::map<std::string,SUniformData*>::iterator i;
+	i=m_mUniforms.find(sUniformName);
+	if(i==m_mUniforms.end())
+	{
+		SUniformData *pData=new SUniformData;
+		i=m_mUniforms.insert(std::pair<std::string,SUniformData*>(sUniformName,pData)).first;
+	}
+	else
+	{
+		SUniformData *pData=i->second;
+		if(pData->eType==eUniformType_Vector2 && (float)pData->data.fFloats[0]==fValue1 && (float)pData->data.fFloats[1]==fValue2)
+		{
+			// Not mofidied
+			return;
+		}
+	}	  
+	SUniformData *pData=i->second;
+	pData->eType=eUniformType_Vector2;
+	pData->data.fFloats[0]=fValue1;
+	pData->data.fFloats[1]=fValue2;
+	pData->bTemporal=bTemporal;
+	pData->bModified=!bTemporal;
+	pData->nElements=0;
+	if(pData->pBuffer){delete [] pData->pBuffer;pData->pBuffer=NULL;}
+	
+	if(m_bActive)
+	{
+		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());}
+		if(pData->nLocation!=-1){pData->bModified=false;glUniform2fvARB(pData->nLocation,1,pData->data.fFloats);}
+	}
+}
+  
+void COpenGLShader::AddUniform( std::string sUniformName,const CVector &vVector,bool bTemporal )
+{
+	std::map<std::string,SUniformData*>::iterator i;
+	i=m_mUniforms.find(sUniformName);
+	if(i==m_mUniforms.end())
+	{
+		SUniformData *pData=new SUniformData;
+		i=m_mUniforms.insert(std::pair<std::string,SUniformData*>(sUniformName,pData)).first;
+	}
+	else
+	{
+		SUniformData *pData=i->second;
+		if(pData->eType==eUniformType_Vector3 && (float)pData->data.fFloats[0]==vVector.c[0] && pData->data.fFloats[1]==(float)vVector.c[1] && (float)pData->data.fFloats[2]==vVector.c[2])
+		{
+			// Not mofidied
+			return;
+		}
+	}	  
+	
+	SUniformData *pData=i->second;
+	pData->eType=eUniformType_Vector3;
+	pData->data.fFloats[0]=(float)vVector.c[0];
+	pData->data.fFloats[1]=(float)vVector.c[1];
+	pData->data.fFloats[2]=(float)vVector.c[2];
+	pData->bTemporal=bTemporal;
+	pData->bModified=!bTemporal;
+	pData->nElements=0;
+	if(pData->pBuffer){delete [] pData->pBuffer;pData->pBuffer=NULL;}
+	
+	if(m_bActive)
+	{
+		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());}
+		if(pData->nLocation!=-1){pData->bModified=false;glUniform3fvARB(pData->nLocation,1,pData->data.fFloats);}
+	}
+}
+  
+void COpenGLShader::AddUniform( std::string sUniformName,const CVector &vColor, float fAlpha ,bool bTemporal)
+{
+	std::map<std::string,SUniformData*>::iterator i;
+	i=m_mUniforms.find(sUniformName);
+	if(i==m_mUniforms.end())
+	{
+		SUniformData *pData=new SUniformData;
+		i=m_mUniforms.insert(std::pair<std::string,SUniformData*>(sUniformName,pData)).first;
+	}
+	else
+	{
+		SUniformData *pData=i->second;
+		if(pData->eType==eUniformType_Color && pData->data.fFloats[0]==(float)vColor.c[0] && pData->data.fFloats[1]==(float)vColor.c[1] && pData->data.fFloats[2]==(float)vColor.c[2] && pData->data.fFloats[3]==fAlpha)
+		{
+			// Not mofidied
+			return;
+		}
+	}	  
+	SUniformData *pData=i->second;
+	pData->eType=eUniformType_Color;
+	pData->data.fFloats[0]=(float)vColor.c[0];
+	pData->data.fFloats[1]=(float)vColor.c[1];
+	pData->data.fFloats[2]=(float)vColor.c[2];
+	pData->data.fFloats[3]=fAlpha;
+	pData->bTemporal=bTemporal;
+	pData->bModified=!bTemporal;
+	pData->nElements=0;
+	if(pData->pBuffer){delete [] pData->pBuffer;pData->pBuffer=NULL;}
+	
+	if(m_bActive)
+	{
+		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());}
+		if(pData->nLocation!=-1){pData->bModified=false;glUniform4fvARB(pData->nLocation,1,pData->data.fFloats);}
+	}
+}
+  
+void COpenGLShader::AddUniform( std::string sUniformName,CMatrix &matrix,bool bTemporal)
+{
+	std::map<std::string,SUniformData*>::iterator i;
+	i=m_mUniforms.find(sUniformName);
+	if(i==m_mUniforms.end())
+	{
+		SUniformData *pData=new SUniformData;
+		i=m_mUniforms.insert(std::pair<std::string,SUniformData*>(sUniformName,pData)).first;
+	}
+	
+	SUniformData *pData=i->second;
+	pData->eType=eUniformType_Matrix;
+	pData->bTemporal=bTemporal;
+	pData->bModified=!bTemporal;
+	pData->nElements=0;
+	if(pData->pBuffer){delete [] pData->pBuffer;pData->pBuffer=NULL;}
+	
+	for(int x=0;x<16;x++)
+	{
+		pData->data.fFloats[x]=(float)((double*)matrix.e)[x];
+	}
+	
+	if(m_bActive)
+	{
+		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());}
+		if(pData->nLocation!=-1){pData->bModified=false;glUniformMatrix4fvARB(pData->nLocation,1,true,pData->data.fFloats);}
+	}
+}  
+
+void COpenGLShader::AddUniformIntegers( std::string sUniformName,unsigned int nValues,int *pValues,bool bTemporal)
+{
+	std::map<std::string,SUniformData*>::iterator i;
+	i=m_mUniforms.find(sUniformName);
+	if(i==m_mUniforms.end())
+	{
+		SUniformData *pData=new SUniformData;
+		i=m_mUniforms.insert(std::pair<std::string,SUniformData*>(sUniformName,pData)).first;
+	}
+	
+	SUniformData *pData=i->second;
+	
+	if(!bTemporal)
+	{
+		// Do not perform unnecesary reallocs
+		if(pData->eType!=eUniformType_IntArray || pData->nElements!=nValues)
+		{
+			delete [] pData->pBuffer;
+			pData->pBuffer=(char*)new int [nValues];
+		}
+		memcpy(pData->pBuffer,pValues,sizeof(int)*nValues);
+		pData->nElements=nValues;
+	}
+		
+	pData->eType=eUniformType_IntArray;
+	pData->bTemporal=bTemporal;
+	pData->bModified=!bTemporal; // temporal values are only set if the shader is currently active
+	
+	if(m_bActive)
+	{
+		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());}
+		if(pData->nLocation!=-1){pData->bModified=false;glUniform1ivARB(pData->nLocation,nValues,pValues);}
+	}	
+}
+
+void COpenGLShader::AddUniformFloats( std::string sUniformName,unsigned int nValues,float *pValues,bool bTemporal)
+{
+	std::map<std::string,SUniformData*>::iterator i;
+	i=m_mUniforms.find(sUniformName);
+	if(i==m_mUniforms.end())
+	{
+		SUniformData *pData=new SUniformData;
+		i=m_mUniforms.insert(std::pair<std::string,SUniformData*>(sUniformName,pData)).first;
+	}
+	
+	SUniformData *pData=i->second;
+	
+	if(!bTemporal)
+	{
+		// Do not perform unnecesary reallocs
+		if(pData->eType!=eUniformType_FloatArray || pData->nElements!=nValues)
+		{
+			delete [] pData->pBuffer;
+			pData->pBuffer=(char*)new float [nValues];
+		}
+		memcpy(pData->pBuffer,pValues,sizeof(float)*nValues);
+		pData->nElements=nValues;
+	}
+	
+	pData->eType=eUniformType_FloatArray;
+	pData->bTemporal=bTemporal;
+	pData->bModified=!bTemporal; // temporal values are only set if the shader is currently active
+	
+	if(m_bActive)
+	{
+		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());}
+		if(pData->nLocation!=-1){pData->bModified=false;glUniform1fvARB(pData->nLocation,nValues,pValues);}
+	}	
+}
+
+void COpenGLShader::AddUniformVectors( std::string sUniformName,unsigned int nValues,const CVector *pvVectors,bool bTemporal)
+{
+	std::map<std::string,SUniformData*>::iterator i;
+	i=m_mUniforms.find(sUniformName);
+	if(i==m_mUniforms.end())
+	{
+		SUniformData *pData=new SUniformData;
+		i=m_mUniforms.insert(std::pair<std::string,SUniformData*>(sUniformName,pData)).first;
+	}
+	
+	SUniformData *pData=i->second;
+	if(pData->eType!=eUniformType_Vector3Array|| pData->nElements!=nValues)
+	{
+		delete [] pData->pBuffer;
+		pData->pBuffer=(char*)new float [nValues*3];
+	}
+	
+	pData->eType=eUniformType_Vector3Array;
+	pData->bTemporal=bTemporal;
+	pData->bModified=!bTemporal;
+	pData->nElements=nValues;
+	
+	float *pFloats=(float*)pData->pBuffer;
+	for(int x=0;x<nValues;x++)
+	{
+		*pFloats++=(float)pvVectors->c[0];
+		*pFloats++=(float)pvVectors->c[1];
+		*pFloats++=(float)pvVectors->c[2];
+		pvVectors++;
+	}
+	
+	if(m_bActive)
+	{
+		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());}
+		if(pData->nLocation!=-1){pData->bModified=false;glUniform3fvARB(pData->nLocation,nValues,(float*)pData->pBuffer);}
+	}
+}
+
+void COpenGLShader::AddUniformColors( std::string sUniformName,unsigned int nValues,const CVector *pvColors, float *pvfAlphas,bool bTemporal)
+{
+	std::map<std::string,SUniformData*>::iterator i;
+	i=m_mUniforms.find(sUniformName);
+	if(i==m_mUniforms.end())
+	{
+		SUniformData *pData=new SUniformData;
+		i=m_mUniforms.insert(std::pair<std::string,SUniformData*>(sUniformName,pData)).first;
+	}
+	
+	SUniformData *pData=i->second;
+	if(pData->eType!=eUniformType_ColorArray|| pData->nElements!=nValues)
+	{
+		delete [] pData->pBuffer;
+		pData->pBuffer=(char*)new float [nValues*4];
+	}
+	
+	pData->eType=eUniformType_ColorArray;
+	pData->bTemporal=bTemporal;
+	pData->bModified=!bTemporal;
+	pData->nElements=nValues;
+	
+	float *pFloats=(float*)pData->pBuffer;
+	for(int x=0;x<nValues;x++)
+	{
+		*pFloats++=(float)pvColors->c[0];
+		*pFloats++=(float)pvColors->c[1];
+		*pFloats++=(float)pvColors->c[2];
+		*pFloats++=*pvfAlphas;
+		pvfAlphas++;
+		pvColors++;
+	}
+	
+	if(m_bActive)
+	{
+		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());}
+		if(pData->nLocation!=-1){pData->bModified=false;glUniform4fvARB(pData->nLocation,nValues,(float*)pData->pBuffer);}
+	}
+}
+
+void COpenGLShader::AddUniformMatrixes( std::string sUniformName,unsigned int nValues,double *pMatrixes,bool bTemporal)
+{
+	std::map<std::string,SUniformData*>::iterator i;
+	i=m_mUniforms.find(sUniformName);
+	if(i==m_mUniforms.end())
+	{
+		SUniformData *pData=new SUniformData;
+		i=m_mUniforms.insert(std::pair<std::string,SUniformData*>(sUniformName,pData)).first;
+	}
+	
+	SUniformData *pData=i->second;
+	if(pData->eType!=eUniformType_MatrixArray|| pData->nElements!=nValues)
+	{
+		delete [] pData->pBuffer;
+		pData->pBuffer=(char*)new float [nValues*16];
+	}
+	
+	pData->eType=eUniformType_MatrixArray;
+	pData->bTemporal=bTemporal;
+	pData->bModified=!bTemporal;
+	pData->nElements=nValues;
+	
+	float *pFloats=(float*)pData->pBuffer;
+	for(int x=0;x<nValues*16;x++){pFloats[x]=(float)pMatrixes[x];}
+	
+	if(m_bActive)
+	{
+		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());}
+		if(pData->nLocation!=-1){pData->bModified=false;glUniformMatrix4fvARB(pData->nLocation,nValues,true,(float*)pData->pBuffer);}
+	}
+}  
+
+void COpenGLShader::AddUniformMatrixes( std::string sUniformName,unsigned int nValues,float *pMatrixes,bool bTemporal)
+{
+	std::map<std::string,SUniformData*>::iterator i;
+	i=m_mUniforms.find(sUniformName);
+	if(i==m_mUniforms.end())
+	{
+		SUniformData *pData=new SUniformData;
+		i=m_mUniforms.insert(std::pair<std::string,SUniformData*>(sUniformName,pData)).first;
+	}
+	
+	SUniformData *pData=i->second;
+	
+	if(!bTemporal)
+	{
+		// Do not perform unnecesary reallocs
+		if(pData->eType!=eUniformType_MatrixArray || pData->nElements!=nValues)
+		{
+			delete [] pData->pBuffer;
+			pData->pBuffer=(char*)new float [nValues*16];
+		}
+		memcpy(pData->pBuffer,pMatrixes,sizeof(float)*nValues*16);
+		pData->nElements=nValues;
+	}
+	else
+	{
+		// Remove previous data, this is now a temrporal uniform
+		if(pData->pBuffer){delete [] pData->pBuffer;pData->pBuffer=NULL;}
+		pData->nElements=0;
+		pData->pBuffer=NULL;
+	}
+	
+	pData->eType=eUniformType_MatrixArray;
+	pData->bTemporal=bTemporal;
+	pData->bModified=!bTemporal; // temporal values are only set if the shader is currently active
+	
+	if(m_bActive)
+	{
+		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());}
+		if(pData->nLocation!=-1){pData->bModified=false;glUniformMatrix4fvARB(pData->nLocation,nValues,true,pMatrixes);}
+	}	
+}  
+
+
+void COpenGLShader::AddAttribute( std::string sAttributeName,int nIndex)
+{
+	SAttributeData data;
+	data.nIndex=nIndex;
+	data.bModified=true;
+	m_mAttributes[sAttributeName]=data;
+}
 
 void COpenGLShader::Deactivate()
 {
-  if(m_hShaderProgram){glUseProgramObjectARB(0);}
+	if(m_hShaderProgram){glUseProgramObjectARB(0);}
+	m_bActive=false;
 }
 
 bool COpenGLShader::Unserialize(ISystemPersistencyNode *piNode)
 {
-  bool bOk=CSystemObjectBase::Unserialize(piNode);
-  std::string sVertexShaderCode;
-  std::string sFragmentShaderCode;
-  if(m_sVertexShader.c_str()){LoadCodeFile(m_sVertexShader,&sVertexShaderCode);}
-  if(m_sFragmentShader.c_str()){LoadCodeFile(m_sFragmentShader,&sFragmentShaderCode);}
-  m_sVertexShaderCode=m_sPreprocessorDefinitions+"\n"+sVertexShaderCode;
-  m_sFragmentShaderCode=m_sPreprocessorDefinitions+"\n"+sFragmentShaderCode;
-  m_bTriedToCompile=false;
-  return bOk;
+	bool bOk=CSystemObjectBase::Unserialize(piNode);
+	std::string sVertexShaderCode;
+	std::string sFragmentShaderCode;
+	if(m_sVertexShader.c_str()){LoadCodeFile(m_sVertexShader,&sVertexShaderCode);}
+	if(m_sFragmentShader.c_str()){LoadCodeFile(m_sFragmentShader,&sFragmentShaderCode);}
+	m_sVertexShaderCode=m_sPreprocessorDefinitions+"\n"+sVertexShaderCode;
+	m_sFragmentShaderCode=m_sPreprocessorDefinitions+"\n"+sFragmentShaderCode;
+	m_bTriedToCompile=false;
+	return bOk;
 }
 
 void COpenGLShader::Load( std::string sVertexShaderFile,std::string sFragmentShaderFile,std::string sPreprocessorDefinitions)

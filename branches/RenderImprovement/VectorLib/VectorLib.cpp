@@ -2577,3 +2577,81 @@ bool MRPersistencyRemove(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<
 
 void    MRPersistencyInitialize(CMRPersistentReferenceT<CRGBColor> *pItem){(*pItem->GetValueAddress())=Origin;}
 void    MRPersistencyFree(CMRPersistentReferenceT<CRGBColor> *pItem){}
+
+void ComputeTangentBasis(unsigned int nVertexes, float *pVertexes, unsigned int nFaces, unsigned int *pFaces, float *pTextCoords,float *pNormals,float *pTangents, float *pBitangents)
+{
+	CVector *tan1 = new CVector[nVertexes];
+	CVector *tan2 = new CVector[nVertexes];
+	
+	for (unsigned int a = 0; a < nFaces; a++)
+	{
+		unsigned int *pTempFace=pFaces+a*3;
+		unsigned int i1 = pTempFace[0];
+		unsigned int i2 = pTempFace[1];
+		unsigned int i3 = pTempFace[2];
+		
+		float *pTempVertex1=pVertexes+i1*3;
+		float *pTempVertex2=pVertexes+i2*3;
+		float *pTempVertex3=pVertexes+i3*3;
+		
+		float *pTempTex1=pTextCoords+i1*2;
+		float *pTempTex2=pTextCoords+i2*2;
+		float *pTempTex3=pTextCoords+i3*2;
+		
+		float x1 = pTempVertex2[0] - pTempVertex1[0];
+		float x2 = pTempVertex3[0] - pTempVertex1[0];
+		float y1 = pTempVertex2[1] - pTempVertex1[1];
+		float y2 = pTempVertex3[1] - pTempVertex1[1];
+		float z1 = pTempVertex2[2] - pTempVertex1[2];
+		float z2 = pTempVertex3[2] - pTempVertex1[2];
+		
+		float s1 = pTempTex2[0] - pTempTex1[0];
+		float s2 = pTempTex3[0] - pTempTex1[0];
+		float t1 = pTempTex2[1] - pTempTex1[1];
+		float t2 = pTempTex3[1] - pTempTex1[1];
+		
+		float r = 1.0F / (s1 * t2 - s2 * t1);
+		CVector sdir((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r,(t2 * z1 - t1 * z2) * r);
+		CVector tdir((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r,(s1 * z2 - s2 * z1) * r);
+		
+		tan1[i1] += sdir;
+		tan1[i2] += sdir;
+		tan1[i3] += sdir;
+		
+		tan2[i1] += tdir;
+		tan2[i2] += tdir;
+		tan2[i3] += tdir;
+	}
+	
+	for (unsigned int a = 0; a < nVertexes; a++)
+	{
+		float *pTempNormal = pNormals+a*3;
+		CVector vTangent= tan1[a];
+		CVector vTangent2 = tan2[a];
+		CVector vNormal(pTempNormal[0],pTempNormal[1],pTempNormal[2]);
+		
+		// Gram-Schmidt orthogonalize
+		CVector vFinalTangent = (vTangent - vNormal * (vNormal*vTangent));
+		CVector vFinalBitangent= (vNormal^vFinalTangent);
+		vFinalBitangent.N();
+		vFinalTangent.N();
+		
+		float *pFinalTangent= pTangents+a*3;
+		float *pFinalBitangent= pBitangents+a*3;
+		
+		pFinalTangent[0]=vFinalTangent.c[0];
+		pFinalTangent[1]=vFinalTangent.c[1];
+		pFinalTangent[2]=vFinalTangent.c[2];
+		
+		pFinalBitangent[0]=vFinalBitangent.c[0];
+		pFinalBitangent[1]=vFinalBitangent.c[1];
+		pFinalBitangent[2]=vFinalBitangent.c[2];
+		
+		// Calculate handedness
+		//pFinalTangent[3]= (((vNormal^vTangent)*vTangent2) < 0.0) ? -1.0 : 1.0;
+		//pFinalBitangent[3]=pFinalTangent[3];
+	}
+	
+	delete[] tan1;
+	delete[] tan2;
+}

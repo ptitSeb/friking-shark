@@ -18,6 +18,7 @@
 
 #include "./stdafx.h"
 #include "GCMFiles.h"
+#include "OBJFiles.h"
 #include "OpenGLModel.h"
 
 COpenGLModel::COpenGLModel(void)
@@ -75,15 +76,30 @@ bool COpenGLModel::LoadFromFile()
 		if(!bLoadedGCM){RTTRACE("COpenGLModel::LoadFromFile -> GCM file for %s not found, rebuilding if possible",m_sFileName.c_str());}
 	}
 	
+	char sExt[MAX_PATH]={0};
 	if(!bLoadedGCM)
 	{
-		CASEFileType	asefile;
-		if(!asefile.Open(m_sFileName.c_str()))
+		GetExtension(m_sFileName.c_str(),sExt);
+		if(strcasecmp(sExt,".OBJ")==0)
 		{
-			RTTRACE("COpenGLModel::LoadFromFile -> Failed to load model %s",m_sFileName.c_str());
-			return false;
+			COBJFileType	objfile;
+			if(!objfile.Open(m_sFileName.c_str()))
+			{
+				RTTRACE("COpenGLModel::LoadFromFile -> Failed to load model %s",m_sFileName.c_str());
+				return false;
+			}
+			objfile.ToGCM(&gcmfile);
 		}
-		asefile.ToGCM(&gcmfile);
+		else
+		{
+			CASEFileType	asefile;
+			if(!asefile.Open(m_sFileName.c_str()))
+			{
+				RTTRACE("COpenGLModel::LoadFromFile -> Failed to load model %s",m_sFileName.c_str());
+				return false;
+			}
+			asefile.ToGCM(&gcmfile);
+		}
 		if(!gcmfile.Save(sGCMFile))
 		{
 			RTTRACE("COpenGLModel::LoadFromFile -> Failed to save GCM for model %s",m_sFileName.c_str());
@@ -319,6 +335,8 @@ void COpenGLModel::UpdateBufferObjects()
 			{
 				SModelRenderBuffer *pBuffer=pFrame->vRenderBuffers[nBuffer];
 
+				UpdateTangentBasis(pBuffer);
+				
 				// Compute BBox
 				float *pVertexCursor=pBuffer->pVertexArray;
 				for(int v=0;v<pBuffer->nVertexes;v++)
@@ -339,8 +357,10 @@ void COpenGLModel::UpdateBufferObjects()
 				int nDataPerVertex=0;
 				if(pBuffer->pVertexArray){nDataPerVertex+=3;}
 				if(pBuffer->pNormalArray){nDataPerVertex+=3;}
-				if(pBuffer->pNormalMapArray){nDataPerVertex+=2;}
 				if(pBuffer->pColorArray){nDataPerVertex+=4;}
+				if(pBuffer->pNormalMapArray){nDataPerVertex+=2;}
+				if(pBuffer->pTangentArray){nDataPerVertex+=3;}
+				if(pBuffer->pBitangentArray){nDataPerVertex+=3;}
 				for(unsigned long nTexture=0;nTexture<pBuffer->vTextureLevels.size();nTexture++)
 				{
 					SModelTextureLevel *pTextureLevel=pBuffer->vTextureLevels[nTexture];
@@ -367,15 +387,25 @@ void COpenGLModel::UpdateBufferObjects()
 						memcpy(((unsigned char*)pBufferObject)+dwOffset,pBuffer->pNormalArray,pBuffer->nVertexes*3*sizeof(GLfloat));
 						dwOffset+=pBuffer->nVertexes*3*sizeof(GLfloat);
 					}
+					if(pBuffer->pColorArray)
+					{
+						memcpy(((unsigned char*)pBufferObject)+dwOffset,pBuffer->pColorArray,pBuffer->nVertexes*4*sizeof(GLfloat));
+						dwOffset+=pBuffer->nVertexes*4*sizeof(GLfloat);
+					}
 					if(pBuffer->pNormalMapArray)
 					{
 						memcpy(((unsigned char*)pBufferObject)+dwOffset,pBuffer->pNormalMapArray,pBuffer->nVertexes*2*sizeof(GLfloat));
 						dwOffset+=pBuffer->nVertexes*2*sizeof(GLfloat);
 					}
-					if(pBuffer->pColorArray)
+					if(pBuffer->pTangentArray)
 					{
-						memcpy(((unsigned char*)pBufferObject)+dwOffset,pBuffer->pColorArray,pBuffer->nVertexes*4*sizeof(GLfloat));
-						dwOffset+=pBuffer->nVertexes*4*sizeof(GLfloat);
+						memcpy(((unsigned char*)pBufferObject)+dwOffset,pBuffer->pTangentArray,pBuffer->nVertexes*3*sizeof(GLfloat));
+						dwOffset+=pBuffer->nVertexes*3*sizeof(GLfloat);
+					}
+					if(pBuffer->pBitangentArray)
+					{
+						memcpy(((unsigned char*)pBufferObject)+dwOffset,pBuffer->pBitangentArray,pBuffer->nVertexes*3*sizeof(GLfloat));
+						dwOffset+=pBuffer->nVertexes*3*sizeof(GLfloat);
 					}
 					for(unsigned long nTexture=0;nTexture<pBuffer->vTextureLevels.size();nTexture++)
 					{
@@ -531,6 +561,7 @@ void COpenGLModel::SetRenderBufferVertexes( unsigned long nAnimation,unsigned lo
 	delete [] pBuffer->pVertexArray;
 	pBuffer->nVertexes=nVertexes;
 	pBuffer->pVertexArray=pVertexes;
+	ClearTangentBasis(pBuffer);
 }
 
 void COpenGLModel::SetRenderBufferFaces( unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nFaces,unsigned int *pFacesVertexes )
@@ -540,6 +571,7 @@ void COpenGLModel::SetRenderBufferFaces( unsigned long nAnimation,unsigned long 
 	delete [] pBuffer->pFaceVertexIndexes;
 	pBuffer->nFaces=nFaces;
 	pBuffer->pFaceVertexIndexes=pFacesVertexes;
+	ClearTangentBasis(pBuffer);
 }
 
 void COpenGLModel::SetRenderBufferNormals( unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,float *pNormals )
@@ -548,6 +580,7 @@ void COpenGLModel::SetRenderBufferNormals( unsigned long nAnimation,unsigned lon
 	if(pBuffer==NULL){return;}
 	delete [] pBuffer->pNormalArray;
 	pBuffer->pNormalArray=pNormals;
+	ClearTangentBasis(pBuffer);
 }
 
 void COpenGLModel::SetRenderBufferColors( unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,float *pColors )
@@ -573,6 +606,7 @@ void COpenGLModel::SetRenderBufferNormalMap( unsigned long nAnimation,unsigned l
 	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation, nFrame, nBuffer);
 	if(pBuffer==NULL){return;}
 	pBuffer->normalMap.Attach(piTexture);
+	ClearTangentBasis(pBuffer);
 }
 
 void COpenGLModel::SetRenderBufferNormalMapCoords( unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,float *pNormalMapVertexes)
@@ -581,6 +615,7 @@ void COpenGLModel::SetRenderBufferNormalMapCoords( unsigned long nAnimation,unsi
 	if(pBuffer==NULL){return;}
 	delete [] pBuffer->pNormalMapArray;
 	pBuffer->pNormalMapArray=pNormalMapVertexes;
+	ClearTangentBasis(pBuffer);
 }
 
 void COpenGLModel::GetRenderBufferMaterial( unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,CVector *pvAmbientColor,CVector *pvDiffuseColor,CVector *pvSpecularColor, float *pfShininess, float *pfOpacity )
@@ -731,13 +766,14 @@ void COpenGLModel::GetBSPOptions(bool *pbLoad)
 	if(pbLoad){*pbLoad=m_bLoadBSP;}
 }
 
-void COpenGLModel::PrepareRenderBuffer(IGenericRender *piRender, unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer ,bool bRenderingShadow,unsigned int nNormalMapTextureIndex)
+void COpenGLModel::PrepareRenderBuffer(IGenericRender *piRender, unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer ,bool bRenderingShadow,SOpenGLRenderMappings *pRenderMappings)
 {
 	if(m_bLoadPending){LoadFromFile();}
 	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation,nFrame,nBuffer);
 	if(pBuffer==NULL){return;}
 
-	bool bUseNormalMap=(!bRenderingShadow && pBuffer->pNormalMapArray && piRender->AreNormalMapsEnabled() && piRender->IsRenderingWithShader());
+	bool bRenderingWithShader=piRender->IsRenderingWithShader();
+	bool bUseNormalMap=(!bRenderingShadow && pBuffer->pNormalMapArray && piRender->AreNormalMapsEnabled() && bRenderingWithShader);
 	
 	if(!bRenderingShadow && piRender->AreTexturesEnabled())
 	{
@@ -759,58 +795,130 @@ void COpenGLModel::PrepareRenderBuffer(IGenericRender *piRender, unsigned int nA
 		unsigned long nOffset=0;
 		if(pBuffer->pVertexArray)
 		{
-			glEnableClientState(GL_VERTEX_ARRAY);
-			glVertexPointer(3,GL_FLOAT,pBuffer->nVertexes*sizeof(GLfloat)*nOffset,NULL);
+			if(bRenderingWithShader)
+			{
+				glEnableVertexAttribArray(pRenderMappings->nVertexAttribIndex);
+				glVertexAttribPointer(pRenderMappings->nVertexAttribIndex,3,GL_FLOAT,GL_FALSE,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
+			}
+			else
+			{
+				glEnableClientState(GL_VERTEX_ARRAY);
+				glVertexPointer(3,GL_FLOAT,pBuffer->nVertexes*sizeof(GLfloat)*nOffset,NULL);
+			}
 			nOffset+=3;
 		}
 		if(!bRenderingShadow)
 		{
-			GLfloat  pSpecular[]={(float)pBuffer->vSpecularColor.c[0],(float)pBuffer->vSpecularColor.c[1],(float)pBuffer->vSpecularColor.c[2],pBuffer->fOpacity};
-			glMaterialfv(GL_FRONT,GL_SPECULAR,pSpecular);
-			glMaterialf(GL_FRONT,GL_SHININESS,pBuffer->fShininess);
-
 			if(pBuffer->pNormalArray)
 			{
-				glEnableClientState(GL_NORMAL_ARRAY);
-				glNormalPointer(GL_FLOAT,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
+				if(bRenderingWithShader)
+				{
+					glEnableVertexAttribArray(pRenderMappings->nNormalAttribIndex);
+					glVertexAttribPointer(pRenderMappings->nNormalAttribIndex,3,GL_FLOAT,GL_FALSE,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
+				}
+				else
+				{
+					glEnableClientState(GL_NORMAL_ARRAY);
+					glNormalPointer(GL_FLOAT,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
+				}
 				nOffset+=3;
 			}
-			if(pBuffer->pNormalMapArray)
-			{
-				if(bUseNormalMap)
-				{
-					glClientActiveTextureARB(GL_TEXTURE0_ARB+nNormalMapTextureIndex);
-					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-					glTexCoordPointer(2,GL_FLOAT,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
-				}
-				nOffset+=2;
-			}
+			
 			if(pBuffer->pColorArray)
 			{
-				glEnable(GL_COLOR_MATERIAL);
-				glColorMaterial(GL_FRONT,GL_AMBIENT_AND_DIFFUSE);
-
-				glEnableClientState(GL_COLOR_ARRAY);
-				glColorPointer(4,GL_FLOAT,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
+				if(bRenderingWithShader)
+				{
+					glEnableVertexAttribArray(pRenderMappings->nColorAttribIndex);
+					glVertexAttribPointer(pRenderMappings->nColorAttribIndex,4,GL_FLOAT,GL_FALSE,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
+				}
+				else
+				{
+					glEnableClientState(GL_COLOR_ARRAY);
+					glColorPointer(4,GL_FLOAT,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
+				}
 				nOffset+=4;
 			}
 			else
 			{
-				GLfloat  pAmbient[]={(float)pBuffer->vAmbientColor.c[0],(float)pBuffer->vAmbientColor.c[1],(float)pBuffer->vAmbientColor.c[2],pBuffer->fOpacity};
-				GLfloat  pDiffuse[]={(float)pBuffer->vDiffuseColor.c[0],(float)pBuffer->vDiffuseColor.c[1],(float)pBuffer->vDiffuseColor.c[2],pBuffer->fOpacity};
-				glMaterialfv(GL_FRONT,GL_AMBIENT,pAmbient);
-				glMaterialfv(GL_FRONT,GL_DIFFUSE,pDiffuse);
+				if(!bRenderingWithShader)
+				{
+					glDisableClientState(GL_COLOR_ARRAY);
+				}
 			}
+			
+			if(!bRenderingWithShader)
+			{ 
+				
+				if(piRender->IsLightingActive())
+				{
+					GLfloat pAmbient[]={(float)pBuffer->vAmbientColor.c[0],(float)pBuffer->vAmbientColor.c[1],(float)pBuffer->vAmbientColor.c[2],pBuffer->fOpacity};
+					GLfloat pDiffuse[]={(float)pBuffer->vDiffuseColor.c[0],(float)pBuffer->vDiffuseColor.c[1],(float)pBuffer->vDiffuseColor.c[2],pBuffer->fOpacity};
+					GLfloat pSpecular[]={(float)pBuffer->vSpecularColor.c[0],(float)pBuffer->vSpecularColor.c[1],(float)pBuffer->vSpecularColor.c[2],pBuffer->fOpacity};
+					glMaterialfv(GL_FRONT,GL_AMBIENT,pAmbient);
+					glMaterialfv(GL_FRONT,GL_DIFFUSE,pDiffuse);
+					glMaterialfv(GL_FRONT,GL_SPECULAR,pSpecular);
+					glMaterialf(GL_FRONT,GL_SHININESS,pBuffer->fShininess);
+					
+					if(pBuffer->pColorArray)
+					{
+						glEnable(GL_COLOR_MATERIAL);
+						glColorMaterial(GL_FRONT,GL_AMBIENT_AND_DIFFUSE);
+					}
+					else
+					{
+						glDisable(GL_COLOR_MATERIAL);
+						glColor4f(pDiffuse[0],pDiffuse[1],pDiffuse[2],pDiffuse[3]);
+					}
+				}
+				else
+				{
+					GLfloat  pDiffuse[]={(float)pBuffer->vDiffuseColor.c[0],(float)pBuffer->vDiffuseColor.c[1],(float)pBuffer->vDiffuseColor.c[2],pBuffer->fOpacity};
+					glColor4f(pDiffuse[0],pDiffuse[1],pDiffuse[2],pDiffuse[3]);
+				}
+			}
+			
+			if(pBuffer->pNormalMapArray)
+			{
+				if(bUseNormalMap)
+				{
+					glEnableVertexAttribArray(pRenderMappings->nNormalMapCoordAttribIndex);
+					glVertexAttribPointer(pRenderMappings->nNormalMapCoordAttribIndex,2,GL_FLOAT,GL_FALSE,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
+					nOffset+=2;
+					
+					if(pBuffer->pTangentArray && pRenderMappings->nTangentAttribIndex!=-1)
+					{
+						glEnableVertexAttribArray(pRenderMappings->nTangentAttribIndex);
+						glVertexAttribPointer(pRenderMappings->nTangentAttribIndex,3,GL_FLOAT,GL_FALSE,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
+						nOffset+=3;
+					}
+					if(pBuffer->pBitangentArray && pRenderMappings->nBitangentAttribIndex!=-1)
+					{
+						glEnableVertexAttribArray(pRenderMappings->nBitangentAttribIndex);
+						glVertexAttribPointer(pRenderMappings->nBitangentAttribIndex,3,GL_FLOAT,GL_FALSE,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
+						nOffset+=3;
+					}
+				}
+			}
+			
+			
 			if(piRender->AreTexturesEnabled())
 			{
-				for(unsigned int x=0;x<pBuffer->vTextureLevels.size();x++)
+				for(unsigned int x=0;x<pBuffer->vTextureLevels.size() && x<2;x++)
 				{
 					SModelTextureLevel *pTextureLevel=pBuffer->vTextureLevels[x];
 					if(pTextureLevel && pTextureLevel->texture.m_piTexture && pTextureLevel->pTexVertexArray)
 					{
-						glClientActiveTextureARB(GL_TEXTURE0_ARB+x);
-						glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-						glTexCoordPointer(2,GL_FLOAT,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
+						if(bRenderingWithShader)
+						{
+							glEnableVertexAttribArray(pRenderMappings->pTextureAttribIndex[x]);
+							glVertexAttribPointer(pRenderMappings->pTextureAttribIndex[x],2,GL_FLOAT,GL_FALSE,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
+						}
+						else
+						{
+							glClientActiveTextureARB(GL_TEXTURE0_ARB+x);
+							glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+							glTexCoordPointer(2,GL_FLOAT,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
+						}
 						nOffset+=2;
 					}
 				}
@@ -831,26 +939,34 @@ void COpenGLModel::PrepareRenderBuffer(IGenericRender *piRender, unsigned int nA
 				glEnableClientState(GL_NORMAL_ARRAY);
 				glNormalPointer(GL_FLOAT,0,pBuffer->pNormalArray);
 			}
-			if(bUseNormalMap)
-			{
-				glClientActiveTextureARB(GL_TEXTURE0_ARB+nNormalMapTextureIndex);
-				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-				glTexCoordPointer(2,GL_FLOAT,0,pBuffer->pNormalMapArray);
-			}
+			
 			if(pBuffer->pColorArray)
 			{
 				glEnableClientState(GL_COLOR_ARRAY);
 				glColorPointer(4,GL_FLOAT,0,pBuffer->pColorArray);
-
-				glEnable(GL_COLOR_MATERIAL);
-				glColorMaterial(GL_FRONT,GL_AMBIENT_AND_DIFFUSE);
 			}
 			else
+			{
+				glDisableClientState(GL_COLOR_ARRAY);
+			}
+			
+			if(piRender->IsLightingActive())
 			{
 				GLfloat  pAmbient[]={(float)pBuffer->vAmbientColor.c[0],(float)pBuffer->vAmbientColor.c[1],(float)pBuffer->vAmbientColor.c[2],pBuffer->fOpacity};
 				GLfloat  pDiffuse[]={(float)pBuffer->vDiffuseColor.c[0],(float)pBuffer->vDiffuseColor.c[1],(float)pBuffer->vDiffuseColor.c[2],pBuffer->fOpacity};
 				glMaterialfv(GL_FRONT,GL_AMBIENT,pAmbient);
 				glMaterialfv(GL_FRONT,GL_DIFFUSE,pDiffuse);
+				
+				if(pBuffer->pColorArray)
+				{
+					glEnable(GL_COLOR_MATERIAL);
+					glColorMaterial(GL_FRONT,GL_AMBIENT_AND_DIFFUSE);
+				}
+			}
+			else
+			{
+				GLfloat  pDiffuse[]={(float)pBuffer->vDiffuseColor.c[0],(float)pBuffer->vDiffuseColor.c[1],(float)pBuffer->vDiffuseColor.c[2],pBuffer->fOpacity};
+				glColor4f(pDiffuse[0],pDiffuse[1],pDiffuse[2],pDiffuse[3]);
 			}
 			
 			if(piRender->AreTexturesEnabled())
@@ -870,14 +986,21 @@ void COpenGLModel::PrepareRenderBuffer(IGenericRender *piRender, unsigned int nA
 	}
 }
 
-void COpenGLModel::CallRenderBuffer(IGenericRender *piRender, unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer )
+void COpenGLModel::CallRenderBuffer(IGenericRender *piRender, unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,unsigned int nInstances)
 {
 	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation,nFrame,nBuffer);
 	if(pBuffer==NULL){return;}
 
 	if(pBuffer->nBufferObject)
 	{
-		glDrawElements(GL_TRIANGLES,pBuffer->nFaces*3,GL_UNSIGNED_INT,NULL);
+		if(piRender->IsRenderingWithShader())
+		{
+			glDrawElementsInstancedARB(GL_TRIANGLES,pBuffer->nFaces*3,GL_UNSIGNED_INT,NULL,nInstances);
+		}
+		else
+		{
+			glDrawElements(GL_TRIANGLES,pBuffer->nFaces*3,GL_UNSIGNED_INT,NULL);
+		}
 	}
 	else
 	{
@@ -885,38 +1008,77 @@ void COpenGLModel::CallRenderBuffer(IGenericRender *piRender, unsigned int nAnim
 	}
 }
 
-void COpenGLModel::UnPrepareRenderBuffer(IGenericRender *piRender, unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer ,bool bRenderingShadow,unsigned int nNormalMapTextureIndex)
+void COpenGLModel::UnPrepareRenderBuffer(IGenericRender *piRender, unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer ,bool bRenderingShadow,SOpenGLRenderMappings *pRenderMappings)
 {
 	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation,nFrame,nBuffer);
 	if(pBuffer==NULL){return;}
 	
+	bool bRenderingWithShader=piRender->IsRenderingWithShader();
 	bool bUseNormalMap=(!bRenderingShadow && pBuffer->pNormalMapArray && piRender->AreNormalMapsEnabled() && piRender->IsRenderingWithShader());
 	
-
 	if(pBuffer->nBufferObject){glBindBuffer(GL_ARRAY_BUFFER,0);}
 	if(pBuffer->nIndexesBufferObject){glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);}
 	
-	if(pBuffer->pVertexArray){glDisableClientState(GL_VERTEX_ARRAY);}
-	if(!bRenderingShadow && pBuffer->pNormalArray){glDisableClientState(GL_NORMAL_ARRAY);}
+	if(pBuffer->pVertexArray)
+	{
+		if(bRenderingWithShader)
+		{
+			glDisableVertexAttribArray(pRenderMappings->nVertexAttribIndex);
+		}
+		else
+		{
+			glDisableClientState(GL_VERTEX_ARRAY);
+		}
+	}
+	if(!bRenderingShadow && pBuffer->pNormalArray)
+	{
+		if(bRenderingWithShader)
+		{
+			glDisableVertexAttribArray(pRenderMappings->nNormalAttribIndex);
+		}
+		else
+		{
+			glDisableClientState(GL_NORMAL_ARRAY);
+		}
+	}
 	if(bUseNormalMap)
 	{
-		glClientActiveTextureARB(GL_TEXTURE0_ARB+nNormalMapTextureIndex);
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glDisableVertexAttribArray(pRenderMappings->nNormalMapCoordAttribIndex);
 		piRender->UnselectNormalMap();
+		
+		if(pRenderMappings->nTangentAttribIndex!=-1){glDisableVertexAttribArray(pRenderMappings->nTangentAttribIndex);}
+		if(pRenderMappings->nBitangentAttribIndex!=-1){glDisableVertexAttribArray(pRenderMappings->nBitangentAttribIndex);}	
 	}
 	if(!bRenderingShadow && pBuffer->pColorArray)
 	{
-		glDisableClientState(GL_COLOR_ARRAY);
-		glDisable(GL_COLOR_MATERIAL);
+		if(piRender->IsLightingActive())
+		{
+			glDisable(GL_COLOR_MATERIAL);
+		}
+		if(bRenderingWithShader)
+		{
+			glDisableVertexAttribArray(pRenderMappings->nColorAttribIndex);
+		}
+		else
+		{
+			glDisableClientState(GL_COLOR_ARRAY);
+		}
 	}
 	if(!bRenderingShadow && piRender->AreTexturesEnabled())
 	{
-		for(unsigned int x=0;x<pBuffer->vTextureLevels.size();x++)
+		for(unsigned int x=0;x<pBuffer->vTextureLevels.size() && x<2;x++)
 		{
 			if(pBuffer->vTextureLevels[x]->texture.m_piTexture && pBuffer->vTextureLevels[x]->pTexVertexArray)
 			{
-				glClientActiveTextureARB(GL_TEXTURE0_ARB+x);
-				glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+				if(bRenderingWithShader)
+				{
+					glDisableVertexAttribArray(pRenderMappings->pTextureAttribIndex[x]);
+				}
+				else
+				{
+					glClientActiveTextureARB(GL_TEXTURE0_ARB+x);
+					glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+				}
 				piRender->UnselectTexture(x);
 			}
 		}
@@ -936,7 +1098,6 @@ CTraceInfo COpenGLModel::GetTrace( const CVector &vOrigin,const CVector &vAngles
 			info.m_dTraceFraction=1.0;
 			info.m_vTracePos=p2;
 		}
-		//else{RTTRACE("Trace hit");}
 		return info;
 	}
 	else
@@ -952,6 +1113,28 @@ bool COpenGLModel::Prepare()
 {
 	if(m_bLoadPending){return LoadFromFile();}
 	return m_bLoadResult;
+}
+
+void COpenGLModel::ClearTangentBasis(SModelRenderBuffer *pBuffer)
+{
+	delete [] pBuffer->pTangentArray;
+	delete [] pBuffer->pBitangentArray;
+	pBuffer->pTangentArray=NULL;
+	pBuffer->pBitangentArray=NULL;
+}
+
+void COpenGLModel::UpdateTangentBasis(SModelRenderBuffer *pBuffer)
+{
+	ClearTangentBasis(pBuffer);
+	
+	if(!pBuffer->nVertexes || !pBuffer->pVertexArray){return;}
+	if(!pBuffer->nFaces || !pBuffer->pFaceVertexIndexes){return;}
+	if(!pBuffer->pNormalArray || !pBuffer->pNormalMapArray){return;}
+	
+	pBuffer->pTangentArray=new float[pBuffer->nVertexes*3];
+	pBuffer->pBitangentArray=new float[pBuffer->nVertexes*3];
+	
+	ComputeTangentBasis(pBuffer->nVertexes,pBuffer->pVertexArray,pBuffer->nFaces,pBuffer->pFaceVertexIndexes,pBuffer->pNormalMapArray,pBuffer->pNormalArray,pBuffer->pTangentArray,pBuffer->pBitangentArray);
 }
 
 SModelTextureLevel::SModelTextureLevel()
@@ -979,6 +1162,8 @@ SModelRenderBuffer::SModelRenderBuffer()
 	pVertexArray=NULL;
 	pNormalArray=NULL;
 	pNormalMapArray=NULL;
+	pTangentArray=NULL;
+	pBitangentArray=NULL;
 	pColorArray=NULL;
 	pFaceVertexIndexes=NULL;
 }
@@ -994,11 +1179,15 @@ SModelRenderBuffer::~SModelRenderBuffer()
 	delete [] pVertexArray;
 	delete [] pNormalArray;
 	delete [] pNormalMapArray;
+	delete [] pTangentArray;
+	delete [] pBitangentArray;
 	delete [] pColorArray;
 	delete [] pFaceVertexIndexes;
 
 	pVertexArray=NULL;
 	pNormalMapArray=NULL;
+	pTangentArray=NULL;
+	pBitangentArray=NULL;
 	pNormalArray=NULL;
 	pColorArray=NULL;
 	pFaceVertexIndexes=NULL;

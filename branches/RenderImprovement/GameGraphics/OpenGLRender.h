@@ -46,6 +46,8 @@ struct SRenderState
 	CVector vHeightFogMaxs;
 	CVector vHeightFogColor;
 	
+	unsigned long nTextureLevels;
+	
 	EShadingModel eShadingModel;
 	
 	bool operator <(const SRenderState &otherState) const
@@ -62,6 +64,9 @@ struct SRenderState
 		
 		if(bActiveLighting<otherState.bActiveLighting){return -1;}
 		if(bActiveLighting>otherState.bActiveLighting){return 1;}
+		
+		if(nTextureLevels<otherState.nTextureLevels){return -1;}
+		if(nTextureLevels>otherState.nTextureLevels){return 1;}
 		
 		if(eShadingModel<otherState.eShadingModel){return -1;}
 		if(eShadingModel>otherState.eShadingModel){return 1;}
@@ -104,6 +109,7 @@ struct SRenderState
 		bActiveShadowEmission=true;
 		bActiveShadowReception=true;
 		bActiveSkyShadow=false;
+		nTextureLevels=0;
 		eShadingModel=eShadingModel_Balanced;
 
 		bActiveDepth=true;
@@ -343,6 +349,17 @@ SShaderKey(){eShadingModel=eShadingModel_Gouraud;bHeightFog=false;bShadows=false
 SShaderKey(EShadingModel shading,bool heightFog,bool shadows,int textureUnits,bool lighting,bool water,bool normalMap,bool sky){eShadingModel=shading;bHeightFog=heightFog;bShadows=shadows;nTextureUnits=textureUnits;bLighting=lighting;bWater=water;bNormalMap=normalMap;bSkyShadow=sky;}
 };
 
+enum EStateChangeShader
+{
+	eStateChange_DoNotUpdateShader,
+	eStateChange_UpdateShader,
+};
+enum EStateChangePolicy
+{
+	eStateChange_Incremental,
+	eStateChange_Force,
+};
+
 class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRender
 {
 	bool		m_bPerspectiveProjection;
@@ -402,6 +419,8 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	int 	          m_nNormalMapTextureLevel;
 	int 	          m_nShadowTextureLevel;
 
+	SOpenGLRenderMappings m_RenderMappings;
+	
 	double m_dSKyShadowSpeed;
 	double m_dSKyShadowXResolution;
 	double m_dSKyShadowZResolution;
@@ -446,8 +465,10 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	bool m_bRenderingShadowReception;
 	void UpdateProjectionMatrix();
 
-	void SetRenderState(const SRenderState &sNewState,bool bForce);
-
+	void SetRenderState(const SRenderState &sNewState,EStateChangePolicy ePolicy=eStateChange_Incremental,EStateChangeShader eShader=eStateChange_UpdateShader);
+	void SetCurrentRenderStateShader();
+	
+	void SetupLightsInShaders();
 	void PrepareLighting();
 	void UnPrepareLighting();
 

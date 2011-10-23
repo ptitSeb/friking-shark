@@ -92,7 +92,7 @@ CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 	InitializeChildren();
 	m_piGameSystem=NULL;
 	m_bSimulationStarted=false;
-	m_eShadingModel=eShadingModel_Balanced;
+	m_eShadingModel=eShadingModel_Phong;
 }
 
 CScenarioEditorMainWindow::~CScenarioEditorMainWindow(void)

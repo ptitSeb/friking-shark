@@ -67,6 +67,8 @@ SGCMBuffer::SGCMBuffer()
 	pNormalMapArray=NULL;
 	pColorArray=NULL;
 	pFaceVertexIndexes=NULL;
+	pTangentArray=NULL;
+	pBitangentArray=NULL;
 }
 
 SGCMBuffer::~SGCMBuffer()
@@ -76,12 +78,16 @@ SGCMBuffer::~SGCMBuffer()
 	delete [] pNormalMapArray;
 	delete [] pColorArray;
 	delete [] pFaceVertexIndexes;
+	delete [] pTangentArray;
+	delete [] pBitangentArray;
 	
 	pVertexArray=NULL;
 	pNormalArray=NULL;
 	pNormalMapArray=NULL;
 	pColorArray=NULL;
 	pFaceVertexIndexes=NULL;
+	pTangentArray=NULL;
+	pBitangentArray=NULL;
 
 	for(unsigned int x=0;x<vTextureLevels.size();x++)
 	{
@@ -192,7 +198,14 @@ bool CGCMFileType::Open(const char *psFileName)
 					bOk=(fread(pBuffer->pNormalMapArray,sizeof(float)*pBuffer->data.nVertexes*2,1,pFile)==1);
 				}
 			}
-			
+
+			if(bOk && nFlags&GCM_BUFFER_FLAG_HAS_NORMAL_BASIS)
+			{
+				pBuffer->pTangentArray=new float [pBuffer->data.nVertexes*3];
+				pBuffer->pBitangentArray=new float [pBuffer->data.nVertexes*3];
+				bOk=(fread(pBuffer->pTangentArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);
+				if(bOk){(fread(pBuffer->pBitangentArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);}
+			}
 			for(unsigned int l=0;bOk && l<nTextureLevels;l++)
 			{
 				SGCMTextureLevel *pTextureLevel=new SGCMTextureLevel;
@@ -262,6 +275,7 @@ bool CGCMFileType::Save(const char *psFileName)
 			nFlags|=pBuffer->pColorArray?GCM_BUFFER_FLAG_HAS_COLORS:0;
 			nFlags|=pBuffer->pNormalArray?GCM_BUFFER_FLAG_HAS_NORMALS:0;
 			nFlags|=pBuffer->pNormalMapArray?GCM_BUFFER_FLAG_HAS_NORMAL_MAP:0;
+			nFlags|=pBuffer->pTangentArray && pBuffer->pBitangentArray?GCM_BUFFER_FLAG_HAS_NORMAL_BASIS:0;
 			
 			if(bOk){bOk=(fwrite(&pBuffer->data,sizeof(pBuffer->data),1,pFile)==1);}			
 			if(bOk){bOk=(fwrite(&nTextureLevels,sizeof(nTextureLevels),1,pFile)==1);}
@@ -282,6 +296,11 @@ bool CGCMFileType::Save(const char *psFileName)
 				if(bOk){bOk=(fwrite(&nNormalMapFileSize,sizeof(nNormalMapFileSize),1,pFile)==1);}
 				if(bOk && nNormalMapFileSize){bOk=(fwrite(pBuffer->sNormalMap.c_str(),nNormalMapFileSize,1,pFile)==1);}
 				if(bOk){bOk=(fwrite(pBuffer->pNormalMapArray,sizeof(float)*pBuffer->data.nVertexes*2,1,pFile)==1);}
+			}
+			if(bOk && nFlags&GCM_BUFFER_FLAG_HAS_NORMAL_BASIS)
+			{
+				bOk=(fwrite(pBuffer->pTangentArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);
+				if(bOk){bOk=(fwrite(pBuffer->pBitangentArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);}
 			}
 			for(unsigned int l=0;bOk && l<nTextureLevels;l++)
 			{
@@ -546,6 +565,38 @@ void CGCMFileType::GetBufferNormalMapCoords(unsigned long nFrame,unsigned long n
 	if(ppNormalMapVertexes){*ppNormalMapVertexes=pBuffer->pNormalMapArray;}
 }
 
+void CGCMFileType::GetBufferTangents(unsigned long nFrame,unsigned long nBuffer,float **ppTangents )
+{
+	if(ppTangents){*ppTangents=NULL;}
+	SGCMBuffer *pBuffer=GetBuffer(nFrame, nBuffer);
+	if(pBuffer==NULL){return;}
+	if(ppTangents){*ppTangents=pBuffer->pTangentArray;}
+}
+
+void CGCMFileType::GetBufferBitangents(unsigned long nFrame,unsigned long nBuffer,float **ppBitangents )
+{
+	if(ppBitangents){*ppBitangents=NULL;}
+	SGCMBuffer *pBuffer=GetBuffer(nFrame, nBuffer);
+	if(pBuffer==NULL){return;}
+	if(ppBitangents){*ppBitangents=pBuffer->pBitangentArray;}
+}
+
+void CGCMFileType::SetBufferTangents(unsigned long nFrame,unsigned long nBuffer,float *pTangents )
+{
+	SGCMBuffer *pBuffer=GetBuffer(nFrame, nBuffer);
+	if(pBuffer==NULL){return;}
+	delete [] pBuffer->pTangentArray;
+	pBuffer->pTangentArray=pTangents;
+}
+
+void CGCMFileType::SetBufferBitangents(unsigned long nFrame,unsigned long nBuffer,float *pBitangents )
+{
+	SGCMBuffer *pBuffer=GetBuffer(nFrame, nBuffer);
+	if(pBuffer==NULL){return;}
+	delete [] pBuffer->pBitangentArray;
+	pBuffer->pBitangentArray=pBitangents;
+}
+
 void CGCMFileType::RemoveFrames()
 {
 	for(unsigned x=0;x<m_vFrames.size();x++){delete m_vFrames[x];}
@@ -620,4 +671,3 @@ void CGCMFileType::UpdateSizes()
 		pFrame->data.dRadius=std::max(vSize.c[0],std::max(vSize.c[1],vSize.c[2]));
 	}
 }
-

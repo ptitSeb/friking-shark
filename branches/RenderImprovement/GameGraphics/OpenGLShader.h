@@ -26,40 +26,68 @@ enum EUniformType
 	eUniformType_Vector2,
 	eUniformType_Vector3,
 	eUniformType_Color,
-	eUniformType_Matrix
+	eUniformType_Matrix,
+	eUniformType_IntArray,
+	eUniformType_FloatArray,
+	eUniformType_Float2Array,
+	eUniformType_Vector3Array,
+	eUniformType_ColorArray,
+	eUniformType_MatrixArray,
+};
+
+union SUniformUnion
+{
+	int   nInteger;
+	float fFloats[16];
 };
 
 struct SUniformData
 {
-	int   nValue;
-	float fValue;
-	CVector vVector;
-	CVector vColor;
-	float fAlpha;
-	float matrix[16];
+	SUniformUnion data;
 	
 	EUniformType eType;
 	bool         bModified;
+	bool         bTemporal;
 	int          nLocation;
+	unsigned int nElements;
+	char        *pBuffer;
 	
-	SUniformData():nValue(0),fValue(0),fAlpha(0),eType(eUniformType_None),bModified(false),nLocation(-1){memset(matrix,0,sizeof(matrix));}
+	SUniformData():eType(eUniformType_None),bModified(false),bTemporal(false),nLocation(-1),nElements(0),pBuffer(NULL)
+	{
+		memset(&data,0,sizeof(data));
+	}
+	~SUniformData()
+	{
+		delete [] pBuffer;
+		pBuffer=NULL;
+	}
+};
+
+struct SAttributeData
+{
+	int   nIndex;
+	bool  bModified;
+	
+	SAttributeData():nIndex(-1),bModified(false){}
 };
 
 class COpenGLShader: virtual public CSystemObjectBase, virtual public IGenericShader
 {
   bool        m_bTriedToCompile;
+  bool        m_bActive;
   GLhandleARB m_hVertexShader;
   GLhandleARB m_hFragmentShader;
   GLhandleARB m_hShaderProgram;
-
+  
   std::string m_sVertexShader;
   std::string m_sVertexShaderCode;
   std::string m_sFragmentShader;
   std::string m_sFragmentShaderCode;
   std::string m_sPreprocessorDefinitions;
   
-  std::map<std::string,SUniformData> m_mUniforms;
-
+  std::map<std::string,SUniformData*>  m_mUniforms;
+  std::map<std::string,SAttributeData> m_mAttributes;
+  
   bool LoadCodeFile(std::string sSourceFile,std::string *psSourceCode);
   void FreeShader();
 
@@ -73,13 +101,23 @@ public:
 	
 	bool Compile();
 	
-	void AddUniform( std::string sUniformName,int bValue );
-	void AddUniform( std::string sUniformName,float fValue );
-	void AddUniform( std::string sUniformName,float fValue1,float fValue2);
-	void AddUniform( std::string sUniformName,const CVector &vVector );
-	void AddUniform( std::string sUniformName,const CVector &vColor, float fAlpha );
-	void AddUniform( std::string sUniformName,double *pMatrix);
-    bool Activate();
+	void AddUniform( std::string sUniformName,int nValue,bool temporal);
+	void AddUniform( std::string sUniformName,float fValue,bool temporal );
+	void AddUniform( std::string sUniformName,float fValue1,float fValue2,bool temporal );
+	void AddUniform( std::string sUniformName,const CVector &vVector,bool temporal );
+	void AddUniform( std::string sUniformName,const CVector &vColor, float fAlpha,bool temporal );
+	void AddUniform( std::string sUniformName,CMatrix &matrix,bool temporal);
+	
+	void AddUniformIntegers( std::string sUniformName,unsigned int nValues,int *pValues,bool temporal);
+	void AddUniformFloats( std::string sUniformName,unsigned int nValues,float *pValues,bool temporal);
+	void AddUniformVectors( std::string sUniformName,unsigned int nValues,const CVector *pvVectors,bool temporal);
+	void AddUniformColors( std::string sUniformName,unsigned int nValues,const CVector *pvColor, float *pvfAlphas,bool temporal);
+	void AddUniformMatrixes( std::string sUniformName,unsigned int nValues,double *pMatrixes,bool temporal);
+	void AddUniformMatrixes( std::string sUniformName,unsigned int nValues,float *pMatrixes,bool temporal);
+	
+	void AddAttribute( std::string sAttributeName,int nIndex);
+	
+	bool Activate();
     void Deactivate();
 	
 	// Propiedades Persistentes
