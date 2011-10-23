@@ -1,0 +1,13 @@
+Source: friking-shark
+Section: game
+Priority: extra
+Maintainer: Cleto Martín <cleto.martin@gmail.com>
+Build-Depends: debhelper (>= 8.0.0), cmake
+Standards-Version: 3.9.2
+Homepage: http://code.google.com/p/friking-shark/
+
+Package: friking-shark
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Flying Shark arcade video game remake
+ Flying Shark arcade video game remake

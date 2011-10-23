@@ -1,0 +1,217 @@
+/*
+	Notacion:
+
+		{}		:	Bloque
+		<>		:	Tipo de dato
+		[]		:	Opcional
+
+	Tanto los bloques como los datos pueden tener ser ocpionales
+	Los tipos de dato pueden ser datos de otros bloques, de esta forma <Modelo::Nombre> indica
+	que se debe poner el nombre de alguno de los nodos Modelo declarados.
+
+	Cardinalidad:
+		<n>		:	puede aparecer n veces 
+		<1>		:	puede aparecer una o mas vecves
+*/
+
+
+[*Modelos] <1>
+{
+	*Modelo <n>
+	{
+		Nombre=<string>
+		[Archivo]=<path>
+
+		[*NivelDetalle] <n>
+		{
+			DistanciaMinima=<double>
+			Archivo=<path>
+		}
+	}
+}
+[*Texturas] <1>
+{
+	*Textura <n>
+	{
+		Nombre	=<string>
+		Archivo	=<path>
+		[ColorKey]=<color>
+		[ArchivoAlpha]=<path>
+	}
+}
+
+[GUI]<1>
+{
+	ModeloCabina=<Modelo::Nombre>
+	[ModeloPuntoDeMira]=<Modelo::Nombre>
+}
+
+[*Escenario]<1>
+{
+	Modelo		=<Modelo::Nombre>
+	[ModeloCielo]   =<Modelo::Nombre>
+
+	PlanoLejano	=<double>
+	DistanciaCamara =<double>
+	InclinacionVista=<double>
+	AnguloVisualizacion=<double>
+
+	VelocidadInspeccion=<double>
+	PosicionInspeccion =<vector>
+	AngulosInspeccion  =<vector>
+
+
+	[*Niebla] <1>
+	{
+		Inicio	=<double>
+		Fin	=<double>
+		Color   =<color>
+	}
+}
+
+[*RutaJugador]<1>
+{
+	Origen	=<vector>
+	Destino	=<vector>
+
+	VelocidadMovimiento=<double>
+	MinimoMovHorz=<double>
+	MaximoMovHorz=<double>
+	MinimoMovVert=<double>
+	MaximoMovVert=<double>
+	MinimoMovProf=<double>
+	MaximoMovProf=<double>
+	MinimoActivacionHorz=<double>
+	MaximoActivacionHorz=<double>
+	MinimoActivacionVert=<double>
+	MaximoActivacionVert=<double>
+	MinimoActivacionProf=<double>
+	MaximoActivacionProf=<double>
+}
+
+[*TiposUnidades]<1>
+{
+	[*TipoUnidad]<n>
+	{
+		Nombre	=<string>
+		Modelo	=<Modelo::Nombre>
+		[ModeloDestruido] = <Modelo::Nombre>
+		Clase	=<class>
+		Vida	=<double>
+
+		[*Trozo]<n>
+		{
+			Modelo=<Modelo::Nombre>
+		}		
+	}
+}
+
+[*PlantillasFormacion]<1>
+{
+	[*PlantillaFormacion]<n>
+	{
+		Nombre				=<string>
+		*UnidadFormacion<n>
+		{
+			Indice			=<dword>
+			Tipo			=<TipoUnidad::Nombre>
+
+			*PuntoDeRuta<n>
+			{
+				Indice		=<dword>
+				Posicion	=<vector> // relativa al punto de activacion que se indica al usar la plantilla
+				Angulos		=<vector> // idem, relativa a los angulos de la direccion del jugador en el punto de activacion
+			}
+		}
+	}
+}
+
+[*Formaciones]<1>
+{
+	[*Formacion]<n>
+	{
+		[Nombre]			=<string>
+		[Plantilla]			=<PlantillaFormacion::Nombre>
+		PosicionActivacion	=<vector>
+
+		// Si no se usa plantilla se usan las unidades especificadas
+		// Si se usa una plantilla, solo se sobrecarga lo especificado. Para identificar 
+		// las unidades y puntos de ruta a sobrecargar se usa el campo indice.
+		
+		[*UnidadFormacion]<n>
+		{
+			Indice			=<dword>
+			[Tipo]			=<TipoUnidad::Nombre>
+
+			[*PuntoDeRuta]<n>
+			{
+				Indice		=<dword>
+				[Posicion]	=<vector> // relativa al punto de activacion que se indica al usar la plantilla
+				[Angulos]	=<vector> // idem, relativa a los angulos de la direccion del jugador en el punto de activacion
+			}
+		}
+	}
+}
+
+[*Unidades]<1>
+{
+	[*UnidadEstatica]<n>
+	{
+		[Nombre]=<string>
+		Posicion=<vector>
+		Angulos	=<vector>
+		Tipo	=<TipoUnidad::Nombre>
+		[Vida]	=<double>
+	}
+}
+
+[*Formaciones]<1>
+{
+	[*Formacion]<n>
+	{
+		[Nombre]		=<string>
+		Posicion		=<vector>
+		Tipo			=<TipoFormacion::Nombre>
+		TipoActivacion	=<CampoVisual:PosicionJugador>
+	}
+}
+
+[*Controladores]<1>
+{
+	[*Controlador]<n>
+	{
+		Posicion		=<vector>
+		Nombre			=<string>
+		Clase			=<class>
+		TipoActivacion		=<CampoVisual:PosicionJugador>
+		TipoDesactivacion	=<CampoVisual:PosicionJugador:Tiempo>
+	}
+}
+
+
+[*ConfiguracionArmas]<1>
+{
+	[*Ametralladora]<1>
+	{
+		ModeloProyectil		=<Modelo:Nombre>
+		NumeroProyectiles	=<double>
+		Intervalo		=<double>
+	}
+	[*Misiles]<1>
+	{
+		ModeloProyectil		=<Modelo:Nombre>
+		Intervalo		=<double>
+	}
+}
+
+[*ConfiguracionEfectos]<1>
+{
+	[*Humo]<1>
+	{
+		Textura			=<Textura:Nombre>
+	}
+	[*Explosion]<1>
+	{
+		Modelo			=<Modelo:Nombre>
+	}
+}

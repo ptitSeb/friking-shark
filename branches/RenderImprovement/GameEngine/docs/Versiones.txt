@@ -1,0 +1,81 @@
+/////////////////////////////////////////////////////////////////////////////////////////
+//	Engine v0.20.0.3				31-10-2006
+/////////////////////////////////////////////////////////////////////////////////////////
+// 
+//  Versiones Relacionadas:
+//
+//	editor	v0.20.0.0
+//	.gbs	v1.0
+//	.ges	v1.2
+
+	- Correccion de bug al iniciar en modo de inspeccion, la camara salia en modo de juego	
+	- Correccion de sombras. Se ha corregido un defeto que hacia que los objetos que 
+		estaban debajo del escenario generasen sombra. Es importante para que las unidades 
+		salgan de dentro del escenario, como en tuneles, bases subterraneas parcialmente 
+		visibles etc...
+	
+/////////////////////////////////////////////////////////////////////////////////////////
+//	Engine v0.20.0.2				29-09-2006
+/////////////////////////////////////////////////////////////////////////////////////////
+// 
+//  Versiones Relacionadas:
+//
+//	editor	v0.20.0.0
+//	.gbs	v1.0
+//	.ges	v1.2
+
+	- Soporte para gestion de varias camaras. Hay dos camaras, de inspeccion y de juego. Con esto
+		se consigue que todas las propiedades de la camara sean independientes, (posicion, orientacion etc...)
+	- Pruebas de iluminacion mixta, OpenGL + Nativa del engine.
+		Se ha creado una luz de opengl que siempre acompaña a la camara de juego. Da un buen efecto a los modelos
+		porque les da un efecto de ser mas redondeados. De momento solo es una prueba nada definitivo, para hacerlo
+		definitivo habria que parametrizalo y meterlo soporte en el editor.
+	- Se han mejorado los archivos GBS, se les a añadido version y guardan la geometria que se utilizo al generar el BSP. 
+		Con esta mejora ahora se controla si los cambios de un modelo son relevantes a la hora de generar los BSPs 
+		cuando se cargan los sectores.
+	- Se han hecho pruebas con buffer objects, sin obtener ninguna mejora. Es posible que se deba a que es tan
+		ineficiente meter todos los modelo en memoria de tarjeta como no meterlos, aunque ahora mismo tampoco 
+		son tantos como para ocupar toda la memoria. En cualquier caso se ha dejado el codigo pero desactivado para
+		hacer pruebas en un futuro.
+	
+	
+/////////////////////////////////////////////////////////////////////////////////////////
+//	Engine v0.20.0.1				27-09-2006
+/////////////////////////////////////////////////////////////////////////////////////////
+// 
+//  Versiones Relacionadas:
+//
+//	editor	v0.20.0.0
+//	.gbs	(sin version)
+//	.ges	v1.2
+
+	-	Se ha dado soporte para sombras pintando los vertex colors, la iluminacion, las sombras 
+		y la sombra de las nubes en una textura en memoria (PBuffer)
+	-	Se ha dado soporte para carga del escenario por sectores. Esto ha implicado modificaciones 
+		en el sistema de colisiones por tener que enlazar los bsps de diferentes modelos mediante 
+		nodos intermedios que se generan en cada frame.
+	-	Se ha dado un poco de soporte para ir gestionando la interfaz grafica, de momento se ha 
+		redirigido el render al GUIManager, que gestionara la interfaz y lo que se pinta. 
+		De momento se han metido 3 estados de interfaz:
+			- Cargando: se muestra un splash de carga con la version e informacion del progreso de carga.
+			- Jugando: se llama al render para que pinte el area de juego y se visualizan los frames visualizados 
+				en el ultimo segundo (fps)
+			- Visualizacion de Sombra: Se muestra el PBuffer de iluminacion y sombras
+
+	- Se ha dado soporte de utilidades en el GameEngine a las que se puede acceder por teclado:
+			- F1: Cambio en caliente entre modo de juego e inspeccion
+			- F2: Visualizar/Ocultar BBoxes
+			- F3: Cambio entre solido y alambres.
+			- F4: Visualizar juego / PBuffer de iluminacion y sombras
+		
+	-	Se ha mejorado la gestion del seguimiento del jugador (camara). Ahora se hace todo calculado dependiendo 
+		del angulo de apertura de la camara.
+	-	Se ha corregido un problema en la gestion de Unidades Estaticas que producia corrupcion de memoria al eliminar unidades. 
+		El problema era que no se notificaba a los elementos del Area de Juego cuando se eliminaban unidades que gestionaban.
+	-	Se ha introducido codigo comentado de pruebas de iluminacion mediante modelos de luces (esferas etc..) 
+		hay que investigarlo mas pero puede ser una solucion aceptable.
+
+/////////////////////////////////////////////////////////////////////////////////////////
+//  v0.20.0.0 (antes de control de versiones)
+
+	Funcionalidad base
