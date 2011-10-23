@@ -17,11 +17,36 @@
 
 
 #pragma once
+struct SOpenGLRenderMappings
+{
+	int nVertexAttribIndex;
+	int pTextureAttribIndex[2];
+	int nNormalAttribIndex;
+	int nNormalMapCoordAttribIndex;
+	int nColorAttribIndex;
+	int nNormalMapTextureIndex;
+	int nTangentAttribIndex;
+	int nBitangentAttribIndex;
+	
+	SOpenGLRenderMappings()
+	{
+		nNormalMapTextureIndex=-1;
+		
+		nVertexAttribIndex=-1;
+		pTextureAttribIndex[0]=-1;
+		pTextureAttribIndex[1]=-1;
+		nNormalAttribIndex=-1;
+		nNormalMapCoordAttribIndex=-1;
+		nColorAttribIndex=-1;
+		nTangentAttribIndex=-1;
+		nBitangentAttribIndex=-1;		
+	}
+};
 
 class IOpenGLModel:virtual public ISystemUnknown
 {
 public:
-	virtual void PrepareRenderBuffer(IGenericRender *piRender,unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,bool bRenderingShadow,unsigned int nNormalMapTextureIndex)=0;
-	virtual void CallRenderBuffer(IGenericRender *piRender,unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer)=0;
-	virtual void UnPrepareRenderBuffer(IGenericRender *piRender,unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,bool bRenderingShadow,unsigned int nNormalMapTextureIndex)=0;
+	virtual void PrepareRenderBuffer(IGenericRender *piRender,unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,bool bRenderingShadow,SOpenGLRenderMappings *pRenderMappings)=0;
+	virtual void CallRenderBuffer(IGenericRender *piRender,unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,unsigned int nInstances)=0;
+	virtual void UnPrepareRenderBuffer(IGenericRender *piRender,unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,bool bRenderingShadow,SOpenGLRenderMappings *pRenderMappings)=0;
 };

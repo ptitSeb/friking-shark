@@ -30,9 +30,10 @@
 #define GCM_FILE_MAGIC			"<GCM>"
 #define GCM_FILE_MAGIC_LENGTH	5
 
-#define GCM_BUFFER_FLAG_HAS_COLORS  	0x0001
-#define GCM_BUFFER_FLAG_HAS_NORMALS 	0x0002
-#define GCM_BUFFER_FLAG_HAS_NORMAL_MAP  0x0004
+#define GCM_BUFFER_FLAG_HAS_COLORS  	 0x0001
+#define GCM_BUFFER_FLAG_HAS_NORMALS 	 0x0002
+#define GCM_BUFFER_FLAG_HAS_NORMAL_MAP   0x0004
+#define GCM_BUFFER_FLAG_HAS_NORMAL_BASIS 0x0008
 
 struct SGCMHeader
 {
@@ -74,6 +75,8 @@ struct SGCMBuffer
 	float			*pNormalArray;
 	float			*pColorArray;
 	float			*pNormalMapArray;
+	float			*pTangentArray;
+	float			*pBitangentArray;
 	unsigned int	*pFaceVertexIndexes;
 	
 	std::string 	 sNormalMap;
@@ -140,6 +143,8 @@ public:
 	void		  SetBufferTextureCoords(unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,float *pTexVertexes);
 	void		  SetBufferNormalMap(unsigned long nFrame,unsigned long nBuffer,const std::string &sNormalMapFile);
 	void		  SetBufferNormalMapCoords(unsigned long nFrame,unsigned long nBuffer,float *pNormalMapVertexes);
+	void		  SetBufferTangents(unsigned long nFrame,unsigned long nBuffer,float *pTangents);
+	void		  SetBufferBitangents(unsigned long nFrame,unsigned long nBuffer,float *pBitangents);
 	
 	void		  GetBufferMaterial(unsigned long nFrame,unsigned long nBuffer,CVector *pvAmbientColor,CVector *pvDiffuseColor,CVector *pvSpecularColor, float *pfShininess, float *pfOpacity);
 	void		  GetBufferTexture(unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,std::string *psTextureFile);
@@ -151,6 +156,8 @@ public:
 	void		  GetBufferTextureLevels(unsigned long nFrame,unsigned long nBuffer,unsigned long *pnTextureLevels);
 	void		  GetBufferNormalMap(unsigned long nFrame,unsigned long nBuffer,std::string *psNormalMapFile);
 	void		  GetBufferNormalMapCoords(unsigned long nFrame,unsigned long nBuffer,float **ppNormalMapVertexes);
+	void		  GetBufferTangents(unsigned long nFrame,unsigned long nBuffer,float **ppTangents);
+	void		  GetBufferBitangents(unsigned long nFrame,unsigned long nBuffer,float **ppBitangents);
 	
 	void		  GetTextures(std::set<std::string> *pvTextures);
 

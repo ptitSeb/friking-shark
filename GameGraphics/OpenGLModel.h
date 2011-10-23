@@ -46,6 +46,8 @@ struct SModelRenderBuffer
 	GLfloat		*pVertexArray;
 	GLfloat		*pNormalArray;
 	GLfloat		*pNormalMapArray;
+	GLfloat		*pTangentArray;
+	GLfloat		*pBitangentArray;
 	GLfloat		*pColorArray;
 	GLuint 		*pFaceVertexIndexes;
 	
@@ -96,6 +98,9 @@ class COpenGLModel : virtual public CSystemObjectBase,virtual public IGenericMod
 
 	SModelRenderBuffer *GetRenderBuffer( unsigned long nAnimation, unsigned long nFrame, unsigned long nBuffer );
 
+	void UpdateTangentBasis(SModelRenderBuffer *pBuffer);
+	void ClearTangentBasis(SModelRenderBuffer *pBuffer);
+	
 public:
 
 	// IGenericModel
@@ -155,9 +160,9 @@ public:
 
 	// IOpenGLModel
 
-	void PrepareRenderBuffer(IGenericRender *piRender,unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,bool bRenderingShadow,unsigned int nNormalMapTextureIndex);
-	void CallRenderBuffer(IGenericRender *piRender,unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer);
-	void UnPrepareRenderBuffer(IGenericRender *piRender,unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,bool bRenderingShadow,unsigned int nNormalMapTextureIndex);
+	void PrepareRenderBuffer(IGenericRender *piRender,unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,bool bRenderingShadow,SOpenGLRenderMappings *pRenderMappings);
+	void CallRenderBuffer(IGenericRender *piRender,unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,unsigned int nInstances);
+	void UnPrepareRenderBuffer(IGenericRender *piRender,unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,bool bRenderingShadow,SOpenGLRenderMappings *pRenderMappings);
 	
 	BEGIN_PROP_MAP(COpenGLModel)
 		PROP_FLAGS(m_sFileName,"Archivo",MRPF_NORMAL|MRPF_OPTIONAL)

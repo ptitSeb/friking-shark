@@ -321,6 +321,8 @@ void		ToOpenGLMatrix(CMatrix *pMatrix,double *dMatrix);
 
 void 		ComputeReferenceSystem( CVector vRefSysPos,CVector vRefSysAngles,CVector vPosition,CVector vAngles,CVector *pvPosition,CVector *pvAngles,CVector *pvX=NULL,CVector *pvY=NULL,CVector *pvZ=NULL);
 
+void 		ComputeTangentBasis(unsigned int nVertexes, float *pVertexes, unsigned int nFaces, unsigned int *pFaces, float *pTextCoords,float *pNormals,float *pTangents, float *pBitangents);
+
 extern CVector AxisPosX;
 extern CVector AxisPosY;
 extern CVector AxisPosZ;

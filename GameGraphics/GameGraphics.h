@@ -367,13 +367,22 @@ struct IGenericShader:virtual public ISystemUnknown
 	virtual void Load(std::string sVertexShaderFile,std::string sFragmentShaderFile,std::string sPreprocessorDefinitions)=0;
 	virtual void Create(std::string sVertexShaderCode,std::string sFragmentShaderCode,std::string sPreprocessorDefinitions)=0;
 	
-	virtual void AddUniform( std::string sUniformName,int bValue )=0;
-	virtual void AddUniform( std::string sUniformName,float fValue )=0;
-	virtual void AddUniform( std::string sUniformName,float fValue1,float fValue2)=0;
-	virtual void AddUniform( std::string sUniformName,const CVector &vVector )=0;
-	virtual void AddUniform( std::string sUniformName,const CVector &vColor, float fAlpha )=0;
-	virtual void AddUniform( std::string sUniformName,double *pMatrix)=0;
-
+	virtual void AddUniform( std::string sUniformName,int bValue ,bool temporal)=0;
+	virtual void AddUniform( std::string sUniformName,float fValue ,bool temporal)=0;
+	virtual void AddUniform( std::string sUniformName,float fValue1,float fValue2,bool temporal)=0;
+	virtual void AddUniform( std::string sUniformName,const CVector &vVector ,bool temporal)=0;
+	virtual void AddUniform( std::string sUniformName,const CVector &vColor, float fAlpha ,bool temporal)=0;
+	virtual void AddUniform( std::string sUniformName,CMatrix &matrix,bool temporal)=0;
+	
+	virtual void AddUniformIntegers( std::string sUniformName,unsigned int nValues,int *pValues,bool temporal)=0;
+	virtual void AddUniformFloats( std::string sUniformName,unsigned int nValues,float *pValues,bool temporal)=0;
+	virtual void AddUniformVectors( std::string sUniformName,unsigned int nValues,const CVector *pvVectors,bool temporal)=0;
+	virtual void AddUniformColors( std::string sUniformName,unsigned int nValues,const CVector *pvColor, float *pvfAlphas,bool temporal)=0;
+	virtual void AddUniformMatrixes( std::string sUniformName,unsigned int nValues,double *pMatrixes,bool temporal)=0;
+	virtual void AddUniformMatrixes( std::string sUniformName,unsigned int nValues,float *pMatrixes,bool temporal)=0;
+	
+	virtual void AddAttribute( std::string sAttributeName,int nIndex)=0;
+	
 	virtual bool Activate()=0;
 	virtual void Deactivate()=0;
 

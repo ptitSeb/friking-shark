@@ -1,22 +1,28 @@
-//
-// Fixed pipeline implementation is based on:
-//    3Dlabs GLSL ShaderGen code (http://developer.3dlabs.com)
-//    OpenGLShading Language Third Edition
-//
-// Ripple effect is based on:
-//    JeGX's post at http://www.geeks3d.com/20110316/shader-library-simple-2d-effects-sphere-and-ripple-in-glsl/
-//    Adrian Boeing's post at http://adrianboeing.blogspot.com/2011/02/ripple-effect-in-webgl.html
+#version 330
 
-uniform int  g_ActiveLights;
-uniform mat4 CameraModelViewInverse;
 uniform float CurrentRealTime;
+uniform vec3 uFogColor;
 
 uniform sampler2D Texture0;
 uniform sampler2D Texture1;
+
+in vec4 g_Color;
+in vec2 g_TexCoord0;
+in vec2 g_TexCoord1;
+in vec2 g_SkyCoord;
+in vec4 g_EyeVertexPos;
+in vec4 g_WorldEyeDir;
+in vec4 g_WorldVertexPos;
+out vec4 oColor;
+
 #ifdef ENABLE_SHADOWS
 uniform sampler2DShadow ShadowMap;
+in vec4 g_ShadowCoord;
 #endif
 #ifdef ENABLE_NORMAL_MAP
+in vec3 g_WorldTangent;
+in vec3 g_WorldBitangent;
+uniform mat4 uModel[MAX_OBJECT_INSTANCES];
 uniform sampler2D NormalMap;
 #endif
 #ifdef ENABLE_SKY_SHADOW
@@ -24,78 +30,75 @@ uniform sampler2D SkyShadowMap;
 uniform vec4 SkyData;
 #endif
 
-varying vec4 g_EyeVertexPos;
 
-#define LIGHTING_SATURATION 1.5
-
-varying vec3 g_WorldVertexPos;
 #ifdef ENABLE_LIGHTING
-#ifdef ENABLE_NORMAL_MAP
-	varying vec3 g_TangentSpaceX;
-	varying vec3 g_TangentSpaceY;
-	varying vec3 g_TangentSpaceZ;
-#else
-	varying vec3 g_normal;
-#endif
 
-void DirectionalLight(const in int  i,
-					  const in vec3 normal,
-					  inout    vec4 ambient,
-					  inout    vec4 diffuse,
-					  inout    vec4 specular)
+uniform vec3 uWorldEyeDir;
+uniform float uMaterialShininess;
+uniform vec4 uMaterialDiffuse;
+uniform vec4 uMaterialSpecular;
+
+uniform vec4 uAmbient;
+uniform vec4 uSunDiffuse;
+uniform vec4 uSunSpecular;
+uniform vec3 uSunDirection;
+
+uniform int  uDynamicLights;
+uniform float uDynamicRange[MAX_DYNAMIC_LIGHTS];
+uniform vec3 uDynamicPosition[MAX_DYNAMIC_LIGHTS];
+uniform vec4 uDynamicDiffuse[MAX_DYNAMIC_LIGHTS];
+uniform vec4 uDynamicSpecular[MAX_DYNAMIC_LIGHTS];
+
+in vec3 g_WorldNormal;
+
+void SunLight(const in vec3 normal,inout vec4 diffuse,inout vec4 specular)
 {
-	float nDotVP; // normal . light direction
-	float nDotHV; // normal . light half vector	
-	float pf; // power factor
-	nDotVP = max(0.0, dot(normal,vec3(gl_LightSource[i].position)));
-	nDotHV = max(0.0, dot(normal, vec3(gl_LightSource[i].halfVector)));
-	pf = max(0.0,pow(nDotHV, gl_FrontMaterial.shininess));
-	ambient  += gl_LightSource[i].ambient;
-	diffuse  += gl_LightSource[i].diffuse * nDotVP;
-	specular += gl_LightSource[i].specular * pf;
+	diffuse += uSunDiffuse * max(0.0, dot(normal,uSunDirection));
+	vec3 hv=normalize(uSunDirection-uWorldEyeDir);
+	float nDotHV = max(0.0, dot(normal, hv));
+	specular += uSunSpecular * max(0.0,pow(nDotHV, uMaterialShininess));
 }
 
-void PointLight(const in int  i,
-				const in vec3 ecPosition3,
+void DynamicLight(const in int  i,
 				const in vec3 normal,
-				inout    vec4 ambient,
 				inout    vec4 diffuse,
 				inout    vec4 specular)
 {
-	vec3 lightDir=gl_LightSource[i].position.xyz - g_EyeVertexPos.xyz;
-	// Compute distance between surface and light position
-	float d = length(vec3(gl_LightSource[i].position) - ecPosition3);
-	vec3 L = normalize(lightDir);
-	float attenuation = 1.0 / (gl_LightSource[i].constantAttenuation +gl_LightSource[i].linearAttenuation * d +gl_LightSource[i].quadraticAttenuation * d * d);
-	float lambertTerm = max(dot(normal,L),0.0);
+	vec3 lightVec=uDynamicPosition[i].xyz - g_WorldVertexPos.xyz;
 	
-	ambient+= gl_LightSource[i].ambient*lambertTerm * attenuation;
-	diffuse+=gl_LightSource[i].diffuse*lambertTerm* attenuation;
-	if(gl_FrontMaterial.shininess>0.0)
-	{
-		vec3 E = normalize(-ecPosition3);
-		vec3 R = reflect(-L, normal);
-		float specularFactor = pow(max(dot(R, E), 0.0),gl_FrontMaterial.shininess);
-		specular += gl_LightSource[i].specular *gl_FrontMaterial.specular* specularFactor * attenuation;
-	}
+//	if(squareddist>uDynamicRange[i]*uDynamicRange[i]){return;}
+
+	float lambertTerm = dot(normal,lightVec); //  lambertTerm is in fact lambertTerm*distance
+	if(lambertTerm<0.0){return;}
+
+	// Compute distance between surface and light position
+	float squareddist=dot(lightVec,lightVec);
+	float attenuation=uDynamicRange[i]/squareddist;
+	diffuse+=uDynamicDiffuse[i]*lambertTerm*attenuation;
+	if(uMaterialShininess<=0.0){return;}
+
+	vec3 R = reflect(-normalize(lightVec), normal);
+	float specularFactor = pow(max(dot(R, -uWorldEyeDir), 0.0),uMaterialShininess);
+	specular += uDynamicSpecular[i]* specularFactor*attenuation*sqrt(squareddist);
 }
+
 #endif
 
 #ifdef ENABLE_FOG
-varying float g_fFogFactor;
+in float g_fFogFactor;
 #endif 
 
 #ifdef ENABLE_WATER
 uniform vec2 WaterMappingSize;
 uniform vec2 WaterMappingOffset;
 
-void ApplyWaterEffect(in sampler2D sampler,in vec2 vCoords, out vec3 color)
+void ApplyWaterEffect(in sampler2D sampler,in vec2 vCoords, out vec3 color/*,inout vec4 normalDisturbance*/)
 {
 	// Ripple effect, based on JeGX's post at http://www.geeks3d.com/20110316/shader-library-simple-2d-effects-sphere-and-ripple-in-glsl/
 	// and Adrian Boeing's post at http://adrianboeing.blogspot.com/2011/02/ripple-effect-in-webgl.html
 	
-	vec2 tc = vec2((WaterMappingOffset.x-WaterMappingSize.x)-gl_TexCoord[0].x,WaterMappingSize.y*4.0-gl_TexCoord[0].y);
-	vec2 tc2= vec2((WaterMappingOffset.x-WaterMappingSize.x*0.5)-gl_TexCoord[0].x,-gl_TexCoord[0].y);
+	vec2 tc = vec2((WaterMappingOffset.x-WaterMappingSize.x)-g_TexCoord0.x,WaterMappingSize.y*4.0-g_TexCoord0.y);
+	vec2 tc2= vec2((WaterMappingOffset.x-WaterMappingSize.x*0.5)-g_TexCoord0.x,-g_TexCoord0.y);
 	vec2 p = -1.0 + 2.0*tc;
 	vec2 p2= -1.0 + 2.0*tc2;
 	
@@ -107,6 +110,12 @@ void ApplyWaterEffect(in sampler2D sampler,in vec2 vCoords, out vec3 color)
 	uv+=(p/len)*ripplesize*0.03;
 	uv+=(p2/len)*ripplesize2*0.03;
 	uv-=WaterMappingOffset;
+/*
+	vec4 tempdisturb=vec4(0.0);
+	tempdisturb.xy=vec2(cos((len2*3.0+CurrentRealTime*1.5)*2.0)-cos((len2*3.1+CurrentRealTime*1.5)*4.0));
+	tempdisturb.xy+=vec2(cos((len*3.0+CurrentRealTime)*2.0)+cos((len*3.1+CurrentRealTime)*4.0));
+	tempdisturb.z=1.0;
+	normalDisturbance+=normalize(tempdisturb)*0.02;*/
 	
 	vec3 texcolor=texture2D(sampler, uv).xyz;
 	color.rgb = texcolor;
@@ -117,86 +126,86 @@ void ApplyWaterEffect(in sampler2D sampler,in vec2 vCoords, out vec3 color)
 
 void main (void) 
 {
-  vec4 texcolor=gl_Color;
+  vec4 texcolor=g_Color;
   vec4 finalcolor;
   float fShadowFactor=1.0;
   float specfactor=1.0;
   
 #ifdef ENABLE_TEXTURES
 
+//  vec4 normalDisturbance=vec4(0.0);
   #ifdef ENABLE_WATER
-  ApplyWaterEffect(Texture0,gl_TexCoord[0].xy,texcolor.xyz);
+  ApplyWaterEffect(Texture0,g_TexCoord0.xy,texcolor.xyz/*,normalDisturbance*/);
   #else
-    texcolor*= texture2D(Texture0, gl_TexCoord[0].xy);
+    texcolor*= texture2D(Texture0, g_TexCoord0.xy);
   #endif
 	#if TEXTURE_UNITS > 1
 		#ifdef ENABLE_WATER
 			vec3 temptexunit1;
-			ApplyWaterEffect(Texture1,gl_TexCoord[1].xy,temptexunit1);
+			ApplyWaterEffect(Texture1,g_TexCoord1.xy,temptexunit1);
 			texcolor.rgb*=temptexunit1;
 		#else
-		texcolor*= texture2D(Texture1, gl_TexCoord[1].xy);
+		texcolor*= texture2D(Texture1, g_TexCoord1.xy);
 		#endif
 	#endif
 #endif
   
   #ifdef ENABLE_SHADOWS
-	fShadowFactor=shadow2DProj(ShadowMap, gl_TexCoord[SHADOW_TEXTURE_LEVEL]).r;
+	fShadowFactor=textureProj(ShadowMap,g_ShadowCoord);
 	#ifdef ENABLE_SOFT_SHADOWS
 		float offset=3.0;
-		fShadowFactor+=shadow2DProj(ShadowMap,gl_TexCoord[SHADOW_TEXTURE_LEVEL]+vec4(-offset,-offset,0,0)).g;
-		fShadowFactor+=shadow2DProj(ShadowMap,gl_TexCoord[SHADOW_TEXTURE_LEVEL]+vec4(offset,-offset,0,0)).g;
-		fShadowFactor+=shadow2DProj(ShadowMap,gl_TexCoord[SHADOW_TEXTURE_LEVEL]+vec4(-offset,offset,0,0)).g;
-		fShadowFactor+=shadow2DProj(ShadowMap,gl_TexCoord[SHADOW_TEXTURE_LEVEL]+vec4(offset,offset,0,0)).g;
+		fShadowFactor+=textureProj(ShadowMap,g_ShadowCoord+vec4(-offset,-offset,0,0));
+		fShadowFactor+=textureProj(ShadowMap,g_ShadowCoord+vec4(offset,-offset,0,0));
+		fShadowFactor+=textureProj(ShadowMap,g_ShadowCoord+vec4(-offset,offset,0,0));
+		fShadowFactor+=textureProj(ShadowMap,g_ShadowCoord+vec4(offset,offset,0,0));
 		fShadowFactor/=5.0;
 	#endif
   #endif
-  #ifdef ENABLE_LIGHTING
+  
+#ifdef ENABLE_LIGHTING
 	  
-	  vec4 amb=vec4(0);
-	  vec4 diff=vec4(0);
-	  vec4 sunamb=vec4(0);
 	  vec4 sundiff=vec4(0);
-	  vec4 spec=vec4(0);
 	  vec4 sunspec=vec4(0);
-	  vec4 g_ambdiffspec=vec4(0);
-	  vec4 g_sunambdiffspec=vec4(0);
+	  vec4 dyndiff=vec4(0);
+	  vec4 dynspec=vec4(0);
+      float ks=1.0;
 	  
 	  #ifdef ENABLE_NORMAL_MAP
 	  // Compute final normal usign the normal map
-	  vec3 bump = normalize( texture2D(NormalMap, gl_TexCoord[NORMAL_MAP_TEXTURE_LEVEL].xy).xyz * 2.0 - 1.0);
-	  vec3 N=normalize(bump.x*normalize(g_TangentSpaceY)+bump.y*normalize(g_TangentSpaceX)+bump.z*normalize(g_TangentSpaceZ));
+	  vec4 normalMapSample=texture2D(NormalMap,g_TexCoord0.xy);
+	  vec3 bump = normalize( normalMapSample.xyz * 2.0 - vec3(1.0));
+	  vec3 N=(vec4(normalize(bump.x*normalize(g_WorldBitangent)+bump.y*normalize(g_WorldTangent)+bump.z*normalize(g_WorldNormal)),1.0)).xyz;
+	  //ks=normalMapSample.a;
 	  #else
-	  vec3 N=normalize(g_normal);
+	  vec3 N=normalize(g_WorldNormal/*+normalDisturbance.xyz*/);
+	  #endif
+
+      SunLight(N, sundiff,sunspec);
+	  for(int x=0;x<uDynamicLights;x++)
+	  {
+	  	DynamicLight(x, N, dyndiff, dynspec);
+	  }
+	  #ifdef ENABLE_SKY_SHADOW
+  	  float skyshadowfactor=1.0-(texture2D(SkyShadowMap, g_SkyCoord.xy).r*SkyData.a);
+	  sundiff*=skyshadowfactor;
+	  sunspec*=skyshadowfactor;
 	  #endif
 	  
-	  
-	  DirectionalLight(0, N, sunamb, sundiff,sunspec);
-	  for(int x=1;x<g_ActiveLights;x++)
-	  {
-			PointLight(x, g_EyeVertexPos.xyz, N, amb, diff, spec);
-	  }
-	  g_ambdiffspec=gl_LightModel.ambient+amb+diff+spec*gl_FrontMaterial.specular;
-	  g_sunambdiffspec=sunamb+sundiff+sunspec*gl_FrontMaterial.specular;	
-	  
-	  #ifdef ENABLE_SKY_SHADOW
-	  g_sunambdiffspec*=1.0-(texture2D(SkyShadowMap, gl_TexCoord[SKY_TEXTURE_LEVEL].xy)*SkyData.a);
-	  #endif	
-	  
-	  finalcolor.rgb=clamp(g_ambdiffspec.rgb+g_sunambdiffspec.rgb*fShadowFactor,0.0,LIGHTING_SATURATION);
-	  finalcolor.rgb*=texcolor.rgb;
+	  finalcolor.rgb=texcolor.rgb*uMaterialDiffuse.rgb*(uAmbient.rgb+dyndiff.rgb+sundiff.rgb*fShadowFactor)+uMaterialSpecular.rgb*(dynspec.rgb+sunspec.rgb*fShadowFactor)*ks;
 	  finalcolor.a=texcolor.a;
   #else
+
 	#ifdef ENABLE_SKY_SHADOW
-	  fShadowFactor*=1.0-(texture2D(SkyShadowMap, gl_TexCoord[SKY_TEXTURE_LEVEL].xy)*SkyData.a).r;
+	  fShadowFactor*=1.0-(texture2D(SkyShadowMap, g_SkyCoord.xy)*SkyData.a).r;
 	#endif
-	finalcolor=texcolor*fShadowFactor;
-  #endif
-  
-  #ifdef ENABLE_FOG
-	finalcolor= vec4(clamp(finalcolor.rgb, 0.0, 1.0),finalcolor.a);
-	finalcolor.rgb=mix(finalcolor.rgb,gl_Fog.color.rgb,g_fFogFactor);
+	finalcolor.rgb=texcolor.rgb*g_Color.rgb*fShadowFactor;
+	finalcolor.a=texcolor.a;
   #endif
 
-	gl_FragColor=finalcolor;
+  #ifdef ENABLE_FOG
+	finalcolor= vec4(clamp(finalcolor.rgb, 0.0, 1.0),finalcolor.a);
+	finalcolor.rgb=mix(finalcolor.rgb,uFogColor,g_fFogFactor);
+  #endif
+
+	oColor=finalcolor;
 }
