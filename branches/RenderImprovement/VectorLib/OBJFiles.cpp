@@ -460,9 +460,6 @@ void COBJFileType::ToGCM(CGCMFileType *pFile)
 					// Calculo de la tangente y bitangente para el normal mapping
 					pFile->SetBufferTangents(nFrame,nBuffer,pTangentArray);
 					pFile->SetBufferBitangents(nFrame,nBuffer,pBitangentArray);
-					
-					delete [] pTangentArray;
-					delete [] pBitangentArray;
 				}
 			}
 		}
