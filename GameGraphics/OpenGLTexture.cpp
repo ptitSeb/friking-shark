@@ -49,7 +49,7 @@ struct BMPINFOHEADER
 }; 
 #pragma pack(pop)
 
-bool LoadBMPFile(const char *pFileName,unsigned int nBits,unsigned int *pnWidth,unsigned int *pnHeight,unsigned char **ppPixels)
+bool LoadBMPFile(const char *pFileName,unsigned int *pnWidth,unsigned int *pnHeight,unsigned char **ppPixels,bool bForceAlpha,unsigned int *pdwColorType)
 {
 	BMPFILEHEADER fileHeader={0};
 	BMPINFOHEADER fileInfo={0};
@@ -71,11 +71,11 @@ bool LoadBMPFile(const char *pFileName,unsigned int nBits,unsigned int *pnWidth,
 		if(bOk){bOk=(fread(pFileBits,fileInfo.biSizeImage,1,pFile)==1);}
 		if(bOk)
 		{
+			int nRequestedBits=bForceAlpha?32:fileInfo.biBitCount;
+			*pdwColorType=(nRequestedBits==32)?GL_RGBA:GL_RGB;
 			*pnHeight=fileInfo.biHeight;
 			*pnWidth=fileInfo.biWidth;
-			*ppPixels = new unsigned char[fileInfo.biHeight * fileInfo.biWidth * nBits/8];
-			// Set alpha to 1
-			if(nBits==32){memset(*ppPixels,0xFF,fileInfo.biHeight * fileInfo.biWidth * nBits/8);}
+			*ppPixels = new unsigned char[fileInfo.biHeight * fileInfo.biWidth * nRequestedBits/8];
 
 			int sourceLineSize = fileInfo.biWidth *  fileInfo.biBitCount/8;
 			int paddedLineSize = ((sourceLineSize/4)*4);
@@ -86,9 +86,12 @@ bool LoadBMPFile(const char *pFileName,unsigned int nBits,unsigned int *pnWidth,
 			unsigned char *imagePointer = pFileBits;
 
 			int x, y;
-			int nSourceExcess=fileInfo.biBitCount>nBits?1:0;
-			int nDestExcess=nBits>fileInfo.biBitCount?1:0;
-			int nCommon=fileInfo.biBitCount==nBits?fileInfo.biBitCount/8:3;
+			int nSourceExcess=fileInfo.biBitCount>nRequestedBits?1:0;
+			int nDestExcess=nRequestedBits>fileInfo.biBitCount?1:0;
+			int nCommon=fileInfo.biBitCount==nRequestedBits?fileInfo.biBitCount/8:3;
+
+			// Alpha channel to full opacity if missing.
+			if(nDestExcess){memset(*ppPixels,0xFF,fileInfo.biHeight * fileInfo.biWidth * nRequestedBits/8);}
 
 			for(x = fileInfo.biHeight-1; x >= 0; x--)
 			{
@@ -112,7 +115,7 @@ bool LoadBMPFile(const char *pFileName,unsigned int nBits,unsigned int *pnWidth,
 	return bOk;
 }
 
-bool LoadPngFile(const char *pFileName,unsigned int nBits,unsigned int *pnWidth,unsigned int *pnHeight,unsigned char **ppPixels)
+bool LoadPngFile(const char *pFileName,unsigned int *pnWidth,unsigned int *pnHeight,unsigned char **ppPixels,bool bForceAlpha,unsigned int *pdwColorType)
 {
 	png_structp pPNGHeader=NULL;
 	png_infop pPNGInfo=NULL;
@@ -132,7 +135,8 @@ bool LoadPngFile(const char *pFileName,unsigned int nBits,unsigned int *pnWidth,
 		*pnWidth= pPNGInfo->width;
 		*pnHeight= pPNGInfo->height;
 		unsigned int nFileBits=pPNGInfo->color_type==PNG_COLOR_TYPE_RGBA?32:24;
-		unsigned int nRequestedBits=(nBits==GL_RGBA)?32:24;
+		unsigned int nRequestedBits=(bForceAlpha)?32:nFileBits;
+		*pdwColorType=(nRequestedBits==32)?GL_RGBA:GL_RGB;
 	
 		if(nFileBits==nRequestedBits)
 		{
@@ -156,7 +160,7 @@ bool LoadPngFile(const char *pFileName,unsigned int nBits,unsigned int *pnWidth,
 			if(nDestBytesPerColor>nFileBytesPerColor)
 			{
 				// Alpha channel to full opacity if missing.
-				memset(*ppPixels,255,nDestBytesPerColor*pPNGInfo->width*pPNGInfo->height);
+				memset(*ppPixels,0xFF,nDestBytesPerColor*pPNGInfo->width*pPNGInfo->height);
 			}
 		
 			png_bytepp ppRows = png_get_rows(pPNGHeader, pPNGInfo);
@@ -183,11 +187,12 @@ bool LoadPngFile(const char *pFileName,unsigned int nBits,unsigned int *pnWidth,
 }
 
 
-bool LoadImageHelper(std::string sFile,unsigned int dwColorType,unsigned *pOpenGLSkinWidth,unsigned *pOpenGLSkinHeight,unsigned char **ppBuffer)
+bool LoadImageHelper(std::string sFile,unsigned *pOpenGLSkinWidth,unsigned *pOpenGLSkinHeight,unsigned char **ppBuffer,bool bForceAlpha,unsigned int *pdwColorType)
 {
 	*pOpenGLSkinWidth=0;
 	*pOpenGLSkinHeight=0;
 	*ppBuffer=NULL;
+	*pdwColorType=GL_RGB;
 
 	char sFileName[MAX_PATH]={0};
 	strcpy(sFileName,sFile.c_str());
@@ -212,10 +217,10 @@ bool LoadImageHelper(std::string sFile,unsigned int dwColorType,unsigned *pOpenG
 	{
 		if(strcasecmp(sExt,".PNG")==0)
 		{
-			return LoadPngFile(path.c_str(),dwColorType,pOpenGLSkinWidth,pOpenGLSkinHeight,ppBuffer);
+			return LoadPngFile(path.c_str(),pOpenGLSkinWidth,pOpenGLSkinHeight,ppBuffer,bForceAlpha,pdwColorType);
 		}
 	}
-	return LoadBMPFile(path.c_str(),(dwColorType==GL_RGBA)?32:24,pOpenGLSkinWidth,pOpenGLSkinHeight,ppBuffer);
+	return LoadBMPFile(path.c_str(),pOpenGLSkinWidth,pOpenGLSkinHeight,ppBuffer,bForceAlpha,pdwColorType);
 }
 
 
@@ -227,6 +232,7 @@ COpenGLTexture::COpenGLTexture(void)
 	m_dwHeight=0;
 	m_pBuffer=NULL;
 
+	m_dwColorType=GL_RGB;
 	m_bColorKey=false;
 	m_fOpacity=1.0;
 
@@ -274,6 +280,7 @@ void COpenGLTexture::Clear()
 		glDeleteTextures(1,&m_nTextureIndex);
 		m_nTextureIndex=0;
 	}
+	m_dwColorType=GL_RGB;
 }
 
 COpenGLTexture::~COpenGLTexture(void)
@@ -290,18 +297,18 @@ CVector		COpenGLTexture::GetColorKey(){return m_vColorKey;}
 bool COpenGLTexture::LoadFromFile()
 {
 	int nStartTime=GetTimeStamp();
-  
+	bool bForceAlpha=(m_bColorKey || m_sAlphaFileName!="" || m_fOpacity<=1.0 || m_bRenderTarget);
 	bool bResult=true;
-	unsigned int	 dwColorType=HasAlphaChannel()?GL_RGBA:GL_RGB;
-
-	if(LoadImageHelper(m_sFileName,dwColorType,&m_dwWidth,&m_dwHeight,&m_pBuffer))
+	m_dwColorType=GL_RGB;
+	if(LoadImageHelper(m_sFileName,&m_dwWidth,&m_dwHeight,&m_pBuffer,bForceAlpha,&m_dwColorType))
 	{
 		if(m_sAlphaFileName!="")
 		{
 			unsigned char	*pAlphaBuffer=NULL;
 			unsigned nAlphaOpenGLSkinWidth=0,nAlphaOpenGLSkinHeight=0;
 
-			if(LoadImageHelper(m_sAlphaFileName,GL_RGB,&nAlphaOpenGLSkinWidth,&nAlphaOpenGLSkinHeight,&pAlphaBuffer))
+			unsigned int dwAlphaColorType=GL_RGB;
+			if(LoadImageHelper(m_sAlphaFileName,&nAlphaOpenGLSkinWidth,&nAlphaOpenGLSkinHeight,&pAlphaBuffer,false,&dwAlphaColorType))
 			{
 				if(nAlphaOpenGLSkinWidth==m_dwWidth && m_dwHeight==nAlphaOpenGLSkinHeight)
 				{
@@ -310,7 +317,8 @@ bool COpenGLTexture::LoadFromFile()
 
 					for(unsigned y=0; y < m_dwHeight; y++)
 					{
-						for(unsigned x = 0; x < m_dwWidth; x++,pTempBuffer+=4,pTempAlpha+=3)
+						unsigned int nAlphaColorLen=dwAlphaColorType==GL_RGB?3:4;
+						for(unsigned x = 0; x < m_dwWidth; x++,pTempBuffer+=4,pTempAlpha+=nAlphaColorLen)
 						{
 							pTempBuffer[3] = (unsigned char)((((unsigned int)pTempAlpha[0])+((unsigned int)pTempAlpha[1])+((unsigned int)pTempAlpha[2]))/3);
 						}
@@ -375,7 +383,7 @@ bool COpenGLTexture::LoadFromFile()
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			gluBuild2DMipmaps(GL_TEXTURE_2D,dwColorType==GL_RGBA?4:3,m_dwWidth,m_dwHeight,dwColorType,GL_UNSIGNED_BYTE,m_pBuffer);
+			gluBuild2DMipmaps(GL_TEXTURE_2D,m_dwColorType==GL_RGBA?4:3,m_dwWidth,m_dwHeight,m_dwColorType,GL_UNSIGNED_BYTE,m_pBuffer);
 		}
 		m_bRenderTarget=false;
 		
@@ -395,7 +403,7 @@ bool COpenGLTexture::Unserialize(ISystemPersistencyNode *piNode)
 	if(bResult){bResult=LoadFromFile();}
 	return bResult;
 }
-bool COpenGLTexture::HasAlphaChannel(){return (m_bColorKey || m_sAlphaFileName!="" || m_fOpacity<=1.0 || m_bRenderTarget);}
+bool COpenGLTexture::HasAlphaChannel(){return (m_dwColorType==GL_RGBA);}
 
 unsigned long COpenGLTexture::GetByteBufferLength(){return HasAlphaChannel()?m_dwHeight*m_dwWidth*4:m_dwHeight*m_dwWidth*3;}
 void		  *COpenGLTexture::GetByteBuffer(){return m_pBuffer;}
@@ -403,7 +411,6 @@ void		  *COpenGLTexture::GetByteBuffer(){return m_pBuffer;}
 bool COpenGLTexture::Load(std::string sFileName,CVector *pColorKey,std::string *pAlphaFile,float fOpacity)
 {
 	Clear();
-
 	m_sFileName=sFileName;
 	m_sAlphaFileName=pAlphaFile?*pAlphaFile:"";
 	m_bColorKey=false;

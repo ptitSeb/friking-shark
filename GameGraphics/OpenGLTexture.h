@@ -26,7 +26,8 @@ class COpenGLTexture : virtual public CSystemObjectBase,virtual public IGenericT
 
 	unsigned char *m_pBuffer;
 
-	unsigned m_nTextureIndex;
+	unsigned int m_nTextureIndex;
+	unsigned int m_dwColorType;
 
 	std::string m_sFileName;
 	std::string m_sAlphaFileName;
