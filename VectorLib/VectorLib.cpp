@@ -2646,10 +2646,6 @@ void ComputeTangentBasis(unsigned int nVertexes, float *pVertexes, unsigned int 
 		pFinalBitangent[0]=vFinalBitangent.c[0];
 		pFinalBitangent[1]=vFinalBitangent.c[1];
 		pFinalBitangent[2]=vFinalBitangent.c[2];
-		
-		// Calculate handedness
-		//pFinalTangent[3]= (((vNormal^vTangent)*vTangent2) < 0.0) ? -1.0 : 1.0;
-		//pFinalBitangent[3]=pFinalTangent[3];
 	}
 	
 	delete[] tan1;
