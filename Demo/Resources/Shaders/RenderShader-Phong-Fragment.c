@@ -20,8 +20,8 @@ uniform sampler2DShadow ShadowMap;
 in vec4 g_ShadowCoord;
 #endif
 #ifdef ENABLE_NORMAL_MAP
-in vec3 g_WorldTangent;
-in vec3 g_WorldBitangent;
+in vec3  g_WorldTangent;
+in vec3  g_WorldBitangent;
 uniform mat4 uModel[MAX_OBJECT_INSTANCES];
 uniform sampler2D NormalMap;
 #endif
@@ -135,7 +135,7 @@ void main (void)
 
 //  vec4 normalDisturbance=vec4(0.0);
   #ifdef ENABLE_WATER
-  ApplyWaterEffect(Texture0,g_TexCoord0.xy,texcolor.xyz/*,normalDisturbance*/);
+  ApplyWaterEffect(Texture0,g_TexCoord0.xy,texcolor.xyz);
   #else
     texcolor*= texture2D(Texture0, g_TexCoord0.xy);
   #endif
@@ -173,9 +173,9 @@ void main (void)
 	  #ifdef ENABLE_NORMAL_MAP
 	  // Compute final normal usign the normal map
 	  vec4 normalMapSample=texture2D(NormalMap,g_TexCoord0.xy);
-	  vec3 bump = normalize( normalMapSample.xyz * 2.0 - vec3(1.0));
-	  vec3 N=(vec4(normalize(bump.x*normalize(g_WorldBitangent)+bump.y*normalize(g_WorldTangent)+bump.z*normalize(g_WorldNormal)),1.0)).xyz;
-	  //ks=normalMapSample.a;
+	  vec3 bump = vec3(normalMapSample.xy* 2.0 - vec2(1.0),normalMapSample.z);
+	  vec3 N=normalize(bump.x*normalize(g_WorldBitangent)+bump.y*normalize(g_WorldTangent)+bump.z*normalize(g_WorldNormal));
+	  ks=normalMapSample.a;
 	  #else
 	  vec3 N=normalize(g_WorldNormal/*+normalDisturbance.xyz*/);
 	  #endif
