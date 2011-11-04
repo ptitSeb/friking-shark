@@ -1,22 +1,22 @@
 SET (SRCS_VECTORLIB
 
-	./3DSFiles.h
-	./3DSTypes.h
-	./ASEFiles.h
-	./GBSFiles.h
-	./GCMFiles.h
-	./OBJFiles.h
-	./StdAfx.h
-	./VectorLib.h
+	./VectorLib/3DSFiles.h
+	./VectorLib/3DSTypes.h
+	./VectorLib/ASEFiles.h
+	./VectorLib/GBSFiles.h
+	./VectorLib/GCMFiles.h
+	./VectorLib/OBJFiles.h
+	./VectorLib/StdAfx.h
+	./VectorLib/VectorLib.h
 
-	./3DSFiles.cpp
-	./3DSTypes.cpp
-	./ASEFiles.cpp
-	./GBSFiles.cpp
-	./GCMFiles.cpp
-	./OBJFiles.cpp
-	./StdAfx.cpp
-	./VectorLib.cpp
+	./VectorLib/3DSFiles.cpp
+	./VectorLib/3DSTypes.cpp
+	./VectorLib/ASEFiles.cpp
+	./VectorLib/GBSFiles.cpp
+	./VectorLib/GCMFiles.cpp
+	./VectorLib/OBJFiles.cpp
+	./VectorLib/StdAfx.cpp
+	./VectorLib/VectorLib.cpp
 )
 
 ADD_LIBRARY ( VectorLib ${SRCS_VECTORLIB} )

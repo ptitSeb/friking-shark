@@ -33,17 +33,17 @@ SET (SRCS_GAMEGUI
 	./GameGUI/GameMainWindow.cpp
 	./GameGUI/stdafx.cpp
 )
+IF(ANDROID)
+	ADD_LIBRARY ( GameGUI ${SRCS_GAMEGUI} )
+ELSE()
+	ADD_LIBRARY ( GameGUI SHARED ${SRCS_GAMEGUI} )
 
-ADD_LIBRARY ( GameGUI SHARED ${SRCS_GAMEGUI} )
-
-TARGET_LINK_LIBRARIES (
-         GameGUI
-	GameGUILib
-	GameRunTimeLib
-	VectorLib
-	GameEntityLib
-	${PNG_LIBRARY}
-	${OPENAL_LIBRARY}
-	${OPENGL_LIBRARY}
-)
-
+	TARGET_LINK_LIBRARIES (
+			GameGUI
+		GameGUILib
+		GameRunTimeLib
+		VectorLib
+		GameEntityLib
+		${ANDROID_LOG_LIBRARY}
+	)
+ENDIF()

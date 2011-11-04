@@ -125,7 +125,6 @@ public:
 	bool				m_bSolid;
 	bool				m_bTextures;
 	bool				m_bFog;
-	bool				m_bShaders;
 	bool				m_bShadows;
 	bool				m_bLighting;
 	bool				m_bNormalMaps;
@@ -334,7 +333,6 @@ public:
 	IGameGUIButton *m_piBTOptionsSolid;
 	IGameGUIButton *m_piBTOptionsBlend;
 	IGameGUIButton *m_piBTOptionsShadows;
-	IGameGUIButton *m_piBTOptionsShaders;
 	IGameGUIButton *m_piBTOptionsLighting;
 	IGameGUIButton *m_piBTOptionsFog;
 	IGameGUIButton *m_piBTOptionsGod;
@@ -640,7 +638,6 @@ public:
 		CHILD_MAP_ENTRY_EX("OptionSolid",m_piBTOptionsSolid,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("OptionBlend",m_piBTOptionsBlend,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("OptionShadows",m_piBTOptionsShadows,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("OptionShaders",m_piBTOptionsShaders,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("OptionFog",m_piBTOptionsFog,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("OptionLighting",m_piBTOptionsLighting,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("OptionGod",m_piBTOptionsGod,IGameGUIButtonEvents);

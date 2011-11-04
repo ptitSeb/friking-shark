@@ -1,4 +1,4 @@
-SET (SRCS_SOUNDSYSTEMS
+SET (SRCS_WEAPONTYPES
 
 	./WeaponTypes/BombProjectileType.h
 	./WeaponTypes/BulletProjectileType.h
@@ -16,16 +16,17 @@ SET (SRCS_SOUNDSYSTEMS
 	./WeaponTypes/WeaponTypes.cpp
 )
 
-ADD_LIBRARY ( WeaponTypes SHARED ${SRCS_SOUNDSYSTEMS} )
+IF(ANDROID)
+	ADD_LIBRARY ( WeaponTypes ${SRCS_WEAPONTYPES} )
+ELSE()
+	ADD_LIBRARY ( WeaponTypes SHARED ${SRCS_WEAPONTYPES} )
 
-TARGET_LINK_LIBRARIES (
-         WeaponTypes
-	GameGUILib
-	GameRunTimeLib
-	VectorLib
-	GameEntityLib
-	${PNG_LIBRARY}
-	${OPENAL_LIBRARY}
-	${OPENGL_LIBRARY}
-)
-
+	TARGET_LINK_LIBRARIES (
+			WeaponTypes
+		GameGUILib
+		GameRunTimeLib
+		VectorLib
+		GameEntityLib
+		${ANDROID_LOG_LIBRARY}
+	)
+ENDIF()

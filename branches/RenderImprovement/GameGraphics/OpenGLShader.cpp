@@ -99,13 +99,13 @@ bool COpenGLShader::Compile()
       if(bOk)
 	  {
 		  glCompileShaderARB(m_hVertexShader);
-		  glGetObjectParameterivARB(m_hVertexShader,GL_OBJECT_COMPILE_STATUS_ARB,&glResult);
+		  glGetShaderiv(m_hVertexShader,GL_COMPILE_STATUS,&glResult);
 		  bOk=(glResult==1);
 
 		  char sOuputBuffer[1024*16];
 		  sOuputBuffer[0]=0;
 		  int nLength=0;
-		  glGetInfoLogARB(m_hVertexShader,sizeof(sOuputBuffer),&nLength,sOuputBuffer);
+		  glGetShaderInfoLog(m_hVertexShader,sizeof(sOuputBuffer),&nLength,sOuputBuffer);
 		  if(!bOk){RTTRACE("COpenGLShader::Compile -> Vertex Shader compilation Failed");}
 		  if(sOuputBuffer[0]!=0){RTTRACE(sOuputBuffer);}
 		  //if(sOuputBuffer[0]!=0){RTTRACE(m_sVertexShaderCode.c_str());}
@@ -128,13 +128,13 @@ bool COpenGLShader::Compile()
       if(bOk)
 	  {
 		  glCompileShaderARB(m_hFragmentShader);
-		  glGetObjectParameterivARB(m_hFragmentShader,GL_OBJECT_COMPILE_STATUS_ARB,&glResult);
+		  glGetShaderiv(m_hFragmentShader,GL_COMPILE_STATUS,&glResult);
 		  bOk=(glResult==1);
 
 		  char sOuputBuffer[1024*16];
 		  sOuputBuffer[0]=0;
 		  int nLength=0;
-		  glGetInfoLogARB(m_hFragmentShader,sizeof(sOuputBuffer),&nLength,sOuputBuffer);
+		  glGetShaderInfoLog(m_hFragmentShader,sizeof(sOuputBuffer),&nLength,sOuputBuffer);
 		  if(!bOk){RTTRACE("COpenGLShader::Compile -> Fragment Shader compilation Failed");}
 		  if(sOuputBuffer[0]!=0){RTTRACE(sOuputBuffer);}
 		  //if(sOuputBuffer[0]!=0){RTTRACE(m_sFragmentShaderCode.c_str());}
@@ -160,12 +160,12 @@ bool COpenGLShader::Compile()
   {
     GLint glResult=0;
 	glLinkProgramARB(m_hShaderProgram);
-    glGetObjectParameterivARB(m_hShaderProgram,GL_OBJECT_LINK_STATUS_ARB,&glResult);
+	glGetProgramiv(m_hShaderProgram,GL_LINK_STATUS,&glResult);
     bOk=(glResult==1);
 	char sOuputBuffer[1024*16];
 	sOuputBuffer[0]=0;
 	int nLength=0;
-	glGetInfoLogARB(m_hShaderProgram,sizeof(sOuputBuffer),&nLength,sOuputBuffer);
+	glGetProgramInfoLog(m_hShaderProgram,sizeof(sOuputBuffer),&nLength,sOuputBuffer);
 	if(sOuputBuffer[0]!=0){RTTRACE(sOuputBuffer);}
 	RTTRACE(bOk?"COpenGLShader::Compile -> Shader link Succeeded":"COpenGLShader::Compile -> Shader link failed");
   }
@@ -175,9 +175,9 @@ bool COpenGLShader::Compile()
 
 void COpenGLShader::FreeShader()
 {
-	if(m_hVertexShader){glDetachObjectARB(m_hShaderProgram,m_hVertexShader);glDeleteObjectARB(m_hVertexShader);m_hVertexShader=0;}
-	if(m_hFragmentShader){glDetachObjectARB(m_hShaderProgram,m_hFragmentShader);glDeleteObjectARB(m_hFragmentShader);m_hFragmentShader=0;}
-	if(m_hShaderProgram){glDeleteObjectARB(m_hShaderProgram);m_hShaderProgram=0;}
+	if(m_hVertexShader){glDetachObjectARB(m_hShaderProgram,m_hVertexShader);glDeleteShader(m_hVertexShader);m_hVertexShader=0;}
+	if(m_hFragmentShader){glDetachObjectARB(m_hShaderProgram,m_hFragmentShader);glDeleteShader(m_hFragmentShader);m_hFragmentShader=0;}
+	if(m_hShaderProgram){glDeleteProgram(m_hShaderProgram);m_hShaderProgram=0;}
 	
 	std::map<std::string,SUniformData*>::iterator i;
 	for(i=m_mUniforms.begin();i!=m_mUniforms.end();i++)

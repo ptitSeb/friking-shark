@@ -18,7 +18,11 @@
 
 #pragma once
 
+#ifdef ANDROID
+#include <GLES2/gl2.h>
+#else
 #include <GL/gl.h>
+#endif
 
 DECLARE_CUSTOM_WRAPPER1(CTextureWrapper,IGenericTexture,m_piTexture)
 

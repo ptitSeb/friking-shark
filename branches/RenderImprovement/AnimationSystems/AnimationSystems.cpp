@@ -30,7 +30,7 @@
 #include "SoundAnimationObjectType.h"
 #include "TextAnimationObjectType.h"
 
-BEGIN_SYSTEM_MODULE()
+BEGIN_SYSTEM_MODULE(AnimationSystems)
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CAnimationType,"AnimationType")
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CModelAnimationObjectType,"ModelAnimationObjectType")
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEventAnimationObjectType,"EventAnimationObjectType")
@@ -38,5 +38,5 @@ BEGIN_SYSTEM_MODULE()
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityAnimationObjectType,"EntityAnimationObjectType")
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CSoundAnimationObjectType,"SoundAnimationObjectType")
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CTextAnimationObjectType,"TextAnimationObjectType")
-END_SYSTEM_MODULE()
+END_SYSTEM_MODULE(AnimationSystems)
 

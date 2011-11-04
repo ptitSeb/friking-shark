@@ -25,5 +25,7 @@
 #pragma comment (lib, "GameEntityLib.lib")
 #endif
 
+#ifndef ANDROID
 CSingletonWrapper<IPlayAreaManager> g_PlayAreaManagerWrapper("GameSystem","PlayAreaManager");
 CSingletonWrapper<IPlayerManager> g_PlayerManagerWrapper("GameSystem","PlayerManager");
+#endif

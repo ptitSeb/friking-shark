@@ -25,17 +25,17 @@ SET (SRCS_ANIMATIONSYSTEMS
 	./AnimationSystems/TextAnimationObjectType.cpp
 )
 
+IF(ANDROID)
+	ADD_LIBRARY ( AnimationSystems ${SRCS_ANIMATIONSYSTEMS} )
+ELSE()
+	ADD_LIBRARY ( AnimationSystems SHARED ${SRCS_ANIMATIONSYSTEMS} )
 
-ADD_LIBRARY ( AnimationSystems SHARED ${SRCS_ANIMATIONSYSTEMS} )
-
-TARGET_LINK_LIBRARIES (
-         AnimationSystems
-	GameGUILib
-	GameRunTimeLib
-	VectorLib
-	GameEntityLib
-	${PNG_LIBRARY}
-	${OPENAL_LIBRARY}
-	${OPENGL_LIBRARY}
-)
-
+	TARGET_LINK_LIBRARIES (
+			AnimationSystems
+		GameGUILib
+		GameRunTimeLib
+		VectorLib
+		GameEntityLib
+		${ANDROID_LOG_LIBRARY}
+	)
+ENDIF()

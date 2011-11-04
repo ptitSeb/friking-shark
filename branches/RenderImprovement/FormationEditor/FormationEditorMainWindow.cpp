@@ -267,9 +267,8 @@ void CFormationEditorMainWindow::OnDraw(IGenericRender *piRender)
 	m_bSolid?m_Render.m_piRender->EnableSolid():m_Render.m_piRender->DisableSolid();
 	m_Render.m_piRender->EnableBlending();
 	m_bRenderShadows?m_Render.m_piRender->EnableShadows():m_Render.m_piRender->DisableShadows();
-	m_Render.m_piRender->DisableLighting();
+	m_Render.m_piRender->EnableLighting();
 	m_Render.m_piRender->DisableHeightFog();
-	m_Render.m_piRender->DisableShaders();
 	
 	if(m_bSimulationStarted)
 	{

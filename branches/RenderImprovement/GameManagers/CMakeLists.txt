@@ -27,16 +27,20 @@ SET (SRCS_GAMEMANAGERS
 	./GameManagers/WorldEntity.cpp
 	./GameManagers/WorldManager.cpp
 )
-ADD_LIBRARY ( GameManagers SHARED ${SRCS_GAMEMANAGERS} )
+IF(ANDROID)
+	ADD_LIBRARY ( GameManagers ${SRCS_GAMEMANAGERS} )
+ELSE()
+	ADD_LIBRARY ( GameManagers SHARED ${SRCS_GAMEMANAGERS} )
 
-TARGET_LINK_LIBRARIES (
-         GameManagers
-	GameGUILib
-	GameRunTimeLib
-	VectorLib
-	GameEntityLib
-	${PNG_LIBRARY}
-	${OPENAL_LIBRARY}
-	${OPENGL_LIBRARY}
-)
-
+	TARGET_LINK_LIBRARIES (
+			GameManagers
+		GameGUILib
+		GameRunTimeLib
+		VectorLib
+		GameEntityLib
+		${PNG_LIBRARY}
+		${OPENAL_LIBRARY}
+		${OPENGL_LIBRARY}
+		${ANDROID_LOG_LIBRARY}
+	)
+ENDIF()

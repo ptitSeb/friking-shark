@@ -28,12 +28,14 @@
 
 #include <sys/stat.h>
 
-#ifndef WIN32
+#ifdef WIN32
+#include <io.h>
+#elif defined LINUX
 #include <sys/time.h>
 #include <libgen.h>
 #include <glob.h>
-#else
-#include <io.h>
+#elif defined ANDROID
+#include <android/log.h>
 #endif
 
 
@@ -180,40 +182,6 @@ unsigned int GetTimeStamp()
 	return (unsigned int)(ldNow.QuadPart*1000/ldPerformanceFrequency.QuadPart);
 }
 
-
-bool FindFiles(const char *psPattern, EFindFilesMode eMode,std::set<std::string> *psFiles)
-{
-	char sFolder[MAX_PATH];
-	GetFileFolder(psPattern,sFolder);
-
-	WIN32_FIND_DATA FileData;
-	HANDLE hFind = FindFirstFile(psPattern, &FileData);
-	if(hFind != INVALID_HANDLE_VALUE) 
-	{
-		do
-		{
-			if(strcmp(FileData.cFileName,".")!=0)
-			{
-				std::string sFile=AppendPathSeparator(sFolder)+FileData.cFileName;
-				bool bDirectory=((GetFileAttributes(sFile.c_str())&FILE_ATTRIBUTE_DIRECTORY)!=0);
-				std::string sFileName=GetFileName(sFile);
-				if(bDirectory){sFile=AppendPathSeparator(sFile);}
-				switch(eMode)
-				{
-				case eFindFilesMode_OnlyFiles:	if(!bDirectory){psFiles->insert(sFile);};break;
-				case eFindFilesMode_OnlyDirs:	if(bDirectory){psFiles->insert(sFile);}break;
-				case eFindFilesMode_DirsAndFiles:psFiles->insert(sFile);break;
-				}
-			}
-		}
-		while(FindNextFile(hFind, &FileData));
-
-		FindClose(hFind);
-		hFind=INVALID_HANDLE_VALUE;
-	}
-	return true;
-}
-
 std::string GetWorkingFolder()
 {
 	char sCurrentPath[MAX_PATH]={0};
@@ -281,54 +249,12 @@ std::string GetFileName(std::string sFilePath)
 	return sFileName;
 }
 
-void RTTRACE(const char *format, ...)
-{
-	va_list vargs;
-	va_start (vargs,format);
-	char pTempBuffer[1024*16];
-	int res=vsnprintf(pTempBuffer,sizeof(pTempBuffer)-1,format,vargs);
-	if(res==-1){pTempBuffer[sizeof(pTempBuffer)-2]=0;res=sizeof(pTempBuffer)-2;}
-	va_end (vargs);
-
-	pTempBuffer[res]='\n';
-	pTempBuffer[res+1]=0;
-	printf("%s",pTempBuffer);
-}
 
 unsigned int GetTimeStamp()
 {
 	timeval tNow;
 	gettimeofday(&tNow, NULL);
 	return ((double)tNow.tv_sec)*1000.0+((double)tNow.tv_usec)/1000.0;
-}
-
-bool FindFiles(const char *psPattern, EFindFilesMode eMode,std::set<std::string> *psFiles)
-{
-	glob_t globbuf={0};
-	unsigned int nFlags=GLOB_MARK;
-	nFlags|=((eMode==eFindFilesMode_OnlyDirs)?GLOB_ONLYDIR:0);
-	glob(psPattern,nFlags,NULL,&globbuf);
-	if(eMode!=eFindFilesMode_OnlyFiles )
-	{
-	  std::string sParent=GetFileFolder(psPattern)+PATH_SEPARATOR+".."+PATH_SEPARATOR;
-	  if(FileExists(sParent.c_str())){psFiles->insert(sParent);}
-	}
-	//liberamos la memoria	
-	for (unsigned int i=0; i <globbuf.gl_pathc; i++)
-	{
-		const char *pFile=globbuf.gl_pathv[i];
-		if(pFile[0]==0){continue;}
-		bool bDirectory=(pFile[strlen(pFile)-1]==PATH_SEPARATOR_CHAR);
-		switch(eMode)
-		{
-		case eFindFilesMode_Unknown:break;
-		case eFindFilesMode_OnlyFiles:	if(!bDirectory){psFiles->insert(pFile);};break;
-		case eFindFilesMode_OnlyDirs:	if(bDirectory){psFiles->insert(pFile);};break;
-		case eFindFilesMode_DirsAndFiles:psFiles->insert(pFile);break;
-		}
-	}
-	globfree(&globbuf);
-	return true;
 }
 
 std::string GetWorkingFolder()
@@ -361,3 +287,105 @@ time_t GetFileTimeStamp(const char *pFileName)
 
 #endif
 
+#ifdef ANDROID
+void RTTRACE(const char *format, ...)
+{
+	va_list vargs;
+	va_start (vargs,format);
+	char pTempBuffer[1024*16];
+	int res=vsnprintf(pTempBuffer,sizeof(pTempBuffer)-1,format,vargs);
+	if(res==-1){pTempBuffer[sizeof(pTempBuffer)-2]=0;res=sizeof(pTempBuffer)-2;}
+	va_end (vargs);
+	
+	
+	
+	pTempBuffer[res]='\n';
+	pTempBuffer[res+1]=0;
+	
+	__android_log_print(ANDROID_LOG_INFO, "FrikingShark",pTempBuffer);
+}
+#else
+void RTTRACE(const char *format, ...)
+{
+	va_list vargs;
+	va_start (vargs,format);
+	char pTempBuffer[1024*16];
+	int res=vsnprintf(pTempBuffer,sizeof(pTempBuffer)-1,format,vargs);
+	if(res==-1){pTempBuffer[sizeof(pTempBuffer)-2]=0;res=sizeof(pTempBuffer)-2;}
+	va_end (vargs);
+	
+	pTempBuffer[res]='\n';
+	pTempBuffer[res+1]=0;
+	printf("%s",pTempBuffer);
+}
+#endif
+
+#ifdef WIN32
+bool FindFiles(const char *psPattern, EFindFilesMode eMode,std::set<std::string> *psFiles)
+{
+	char sFolder[MAX_PATH];
+	GetFileFolder(psPattern,sFolder);
+	
+	WIN32_FIND_DATA FileData;
+	HANDLE hFind = FindFirstFile(psPattern, &FileData);
+	if(hFind != INVALID_HANDLE_VALUE) 
+	{
+		do
+		{
+			if(strcmp(FileData.cFileName,".")!=0)
+			{
+				std::string sFile=AppendPathSeparator(sFolder)+FileData.cFileName;
+				bool bDirectory=((GetFileAttributes(sFile.c_str())&FILE_ATTRIBUTE_DIRECTORY)!=0);
+				std::string sFileName=GetFileName(sFile);
+				if(bDirectory){sFile=AppendPathSeparator(sFile);}
+				switch(eMode)
+				{
+					case eFindFilesMode_OnlyFiles:	if(!bDirectory){psFiles->insert(sFile);};break;
+					case eFindFilesMode_OnlyDirs:	if(bDirectory){psFiles->insert(sFile);}break;
+					case eFindFilesMode_DirsAndFiles:psFiles->insert(sFile);break;
+				}
+			}
+		}
+		while(FindNextFile(hFind, &FileData));
+		
+		FindClose(hFind);
+		hFind=INVALID_HANDLE_VALUE;
+	}
+	return true;
+}
+#elif defined ANDROID
+bool FindFiles(const char *psPattern, EFindFilesMode eMode,std::set<std::string> *psFiles)
+{
+	#pragma message("WARNING: glob replacement needed !!!!!")
+	return true;
+}
+#elif defined LINUX
+bool FindFiles(const char *psPattern, EFindFilesMode eMode,std::set<std::string> *psFiles)
+{
+	glob_t globbuf={0};
+	unsigned int nFlags=GLOB_MARK;
+	nFlags|=((eMode==eFindFilesMode_OnlyDirs)?GLOB_ONLYDIR:0);
+	glob(psPattern,nFlags,NULL,&globbuf);
+	if(eMode!=eFindFilesMode_OnlyFiles )
+	{
+		std::string sParent=GetFileFolder(psPattern)+PATH_SEPARATOR+".."+PATH_SEPARATOR;
+		if(FileExists(sParent.c_str())){psFiles->insert(sParent);}
+	}
+	//liberamos la memoria	
+	for (unsigned int i=0; i <globbuf.gl_pathc; i++)
+	{
+		const char *pFile=globbuf.gl_pathv[i];
+		if(pFile[0]==0){continue;}
+		bool bDirectory=(pFile[strlen(pFile)-1]==PATH_SEPARATOR_CHAR);
+		switch(eMode)
+		{
+			case eFindFilesMode_Unknown:break;
+			case eFindFilesMode_OnlyFiles:	if(!bDirectory){psFiles->insert(pFile);};break;
+			case eFindFilesMode_OnlyDirs:	if(bDirectory){psFiles->insert(pFile);};break;
+			case eFindFilesMode_DirsAndFiles:psFiles->insert(pFile);break;
+		}
+	}
+	globfree(&globbuf);
+	return true;
+}
+#endif

@@ -25,9 +25,9 @@
 #include "BombProjectileType.h"
 #include "HomingMissileProjectileType.h"
 
-BEGIN_SYSTEM_MODULE()
+BEGIN_SYSTEM_MODULE(WeaponTypes)
   SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CProjectileLauncherType,"ProjectileLauncherType")
   SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CBulletProjectileType,"BulletType")
   SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CBombProjectileType,"BombType")
   SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CHomingMissileProjectileType,"HomingMissileType")
-END_SYSTEM_MODULE()
+END_SYSTEM_MODULE(WeaponTypes)

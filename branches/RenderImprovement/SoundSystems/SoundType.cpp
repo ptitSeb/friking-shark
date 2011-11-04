@@ -19,7 +19,11 @@
 #include "./stdafx.h"
 #include "SoundSystems.h"
 #include "SoundType.h"
+#ifdef ANDROID
+#include <ivorbisfile.h>
+#else
 #include "vorbis/vorbisfile.h"
+#endif
 
 #define OGG_PACKET_SIZE (4096)
 #define OGG_REALLOC_SIZE (1024*512)
@@ -106,7 +110,11 @@ bool CSoundType::LoadOgg()
 			char temp[OGG_PACKET_SIZE];
 			do 
 			{
+#ifdef ANDROID
+				nDecodedBytes=ov_read(&oggFile, temp, OGG_PACKET_SIZE, &bitStream);
+#else
 				nDecodedBytes=ov_read(&oggFile, temp, OGG_PACKET_SIZE, 0, 2, 1, &bitStream);
+#endif
 				if(nDecodedBytes)
 				{
 					if(nAllocatedSize<nBufferSize+nDecodedBytes)
@@ -139,7 +147,7 @@ bool CSoundType::LoadOgg()
 		else
 		{
 			bOk=false;
-			RTTRACE("CSoundType::LoadOgg -> Failed to create buffer for file %s: Error %x:%s",m_sFileName.c_str(),error,alutGetErrorString(error));
+			RTTRACE("CSoundType::LoadOgg -> Failed to create buffer for file %s: Error %x",m_sFileName.c_str(),error);
 		}
 		
 	}
@@ -155,8 +163,10 @@ bool CSoundType::LoadOgg()
 
 bool CSoundType::LoadWav()
 {
+#ifdef ANDROID
+	return false;
+#else
 	bool bOk=true;
-
 	ReleaseAllSources();
 	if(m_iSoundBuffer){alDeleteBuffers(1,&m_iSoundBuffer);m_iSoundBuffer=AL_NONE;}
 	
@@ -172,6 +182,7 @@ bool CSoundType::LoadWav()
 		RTTRACE("CSoundType::LoadWav -> Failed to load sound %s.",m_sFileName.c_str());
 	}
 	return bOk;
+#endif
 }
 
 std::string CSoundType::GetFileName(){return m_sFileName;}
@@ -248,6 +259,7 @@ unsigned int CSoundType::AcquireSoundSource(ISound *piSound)
   else
   {
 	  unsigned int nSource=m_piSoundManager->AcquireSource(this);
+	  
 	  if(nSource!=AL_NONE)
 	  {
 		   alSourceStop(nSource);
@@ -315,7 +327,7 @@ CSound::~CSound()
 	  alSourceStop(m_nSource);
 	  m_pType->ReleaseSoundSource(m_nSource);
 	  m_nSource=AL_NONE;
-    }
+	}
     UNSUBSCRIBE_FROM_CAST(m_pType->m_piSoundManager,ISoundManagerEvents);
 }
 
@@ -370,6 +382,7 @@ void CSound::Stop()
 bool CSound::IsPlaying()
 {
   if(m_nSource==AL_NONE){return false;}
+
   ALint nState=AL_STOPPED;
   alGetSourcei(m_nSource,AL_SOURCE_STATE,&nState);
   if(nState==AL_PLAYING || nState==AL_INITIAL){return true;}
@@ -379,6 +392,7 @@ bool CSound::IsPlaying()
 bool CSound::IsPaused()
 {
 	if(m_nSource==AL_NONE){return false;}
+	
 	ALint nState=AL_STOPPED;
 	alGetSourcei(m_nSource,AL_SOURCE_STATE,&nState);
 	if(nState==AL_PAUSED){return true;}
@@ -388,7 +402,6 @@ bool CSound::IsPaused()
 void CSound::UpdateSource()
 {
 	if(m_nSource==AL_NONE){return;}
-	
 	double dEffectiveVolume=(float)((m_dVolume*m_pType->m_dVolume)/(100.0));
 	alSourcei(m_nSource,AL_LOOPING,m_bLoop?AL_TRUE:AL_FALSE);
 	alSourcef(m_nSource,AL_GAIN,(float)((dEffectiveVolume*m_dGroupVolume)/(100.0*100.0)));

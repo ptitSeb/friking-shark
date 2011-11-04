@@ -30,11 +30,11 @@ class CSystemModule:virtual public CSystemUnknownBase,
     ISystem     *m_piSystem;
     bool        m_bRegistered;
 
-    typedef bool (*tSystemModuleRegister)(ISystem *);
-    typedef bool (*tSystemModuleUnregister)(ISystem *);
-
-    tSystemModuleRegister    m_pSystemModuleRegister;
-    tSystemModuleUnregister  m_pSystemModuleUnregister;
+	typedef bool (*tSystemModuleRegister)(ISystem *);
+	typedef void (*tSystemModuleUnregister)(ISystem *);
+	
+	tSystemModuleRegister    m_pSystemModuleRegister;
+	tSystemModuleUnregister  m_pSystemModuleUnregister;
 public:
 
     virtual bool Init(std::string sPath,ISystem *piSystem);

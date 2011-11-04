@@ -74,7 +74,6 @@ CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 	m_dwNexControlKey=0;
 	m_bTextures=1;
 	m_bFog=1;
-	m_bShaders=1;
 	m_bShadows=1;
 	m_bSolid=1;
 	m_bLighting=1;
@@ -156,7 +155,7 @@ bool CScenarioEditorMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 	}
 	
 	
-	//OpenScenario("/home/javi/workspace/Game/Demo/Resources/new21.ges");
+	OpenScenario("/home/javi/workspace/AndroidPort/Demo/Resources/Level1.ges");
 	return bOk;
 }
 
@@ -432,7 +431,6 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 	m_bNormalMaps?m_Render.m_piRender->EnableNormalMaps():m_Render.m_piRender->DisableNormalMaps();
 	m_bSkyShadow?m_Render.m_piRender->EnableSkyShadow():m_Render.m_piRender->DisableSkyShadow();
 	m_bShadows?m_Render.m_piRender->EnableShadows():m_Render.m_piRender->DisableShadows();
-	m_bShaders?m_Render.m_piRender->EnableShaders():m_Render.m_piRender->DisableShaders();
 	m_bFog?m_Render.m_piRender->EnableHeightFog():m_Render.m_piRender->DisableHeightFog();
 	m_bStats?m_Render.m_piRender->EnableStagedRenderingStats():m_Render.m_piRender->DisableStagedRenderingStats();
 
@@ -946,7 +944,6 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	if(m_piBTOptionsTextures==piControl){m_bTextures=!m_bTextures;}
 	if(m_piBTOptionsSolid==piControl){m_bSolid=!m_bSolid;}
 	if(m_piBTOptionsShadows==piControl){m_bShadows=!m_bShadows;}
-	if(m_piBTOptionsShaders==piControl){m_bShaders=!m_bShaders;}
 	if(m_piBTOptionsLighting==piControl){m_bLighting=!m_bLighting;}
 	if(m_piBTOptionsFog==piControl){m_bFog=!m_bFog;}
 	if(m_piBTNewEntity==piControl)
@@ -2654,7 +2651,8 @@ void CScenarioEditorMainWindow::UpdateLayerPanel()
 		{
 			SGameRect sRect(38,3,sRowRect.w-32-9,32);
 			pData->m_STDescription.m_piLabel->SetRect(&sRect);
-
+			pData->m_STDescription.m_piLabel->SetTextColor(CVector(1,1,1),1);
+			
 			char A[MAX_PATH];
 			sprintf(A,"%0.2f - %0.2f",layer.dMinHeight,layer.dMaxHeight);
 			pData->m_STDescription.m_piLabel->SetText(A);
@@ -2834,7 +2832,6 @@ void CScenarioEditorMainWindow::OnCharacter(int nKey,bool *pbProcessed)
 	else if(nKey=='N'|| nKey=='n'){m_bNormalMaps=!m_bNormalMaps;*pbProcessed=true;}
 	else if(nKey=='Y'|| nKey=='y'){m_bSkyShadow=!m_bSkyShadow;*pbProcessed=true;}
 	else if(nKey=='O'|| nKey=='o'){m_bShadows=!m_bShadows;*pbProcessed=true;}
-	else if(nKey=='H'|| nKey=='h'){m_bShaders=!m_bShaders;*pbProcessed=true;}
 	else if(nKey=='B'|| nKey=='b'){m_bBlend=!m_bBlend;*pbProcessed=true;}
 	else if(nKey=='1'){m_nStartingWeapon=1;*pbProcessed=true;bUpdatePlayerWeapon=true;}
 	else if(nKey=='2'){m_nStartingWeapon=2;*pbProcessed=true;bUpdatePlayerWeapon=true;}

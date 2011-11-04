@@ -18,11 +18,18 @@
 
 #pragma once
 #include "GameGraphics.h"
-#ifndef WIN32
+#ifdef LINUX
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
+#elif defined ANDROID
+#include <android/configuration.h>
+#include <android/looper.h>
+#include <android/native_activity.h>
+#include <EGL/egl.h>
+#include "../GameEngine/android_native_app_glue.h"
 #endif
+
 
 class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericViewport
 {
@@ -39,7 +46,7 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 		LRESULT ProcessMessage(HWND hWnd,UINT  uMsg, WPARAM  wParam,LPARAM  lParam);
 		static LRESULT WindowProc(HWND  hWnd,UINT  uMsg, WPARAM  wParam,LPARAM  lParam);
 		static BOOL CALLBACK PrimaryMonitorEnumerationCallBack(HMONITOR hMonitor,HDC hdcMonitor,LPRECT lprcMonitor,LPARAM dwData);
-	#else
+	#elif defined LINUX
 		
 		static int CustomXIOErrorHandler(Display*);
 		
@@ -73,6 +80,19 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 		bool WaitForXEvent(int nEventType);
 		void ProcessXEvent(XEvent &event,bool *pbBreakLoop);
 		
+	#elif defined ANDROID
+		android_app *m_pAndroidApp;
+		int          m_nLoopDepth;
+		static int32_t OnAndroidInput(struct android_app *pApplication, AInputEvent *pEvent);
+		static void    OnAndroidCommand(struct android_app *pApplication, int32_t nCommand); 
+		
+		EGLDisplay m_AndroidDisplay;
+		EGLSurface m_AndroidSurface;
+		EGLContext m_AndroidRenderContext;
+		int32_t    m_AndroidWidth;
+		int32_t    m_AndroidHeight;
+		
+		void AndroidCreateRenderContext();
 	#endif
 		
 	SVideoMode  	m_OriginalVideoMode;
@@ -80,7 +100,9 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 	std::map<unsigned int,std::string> m_mKeyNames;
 
 	void InitializeKeyNames();
-
+	
+	bool Init(std::string sClass,std::string sName,ISystem *piSystem);
+	
 public:
 
 	bool  	m_bShowSystemMouseCursor;

@@ -30,7 +30,7 @@
 #include "GameController.h"
 #include "FrameManager.h"
 
-BEGIN_SYSTEM_MODULE()
+BEGIN_SYSTEM_MODULE(GameManagers)
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityManager,"CEntityManager");
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CPhysicManager,"CPhysicManager");
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CWorldManager,"CWorldManager");
@@ -40,4 +40,4 @@ BEGIN_SYSTEM_MODULE()
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CPlayAreaManager,"CPlayAreaManager");
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGameController,"CGameController");
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CFrameManager,"CFrameManager");
-END_SYSTEM_MODULE()
+END_SYSTEM_MODULE(GameManagers)

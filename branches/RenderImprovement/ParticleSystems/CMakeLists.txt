@@ -31,16 +31,17 @@ SET (SRCS_PARTICLESYSTEMS
 	./ParticleSystems/TextureParticleType.cpp
 )
 
-ADD_LIBRARY ( ParticleSystems SHARED ${SRCS_PARTICLESYSTEMS} )
+IF(ANDROID)
+	ADD_LIBRARY ( ParticleSystems ${SRCS_PARTICLESYSTEMS} )
+ELSE()
+	ADD_LIBRARY ( ParticleSystems SHARED ${SRCS_PARTICLESYSTEMS} )
 
-TARGET_LINK_LIBRARIES (
-         ParticleSystems
-	GameGUILib
-	GameRunTimeLib
-	VectorLib
-	GameEntityLib
-	${PNG_LIBRARY}
-	${OPENAL_LIBRARY}
-	${OPENGL_LIBRARY}
-)
-
+	TARGET_LINK_LIBRARIES (
+			ParticleSystems
+		GameGUILib
+		GameRunTimeLib
+		VectorLib
+		GameEntityLib
+		${ANDROID_LOG_LIBRARY}
+	)
+ENDIF()

@@ -22,17 +22,17 @@ SET (SRCS_GROUNDUNITTYPES
 	./GroundUnitTypes/VehicleType.cpp
 )
 
+IF(ANDROID)
+	ADD_LIBRARY ( GroundUnitTypes ${SRCS_GROUNDUNITTYPES} )
+ELSE()
+	ADD_LIBRARY ( GroundUnitTypes SHARED ${SRCS_GROUNDUNITTYPES} )
 
-ADD_LIBRARY ( GroundUnitTypes SHARED ${SRCS_GROUNDUNITTYPES} )
-
-TARGET_LINK_LIBRARIES (
-         GroundUnitTypes
-	GameGUILib
-	GameRunTimeLib
-	VectorLib
-	GameEntityLib
-	${PNG_LIBRARY}
-	${OPENAL_LIBRARY}
-	${OPENGL_LIBRARY}
-)
-
+	TARGET_LINK_LIBRARIES (
+			GroundUnitTypes
+		GameGUILib
+		GameRunTimeLib
+		VectorLib
+		GameEntityLib
+		${ANDROID_LOG_LIBRARY}
+	)
+ENDIF()

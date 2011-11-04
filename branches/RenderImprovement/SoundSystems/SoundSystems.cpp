@@ -21,10 +21,10 @@
 #include "SoundSystemManager.h"
 #include "SoundType.h"
 
-BEGIN_SYSTEM_MODULE()
+BEGIN_SYSTEM_MODULE(SoundSystems)
   SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CSoundSystemManager,"CSoundSystemManager")
   SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CSoundType,"SoundType")
-END_SYSTEM_MODULE()
+END_SYSTEM_MODULE(SoundSystems)
 
 double DeciblesToPercentage(double dDb)
 {

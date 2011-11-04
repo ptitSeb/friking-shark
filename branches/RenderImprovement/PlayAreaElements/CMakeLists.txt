@@ -19,16 +19,17 @@ SET (SRCS_PLAYAREAELEMENTS
 )
 
 
-ADD_LIBRARY ( PlayAreaElements SHARED ${SRCS_PLAYAREAELEMENTS} )
+IF(ANDROID)
+	ADD_LIBRARY ( PlayAreaElements ${SRCS_PLAYAREAELEMENTS} )
+ELSE()
+	ADD_LIBRARY ( PlayAreaElements SHARED ${SRCS_PLAYAREAELEMENTS} )
 
-TARGET_LINK_LIBRARIES (
-         PlayAreaElements
-	GameGUILib
-	GameRunTimeLib
-	VectorLib
-	GameEntityLib
-	${PNG_LIBRARY}
-	${OPENAL_LIBRARY}
-	${OPENGL_LIBRARY}
-)
-
+	TARGET_LINK_LIBRARIES (
+			PlayAreaElements
+		GameGUILib
+		GameRunTimeLib
+		VectorLib
+		GameEntityLib
+		${ANDROID_LOG_LIBRARY}
+	)
+ENDIF()

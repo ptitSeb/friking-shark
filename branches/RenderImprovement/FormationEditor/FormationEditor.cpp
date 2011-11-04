@@ -26,8 +26,8 @@
 #include "FormationEditorObjectLabel.h"
 
 
-BEGIN_SYSTEM_MODULE()
-SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CFormationEditorMainWindow,"CFormationEditorMainWindow")
-SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CFormationEditorObjectSelector,"CFormationEditorObjectSelector")
-SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CFormationEditorObjectLabel,"CFormationEditorObjectLabel")
-END_SYSTEM_MODULE()
+BEGIN_SYSTEM_MODULE(FormationEditor)
+	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CFormationEditorMainWindow,"CFormationEditorMainWindow")
+	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CFormationEditorObjectSelector,"CFormationEditorObjectSelector")
+	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CFormationEditorObjectLabel,"CFormationEditorObjectLabel")
+END_SYSTEM_MODULE(FormationEditor)

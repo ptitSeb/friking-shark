@@ -76,6 +76,7 @@ bool CSystem::RegisterClassFactory(ISystemClass *piClass)
 {
     std::string sName=piClass->GetName();
     std::map<std::string,ISystemClass *>::iterator i;
+	
     i=m_mClasses.find(sName);
     if(i!=m_mClasses.end()){return false;}
     ADD(piClass);
@@ -87,6 +88,7 @@ void CSystem::UnregisterClassFactory(ISystemClass *piClass)
 {
     std::string sName=piClass->GetName();
     std::map<std::string,ISystemClass *>::iterator i;
+	
     i=m_mClasses.find(sName);
     if(i==m_mClasses.end()){return;}
     m_mClasses.erase(sName);
@@ -95,7 +97,7 @@ void CSystem::UnregisterClassFactory(ISystemClass *piClass)
 
 bool CSystem::LoadModule(std::string sPath,ISystemModule **ppiModule)
 {
-    if(GetModule(sPath,ppiModule)){return true;}
+   if(GetModule(sPath,ppiModule)){return true;}
     CSystemModule *pModule=new CSystemModule;
     if(!pModule->Init(sPath,this))
     {

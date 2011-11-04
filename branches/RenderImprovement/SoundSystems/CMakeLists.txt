@@ -12,18 +12,22 @@ SET (SRCS_SOUNDSYSTEMS
 	./SoundSystems/stdafx.cpp
 )
 
-ADD_LIBRARY ( SoundSystems SHARED ${SRCS_SOUNDSYSTEMS} )
+IF(ANDROID)
+	ADD_LIBRARY ( SoundSystems ${SRCS_SOUNDSYSTEMS} )
+ELSE()
+	ADD_LIBRARY ( SoundSystems SHARED ${SRCS_SOUNDSYSTEMS} )
 
-TARGET_LINK_LIBRARIES (
-         SoundSystems
-	GameGUILib
-	GameRunTimeLib
-	VectorLib
-	GameEntityLib
-	${OPENAL_LIBRARY}
-	${ALUT_LIBRARY}
-	${VORBISFILE_LIBRARY}
-	${VORBIS_LIBRARY}
-	${OGG_LIBRARY}
-)
-
+	TARGET_LINK_LIBRARIES (
+			SoundSystems
+		GameGUILib
+		GameRunTimeLib
+		VectorLib
+		GameEntityLib
+		${OPENAL_LIBRARY}
+		${ALUT_LIBRARY}
+		${VORBISFILE_LIBRARY}
+		${VORBIS_LIBRARY}
+		${OGG_LIBRARY}
+		${ANDROID_LOG_LIBRARY}
+	)
+ENDIF()

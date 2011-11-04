@@ -1,3 +1,4 @@
+#ifndef ANDROID
 /***************************************************************************
 *
 * GLee.c
@@ -18168,3 +18169,4 @@ GLEE_EXTERN GLboolean GLeeInit( void )
     __GLeeExtList_clean(&extensionNames);
     return GL_TRUE;
 }
+#endif // !ANDROID

@@ -14,19 +14,17 @@ SET (SRCS_FORMATIONEDITOR
 )
 
 
-link_libraries (
-	${INCLUDED_LIBRARIES}
-)
+IF(ANDROID)
+	ADD_LIBRARY ( FormationEditor ${SRCS_FORMATIONEDITOR} )
+ELSE()
+	ADD_LIBRARY ( FormationEditor SHARED ${SRCS_FORMATIONEDITOR} )
 
-ADD_LIBRARY ( FormationEditor SHARED ${SRCS_FORMATIONEDITOR} )
-
-TARGET_LINK_LIBRARIES (
-         FormationEditor
-	GameGUILib
-	GameRunTimeLib
-	VectorLib
-	GameEntityLib
-	${PNG_LIBRARY}
-	${OPENAL_LIBRARY}
-	${OPENGL_LIBRARY}
-)
+	TARGET_LINK_LIBRARIES (
+			FormationEditor
+		GameGUILib
+		GameRunTimeLib
+		VectorLib
+		GameEntityLib
+		${ANDROID_LOG_LIBRARY}
+	)
+ENDIF()

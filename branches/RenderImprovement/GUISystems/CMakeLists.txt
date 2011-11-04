@@ -41,17 +41,17 @@ SET (SRCS_GUISYSTEMS
 	./GUISystems/AudioOptions.cpp
 )
 
+IF(ANDROID)
+	ADD_LIBRARY ( GUISystems ${SRCS_GUISYSTEMS} )
+ELSE()
+	ADD_LIBRARY ( GUISystems SHARED ${SRCS_GUISYSTEMS} )
 
-ADD_LIBRARY ( GUISystems SHARED ${SRCS_GUISYSTEMS} )
-
-TARGET_LINK_LIBRARIES (
-         GUISystems
-	GameGUILib
-	GameRunTimeLib
-	VectorLib
-	GameEntityLib
-	${PNG_LIBRARY}
-	${OPENAL_LIBRARY}
-	${OPENGL_LIBRARY}
-)
-
+	TARGET_LINK_LIBRARIES (
+			GUISystems
+		GameGUILib
+		GameRunTimeLib
+		VectorLib
+		GameEntityLib
+		${ANDROID_LOG_LIBRARY}
+	)
+ENDIF()

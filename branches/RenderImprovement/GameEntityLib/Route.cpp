@@ -21,6 +21,7 @@
 #include "SingletonWrapper.h"
 
 CSingletonWrapper<IPlayAreaManager> g_PlayAreaManagerWrapper("GameSystem","PlayAreaManager");
+CSingletonWrapper<IPlayerManager> g_PlayerManagerWrapper("GameSystem","PlayerManager");
 
 CRoute::CRoute()
 {

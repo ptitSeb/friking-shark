@@ -24,7 +24,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <list>
-#include <AL/alut.h>
+
+#ifdef ANDROID
+	#include <AL/al.h>
+	#include <AL/alc.h>
+#else
+	#include <AL/alut.h>
+#endif
+	
 #include "GameRunTimeLib.h"
 #include "VectorLib.h"
 #endif

@@ -112,11 +112,11 @@ void CLevelOptions::UpdateGUI()
 		m_piBTLevel3->SetTextColor(m_nSelectedLevel==2?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==2?1.0:0.5);
 		m_piBTLevel4->SetTextColor(m_nSelectedLevel==3?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==3?1.0:0.5);
 		m_piBTLevel5->SetTextColor(m_nSelectedLevel==4?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==4?1.0:0.5);
-		m_piBTLevel1->SetBackgroundColor(m_nSelectedLevel==0?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==0?1.0:0.5);
-		m_piBTLevel2->SetBackgroundColor(m_nSelectedLevel==1?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==1?1.0:0.5);
-		m_piBTLevel3->SetBackgroundColor(m_nSelectedLevel==2?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==2?1.0:0.5);
-		m_piBTLevel4->SetBackgroundColor(m_nSelectedLevel==3?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==3?1.0:0.5);
-		m_piBTLevel5->SetBackgroundColor(m_nSelectedLevel==4?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==4?1.0:0.5);
+		m_piBTLevel1->SetBackgroundColor(m_nSelectedLevel==0?CVector(1,1,1):CVector(0.8,0.8,0.8),m_nSelectedLevel==0?1.0:0.5);
+		m_piBTLevel2->SetBackgroundColor(m_nSelectedLevel==1?CVector(1,1,1):CVector(0.8,0.8,0.8),m_nSelectedLevel==1?1.0:0.5);
+		m_piBTLevel3->SetBackgroundColor(m_nSelectedLevel==2?CVector(1,1,1):CVector(0.8,0.8,0.8),m_nSelectedLevel==2?1.0:0.5);
+		m_piBTLevel4->SetBackgroundColor(m_nSelectedLevel==3?CVector(1,1,1):CVector(0.8,0.8,0.8),m_nSelectedLevel==3?1.0:0.5);
+		m_piBTLevel5->SetBackgroundColor(m_nSelectedLevel==4?CVector(1,1,1):CVector(0.8,0.8,0.8),m_nSelectedLevel==4?1.0:0.5);
 	}
 }
 
