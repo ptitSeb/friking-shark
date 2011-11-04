@@ -15,12 +15,17 @@ SET (SRCS_GAMERUNTIME
 	./GameRunTime/SystemModule.cpp
 )
 
-ADD_LIBRARY ( ./GameRunTime SHARED ${SRCS_GAMERUNTIME} )
 
-TARGET_LINK_LIBRARIES (
-         ./GameRunTime
-	GameGUILib
-	GameRunTimeLib
-	VectorLib
-)
+IF(ANDROID)
+	ADD_LIBRARY ( GameRunTime ${SRCS_GAMERUNTIME} )
+ELSE()
+	ADD_LIBRARY ( ./GameRunTime SHARED ${SRCS_GAMERUNTIME} )
 
+	TARGET_LINK_LIBRARIES (
+		     ./GameRunTime
+		GameGUILib
+		GameRunTimeLib
+		VectorLib
+		dl
+	)
+ENDIF()

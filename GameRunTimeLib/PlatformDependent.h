@@ -19,6 +19,10 @@
 #ifndef _PLATFORM_DEPENDENT_
 #define _PLATFORM_DEPENDENT_
 
+#if !defined WIN32 && !defined ANDROID
+#define LINUX
+#endif
+
 #ifdef WIN32
 
 	#define WINVER 0x0501

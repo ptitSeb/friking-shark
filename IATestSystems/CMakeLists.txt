@@ -26,5 +26,6 @@ TARGET_LINK_LIBRARIES (
 	GameGUILib
 	GameRunTimeLib
 	VectorLib
+	${ANDROID_LOG_LIBRARY}
 )
 

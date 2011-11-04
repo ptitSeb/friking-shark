@@ -19,7 +19,6 @@
 #include "./stdafx.h"
 #include "GameRunTimeLib.h"
 #include "WorldManager.h"
-#include <GL/gl.h>
 
 CWorldManager::CWorldManager()
 {
@@ -144,7 +143,7 @@ void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCam
 			piRender->DeactivateShadowEmission();
 			piRender->DeactivateLighting();
 			piRender->ActivateBlending();
-			piRender->SetDepthFunction(GL_LEQUAL);
+			piRender->SetDepthFunction(eDepthFunction_LessOrEqual);
 			piRender->RenderModel(Origin,Origin,m_TerrainBaseModel.m_piModel);
 			piRender->PopState();
 		}
@@ -170,7 +169,7 @@ void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCam
 				piRender->DeactivateShadowEmission();
 				piRender->ActivateLighting();
 				piRender->ActivateBlending();
-				piRender->SetDepthFunction(GL_LEQUAL);
+				piRender->SetDepthFunction(eDepthFunction_LessOrEqual);
 				piRender->RenderModel(Origin,Origin,piModel);
 				piRender->PopState();
 			}
@@ -205,7 +204,7 @@ void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCam
 			}
 			piRender->ActivateBlending();
 			piRender->ActivateWater();
-			piRender->SetDepthFunction(GL_LEQUAL);
+			piRender->SetDepthFunction(eDepthFunction_LessOrEqual);
 			piRender->SetBlendingLayer(1);
 			piRender->RenderModel(Origin,Origin,m_WaterModel.m_piModel);
 			piRender->PopState();
@@ -519,12 +518,12 @@ struct STemporalRenderBuffer
 {
 	ETerrainTexturizationLayer eType;
 
-	vector<GLfloat> vVertexArray; // por vertice
-	vector<GLfloat> vNormalArray;// por vertice
-	vector<GLfloat> vTexVertexArray;// por vertice
-	vector<GLfloat> vColorMapTexVertexArray; // por vertice
-	vector<GLfloat> vColorArray; // por vertice
-	vector<GLuint>	vTriangleVertexes; // 3 por cara
+	vector<float> vVertexArray; // por vertice
+	vector<float> vNormalArray;// por vertice
+	vector<float> vTexVertexArray;// por vertice
+	vector<float> vColorMapTexVertexArray; // por vertice
+	vector<float> vColorArray; // por vertice
+	vector<unsigned int>	vTriangleVertexes; // 3 por cara
 
 	map<SVertexKey,unsigned long> mUniqueVertexes;
 
@@ -676,10 +675,10 @@ bool CWorldManager::UpdateTerrain()
 
 			for(unsigned long nVertex=0;nVertex<3;nVertex++,pBaseModelFaceCursor++)
 			{
-				GLuint nVertexIndex=*pBaseModelFaceCursor;
-				GLfloat *pVertexCursor=&pBaseModelVertexes[nVertexIndex*3];
-				GLfloat *pColorCursor=&pBaseModelColor[nVertexIndex*4];
-				GLfloat *pNormalCursor=&pBaseModelNormals[nVertexIndex*3];
+				unsigned int nVertexIndex=*pBaseModelFaceCursor;
+				float *pVertexCursor=&pBaseModelVertexes[nVertexIndex*3];
+				float *pColorCursor=&pBaseModelColor[nVertexIndex*4];
+				float *pNormalCursor=&pBaseModelNormals[nVertexIndex*3];
 
 				for(unsigned long nCoord=0;nCoord<3;nCoord++)
 				{
@@ -854,16 +853,16 @@ bool CWorldManager::UpdateTerrain()
 						// por cada coordenada del vertice
 						for(unsigned long nCoord=0;nCoord<2;nCoord++)
 						{
-							pDestBuffer->vTexVertexArray.push_back((GLfloat)vTexture[nVertex].c[nCoord]);
-							pDestBuffer->vColorMapTexVertexArray.push_back((GLfloat)vColorMapTexture[nVertex].c[nCoord]);
+							pDestBuffer->vTexVertexArray.push_back((float)vTexture[nVertex].c[nCoord]);
+							pDestBuffer->vColorMapTexVertexArray.push_back((float)vColorMapTexture[nVertex].c[nCoord]);
 						}
 						for(unsigned long nCoord=0;nCoord<3;nCoord++)
 						{
-							pDestBuffer->vVertexArray.push_back((GLfloat)vVertexes[nVertex].c[nCoord]);
-							pDestBuffer->vColorArray.push_back((GLfloat)vColors[nVertex].c[nCoord]);
-							pDestBuffer->vNormalArray.push_back((GLfloat)vNormals[nVertex].c[nCoord]);
+							pDestBuffer->vVertexArray.push_back((float)vVertexes[nVertex].c[nCoord]);
+							pDestBuffer->vColorArray.push_back((float)vColors[nVertex].c[nCoord]);
+							pDestBuffer->vNormalArray.push_back((float)vNormals[nVertex].c[nCoord]);
 						}
-						pDestBuffer->vColorArray.push_back((GLfloat)dColorAlpha[nVertex]);
+						pDestBuffer->vColorArray.push_back((float)dColorAlpha[nVertex]);
 					}
 					else
 					{
@@ -937,7 +936,7 @@ bool CWorldManager::UpdateTerrain()
 				m_WaterModel.m_piModel->SetRenderBufferTexture(nWaterAnimation,nWaterFrame,m_pnWaterRenderBuffers[x],0,piTextures[x]);
 				m_WaterModel.m_piModel->SetRenderBufferMaterial(nWaterAnimation,nWaterFrame,m_pnWaterRenderBuffers[x],CVector(1,1,1),CVector(1,1,1),CVector(1,1,1),128,(float)m_TerrainWater.m_Config.dOpacity);
 
-				float *pWaterVertexBuffer=new GLfloat[12];
+				float *pWaterVertexBuffer=new float[12];
 				float *pCursor=pWaterVertexBuffer;
 				
 				*pCursor++=(float)m_TerrainWater.m_Config.vMins.c[0];
@@ -958,17 +957,17 @@ bool CWorldManager::UpdateTerrain()
 				
 				m_WaterModel.m_piModel->SetRenderBufferVertexes(nWaterAnimation,nWaterFrame,m_pnWaterRenderBuffers[x],4,pWaterVertexBuffer);
 
-				float *pWaterNormalBuffer=new GLfloat[12];
+				float *pWaterNormalBuffer=new float[12];
 				pCursor=pWaterNormalBuffer;
 				for(int y=0;y<4;y++){*pCursor++=0;*pCursor++=1;*pCursor++=0;}
 				m_WaterModel.m_piModel->SetRenderBufferNormals(nWaterAnimation,nWaterFrame,m_pnWaterRenderBuffers[x],pWaterNormalBuffer);
 
-				float *pWaterColorBuffer=new GLfloat[16];
+				float *pWaterColorBuffer=new float[16];
 				pCursor=pWaterColorBuffer;
 				for(int y=0;y<4;y++){*pCursor++=1;*pCursor++=1;*pCursor++=1;*pCursor++=(float)m_TerrainWater.m_Config.dOpacity;}
 				m_WaterModel.m_piModel->SetRenderBufferColors(nWaterAnimation,nWaterFrame,m_pnWaterRenderBuffers[x],pWaterColorBuffer);
 
-				float *pWaterTexBuffer=new GLfloat[8];
+				float *pWaterTexBuffer=new float[8];
 				pCursor=pWaterTexBuffer;
 				*pCursor++=0;
 				*pCursor++=0;

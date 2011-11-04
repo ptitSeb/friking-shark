@@ -16,7 +16,7 @@
 //  
 
 
-#include "./stdafx.h"
+#include "./StdAfx.h"
 
 #ifdef WIN32
   #ifdef _DEBUG

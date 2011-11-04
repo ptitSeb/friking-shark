@@ -1,29 +1,29 @@
 SET (SRCS_GAMERUNTIMELIB
 
-	./ConfigFile.h
-	./EventBase.h
-	./GameRunTimeLib.h
-	./Persistency.h
-	./PersistentTypes.h
-	./PlatformDependent.h
-	./stdafx.h
-	./SystemLoaderHelper.h
-	./SystemModuleHelpers.h
-	./SystemObjectBase.h
-	./SystemObjectWrapper.h
-	./SystemUnknownBase.h
+	./GameRunTimeLib/ConfigFile.h
+	./GameRunTimeLib/EventBase.h
+	./GameRunTimeLib/GameRunTimeLib.h
+	./GameRunTimeLib/Persistency.h
+	./GameRunTimeLib/PersistentTypes.h
+	./GameRunTimeLib/PlatformDependent.h
+	./GameRunTimeLib/stdafx.h
+	./GameRunTimeLib/SystemLoaderHelper.h
+	./GameRunTimeLib/SystemModuleHelpers.h
+	./GameRunTimeLib/SystemObjectBase.h
+	./GameRunTimeLib/SystemObjectWrapper.h
+	./GameRunTimeLib/SystemUnknownBase.h
 
-	./ConfigFile.cpp
-	./EventBase.cpp
-	./Persistency.cpp
-	./PersistentTypes.cpp
-	./PlatformDependent.cpp
-	./stdafx.cpp
-	./SystemLoaderHelper.cpp
-	./SystemModuleHelpers.cpp
-	./SystemObjectBase.cpp
-	./SystemObjectWrapper.cpp
-	./SystemUnknownBase.cpp
+	./GameRunTimeLib/ConfigFile.cpp
+	./GameRunTimeLib/EventBase.cpp
+	./GameRunTimeLib/Persistency.cpp
+	./GameRunTimeLib/PersistentTypes.cpp
+	./GameRunTimeLib/PlatformDependent.cpp
+	./GameRunTimeLib/stdafx.cpp
+	./GameRunTimeLib/SystemLoaderHelper.cpp
+	./GameRunTimeLib/SystemModuleHelpers.cpp
+	./GameRunTimeLib/SystemObjectBase.cpp
+	./GameRunTimeLib/SystemObjectWrapper.cpp
+	./GameRunTimeLib/SystemUnknownBase.cpp
 )
 
 ADD_LIBRARY (GameRunTimeLib STATIC ${SRCS_GAMERUNTIMELIB})

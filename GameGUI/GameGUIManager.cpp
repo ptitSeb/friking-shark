@@ -884,10 +884,12 @@ bool CGameGUIManager::Unserialize(ISystemPersistencyNode *piNode)
 		if(m_sScreenProperties.bFullScreen)
 		{
 			bOk=m_Viewport.m_piViewport->CreateFullScreen(m_sScreenProperties.sFullScreenResolution.w,m_sScreenProperties.sFullScreenResolution.h,m_sScreenProperties.dFullScreenRefreshBitsPerPixel,m_sScreenProperties.dFullScreenRefreshRate);
+			if(!bOk){RTTRACE("CGameGUIManager::UpdateScreenPlacement -> Failed create full screen viewport");}
 		}
 		else
 		{
 			bOk=m_Viewport.m_piViewport->CreateWindowed((unsigned int)rWindowRect.x,(unsigned int)rWindowRect.y,(unsigned int)rWindowRect.w,(unsigned int)rWindowRect.h);
+			if(!bOk){RTTRACE("CGameGUIManager::UpdateScreenPlacement -> Failed create windowed viewport");}
 		}
 		if(bOk){m_Viewport.m_piViewport->ShowMouseCursor(false);}
 	}

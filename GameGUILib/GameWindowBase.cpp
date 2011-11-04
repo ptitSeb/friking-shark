@@ -709,7 +709,7 @@ void CGameWindowBase::OnDrawMouseCursor(SGamePos position,IGenericRender *piRend
 		piRender->ActivateBlending();
 		piRender->SetColor(CVector(1,1,1),1);
 		piRender->SelectTexture(m_MouseCursorTexture.m_piTexture,0);
-		piRender->RenderTextureRect(position.x,position.y-dHeight,dWidth,dHeight,0,0,1,1);
+		piRender->RenderTexture(CVector(position.x+dWidth*0.5,position.y-dHeight*0.5,0),dWidth,dHeight);
 		piRender->UnselectTexture(0);
 		piRender->DeactivateBlending();
 		(*pbDrawed)=true;
@@ -731,7 +731,9 @@ void CGameWindowBase::OnDrawBackground(IGenericRender *piRender)
 	{
 		if(m_dBackgroundAlpha!=0.0)
 		{
+			piRender->ActivateBlending();
 			piRender->Clear(m_vBackgroundColor,m_dBackgroundAlpha);
+			piRender->DeactivateBlending();
 		}
 	}
 

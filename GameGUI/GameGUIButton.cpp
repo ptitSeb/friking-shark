@@ -131,7 +131,9 @@ void CGameGUIButton::OnDrawBackground(IGenericRender *piRender)
 		{
 			if(m_dDeactivatedBackgroundAlpha!=0.0)
 			{
+				piRender->ActivateBlending();
 				piRender->Clear(m_vDeactivatedBackgroundColor,m_dDeactivatedBackgroundAlpha);
+				piRender->DeactivateBlending();
 			}
 		}
 	}
@@ -151,7 +153,9 @@ void CGameGUIButton::OnDrawBackground(IGenericRender *piRender)
 		{
 			if(m_dHoverBackgroundAlpha!=0.0)
 			{
+				piRender->ActivateBlending();
 				piRender->Clear(m_vHoverBackgroundColor,m_dHoverBackgroundAlpha);
+				piRender->DeactivateBlending();
 			}
 		}
 	}

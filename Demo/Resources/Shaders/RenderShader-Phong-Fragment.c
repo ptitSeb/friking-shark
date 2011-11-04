@@ -151,13 +151,14 @@ void main (void)
 #endif
   
   #ifdef ENABLE_SHADOWS
-	fShadowFactor=textureProj(ShadowMap,g_ShadowCoord);
+	float ndc=g_ShadowCoord.z/g_ShadowCoord.w;
+	fShadowFactor=step(ndc,textureProj(ShadowMap,g_ShadowCoord));
 	#ifdef ENABLE_SOFT_SHADOWS
 		float offset=3.0;
-		fShadowFactor+=textureProj(ShadowMap,g_ShadowCoord+vec4(-offset,-offset,0,0));
-		fShadowFactor+=textureProj(ShadowMap,g_ShadowCoord+vec4(offset,-offset,0,0));
-		fShadowFactor+=textureProj(ShadowMap,g_ShadowCoord+vec4(-offset,offset,0,0));
-		fShadowFactor+=textureProj(ShadowMap,g_ShadowCoord+vec4(offset,offset,0,0));
+		fShadowFactor+=step(ndc,textureProj(ShadowMap,g_ShadowCoord+vec4(-offset,-offset,0,0)));
+		fShadowFactor+=step(ndc,textureProj(ShadowMap,g_ShadowCoord+vec4(offset,-offset,0,0)));
+		fShadowFactor+=step(ndc,textureProj(ShadowMap,g_ShadowCoord+vec4(-offset,offset,0,0)));
+		fShadowFactor+=step(ndc,textureProj(ShadowMap,g_ShadowCoord+vec4(offset,offset,0,0)));
 		fShadowFactor/=5.0;
 	#endif
   #endif
@@ -177,7 +178,7 @@ void main (void)
 	  vec3 N=normalize(bump.x*normalize(g_WorldBitangent)+bump.y*normalize(g_WorldTangent)+bump.z*normalize(g_WorldNormal));
 	  ks=normalMapSample.a;
 	  #else
-	  vec3 N=normalize(g_WorldNormal/*+normalDisturbance.xyz*/);
+	  vec3 N=normalize(g_WorldNormal);
 	  #endif
 
       SunLight(N, sundiff,sunspec);
@@ -198,7 +199,7 @@ void main (void)
 	#ifdef ENABLE_SKY_SHADOW
 	  fShadowFactor*=1.0-(texture2D(SkyShadowMap, g_SkyCoord.xy)*SkyData.a).r;
 	#endif
-	finalcolor.rgb=texcolor.rgb*g_Color.rgb*fShadowFactor;
+	finalcolor.rgb=texcolor.rgb*fShadowFactor;
 	finalcolor.a=texcolor.a;
   #endif
 

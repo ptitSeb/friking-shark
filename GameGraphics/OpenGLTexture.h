@@ -31,6 +31,8 @@ class COpenGLTexture : virtual public CSystemObjectBase,virtual public IGenericT
 
 	std::string m_sFileName;
 	std::string m_sAlphaFileName;
+	
+	bool m_bGenerateMipMaps;
 
 	bool		m_bColorKey;
 	CRGBColor	m_vColorKey;
@@ -66,6 +68,7 @@ public:
 	
 	BEGIN_PROP_MAP(COpenGLTexture)
 		PROP_FLAGS(m_sFileName,"Archivo",MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_bGenerateMipMaps,"GenerateMipmaps",true,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_sAlphaFileName,"ArchivoAlpha","",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_bColorKey,"UsarColorKey",0,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_vColorKey,"ColorKey",CVector(0,0,0),MRPF_NORMAL|MRPF_OPTIONAL)
@@ -90,7 +93,7 @@ public:
 	CVector		GetPixelColor(unsigned long x, unsigned long y);
 	double		GetPixelAlpha(unsigned long x, unsigned long y);
 	
-	virtual bool Load(std::string sFileName,CVector *pColorKey,std::string *pAlphaFile,float fOpacity);
+	virtual bool Load(std::string sFileName,CVector *pColorKey,std::string *pAlphaFile,float fOpacity,bool bGenerateMipmaps);
 	virtual bool Create( unsigned nWidth,unsigned nHeight,IGenericViewport *piViewport );
 	virtual bool CreateDepth( unsigned nWidth,unsigned nHeight ,IGenericViewport *piViewport);
 	virtual bool StartRenderingToTexture();

@@ -23,13 +23,16 @@
 #ifdef WIN32
   #define VIEWPORT_CLASSNAME "OpenGLViewport"
   #define WM_GL_VIEWPORT_END_LOOP WM_USER+0x001
-#else
+#elif defined LINUX
 	#include <X11/extensions/Xrandr.h>
 	#include <X11/extensions/Xinerama.h>
 	#define DETECT_DRAG_SIZE 3
 	#define X_WINDOWS_EVENT_MASK ExposureMask|ButtonPressMask|ButtonReleaseMask|PointerMotionMask|KeyPressMask|KeyReleaseMask|StructureNotifyMask
+#elif defined ANDROID
+	#include <EGL/egl.h>	
+	extern android_app* g_pAndroidApp;
 #endif
-
+	
 #ifdef WIN32
 
 int TranslateKeyFromWindows(unsigned int nVirtualKey,unsigned int nlparam)
@@ -231,7 +234,7 @@ int TranslateKeyToWindows(int nGameKey)
 
 	return 0;
 }
-#else
+#elif defined LINUX
 
 int TranslateKeyFromX11(int nX11Key)
 {
@@ -437,7 +440,7 @@ COpenGLViewport::COpenGLViewport(void)
 	m_hWnd=NULL;
 	m_hRenderContext=NULL;
 	m_nPixelFormatIndex=0;
-#else
+#elif defined LINUX
 	m_bShowSystemMouseCursor=true;
 	m_pXDisplay=NULL;
 	m_pXVisualInfo=NULL;	
@@ -464,6 +467,14 @@ COpenGLViewport::COpenGLViewport(void)
 	m_nDblClkDetectMilliseconds=300;
 	m_nDblClkDetectDistance=3;
 	
+#elif defined ANDROID
+	m_AndroidWidth=0;
+	m_AndroidHeight=0;
+	m_AndroidRenderContext=EGL_NO_CONTEXT;
+	m_AndroidDisplay=EGL_NO_DISPLAY;
+	m_AndroidSurface=EGL_NO_SURFACE;
+	m_pAndroidApp=NULL;
+	m_nLoopDepth=0;
 #endif
 	
 	GetCurrentVideoMode(&m_OriginalVideoMode);
@@ -473,6 +484,43 @@ COpenGLViewport::COpenGLViewport(void)
 
 COpenGLViewport::~COpenGLViewport(void)
 {
+}
+
+bool COpenGLViewport::Init(std::string sClass,std::string sName,ISystem *piSystem)
+{
+	bool bOk=CSystemObjectBase::Init(sClass,sName,piSystem);
+	if(!bOk){return bOk;}
+	
+	#ifdef ANDROID
+	m_pAndroidApp=g_pAndroidApp;
+	m_pAndroidApp->userData = this;
+	m_pAndroidApp->onAppCmd = OnAndroidCommand;
+	m_pAndroidApp->onInputEvent = OnAndroidInput;
+	RTTRACE("COpenGLViewport::InitializeAndroidViewPort -> App %p",m_pAndroidApp);
+	RTTRACE("COpenGLViewport::InitializeAndroidViewPort -> Waiting for render context....");
+	
+	while (m_AndroidRenderContext==EGL_NO_CONTEXT)
+	{
+		// Read all pending events.
+		int events=0;
+		int eventId=0;
+		bool bBlocking=false;
+		struct android_poll_source* source=NULL;
+		while ((eventId=ALooper_pollAll(!bBlocking? 0 : -1, NULL, &events,(void**)&source)) >= 0) 
+		{
+			if (source != NULL) {source->process(m_pAndroidApp, source);}
+			
+			if (m_pAndroidApp->destroyRequested != 0) 
+			{
+				RTTRACE("COpenGLViewport::InitializeAndroidViewPort -> Exit, Destroy request received");
+				return false;
+			}
+		}
+	}
+	
+	RTTRACE("COpenGLViewport::InitializeAndroidViewPort -> Exit");
+	#endif
+	return  bOk;
 }
 
 void COpenGLViewport::InitializeKeyNames()
@@ -746,8 +794,8 @@ bool COpenGLViewport::CreateWindowed(unsigned x, unsigned y, unsigned w, unsigne
 		UpdateWindow(m_hWnd);
 	}
 	bOk=(m_hRenderContext!=NULL);
-	if(!bOk){RTTRACE("COpenGLViewport::Create -> Failed to get OpenGL render context");}
-#else
+	if(!bOk){RTTRACE("COpenGLViewport::CreateWindowed -> Failed to get OpenGL render context");}
+#elif defined LINUX
 	m_pXDisplay=XOpenDisplay(NULL);
 	if(m_pXDisplay)
 	{
@@ -763,15 +811,19 @@ bool COpenGLViewport::CreateWindowed(unsigned x, unsigned y, unsigned w, unsigne
 		SetWindowed(x,y,w,h);
 		bOk=(m_XWindow!=None);
 	}
-	if(!bOk){RTTRACE("COpenGLViewport::Create -> Failed to get OpenGL render context");}
+	if(!bOk){RTTRACE("COpenGLViewport::CreateWindowed -> Failed to get OpenGL render context");}
+#else
+	bOk=true;
+	RTTRACE("COpenGLViewport::CreateWindowed -> Windowed called");
 #endif
+	
 	return bOk;
 }
 
 bool COpenGLViewport::CreateFullScreen(unsigned int w,unsigned int h,unsigned int bpp,unsigned int rate)
 {
 	bool bOk=false;
-	#ifdef WIN32
+#ifdef WIN32
 	WNDCLASSEX		wcex={0};
 	wcex.cbSize=sizeof(wcex);
 	if(!GetClassInfoEx(NULL,VIEWPORT_CLASSNAME,&wcex))
@@ -803,8 +855,8 @@ bool COpenGLViewport::CreateFullScreen(unsigned int w,unsigned int h,unsigned in
 		UpdateWindow(m_hWnd);
 	}
 	bOk=(m_hRenderContext!=NULL);
-	if(!bOk){RTTRACE("COpenGLViewport::Create -> Failed to get OpenGL render context");}
-	#else
+	if(!bOk){RTTRACE("COpenGLViewport::CreateFullScreen -> Failed to get OpenGL render context");}
+#elif defined LINUX
 	m_pXDisplay=XOpenDisplay(NULL);
 	if(m_pXDisplay)
 	{
@@ -820,8 +872,11 @@ bool COpenGLViewport::CreateFullScreen(unsigned int w,unsigned int h,unsigned in
 		SetFullScreen(w,h,bpp,rate);
 		bOk=(m_XWindow!=None);
 	}
-	if(!bOk){RTTRACE("COpenGLViewport::Create -> Failed to get OpenGL render context");}
-	#endif
+	if(!bOk){RTTRACE("COpenGLViewport::CreateFullScreen -> Failed to get OpenGL render context");}
+#else
+	bOk=true;
+	RTTRACE("COpenGLViewport::CreateFullScreen -> Full screen called");
+#endif
 	return bOk;
 }
 
@@ -831,7 +886,7 @@ void COpenGLViewport::Destroy()
 #ifdef WIN32
 	if(m_hWnd){DestroyWindow(m_hWnd);m_hWnd=NULL;}
 	SetVideoMode(&m_OriginalVideoMode);
-#else
+#elif defined LINUX
 	if(m_XWindow!=None)
 	{
 		SetVideoMode(&m_OriginalVideoMode);
@@ -881,7 +936,7 @@ void COpenGLViewport::GetSize(unsigned *pdwWidth,unsigned *pdwHeight)
 	GetClientRect(m_hWnd,&R);
 	*pdwWidth=R.right-R.left;
 	*pdwHeight=R.bottom-R.top;
-#else
+#elif defined LINUX
 	if(m_XWindow!=None)
 	{
 		XWindowAttributes attribs;
@@ -894,6 +949,9 @@ void COpenGLViewport::GetSize(unsigned *pdwWidth,unsigned *pdwHeight)
 		*pdwWidth=0;
 		*pdwHeight=0;
 	}
+#elif defined ANDROID
+	*pdwWidth=m_AndroidWidth;
+	*pdwHeight=m_AndroidHeight;
 #endif
 }
 
@@ -905,18 +963,17 @@ void COpenGLViewport::SetCallBack(IGenericViewportCallBack *pCallBack)
 void COpenGLViewport::Render()
 {
 	glFrontFace(GL_CCW);
-	glEnable(GL_POINT_SMOOTH);
-	glDisable(GL_POLYGON_SMOOTH);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_TEXTURE_2D);
 	glCullFace(GL_BACK);
+#ifndef ANDROID
+	glEnable(GL_POINT_SMOOTH);
+	glDisable(GL_POLYGON_SMOOTH);
 	glHint(GL_POINT_SMOOTH_HINT,GL_NICEST);
 	glHint(GL_LINE_SMOOTH_HINT,GL_NICEST);
-	//glHint(GL_POLYGON_SMOOTH_HINT,GL_NICEST);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
-	glPolygonMode(GL_FRONT,GL_FILL);
-
+#endif
 	glClearColor(0,0,0,1);
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
@@ -927,7 +984,7 @@ void COpenGLViewport::Render()
 	
 #ifdef WIN32
 	SwapBuffers(m_hDC);
-#else
+#elif defined LINUX
 	glXSwapBuffers(m_pXDisplay,m_XWindow);
 #endif
 }
@@ -953,7 +1010,7 @@ void COpenGLViewport::SetVSync(bool bVSync)
 
 #ifdef WIN32
 	wglSwapIntervalEXT(m_bVerticalSync);
-#else
+#elif defined LINUX
 	glXSwapIntervalSGI(m_bVerticalSync);
 #endif
 }
@@ -968,7 +1025,7 @@ void COpenGLViewport::SetCaption(std::string sCaption)
 	m_sCaption=sCaption;
 #ifdef WIN32
 	if(m_hWnd){SetWindowText(m_hWnd,m_sCaption.c_str());}
-#else
+#elif defined LINUX
 	if(m_XWindow!=None)
 	{
 	  XSetStandardProperties(m_pXDisplay,m_XWindow,m_sCaption.c_str(),m_sCaption.c_str(),None,NULL,0,NULL);
@@ -1004,7 +1061,7 @@ void COpenGLViewport::EnterLoop()
 			InvalidateRect(m_hWnd,NULL,FALSE);
 		}
 	}
-#else
+#elif defined LINUX
 	XEvent event;
 	int nLoopId=++m_nLoopDepth;
 
@@ -1020,13 +1077,42 @@ void COpenGLViewport::EnterLoop()
 		Render();
 	}
 
+#elif defined ANDROID
+
+	RTTRACE("COpenGLViewport::EnterLoop -> Enter");
+
+	int nLoopId=++m_nLoopDepth;
+	while (m_nLoopDepth>=nLoopId /*&& !m_bXExit*/)
+	{
+		// Read all pending events.
+		int events=0;
+		int eventId=0;
+		bool bBlocking=false;
+		struct android_poll_source* source=NULL;
+		while ((eventId=ALooper_pollAll(!bBlocking? 0 : -1, NULL, &events,(void**)&source)) >= 0) 
+		{
+			if (source != NULL) {source->process(m_pAndroidApp, source);}
+			
+			if (m_pAndroidApp->destroyRequested != 0) 
+			{
+				RTTRACE("COpenGLViewport::EnterLoop -> Exit, Destroy request received");
+				return;
+			}
+		}
+		Render();
+	}
+	
+	RTTRACE("COpenGLViewport::EnterLoop -> Exit");
+	
 #endif
 }
 void COpenGLViewport::ExitLoop()
 {
 #ifdef WIN32
 	PostMessage(m_hWnd,WM_GL_VIEWPORT_END_LOOP,0,0);
-#else
+#elif defined LINUX
+	if(m_nLoopDepth>0){m_nLoopDepth--;}
+#elif defined ANDROID
 	if(m_nLoopDepth>0){m_nLoopDepth--;}
 #endif
 }
@@ -1039,7 +1125,7 @@ void  COpenGLViewport::GetCursorPos(int *pX,int *pY)
 	ScreenToClient(m_hWnd,&P);
 	*pX=P.x;
 	*pY=P.y;
-#else
+#elif defined LINUX
 	if(m_XWindow!=None)
 	{
 		Window root,child;
@@ -1062,7 +1148,7 @@ void  COpenGLViewport::SetCursorPos(int x,int y)
 	P.y=y;
 	ClientToScreen(m_hWnd,&P);
 	SetCursorPos(P.x,P.y);
-#else
+#elif defined LINUX
 	if(m_XWindow!=None){XWarpPointer(m_pXDisplay,None,m_XWindow,0,0,0,0,x,y);}
 #endif
 }
@@ -1086,7 +1172,7 @@ bool  COpenGLViewport::IsKeyDown(unsigned int nKey)
 	}
 	USHORT nKeyState=GetKeyState(TranslateKeyToWindows(nKey));
 	return (nKeyState&0x8000)!=0;
-#else
+#elif defined LINUX
 	if(m_pXDisplay!=None)
 	{
 		char keys[32];
@@ -1122,7 +1208,7 @@ bool  COpenGLViewport::IsMouseVisible()
 void  COpenGLViewport::ShowMouseCursor(bool bShow)
 {
     // en windows el cursor se pone WM_SETCURSOR
-#ifndef WIN32
+#ifdef LINUX
 	if(m_XWindow!=None && m_bShowSystemMouseCursor!=bShow)
 	{
 	  if(bShow)
@@ -1152,7 +1238,7 @@ bool COpenGLViewport::DetectDrag(double dx,double dy)
 	pt.x=(LONG)dx;
 	pt.y=(LONG)((h-1)-dy);
 	return (DragDetect(threadInfo.hwndActive,pt)?true:false);
-#else
+#elif defined LINUX
 	if(m_nDetectDragButton){return false;}
 	
 	m_nDetectDragButton=Button1;
@@ -1215,7 +1301,7 @@ void COpenGLViewport::GetCurrentVideoMode(SVideoMode *pMode)
 		pMode->fullscreenW=pMode->w;
 		pMode->fullscreenH=pMode->h;
 	}
-#else
+#elif defined LINUX
 	Display *pDisplay=XOpenDisplay(NULL);
 	if(pDisplay)
 	{
@@ -1236,6 +1322,11 @@ void COpenGLViewport::GetCurrentVideoMode(SVideoMode *pMode)
 	  pDisplay=NULL;
 	}	
 	//RTTRACE("GetCurrentVideoMode : %dx%d : %d : full: %d,%d %dx%d",pMode->w,pMode->h,pMode->bpp,pMode->fullscreenX,pMode->fullscreenY,pMode->fullscreenW,pMode->fullscreenH);
+#elif defined ANDROID
+	pMode->w = m_AndroidWidth;
+	pMode->h = m_AndroidHeight;
+	pMode->bpp = 8;//FIXME
+	pMode->rate=60;
 #endif
 }
 
@@ -1250,7 +1341,7 @@ bool COpenGLViewport::SetVideoMode(SVideoMode *pMode)
 	mode.dmDisplayFrequency=(DWORD)pMode->rate;
 	mode.dmFields=DM_BITSPERPEL|DM_PELSWIDTH|DM_PELSHEIGHT|DM_DISPLAYFREQUENCY;
 	return ChangeDisplaySettings(&mode,CDS_FULLSCREEN)==DISP_CHANGE_SUCCESSFUL;
-#else
+#elif defined LINUX
 	int nSizeIndex=-1;
 	int nScreenSizes=0;
 	int nScreenRates=0;
@@ -1314,7 +1405,7 @@ bool COpenGLViewport::SetVideoMode(SVideoMode *pMode)
 #endif
 }
 
-#ifndef WIN32
+#ifdef LINUX
 bool COpenGLViewport::GetFirstXineramaScreen(int *pX,int *pY,int *pW,int *pH)
 {
 	*pX=*pY=*pW=*pH=0;
@@ -1515,7 +1606,7 @@ bool COpenGLViewport::SetFullScreen(unsigned int w,unsigned int h,unsigned int b
 	SetWindowPos(m_hWnd,NULL,mode.fullscreenX,mode.fullscreenY,mode.fullscreenW,mode.fullscreenH,SWP_NOZORDER);
 	ShowWindow(m_hWnd,SW_MAXIMIZE);
 	return true;
-#else
+#elif defined LINUX
 	
 	SVideoMode oldMode;
 	GetCurrentVideoMode(&oldMode);// Get mode to get the fullscreen rect.
@@ -1598,7 +1689,7 @@ bool COpenGLViewport::SetWindowed(unsigned int x,unsigned int y,unsigned int w,u
 	ClientToScreen(m_hWnd,&p);
 	SetWindowPos(m_hWnd,NULL,x-(p.x-wr.left),y-(p.y-wr.top),w+nonclientsize.cx,h+nonclientsize.cy,SWP_NOZORDER);
 	return true;
-#else
+#elif defined LINUX
 	
 	if(m_pXDisplay!=NULL && m_XWindow!=None)
 	{
@@ -1644,4 +1735,146 @@ bool COpenGLViewport::SetWindowed(unsigned int x,unsigned int y,unsigned int w,u
 	return true;
 #endif
 }
+
+#ifdef ANDROID
+int32_t COpenGLViewport::OnAndroidInput(struct android_app *pApplication, AInputEvent *pEvent)
+{
+	COpenGLViewport *pThis=(COpenGLViewport*)pApplication->userData;
+	/*	struct engine* engine = (struct engine*)app->userData;
+	*	if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) 
+	* {
+	*		engine->animating = 1;
+	*		engine->state.x = AMotionEvent_getX(event, 0);
+	*		engine->state.y = AMotionEvent_getY(event, 0);
+	*		return 1;
+	}*/
+	return 0;
+}
+
+void COpenGLViewport::AndroidCreateRenderContext() 
+{
+	const EGLint attribs[] = 
+	{
+		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+		//EGL_RENDERABLE_TYPE,   EGL_OPENGL_ES2_BIT,
+		EGL_BLUE_SIZE, 8,
+		EGL_GREEN_SIZE, 8,
+		EGL_RED_SIZE, 8,	
+		EGL_NONE
+	};
+	EGLint format=0;
+	EGLint numConfigs=0;
+	EGLConfig config;
+	
+	bool bOk=false;
+	
+	m_AndroidDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+	bOk=(m_AndroidDisplay!=EGL_NO_DISPLAY);
+	if(!bOk){RTTRACE("COpenGLViewport::AndroidCreateRenderContext -> %d available configs",numConfigs);}
+
+	if(bOk)
+	{
+		eglInitialize(m_AndroidDisplay, 0, 0);
+		eglChooseConfig(m_AndroidDisplay, attribs, &config, 1, &numConfigs);
+		RTTRACE("COpenGLViewport::AndroidCreateRenderContext -> %d available configs",numConfigs);
+	}
+	
+	/* EGL_NATIVE_VISUAL_ID is an attribute of the EGLConfig that is
+	 * guaranteed to be accepted by ANativeWindow_setBuffersGeometry().
+	 * As soon as we picked a EGLConfig, we can safely reconfigure the
+	 * ANativeWindow buffers to match, using EGL_NATIVE_VISUAL_ID. */
+	eglGetConfigAttrib(m_AndroidDisplay, config, EGL_NATIVE_VISUAL_ID, &format);
+	
+	ANativeWindow_setBuffersGeometry(m_pAndroidApp->window, 0, 0, format);
+
+	if(bOk)
+	{
+		m_AndroidSurface = eglCreateWindowSurface(m_AndroidDisplay, config, m_pAndroidApp->window, NULL);
+		bOk=(m_AndroidSurface!=EGL_NO_SURFACE);
+		if(!bOk){RTTRACE("COpenGLViewport::AndroidCreateRenderContext -> Failed to create surface");}
+	}
+	if(bOk)
+	{/*
+		const EGLint contextAttribs[] = 
+		{
+			EGL_CONTEXT_CLIENT_VERSION, 2,
+			EGL_NONE
+		};*/
+		m_AndroidRenderContext = eglCreateContext(m_AndroidDisplay, config, NULL, NULL);//contextAttribs);
+		bOk=(m_AndroidRenderContext!=EGL_NO_CONTEXT);
+		if(!bOk){RTTRACE("COpenGLViewport::AndroidCreateRenderContext -> Failed to create render context");}
+	}
+	if(bOk)
+	{
+		bOk=(eglMakeCurrent(m_AndroidDisplay, m_AndroidSurface, m_AndroidSurface, m_AndroidRenderContext) != EGL_FALSE);
+		if(!bOk){RTTRACE("COpenGLViewport::AndroidCreateRenderContext -> Failed to set current render context");}
+	}
+	if(bOk)
+	{
+		eglQuerySurface(m_AndroidDisplay, m_AndroidSurface, EGL_WIDTH, &m_AndroidWidth);
+		eglQuerySurface(m_AndroidDisplay, m_AndroidSurface, EGL_HEIGHT, &m_AndroidHeight);
+		
+		RTTRACE("COpenGLViewport::InitializeAndroidViewPort -> Viewport initialized %dx%d",m_AndroidWidth,m_AndroidHeight);
+		
+		OnMove(0,0);
+		OnSize(m_AndroidWidth,m_AndroidHeight);
+	}
+	else
+	{
+		RTTRACE("COpenGLViewport::InitializeAndroidViewPort -> Failed to initialize viewport");
+	}
+}
+
+void COpenGLViewport::OnAndroidCommand(struct android_app* pApplication, int32_t nCommand) 
+{
+	COpenGLViewport *pThis=(COpenGLViewport*)pApplication->userData;
+	switch (nCommand) 
+	{
+		case APP_CMD_SAVE_STATE:
+			RTTRACE("COpenGLViewport::OnAndroidCommand -> Save state received");
+			break;
+		case APP_CMD_INIT_WINDOW:
+			RTTRACE("COpenGLViewport::OnAndroidCommand -> Init window received");
+			/*
+			*			// The window is being shown, get it ready.
+			*			if (engine->app->window != NULL) {
+			*				engine_init_display(engine);
+			*				engine_draw_frame(engine);
+			}*/
+			if (pThis->m_pAndroidApp->window != NULL) 
+			{
+				pThis->AndroidCreateRenderContext();
+			}
+			break;
+		case APP_CMD_TERM_WINDOW:
+			RTTRACE("COpenGLViewport::OnAndroidCommand -> Terminate window received");
+			// The window is being hidden or closed, clean it up.
+			//engine_term_display(engine);
+			break;
+		case APP_CMD_GAINED_FOCUS:
+			RTTRACE("COpenGLViewport::OnAndroidCommand -> Setfocus received");
+			/*// When our app gains focus, we start monitoring the accelerometer.
+			*			if (engine->accelerometerSensor != NULL) {
+			*				ASensorEventQueue_enableSensor(engine->sensorEventQueue,
+			*											   engine->accelerometerSensor);
+			*				// We'd like to get 60 events per second (in us).
+			*				ASensorEventQueue_setEventRate(engine->sensorEventQueue,
+			*											   engine->accelerometerSensor, (1000L/60)*1000);
+			}*/
+			break;
+		case APP_CMD_LOST_FOCUS:
+			RTTRACE("COpenGLViewport::OnAndroidCommand -> KillFocus received");
+			/*	// When our app loses focus, we stop monitoring the accelerometer.
+			*			// This is to avoid consuming battery while not being used.
+			*			if (engine->accelerometerSensor != NULL) {
+			*				ASensorEventQueue_disableSensor(engine->sensorEventQueue,
+			*												engine->accelerometerSensor);
+			}
+			// Also stop animating.
+			engine->animating = 0;
+			engine_draw_frame(engine);*/
+			break;
+	}
+}
+#endif
 

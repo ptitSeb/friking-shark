@@ -194,7 +194,6 @@ void CBSPDebuggerMainWindow::OnDraw(IGenericRender *piRender)
 	piRender->EnableShadows();
 	piRender->DisableLighting();
 	piRender->DisableHeightFog();
-	piRender->DisableShaders();
 	
 	SetupRenderOptions(piRender,m_Camera.m_piCamera);
 	

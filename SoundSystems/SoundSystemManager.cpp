@@ -21,6 +21,13 @@
 #include "SoundSystems.h"
 #include "SoundSystemManager.h"
 
+#ifdef ANDROID
+	#include "../GameEngine/android_native_app_glue.h"
+	extern "C"{jint JNI_OnLoad(JavaVM* vm, void* reserved);};
+	extern android_app *g_pAndroidApp;
+#endif
+
+	   
 CSoundSystemManager::CSoundSystemManager()
 {
   m_nMasterVolume=100;
@@ -45,8 +52,18 @@ bool CSoundSystemManager::Init(std::string sClass,std::string sName,ISystem *piS
 bool CSoundSystemManager::Unserialize(ISystemPersistencyNode *piNode)
 {
 	bool bOk=CSystemObjectBase::Unserialize(piNode);
-	if(bOk) {m_pDevice=alcOpenDevice(m_sDeviceName==""?NULL:m_sDeviceName.c_str());bOk=(m_pDevice!=NULL);}
+#ifdef ANDROID
+	// As openAL is being linked as an static library it does not receive
+	// JNI_OnLoad calls and cannot initialize its internal state form the Java Virtual Machine.
+	// Here we simulate the initialization call.
+	JNI_OnLoad(g_pAndroidApp->activity->vm,NULL);
+#endif
+	
+	RTTRACE("CSoundSystemManager::Unserialize -> Initializing sound system");
+	if(bOk) {m_pDevice=alcOpenDevice(NULL);bOk=(m_pDevice!=NULL);}
+	RTTRACE("CSoundSystemManager::Unserialize -> Creating context");
 	if(bOk) {m_pContext=alcCreateContext(m_pDevice,NULL);bOk=(m_pContext!=NULL);}
+	RTTRACE("CSoundSystemManager::Unserialize -> Setting current context");
 	if(bOk) {bOk=(alcMakeContextCurrent(m_pContext)==ALC_TRUE);}
 	if(!bOk)
 	{
@@ -59,8 +76,10 @@ bool CSoundSystemManager::Unserialize(ISystemPersistencyNode *piNode)
 	
 	if(bOk && m_pContext)
 	{
+		RTTRACE("CSoundSystemManager::Unserialize -> Configuring listener");
 		alListenerf(AL_GAIN ,m_bMuted?0:((float)m_nMasterVolume)/(float)100.0);
 	
+		RTTRACE("CSoundSystemManager::Unserialize -> Creating sources");
 		for(unsigned int x=0;x<m_nMaxSources;x++)
 		{
 			alGetError();
@@ -82,7 +101,7 @@ bool CSoundSystemManager::Unserialize(ISystemPersistencyNode *piNode)
 }
 
 void CSoundSystemManager::Destroy()
-{
+{	
 	std::list<ALuint>::iterator f;
 	for(f=m_vFreeSources.begin();f!=m_vFreeSources.end();f++)
 	{
@@ -104,7 +123,8 @@ void CSoundSystemManager::Destroy()
 
   if(m_pContext){alcMakeContextCurrent(NULL);alcDestroyContext(m_pContext);m_pContext=NULL;}
   if(m_pDevice){alcCloseDevice(m_pDevice);m_pDevice=NULL;}
-  CSystemObjectBase::Destroy();
+
+	CSystemObjectBase::Destroy();
 }
 
 void CSoundSystemManager::UpdateListener()
@@ -205,7 +225,7 @@ unsigned int CSoundSystemManager::AcquireSource(ISoundType *piSoundType)
 void CSoundSystemManager::ReleaseSource(unsigned int nSource)
 {
 	if(nSource==AL_NONE){return;}
-
+	
 	std::map<ALuint,ISoundType *>::iterator i;
 	i=m_mBusySources.find(nSource);
 	if(i!=m_mBusySources.end())

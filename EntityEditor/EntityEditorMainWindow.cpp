@@ -256,10 +256,25 @@ void CEntityEditorMainWindow::OnDraw(IGenericRender *piRender)
 	m_bSolid?m_Render.m_piRender->EnableSolid():m_Render.m_piRender->DisableSolid();
 	m_Render.m_piRender->EnableBlending();
 	m_Render.m_piRender->EnableShadows();
-	m_Render.m_piRender->DisableLighting();
+	m_Render.m_piRender->EnableLighting();
 	m_Render.m_piRender->DisableHeightFog();
-	m_Render.m_piRender->DisableShaders();
 	
+	
+	STerrainSun sSun;
+	sSun.dDistance=1.5;
+	sSun.dAzimuth=30;
+	sSun.dElevation=60;
+	sSun.vColor=CVector(0.5,0.5,0.5);
+	
+	CVector vSunAngles(sSun.dAzimuth,sSun.dElevation,0);
+	CVector vForward;
+	CVector vBlack;
+	VectorsFromAngles(vSunAngles,&vForward);
+	double dTerrainMaxDimension=1000.0;
+	CVector vSunPos=vForward*(dTerrainMaxDimension*sSun.dDistance);
+	piRender->SetSunLight(vSunPos,vForward,vBlack,sSun.vColor,sSun.vColor);
+	piRender->SetAmbientLight(CVector(0.4,0.4,0.4));
+
 	SetupRenderOptions(piRender,m_Camera.m_piCamera);
 	
 	piRender->StartStagedRendering();

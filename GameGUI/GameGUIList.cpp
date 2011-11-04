@@ -78,7 +78,7 @@ void CGameGUIList::OnDraw(IGenericRender *piRender)
   GetFont(&piFont,&dFontSize);
   if(!piFont){return;}
   piFont->CalcTextSize(dFontSize,"A",&dFontPixelWidth,&m_dFontPixelHeight);
-
+  
   double y=m_rRealRect.h;
   m_nVisibleCount=(int)(m_dFontPixelHeight?m_rRealRect.h/m_dFontPixelHeight:0);
   double dElementWidth=m_rRealRect.w;
@@ -218,6 +218,7 @@ void CGameGUIList::OnMouseDown(int nButton,double x,double y)
 	if(m_nSelectedElement<0){m_nSelectedElement=-1;}
 	if(m_nSelectedElement>=(int)m_vElements.size()){m_nSelectedElement=-1;}
 	std::string sElement=(m_nSelectedElement!=-1)?m_vElements[m_nSelectedElement]:"";
+	
 	NOTIFY_EVENT(IGameGUIListEvents,OnSelectionChanged(this,m_nSelectedElement,sElement));
   }  
 }

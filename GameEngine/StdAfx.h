@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
-#include "GameRunTimeLib.h"
+/*
+#include "GameRunTimeLib.h"*/
 
 #endif 

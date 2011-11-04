@@ -8,23 +8,47 @@ if(COMMAND cmake_policy)
 	cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
-FIND_PACKAGE ( X11 REQUIRED )
-FIND_PACKAGE ( OpenGL REQUIRED )
-FIND_PACKAGE ( OpenAL REQUIRED )
-FIND_PACKAGE ( PNG REQUIRED )
-FIND_LIBRARY (XRANDR_LIBARY Xrandr /usr/local/lib /usr/lib /sw/lib)
-FIND_LIBRARY (XINERAMA_LIBRARY Xinerama /usr/local/lib /usr/lib /sw/lib)
-FIND_LIBRARY (ALUT_LIBRARY alut /usr/local/lib /usr/lib /sw/lib)
-FIND_LIBRARY (VORBISFILE_LIBRARY vorbisfile /usr/local/lib /usr/lib /sw/lib)
-FIND_LIBRARY (VORBIS_LIBRARY vorbis /usr/local/lib /usr/lib /sw/lib)
-FIND_LIBRARY (OGG_LIBRARY ogg /usr/local/lib /usr/lib /sw/lib)
+IF(ANDROID)
 
-# FIND_PACKAGE ( Vorbis REQUIRED )
+	FIND_LIBRARY ( GLES2_LIBRARY GLESv2 REQUIRED /usr/lib )
+	FIND_LIBRARY ( EGL_LIBRARY EGL REQUIRED /usr/lib )
+	FIND_LIBRARY ( TREMOLO_LIBRARY tremolo REQUIRED /usr/lib )
+	FIND_LIBRARY ( ANDROID_LIBRARY android REQUIRED /usr/lib ) # Needed by app activiy
+	FIND_LIBRARY ( ANDROID_LOG_LIBRARY log REQUIRED /usr/lib ) # Needed by app activiy
+	FIND_PACKAGE ( PNG REQUIRED)
+	FIND_PACKAGE ( ZLIB REQUIRED )
+	FIND_PACKAGE ( OpenAL REQUIRED )
+ELSEIF(UNIX)
+	FIND_PACKAGE ( X11 REQUIRED )
+	FIND_PACKAGE ( OpenGL REQUIRED )
+	FIND_PACKAGE ( OpenAL REQUIRED )
+	FIND_PACKAGE ( PNG REQUIRED )
+	FIND_LIBRARY (XRANDR_LIBARY Xrandr /usr/local/lib /usr/lib /sw/lib)
+	FIND_LIBRARY (XINERAMA_LIBRARY Xinerama /usr/local/lib /usr/lib /sw/lib)
+	FIND_LIBRARY (ALUT_LIBRARY alut /usr/local/lib /usr/lib /sw/lib)
+	FIND_LIBRARY (VORBISFILE_LIBRARY vorbisfile /usr/local/lib /usr/lib /sw/lib)
+	FIND_LIBRARY (VORBIS_LIBRARY vorbis /usr/local/lib /usr/lib /sw/lib)
+	FIND_LIBRARY (OGG_LIBRARY ogg /usr/local/lib /usr/lib /sw/lib)
+ENDIF(ANDROID)
+
 set(CMAKE_SHARED_LIBRARY_PREFIX )
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/Demo/Bin/Release/)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/Demo/Bin/Release/)
 
-# Libraries
+IF(UNIX AND NOT WIN32)
+  #ADD_DEFINITIONS(-O3 -g)
+  #ADD_DEFINITIONS(-g)
+  FIND_PROGRAM(CMAKE_UNAME uname /bin /usr/bin /usr/local/bin )
+  IF(CMAKE_UNAME)
+    EXEC_PROGRAM(uname ARGS -m OUTPUT_VARIABLE CMAKE_SYSTEM_PROCESSOR)
+    SET(CMAKE_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR} CACHE INTERNAL
+"processor type (i386 and x86_64)")
+    IF(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+      ADD_DEFINITIONS(-fPIC)
+    ENDIF(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+  ENDIF(CMAKE_UNAME)
+ENDIF(UNIX AND NOT WIN32)
+
 INCLUDE_DIRECTORIES (
 	./VectorLib
 	./GameManagers
@@ -40,7 +64,10 @@ INCLUDE_DIRECTORIES (
 	./SoundSystems
 )
 
-# Sources
+INCLUDE ( ./VectorLib/CMakeLists.txt )
+INCLUDE ( ./GameGUILib/CMakeLists.txt )
+INCLUDE ( ./GameRunTimeLib/CMakeLists.txt )
+INCLUDE ( ./GameEntityLib/CMakeLists.txt )
 
 INCLUDE ( ./AirUnitTypes/CMakeLists.txt )
 INCLUDE ( ./AnimationSystems/CMakeLists.txt )
@@ -55,50 +82,19 @@ INCLUDE ( ./GameManagers/CMakeLists.txt )
 INCLUDE ( ./GameRunTime/CMakeLists.txt )
 INCLUDE ( ./GroundUnitTypes/CMakeLists.txt )
 INCLUDE ( ./GUISystems/CMakeLists.txt )
-INCLUDE ( ./IATestSystems/CMakeLists.txt )
+#INCLUDE ( ./IATestSystems/CMakeLists.txt )
 INCLUDE ( ./ParticleSystems/CMakeLists.txt )
 INCLUDE ( ./PlayAreaElements/CMakeLists.txt )
 INCLUDE ( ./ScenarioEditor/CMakeLists.txt )
-INCLUDE ( ./SoundSystems/CMakeLists.txt )
 INCLUDE ( ./WeaponTypes/CMakeLists.txt )
+INCLUDE ( ./SoundSystems/CMakeLists.txt )
 
-#IF (NOT WINDOWS)
-#	ADD_DEFINITIONS(-D_GNU_SOURCE=1 -D_REENTRANT -DGCC_SYMBOLS_PRIVATE_EXTERN=0)
-#ELSE (NOT WINDOWS)
-#	ADD_DEFINITIONS(-D_SCL_SECURE_NO_WARNINGS )
-#ENDIF (NOT WINDOWS)
+IF(ANDROID)
+	install(TARGETS libGameEngine DESTINATION share/frikingshark/Bin/Release) 
+ELSE()
+	install(TARGETS GameEngine ./GameRunTime GameGraphics GameGUI GameManagers GUISystems AirUnitTypes AnimationSystems BonusTypes GroundUnitTypes ParticleSystems PlayAreaElements WeaponTypes EntityEditor FormationEditor ScenarioEditor DESTINATION share/frikingshark/Bin/Release)
+ENDIF()
 
-# -fPIC
-IF(UNIX AND NOT WIN32)
-  ADD_DEFINITIONS(-O3 -g)
-  FIND_PROGRAM(CMAKE_UNAME uname /bin /usr/bin /usr/local/bin )
-  IF(CMAKE_UNAME)
-    EXEC_PROGRAM(uname ARGS -m OUTPUT_VARIABLE CMAKE_SYSTEM_PROCESSOR)
-    SET(CMAKE_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR} CACHE INTERNAL
-"processor type (i386 and x86_64)")
-    IF(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-      ADD_DEFINITIONS(-fPIC)
-    ENDIF(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-  ENDIF(CMAKE_UNAME)
-ENDIF(UNIX AND NOT WIN32)
-
-
-# Main build details.
-
-ADD_SUBDIRECTORY (
-./GameGUILib
-)
-ADD_SUBDIRECTORY (
-./GameRunTimeLib
-)
-ADD_SUBDIRECTORY (
-./VectorLib
-)
-ADD_SUBDIRECTORY (
-./GameEntityLib
-)
-
-install(TARGETS GameEngine ./GameRunTime GameGraphics GameGUI AirUnitTypes AnimationSystems BonusTypes GameManagers GroundUnitTypes GUISystems ParticleSystems PlayAreaElements SoundSystems WeaponTypes EntityEditor FormationEditor ScenarioEditor DESTINATION share/frikingshark/Bin/Release)
 install(DIRECTORY Demo/Resources/Models/ DESTINATION share/frikingshark/Resources/Models/ FILES_MATCHING PATTERN "*.gbs")
 install(DIRECTORY Demo/Resources/Models/ DESTINATION share/frikingshark/Resources/Models/ FILES_MATCHING PATTERN "*.gcm")
 install(DIRECTORY Demo/Resources/Sounds/ DESTINATION share/frikingshark/Resources/Sounds/ FILES_MATCHING PATTERN "*.ogg")

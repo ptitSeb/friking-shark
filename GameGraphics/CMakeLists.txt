@@ -27,19 +27,24 @@ SET (SRCS_GAMEGRAPHICS
 	./GameGraphics/OpenGLViewport.cpp
 	./GameGraphics/stdafx.cpp
 )
+IF(ANDROID)
+	ADD_LIBRARY ( GameGraphics ${SRCS_GAMEGRAPHICS} )
+ELSE()
+	ADD_LIBRARY ( GameGraphics SHARED ${SRCS_GAMEGRAPHICS} )
 
-ADD_LIBRARY ( GameGraphics SHARED ${SRCS_GAMEGRAPHICS} )
-
-TARGET_LINK_LIBRARIES (
-         GameGraphics
-	GameGUILib
-	GameRunTimeLib
-	VectorLib
-	GameEntityLib
-	${PNG_LIBRARY}
-	${OPENAL_LIBRARY}
-	${OPENGL_LIBRARY}
-	${XINERAMA_LIBRARY}
-	${XRANDR_LIBARY}
-)
-
+	TARGET_LINK_LIBRARIES (
+			GameGraphics
+		GameGUILib
+		GameRunTimeLib
+		VectorLib
+		GameEntityLib
+		${PNG_LIBRARY}
+		${ZLIB_LIBRARY}
+		${OPENAL_LIBRARY}
+		${OPENGL_LIBRARY}
+		${XINERAMA_LIBRARY}
+		${XRANDR_LIBARY}
+		${GLES2_LIBRARY}
+		${ANDROID_LOG_LIBRARY}
+	)
+ENDIF()

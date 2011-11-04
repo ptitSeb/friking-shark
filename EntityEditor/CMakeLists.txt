@@ -29,19 +29,17 @@ SET (SRCS_ENTITYEDITOR
 	./EntityEditor/stdafx.cpp
 )
 
-link_libraries (
-	${INCLUDED_LIBRARIES}
-)
+IF(ANDROID)
+	ADD_LIBRARY ( EntityEditor ${SRCS_ENTITYEDITOR} )
+ELSE()
+	ADD_LIBRARY ( EntityEditor SHARED ${SRCS_ENTITYEDITOR} )
 
-ADD_LIBRARY ( EntityEditor SHARED ${SRCS_ENTITYEDITOR} )
-
-TARGET_LINK_LIBRARIES (
-         EntityEditor
-	GameGUILib
-	GameRunTimeLib
-	VectorLib
-	GameEntityLib
-	${PNG_LIBRARY}
-	${OPENAL_LIBRARY}
-	${OPENGL_LIBRARY}
-)
+	TARGET_LINK_LIBRARIES (
+			EntityEditor
+		GameGUILib
+		GameRunTimeLib
+		VectorLib
+		GameEntityLib
+		${ANDROID_LOG_LIBRARY}
+	)
+ENDIF()

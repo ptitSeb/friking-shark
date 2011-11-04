@@ -135,14 +135,12 @@ struct SRenderOptions
 	bool bEnableAutoShadowVolume;
 	bool bEnableBlending;
 	bool bEnableHeightFog;
-	bool bEnableShader;
 	bool bEnableNormalMaps;
 	bool bEnableSkyShadow;
 	bool bEnableStagedRenderingStats;
 
 	SRenderOptions()
 	{
-		bEnableShader=true;
 		bEnableHeightFog=false;
 		bEnableTextures=true;
 		bEnableLighting=false;
@@ -159,10 +157,10 @@ struct SRenderOptions
 struct SHardwareSupport
 {
 	bool bShaders;
-	int  nMaxLights;
+	bool bObjectInstancing;
 	int  nMaxTextureUnits;
 
-	SHardwareSupport(){bShaders=false;nMaxLights=8;nMaxTextureUnits=2;}
+	SHardwareSupport(){bShaders=false;nMaxTextureUnits=2;bObjectInstancing=false;}
 };
 
 struct STextureParticleBuffer
@@ -367,8 +365,11 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	double		m_dPerspectiveNearPlane;
 	double		m_dPerspectiveFarPlane;
 
-	double m_dProyectionWidth;
-	double m_dProyectionHeight;
+	double m_dProjectionWidth;
+	double m_dProjectionHeight;
+	
+	CMatrix m_ProjectionMatrix;
+	CMatrix m_ModelViewMatrix;
 
 	CVector m_vCameraForward;
 	CVector m_vCameraRight;
@@ -403,12 +404,9 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	CVector      m_pvLastShadowVolume[8];
 	double 		 m_dShadowAntiFlickeringMargin;
 	
-	bool		 m_bPrecompileShaders;
-	
 	unsigned int m_nFirstTimeStamp;
 	
 	unsigned long m_nActiveLights;
-	bool m_bLightingPrepared;
 
 	CVector m_vColor;
 	double  m_dAlpha;
@@ -444,7 +442,6 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	CVector				m_vShadowVolumeMaxs;
 	bool				m_bHardwareSupportRead;
 	SHardwareSupport	m_sHardwareSupport;
-	bool				m_bIgnoreShaderSupport;
 	
 	std::stack<SRenderState> m_sStagedRenderingStateStack;
 	std::stack<SRenderState> m_sRenderStateStack;
@@ -481,7 +478,25 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	void RenderModelStages(bool bRenderingShadow,bool bShadowReceptionState);
 
 	void AddShader(const SShaderKey &key);
-
+	
+	void InternalActivateTextures();
+	void InternalDeactivateTextures();
+	
+	void InternalActivateLighting();
+	void InternalDeactivateLighting();
+	
+	void InternalActivateSolid();
+	void InternalDeactivateSolid();
+	
+	void InternalActivateBlending();
+	void InternalDeactivateBlending();
+	void InternalSetBlendingFunction(unsigned int nOperator1,unsigned int nOperator2);
+	void InternalSetBlendingLayer(unsigned int nLayer);
+	
+	void InternalActivateDepth();
+	void InternalDeactivateDepth();
+	void InternalSetDepthFunction(EDepthFunction eDepthFunction);
+	
 public:
 
 	bool Init(std::string sClass,std::string sName,ISystem *piSystem);
@@ -529,10 +544,10 @@ public:
 	void RenderText(double x,double y,const char *pText);
 	void RenderTextEx(double x,double y,double w,double h,const char *pText,eTextAlignment dwHorzAlign,eTextAlignment dwVertAlign);
 	void RenderTexture(const CVector &vOrigin,double s1,double s2);
+	void RenderTexture(const CVector &vOrigin,double s1,double s2,double dTexX,double dTexY,double dTexW,double dTexH);
 	void RenderParticle(IGenericTexture *piTexture,const CVector &vOrigin,double dAngle,double s1,double s2,const CVector &vColor,double dAlpha,double dTextX,double dTextY,double dTextW,double dTextH);
 	void RenderModel(const CVector &vOrigin,const CVector &vOrientation,IGenericModel *piModel,unsigned int nAnimation,unsigned int nFrame);
-	void RenderTextureRect(double dPosx,double dPosy,double dWidth,double dHeight,double dTexturex,double dTexturey,double dTextureWidth,double dTextureHeight);
-
+	
 	void RenderBBox(const CVector &vMins,const CVector &vMaxs,const CVector &vColor,unsigned long nStipple);
 	void RenderBBox(const CVector &vOrigin,const CVector &vOrientation,const CVector &vMins,const CVector &vMaxs,const CVector &vColor,unsigned long nStipple=0x8888);
 	void RenderLine(const CVector &v1,const CVector &v2,const CVector &vColor,unsigned long nStipple);
@@ -583,7 +598,7 @@ public:
 	
 	void ActivateDepth();
 	void DeactivateDepth();
-	void SetDepthFunction(unsigned int nDepthFunc);
+	void SetDepthFunction(EDepthFunction eDepthFunction);
 
 	void ActivateSkyShadow();
 	void DeactivateSkyShadow();
@@ -602,10 +617,6 @@ public:
 
 	// Render Options
 
-	void EnableShaders();
-	void DisableShaders();
-	bool AreShadersEnabled();
-	
 	void EnableNormalMaps();
 	void DisableNormalMaps();
 	bool AreNormalMapsEnabled();
@@ -657,7 +668,6 @@ public:
 
 	void StartStagedRendering();
 	void EndStagedRendering();
-	bool IsRenderingWithShader();
 	SRenderStats GetStagedRenderingStats();
 	
 	// Selection
@@ -669,9 +679,7 @@ public:
 	void ReloadShaders();
 	
 	BEGIN_PROP_MAP(COpenGLRender)
-	PROP_VALUE_FLAGS(m_bIgnoreShaderSupport,"IgnoreShaderSupport",false,MRPF_NORMAL|MRPF_OPTIONAL)
 	PROP_VALUE_FLAGS(m_dShadowAntiFlickeringMargin,"ShadowAntiFlickeringMargin",10,MRPF_NORMAL|MRPF_OPTIONAL)
-	PROP_VALUE_FLAGS(m_bPrecompileShaders,"PrecompileShaders",true,MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP();
 	
 	COpenGLRender(void);

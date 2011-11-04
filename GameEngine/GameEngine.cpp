@@ -25,6 +25,13 @@
 #include "GameGUI.h"
 #include "InterfaceLeakAPI.h"
 
+#ifdef ANDROID
+#include "android_native_app_glue.h"
+#include <android/sensor.h>
+#include <android/log.h>
+android_app *g_pAndroidApp=NULL;
+#endif
+
 CGameEngineApp theApp;
 
 DECLARE_CUSTOM_WRAPPER1(CGameGUIManagerWrapper,IGameGUIManager,m_piInterface)
@@ -42,7 +49,7 @@ void CGameEngineApp::Run()
 {
 	CConfigFile             configFile;
 	CSystemLoaderHelper     systemLoader;
-
+	
 	ISystemManager *piSystemManager=GetSystemManager();
 	ISystemManagerPathControl *piPathControl=QI(ISystemManagerPathControl,piSystemManager);
 	if(piPathControl)
@@ -70,11 +77,9 @@ void CGameEngineApp::Run()
 		ISystem *piGameSystem=guiSystem.LoadSystem(configFile.GetRoot(),"GameGUI");
 		if(piGameSystem)
 		{
-			CGameWindowWrapper  mainWindow;
 			CGameGUIManagerWrapper   guiManager;
 			guiManager.Attach("GameGUI","GUIManager");
-			guiManager.m_piInterface->EnterGUILoop();
-			mainWindow.Detach();
+			if(guiManager.m_piInterface){guiManager.m_piInterface->EnterGUILoop();}
 			guiManager.Detach();
 
 			piGameSystem->Destroy();
@@ -110,7 +115,11 @@ void CGameEngineApp::Run()
 
 void CGameEngineApp::InterpretCommandLine(std::string sExecutableFolder,std::vector<std::string> &vParams)
 {
+#ifdef ANDROID
+	g_sRootFolder=AppendPathSeparator(sExecutableFolder)+PATH_SEPARATOR "assets";
+#else
 	g_sRootFolder=AppendPathSeparator(sExecutableFolder)+".." PATH_SEPARATOR ".." PATH_SEPARATOR "Resources";
+#endif
 	g_sInitialConfigFile="Scripts" PATH_SEPARATOR "GameGUI.cfg";
 	g_sExecutableFolder=sExecutableFolder;
 	
@@ -174,7 +183,7 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
  // EndMonitorization();
   	return 0;
 }
-#else
+#elif defined(LINUX)
 int main(int argc, char *argv[])
 {
 	std::string sFolder=GetFileFolder(argv[0]);
@@ -186,5 +195,18 @@ int main(int argc, char *argv[])
 	theApp.InterpretCommandLine(sFolder,vParams);
 	theApp.Run();
 	return 0;
+}
+#elif defined(ANDROID)
+void android_main(struct android_app* state) 
+{
+	// Make sure glue isn't stripped.
+	app_dummy();
+	
+	g_pAndroidApp=state;
+	RTTRACE("AndroidMain -> Current Folder: %s",GetWorkingFolder().c_str());
+	std::string sFolder="/data/data/com.games.frikingshark";
+	std::vector<std::string> vParams;
+	theApp.InterpretCommandLine(sFolder,vParams);
+	theApp.Run();
 }
 #endif

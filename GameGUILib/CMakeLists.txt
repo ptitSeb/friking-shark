@@ -1,22 +1,22 @@
 SET (SRCS_GAMEGUILIB
 
-	./GameDialogBase.h
-	./GameGUIBBoxGizmo.h
-	./GameGUILib.h
-	./GameGUIRotationGizmo.h
-	./GameGUITranslationGizmo.h
-	./GameGUIUtil.h
-	./GameWindowBase.h
-	./stdafx.h
+	./GameGUILib/GameDialogBase.h
+	./GameGUILib/GameGUIBBoxGizmo.h
+	./GameGUILib/GameGUILib.h
+	./GameGUILib/GameGUIRotationGizmo.h
+	./GameGUILib/GameGUITranslationGizmo.h
+	./GameGUILib/GameGUIUtil.h
+	./GameGUILib/GameWindowBase.h
+	./GameGUILib/stdafx.h
 
-	./GameDialogBase.cpp
-	./GameGUIBBoxGizmo.cpp
-	./GameGUILib.cpp
-	./GameGUIRotationGizmo.cpp
-	./GameGUITranslationGizmo.cpp
-	./GameGUIUtil.cpp
-	./GameWindowBase.cpp
-	./stdafx.cpp
+	./GameGUILib/GameDialogBase.cpp
+	./GameGUILib/GameGUIBBoxGizmo.cpp
+	./GameGUILib/GameGUILib.cpp
+	./GameGUILib/GameGUIRotationGizmo.cpp
+	./GameGUILib/GameGUITranslationGizmo.cpp
+	./GameGUILib/GameGUIUtil.cpp
+	./GameGUILib/GameWindowBase.cpp
+	./GameGUILib/stdafx.cpp
 )
 
 ADD_LIBRARY ( GameGUILib ${SRCS_GAMEGUILIB} )

@@ -657,10 +657,10 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 			piRender->EnableBlending();
 			piRender->EnableLighting();	
 			piRender->EnableShadows();
-			piRender->EnableShaders();
 			piRender->EnableHeightFog();
 			piRender->DisableAutoShadowVolume();
 			
+			piRender->SetShadingModel(eShadingModel_Phong);
 			piRender->StartStagedRendering();
 			m_WorldManagerWrapper.m_piWorldManager->SetupRenderingEnvironment(piRender);
 			m_EntityManagerWrapper.m_piEntityManager->RenderEntities(piRender,piCamera);

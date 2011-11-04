@@ -1,21 +1,21 @@
 SET (SRCS_GAMEENTITYLIB
 
-	EntityBase.h
-	EntityTypeBase.h
-	EntityUtilities.h
-	GameEntityLib.h
-	Route.h
-	SingletonWrapper.h
-	stdafx.h
-	SteeringBehaviours.h
+	./GameEntityLib/EntityBase.h
+	./GameEntityLib/EntityTypeBase.h
+	./GameEntityLib/EntityUtilities.h
+	./GameEntityLib/GameEntityLib.h
+	./GameEntityLib/Route.h
+	./GameEntityLib/SingletonWrapper.h
+	./GameEntityLib/stdafx.h
+	./GameEntityLib/SteeringBehaviours.h
 	
-	EntityBase.cpp
-	EntityTypeBase.cpp
-	EntityUtilities.cpp
-	GameEntityLib.cpp
-	Route.cpp
-	stdafx.cpp
-	SteeringBehaviours.cpp
+	./GameEntityLib/EntityBase.cpp
+	./GameEntityLib/EntityTypeBase.cpp
+	./GameEntityLib/EntityUtilities.cpp
+	./GameEntityLib/GameEntityLib.cpp
+	./GameEntityLib/Route.cpp
+	./GameEntityLib/stdafx.cpp
+	./GameEntityLib/SteeringBehaviours.cpp
 )
 
 ADD_LIBRARY (GameEntityLib ${SRCS_GAMEENTITYLIB})

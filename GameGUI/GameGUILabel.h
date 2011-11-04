@@ -39,7 +39,7 @@ public:
 	BEGIN_PROP_MAP(CGameGUILabel)
 		PROP_CLASS_CHAIN(CGameWindowBase)
 		PROP_VALUE_FLAGS(m_bAutoResizeFont,"AutoResizeFont",false,MRPF_NORMAL|MRPF_OPTIONAL)
-		PROP_VALUE_FLAGS(m_vTextColor,"TextColor",CVector(0,0,0),MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_vTextColor,"TextColor",CVector(1,1,1),MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_dTextAlpha,"TextAlpha",1.0,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_sText,"Text","",MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_VALUE_FLAGS(m_eHorizontalAlignment,"HorzAlign",eTextAlignment_Left,MRPF_NORMAL|MRPF_OPTIONAL);

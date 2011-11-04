@@ -1,4 +1,4 @@
-SET (SRCS_FORMATIONEDITOR
+SET (SRCS_SCENARIOEDITOR
 
 	./ScenarioEditor/ScenarioEditorColorSelector.h
 	./ScenarioEditor/ScenarioEditor.h
@@ -17,19 +17,18 @@ SET (SRCS_FORMATIONEDITOR
 	./ScenarioEditor/stdafx.cpp
 )
 
-link_libraries (
-	${INCLUDED_LIBRARIES}
-)
 
-ADD_LIBRARY ( ScenarioEditor SHARED ${SRCS_FORMATIONEDITOR} )
+IF(ANDROID)
+	ADD_LIBRARY ( ScenarioEditor ${SRCS_SCENARIOEDITOR} )
+ELSE()
+	ADD_LIBRARY ( ScenarioEditor SHARED ${SRCS_SCENARIOEDITOR} )
 
-TARGET_LINK_LIBRARIES (
-         ScenarioEditor
-	GameGUILib
-	GameRunTimeLib
-	VectorLib
-	GameEntityLib
-	${PNG_LIBRARY}
-	${OPENAL_LIBRARY}
-	${OPENGL_LIBRARY}
-)
+	TARGET_LINK_LIBRARIES (
+			ScenarioEditor
+		GameGUILib
+		GameRunTimeLib
+		VectorLib
+		GameEntityLib
+		${ANDROID_LOG_LIBRARY}
+	)
+ENDIF()

@@ -43,25 +43,25 @@ public:
 	void AddClass(ISystemClass *piClass);
     void RegisterClasses(ISystem *piSystem);
     void UnregisterClasses(ISystem *piSystem);
-
+	
     CSystemModuleHelper(tBuildClassMap pBuildClassMap);
     ~CSystemModuleHelper();
 };
 
 #ifdef WIN32
-#define BEGIN_SYSTEM_MODULE() \
+#define BEGIN_SYSTEM_MODULE(name) \
     CSystemModuleHelper *g_pSystemModuleHelper=NULL;\
     void CSystemModuleHelper_BuildClassMap(CSystemModuleHelper *pModuleHelper)\
     {
 #define SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CLASS,NAME) {ISystemClass *piClass=new CSystemClassHelperT<CLASS>(NAME);pModuleHelper->AddClass(piClass);REL(piClass);}
 #define SYSTEM_MODULE_CUSTOM_CLASS_FACTORY_ENTRY(INSTANCE) pModuleHelper->AddClass(INSTANCE);REL(INSTANCE);
-#define END_SYSTEM_MODULE()\
+#define END_SYSTEM_MODULE(name)\
     }\
     extern "C" \
     {\
         bool  __declspec(dllexport) SystemModuleRegister(ISystem *piSystem){g_pSystemModuleHelper->RegisterClasses(piSystem);return true;}\
         void  __declspec(dllexport) SystemModuleUnregister(ISystem *piSystem){g_pSystemModuleHelper->UnregisterClasses(piSystem);}\
-    }\
+        }\
     BOOL APIENTRY DllMain( HANDLE hModule, unsigned int  ul_reason_for_call, LPVOID lpReserved)\
     {\
     switch (ul_reason_for_call)\
@@ -71,13 +71,15 @@ public:
         }\
         return TRUE;\
     }
-#else
-#define BEGIN_SYSTEM_MODULE() \
+
+#elif defined LINUX
+
+#define BEGIN_SYSTEM_MODULE(name) \
     void CSystemModuleHelper_BuildClassMap(CSystemModuleHelper *pModuleHelper)\
     {
 #define SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CLASS,NAME) {ISystemClass *piClass=new CSystemClassHelperT<CLASS>(NAME);pModuleHelper->AddClass(piClass);REL(piClass);}
 #define SYSTEM_MODULE_CUSTOM_CLASS_FACTORY_ENTRY(INSTANCE) pModuleHelper->AddClass(INSTANCE);REL(INSTANCE);
-#define END_SYSTEM_MODULE()\
+#define END_SYSTEM_MODULE(name)\
     }\
     CSystemModuleHelper g_SystemModuleHelper(CSystemModuleHelper_BuildClassMap);\
     extern "C" \
@@ -85,4 +87,19 @@ public:
         bool SystemModuleRegister(ISystem *piSystem){g_SystemModuleHelper.RegisterClasses(piSystem);return true;}\
         void SystemModuleUnregister(ISystem *piSystem){g_SystemModuleHelper.UnregisterClasses(piSystem);}\
     }
+
+#elif defined ANDROID
+
+#define BEGIN_SYSTEM_MODULE(name) \
+void CSystemModuleHelper_BuildClassMap##name(CSystemModuleHelper *pModuleHelper)\
+{
+#define SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CLASS,NAME) {ISystemClass *piClass=new CSystemClassHelperT<CLASS>(NAME);pModuleHelper->AddClass(piClass);REL(piClass);}
+#define SYSTEM_MODULE_CUSTOM_CLASS_FACTORY_ENTRY(INSTANCE) pModuleHelper->AddClass(INSTANCE);REL(INSTANCE);
+#define END_SYSTEM_MODULE(name)\
+}\
+CSystemModuleHelper g_SystemModuleHelper##name(CSystemModuleHelper_BuildClassMap##name);\
+bool EmbeddedModuleRegister##name(ISystem *piSystem){g_SystemModuleHelper##name.RegisterClasses(piSystem);return true;}\
+void EmbeddedModuleUnregister##name(ISystem *piSystem){g_SystemModuleHelper##name.UnregisterClasses(piSystem);}
+
 #endif
+	

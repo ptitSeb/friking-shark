@@ -25,9 +25,9 @@
 #include "PointBonusType.h"
 #include "LiveBonusType.h"
 
-BEGIN_SYSTEM_MODULE()
+BEGIN_SYSTEM_MODULE(BonusTypes)
   SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CWeaponUpgradeBonusType,"WeaponUpgradeBonus")
   SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CBombBonusType,"BombBonus")
   SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CPointBonusType,"PointBonus")
   SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CLiveBonusType,"LiveBonus")
-END_SYSTEM_MODULE()
+END_SYSTEM_MODULE(BonusTypes)

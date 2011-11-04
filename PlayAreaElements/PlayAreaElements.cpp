@@ -26,10 +26,10 @@
 #include "PlayAreaCheckPoint.h"
 #include "FormationType.h"
 
-BEGIN_SYSTEM_MODULE()
+BEGIN_SYSTEM_MODULE(PlayAreaElements)
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CFormationType,"CFormationType")
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CPlayAreaEntity,"CPlayAreaEntity")
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CPlayAreaFormation,"CPlayAreaFormation")
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CPlayAreaCheckPoint,"CPlayAreaCheckPoint")
-END_SYSTEM_MODULE()
+END_SYSTEM_MODULE(PlayAreaElements)
 

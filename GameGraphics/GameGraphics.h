@@ -223,7 +223,7 @@ public:
 	virtual CVector		GetPixelColor(unsigned long x, unsigned long y)=0;
 	virtual double		GetPixelAlpha(unsigned long x, unsigned long y)=0;
 	
-	virtual bool		Load(std::string sFileName,CVector *pColorKey=NULL,std::string *pAlphaFile=NULL,float fOpacity=1.0)=0;
+	virtual bool		Load(std::string sFileName,CVector *pColorKey=NULL,std::string *pAlphaFile=NULL,float fOpacity=1.0,bool bGenerateMipmaps=true)=0;
 	virtual bool		Create( unsigned nWidth,unsigned nHeight,IGenericViewport *piViewport)=0;
 	virtual bool		CreateDepth( unsigned nWidth,unsigned nHeight,IGenericViewport *piViewport)=0;
 
@@ -341,20 +341,9 @@ public:
 	~IGenericLight(){}
 };
 
-enum eGenericFontType
-{
-	eGenericFontType_UNKNOWN=0,
-	eGenericFontType_System,
-	eGenericFontType_Texture
-};
-
-DECLARE_SERIALIZABLE_ENUMERATION(eGenericFontType)
-
 struct IGenericFont:virtual public ISystemUnknown
 {	
 public:
-
-	virtual eGenericFontType GetType()=0;
 
 	virtual void CalcTextSize(double dFontHeight,const char *pText,double *pdWidth,double *pdHeight)=0;
 	virtual void RenderText(IGenericRender *piRender,double dFontHeight,double x,double y,const char *pText)=0;
@@ -443,6 +432,18 @@ struct SRenderStats
 	}
 };
 
+enum EDepthFunction
+{
+	eDepthFunction_Never,
+	eDepthFunction_Less,
+	eDepthFunction_LessOrEqual,
+	eDepthFunction_Equal,
+	eDepthFunction_NotEqual,
+	eDepthFunction_GreaterOrEqual,
+	eDepthFunction_Greater,
+	eDepthFunction_Always
+};
+
 class IGenericRender:virtual public ISystemUnknown
 {
 public:
@@ -457,8 +458,6 @@ public:
 
 	virtual void ReloadShaders()=0;
 	
-	virtual bool IsRenderingWithShader()=0;
-
 	virtual void              SetViewport(IGenericViewport *piViewport)=0;
 	virtual IGenericViewport *GetViewPort()=0; // solo valido entre StartFrame y EndFrame.
 
@@ -493,8 +492,8 @@ public:
 	
 	virtual void RenderPoint(const CVector &vPosition,double dSize,const CVector &vColor,double dAlpha)=0;
 	virtual void RenderTexture(const CVector &vOrigin,double s1,double s2)=0;
+	virtual void RenderTexture(const CVector &vOrigin,double s1,double s2,double dTexX,double dTexY,double dTexW,double dTexH)=0;
 	virtual void RenderParticle(IGenericTexture *piTexture,const CVector &vOrigin,double dAngle,double s1,double s2,const CVector &vColor,double dAlpha,double dTextX,double dTextY,double dTextW,double dTextH)=0;
-	virtual void RenderTextureRect(double dPosx,double dPosy,double dWidth,double dHeight,double dTexturex,double dTexturey,double dTextureWidth,double dTextureHeight)=0;
 	virtual void RenderModel(const CVector &vOrigin,const CVector &vOrientation,IGenericModel *piModel,unsigned int nAnimation=0,unsigned int nFrame=0)=0;
 	virtual void RenderBBox(const CVector &vMins,const CVector &vMaxs,const CVector &vColor,unsigned long nStipple=0x8888)=0;
 	virtual void RenderBBox(const CVector &vOrigin,const CVector &vOrientation,const CVector &vMins,const CVector &vMaxs,const CVector &vColor,unsigned long nStipple=0x8888)=0;
@@ -544,7 +543,7 @@ public:
 	
 	virtual void ActivateDepth()=0;
 	virtual void DeactivateDepth()=0;
-	virtual void SetDepthFunction(unsigned int nDepthFunc)=0;
+	virtual void SetDepthFunction(EDepthFunction eDepthFunction)=0;
 
 	virtual void ActivateShadowEmission()=0;
 	virtual void DeactivateShadowEmission()=0;
@@ -568,10 +567,6 @@ public:
 	
 	// Render options
 
-	virtual void EnableShaders()=0;
-	virtual void DisableShaders()=0;
-	virtual bool AreShadersEnabled()=0;
-	
 	virtual void EnableNormalMaps()=0;
 	virtual void DisableNormalMaps()=0;
 	virtual bool AreNormalMapsEnabled()=0;

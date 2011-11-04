@@ -16,17 +16,17 @@ SET (SRCS_BONUSTYPES
 	./BonusTypes/WeaponUpgradeBonusType.cpp
 )
 
+IF(ANDROID)
+	ADD_LIBRARY ( BonusTypes ${SRCS_BONUSTYPES} )
+ELSE()
+	ADD_LIBRARY ( BonusTypes SHARED ${SRCS_BONUSTYPES} )
 
-ADD_LIBRARY ( BonusTypes SHARED ${SRCS_BONUSTYPES} )
-
-TARGET_LINK_LIBRARIES (
-         BonusTypes
-	GameGUILib
-	GameRunTimeLib
-	VectorLib
-	GameEntityLib
-	${PNG_LIBRARY}
-	${OPENAL_LIBRARY}
-	${OPENGL_LIBRARY}
-)
-
+	TARGET_LINK_LIBRARIES (
+			BonusTypes
+		GameGUILib
+		GameRunTimeLib
+		VectorLib
+		GameEntityLib
+		${ANDROID_LOG_LIBRARY}
+	)
+ENDIF()

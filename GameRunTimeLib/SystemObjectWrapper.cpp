@@ -54,8 +54,8 @@ bool CSystemObjectWrapper::GetInterfaces(ISystemUnknown *piUnknown)
 {
     m_piObject=QI(ISystemObject,piUnknown);
     if(m_piObject){m_piSerializable=QI(ISystemSerializable,piUnknown);}
-    if(!m_piObject){ReleaseInterfaces();return false;}
-    return true;
+	if(!m_piObject){ReleaseInterfaces();return false;}
+	return true;
 }
 
 void CSystemObjectWrapper::ReleaseInterfaces()
@@ -224,7 +224,14 @@ bool CSystemObjectWrapper::Create(std::string sSystem,std::string sClass,std::st
 
     if(piManager){piSystem=piManager->GetSystem(sSystem);}
     if(piSystem){bOk=Create(piSystem,sClass,sName);}
-    if(piObject){bOk=GetInterfaces(piObject);}
+    if(piObject)
+	{
+		bOk=GetInterfaces(piObject);
+		if(!bOk)
+		{
+			RTTRACE("CSystemObjectWrapper::Create -> Failed to get interfaces System: %s, Class: %s, Object:%s",sSystem.c_str(),sClass.c_str(),sName.c_str());
+		}
+	}
 	if(!bOk)
 	{
 		RTTRACE("CSystemObjectWrapper::Create -> Failed to create System: %s, Class: %s, Object:%s",sSystem.c_str(),sClass.c_str(),sName.c_str());
@@ -247,7 +254,14 @@ bool CSystemObjectWrapper::Create(ISystem *piSystem,std::string sClass,std::stri
             //m_bObjectMustBeDestroyed=true;
         }
     }
-    if(piObject){bOk=GetInterfaces(piObject);}
+    if(piObject)
+	{
+		bOk=GetInterfaces(piObject);
+		if(!bOk)
+		{
+			RTTRACE("CSystemObjectWrapper::Create -> Failed to get interfaces Class: %s, Object:%s",sClass.c_str(),sName.c_str());
+		}
+	}
     REL(piObject);
     return bOk;
 }

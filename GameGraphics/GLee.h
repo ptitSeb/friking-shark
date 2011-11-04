@@ -1,3 +1,4 @@
+#ifndef ANDROID
 /***************************************************************************
 *
 * GLee.h 
@@ -17645,3 +17646,4 @@ GLEE_EXTERN const char * GLeeGetExtStrGLX( void );
 #endif
 
 #endif /* __glee_h_ defined */
+#endif // !ANDROID
