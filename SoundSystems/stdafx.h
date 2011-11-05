@@ -25,12 +25,8 @@
 #include <string.h>
 #include <list>
 
-#ifdef ANDROID
-	#include <AL/al.h>
-	#include <AL/alc.h>
-#else
-	#include <AL/alut.h>
-#endif
+#include <AL/al.h>
+#include <AL/alc.h>
 	
 #include "GameRunTimeLib.h"
 #include "VectorLib.h"

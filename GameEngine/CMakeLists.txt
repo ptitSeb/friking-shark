@@ -18,9 +18,9 @@ IF(ANDROID)
 	LIST(APPEND SRCS_GAMEENGINE ./GameEngine/android_native_app_glue.h)
 	LIST(APPEND SRCS_GAMEENGINE ./GameEngine/android_native_app_glue.c)
 
-	ADD_LIBRARY ( libGameEngine SHARED ${SRCS_GAMEENGINE} )
+	ADD_LIBRARY ( GameEngine SHARED ${SRCS_GAMEENGINE} )
 	TARGET_LINK_LIBRARIES (
-			libGameEngine
+			GameEngine
 		GameRunTime
 		GameManagers
 		GameGraphics
@@ -28,13 +28,10 @@ IF(ANDROID)
 		GUISystems
 		AnimationSystems
 		BonusTypes
-		BSPDebugger
-		EntityEditor
-		FormationEditor
+		AirUnitTypes
 		GroundUnitTypes
 		ParticleSystems
 		PlayAreaElements
-		ScenarioEditor
 		WeaponTypes
 		SoundSystems
 		GameGUILib

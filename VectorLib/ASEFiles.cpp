@@ -165,11 +165,11 @@ bool CASEFileType::Open(const char *sFileName)
 {
 	unsigned int dwFileLength=0;
 
-	if ((m_pFile=fopen (sFileName, "rb"))== NULL) return false; //Open the file
+	if ((m_pFile=afopen (sFileName, "rb"))== NULL) return false; //Open the file
 
-	fseek(m_pFile,0,SEEK_END);
-    dwFileLength=ftell(m_pFile);
-	fseek(m_pFile,0,SEEK_SET);
+	afseek(m_pFile,0,SEEK_END);
+    dwFileLength=aftell(m_pFile);
+	afseek(m_pFile,0,SEEK_SET);
 	
 	if(!dwFileLength){return false;}
 
@@ -197,7 +197,7 @@ bool CASEFileType::Open(const char *sFileName)
 	int y;
 
 	m_pBuffer=new char [dwFileLength+1];
-	if(fread(m_pBuffer,dwFileLength,1,m_pFile)!=1){Close();return false;}
+	if(afread(m_pBuffer,dwFileLength,1,m_pFile)!=1){Close();return false;}
 	m_pBuffer[dwFileLength]=0;
 
 	map<string,unsigned int> mKeyNames;
@@ -777,7 +777,7 @@ bool CASEFileType::Open(const char *sFileName)
 	
 	if(m_pBuffer){delete [] m_pBuffer;m_pBuffer=NULL;}
 
-	fclose (m_pFile); // Closes the file stream
+	afclose (m_pFile); // Closes the file stream
 	m_pFile=NULL;
 	m_pBuffer=NULL;
 	return true;

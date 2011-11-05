@@ -58,8 +58,8 @@ bool COpenGLModel::LoadFromFile()
 	bool bLoadedGCM=false;
 	CGCMFileType gcmfile;
 	
-	if( FileExists(sFileName.c_str()) &&
-		FileExists(sGCMFile))
+	if( afexists(sFileName.c_str()) &&
+		afexists(sGCMFile))
 	{
 		time_t asetime=GetFileTimeStamp(m_sFileName.c_str());
 		time_t gcmfile=GetFileTimeStamp(sGCMFile);
@@ -256,12 +256,12 @@ bool COpenGLModel::LoadBSP(const char *pFileName)
 	ReplaceExtension(sASEFile,".ase");
 	
 	
-	bool bGBSOutdated = !FileExists(sGBSFile);
+	bool bGBSOutdated = !afexists(sGBSFile);
 	if(bGBSOutdated)
 	{
 		RTTRACE("COpenGLModel::LoadBSP -> GBS file for %s does not exist, rebuilding",m_sFileName.c_str());
 	}
-	if(!bGBSOutdated &&  FileExists(sASEFile))
+	if(!bGBSOutdated &&  afexists(sASEFile))
 	{
 		time_t asetime=GetFileTimeStamp(sASEFile);
 		time_t gbstime=GetFileTimeStamp(sGBSFile);
@@ -323,7 +323,7 @@ void COpenGLModel::Render(IGenericRender *piRender,unsigned long nAnimation,unsi
 }
 
 void COpenGLModel::UpdateBufferObjects()
-{
+{/*
 	for(unsigned long x=0;x<m_vAnimations.size();x++)
 	{
 		SModelAnimation *pAnimation=m_vAnimations[x];
@@ -364,7 +364,8 @@ void COpenGLModel::UpdateBufferObjects()
 				for(unsigned long nTexture=0;nTexture<pBuffer->vTextureLevels.size();nTexture++)
 				{
 					SModelTextureLevel *pTextureLevel=pBuffer->vTextureLevels[nTexture];
-					if(pTextureLevel /*&& pTextureLevel->texture.m_piTexture */&& pTextureLevel->pTexVertexArray){nDataPerVertex+=2;}
+					//&& pTextureLevel->texture.m_piTexture 
+					if(pTextureLevel && pTextureLevel->pTexVertexArray){nDataPerVertex+=2;}
 				}
 
 				// Generacion del buffer object
@@ -410,7 +411,8 @@ void COpenGLModel::UpdateBufferObjects()
 					for(unsigned long nTexture=0;nTexture<pBuffer->vTextureLevels.size();nTexture++)
 					{
 						SModelTextureLevel *pTextureLevel=pBuffer->vTextureLevels[nTexture];
-						if(pTextureLevel/* && pTextureLevel->texture.m_piTexture*/ && pTextureLevel->pTexVertexArray)
+						// && pTextureLevel->texture.m_piTexture
+						if(pTextureLevel && pTextureLevel->pTexVertexArray)
 						{
 							memcpy(((unsigned char*)pBufferObject)+dwOffset,pTextureLevel->pTexVertexArray,pBuffer->nVertexes*2*sizeof(GLfloat));
 							dwOffset+=pBuffer->nVertexes*2*sizeof(GLfloat);
@@ -442,7 +444,7 @@ void COpenGLModel::UpdateBufferObjects()
 			pFrame->vSize=(pFrame->vMaxs-pFrame->vMins);
 			pFrame->dRadius=GetBBoxRadius(pFrame->vMins,pFrame->vMaxs);
 		}
-	}
+	}*/
 }
 
 unsigned long COpenGLModel::GetAnimations()
@@ -775,7 +777,7 @@ void COpenGLModel::GetBSPOptions(bool *pbLoad)
 }
 
 void COpenGLModel::PrepareRenderBuffer(IGenericRender *piRender, unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer ,bool bRenderingShadow,SOpenGLRenderMappings *pRenderMappings)
-{
+{/*
 	if(m_bLoadPending){LoadFromFile();}
 	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation,nFrame,nBuffer);
 	if(pBuffer==NULL){return;}
@@ -858,11 +860,11 @@ void COpenGLModel::PrepareRenderBuffer(IGenericRender *piRender, unsigned int nA
 				}
 			}
 		}
-	}
+	}*/
 }
 
 void COpenGLModel::CallRenderBuffer(IGenericRender *piRender, unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,unsigned int nInstances)
-{
+{/*
 	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation,nFrame,nBuffer);
 	if(pBuffer==NULL){return;}
 
@@ -878,11 +880,11 @@ void COpenGLModel::CallRenderBuffer(IGenericRender *piRender, unsigned int nAnim
 	else
 	{
 		glDrawElements(GL_TRIANGLES,pBuffer->nFaces*3,GL_UNSIGNED_INT,pBuffer->pFaceVertexIndexes);
-	}
+	}*/
 }
 
 void COpenGLModel::UnPrepareRenderBuffer(IGenericRender *piRender, unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer ,bool bRenderingShadow,SOpenGLRenderMappings *pRenderMappings)
-{
+{/*
 	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation,nFrame,nBuffer);
 	if(pBuffer==NULL){return;}
 	
@@ -921,7 +923,7 @@ void COpenGLModel::UnPrepareRenderBuffer(IGenericRender *piRender, unsigned int 
 				piRender->UnselectTexture(x);
 			}
 		}
-	}
+	}*/
 }
 
 CTraceInfo COpenGLModel::GetTrace( const CVector &vOrigin,const CVector &vAngles,const CVector &p1,const CVector &p2 )

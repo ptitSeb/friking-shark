@@ -62,16 +62,26 @@ bool CSoundType::LoadFromFile()
 	unsigned int nStartTime=GetTimeStamp();	
 	char sExt[1024]={0};
 	GetExtension(m_sFileName.c_str(),sExt);
-	if(strcasecmp(sExt,".OGG")==0)
-	{
-		bOk=LoadOgg();
-	}
-	else
-	{
-		bOk=LoadWav();
-	}
+	bOk=LoadOgg();
 	RTTRACE("CSoundType::LoadFromFile -> %s loaded (%d ms)",m_sFileName.c_str(),GetTimeStamp()-nStartTime);
 	return bOk;
+}
+
+size_t ov_read_func(void *ptr, size_t size, size_t nmemb, void *datasource)
+{
+	return afread(ptr,size,nmemb,(AFILE*)datasource);
+}
+int ov_seek_func(void *datasource, ogg_int64_t offset, int whence)
+{
+	return afseek((AFILE*)datasource,offset,whence);
+}
+long ov_tell_func(void *datasource)
+{
+	return aftell((AFILE*)datasource);
+}
+int ov_close_func(void *datasource)
+{
+	return 0;
 }
 
 bool CSoundType::LoadOgg()
@@ -85,13 +95,19 @@ bool CSoundType::LoadOgg()
 	unsigned int nBufferSize=0;
 	unsigned int nFileFormat=0;
 	long         nFrequency=0;
-	FILE *pFile=fopen(m_sFileName.c_str(), "rb");
+	
+	AFILE *pFile=afopen(m_sFileName.c_str(), "rb");
 	bOk=(pFile!=NULL);
 	if(bOk)
 	{
 		vorbis_info *pInfo=NULL;
 		OggVorbis_File oggFile;
-		bool bVorbisFileOpen=bOk=(ov_open(pFile, &oggFile, NULL, 0)==0);
+		ov_callbacks callBacks;
+		callBacks.read_func=ov_read_func;
+		callBacks.seek_func=ov_seek_func;
+		callBacks.tell_func=ov_tell_func;
+		callBacks.close_func=ov_close_func;
+		bool bVorbisFileOpen=bOk=(ov_open_callbacks(pFile, &oggFile, NULL, 0,callBacks)==0);
 		if(bOk)
 		{
 			pInfo = ov_info(&oggFile, -1);
@@ -132,6 +148,8 @@ bool CSoundType::LoadOgg()
 		{
 			ov_clear(&oggFile);
 		}
+		afclose(pFile);
+		pFile=NULL;
 	}
 	if(bOk)
 	{
@@ -159,30 +177,6 @@ bool CSoundType::LoadOgg()
 		RTTRACE("CSoundType::LoadFromFile -> Failed to load sound %s.",m_sFileName.c_str());
 	}
 	return bOk;
-}
-
-bool CSoundType::LoadWav()
-{
-#ifdef ANDROID
-	return false;
-#else
-	bool bOk=true;
-	ReleaseAllSources();
-	if(m_iSoundBuffer){alDeleteBuffers(1,&m_iSoundBuffer);m_iSoundBuffer=AL_NONE;}
-	
-	m_iSoundBuffer=alutCreateBufferFromFile(m_sFileName.c_str());
-	if(m_iSoundBuffer==AL_NONE)
-	{
-		ALenum aluterror=alutGetError();
-		RTTRACE("CSoundType::LoadWav -> Failed to create sound buffer from file %s. Error %x:%s",m_sFileName.c_str(),aluterror,alutGetErrorString(aluterror));
-		bOk=false;
-	}
-	if(!bOk)
-	{
-		RTTRACE("CSoundType::LoadWav -> Failed to load sound %s.",m_sFileName.c_str());
-	}
-	return bOk;
-#endif
 }
 
 std::string CSoundType::GetFileName(){return m_sFileName;}

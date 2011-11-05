@@ -83,6 +83,34 @@ std::string GetWorkingFolder();
 bool 		SetWorkingFolder(std::string sFolder);
 std::string NormalizePath(std::string sPath);
 
+// Asset file encapsulation, needed for android.
+
+#ifdef ANDROID
+#include "../GameEngine/android_native_app_glue.h"
+void setAssetManager(AAssetManager *pAssetManager);
+struct AFILE;
+bool afexists(const char * _Filename);
+AFILE *afopen(const char * _Filename, const char * _Mode);
+size_t afread(void * _DstBuf, size_t _ElementSize, size_t _Count, AFILE * _File);
+size_t afwrite(const void * _DstBuf, size_t _ElementSize, size_t _Count, AFILE * _File);
+char  *afgets(char *s, int size, AFILE *_File);
+FILE  *afgetfile(AFILE *file);
+int afseek(AFILE * _File, long _Offset, int _Origin);
+int aftell(AFILE * _File);
+int afclose(AFILE * _File);
+#else
+struct AFILE;
+bool afexists(const char * _Filename);
+AFILE *afopen(const char * _Filename, const char * _Mode);
+size_t afread(void * _DstBuf, size_t _ElementSize, size_t _Count, AFILE * _File);
+size_t afwrite(const void * _DstBuf, size_t _ElementSize, size_t _Count, AFILE * _File);
+char  *afgets(char *s, int size, AFILE *_File);
+FILE  *afgetfile(AFILE *file);
+int afseek(AFILE * _File, long _Offset, int _Origin);
+int aftell(AFILE * _File);
+int afclose(AFILE * _File);
+#endif
+
 unsigned int GetTimeStamp();
 
 void RTTRACE(const char *format, ...);

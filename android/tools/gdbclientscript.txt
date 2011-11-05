@@ -1,0 +1,5 @@
+file ./libs/armeabi/libGameEngine.so
+set solib-absolute-prefix
+set solib-search-path ./tools/system/lib
+target remote :5039
+

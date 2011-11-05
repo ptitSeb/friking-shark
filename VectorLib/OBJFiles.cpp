@@ -56,14 +56,14 @@ bool COBJFileType::Open(const char *psFileName)
 	Clear();
 
 	bool bOk=true;
-	FILE *pFile=fopen(psFileName,"rb");
+	AFILE *pFile=afopen(psFileName,"rb");
 	bOk=(pFile!=NULL);
 	if(!bOk){return false;}
 	
 	m_pCurrentMaterial=NULL;
 
 	char sLine[1024*16]={0};
-	while(bOk && fgets(sLine,sizeof(sLine)-1,pFile))
+	while(bOk && afgets(sLine,sizeof(sLine)-1,pFile))
 	{
 		char *pTemp;
 		char *pType=strtok_r(sLine,OBJ_TOKEN_SEPARATORS,&pTemp);
@@ -189,7 +189,7 @@ bool COBJFileType::Open(const char *psFileName)
 	
 	if(pFile)
 	{
-		fclose(pFile);
+		afclose(pFile);
 		pFile=NULL;
 	}
 	m_pCurrentMaterial=NULL;
@@ -201,14 +201,14 @@ bool COBJFileType::ReadMTL(const char *psObjFile, const char *psMTLFile)
 {
 	std::string sFile=AppendPathSeparator(GetFileFolder(psObjFile).c_str())+GetFileName(psMTLFile);
 	bool bOk=true;
-	FILE *pFile=fopen(sFile.c_str(),"rb");
+	AFILE *pFile=afopen(sFile.c_str(),"rb");
 	bOk=(pFile!=NULL);
 	if(!bOk){return false;}
 	
 	SOBJMaterial *pMaterial=NULL;
 	
 	char sLine[1024*16]={0};
-	while(fgets(sLine,sizeof(sLine)-1,pFile))
+	while(afgets(sLine,sizeof(sLine)-1,pFile))
 	{
 		char *pTemp;
 		char *pType=strtok_r(sLine,OBJ_TOKEN_SEPARATORS,&pTemp);
@@ -273,7 +273,7 @@ bool COBJFileType::ReadMTL(const char *psObjFile, const char *psMTLFile)
 	}
 	if(pFile)
 	{
-		fclose(pFile);
+		afclose(pFile);
 		pFile=NULL;
 	}
 	return bOk;
