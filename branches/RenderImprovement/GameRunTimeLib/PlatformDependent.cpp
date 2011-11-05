@@ -35,7 +35,9 @@
 #include <libgen.h>
 #include <glob.h>
 #elif defined ANDROID
+#include "../GameEngine/android_native_app_glue.h"
 #include <android/log.h>
+extern android_app *g_pAndroidApp;
 #endif
 
 
@@ -304,7 +306,7 @@ void RTTRACE(const char *format, ...)
 	
 	__android_log_print(ANDROID_LOG_INFO, "FrikingShark",pTempBuffer);
 }
-#else
+#elif defined LINUX
 void RTTRACE(const char *format, ...)
 {
 	va_list vargs;
@@ -388,4 +390,183 @@ bool FindFiles(const char *psPattern, EFindFilesMode eMode,std::set<std::string>
 	globfree(&globbuf);
 	return true;
 }
+#endif
+
+
+#ifdef ANDROID
+
+struct AFILE
+{
+	FILE *pFile;
+	AAsset *pAsset;
+	off_t nLength;
+	off_t nOffset;
+	
+	AFILE(){pAsset=NULL;pFile=NULL;nOffset=0;nLength=0;}
+};
+
+AFILE *afopen_internal(const char * _Filename, const char * _Mode,bool bTrace)
+{
+	const char *pFileName=_Filename;
+	
+	// Remove ./ and ../ as they are not supported by the asset manager.
+	// In android, every accesible file is in the assets folder, that way actual
+	// file system paths and .apk packed files can be treated transparently
+	
+	if(strncmp(_Filename,"./",2)==0){pFileName=_Filename+2;}
+	else if(strncmp(_Filename,"../",3)==0){pFileName=_Filename+3;}
+	bool bWrite=strchr(_Mode,'w')!=NULL || strchr(_Mode,'a')!=NULL || strchr(_Mode,'+')!=NULL;
+	
+	//RTTRACE("afopen -> Opening file %s",pFileName);
+	
+	bool bOk=false;
+	AFILE *pAFile=new AFILE;
+	pAFile->pFile=fopen(pFileName,_Mode);
+	bOk=(pAFile->pFile!=NULL);
+	if(!bOk)
+	{
+		//RTTRACE("afopen -> File %s not found in the file system, looking for it in the asset manager",pFileName);
+		if(bWrite)
+		{
+			if(bTrace){RTTRACE("afopen -> Cannot open file %s in write mode",pFileName);}
+		}
+		else
+		{
+			pAFile->pAsset = AAssetManager_open(g_pAndroidApp->activity->assetManager,pFileName,AASSET_MODE_UNKNOWN);
+			if(pAFile->pAsset)
+			{
+				//RTTRACE("afopen -> Asset found for %s",pFileName);
+
+				int fd=AAsset_openFileDescriptor(pAFile->pAsset, &pAFile->nOffset, &pAFile->nLength);
+				if(fd>=0)
+				{
+					pAFile->pFile=fdopen(fd,_Mode);
+					if(pAFile->pFile)
+					{
+						fseek(pAFile->pFile,pAFile->nOffset,SEEK_SET);
+						
+						//RTTRACE("afopen -> Open file %s from the asset manager",pFileName);
+					}
+					else
+					{
+						
+						if(bTrace){RTTRACE("afopen -> Failed to fpopen over the asset manager descriptor %d for file %s with mode",pFileName,fd,_Mode);}
+					}
+				}
+				else
+				{
+					if(bTrace){RTTRACE("afopen -> Failed to open %s from the asset manager",pFileName);}
+				}
+			}
+			else
+			{
+				if(bTrace){RTTRACE("afopen -> Asset not found for %s",pFileName);}
+			}
+			bOk=(pAFile->pFile!=NULL);
+			
+		}
+	}
+	
+	if(!bOk)
+	{
+		if(pAFile->pFile){fclose(pAFile->pFile);}
+		if(pAFile->pAsset){AAsset_close(pAFile->pAsset);}
+		delete pAFile;
+		pAFile=NULL;
+	}
+	return pAFile;
+}
+
+bool afexists(const char * _Filename)
+{
+	AFILE *pAFile=afopen_internal(_Filename, "rb",false);
+	bool bExists=(pAFile!=NULL);
+	if(pAFile){afclose(pAFile);pAFile=NULL;}
+	return bExists;
+}
+
+AFILE *afopen(const char * _Filename, const char * _Mode)
+{
+	return afopen_internal(_Filename, _Mode,true);
+	
+}
+size_t afread(void * _DstBuf, size_t _ElementSize, size_t _Count, AFILE * pAFile)
+{
+	if(pAFile==NULL){return 0;}
+	return fread(_DstBuf, _ElementSize, _Count, pAFile->pFile);
+}
+
+size_t afwrite(const void * _DstBuf, size_t _ElementSize, size_t _Count, AFILE * pAFile)
+{
+	if(pAFile==NULL){return 0;}
+	return fwrite(_DstBuf, _ElementSize, _Count, pAFile->pFile);
+}
+char  *afgets(char *s, int size, AFILE *pAFile)
+{
+	if(pAFile==NULL){return NULL;}
+	return fgets(s, size, pAFile->pFile);
+}
+
+FILE  *afgetfile(AFILE *pAFile)
+{
+	if(pAFile==NULL){return NULL;}
+	return pAFile->pFile;
+}
+
+int afseek(AFILE * pAFile, long _Offset, int _Origin)
+{
+	if(pAFile==NULL){return -1;}
+	if(pAFile->pAsset)
+	{
+		if(_Origin==SEEK_SET)
+		{
+			int newOffset=pAFile->nOffset+_Offset;
+			if(newOffset<pAFile->nOffset){return -1;}
+			if(newOffset>pAFile->nOffset+pAFile->nLength){return -1;}
+			return fseek(pAFile->pFile,newOffset,SEEK_SET);
+		}
+		else if(_Origin==SEEK_END)
+		{
+			int newOffset=pAFile->nOffset+(pAFile->nLength-_Offset);
+			if(newOffset<pAFile->nOffset){return -1;}
+			if(newOffset>pAFile->nOffset+pAFile->nLength){return -1;}
+			return fseek(pAFile->pFile,newOffset,SEEK_SET);
+		}
+		else if(_Origin==SEEK_CUR)
+		{
+			return fseek(pAFile->pFile,_Offset,SEEK_CUR);
+		}
+	}
+	else
+	{
+		return fseek(pAFile->pFile,_Offset,_Origin);
+	}
+}
+
+int aftell(AFILE * pAFile)
+{
+	if(pAFile==NULL){return -1;}
+	return ftell(pAFile->pFile)-pAFile->nOffset;
+}
+
+int afclose(AFILE * pAFile)
+{
+	if(!pAFile){return EOF;}
+	if(pAFile->pFile){fclose(pAFile->pFile);}
+	if(pAFile->pAsset){AAsset_close(pAFile->pAsset);}
+	delete pAFile;
+	pAFile=NULL;
+	return 0;
+}
+
+#else
+bool afexists(const char * _Filename){return FileExists(_Filename);}
+AFILE *afopen(const char * _Filename, const char * _Mode){return (AFILE*)fopen(_Filename,_Mode);}
+size_t afread(void * _DstBuf, size_t _ElementSize, size_t _Count, AFILE * _File){return fread(_DstBuf, _ElementSize, _Count, (FILE*)_File);}
+size_t afwrite(const void * _DstBuf, size_t _ElementSize, size_t _Count, AFILE * _File){return fwrite(_DstBuf, _ElementSize, _Count,(FILE*)_File);}
+char  *afgets(char *s, int size, AFILE *_File){return fgets(s, size, (FILE *)_File);}
+FILE  *afgetfile(AFILE *file){return (FILE*)file;}
+int afseek(AFILE * _File, long _Offset, int _Origin){return fseek((FILE*)_File,_Offset,_Origin);}
+int aftell(AFILE * _File){return ftell((FILE*)_File);}
+int afclose(AFILE * _File){return fclose((FILE*)_File);}
 #endif

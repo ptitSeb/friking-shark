@@ -31,7 +31,7 @@ class CGCMFileType;
 
 class CASEFileType :public C3DSFileTypeBase
 {
-	FILE			*m_pFile;
+	AFILE			*m_pFile;
 	char			*m_pBuffer;
 
 	unsigned char	ReadByte();

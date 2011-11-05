@@ -326,12 +326,12 @@ bool CConfigFile::Open(const char *pFileName)
 
     m_RootNode.Clear();
 
-    m_pFile=fopen(pFileName,"rb");
+    m_pFile=afopen(pFileName,"rb");
     if (m_pFile==NULL) {return false;}
 
-	fseek(m_pFile,0,SEEK_END);
-    dwFileLength=ftell(m_pFile);
-	fseek(m_pFile,0,SEEK_SET);
+	afseek(m_pFile,0,SEEK_END);
+    dwFileLength=aftell(m_pFile);
+	afseek(m_pFile,0,SEEK_SET);
     if (!dwFileLength) {return false;}
     
     std::string sFileName=pFileName;
@@ -339,7 +339,7 @@ bool CConfigFile::Open(const char *pFileName)
     m_pBuffer=new char [dwFileLength+1];
     // se reserva el triple porque la normalizacion puede meter 2 espacio por cada llave encontrada
     char *pNormalizedBuffer=new char [dwFileLength*3+1];
-    dwFileLength=fread(m_pBuffer,1,dwFileLength,m_pFile);
+    dwFileLength=afread(m_pBuffer,1,dwFileLength,m_pFile);
 	m_pBuffer[dwFileLength]=0;
     strcpy(pNormalizedBuffer,m_pBuffer);
 
@@ -533,7 +533,7 @@ bool CConfigFile::Open(const char *pFileName)
         delete [] pNormalizedBuffer;
         pNormalizedBuffer=NULL;
     }
-    fclose(m_pFile);
+    afclose(m_pFile);
     m_pFile=NULL;
     m_pBuffer=NULL;
     return true;
@@ -544,14 +544,14 @@ bool CConfigFile::Save(std::string &sFileName) {
 }
 bool CConfigFile::Save(const char *pFileName)
 {
-    m_pFile=fopen(pFileName,"wb");
+    m_pFile=afopen(pFileName,"wb");
     if (m_pFile)
     {
         m_dwSaveTabCount=0;
         std::string sFileName=pFileName;
         m_RootNode.SetFileName(sFileName);
         SaveNode(&m_RootNode);
-        fclose(m_pFile);
+        afclose(m_pFile);
         m_pFile=NULL;
         return true;
     }
@@ -595,7 +595,7 @@ void CConfigFile::SaveLine(const char *psValue)
     std::string sTempLine=sTemp;
     sTempLine+=psValue;
     sTempLine+="\r\n";
-    fwrite(sTempLine.c_str(),1,sTempLine.length(),m_pFile);
+    afwrite(sTempLine.c_str(),1,sTempLine.length(),m_pFile);
 }
 
 void CConfigFile::SaveValue(const char *sName,const char *sValue)

@@ -141,10 +141,10 @@ C3DSFileType::C3DSFileType()
 	m_bBinaryFile=false;
 }
 
-unsigned short			C3DSFileType::ReadWord()  {unsigned short value=0;if(fread (&value, sizeof(value), 1, m_pFile)!=1){return 0;}return value;}
-unsigned int			C3DSFileType::ReadDWord() {unsigned int value=0;if(fread (&value, sizeof(value), 1, m_pFile)!=1){return 0;}return value;}
-float			C3DSFileType::ReadFloat() {float value=0;if(fread (&value, sizeof(value), 1, m_pFile)!=1){return 0;}return value;}
-unsigned char	C3DSFileType::ReadByte()  {unsigned char value=0;if(fread (&value, sizeof(value), 1, m_pFile)!=1){return 0;}return value;}
+unsigned short			C3DSFileType::ReadWord()  {unsigned short value=0;if(afread (&value, sizeof(value), 1, m_pFile)!=1){return 0;}return value;}
+unsigned int			C3DSFileType::ReadDWord() {unsigned int value=0;if(afread (&value, sizeof(value), 1, m_pFile)!=1){return 0;}return value;}
+float			C3DSFileType::ReadFloat() {float value=0;if(afread (&value, sizeof(value), 1, m_pFile)!=1){return 0;}return value;}
+unsigned char	C3DSFileType::ReadByte()  {unsigned char value=0;if(afread (&value, sizeof(value), 1, m_pFile)!=1){return 0;}return value;}
 CVector			C3DSFileType::ReadVector(){CVector v;v.c[0]=ReadFloat();v.c[1]=ReadFloat();v.c[2]=ReadFloat();return v;}
 
 string C3DSFileType::ReadString()
@@ -155,7 +155,7 @@ string C3DSFileType::ReadString()
 	do
 	{
 		sName[nNameLength]=0;
-		if(fread (&sName[nNameLength], 1, 1, m_pFile)!=1){break;}
+		if(afread (&sName[nNameLength], 1, 1, m_pFile)!=1){break;}
 		nNameLength++;
 	}
 	while(sName[nNameLength-1]!=0 && nNameLength<20);
@@ -168,7 +168,7 @@ bool C3DSFileType::Open(const char *sFileName)
 {
 	Close();
 
-	if ((m_pFile=fopen (sFileName, "rb"))== NULL) return false; //Open the file
+	if ((m_pFile=afopen (sFileName, "rb"))== NULL) return false; //Open the file
 	
 	unsigned short	wChunckId=0; //Chunk identifier
 	unsigned int	dwChunckLength=0; //Chunk lenght
@@ -183,16 +183,16 @@ bool C3DSFileType::Open(const char *sFileName)
 	float				*pCurrentPercent=NULL;
 	string				sCurrentObjectName;
 
-	fseek(m_pFile,0,SEEK_END);
-    int nLength=ftell(m_pFile);
-	fseek(m_pFile,0,SEEK_SET);
+	afseek(m_pFile,0,SEEK_END);
+    int nLength=aftell(m_pFile);
+	afseek(m_pFile,0,SEEK_SET);
 	
-	while (ftell (m_pFile) < nLength) //Loop to scan the whole file 
+	while (aftell (m_pFile) < nLength) //Loop to scan the whole file 
 	{
 		//getche(); //Insert this command for debug (to wait for keypress for each chuck reading)
 
-		if(fread (&wChunckId, 2, 1, m_pFile)!=1){break;} //Read the chunk header
-		if(fread (&dwChunckLength, 4, 1, m_pFile)!=1){break;} //Read the lenght of the chunk
+		if(afread (&wChunckId, 2, 1, m_pFile)!=1){break;} //Read the chunk header
+		if(afread (&dwChunckLength, 4, 1, m_pFile)!=1){break;} //Read the lenght of the chunk
 
 		switch (wChunckId)
         {
@@ -403,7 +403,7 @@ bool C3DSFileType::Open(const char *sFileName)
 					{
 						pObjectMaterial->nFaces=nFaces;
 						pObjectMaterial->pFaces=new int[nFaces];
-						if(fread (pObjectMaterial->pFaces, sizeof (int)*nFaces, 1, m_pFile)!=1){break;}
+						if(afread (pObjectMaterial->pFaces, sizeof (int)*nFaces, 1, m_pFile)!=1){break;}
 					}
 					pFrame->sObjectMaterials.push_back(pObjectMaterial);
 				}
@@ -521,7 +521,7 @@ bool C3DSFileType::Open(const char *sFileName)
 				break;
 			default:
 				{
-					fseek(m_pFile, dwChunckLength-6, SEEK_CUR);
+					afseek(m_pFile, dwChunckLength-6, SEEK_CUR);
 				}
         } 
 	}
@@ -577,7 +577,7 @@ bool C3DSFileType::Open(const char *sFileName)
 		pLight->vSpotTarget.c[1]=temp;
 	}
 
-	fclose (m_pFile); // Closes the file stream
+	afclose (m_pFile); // Closes the file stream
 	m_pFile=NULL;
 	m_bBinaryFile=false;
 	return true; // Returns ok

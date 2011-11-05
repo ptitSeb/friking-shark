@@ -30,7 +30,7 @@
 
 class C3DSFileType:public C3DSFileTypeBase
 {
-	FILE			*m_pFile;
+	AFILE			*m_pFile;
 	char			*m_pBuffer;
 	bool			m_bBinaryFile;
 

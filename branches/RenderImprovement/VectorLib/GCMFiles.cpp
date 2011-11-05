@@ -129,14 +129,14 @@ bool CGCMFileType::Open(const char *psFileName)
 	Clear();
 
 	bool bOk=true;
-	FILE *pFile=fopen(psFileName,"rb");
+	AFILE *pFile=afopen(psFileName,"rb");
 	bOk=(pFile!=NULL);
 
 	SGCMHeader header;
 
 	// Read and check file header,
 
-	if(bOk){bOk=(fread(&header,sizeof(header),1,pFile)==1);}
+	if(bOk){bOk=(afread(&header,sizeof(header),1,pFile)==1);}
 	if(bOk){bOk=(memcmp(&header.sMagic,GCM_FILE_MAGIC,GCM_FILE_MAGIC_LENGTH)==0 && header.nVersion<=GCM_FILE_VERSION);}
 
 	// Read frames.
@@ -146,8 +146,8 @@ bool CGCMFileType::Open(const char *psFileName)
 		SGCMFrame *pFrame=new SGCMFrame;
 		unsigned int nBuffers=0;
 
-		if(bOk){bOk=(fread(&pFrame->data,sizeof(pFrame->data),1,pFile)==1);}
-		if(bOk){bOk=(fread(&nBuffers,sizeof(nBuffers),1,pFile)==1);}
+		if(bOk){bOk=(afread(&pFrame->data,sizeof(pFrame->data),1,pFile)==1);}
+		if(bOk){bOk=(afread(&nBuffers,sizeof(nBuffers),1,pFile)==1);}
 
 		for(unsigned int b=0;bOk && b<nBuffers;b++)
 		{
@@ -155,38 +155,38 @@ bool CGCMFileType::Open(const char *psFileName)
 			unsigned int nTextureLevels=0;
 			unsigned int nFlags=0;
 
-			if(bOk){bOk=(fread(&pBuffer->data,sizeof(pBuffer->data),1,pFile)==1);}
-			if(bOk){bOk=(fread(&nTextureLevels,sizeof(nTextureLevels),1,pFile)==1);}
-			if(bOk){bOk=(fread(&nFlags,sizeof(nFlags),1,pFile)==1);}
+			if(bOk){bOk=(afread(&pBuffer->data,sizeof(pBuffer->data),1,pFile)==1);}
+			if(bOk){bOk=(afread(&nTextureLevels,sizeof(nTextureLevels),1,pFile)==1);}
+			if(bOk){bOk=(afread(&nFlags,sizeof(nFlags),1,pFile)==1);}
 
 			if(bOk)
 			{
 				pBuffer->pVertexArray=new float [pBuffer->data.nVertexes*3];
-				bOk=(fread(pBuffer->pVertexArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);
+				bOk=(afread(pBuffer->pVertexArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);
 			}
 			if(bOk)
 			{
 				pBuffer->pFaceVertexIndexes=new unsigned int [pBuffer->data.nFaces*3];
-				bOk=(fread(pBuffer->pFaceVertexIndexes,sizeof(unsigned int)*pBuffer->data.nFaces*3,1,pFile)==1);
+				bOk=(afread(pBuffer->pFaceVertexIndexes,sizeof(unsigned int)*pBuffer->data.nFaces*3,1,pFile)==1);
 			}
 			if(bOk && nFlags&GCM_BUFFER_FLAG_HAS_COLORS)
 			{
 				pBuffer->pColorArray=new float [pBuffer->data.nVertexes*4];
-				bOk=(fread(pBuffer->pColorArray,sizeof(float)*pBuffer->data.nVertexes*4,1,pFile)==1);
+				bOk=(afread(pBuffer->pColorArray,sizeof(float)*pBuffer->data.nVertexes*4,1,pFile)==1);
 			}			
 			if(bOk && nFlags&GCM_BUFFER_FLAG_HAS_NORMALS)
 			{
 				pBuffer->pNormalArray=new float [pBuffer->data.nVertexes*3];
-				bOk=(fread(pBuffer->pNormalArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);
+				bOk=(afread(pBuffer->pNormalArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);
 			}
 			if(bOk && nFlags&GCM_BUFFER_FLAG_HAS_NORMAL_MAP)
 			{
 				unsigned int nNormalMapFileSize=0;
-				if(bOk){bOk=(fread(&nNormalMapFileSize,sizeof(nNormalMapFileSize),1,pFile)==1);}
+				if(bOk){bOk=(afread(&nNormalMapFileSize,sizeof(nNormalMapFileSize),1,pFile)==1);}
 				if(bOk)
 				{
 					char *pNormalMapFile=new char [nNormalMapFileSize+1];
-					if(nNormalMapFileSize){bOk=(fread(pNormalMapFile,nNormalMapFileSize,1,pFile)==1);}
+					if(nNormalMapFileSize){bOk=(afread(pNormalMapFile,nNormalMapFileSize,1,pFile)==1);}
 					pNormalMapFile[nNormalMapFileSize]=0;
 					pBuffer->sNormalMap=pNormalMapFile;
 					delete [] pNormalMapFile;
@@ -195,7 +195,7 @@ bool CGCMFileType::Open(const char *psFileName)
 				if(bOk)
 				{
 					pBuffer->pNormalMapArray=new float [pBuffer->data.nVertexes*2];
-					bOk=(fread(pBuffer->pNormalMapArray,sizeof(float)*pBuffer->data.nVertexes*2,1,pFile)==1);
+					bOk=(afread(pBuffer->pNormalMapArray,sizeof(float)*pBuffer->data.nVertexes*2,1,pFile)==1);
 				}
 			}
 
@@ -203,18 +203,18 @@ bool CGCMFileType::Open(const char *psFileName)
 			{
 				pBuffer->pTangentArray=new float [pBuffer->data.nVertexes*3];
 				pBuffer->pBitangentArray=new float [pBuffer->data.nVertexes*3];
-				bOk=(fread(pBuffer->pTangentArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);
-				if(bOk){(fread(pBuffer->pBitangentArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);}
+				bOk=(afread(pBuffer->pTangentArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);
+				if(bOk){(afread(pBuffer->pBitangentArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);}
 			}
 			for(unsigned int l=0;bOk && l<nTextureLevels;l++)
 			{
 				SGCMTextureLevel *pTextureLevel=new SGCMTextureLevel;
 				unsigned int nFileNameSize=0;
-				if(bOk){bOk=(fread(&nFileNameSize,sizeof(nFileNameSize),1,pFile)==1);}
+				if(bOk){bOk=(afread(&nFileNameSize,sizeof(nFileNameSize),1,pFile)==1);}
 				if(bOk)
 				{
 					char *pFileName=new char [nFileNameSize+1];
-					bOk=(fread(pFileName,nFileNameSize,1,pFile)==1);
+					bOk=(afread(pFileName,nFileNameSize,1,pFile)==1);
 					pFileName[nFileNameSize]=0;
 					pTextureLevel->sTexture=pFileName;
 					delete [] pFileName;
@@ -223,7 +223,7 @@ bool CGCMFileType::Open(const char *psFileName)
 				if(bOk)
 				{
 					pTextureLevel->pTexVertexArray=new float [pBuffer->data.nVertexes*2];
-					bOk=(fread(pTextureLevel->pTexVertexArray,sizeof(float)*pBuffer->data.nVertexes*2,1,pFile)==1);
+					bOk=(afread(pTextureLevel->pTexVertexArray,sizeof(float)*pBuffer->data.nVertexes*2,1,pFile)==1);
 				}
 				pBuffer->vTextureLevels.push_back(pTextureLevel);
 			}
@@ -236,7 +236,7 @@ bool CGCMFileType::Open(const char *psFileName)
 
 	if(pFile)
 	{
-		fclose(pFile);
+		afclose(pFile);
 		pFile=NULL;
 	}
 	return bOk;
@@ -247,7 +247,7 @@ bool CGCMFileType::Save(const char *psFileName)
 	UpdateSizes();
 
 	bool bOk=true;
-	FILE *pFile=fopen(psFileName,"wb");
+	AFILE *pFile=afopen(psFileName,"wb");
 	bOk=(pFile!=NULL);
 	
 	SGCMHeader header;
@@ -255,7 +255,7 @@ bool CGCMFileType::Save(const char *psFileName)
 	// Write file header,
 	
 	header.nFrames=m_vFrames.size();
-	if(bOk){bOk=(fwrite(&header,sizeof(header),1,pFile)==1);}
+	if(bOk){bOk=(afwrite(&header,sizeof(header),1,pFile)==1);}
 	
 	// Write frames.
 	
@@ -264,8 +264,8 @@ bool CGCMFileType::Save(const char *psFileName)
 		SGCMFrame *pFrame=m_vFrames[f];
 		unsigned int nBuffers=pFrame->vBuffers.size();
 		
-		if(bOk){bOk=(fwrite(&pFrame->data,sizeof(pFrame->data),1,pFile)==1);}
-		if(bOk){bOk=(fwrite(&nBuffers,sizeof(nBuffers),1,pFile)==1);}
+		if(bOk){bOk=(afwrite(&pFrame->data,sizeof(pFrame->data),1,pFile)==1);}
+		if(bOk){bOk=(afwrite(&nBuffers,sizeof(nBuffers),1,pFile)==1);}
 		
 		for(unsigned int b=0;bOk && b<nBuffers;b++)
 		{
@@ -277,44 +277,44 @@ bool CGCMFileType::Save(const char *psFileName)
 			nFlags|=pBuffer->pNormalMapArray?GCM_BUFFER_FLAG_HAS_NORMAL_MAP:0;
 			nFlags|=pBuffer->pTangentArray && pBuffer->pBitangentArray?GCM_BUFFER_FLAG_HAS_NORMAL_BASIS:0;
 			
-			if(bOk){bOk=(fwrite(&pBuffer->data,sizeof(pBuffer->data),1,pFile)==1);}			
-			if(bOk){bOk=(fwrite(&nTextureLevels,sizeof(nTextureLevels),1,pFile)==1);}
-			if(bOk){bOk=(fwrite(&nFlags,sizeof(nFlags),1,pFile)==1);}
-			if(bOk){bOk=(fwrite(pBuffer->pVertexArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);}
-			if(bOk){bOk=(fwrite(pBuffer->pFaceVertexIndexes,sizeof(unsigned int)*pBuffer->data.nFaces*3,1,pFile)==1);}
+			if(bOk){bOk=(afwrite(&pBuffer->data,sizeof(pBuffer->data),1,pFile)==1);}			
+			if(bOk){bOk=(afwrite(&nTextureLevels,sizeof(nTextureLevels),1,pFile)==1);}
+			if(bOk){bOk=(afwrite(&nFlags,sizeof(nFlags),1,pFile)==1);}
+			if(bOk){bOk=(afwrite(pBuffer->pVertexArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);}
+			if(bOk){bOk=(afwrite(pBuffer->pFaceVertexIndexes,sizeof(unsigned int)*pBuffer->data.nFaces*3,1,pFile)==1);}
 			if(bOk && nFlags&GCM_BUFFER_FLAG_HAS_COLORS)
 			{
-				bOk=(fwrite(pBuffer->pColorArray,sizeof(float)*pBuffer->data.nVertexes*4,1,pFile)==1);
+				bOk=(afwrite(pBuffer->pColorArray,sizeof(float)*pBuffer->data.nVertexes*4,1,pFile)==1);
 			}			
 			if(bOk && nFlags&GCM_BUFFER_FLAG_HAS_NORMALS)
 			{
-				bOk=(fwrite(pBuffer->pNormalArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);
+				bOk=(afwrite(pBuffer->pNormalArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);
 			}
 			if(bOk && nFlags&GCM_BUFFER_FLAG_HAS_NORMAL_MAP)
 			{
 				unsigned int nNormalMapFileSize=pBuffer->sNormalMap.length();
-				if(bOk){bOk=(fwrite(&nNormalMapFileSize,sizeof(nNormalMapFileSize),1,pFile)==1);}
-				if(bOk && nNormalMapFileSize){bOk=(fwrite(pBuffer->sNormalMap.c_str(),nNormalMapFileSize,1,pFile)==1);}
-				if(bOk){bOk=(fwrite(pBuffer->pNormalMapArray,sizeof(float)*pBuffer->data.nVertexes*2,1,pFile)==1);}
+				if(bOk){bOk=(afwrite(&nNormalMapFileSize,sizeof(nNormalMapFileSize),1,pFile)==1);}
+				if(bOk && nNormalMapFileSize){bOk=(afwrite(pBuffer->sNormalMap.c_str(),nNormalMapFileSize,1,pFile)==1);}
+				if(bOk){bOk=(afwrite(pBuffer->pNormalMapArray,sizeof(float)*pBuffer->data.nVertexes*2,1,pFile)==1);}
 			}
 			if(bOk && nFlags&GCM_BUFFER_FLAG_HAS_NORMAL_BASIS)
 			{
-				bOk=(fwrite(pBuffer->pTangentArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);
-				if(bOk){bOk=(fwrite(pBuffer->pBitangentArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);}
+				bOk=(afwrite(pBuffer->pTangentArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);
+				if(bOk){bOk=(afwrite(pBuffer->pBitangentArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);}
 			}
 			for(unsigned int l=0;bOk && l<nTextureLevels;l++)
 			{
 				SGCMTextureLevel *pTextureLevel=pBuffer->vTextureLevels[l];
 				unsigned int nFileNameSize=pTextureLevel->sTexture.length();
-				if(bOk){bOk=(fwrite(&nFileNameSize,sizeof(nFileNameSize),1,pFile)==1);}
-				if(bOk && nFileNameSize){bOk=(fwrite(pTextureLevel->sTexture.c_str(),nFileNameSize,1,pFile)==1);}
-				if(bOk){bOk=(fwrite(pTextureLevel->pTexVertexArray,sizeof(float)*pBuffer->data.nVertexes*2,1,pFile)==1);}
+				if(bOk){bOk=(afwrite(&nFileNameSize,sizeof(nFileNameSize),1,pFile)==1);}
+				if(bOk && nFileNameSize){bOk=(afwrite(pTextureLevel->sTexture.c_str(),nFileNameSize,1,pFile)==1);}
+				if(bOk){bOk=(afwrite(pTextureLevel->pTexVertexArray,sizeof(float)*pBuffer->data.nVertexes*2,1,pFile)==1);}
 			}
 		}
 	}
 	if(pFile)
 	{
-		fclose(pFile);
+		afclose(pFile);
 		pFile=NULL;
 	}
 	return bOk;

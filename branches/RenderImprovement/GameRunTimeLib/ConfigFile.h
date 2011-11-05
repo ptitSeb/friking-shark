@@ -75,7 +75,7 @@ class CConfigFile
     };
 
     unsigned int			m_dwSaveTabCount;
-    FILE  	    	*m_pFile;
+    AFILE  	    	*m_pFile;
     char			*m_pBuffer;
 
     CConfigFileNode m_RootNode;

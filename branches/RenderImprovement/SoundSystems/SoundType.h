@@ -41,9 +41,7 @@ class CSoundType: virtual public CSystemObjectBase,virtual public ISoundType
   bool Unserialize(ISystemPersistencyNode *piNode);
   
   bool LoadFromFile();
-  bool LoadOgg();
-  bool LoadWav();
-  
+  bool LoadOgg();  
 public:
 
     ISoundManager  *m_piSoundManager;

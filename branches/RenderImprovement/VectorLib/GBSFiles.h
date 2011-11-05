@@ -69,8 +69,8 @@ class CGBSFileType
 {
 	SGBSHeader	 m_Header;
 
-	CBSPNode	*ReadNode(FILE *pFile,CBSPNode *pParent);
-	bool		 WriteNode(FILE *pFile,CBSPNode *pNode,SGBSFileNodeStats *pStats,int nCurrentDepth,double *pBalanceFactor);
+	CBSPNode	*ReadNode(AFILE *pFile,CBSPNode *pParent);
+	bool		 WriteNode(AFILE *pFile,CBSPNode *pNode,SGBSFileNodeStats *pStats,int nCurrentDepth,double *pBalanceFactor);
 public:
 	unsigned int		GetVersion();
 	

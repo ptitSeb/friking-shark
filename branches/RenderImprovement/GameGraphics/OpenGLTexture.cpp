@@ -23,109 +23,18 @@
 #define PNG_NO_PEDANTIC_WARNINGS
 #include <png.h>
 
-#pragma pack(push,1)
-struct BMPFILEHEADER
-{
-	uint16_t bfType; 
-	uint32_t bfSize; 
-	uint16_t bfReserved1; 
-	uint16_t bfReserved2; 
-	uint32_t bfOffBits; 
-};
-struct BMPINFOHEADER 
-{ 
-	uint32_t biSize; 
-	uint32_t biWidth; 
-	uint32_t biHeight; 
-	uint16_t biPlanes; 
-	uint16_t biBitCount;
-	uint32_t biCompression; 
-	uint32_t biSizeImage; 
-	uint32_t biXPelsPerMeter; 
-	uint32_t biYPelsPerMeter; 
-	uint32_t biClrUsed; 
-	uint32_t biClrImportant; 
-}; 
-#pragma pack(pop)
-
-bool LoadBMPFile(const char *pFileName,unsigned int *pnWidth,unsigned int *pnHeight,unsigned char **ppPixels,bool bForceAlpha,unsigned int *pdwColorType)
-{
-	BMPFILEHEADER fileHeader={0};
-	BMPINFOHEADER fileInfo={0};
-
-	FILE *pFile=fopen(pFileName,"rb");
-	if(!pFile){return false;}
-	// Make room for the header
-	bool bOk=(fread(&fileHeader,sizeof(fileHeader),1,pFile)==1);
-	if(bOk){bOk=(fileHeader.bfType == 0x4d42);}
-	if(bOk){bOk=(fread(&fileInfo,sizeof(fileInfo),1,pFile)==1);}
-	if(bOk){bOk=(fileInfo.biSize==sizeof(fileInfo));}
-	if(bOk){bOk=(fileInfo.biPlanes==1);}
-	if(bOk){bOk=(fileInfo.biBitCount==24 || fileInfo.biBitCount==32);}
-	if(bOk){bOk=(fileInfo.biCompression==0);} // BI_RGB
-	if(bOk){fseek(pFile,fileHeader.bfOffBits,SEEK_SET);}
-	if(bOk)
-	{
-		unsigned char *pFileBits=(unsigned char*)malloc(fileInfo.biSizeImage);
-		if(bOk){bOk=(fread(pFileBits,fileInfo.biSizeImage,1,pFile)==1);}
-		if(bOk)
-		{
-			int nRequestedBits=bForceAlpha?32:fileInfo.biBitCount;
-			*pdwColorType=(nRequestedBits==32)?GL_RGBA:GL_RGB;
-			*pnHeight=fileInfo.biHeight;
-			*pnWidth=fileInfo.biWidth;
-			*ppPixels = new unsigned char[fileInfo.biHeight * fileInfo.biWidth * nRequestedBits/8];
-
-			int sourceLineSize = fileInfo.biWidth *  fileInfo.biBitCount/8;
-			int paddedLineSize = ((sourceLineSize/4)*4);
-			int pad=0;
-			if(paddedLineSize < sourceLineSize){pad=4;}
-
-			unsigned char *bufferPointer = (*ppPixels);// + (lineSize * (fileInfo.biHeight-1));
-			unsigned char *imagePointer = pFileBits;
-
-			int x, y;
-			int nSourceExcess=fileInfo.biBitCount>nRequestedBits?1:0;
-			int nDestExcess=nRequestedBits>fileInfo.biBitCount?1:0;
-			int nCommon=fileInfo.biBitCount==nRequestedBits?fileInfo.biBitCount/8:3;
-
-			// Alpha channel to full opacity if missing.
-			if(nDestExcess){memset(*ppPixels,0xFF,fileInfo.biHeight * fileInfo.biWidth * nRequestedBits/8);}
-
-			for(x = fileInfo.biHeight-1; x >= 0; x--)
-			{
-				for(y = 0; y < (int)fileInfo.biWidth; y++)
-				{
-					bufferPointer[0] = imagePointer[2];
-					bufferPointer[1] = imagePointer[1];
-					bufferPointer[2] = imagePointer[0];
-					bufferPointer+=nCommon+nDestExcess;
-					imagePointer+=nCommon+nSourceExcess;
-				}
-				imagePointer  += pad;
-			}
-		}
-		free(pFileBits);
-		pFileBits=NULL;
-	}
-
-	fclose(pFile);
-	pFile=NULL;
-	return bOk;
-}
-
 bool LoadPngFile(const char *pFileName,unsigned int *pnWidth,unsigned int *pnHeight,unsigned char **ppPixels,bool bForceAlpha,unsigned int *pdwColorType)
 {
 	png_structp pPNGHeader=NULL;
 	png_infop pPNGInfo=NULL;
 
 	bool bOk;
-	FILE *pFile=fopen(pFileName,"rb");
+	AFILE *pFile=afopen(pFileName,"rb");
 	bOk=(pFile!=NULL);
 	if(bOk){pPNGHeader=png_create_read_struct(PNG_LIBPNG_VER_STRING,NULL,NULL,NULL);bOk=(pPNGHeader!=NULL);}
 	if(bOk){pPNGInfo=png_create_info_struct(pPNGHeader);bOk=(pPNGInfo!=NULL);}
 	if(bOk){bOk=(setjmp(png_jmpbuf(pPNGHeader))==0);}
-	if(bOk){png_init_io(pPNGHeader, pFile);}
+	if(bOk){png_init_io(pPNGHeader, afgetfile(pFile));}
 	if(bOk){png_set_sig_bytes(pPNGHeader, 0);}
 	if(bOk){png_read_png(pPNGHeader, pPNGInfo, PNG_TRANSFORM_STRIP_16 | PNG_TRANSFORM_PACKING | PNG_TRANSFORM_EXPAND, NULL);}
 	if(bOk){bOk=(pPNGInfo->color_type==PNG_COLOR_TYPE_RGBA || pPNGInfo->color_type==PNG_COLOR_TYPE_RGB);}
@@ -181,7 +90,7 @@ bool LoadPngFile(const char *pFileName,unsigned int *pnWidth,unsigned int *pnHei
 	}
 
 	if(pPNGHeader){png_destroy_read_struct(&pPNGHeader, &pPNGInfo,NULL);}
-	if(pFile){fclose(pFile);}	
+	if(pFile){afclose(pFile);}	
 	return bOk;	
 }
 
@@ -193,35 +102,17 @@ bool LoadImageHelper(std::string sFile,unsigned *pOpenGLSkinWidth,unsigned *pOpe
 	*ppBuffer=NULL;
 	*pdwColorType=GL_RGB;
 
-	char sFileName[MAX_PATH]={0};
-	strcpy(sFileName,sFile.c_str());
-
-	char sExt[MAX_PATH]={0};
-	GetExtension(sFile.c_str(),sExt);
-
 	std::string path=sFile;
 	char pFileFolder[MAX_PATH];
-	GetFileFolder(sFileName,pFileFolder);
+	GetFileFolder(sFile.c_str(),pFileFolder);
 	if(pFileFolder[0]==0 || strcmp(pFileFolder,".")==0)
 	{
 		std::string sTemp="Textures/";
 		sTemp+=path;
 		path=sTemp;
 	}
-	if(sExt[0]==0)
-	{
-		path+=".bmp";
-	}
-	else
-	{
-		if(strcasecmp(sExt,".PNG")==0)
-		{
-			return LoadPngFile(path.c_str(),pOpenGLSkinWidth,pOpenGLSkinHeight,ppBuffer,bForceAlpha,pdwColorType);
-		}
-	}
-	return LoadBMPFile(path.c_str(),pOpenGLSkinWidth,pOpenGLSkinHeight,ppBuffer,bForceAlpha,pdwColorType);
+	return LoadPngFile(path.c_str(),pOpenGLSkinWidth,pOpenGLSkinHeight,ppBuffer,bForceAlpha,pdwColorType);
 }
-
 
 COpenGLTexture::COpenGLTexture(void)
 {

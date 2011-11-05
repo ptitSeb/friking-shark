@@ -116,7 +116,7 @@ void CGameEngineApp::Run()
 void CGameEngineApp::InterpretCommandLine(std::string sExecutableFolder,std::vector<std::string> &vParams)
 {
 #ifdef ANDROID
-	g_sRootFolder=AppendPathSeparator(sExecutableFolder)+PATH_SEPARATOR "assets";
+	g_sRootFolder="./";
 #else
 	g_sRootFolder=AppendPathSeparator(sExecutableFolder)+".." PATH_SEPARATOR ".." PATH_SEPARATOR "Resources";
 #endif
@@ -201,10 +201,8 @@ void android_main(struct android_app* state)
 {
 	// Make sure glue isn't stripped.
 	app_dummy();
-	
 	g_pAndroidApp=state;
-	RTTRACE("AndroidMain -> Current Folder: %s",GetWorkingFolder().c_str());
-	std::string sFolder="/data/data/com.games.frikingshark";
+	std::string sFolder="";
 	std::vector<std::string> vParams;
 	theApp.InterpretCommandLine(sFolder,vParams);
 	theApp.Run();
