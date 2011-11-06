@@ -323,7 +323,7 @@ void COpenGLModel::Render(IGenericRender *piRender,unsigned long nAnimation,unsi
 }
 
 void COpenGLModel::UpdateBufferObjects()
-{/*
+{
 	for(unsigned long x=0;x<m_vAnimations.size();x++)
 	{
 		SModelAnimation *pAnimation=m_vAnimations[x];
@@ -374,8 +374,7 @@ void COpenGLModel::UpdateBufferObjects()
 				if(pBuffer->nBufferObject)
 				{
 					glBindBuffer(GL_ARRAY_BUFFER,pBuffer->nBufferObject);
-					glBufferData(GL_ARRAY_BUFFER,pBuffer->nVertexes*nDataPerVertex*sizeof(GLfloat),NULL,GL_STATIC_DRAW);
-					GLfloat *pBufferObject = (GLfloat *)glMapBuffer(GL_ARRAY_BUFFER,GL_WRITE_ONLY);
+					GLfloat *pBufferObject = new GLfloat[pBuffer->nVertexes*nDataPerVertex];
 
 					unsigned int dwOffset=0;
 					if(pBuffer->pVertexArray)
@@ -418,7 +417,11 @@ void COpenGLModel::UpdateBufferObjects()
 							dwOffset+=pBuffer->nVertexes*2*sizeof(GLfloat);
 						}
 					}
-					glUnmapBuffer(GL_ARRAY_BUFFER);
+					glBufferData(GL_ARRAY_BUFFER,pBuffer->nVertexes*nDataPerVertex*sizeof(GLfloat),pBufferObject,GL_STATIC_DRAW);
+					if((nError=glGetError())!=GL_NO_ERROR){RTTRACE("COpenGLModel::UpdateBufferObjects -> Error setting buffer size %d",nError);}
+					delete [] pBufferObject;
+					pBufferObject=NULL;
+
 					glBindBuffer(GL_ARRAY_BUFFER, 0);
 				}
 				else
@@ -430,10 +433,7 @@ void COpenGLModel::UpdateBufferObjects()
 				if(pBuffer->nIndexesBufferObject)
 				{
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pBuffer->nIndexesBufferObject);
-					glBufferData(GL_ELEMENT_ARRAY_BUFFER, pBuffer->nFaces*3*sizeof(GLuint),NULL,GL_STATIC_DRAW);
-					GLuint *pBufferObjectIndexes = (GLuint *)glMapBuffer(GL_ELEMENT_ARRAY_BUFFER,GL_WRITE_ONLY);
-					memcpy(pBufferObjectIndexes,pBuffer->pFaceVertexIndexes,sizeof(GLuint)*pBuffer->nFaces*3);
-					glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+					glBufferData(GL_ELEMENT_ARRAY_BUFFER, pBuffer->nFaces*3*sizeof(GLuint),pBuffer->pFaceVertexIndexes,GL_STATIC_DRAW);
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 				}
 				else
@@ -444,7 +444,7 @@ void COpenGLModel::UpdateBufferObjects()
 			pFrame->vSize=(pFrame->vMaxs-pFrame->vMins);
 			pFrame->dRadius=GetBBoxRadius(pFrame->vMins,pFrame->vMaxs);
 		}
-	}*/
+	}
 }
 
 unsigned long COpenGLModel::GetAnimations()
