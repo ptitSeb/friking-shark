@@ -33,7 +33,6 @@
 #define GL_GLEXT_PROTOTYPES
 #ifdef ANDROID
 #include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
 
 	typedef GLuint GLhandleARB;
 	typedef char GLcharARB;
@@ -41,7 +40,6 @@
 	#define GL_FRAGMENT_SHADER_ARB GL_FRAGMENT_SHADER
 	#define GL_VERTEX_SHADER_ARB GL_VERTEX_SHADER
 	#define GL_TEXTURE0_ARB GL_TEXTURE0
-	#define GL_WRITE_ONLY GL_WRITE_ONLY_OES
 		
 	#define GL_FRAMEBUFFER_EXT GL_FRAMEBUFFER
 	#define GL_RENDERBUFFER_EXT GL_RENDERBUFFER
@@ -50,8 +48,6 @@
 	#define GL_FRAMEBUFFER_COMPLETE_EXT GL_FRAMEBUFFER_COMPLETE
 	
 	#define glClientActiveTextureARB glActiveTexture
-	#define glMapBuffer glMapBufferOES
-	#define glUnmapBuffer glUnmapBufferOES
 	#define glCreateProgramObjectARB glCreateProgram
 	#define glCreateShaderObjectARB glCreateShader
 	#define glDetachObjectARB glDetachShader
