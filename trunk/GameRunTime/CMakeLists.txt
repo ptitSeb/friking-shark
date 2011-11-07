@@ -17,10 +17,11 @@ SET (SRCS_GAMERUNTIME
 
 ADD_LIBRARY ( ./GameRunTime SHARED ${SRCS_GAMERUNTIME} )
 
-TARGET_LINK_LIBRARIES (
-         ./GameRunTime
-	GameGUILib
-	GameRunTimeLib
-	VectorLib
-)
+	TARGET_LINK_LIBRARIES (
+			./GameRunTime
+		GameGUILib
+		GameRunTimeLib
+		VectorLib
+		dl
+	)
 
