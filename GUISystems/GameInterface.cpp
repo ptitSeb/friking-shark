@@ -623,7 +623,7 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 		IGenericCamera *piCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera();
 		if(piCamera)
 		{
-			/*SGameRect sParentRect;
+			SGameRect sParentRect;
 			SGameRect sRect;
 			
 			m_piParent->GetRealRect(&sParentRect);
@@ -671,7 +671,7 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 			//RTTRACE("FrameTime %dms, render %d",nRenderEnd-nRenderStart,nRenderStart-nFrameStart);
 			piRender->DeactivateDepth();
 			piRender->PopState();
-			piRender->PopOptions();	*/
+			piRender->PopOptions();
 		}
 		REL(piCamera);
 	}

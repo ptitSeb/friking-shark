@@ -2367,6 +2367,46 @@ void ToOpenGLMatrix(CMatrix *pMatrix,double *dMatrix)
 	dMatrix[4*3+3]=pMatrix->e[3][3];
 }
 
+void FromOpenGLMatrix(float *fMatrix,CMatrix *pMatrix)
+{
+	pMatrix->e[0][0]=fMatrix[4*0+0];
+	pMatrix->e[1][0]=fMatrix[4*0+1];
+	pMatrix->e[2][0]=fMatrix[4*0+2];
+	pMatrix->e[3][0]=fMatrix[4*0+3];
+	pMatrix->e[0][1]=fMatrix[4*1+0];
+	pMatrix->e[1][1]=fMatrix[4*1+1];
+	pMatrix->e[2][1]=fMatrix[4*1+2];
+	pMatrix->e[3][1]=fMatrix[4*1+3];
+	pMatrix->e[0][2]=fMatrix[4*2+0];
+	pMatrix->e[1][2]=fMatrix[4*2+1];
+	pMatrix->e[2][2]=fMatrix[4*2+2];
+	pMatrix->e[3][2]=fMatrix[4*2+3];
+	pMatrix->e[0][3]=fMatrix[4*3+0];
+	pMatrix->e[1][3]=fMatrix[4*3+1];
+	pMatrix->e[2][3]=fMatrix[4*3+2];
+	pMatrix->e[3][3]=fMatrix[4*3+3];
+}
+
+void ToOpenGLMatrix(CMatrix *pMatrix,float *fMatrix)
+{
+	fMatrix[4*0+0]=pMatrix->e[0][0];
+	fMatrix[4*0+1]=pMatrix->e[1][0];
+	fMatrix[4*0+2]=pMatrix->e[2][0];
+	fMatrix[4*0+3]=pMatrix->e[3][0];
+	fMatrix[4*1+0]=pMatrix->e[0][1];
+	fMatrix[4*1+1]=pMatrix->e[1][1];
+	fMatrix[4*1+2]=pMatrix->e[2][1];
+	fMatrix[4*1+3]=pMatrix->e[3][1];
+	fMatrix[4*2+0]=pMatrix->e[0][2];
+	fMatrix[4*2+1]=pMatrix->e[1][2];
+	fMatrix[4*2+2]=pMatrix->e[2][2];
+	fMatrix[4*2+3]=pMatrix->e[3][2];
+	fMatrix[4*3+0]=pMatrix->e[0][3];
+	fMatrix[4*3+1]=pMatrix->e[1][3];
+	fMatrix[4*3+2]=pMatrix->e[2][3];
+	fMatrix[4*3+3]=pMatrix->e[3][3];
+}
+
 void CalcCameraVolume(CVector vPosition,CVector vAngles, double dViewAngle, double dAspectRatio, double dNear, double dFar,CVector *pPoints)
 {
 	CVector vForward,vRight,vUp;

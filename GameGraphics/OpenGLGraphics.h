@@ -17,10 +17,12 @@
 
 
 #pragma once
+
+#define MAX_OPENGL_TEXTURE_COORDS 2
 struct SOpenGLRenderMappings
 {
 	int nVertexAttribIndex;
-	int pTextureAttribIndex[2];
+	int pTextureAttribIndex[MAX_OPENGL_TEXTURE_COORDS];
 	int nNormalAttribIndex;
 	int nNormalMapCoordAttribIndex;
 	int nColorAttribIndex;
@@ -33,8 +35,7 @@ struct SOpenGLRenderMappings
 		nNormalMapTextureIndex=-1;
 		
 		nVertexAttribIndex=-1;
-		pTextureAttribIndex[0]=-1;
-		pTextureAttribIndex[1]=-1;
+		for(int x=0;x<MAX_OPENGL_TEXTURE_COORDS;x++){pTextureAttribIndex[x]=-1;}
 		nNormalAttribIndex=-1;
 		nNormalMapCoordAttribIndex=-1;
 		nColorAttribIndex=-1;
@@ -43,10 +44,51 @@ struct SOpenGLRenderMappings
 	}
 };
 
+struct SVertexBufferObject
+{
+	unsigned int nBufferObject;
+	unsigned int nIndexesBufferObject;
+	int nVertexOffset;
+	int nColorOffset;
+	int nNormalOffset;
+	int nTexOffset;
+	int nTextures;
+	int pTexOffsets[MAX_OPENGL_TEXTURE_COORDS];
+	int nNormalMapOffset;
+	int nTangentOffset;
+	int nBitangentOffset;
+	
+	SVertexBufferObject()
+	{
+		nBufferObject=0;
+		nIndexesBufferObject=0;
+		nVertexOffset=-1;
+		nColorOffset=-1;
+		nNormalOffset=-1;
+		nTexOffset=-1;
+		nTextures=0;
+		nNormalMapOffset=-1;
+		nTangentOffset=-1;
+		nBitangentOffset=-1;
+		for(int x=0;x<MAX_OPENGL_TEXTURE_COORDS;x++)
+		{
+			pTexOffsets[x]=-1;
+		}
+	}
+};
+
+class IOpenGLRender:virtual public IGenericRender
+{
+public:
+	virtual void SetVertexPointers(float *pVertex,float *pNormal,float *pColor,int nTex,float **pTex, float *pNormalTex,float *pTangent,float *pBiTangent)=0;
+	virtual void SetVertexBufferObject(SVertexBufferObject *pVBO)=0;
+};
+
 class IOpenGLModel:virtual public ISystemUnknown
 {
 public:
-	virtual void PrepareRenderBuffer(IGenericRender *piRender,unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,bool bRenderingShadow,SOpenGLRenderMappings *pRenderMappings)=0;
-	virtual void CallRenderBuffer(IGenericRender *piRender,unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,unsigned int nInstances)=0;
-	virtual void UnPrepareRenderBuffer(IGenericRender *piRender,unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,bool bRenderingShadow,SOpenGLRenderMappings *pRenderMappings)=0;
+	
+	virtual void PrepareRenderBuffer(IOpenGLRender *piRender,unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,bool bRenderingShadow,SOpenGLRenderMappings *pRenderMappings)=0;
+	virtual void CallRenderBuffer(IOpenGLRender *piRender,unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,unsigned int nInstances)=0;
+	virtual void UnPrepareRenderBuffer(IOpenGLRender *piRender,unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,bool bRenderingShadow,SOpenGLRenderMappings *pRenderMappings)=0;
 };

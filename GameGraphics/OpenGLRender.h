@@ -23,6 +23,7 @@
 #define POINT_BUFFER_SIZE			 1024
 #define SELECTION_BUFFER_SIZE		 1024
 
+
 struct SRenderState
 {
 	bool bActiveTextures;
@@ -125,6 +126,27 @@ struct SRenderState
 	}
 };
 
+struct SRenderVertexBufferState
+{
+	bool bVertexBufferEnabled;
+	bool bColorBufferEnabled;
+	bool bNormalBufferEnabled;
+	bool bNormalMapBufferEnabled;
+	bool bTangentBufferEnabled;
+	bool bBitangentBufferEnabled;
+	bool pbTexCoordEnabled[MAX_OPENGL_TEXTURE_COORDS];
+	
+	SRenderVertexBufferState()
+	{
+		bVertexBufferEnabled=false;
+		bColorBufferEnabled=false;
+		bNormalBufferEnabled=false;
+		bNormalMapBufferEnabled=false;
+		bTangentBufferEnabled=false;
+		bBitangentBufferEnabled=false;
+		for(int x=0;x<MAX_OPENGL_TEXTURE_COORDS;x++){pbTexCoordEnabled[x]=false;}
+	}
+};
 
 struct SRenderOptions
 {
@@ -166,9 +188,9 @@ struct SHardwareSupport
 struct STextureParticleBuffer
 {
 	int nUsedElements;
-	float pVertexBuffer[3*4*TEXTURE_PARTICLE_BUFFER_SIZE];
-	float pColorBuffer[4*4*TEXTURE_PARTICLE_BUFFER_SIZE];
-	float pTexBuffers[2*4*TEXTURE_PARTICLE_BUFFER_SIZE];
+	float pVertexBuffer[3*6*TEXTURE_PARTICLE_BUFFER_SIZE];
+	float pColorBuffer[4*6*TEXTURE_PARTICLE_BUFFER_SIZE];
+	float pTexBuffers[2*6*TEXTURE_PARTICLE_BUFFER_SIZE];
 
 	STextureParticleBuffer(){nUsedElements=0;}
 };
@@ -358,7 +380,8 @@ enum EStateChangePolicy
 	eStateChange_Force,
 };
 
-class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRender
+
+class COpenGLRender: virtual public CSystemObjectBase,virtual public IOpenGLRender
 {
 	bool		m_bPerspectiveProjection;
 	double		m_dPerspectiveViewAngle;
@@ -390,6 +413,8 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	SRenderState m_sRenderState;
 	SRenderState m_sStagedRenderingState;
 	SRenderState m_sPreStagedRenderingState;
+	SRenderVertexBufferState m_sBufferState;
+	
 	double		 m_dStagedRenderingMinZ;
 	double		 m_dStagedRenderingMaxZ;
 	double		 m_dMinDistanceToLight;
@@ -406,6 +431,7 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	
 	unsigned int m_nFirstTimeStamp;
 	
+	bool 		  m_bLightingPrepared;
 	unsigned long m_nActiveLights;
 
 	CVector m_vColor;
@@ -436,12 +462,12 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	CPlane				m_CameraUpPlane;
 
 	bool				m_bRestoreTextureMatrix;
-	bool				m_bRenderingWithShader;
 	bool				m_bShadowVolumeFirstVertex;
 	CVector				m_vShadowVolumeMins;
 	CVector				m_vShadowVolumeMaxs;
 	bool				m_bHardwareSupportRead;
 	SHardwareSupport	m_sHardwareSupport;
+	bool 				m_bRenderingShadowReception;
 	
 	std::stack<SRenderState> m_sStagedRenderingStateStack;
 	std::stack<SRenderState> m_sRenderStateStack;
@@ -459,7 +485,9 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	
 	SRenderStats m_sStagedStats;
 	
-	bool m_bRenderingShadowReception;
+	void PrepareSunShadows();
+	void UnprepareSunShadows();
+	
 	void UpdateProjectionMatrix();
 
 	void SetRenderState(const SRenderState &sNewState,EStateChangePolicy ePolicy=eStateChange_Incremental,EStateChangeShader eShader=eStateChange_UpdateShader);
@@ -496,6 +524,10 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	void InternalActivateDepth();
 	void InternalDeactivateDepth();
 	void InternalSetDepthFunction(EDepthFunction eDepthFunction);
+	
+	void SetVertexPointers(float *pVertex,float *pNormal,float *pColor,int nTex,float **pTex, float *pNormalTex=NULL,float *pTangent=NULL,float *pBiTangent=NULL);
+	void SetVertexBufferObject(SVertexBufferObject *pVBO);
+	void SetOpenGLMatrix(unsigned int nMatrixMode,CMatrix &pMatrix);
 	
 public:
 
@@ -675,7 +707,7 @@ public:
 	void StartSelection(SGameRect rWindowRect,IGenericCamera *piCamera,double dx,double dy,double dPrecision);
 	void SetSelectionId(unsigned int nId);
 	int EndSelection();
-
+	
 	void ReloadShaders();
 	
 	BEGIN_PROP_MAP(COpenGLRender)

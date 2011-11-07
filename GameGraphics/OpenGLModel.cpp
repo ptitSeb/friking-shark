@@ -432,9 +432,12 @@ void COpenGLModel::UpdateBufferObjects()
 				nError=glGetError();
 				if(pBuffer->nIndexesBufferObject)
 				{
+					GLushort *puShort=new GLushort[pBuffer->nFaces*3];
+					for(int v=0;v<pBuffer->nFaces*3;v++){puShort[v]=pBuffer->pFaceVertexIndexes[v];}
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pBuffer->nIndexesBufferObject);
-					glBufferData(GL_ELEMENT_ARRAY_BUFFER, pBuffer->nFaces*3*sizeof(GLuint),pBuffer->pFaceVertexIndexes,GL_STATIC_DRAW);
+					glBufferData(GL_ELEMENT_ARRAY_BUFFER, pBuffer->nFaces*3*sizeof(GLushort),puShort,GL_STATIC_DRAW);
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+					delete [] puShort;
 				}
 				else
 				{
@@ -776,154 +779,96 @@ void COpenGLModel::GetBSPOptions(bool *pbLoad)
 	if(pbLoad){*pbLoad=m_bLoadBSP;}
 }
 
-void COpenGLModel::PrepareRenderBuffer(IGenericRender *piRender, unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer ,bool bRenderingShadow,SOpenGLRenderMappings *pRenderMappings)
-{/*
+void COpenGLModel::PrepareRenderBuffer(IOpenGLRender *piRender, unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer ,bool bRenderingShadow,SOpenGLRenderMappings *pRenderMappings)
+{
 	if(m_bLoadPending){LoadFromFile();}
 	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation,nFrame,nBuffer);
 	if(pBuffer==NULL){return;}
-
+	
 	bool bUseNormalMap=(!bRenderingShadow && pBuffer->pNormalMapArray && piRender->AreNormalMapsEnabled());
 	
-	if(!bRenderingShadow && piRender->AreTexturesEnabled())
+	int nOffset=0;
+	SVertexBufferObject object;
+	object.nBufferObject=pBuffer->nBufferObject;
+	object.nIndexesBufferObject=pBuffer->nIndexesBufferObject;
+	object.nVertexOffset=nOffset;
+	nOffset+=pBuffer->nVertexes*sizeof(GLfloat)*3;
+	if(!bRenderingShadow)
 	{
-		for(unsigned int x=0;x<pBuffer->vTextureLevels.size();x++)
+		if(pBuffer->pNormalArray){object.nNormalOffset=nOffset;nOffset+=pBuffer->nVertexes*sizeof(GLfloat)*3;}
+		if(pBuffer->pColorArray){object.nColorOffset=nOffset;nOffset+=pBuffer->nVertexes*sizeof(GLfloat)*4;}
+		
+		if(pBuffer->pNormalMapArray)
 		{
-			if(pBuffer->vTextureLevels[x]->texture.m_piTexture && pBuffer->vTextureLevels[x]->pTexVertexArray)
+			nOffset+=pBuffer->nVertexes*sizeof(GLfloat)*2;
+			if(bUseNormalMap){object.nNormalMapOffset=nOffset;}
+		}
+		if(pBuffer->pTangentArray)
+		{
+			if(bUseNormalMap){object.nTangentOffset=nOffset;}
+			nOffset+=pBuffer->nVertexes*sizeof(GLfloat)*3;
+		}
+		if(pBuffer->pBitangentArray)
+		{
+			if(bUseNormalMap){object.nBitangentOffset=nOffset;}
+			nOffset+=pBuffer->nVertexes*sizeof(GLfloat)*3;
+		}
+			
+		if(piRender->AreTexturesEnabled())
+		{
+			object.nTextures=pBuffer->vTextureLevels.size();
+			for(unsigned int x=0;x<pBuffer->vTextureLevels.size() && x<2;x++)
 			{
-				piRender->SelectTexture(pBuffer->vTextureLevels[x]->texture.m_piTexture,x);
-				if(!pBuffer->vTextureLevels[x]->bTextMatrixIdentity){piRender->SetTextureMatrix(&pBuffer->vTextureLevels[x]->texMatrix,x);}
+				SModelTextureLevel *pTextureLevel=pBuffer->vTextureLevels[x];
+				if(pTextureLevel && pTextureLevel->texture.m_piTexture && pTextureLevel->pTexVertexArray)
+				{
+					object.pTexOffsets[x]=nOffset;nOffset+=pBuffer->nVertexes*sizeof(GLfloat)*2;
+					piRender->SelectTexture(pBuffer->vTextureLevels[x]->texture.m_piTexture,x);
+					if(!pBuffer->vTextureLevels[x]->bTextMatrixIdentity){piRender->SetTextureMatrix(&pBuffer->vTextureLevels[x]->texMatrix,x);}
+				}
 			}
 		}
 	}
-	if(bUseNormalMap){piRender->SelectNormalMap(pBuffer->normalMap.m_piTexture);}
-	if(pBuffer->nBufferObject)
-	{
-		glBindBuffer(GL_ARRAY_BUFFER,pBuffer->nBufferObject);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,pBuffer->nIndexesBufferObject);
-	
-		unsigned long nOffset=0;
-		if(pBuffer->pVertexArray)
-		{
-			glEnableVertexAttribArray(pRenderMappings->nVertexAttribIndex);
-			glVertexAttribPointer(pRenderMappings->nVertexAttribIndex,3,GL_FLOAT,GL_FALSE,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
-			nOffset+=3;
-		}
-		if(!bRenderingShadow)
-		{
-			if(pBuffer->pNormalArray)
-			{
-				glEnableVertexAttribArray(pRenderMappings->nNormalAttribIndex);
-				glVertexAttribPointer(pRenderMappings->nNormalAttribIndex,3,GL_FLOAT,GL_FALSE,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
-				nOffset+=3;
-			}
-			
-			if(pBuffer->pColorArray)
-			{
-				glEnableVertexAttribArray(pRenderMappings->nColorAttribIndex);
-				glVertexAttribPointer(pRenderMappings->nColorAttribIndex,4,GL_FLOAT,GL_FALSE,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
-				nOffset+=4;
-			}
-
-			if(pBuffer->pNormalMapArray)
-			{
-				if(bUseNormalMap)
-				{
-					glEnableVertexAttribArray(pRenderMappings->nNormalMapCoordAttribIndex);
-					glVertexAttribPointer(pRenderMappings->nNormalMapCoordAttribIndex,2,GL_FLOAT,GL_FALSE,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
-					nOffset+=2;
-					
-					if(pBuffer->pTangentArray && pRenderMappings->nTangentAttribIndex!=-1)
-					{
-						glEnableVertexAttribArray(pRenderMappings->nTangentAttribIndex);
-						glVertexAttribPointer(pRenderMappings->nTangentAttribIndex,3,GL_FLOAT,GL_FALSE,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
-						nOffset+=3;
-					}
-					if(pBuffer->pBitangentArray && pRenderMappings->nBitangentAttribIndex!=-1)
-					{
-						glEnableVertexAttribArray(pRenderMappings->nBitangentAttribIndex);
-						glVertexAttribPointer(pRenderMappings->nBitangentAttribIndex,3,GL_FLOAT,GL_FALSE,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
-						nOffset+=3;
-					}
-				}
-			}
-			if(piRender->AreTexturesEnabled())
-			{
-				for(unsigned int x=0;x<pBuffer->vTextureLevels.size() && x<2;x++)
-				{
-					SModelTextureLevel *pTextureLevel=pBuffer->vTextureLevels[x];
-					if(pTextureLevel && pTextureLevel->texture.m_piTexture && pTextureLevel->pTexVertexArray)
-					{
-						glEnableVertexAttribArray(pRenderMappings->pTextureAttribIndex[x]);
-						glVertexAttribPointer(pRenderMappings->pTextureAttribIndex[x],2,GL_FLOAT,GL_FALSE,0,(void*)(pBuffer->nVertexes*sizeof(GLfloat)*nOffset));
-						nOffset+=2;
-					}
-				}
-			}
-		}
-	}*/
+	piRender->SetVertexBufferObject(&object);
 }
 
-void COpenGLModel::CallRenderBuffer(IGenericRender *piRender, unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,unsigned int nInstances)
-{/*
+
+void COpenGLModel::CallRenderBuffer(IOpenGLRender *piRender, unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,unsigned int nInstances)
+{
 	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation,nFrame,nBuffer);
 	if(pBuffer==NULL){return;}
 
 	if(pBuffer->nBufferObject)
 	{
 #ifndef ANDROID
-		glDrawElementsInstancedARB(GL_TRIANGLES,pBuffer->nFaces*3,GL_UNSIGNED_INT,NULL,nInstances);
+		glDrawElementsInstancedARB(GL_TRIANGLES,pBuffer->nFaces*3,GL_UNSIGNED_SHORT,NULL,nInstances);
 #else
-		if(nInstances!=1){RTTRACE("COpenGLModel::CallRenderBuffer -> ERROR: GLES2 does not support object instancing !!!");}
-		glDrawElements(GL_TRIANGLES,pBuffer->nFaces*3,GL_UNSIGNED_INT,NULL);
+		if(nInstances!=1){RTTRACE("COpenGLModel::CallRenderBuffer -> ERROR: GLES does not support object instancing !!!");}
+		glDrawElements(GL_TRIANGLES,pBuffer->nFaces*3,GL_UNSIGNED_SHORT,NULL);
 #endif
 	}
 	else
 	{
-		glDrawElements(GL_TRIANGLES,pBuffer->nFaces*3,GL_UNSIGNED_INT,pBuffer->pFaceVertexIndexes);
-	}*/
+		glDrawElements(GL_TRIANGLES,pBuffer->nFaces*3,GL_UNSIGNED_SHORT,pBuffer->pFaceVertexIndexes);
+	}
 }
 
-void COpenGLModel::UnPrepareRenderBuffer(IGenericRender *piRender, unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer ,bool bRenderingShadow,SOpenGLRenderMappings *pRenderMappings)
-{/*
+void COpenGLModel::UnPrepareRenderBuffer(IOpenGLRender *piRender, unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer ,bool bRenderingShadow,SOpenGLRenderMappings *pRenderMappings)
+{
 	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation,nFrame,nBuffer);
 	if(pBuffer==NULL){return;}
-	
-	bool bUseNormalMap=(!bRenderingShadow && pBuffer->pNormalMapArray && piRender->AreNormalMapsEnabled());
-	
-	if(pBuffer->nBufferObject){glBindBuffer(GL_ARRAY_BUFFER,0);}
-	if(pBuffer->nIndexesBufferObject){glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);}
-	
-	if(pBuffer->pVertexArray)
-	{
-		glDisableVertexAttribArray(pRenderMappings->nVertexAttribIndex);
-	}
-	if(!bRenderingShadow && pBuffer->pNormalArray)
-	{
-		glDisableVertexAttribArray(pRenderMappings->nNormalAttribIndex);
-	}
-	if(bUseNormalMap)
-	{
-		glDisableVertexAttribArray(pRenderMappings->nNormalMapCoordAttribIndex);
-		piRender->UnselectNormalMap();
-		
-		if(pRenderMappings->nTangentAttribIndex!=-1){glDisableVertexAttribArray(pRenderMappings->nTangentAttribIndex);}
-		if(pRenderMappings->nBitangentAttribIndex!=-1){glDisableVertexAttribArray(pRenderMappings->nBitangentAttribIndex);}	
-	}
-	if(!bRenderingShadow && pBuffer->pColorArray)
-	{
-		glDisableVertexAttribArray(pRenderMappings->nColorAttribIndex);
-	}
+	piRender->SetVertexBufferObject(NULL);
+
 	if(!bRenderingShadow && piRender->AreTexturesEnabled())
 	{
-		for(unsigned int x=0;x<pBuffer->vTextureLevels.size() && x<2;x++)
+		for(unsigned int x=0;x<pBuffer->vTextureLevels.size();x++)
 		{
 			if(pBuffer->vTextureLevels[x]->texture.m_piTexture && pBuffer->vTextureLevels[x]->pTexVertexArray)
 			{
-				glDisableVertexAttribArray(pRenderMappings->pTextureAttribIndex[x]);
 				piRender->UnselectTexture(x);
 			}
 		}
-	}*/
+	}
 }
 
 CTraceInfo COpenGLModel::GetTrace( const CVector &vOrigin,const CVector &vAngles,const CVector &p1,const CVector &p2 )
