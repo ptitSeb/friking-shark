@@ -26,7 +26,7 @@
 
 COpenGLRender::COpenGLRender(void)
 {
-	m_pCurrentShader=NULL;
+	m_bLightingPrepared=false;
 	m_bRestoreTextureMatrix=false;
 	m_bHardwareSupportRead=false;
 	m_bShadowVolumeFirstVertex=false;
@@ -78,6 +78,8 @@ COpenGLRender::COpenGLRender(void)
 	m_RenderMappings.nTangentAttribIndex=nAttribIndex++;
 	m_RenderMappings.nBitangentAttribIndex=nAttribIndex++;
 	m_RenderMappings.nColorAttribIndex=nAttribIndex++;
+	
+	m_pCurrentShader=NULL;
 }
 
 COpenGLRender::~COpenGLRender(void)
@@ -229,15 +231,24 @@ void COpenGLRender::UpdateProjectionMatrix()
 	else
 	{
 		glhOrtho(&m_ProjectionMatrix,-m_dProjectionWidth*0.5,m_dProjectionWidth*0.5,-m_dProjectionHeight*0.5,m_dProjectionHeight*0.5,1,10000);
-	}	
+	}
+#ifdef ANDROID_GLES1
+	float fMatrix[16];
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	ToOpenGLMatrix(&m_ProjectionMatrix,fMatrix);
+	glLoadMatrixf(fMatrix);	
+	glMatrixMode(GL_MODELVIEW);
+#else
 	std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader;
 	for(iShader=m_mShaders.begin();iShader!=m_mShaders.end();iShader++)
 	{
 		iShader->second.m_piShader->AddUniform("uProjection",m_ProjectionMatrix,false);
 	}
 	if(m_ShadowShader.m_piShader){m_ShadowShader.m_piShader->AddUniform("uProjection",m_ProjectionMatrix,false);}
-	
+#endif
 }
+
 CVector COpenGLRender::GetCameraPosition(){return m_vCameraPos;}
 CVector COpenGLRender::GetCameraForward(){return m_vCameraForward;}
 CVector COpenGLRender::GetCameraRight(){return m_vCameraRight;}
@@ -249,26 +260,28 @@ void COpenGLRender::SetCamera(const CVector &vPosition,double dYaw, double dPitc
 	{
 		m_bHardwareSupportRead=true;
 
+	//	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS,&m_sHardwareSupport.nMaxTextureUnits);
+		
+		#ifndef ANDROID_GLES1
 		GLhandleARB hFakeShaderProgram=glCreateProgramObjectARB();
 		m_sHardwareSupport.bShaders=(hFakeShaderProgram!=0);
 		if(hFakeShaderProgram){glDeleteProgram(hFakeShaderProgram);hFakeShaderProgram=0;}
-
-#ifdef ANDROID
-		m_sHardwareSupport.bObjectInstancing=false;
-#else
-		m_sHardwareSupport.bObjectInstancing=true;
-#endif
 		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS,&m_sHardwareSupport.nMaxTextureUnits);
-
-		if(m_sHardwareSupport.bShaders)
-		{
-			ReloadShaders();
-		}
-		m_sRenderOptions.bEnableShadows&=(m_nShadowTextureLevel<m_sHardwareSupport.nMaxTextureUnits);
-		m_sRenderOptions.bEnableSkyShadow&=(m_nSkyShadowTextureLevel<m_sHardwareSupport.nMaxTextureUnits);
-		m_sRenderOptions.bEnableNormalMaps&=(m_nNormalMapTextureLevel<m_sHardwareSupport.nMaxTextureUnits);
+		#endif
+		
+		#ifdef ANDROID
+		m_sHardwareSupport.bObjectInstancing=false;
+		#else
+		m_sHardwareSupport.bObjectInstancing=true;
+		#endif		
+		
+		if(m_sHardwareSupport.bShaders){ReloadShaders();}
+		
+		m_sRenderOptions.bEnableShadows=m_sRenderOptions.bEnableShadows && (m_nShadowTextureLevel<m_sHardwareSupport.nMaxTextureUnits);
+		m_sRenderOptions.bEnableSkyShadow=m_sRenderOptions.bEnableSkyShadow && (m_nSkyShadowTextureLevel<m_sHardwareSupport.nMaxTextureUnits);
+		m_sRenderOptions.bEnableNormalMaps=m_sRenderOptions.bEnableNormalMaps && (m_nNormalMapTextureLevel<m_sHardwareSupport.nMaxTextureUnits);
 	}
-
+	
 	CMatrix tmp,identity;
 	m_ModelViewMatrix.I();
 	if(vPosition.c[0] || vPosition.c[1] || vPosition.c[2]){tmp.T(Origin-vPosition);m_ModelViewMatrix*=tmp;}
@@ -276,6 +289,14 @@ void COpenGLRender::SetCamera(const CVector &vPosition,double dYaw, double dPitc
 	if(dPitch){tmp.R(AxisPosX,DegreesToRadians(0-dPitch));m_ModelViewMatrix*=tmp;}
 	if(dRoll){tmp.R(AxisPosZ,DegreesToRadians(0-dRoll));m_ModelViewMatrix*=tmp;}
 	
+#ifdef ANDROID_GLES1
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glRotatef((0-dRoll)	,AxisPosZ.c[0],AxisPosZ.c[1],AxisPosZ.c[2]);
+	glRotatef((0-dPitch),AxisPosX.c[0],AxisPosX.c[1],AxisPosX.c[2]);
+	glRotatef((0-(dYaw-90))	,AxisPosY.c[0],AxisPosY.c[1],AxisPosY.c[2]);
+	glTranslatef(-vPosition.c[0],-vPosition.c[1],-vPosition.c[2]);
+#else
 	std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader;
 	for(iShader=m_mShaders.begin();iShader!=m_mShaders.end();iShader++)
 	{
@@ -287,7 +308,8 @@ void COpenGLRender::SetCamera(const CVector &vPosition,double dYaw, double dPitc
 		m_ShadowShader.m_piShader->AddUniform("uModel",identity,false);
 		m_ShadowShader.m_piShader->AddUniform("uView",m_ModelViewMatrix,false);
 	}
-	
+#endif
+
 	VectorsFromAngles(dYaw,dPitch,dRoll,m_vCameraForward,m_vCameraRight,m_vCameraUp);
 	m_vCameraPos=vPosition;
 	m_vCameraAngles.c[YAW]=dYaw;
@@ -335,7 +357,8 @@ void COpenGLRender::Clear(const CVector &vColor,double dAlpha)
 {
 	float pVertexBuffer[12];
 	float pColorBuffer[16];
-	unsigned int pFaceIndexes[12];
+	GLushort pFaceIndexes[12];
+	
 	pVertexBuffer[0]=m_dProjectionWidth;
 	pVertexBuffer[1]=m_dProjectionHeight;
 	pVertexBuffer[2]=0;
@@ -375,15 +398,10 @@ void COpenGLRender::Clear(const CVector &vColor,double dAlpha)
 	pColorBuffer[13]=vColor.c[1];
 	pColorBuffer[14]=vColor.c[2];
 	pColorBuffer[15]=dAlpha;
-	
-	glEnableVertexAttribArray(m_RenderMappings.nVertexAttribIndex);
-	glEnableVertexAttribArray(m_RenderMappings.nColorAttribIndex);
-	glVertexAttribPointer(m_RenderMappings.nVertexAttribIndex,3,GL_FLOAT,GL_FALSE,0,pVertexBuffer);
-	glVertexAttribPointer(m_RenderMappings.nColorAttribIndex,4,GL_FLOAT,GL_FALSE,0,pColorBuffer);
-	glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,pFaceIndexes);
-	glDisableVertexAttribArray(m_RenderMappings.nVertexAttribIndex);
-	glDisableVertexAttribArray(m_RenderMappings.nColorAttribIndex);	
+	SetVertexPointers(pVertexBuffer,NULL,pColorBuffer,0,NULL);
+	glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_SHORT,pFaceIndexes);
 }
+
 
 void COpenGLRender::SetColor(const CVector &vColor,double dAlpha)
 {
@@ -413,8 +431,18 @@ void COpenGLRender::SetTextureMatrix(CMatrix *pMatrix,int nTextureLevel)
 	if(!m_sRenderOptions.bEnableTextures){return;}
 	if(!m_sRenderState.bActiveTextures){return;}
 	if(m_bStagedRendering){return;}
-	
+
 	if(m_pCurrentShader){m_pCurrentShader->m_piShader->AddUniform(nTextureLevel==0?"uTexMatrix0":"uTexMatrix1",*pMatrix,false);}
+	
+#ifdef ANDROID_GLES1
+	float pfMatrix[16];
+	ToOpenGLMatrix(pMatrix,pfMatrix);
+	glActiveTexture(GL_TEXTURE0_ARB+nTextureLevel);
+	glMatrixMode(GL_TEXTURE);
+	glLoadMatrixf(pfMatrix);
+	glMatrixMode(GL_MODELVIEW);
+#endif
+	
 	m_bRestoreTextureMatrix=true;
 }
 
@@ -426,6 +454,11 @@ void COpenGLRender::UnselectTexture(int nTextureLevel)
 	{
 		CMatrix identity;
 		if(m_pCurrentShader){m_pCurrentShader->m_piShader->AddUniform(nTextureLevel==0?"uTexMatrix0":"uTexMatrix1",identity,false);}
+#ifdef ANDROID_GLES1
+		glMatrixMode(GL_TEXTURE);
+		glLoadIdentity();
+		glMatrixMode(GL_MODELVIEW);
+#endif
 		m_bRestoreTextureMatrix=false;
 	}
 	if(!m_bStagedRendering && piTexture){piTexture->UnprepareTexture(this,nTextureLevel);}
@@ -496,8 +529,7 @@ void COpenGLRender::RenderTexture(const CVector &vOrigin,double s1,double s2,dou
 	float pVertexBuffer[12];
 	float pTexVertexBuffer[8];
 	float pColorBuffer[16];
-	unsigned int pFaceIndexes[12];
-	
+	GLushort pFaceIndexes[12];
 	
 	pTexVertexBuffer[0]=dTexX+dTexW;
 	pTexVertexBuffer[1]=dTexY+dTexH;
@@ -551,16 +583,10 @@ void COpenGLRender::RenderTexture(const CVector &vOrigin,double s1,double s2,dou
 	pColorBuffer[14]=m_vColor.c[2];
 	pColorBuffer[15]=m_dAlpha;
 	
-	glEnableVertexAttribArray(m_RenderMappings.nVertexAttribIndex);
-	glEnableVertexAttribArray(m_RenderMappings.nColorAttribIndex);
-	glEnableVertexAttribArray(m_RenderMappings.pTextureAttribIndex[0]);
-	glVertexAttribPointer(m_RenderMappings.nVertexAttribIndex,3,GL_FLOAT,GL_FALSE,0,pVertexBuffer);
-	glVertexAttribPointer(m_RenderMappings.nColorAttribIndex,4,GL_FLOAT,GL_FALSE,0,pColorBuffer);
-	glVertexAttribPointer(m_RenderMappings.pTextureAttribIndex[0],2,GL_FLOAT,GL_FALSE,0,pTexVertexBuffer);
-	glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,pFaceIndexes);
-	glDisableVertexAttribArray(m_RenderMappings.nVertexAttribIndex);
-	glDisableVertexAttribArray(m_RenderMappings.nColorAttribIndex);		
-	glDisableVertexAttribArray(m_RenderMappings.pTextureAttribIndex[0]);
+	float *pTexVertexBufferTemp=pTexVertexBuffer;
+	SetVertexPointers(pVertexBuffer,NULL,pColorBuffer,1,&pTexVertexBufferTemp);
+	glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_SHORT,pFaceIndexes);
+	
 }
 
 void COpenGLRender::RenderBBox(const CVector &vOrigin,const CVector &vOrientation,const CVector &vMins,const CVector &vMaxs,const CVector &vColor,unsigned long nStipple)
@@ -829,15 +855,9 @@ void COpenGLRender::RenderLine(const CVector &v1,const CVector &v2,const CVector
 		pColorBuffer[6]=vColor.c[2];
 		pColorBuffer[7]=1.0;
 		
-		glEnableVertexAttribArray(m_RenderMappings.nVertexAttribIndex);
-		glEnableVertexAttribArray(m_RenderMappings.nColorAttribIndex);
-		glVertexAttribPointer(m_RenderMappings.nVertexAttribIndex,3,GL_FLOAT,GL_FALSE,0,pVertexBuffer);
-		glVertexAttribPointer(m_RenderMappings.nColorAttribIndex,4,GL_FLOAT,GL_FALSE,0,pColorBuffer);
+		SetVertexPointers(pVertexBuffer,NULL,pColorBuffer,0,NULL);
 		glDrawArrays(GL_LINES,0,1);
-		glDisableVertexAttribArray(m_RenderMappings.nVertexAttribIndex);
-		glDisableVertexAttribArray(m_RenderMappings.nColorAttribIndex);
 	}
-
 }
 
 
@@ -885,13 +905,10 @@ void COpenGLRender::RenderRect(const CVector &vCenter,const CVector &vAxisW,cons
 	pColorBuffer[14]=m_vColor.c[2];
 	pColorBuffer[15]=m_dAlpha;
 	
-	glEnableVertexAttribArray(m_RenderMappings.nVertexAttribIndex);
-	glEnableVertexAttribArray(m_RenderMappings.nColorAttribIndex);
-	glVertexAttribPointer(m_RenderMappings.nVertexAttribIndex,3,GL_FLOAT,GL_FALSE,0,pVertexBuffer);
-	glVertexAttribPointer(m_RenderMappings.nColorAttribIndex,4,GL_FLOAT,GL_FALSE,0,pColorBuffer);
+	SetVertexPointers(pVertexBuffer,NULL,pColorBuffer,0,NULL);
 	if(m_sRenderState.bActiveSolid)
 	{
-		unsigned int pFaceIndexes[6];
+		GLushort pFaceIndexes[6];
 		pFaceIndexes[0]=0;
 		pFaceIndexes[1]=1;
 		pFaceIndexes[2]=2;
@@ -899,20 +916,18 @@ void COpenGLRender::RenderRect(const CVector &vCenter,const CVector &vAxisW,cons
 		pFaceIndexes[4]=2;
 		pFaceIndexes[5]=3;
 		
-		glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,pFaceIndexes);
+		glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_SHORT,pFaceIndexes);
 	}
 	else
 	{	
-		unsigned int pFaceIndexes[4];
+		GLushort pFaceIndexes[4];
 		pFaceIndexes[0]=0;
 		pFaceIndexes[1]=1;
 		pFaceIndexes[2]=2;
 		pFaceIndexes[3]=3;
 		
-		glDrawElements(GL_LINE_LOOP,4,GL_UNSIGNED_INT,pFaceIndexes);
+		glDrawElements(GL_LINE_LOOP,4,GL_UNSIGNED_SHORT,pFaceIndexes);
 	}
-	glDisableVertexAttribArray(m_RenderMappings.nVertexAttribIndex);
-	glDisableVertexAttribArray(m_RenderMappings.nColorAttribIndex);
 }
 
 void COpenGLRender::RenderRect(double x,double y,double w,double h)
@@ -959,13 +974,10 @@ void COpenGLRender::RenderRect(double x,double y,double w,double h)
 	pColorBuffer[14]=m_vColor.c[2];
 	pColorBuffer[15]=m_dAlpha;
 	
-	glEnableVertexAttribArray(m_RenderMappings.nVertexAttribIndex);
-	glEnableVertexAttribArray(m_RenderMappings.nColorAttribIndex);
-	glVertexAttribPointer(m_RenderMappings.nVertexAttribIndex,3,GL_FLOAT,GL_FALSE,0,pVertexBuffer);
-	glVertexAttribPointer(m_RenderMappings.nColorAttribIndex,4,GL_FLOAT,GL_FALSE,0,pColorBuffer);
+	SetVertexPointers(pVertexBuffer,NULL,pColorBuffer,0,NULL);
 	if(m_sRenderState.bActiveSolid)
 	{
-		unsigned int pFaceIndexes[6];
+		GLushort pFaceIndexes[6];
 		pFaceIndexes[0]=0;
 		pFaceIndexes[1]=1;
 		pFaceIndexes[2]=2;
@@ -973,20 +985,18 @@ void COpenGLRender::RenderRect(double x,double y,double w,double h)
 		pFaceIndexes[4]=2;
 		pFaceIndexes[5]=3;
 		
-		glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,pFaceIndexes);
+		glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_SHORT,pFaceIndexes);
 	}
 	else
 	{	
-		unsigned int pFaceIndexes[4];
+		GLushort pFaceIndexes[4];
 		pFaceIndexes[0]=0;
 		pFaceIndexes[1]=1;
 		pFaceIndexes[2]=2;
 		pFaceIndexes[3]=3;
 		
-		glDrawElements(GL_LINE_LOOP,4,GL_UNSIGNED_INT,pFaceIndexes);
+		glDrawElements(GL_LINE_LOOP,4,GL_UNSIGNED_SHORT,pFaceIndexes);
 	}
-	glDisableVertexAttribArray(m_RenderMappings.nVertexAttribIndex);
-	glDisableVertexAttribArray(m_RenderMappings.nColorAttribIndex);
 }
 
 void COpenGLRender::RenderPolygon(unsigned int nVertexes,const CVector *pVertexes,const CVector *pColors)
@@ -1197,6 +1207,20 @@ void COpenGLRender::ActivateHeightFog(const CVector &vMins,const CVector &vMaxs,
 	pState->vHeightFogMins=vMins;
 	pState->vHeightFogMaxs=vMaxs;
 	pState->vHeightFogColor=vColor;
+#ifdef ANDROID_GLES1
+	if(!m_bStagedRendering)
+	{
+		if(m_vCameraForward==AxisNegY)
+		{
+			glEnable(GL_FOG);
+			glFogf(GL_FOG_START,m_vCameraPos.c[1]-vMaxs.c[1]);
+			glFogf(GL_FOG_END,m_vCameraPos.c[1]-vMins.c[1]);
+		}
+		float vHeightFogColor[3]={(float)vColor.c[0],(float)vColor.c[1],(float)vColor.c[2]};
+		glFogfv(GL_FOG_COLOR,vHeightFogColor);
+		glFogf(GL_FOG_MODE,GL_LINEAR);
+	}
+#endif
 }
 
 void COpenGLRender::ActivateWater()
@@ -1207,6 +1231,7 @@ void COpenGLRender::ActivateWater()
 
 void COpenGLRender::SetWaterMappingSize(double dMaxU,double dMaxV)
 {
+#ifndef ANDROID_GLES1
 	std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader;
 	for(iShader=m_mShaders.begin();iShader!=m_mShaders.end();iShader++)
 	{
@@ -1215,10 +1240,12 @@ void COpenGLRender::SetWaterMappingSize(double dMaxU,double dMaxV)
 			iShader->second.m_piShader->AddUniform("WaterMappingSize",dMaxU,dMaxV,false);
 		}
 	}
+#endif
 }
 
 void COpenGLRender::SetWaterMappingOffset(double dMaxU,double dMaxV)
 {
+#ifndef ANDROID_GLES1
 	std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader;
 	for(iShader=m_mShaders.begin();iShader!=m_mShaders.end();iShader++)
 	{
@@ -1227,7 +1254,9 @@ void COpenGLRender::SetWaterMappingOffset(double dMaxU,double dMaxV)
 			iShader->second.m_piShader->AddUniform("WaterMappingOffset",dMaxU,dMaxV,false);
 		}
 	}
+#endif
 }
+
 void COpenGLRender::DeactivateWater()
 {
 	SRenderState *pState=m_bStagedRendering?&m_sStagedRenderingState:&m_sRenderState;
@@ -1238,6 +1267,13 @@ void COpenGLRender::DeactivateHeightFog()
 {
 	SRenderState *pState=m_bStagedRendering?&m_sStagedRenderingState:&m_sRenderState;
 	pState->bActiveHeightFog=false;
+	
+#ifdef ANDROID_GLES1
+	if(!m_bStagedRendering && m_vCameraForward==AxisNegY)
+	{
+		glDisable(GL_FOG);
+	}
+#endif
 }
 bool COpenGLRender::IsHeightFogActive(){return m_bActiveHeightFog=false;}
 
@@ -1471,6 +1507,7 @@ void COpenGLRender::InternalActivateLighting()
 	if(!m_sRenderOptions.bEnableLighting){return;}
 	SRenderState *pState=m_bStagedRendering?&m_sStagedRenderingState:&m_sRenderState;
 	pState->bActiveLighting=true;
+	if(!m_bStagedRendering){PrepareLighting();}
 }
 
 void COpenGLRender::InternalDeactivateLighting()
@@ -1478,6 +1515,7 @@ void COpenGLRender::InternalDeactivateLighting()
 	if(!m_sRenderOptions.bEnableLighting){return;}
 	SRenderState *pState=m_bStagedRendering?&m_sStagedRenderingState:&m_sRenderState;
 	pState->bActiveLighting=false;
+	if(!m_bStagedRendering){UnPrepareLighting();}
 }
 
 void COpenGLRender::ActivateLighting()
@@ -1514,6 +1552,107 @@ void COpenGLRender::RemoveLight( IGenericLight *piLight)
 			return;
 		}
 	}
+}
+
+
+
+void COpenGLRender::PrepareLighting()
+{
+#ifdef ANDROID_GLES1
+	if(m_bLightingPrepared){return;}
+	
+	const GLfloat pfAmbienColor[]  = {(float)m_vAmbientColor.c[0], (float)m_vAmbientColor.c[1], (float)m_vAmbientColor.c[2], 1.0};
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT,pfAmbienColor);
+//	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE ,0);
+//	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER ,1);
+	glEnable(GL_LIGHTING);
+	
+	std::vector<IGenericLight *>::iterator i;
+	int nlIndex=GL_LIGHT0;
+	for(i=m_vLights.begin(); nlIndex<(GL_LIGHT0+MAX_DYNAMIC_LIGHTS) && i!=m_vLights.end();i++)
+	{
+		IGenericLight *piLight=*i;
+		eGenericLightType eType=piLight->GetType();
+		glDisable(nlIndex);
+		
+		if(eType==eGenericLightType_Omni)
+		{
+			float dRadius=(float)piLight->GetOmniRadius();
+			glLightf(nlIndex,GL_CONSTANT_ATTENUATION,0);
+			glLightf(nlIndex,GL_LINEAR_ATTENUATION,(float)(1.0/(dRadius)));
+			glLightf(nlIndex,GL_QUADRATIC_ATTENUATION,(float)(1.0/(dRadius*dRadius)));
+		}
+		else if (eType==eGenericLightType_Spot)
+		{
+			double dExponent=0,dAttenuationConstant=0,dAttenuationLinear=0,dAttenuationQuadratic=0;
+			CVector dir=piLight->GetSpotDirection();
+			float vDir[3]={0};
+			vDir[0]=(float)dir.c[0];
+			vDir[1]=(float)dir.c[1];
+			vDir[2]=(float)dir.c[2];
+			piLight->GetSpotParameters(&dExponent,&dAttenuationConstant,&dAttenuationLinear,&dAttenuationQuadratic);
+			
+			glLightf(nlIndex,GL_CONSTANT_ATTENUATION,(float)dAttenuationConstant);
+			glLightf(nlIndex,GL_LINEAR_ATTENUATION,(float)dAttenuationLinear);
+			glLightf(nlIndex,GL_QUADRATIC_ATTENUATION,(float)dAttenuationQuadratic);
+			
+			glLightfv(nlIndex,GL_SPOT_DIRECTION	,vDir);
+			glLightf(nlIndex,GL_SPOT_CUTOFF		,(float)piLight->GetSpotAngle());
+			glLightf(nlIndex,GL_SPOT_EXPONENT	,(float)dExponent);
+		}
+		
+		CVector ambient=piLight->GetAmbientColor();
+		CVector diffuse=piLight->GetDiffuseColor();
+		CVector specular=piLight->GetSpecularColor();
+		CVector position=(eType==eGenericLightType_Directional)?piLight->GetDirectionalDirection():piLight->GetPosition();
+		float vAmbientColor[4]={0},vDiffuseColor[4]={0},vSpecularColor[4]={0},vPos[4]={0};
+		vAmbientColor[0]=(float)ambient.c[0];
+		vAmbientColor[1]=(float)ambient.c[1];
+		vAmbientColor[2]=(float)ambient.c[2];
+		vAmbientColor[3]=1.0;
+		vDiffuseColor[0]=(float)diffuse.c[0];
+		vDiffuseColor[1]=(float)diffuse.c[1];
+		vDiffuseColor[2]=(float)diffuse.c[2];
+		vDiffuseColor[3]=1.0;
+		vSpecularColor[0]=(float)specular.c[0];
+		vSpecularColor[1]=(float)specular.c[1];
+		vSpecularColor[2]=(float)specular.c[2];
+		vSpecularColor[3]=1.0;
+		vPos[0]=(float)position.c[0];
+		vPos[1]=(float)position.c[1];
+		vPos[2]=(float)position.c[2];
+		vPos[3]=(eType==eGenericLightType_Directional)?(float)0.0:(float)1.0;
+		
+		glLightfv(nlIndex,GL_POSITION,vPos);
+		glLightfv(nlIndex,GL_AMBIENT,vAmbientColor);
+		glLightfv(nlIndex,GL_DIFFUSE ,vDiffuseColor);
+		glLightfv(nlIndex,GL_SPECULAR,vSpecularColor);
+		glEnable(nlIndex);
+		nlIndex++;
+		m_nActiveLights++;
+	}
+	m_bLightingPrepared=true;
+#endif
+}
+
+void COpenGLRender::UnPrepareLighting()
+{
+#ifdef ANDROID_GLES1
+	if(!m_bLightingPrepared){return;}
+	std::set<IGenericLight *>::iterator i;
+	for(int nlIndex=GL_LIGHT0;nlIndex<(GL_LIGHT0+MAX_DYNAMIC_LIGHTS) && nlIndex<(GL_LIGHT0+(int)m_nActiveLights);nlIndex++)
+	{
+		float vColor[4]={0};
+		glLightfv(nlIndex,GL_AMBIENT,vColor);
+		glLightfv(nlIndex,GL_DIFFUSE ,vColor);
+		glLightfv(nlIndex,GL_SPECULAR,vColor);
+		glDisable(nlIndex);
+	}
+	m_nActiveLights=0;
+	glDisable(GL_LIGHTING);
+	glDisable(GL_COLOR_MATERIAL);
+	m_bLightingPrepared=false;
+#endif
 }
 
 void COpenGLRender::SetupLightsInShaders()
@@ -1920,24 +2059,36 @@ void COpenGLRender::RenderModel(const CVector &vOrigin,const CVector &vOrientati
 	}
 	else
 	{
+#ifdef ANDROID_GLES1
+		glPushMatrix();
+		glTranslatef(vOrigin.c[0],vOrigin.c[1],vOrigin.c[2]);
+		glRotatef(vOrientation.c[YAW]	,0,1,0);
+		glRotatef(vOrientation.c[PITCH]	,0,0,1);
+		glRotatef(vOrientation.c[ROLL]	,1,0,0);
+#else
 		CMatrix m,tmp;
 		if(vOrientation.c[ROLL]){tmp.R(AxisPosX,DegreesToRadians(vOrientation.c[ROLL]));m*=tmp;}
 		if(vOrientation.c[PITCH]){tmp.R(AxisPosZ,DegreesToRadians(vOrientation.c[PITCH]));m*=tmp;}
 		if(vOrientation.c[YAW]){tmp.R(AxisPosY,DegreesToRadians(vOrientation.c[YAW]));m*=tmp;}
 		if(vOrigin.c[0] || vOrigin.c[1] || vOrigin.c[2]){tmp.T(vOrigin);m*=tmp;}
-		
+#endif
 		IOpenGLModel *piGLModel=QI(IOpenGLModel,piModel);
 		if(piGLModel)
 		{
 			for(unsigned long x=0;x<piModel->GetFrameRenderBuffers(nAnimation,nFrame);x++)
 			{			
 				piGLModel->PrepareRenderBuffer(this,nAnimation,nFrame,x,false,&m_RenderMappings);
+#ifndef ANDROID_GLES1
 				if(m_pCurrentShader){m_pCurrentShader->m_piShader->AddUniform("uModel",m,true);}
+#endif
 				piGLModel->CallRenderBuffer(this,nAnimation,nFrame,x,1);
 				piGLModel->UnPrepareRenderBuffer(this,nAnimation,nFrame,x,false,&m_RenderMappings);
 			}
 		}
 		REL(piGLModel);
+#ifdef ANDROID_GLES1
+		glPopMatrix();
+#endif
 	}
 }
 
@@ -2062,39 +2213,35 @@ void COpenGLRender::StartStagedRendering()
 		}
 	}
 }
-
-void COpenGLRender::EndStagedRendering()
+#ifdef ANDROID_GLES1
+void COpenGLRender::PrepareSunShadows(){}
+void COpenGLRender::UnprepareSunShadows(){}
+#else
+void COpenGLRender::PrepareSunShadows()
 {
-	if(!m_bStagedRendering){return;}
-
-	unsigned int nRenderStart=0;
-	if(m_sRenderOptions.bEnableStagedRenderingStats){nRenderStart=GetTimeStamp();m_sStagedStats=SRenderStats();}
-	
-	m_bStagedRendering=false;
-	
-	if(m_sRenderOptions.bEnableShadows)
+	if(m_ShadowTexture.m_piTexture==NULL)
 	{
-		if(m_ShadowTexture.m_piTexture==NULL)
+		if(m_ShadowTexture.Create(m_piSystem,"Texture",""))
 		{
-			if(m_ShadowTexture.Create(m_piSystem,"Texture",""))
+			if(!m_ShadowTexture.m_piTexture->CreateDepth(1024,1024,m_piCurrentViewport))
 			{
-				if(!m_ShadowTexture.m_piTexture->CreateDepth(1024,1024,m_piCurrentViewport))
-				{
-					m_ShadowTexture.Destroy();
-				}
-			}
-		}
-		if(m_sHardwareSupport.bShaders)
-		{
-			if(m_ShadowShader.m_piShader==NULL)
-			{
-				if(m_ShadowShader.Create(m_piSystem,"Shader",""))
-				{
-					m_ShadowShader.m_piShader->Load("Shaders/ShadowBufferShader-Vertex.c","Shaders/ShadowBufferShader-Fragment.c","");
-				}
+				m_ShadowTexture.Destroy();
 			}
 		}
 	}
+	if(m_sHardwareSupport.bShaders)
+	{
+		if(m_ShadowShader.m_piShader==NULL)
+		{
+			if(m_ShadowShader.Create(m_piSystem,"Shader",""))
+			{
+				m_ShadowShader.m_piShader->Load("Shaders/ShadowBufferShader-Vertex.c","Shaders/ShadowBufferShader-Fragment.c","");
+			}
+		}
+	}
+	
+	if(m_ShadowTexture.m_piTexture==NULL){return;}
+		
 	CVector vLightAngles;
 	CVector pvCameraVolume[8];
 	CVector pvLightVolume[8];
@@ -2104,199 +2251,198 @@ void COpenGLRender::EndStagedRendering()
 	CVector vLightForward;
 	double dLightNear;
 	double dLightFar;
-
+	
 	double pCameraViewMatrix[16];
 	double pCameraProjectionMatrix[16];
 	CMatrix cameraViewMatrix=m_ModelViewMatrix;
 	CMatrix cameraProjectionMatrix=m_ProjectionMatrix;
 	CMatrix identity;
-	
-	float fCurrentTime=((double)(GetTimeStamp()-m_nFirstTimeStamp))*0.001;
-	std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader;
-
-	SetupLightsInShaders();
-	
-	for(iShader=m_mShaders.begin();iShader!=m_mShaders.end();iShader++)
-	{
-		if(iShader->first.bSkyShadow)
-		{
-			iShader->second.m_piShader->AddUniform("SkyData",CVector(fCurrentTime*m_dSKyShadowSpeed,m_dSKyShadowXResolution,m_dSKyShadowZResolution),m_dSKyShadowOpacity,false);
-		}
-		if(iShader->first.bWater)
-		{
-			iShader->second.m_piShader->AddUniform("CurrentRealTime",fCurrentTime,false);
-		}
-	}
-
 	double dPreviousNear=m_dPerspectiveNearPlane;
 	double dPreviousFar=m_dPerspectiveFarPlane;
 	double dPreviousViewAngle=m_dPerspectiveViewAngle;
+
+	unsigned int nShadowStart=0;
+	if(m_sRenderOptions.bEnableStagedRenderingStats){nShadowStart=GetTimeStamp();}
 	
-	if(m_sRenderOptions.bEnableShadows && m_ShadowTexture.m_piTexture && m_sHardwareSupport.nMaxTextureUnits>1)
+	int nPreviousViewportX=m_nViewportX;
+	int nPreviousViewportY=m_nViewportY;
+	int nPreviousViewportW=m_nViewportW;
+	int nPreviousViewportH=m_nViewportH;
+	double dPreviousViewAspect=((m_nViewportH)==0)?1:(double)(m_nViewportW)/(double)(m_nViewportH);
+	CVector vPreviousCameraPosition=m_vCameraPos;
+	CVector vPreviousCameraAngles=m_vCameraAngles;
+	
+	CalcCameraVolume(vPreviousCameraPosition,vPreviousCameraAngles,dPreviousViewAngle,dPreviousViewAspect,m_dStagedRenderingMinZ,m_dStagedRenderingMaxZ,pvCameraVolume);
+	CalcBBoxVolume(Origin,Origin,m_vShadowVolumeMins,m_vShadowVolumeMaxs,pvShadowVolume);
+	
+	for(int x=0;x<8;x++){vVolumeMidPoint+=pvShadowVolume[x];}
+	vVolumeMidPoint/=8.0;
+	CVector vLightRight,vLightUp;
+	vLightPosition=m_SunLight.m_piLight->GetPosition()+m_vCameraPos;//vVolumeMidPoint-vLightForward*500.0;
+	
+	CVector *pVolumeToUse=pvShadowVolume;
+	if(fabs(m_vLastShadowCameraTarget.c[0]-vVolumeMidPoint.c[0])>m_dShadowAntiFlickeringMargin ||
+		fabs(m_vLastShadowCameraTarget.c[1]-vVolumeMidPoint.c[1])>m_dShadowAntiFlickeringMargin ||
+		fabs(m_vLastShadowCameraTarget.c[2]-vVolumeMidPoint.c[2])>m_dShadowAntiFlickeringMargin ||
+		fabs(m_vLastShadowCameraPosition.c[0]-vLightPosition.c[0])>m_dShadowAntiFlickeringMargin ||
+		fabs(m_vLastShadowCameraPosition.c[1]-vLightPosition.c[1])>m_dShadowAntiFlickeringMargin ||
+		fabs(m_vLastShadowCameraPosition.c[2]-vLightPosition.c[2])>m_dShadowAntiFlickeringMargin)
 	{
-		unsigned int nShadowStart=0;
-		if(m_sRenderOptions.bEnableStagedRenderingStats){nShadowStart=GetTimeStamp();}
-		
-		int nPreviousViewportX=m_nViewportX;
-		int nPreviousViewportY=m_nViewportY;
-		int nPreviousViewportW=m_nViewportW;
-		int nPreviousViewportH=m_nViewportH;
-		double dPreviousViewAspect=((m_nViewportH)==0)?1:(double)(m_nViewportW)/(double)(m_nViewportH);
-		CVector vPreviousCameraPosition=m_vCameraPos;
-		CVector vPreviousCameraAngles=m_vCameraAngles;
-		
-		CalcCameraVolume(vPreviousCameraPosition,vPreviousCameraAngles,dPreviousViewAngle,dPreviousViewAspect,m_dStagedRenderingMinZ,m_dStagedRenderingMaxZ,pvCameraVolume);
-		CalcBBoxVolume(Origin,Origin,m_vShadowVolumeMins,m_vShadowVolumeMaxs,pvShadowVolume);
-
-		for(int x=0;x<8;x++){vVolumeMidPoint+=pvShadowVolume[x];}
-		vVolumeMidPoint/=8.0;
-		CVector vLightRight,vLightUp;
-		vLightPosition=m_SunLight.m_piLight->GetPosition()+m_vCameraPos;//vVolumeMidPoint-vLightForward*500.0;
-		
-		CVector *pVolumeToUse=pvShadowVolume;
-		if(fabs(m_vLastShadowCameraTarget.c[0]-vVolumeMidPoint.c[0])>m_dShadowAntiFlickeringMargin ||
-			fabs(m_vLastShadowCameraTarget.c[1]-vVolumeMidPoint.c[1])>m_dShadowAntiFlickeringMargin ||
-			fabs(m_vLastShadowCameraTarget.c[2]-vVolumeMidPoint.c[2])>m_dShadowAntiFlickeringMargin ||
-			fabs(m_vLastShadowCameraPosition.c[0]-vLightPosition.c[0])>m_dShadowAntiFlickeringMargin ||
-			fabs(m_vLastShadowCameraPosition.c[1]-vLightPosition.c[1])>m_dShadowAntiFlickeringMargin ||
-			fabs(m_vLastShadowCameraPosition.c[2]-vLightPosition.c[2])>m_dShadowAntiFlickeringMargin)
-		{
-			m_vLastShadowCameraTarget=vVolumeMidPoint;
-			m_vLastShadowCameraPosition=vLightPosition;
-			for(int x=0;x<8;x++){m_pvLastShadowVolume[x]=pvShadowVolume[x];}
-		}
-		else
-		{
-			vVolumeMidPoint=m_vLastShadowCameraTarget;
-			vLightPosition=m_vLastShadowCameraPosition;
-			for(int x=0;x<8;x++){pvShadowVolume[x]=m_pvLastShadowVolume[x];}
-		}
-		vLightForward=m_vLastShadowCameraTarget-vLightPosition;
-		vLightForward.N();
-		vLightAngles=AnglesFromVector(vLightForward);
-		VectorsFromAngles(vLightAngles,NULL,&vLightRight,&vLightUp);
-
-		double dLightMinRigthAngle=0,dLightMaxRigthAngle=0;
-		double dLightMinUpAngle=0,dLightMaxUpAngle=0;
-		dLightNear=100000;
-		dLightFar=0;
-		CPlane forwardPlane(vLightForward,vLightPosition);
-		CPlane rightPlane(vLightRight,vLightPosition);
-		CPlane upPlane(vLightUp,vLightPosition);
-		for(int x=0;x<8;x++)
-		{
-			double dDistance=forwardPlane.GetSide(pVolumeToUse[x]);
-			double dRight=rightPlane.GetSide(pVolumeToUse[x])+m_dShadowAntiFlickeringMargin;
-			double dUp=upPlane.GetSide(pVolumeToUse[x])+m_dShadowAntiFlickeringMargin;
-			dLightNear=std::min(dLightNear,dDistance);
-			dLightFar=std::max(dLightFar,dDistance);
-
-			if(dDistance)
-			{
-				double dRightAngle=RadiansToDegrees(atan2(dRight,dDistance));
-				double dUpAngle=RadiansToDegrees(atan2(dUp,dDistance));
-				dLightMinRigthAngle=std::min(dLightMinRigthAngle,dRightAngle);
-				dLightMaxRigthAngle=std::max(dLightMaxRigthAngle,dRightAngle);
-				dLightMinUpAngle=std::min(dLightMinUpAngle,dUpAngle);
-				dLightMaxUpAngle=std::max(dLightMaxUpAngle,dUpAngle);
-			}
-		}
-		double dViewAngleRight=std::max(fabs(dLightMinRigthAngle),fabs(dLightMaxRigthAngle));
-		double dViewAngleUp=std::max(fabs(dLightMinUpAngle),fabs(dLightMaxUpAngle));
-	
-		dLightNear=std::min(dLightNear,m_dMinDistanceToLight);
-		if(dLightNear<1){dLightNear=1;}
-		if(dLightFar<1){dLightFar=1;}
-
-		double dLightViewAngle=std::max(dViewAngleRight,dViewAngleUp)*2.0;//dPreviousViewAngle*0.5;
-		double pLightModelViewMatrix[16];
-		
-		PushOptions();
-		m_sRenderOptions.bEnableHeightFog=false;
-
-		m_ShadowTexture.m_piTexture->StartRenderingToTexture();
-
-		unsigned dwWidth=0,dwHeight=0;
-		m_ShadowTexture.m_piTexture->GetSize(&dwWidth,&dwHeight);
-		SetViewport(0, 0, dwWidth, dwHeight);
-		SetPerspectiveProjection(dLightViewAngle,dLightNear,dLightFar);
-		SetCamera(vLightPosition,vLightAngles.c[YAW],vLightAngles.c[PITCH],vLightAngles.c[ROLL]);
-
-		CMatrix lightModelViewMatrix=m_ModelViewMatrix;
-		CMatrix lightProjectionMatrix=m_ProjectionMatrix;
-		
-		CalcCameraVolume(vLightPosition,vLightAngles,dLightViewAngle,1,dLightNear,dLightFar,pvLightVolume);
-
-		glClear(GL_DEPTH_BUFFER_BIT);
-
-		CGenericShaderWrapper *pPreviousShader=NULL;
-		if(m_ShadowShader.m_piShader)
-		{
-			pPreviousShader=m_pCurrentShader;
-			if(pPreviousShader){pPreviousShader->m_piShader->Deactivate();}
-			m_pCurrentShader=&m_ShadowShader;
-			m_ShadowShader.m_piShader->Activate();
-		}
-		RenderModelStages(true,false);
-		RenderModelStages(true,true);
-		if(m_ShadowShader.m_piShader){m_ShadowShader.m_piShader->Deactivate();}
-		if(pPreviousShader){pPreviousShader->m_piShader->Activate();m_pCurrentShader=pPreviousShader;}
-		
-		m_ShadowTexture.m_piTexture->StopRenderingToTexture();
-		PopOptions();
-
-		SetViewport(nPreviousViewportX, nPreviousViewportY,nPreviousViewportW, nPreviousViewportH);
-		SetPerspectiveProjection(dPreviousViewAngle,dPreviousNear,dPreviousFar);//m_dStagedRenderingMinZ>1.0?m_dStagedRenderingMinZ-1.0:m_dStagedRenderingMinZ,m_dStagedRenderingMaxZ+1.0);
-		SetCamera(vPreviousCameraPosition,vPreviousCameraAngles.c[YAW],vPreviousCameraAngles.c[PITCH],vPreviousCameraAngles.c[ROLL]);
-
-		// Se hace esto porque el inicio y fin del pintado a textura hace un push attrib y pop attrib
-		// ya que pueden estar en otro contexto de render dependiendo de la tecnica usada.
-		SetRenderState(m_sStagedRenderingState,eStateChange_Force);
-
-		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-
-		CMatrix biasMatrix;
-		biasMatrix.e[0][0]=0.5f;
-		biasMatrix.e[0][3]=0.5f;
-		biasMatrix.e[1][1]=0.5f;
-		biasMatrix.e[1][3]=0.5f;
-		biasMatrix.e[2][2]=0.5f;
-		biasMatrix.e[2][3]=0.5f;
-		biasMatrix.e[3][3]=1.0f;
-
-		CMatrix shadowMatrix;
-		shadowMatrix.T(Origin-m_vCameraForward);
-		shadowMatrix*=lightModelViewMatrix;
-		shadowMatrix*=lightProjectionMatrix;
-		shadowMatrix*=biasMatrix;
-		
-		m_ShadowTexture.m_piTexture->PrepareTexture(this,m_nShadowTextureLevel);
-		
-		for(iShader=m_mShaders.begin();iShader!=m_mShaders.end();iShader++)
-		{
-			if(iShader->first.bShadows)
-			{
-				iShader->second.m_piShader->AddUniform("uShadowMatrix",shadowMatrix,false);
-			}
-		}
-		if(m_sRenderOptions.bEnableStagedRenderingStats)
-		{
-			glFinish();
-			m_sStagedStats.nShadowTime=GetTimeStamp()-nShadowStart;
-		}
-		
-		if(m_piSkyShadow && m_sRenderOptions.bEnableSkyShadow){m_piSkyShadow->PrepareTexture(this,m_nSkyShadowTextureLevel);}
-		RenderAllStages(false,true);
-		
-		m_ShadowTexture.m_piTexture->UnprepareTexture(this,m_nShadowTextureLevel);
+		m_vLastShadowCameraTarget=vVolumeMidPoint;
+		m_vLastShadowCameraPosition=vLightPosition;
+		for(int x=0;x<8;x++){m_pvLastShadowVolume[x]=pvShadowVolume[x];}
 	}
 	else
 	{
-		if(m_piSkyShadow && m_sRenderOptions.bEnableSkyShadow){m_piSkyShadow->PrepareTexture(this,m_nSkyShadowTextureLevel);}
-		RenderAllStages(false,true);
+		vVolumeMidPoint=m_vLastShadowCameraTarget;
+		vLightPosition=m_vLastShadowCameraPosition;
+		for(int x=0;x<8;x++){pvShadowVolume[x]=m_pvLastShadowVolume[x];}
+	}
+	vLightForward=m_vLastShadowCameraTarget-vLightPosition;
+	vLightForward.N();
+	vLightAngles=AnglesFromVector(vLightForward);
+	VectorsFromAngles(vLightAngles,NULL,&vLightRight,&vLightUp);
+	
+	double dLightMinRigthAngle=0,dLightMaxRigthAngle=0;
+	double dLightMinUpAngle=0,dLightMaxUpAngle=0;
+	dLightNear=100000;
+	dLightFar=0;
+	CPlane forwardPlane(vLightForward,vLightPosition);
+	CPlane rightPlane(vLightRight,vLightPosition);
+	CPlane upPlane(vLightUp,vLightPosition);
+	for(int x=0;x<8;x++)
+	{
+		double dDistance=forwardPlane.GetSide(pVolumeToUse[x]);
+		double dRight=rightPlane.GetSide(pVolumeToUse[x])+m_dShadowAntiFlickeringMargin;
+		double dUp=upPlane.GetSide(pVolumeToUse[x])+m_dShadowAntiFlickeringMargin;
+		dLightNear=std::min(dLightNear,dDistance);
+		dLightFar=std::max(dLightFar,dDistance);
+		
+		if(dDistance)
+		{
+			double dRightAngle=RadiansToDegrees(atan2(dRight,dDistance));
+			double dUpAngle=RadiansToDegrees(atan2(dUp,dDistance));
+			dLightMinRigthAngle=std::min(dLightMinRigthAngle,dRightAngle);
+			dLightMaxRigthAngle=std::max(dLightMaxRigthAngle,dRightAngle);
+			dLightMinUpAngle=std::min(dLightMinUpAngle,dUpAngle);
+			dLightMaxUpAngle=std::max(dLightMaxUpAngle,dUpAngle);
+		}
+	}
+	double dViewAngleRight=std::max(fabs(dLightMinRigthAngle),fabs(dLightMaxRigthAngle));
+	double dViewAngleUp=std::max(fabs(dLightMinUpAngle),fabs(dLightMaxUpAngle));
+	
+	dLightNear=std::min(dLightNear,m_dMinDistanceToLight);
+	if(dLightNear<1){dLightNear=1;}
+	if(dLightFar<1){dLightFar=1;}
+	
+	double dLightViewAngle=std::max(dViewAngleRight,dViewAngleUp)*2.0;//dPreviousViewAngle*0.5;
+	double pLightModelViewMatrix[16];
+	
+	m_ShadowTexture.m_piTexture->StartRenderingToTexture();
+	
+	unsigned dwWidth=0,dwHeight=0;
+	m_ShadowTexture.m_piTexture->GetSize(&dwWidth,&dwHeight);
+	SetViewport(0, 0, dwWidth, dwHeight);
+	SetPerspectiveProjection(dLightViewAngle,dLightNear,dLightFar);
+	SetCamera(vLightPosition,vLightAngles.c[YAW],vLightAngles.c[PITCH],vLightAngles.c[ROLL]);
+	
+	CMatrix lightModelViewMatrix=m_ModelViewMatrix;
+	CMatrix lightProjectionMatrix=m_ProjectionMatrix;
+	
+	CalcCameraVolume(vLightPosition,vLightAngles,dLightViewAngle,1,dLightNear,dLightFar,pvLightVolume);
+	
+	glClear(GL_DEPTH_BUFFER_BIT);
+	
+	CGenericShaderWrapper *pPreviousShader=NULL;
+	if(m_ShadowShader.m_piShader)
+	{
+		pPreviousShader=m_pCurrentShader;
+		if(pPreviousShader){pPreviousShader->m_piShader->Deactivate();}
+		m_pCurrentShader=&m_ShadowShader;
+		m_ShadowShader.m_piShader->Activate();
+	}
+	RenderModelStages(true,false);
+	RenderModelStages(true,true);
+	if(m_ShadowShader.m_piShader){m_ShadowShader.m_piShader->Deactivate();}
+	if(pPreviousShader){pPreviousShader->m_piShader->Activate();m_pCurrentShader=pPreviousShader;}
+	
+	m_ShadowTexture.m_piTexture->StopRenderingToTexture();
+	
+	SetViewport(nPreviousViewportX, nPreviousViewportY,nPreviousViewportW, nPreviousViewportH);
+	SetPerspectiveProjection(dPreviousViewAngle,dPreviousNear,dPreviousFar);//m_dStagedRenderingMinZ>1.0?m_dStagedRenderingMinZ-1.0:m_dStagedRenderingMinZ,m_dStagedRenderingMaxZ+1.0);
+	SetCamera(vPreviousCameraPosition,vPreviousCameraAngles.c[YAW],vPreviousCameraAngles.c[PITCH],vPreviousCameraAngles.c[ROLL]);
+	
+	// Se hace esto porque el inicio y fin del pintado a textura hace un push attrib y pop attrib
+	// ya que pueden estar en otro contexto de render dependiendo de la tecnica usada.
+	SetRenderState(m_sStagedRenderingState,eStateChange_Force);
+	
+	CMatrix biasMatrix;
+	biasMatrix.e[0][0]=0.5f;
+	biasMatrix.e[0][3]=0.5f;
+	biasMatrix.e[1][1]=0.5f;
+	biasMatrix.e[1][3]=0.5f;
+	biasMatrix.e[2][2]=0.5f;
+	biasMatrix.e[2][3]=0.5f;
+	biasMatrix.e[3][3]=1.0f;
+	
+	CMatrix shadowMatrix;
+	shadowMatrix.T(Origin-m_vCameraForward);
+	shadowMatrix*=lightModelViewMatrix;
+	shadowMatrix*=lightProjectionMatrix;
+	shadowMatrix*=biasMatrix;
+	
+	m_ShadowTexture.m_piTexture->PrepareTexture(this,m_nShadowTextureLevel);
+	
+	std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader;
+	for(iShader=m_mShaders.begin();iShader!=m_mShaders.end();iShader++)
+	{
+		if(iShader->first.bShadows)
+		{
+			iShader->second.m_piShader->AddUniform("uShadowMatrix",shadowMatrix,false);
+		}
+	}
+	if(m_sRenderOptions.bEnableStagedRenderingStats)
+	{
+		glFinish();
+		m_sStagedStats.nShadowTime=GetTimeStamp()-nShadowStart;
+	}
+}
+
+void COpenGLRender::UnprepareSunShadows()
+{
+	if(m_ShadowTexture.m_piTexture){m_ShadowTexture.m_piTexture->UnprepareTexture(this,m_nShadowTextureLevel);}
+}
+#endif
+
+void COpenGLRender::EndStagedRendering()
+{
+	if(!m_bStagedRendering){return;}
+	
+	unsigned int nRenderStart=0;
+	float fCurrentTime=((double)(GetTimeStamp()-m_nFirstTimeStamp))*0.001;
+	
+	m_bStagedRendering=false;
+	
+	if(m_sRenderOptions.bEnableStagedRenderingStats){nRenderStart=GetTimeStamp();m_sStagedStats=SRenderStats();}
+
+	SetupLightsInShaders();
+	
+	std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader;
+	for(iShader=m_mShaders.begin();iShader!=m_mShaders.end();iShader++)
+	{
+		if(iShader->first.bSkyShadow){iShader->second.m_piShader->AddUniform("SkyData",CVector(fCurrentTime*m_dSKyShadowSpeed,m_dSKyShadowXResolution,m_dSKyShadowZResolution),m_dSKyShadowOpacity,false);}
+		if(iShader->first.bWater)    {iShader->second.m_piShader->AddUniform("CurrentRealTime",fCurrentTime,false);}
 	}
 
+	if(m_piSkyShadow && m_sRenderOptions.bEnableSkyShadow){m_piSkyShadow->PrepareTexture(this,m_nSkyShadowTextureLevel);}
+	
+	if(m_sRenderOptions.bEnableShadows){PrepareSunShadows();}
+	RenderAllStages(false,true);
+	if(m_sRenderOptions.bEnableShadows){UnprepareSunShadows();}
 	RenderAllStages(false,false);
+	
+	
+	if(m_piSkyShadow && m_sRenderOptions.bEnableSkyShadow){m_piSkyShadow->UnprepareTexture(this,m_nSkyShadowTextureLevel);}
 	
 	std::map<SModelStageKey,SModelStage>::iterator iModelStage;
 	for(iModelStage=m_mModelStages.begin();iModelStage!=m_mModelStages.end();iModelStage++)
@@ -2310,7 +2456,7 @@ void COpenGLRender::EndStagedRendering()
 	{
 		IGenericTexture *piTexture=iParticleStage->first.piTexture;
 		STextureParticleStage *pStage=&iParticleStage->second;
-
+		
 		for(unsigned int x=0;x<pStage->vBuffers.size();x++)
 		{
 			STextureParticleBuffer *pBuffer=pStage->vBuffers[x];
@@ -2338,13 +2484,12 @@ void COpenGLRender::EndStagedRendering()
 			delete pBuffer;
 		}
 	}
-	if(m_piSkyShadow && m_sRenderOptions.bEnableSkyShadow){m_piSkyShadow->UnprepareTexture(this,m_nSkyShadowTextureLevel);}
-	
+
 	m_mModelStages.clear();
 	m_mTextureParticleStages.clear();
 	m_mLineStages.clear();
 	m_mPointStages.clear();
-
+	
 	if(m_sRenderOptions.bEnableStagedRenderingStats)
 	{
 		glFinish();
@@ -2427,7 +2572,7 @@ void COpenGLRender::SetRenderState( const SRenderState &sNewState,EStateChangePo
 	}
 	if(bStateChange && m_sRenderOptions.bEnableStagedRenderingStats){m_sStagedStats.nStateChanges++;}
 	   
-	
+	   
 	if(eShader==eStateChange_UpdateShader)
 	{
 		SetCurrentRenderStateShader();
@@ -2436,6 +2581,7 @@ void COpenGLRender::SetRenderState( const SRenderState &sNewState,EStateChangePo
 
 void COpenGLRender::SetCurrentRenderStateShader()
 {
+#ifndef ANDROID_GLES1
 	bool bTempSkyShadow=m_piSkyShadow && m_piSkyShadow && m_sRenderOptions.bEnableSkyShadow && m_sRenderState.bActiveSkyShadow && m_sRenderState.bActiveShadowReception;
 	SShaderKey key(m_sRenderState.eShadingModel,m_sRenderState.bActiveHeightFog,m_sRenderOptions.bEnableShadows && m_bRenderingShadowReception,m_sRenderState.bActiveTextures && m_sRenderOptions.bEnableTextures?m_mTextureLevels.size():0,m_sRenderOptions.bEnableLighting && m_sRenderState.bActiveLighting,m_sRenderState.bActiveWater,m_sRenderOptions.bEnableNormalMaps && m_piNormalMap,bTempSkyShadow);
 	std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader=m_mShaders.find(key);
@@ -2464,6 +2610,7 @@ void COpenGLRender::SetCurrentRenderStateShader()
 			}
 		}
 	}
+#endif
 }
 
 void COpenGLRender::EnableNormalMaps()
@@ -2588,6 +2735,29 @@ void COpenGLRender::RenderModelStages(bool bRenderingShadow,bool bShadowReceptio
 					pStage->piGLModel->PrepareRenderBuffer(this,pKey->nAnimation,pKey->nFrame,nBuffer,bRenderingShadow,&m_RenderMappings);
 					if(!bRenderingShadow)
 					{
+#ifdef ANDROID_GLES1
+						CVector vAmbientColor,vDiffuseColor,vSpecularColor;
+						float fShininess,fOpacity;
+						float *pColors=NULL;
+						pStage->piModel->GetRenderBufferMaterial(pKey->nAnimation,pKey->nFrame,nBuffer,&vAmbientColor,&vDiffuseColor,&vSpecularColor, &fShininess, &fOpacity);
+						pStage->piModel->GetRenderBufferColors(pKey->nAnimation,pKey->nFrame,nBuffer,&pColors);
+						
+						if(pColors)
+						{
+							glEnable(GL_COLOR_MATERIAL);
+							glColorMaterial(GL_FRONT,GL_AMBIENT_AND_DIFFUSE);
+						}
+						else
+						{
+							GLfloat  pAmbient[]={(float)vAmbientColor.c[0],(float)vAmbientColor.c[1],(float)vAmbientColor.c[2],fOpacity};
+							GLfloat  pDiffuse[]={(float)vDiffuseColor.c[0],(float)vDiffuseColor.c[1],(float)vDiffuseColor.c[2],fOpacity};
+							glMaterialfv(GL_FRONT,GL_AMBIENT,pAmbient);
+							glMaterialfv(GL_FRONT,GL_DIFFUSE,pDiffuse);
+						}
+						GLfloat  pSpecular[]={(float)vSpecularColor.c[0],(float)vSpecularColor.c[1],(float)vSpecularColor.c[2],fOpacity};
+						glMaterialfv(GL_FRONT,GL_SPECULAR,pSpecular);
+						glMaterialf(GL_FRONT,GL_SHININESS,fShininess);
+#else
 						SetCurrentRenderStateShader();
 						
 						if(m_pCurrentShader)
@@ -2603,9 +2773,22 @@ void COpenGLRender::RenderModelStages(bool bRenderingShadow,bool bShadowReceptio
 							m_pCurrentShader->m_piShader->AddUniform("uMaterialDiffuse",vDiffuseColor,fOpacity,true);
 							m_pCurrentShader->m_piShader->AddUniform("uMaterialShininess",fShininess,true);
 						}
+#endif
 					}
 				}
 				
+		#ifdef ANDROID_GLES1
+
+				glPushMatrix();
+				glTranslatef(vPos.c[0],vPos.c[1],vPos.c[2]);
+				if(vAngles.c[YAW]){glRotatef(vAngles.c[YAW]	,0,1,0);}
+				if(vAngles.c[PITCH]){glRotatef(vAngles.c[PITCH]	,0,0,1);}
+				if(vAngles.c[ROLL]){glRotatef(vAngles.c[ROLL]	,1,0,0);}
+
+				pStage->piGLModel->CallRenderBuffer(this,pKey->nAnimation,pKey->nFrame,nBuffer,1);
+				glPopMatrix();
+				
+		#else
 				CMatrix m,tmp;
 				if(vAngles.c[ROLL]){tmp.R(AxisPosX,DegreesToRadians(vAngles.c[ROLL]));m*=tmp;}
 				if(vAngles.c[PITCH]){tmp.R(AxisPosZ,DegreesToRadians(vAngles.c[PITCH]));m*=tmp;}
@@ -2617,21 +2800,23 @@ void COpenGLRender::RenderModelStages(bool bRenderingShadow,bool bShadowReceptio
 				if(  m_sHardwareSupport.bObjectInstancing==false ||
 					(m_sHardwareSupport.bObjectInstancing==true  && nInstances==MAX_OBJECT_INSTANCES))
 				{
-					if(m_pCurrentShader)
-					{
-						m_pCurrentShader->m_piShader->AddUniformMatrixes("uModel",nInstances,fMatrixes,true);
-					}
+					if(m_pCurrentShader){m_pCurrentShader->m_piShader->AddUniformMatrixes("uModel",nInstances,fMatrixes,true);}
 					pStage->piGLModel->CallRenderBuffer(this,pKey->nAnimation,pKey->nFrame,nBuffer,nInstances);
-				
+					
 					nInstances=0;
 					pfMatrixes=fMatrixes;
 				}
+		#endif
 			}
+			
+		#ifndef ANDROID_GLES1
 			if(nInstances)
 			{
 				if(m_pCurrentShader){m_pCurrentShader->m_piShader->AddUniformMatrixes("uModel",nInstances,fMatrixes,true);}
 				pStage->piGLModel->CallRenderBuffer(this,pKey->nAnimation,pKey->nFrame,nBuffer,nInstances);
 			}
+		#endif
+
 			if(bRenderBufferPrepared)
 			{
 				pStage->piGLModel->UnPrepareRenderBuffer(this,pKey->nAnimation,pKey->nFrame,nBuffer,bRenderingShadow,&m_RenderMappings);
@@ -2644,8 +2829,6 @@ void COpenGLRender::RenderParticleStages(bool bRenderingShadow,bool bShadowRecep
 {
 	// Flush Texture Particles Stages.
 	if(!bRenderingShadow){glDepthMask(false);}
-	
-	glEnableVertexAttribArray(m_RenderMappings.pTextureAttribIndex[0]);
 
 	std::map<STextureParticleStageKey,STextureParticleStage>::iterator iParticleStage;
 	for(iParticleStage=m_mTextureParticleStages.begin();iParticleStage!=m_mTextureParticleStages.end();iParticleStage++)
@@ -2662,12 +2845,9 @@ void COpenGLRender::RenderParticleStages(bool bRenderingShadow,bool bShadowRecep
 
 		for(unsigned int x=0;x<pStage->vBuffers.size();x++)
 		{
-			
 			STextureParticleBuffer *pBuffer=pStage->vBuffers[x];
-			glVertexAttribPointer(m_RenderMappings.nVertexAttribIndex,3,GL_FLOAT,GL_FALSE,0,pBuffer->pVertexBuffer);
-			glVertexAttribPointer(m_RenderMappings.nColorAttribIndex,4,GL_FLOAT,GL_FALSE,0,pBuffer->pColorBuffer);
-			glVertexAttribPointer(m_RenderMappings.pTextureAttribIndex[0],2,GL_FLOAT,GL_FALSE,0,pBuffer->pTexBuffers);
-
+			float *pTexVertexBufferTemp=pBuffer->pTexBuffers;
+			SetVertexPointers(pBuffer->pVertexBuffer,NULL,pBuffer->pColorBuffer,1,&pTexVertexBufferTemp);
 			glDrawArrays(GL_TRIANGLES,0,pBuffer->nUsedElements*6);
 			if(!bRenderingShadow && m_sRenderOptions.bEnableStagedRenderingStats)
 			{
@@ -2680,7 +2860,6 @@ void COpenGLRender::RenderParticleStages(bool bRenderingShadow,bool bShadowRecep
 		}
 		if(piTexture){UnselectTexture(0);}
 	}
-	glDisableVertexAttribArray(m_RenderMappings.pTextureAttribIndex[0]);
 	if(!bRenderingShadow){glDepthMask(true);}
 }
 
@@ -2707,9 +2886,7 @@ void COpenGLRender::RenderLineStages(bool bRenderingShadow,bool bShadowReception
 		for(unsigned int x=0;x<pStage->vBuffers.size();x++)
 		{
 			SLineBuffer *pBuffer=pStage->vBuffers[x];
-			glVertexAttribPointer(m_RenderMappings.nVertexAttribIndex,3,GL_FLOAT,GL_FALSE,0,pBuffer->pVertexBuffer);
-			glVertexAttribPointer(m_RenderMappings.nColorAttribIndex,4,GL_FLOAT,GL_FALSE,0,pBuffer->pColorBuffer);
-
+			SetVertexPointers(pBuffer->pVertexBuffer,NULL,pBuffer->pColorBuffer,0,NULL);
 			glDrawArrays(GL_LINES,0,pBuffer->nUsedElements*2);
 			if(!bRenderingShadow && m_sRenderOptions.bEnableStagedRenderingStats)
 			{
@@ -2736,14 +2913,13 @@ void COpenGLRender::RenderPointStages(bool bRenderingShadow,bool bShadowReceptio
 		if(bShadowReceptionState!=pKey->sRenderState.bActiveShadowReception){continue;}
 
 		SetRenderState(pKey->sRenderState,eStateChange_Incremental);
-#ifndef TEMP_DISABLED
+#ifndef ANDROID
 		glPointSize((float)pKey->dSize);
 #endif
 		for(unsigned int x=0;x<pStage->vBuffers.size();x++)
 		{
 			SPointBuffer *pBuffer=pStage->vBuffers[x];
-			glVertexAttribPointer(m_RenderMappings.nVertexAttribIndex,3,GL_FLOAT,GL_FALSE,0,pBuffer->pVertexBuffer);
-			glVertexAttribPointer(m_RenderMappings.nColorAttribIndex,4,GL_FLOAT,GL_FALSE,0,pBuffer->pColorBuffer);
+			SetVertexPointers(pBuffer->pVertexBuffer,NULL,pBuffer->pColorBuffer,0,NULL);
 
 			glDrawArrays(GL_POINTS,0,pBuffer->nUsedElements);
 			if(!bRenderingShadow && m_sRenderOptions.bEnableStagedRenderingStats)
@@ -2756,28 +2932,157 @@ void COpenGLRender::RenderPointStages(bool bRenderingShadow,bool bShadowReceptio
 	}
 }
 
+void COpenGLRender::SetVertexBufferObject(SVertexBufferObject *pVBO)
+{
+	if(pVBO==NULL)
+	{
+		glBindBuffer(GL_ARRAY_BUFFER,0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
+		return;
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER,pVBO->nBufferObject);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,pVBO->nIndexesBufferObject);
+	
+#ifdef ANDROID_GLES1 
+
+	if(!m_sBufferState.bVertexBufferEnabled && pVBO->nVertexOffset!=-1)     {glEnableClientState(GL_VERTEX_ARRAY);m_sBufferState.bVertexBufferEnabled=true;}
+	else if(m_sBufferState.bVertexBufferEnabled && !pVBO->nVertexOffset==-1){glDisableClientState(GL_VERTEX_ARRAY);m_sBufferState.bVertexBufferEnabled=false;}
+	
+	if(!m_sBufferState.bColorBufferEnabled && pVBO->nColorOffset!=-1)     {glEnableClientState(GL_COLOR_ARRAY);m_sBufferState.bColorBufferEnabled=true;}
+	else if(m_sBufferState.bColorBufferEnabled && !pVBO->nColorOffset==-1){glDisableClientState(GL_COLOR_ARRAY);m_sBufferState.bColorBufferEnabled=false;}
+	
+	if(!m_sBufferState.bNormalBufferEnabled && pVBO->nNormalOffset!=-1)     {glEnableClientState(GL_NORMAL_ARRAY);m_sBufferState.bNormalBufferEnabled=true;}
+	else if(m_sBufferState.bNormalBufferEnabled && !pVBO->nNormalOffset==-1){glDisableClientState(GL_NORMAL_ARRAY);m_sBufferState.bNormalBufferEnabled=false;}
+	
+	if(pVBO->nVertexOffset!=-1){glVertexPointer(3,GL_FLOAT,0,(void*)pVBO->nVertexOffset);}
+	if(pVBO->nColorOffset!=-1){glColorPointer(4,GL_FLOAT,0,(void*)pVBO->nColorOffset);}
+	if(pVBO->nNormalOffset!=-1){glNormalPointer(GL_FLOAT,0,(void*)pVBO->nNormalOffset);}
+	
+	for(int x=0;x<MAX_OPENGL_TEXTURE_COORDS;x++)
+	{
+		bool bEnable=(x<pVBO->nTextures && pVBO->pTexOffsets[x]!=-1);
+		if(bEnable!=m_sBufferState.pbTexCoordEnabled[x])        {glClientActiveTextureARB(GL_TEXTURE0_ARB+x);}
+		if(!m_sBufferState.pbTexCoordEnabled[x] && bEnable)     {glEnableClientState(GL_TEXTURE_COORD_ARRAY);m_sBufferState.pbTexCoordEnabled[x]=true;}
+		else if(m_sBufferState.pbTexCoordEnabled[x] && !bEnable){glDisableClientState(GL_TEXTURE_COORD_ARRAY);m_sBufferState.pbTexCoordEnabled[x]=false;}
+		if(bEnable){glTexCoordPointer(2,GL_FLOAT,0,(void*)pVBO->pTexOffsets[x]);}
+	}
+#else
+	
+	if(!m_sBufferState.bVertexBufferEnabled && pVBO->nVertexOffset!=-1)     {glEnableVertexAttribArray(m_RenderMappings.nVertexAttribIndex);m_sBufferState.bVertexBufferEnabled=true;}
+	else if(m_sBufferState.bVertexBufferEnabled && pVBO->nVertexOffset==-1){glDisableVertexAttribArray(m_RenderMappings.nVertexAttribIndex);m_sBufferState.bVertexBufferEnabled=false;}
+	
+	if(!m_sBufferState.bColorBufferEnabled && pVBO->nColorOffset!=-1)     {glEnableVertexAttribArray(m_RenderMappings.nColorAttribIndex);m_sBufferState.bColorBufferEnabled=true;}
+	else if(m_sBufferState.bColorBufferEnabled && pVBO->nColorOffset==-1){glDisableVertexAttribArray(m_RenderMappings.nColorAttribIndex);m_sBufferState.bColorBufferEnabled=false;}
+	
+	if(!m_sBufferState.bNormalBufferEnabled && pVBO->nNormalOffset!=-1)     {glEnableVertexAttribArray(m_RenderMappings.nNormalAttribIndex);m_sBufferState.bNormalBufferEnabled=true;}
+	else if(m_sBufferState.bNormalBufferEnabled && pVBO->nNormalOffset==-1){glDisableVertexAttribArray(m_RenderMappings.nNormalAttribIndex);m_sBufferState.bNormalBufferEnabled=false;}
+	
+	if(!m_sBufferState.bNormalMapBufferEnabled && pVBO->nNormalMapOffset!=-1)     {glEnableVertexAttribArray(m_RenderMappings.nNormalMapCoordAttribIndex);m_sBufferState.bNormalMapBufferEnabled=true;}
+	else if(m_sBufferState.bNormalMapBufferEnabled && pVBO->nNormalMapOffset==-1){glDisableVertexAttribArray(m_RenderMappings.nNormalMapCoordAttribIndex);m_sBufferState.bNormalMapBufferEnabled=false;}
+	
+	if(!m_sBufferState.bTangentBufferEnabled && pVBO->nTangentOffset!=-1)     {glEnableVertexAttribArray(m_RenderMappings.nTangentAttribIndex);m_sBufferState.bTangentBufferEnabled=true;}
+	else if(m_sBufferState.bTangentBufferEnabled && pVBO->nTangentOffset==-1){glDisableVertexAttribArray(m_RenderMappings.nTangentAttribIndex);m_sBufferState.bTangentBufferEnabled=false;}
+	
+	if(!m_sBufferState.bBitangentBufferEnabled && pVBO->nBitangentOffset!=-1)     {glEnableVertexAttribArray(m_RenderMappings.nBitangentAttribIndex);m_sBufferState.bBitangentBufferEnabled=true;}
+	else if(m_sBufferState.bBitangentBufferEnabled && pVBO->nBitangentOffset==-1){glDisableVertexAttribArray(m_RenderMappings.nBitangentAttribIndex);m_sBufferState.bBitangentBufferEnabled=false;}
+	
+	if(pVBO->nVertexOffset!=-1){glVertexAttribPointer(m_RenderMappings.nVertexAttribIndex,3,GL_FLOAT,GL_FALSE,0,(void*)pVBO->nVertexOffset);}
+	if(pVBO->nColorOffset!=-1){glVertexAttribPointer(m_RenderMappings.nColorAttribIndex,4,GL_FLOAT,GL_FALSE,0,(void*)pVBO->nColorOffset);}
+	if(pVBO->nNormalOffset!=-1){glVertexAttribPointer(m_RenderMappings.nNormalAttribIndex,3,GL_FLOAT,GL_FALSE,0,(void*)pVBO->nNormalOffset);}
+	if(pVBO->nNormalMapOffset!=-1){glVertexAttribPointer(m_RenderMappings.nNormalMapCoordAttribIndex,2,GL_FLOAT,GL_FALSE,0,(void*)pVBO->nNormalMapOffset);}
+	if(pVBO->nTangentOffset!=-1){glVertexAttribPointer(m_RenderMappings.nTangentAttribIndex,3,GL_FLOAT,GL_FALSE,0,(void*)pVBO->nTangentOffset);}
+	if(pVBO->nBitangentOffset!=-1){glVertexAttribPointer(m_RenderMappings.nBitangentAttribIndex,3,GL_FLOAT,GL_FALSE,0,(void*)pVBO->nBitangentOffset);}
+	
+	for(int x=0;x<MAX_OPENGL_TEXTURE_COORDS;x++)
+	{
+		bool bEnable=(x<pVBO->nTextures && pVBO->pTexOffsets[x]!=-1);
+		if(!m_sBufferState.pbTexCoordEnabled[x] && bEnable)    {glEnableVertexAttribArray(m_RenderMappings.pTextureAttribIndex[x]);m_sBufferState.pbTexCoordEnabled[x]=true;}
+		else if(m_sBufferState.pbTexCoordEnabled[x] && !bEnable){glDisableVertexAttribArray(m_RenderMappings.pTextureAttribIndex[x]);m_sBufferState.pbTexCoordEnabled[x]=false;}
+		
+		if(bEnable){glVertexAttribPointer(m_RenderMappings.pTextureAttribIndex[x],2,GL_FLOAT,GL_FALSE,0,(void*)pVBO->pTexOffsets[x]);}
+	}
+#endif
+}
+
+void COpenGLRender::SetVertexPointers(float *pVertex,float *pNormal,float *pColor,int nTex,float **pTex, float *pNormalMap,float *pTangent,float *pBiTangent)
+{
+#ifdef ANDROID_GLES1 
+	if(!m_sBufferState.bVertexBufferEnabled && pVertex)     {glEnableClientState(GL_VERTEX_ARRAY);m_sBufferState.bVertexBufferEnabled=true;}
+	else if(m_sBufferState.bVertexBufferEnabled && !pVertex){glDisableClientState(GL_VERTEX_ARRAY);m_sBufferState.bVertexBufferEnabled=false;}
+
+	if(!m_sBufferState.bColorBufferEnabled && pColor)     {glEnableClientState(GL_COLOR_ARRAY);m_sBufferState.bColorBufferEnabled=true;}
+	else if(m_sBufferState.bColorBufferEnabled && !pColor){glDisableClientState(GL_COLOR_ARRAY);m_sBufferState.bColorBufferEnabled=false;}
+
+	if(!m_sBufferState.bNormalBufferEnabled && pNormal)     {glEnableClientState(GL_NORMAL_ARRAY);m_sBufferState.bNormalBufferEnabled=true;}
+	else if(m_sBufferState.bNormalBufferEnabled && !pNormal){glDisableClientState(GL_NORMAL_ARRAY);m_sBufferState.bNormalBufferEnabled=false;}
+
+	if(pVertex){glVertexPointer(3,GL_FLOAT,0,pVertex);}
+	if(pColor){glColorPointer(4,GL_FLOAT,0,pColor);}
+	if(pNormal){glNormalPointer(GL_FLOAT,0,pNormal);}
+	for(int x=0;x<nTex;x++)
+	{
+		bool bEnable=(x<nTex && pTex[x]!=NULL);
+		
+		if(bEnable!=m_sBufferState.pbTexCoordEnabled[x])        {glClientActiveTextureARB(GL_TEXTURE0_ARB+x);}
+		if(!m_sBufferState.pbTexCoordEnabled[x] && bEnable)     {glEnableClientState(GL_TEXTURE_COORD_ARRAY);m_sBufferState.pbTexCoordEnabled[x]=true;}
+		else if(m_sBufferState.pbTexCoordEnabled[x] && !bEnable){glDisableClientState(GL_TEXTURE_COORD_ARRAY);m_sBufferState.pbTexCoordEnabled[x]=false;}
+		if(bEnable){glTexCoordPointer(2,GL_FLOAT,0,pTex[x]);}
+	}
+#else
+
+	if(!m_sBufferState.bVertexBufferEnabled && pVertex)     {glEnableVertexAttribArray(m_RenderMappings.nVertexAttribIndex);m_sBufferState.bVertexBufferEnabled=true;}
+	else if(m_sBufferState.bVertexBufferEnabled && !pVertex){glDisableVertexAttribArray(m_RenderMappings.nVertexAttribIndex);m_sBufferState.bVertexBufferEnabled=false;}
+
+	if(!m_sBufferState.bColorBufferEnabled && pColor)     {glEnableVertexAttribArray(m_RenderMappings.nColorAttribIndex);m_sBufferState.bColorBufferEnabled=true;}
+	else if(m_sBufferState.bColorBufferEnabled && !pColor){glDisableVertexAttribArray(m_RenderMappings.nColorAttribIndex);m_sBufferState.bColorBufferEnabled=false;}
+
+	if(!m_sBufferState.bNormalBufferEnabled && pNormal)     {glEnableVertexAttribArray(m_RenderMappings.nNormalAttribIndex);m_sBufferState.bNormalBufferEnabled=true;}
+	else if(m_sBufferState.bNormalBufferEnabled && !pNormal){glDisableVertexAttribArray(m_RenderMappings.nNormalAttribIndex);m_sBufferState.bNormalBufferEnabled=false;}
+
+	if(!m_sBufferState.bNormalMapBufferEnabled && pNormalMap)     {glEnableVertexAttribArray(m_RenderMappings.nNormalMapCoordAttribIndex);m_sBufferState.bNormalMapBufferEnabled=true;}
+	else if(m_sBufferState.bNormalMapBufferEnabled && !pNormalMap){glDisableVertexAttribArray(m_RenderMappings.nNormalMapCoordAttribIndex);m_sBufferState.bNormalMapBufferEnabled=false;}
+	
+	if(!m_sBufferState.bTangentBufferEnabled && pTangent)     {glEnableVertexAttribArray(m_RenderMappings.nTangentAttribIndex);m_sBufferState.bTangentBufferEnabled=true;}
+	else if(m_sBufferState.bTangentBufferEnabled && !pTangent){glDisableVertexAttribArray(m_RenderMappings.nTangentAttribIndex);m_sBufferState.bTangentBufferEnabled=false;}
+	
+	if(!m_sBufferState.bBitangentBufferEnabled && pBiTangent)     {glEnableVertexAttribArray(m_RenderMappings.nBitangentAttribIndex);m_sBufferState.bBitangentBufferEnabled=true;}
+	else if(m_sBufferState.bBitangentBufferEnabled && !pBiTangent){glDisableVertexAttribArray(m_RenderMappings.nBitangentAttribIndex);m_sBufferState.bBitangentBufferEnabled=false;}
+	
+	if(pVertex){glVertexAttribPointer(m_RenderMappings.nVertexAttribIndex,3,GL_FLOAT,GL_FALSE,0,pVertex);}
+	if(pColor){glVertexAttribPointer(m_RenderMappings.nColorAttribIndex,4,GL_FLOAT,GL_FALSE,0,pColor);}
+	if(pNormal){glVertexAttribPointer(m_RenderMappings.nNormalAttribIndex,3,GL_FLOAT,GL_FALSE,0,pNormal);}
+	if(pNormalMap){glVertexAttribPointer(m_RenderMappings.nNormalMapCoordAttribIndex,2,GL_FLOAT,GL_FALSE,0,pNormalMap);}
+	if(pTangent){glVertexAttribPointer(m_RenderMappings.nTangentAttribIndex,3,GL_FLOAT,GL_FALSE,0,pTangent);}
+	if(pBiTangent){glVertexAttribPointer(m_RenderMappings.nBitangentAttribIndex,3,GL_FLOAT,GL_FALSE,0,pBiTangent);}
+
+	for(int x=0;x<MAX_OPENGL_TEXTURE_COORDS;x++)
+	{
+		bool bEnable=(x<nTex && pTex[x]!=NULL);
+		if(!m_sBufferState.pbTexCoordEnabled[x] && bEnable)    {glEnableVertexAttribArray(m_RenderMappings.pTextureAttribIndex[x]);m_sBufferState.pbTexCoordEnabled[x]=true;}
+		else if(m_sBufferState.pbTexCoordEnabled[x] && !bEnable){glDisableVertexAttribArray(m_RenderMappings.pTextureAttribIndex[x]);m_sBufferState.pbTexCoordEnabled[x]=false;}
+		
+		if(bEnable){glVertexAttribPointer(m_RenderMappings.pTextureAttribIndex[x],2,GL_FLOAT,GL_FALSE,0,pTex[x]);}
+	}
+#endif
+}
+
 void COpenGLRender::RenderAllStages(bool bRenderingShadow,bool bShadowReceptionState)
 {
 	m_bRenderingShadowReception=bShadowReceptionState;
 	RenderModelStages(bRenderingShadow,bShadowReceptionState);
-	glEnableVertexAttribArray(m_RenderMappings.nVertexAttribIndex);
-	glEnableVertexAttribArray(m_RenderMappings.nColorAttribIndex);
-	
 	CMatrix identity;
 	std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader;
 	for(iShader=m_mShaders.begin();iShader!=m_mShaders.end();iShader++)
 	{
 		iShader->second.m_piShader->AddUniform("uModel",identity,false);
 	}
-	
 	RenderParticleStages(bRenderingShadow,bShadowReceptionState);
 	RenderLineStages(bRenderingShadow,bShadowReceptionState);
 	RenderPointStages(bRenderingShadow,bShadowReceptionState);
-	
-	glDisableVertexAttribArray(m_RenderMappings.nVertexAttribIndex);
-	glDisableVertexAttribArray(m_RenderMappings.nColorAttribIndex);
 	m_bRenderingShadowReception=false;
 }
+
 
 void COpenGLRender::SetAmbientLight( const CVector &vColor ){m_vAmbientColor=vColor;}
 void COpenGLRender::GetAmbientLight( CVector *pvColor ){if(pvColor){*pvColor=m_vAmbientColor;}}
@@ -2925,18 +3230,18 @@ void COpenGLRender::AddShader( const SShaderKey &key )
 	CGenericShaderWrapper wrapper;
 	if(wrapper.Create(m_piSystem,"Shader",""))
 	{
-/*		if(key.eShadingModel==eShadingModel_Gouraud)
+		/*		if(key.eShadingModel==eShadingModel_Gouraud)
 		{
 			wrapper.m_piShader->Load("Shaders/RenderShader-Gouraud-Vertex.c","Shaders/RenderShader-Gouraud-Fragment.c",sPreprocessor);
-		}
-		else if(key.eShadingModel==eShadingModel_Balanced)
-		{
-			wrapper.m_piShader->Load("Shaders/RenderShader-Balanced-Vertex.c","Shaders/RenderShader-Balanced-Fragment.c",sPreprocessor);
-		}
-		else if(key.eShadingModel==eShadingModel_Phong)
-		{*/
-			wrapper.m_piShader->Load("Shaders/RenderShader-Phong-Vertex.c","Shaders/RenderShader-Phong-Fragment.c",sPreprocessor);
-		//}
+		 }
+		 else if(key.eShadingModel==eShadingModel_Balanced)
+		 {
+			 wrapper.m_piShader->Load("Shaders/RenderShader-Balanced-Vertex.c","Shaders/RenderShader-Balanced-Fragment.c",sPreprocessor);
+		 }
+		 else if(key.eShadingModel==eShadingModel_Phong)
+		 {*/
+		wrapper.m_piShader->Load("Shaders/RenderShader-Phong-Vertex.c","Shaders/RenderShader-Phong-Fragment.c",sPreprocessor);
+	//}
 		
 		if(key.nTextureUnits>=1){wrapper.m_piShader->AddUniform("Texture0",(int)0,false);wrapper.m_piShader->AddUniform("uTexMatrix0",identity,false);}
 		if(key.nTextureUnits>=2){wrapper.m_piShader->AddUniform("Texture1",(int)1,false);wrapper.m_piShader->AddUniform("uTexMatrix1",identity,false);}
@@ -2957,7 +3262,7 @@ void COpenGLRender::AddShader( const SShaderKey &key )
 		m_mShaders[key]=wrapper;
 	}
 }
-
+	
 void COpenGLRender::StartSelection(SGameRect rWindowRect,IGenericCamera *piCamera,double dx,double dy,double dPrecision)
 {
 #ifndef TEMP_DISABLED
@@ -3041,6 +3346,7 @@ int COpenGLRender::EndSelection()
 
 void COpenGLRender::ReloadShaders()
 {
+#ifndef ANDROID_GLES1
 	m_pCurrentShader=NULL;
 	
 	std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader;
@@ -3055,4 +3361,5 @@ void COpenGLRender::ReloadShaders()
 		m_ShadowShader.m_piShader->Load("Shaders/ShadowBufferShader-Vertex.c","Shaders/ShadowBufferShader-Fragment.c","");
 		m_ShadowShader.m_piShader->Compile();
 	}
+#endif
 }

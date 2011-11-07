@@ -251,14 +251,6 @@ std::string GetFileName(std::string sFilePath)
 	return sFileName;
 }
 
-
-unsigned int GetTimeStamp()
-{
-	timeval tNow;
-	gettimeofday(&tNow, NULL);
-	return ((double)tNow.tv_sec)*1000.0+((double)tNow.tv_usec)/1000.0;
-}
-
 std::string GetWorkingFolder()
 {
 	char sCurrentPath[MAX_PATH]={0};
@@ -306,6 +298,14 @@ void RTTRACE(const char *format, ...)
 	
 	__android_log_print(ANDROID_LOG_INFO, "FrikingShark",pTempBuffer);
 }
+
+unsigned int GetTimeStamp()
+{
+	struct timespec now;
+	clock_gettime(CLOCK_MONOTONIC, &now);
+	return now.tv_sec*1000L + now.tv_nsec/1000000L;
+}
+
 #elif defined LINUX
 void RTTRACE(const char *format, ...)
 {
@@ -319,6 +319,12 @@ void RTTRACE(const char *format, ...)
 	pTempBuffer[res]='\n';
 	pTempBuffer[res+1]=0;
 	printf("%s",pTempBuffer);
+}
+unsigned int GetTimeStamp()
+{
+	timeval tNow;
+	gettimeofday(&tNow, NULL);
+	return ((double)tNow.tv_sec)*1000.0+((double)tNow.tv_usec)/1000.0;
 }
 #endif
 

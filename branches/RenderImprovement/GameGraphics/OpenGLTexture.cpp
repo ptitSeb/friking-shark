@@ -139,7 +139,7 @@ void COpenGLTexture::Clear()
 		delete [] m_pBuffer;
 		m_pBuffer=NULL;
 	}
-	
+#ifndef ANDROID_GLES1
 	if(m_nFrameBuffer)
 	{
 		glDeleteFramebuffersEXT(1,&m_nFrameBuffer);
@@ -150,6 +150,7 @@ void COpenGLTexture::Clear()
 		glDeleteRenderbuffersEXT(1,&m_nFrameBufferDepth);
 		m_nFrameBufferDepth=0;
 	}
+#endif
 	if(m_nTextureIndex)
 	{
 		glDeleteTextures(1,&m_nTextureIndex);
@@ -253,13 +254,17 @@ bool COpenGLTexture::LoadFromFile()
 		if(m_nTextureIndex)
 		{
 			glBindTexture(GL_TEXTURE_2D,m_nTextureIndex);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_bGenerateMipMaps?GL_NEAREST_MIPMAP_LINEAR:GL_NEAREST);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_bGenerateMipMaps?GL_LINEAR:GL_NEAREST);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 #ifdef ANDROID
-			glTexImage2D(GL_TEXTURE_2D, 0, m_dwColorType==GL_RGBA?4:3, m_dwWidth,m_dwHeight, 0,m_dwColorType, GL_UNSIGNED_BYTE, m_pBuffer);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_bGenerateMipMaps?GL_LINEAR:GL_NEAREST);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_bGenerateMipMaps?GL_LINEAR:GL_NEAREST);
+			glTexImage2D(GL_TEXTURE_2D, 0, m_dwColorType, m_dwWidth,m_dwHeight, 0,m_dwColorType, GL_UNSIGNED_BYTE, m_pBuffer);
+			int error=glGetError();
+			if(error!=GL_NO_ERROR){RTTRACE("COpenGLTexture::LoadFromFile -> glTexImage2D, error for %s: %d",m_sFileName.c_str(),error);}
 #else
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_bGenerateMipMaps?GL_NEAREST_MIPMAP_LINEAR:GL_NEAREST);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_bGenerateMipMaps?GL_LINEAR:GL_NEAREST);
 			if(m_bGenerateMipMaps)
 			{
 				gluBuild2DMipmaps(GL_TEXTURE_2D,m_dwColorType==GL_RGBA?4:3,m_dwWidth,m_dwHeight,m_dwColorType,GL_UNSIGNED_BYTE,m_pBuffer);
@@ -270,7 +275,7 @@ bool COpenGLTexture::LoadFromFile()
 				glTexImage2D(GL_TEXTURE_2D, 0, m_dwColorType==GL_RGBA?4:3, m_dwWidth,m_dwHeight, 0,m_dwColorType, GL_UNSIGNED_BYTE, m_pBuffer);
 			}
 #endif
-			RTTRACE("COpenGLTexture::LoadFromFile -> Loaded texture %s (%d ms)",m_sFileName.c_str(),GetTimeStamp()-nStartTime);
+			RTTRACE("COpenGLTexture::LoadFromFile -> Loaded texture %s-id %d, %dx%d (%d ms)",m_sFileName.c_str(),m_nTextureIndex,m_dwWidth,m_dwHeight,GetTimeStamp()-nStartTime);
 		}
 		else
 		{
@@ -348,6 +353,9 @@ double COpenGLTexture::GetPixelAlpha( unsigned long x, unsigned long y )
 bool COpenGLTexture::CreateFrameBuffer(bool bDepth)
 {
 	// FrameBuffer Implementation
+#ifdef ANDROID_GLES1
+	return false;
+#else
 	
 	glGenTextures(1,&m_nTextureIndex);
 	if(m_nTextureIndex==0){RTTRACE("COpenGLTexture::CreateFrameBuffer -> Failed to create texture id for frame buffer object");}
@@ -413,6 +421,7 @@ bool COpenGLTexture::CreateFrameBuffer(bool bDepth)
 		RTTRACE("COpenGLTexture::CreateFrameBuffer -> Failed to create frame buffer object");
 		return false;
 	}
+#endif
 }
 
 
@@ -459,6 +468,7 @@ bool COpenGLTexture::CreateDepth( unsigned nWidth,unsigned nHeight,IGenericViewp
 
 bool COpenGLTexture::StartRenderingToTexture()
 {
+#ifndef ANDROID_GLES1
 	// FrameBuffer Implementation
 	if(m_nFrameBuffer)
 	{
@@ -472,12 +482,13 @@ bool COpenGLTexture::StartRenderingToTexture()
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,m_nFrameBufferDepth);
 		return true;
 	}
-	
+#endif
 	return false;
 }
 void COpenGLTexture::StopRenderingToTexture()
 {
 	// FrameBuffer Implementation
+#ifndef ANDROID_GLES1
 	if(m_nFrameBuffer)
 	{
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,0);
@@ -486,23 +497,15 @@ void COpenGLTexture::StopRenderingToTexture()
 	{
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,0);
 	}
+#endif
 }
 
 bool COpenGLTexture::PrepareTexture(IGenericRender *piRender,int nTextureLevel)
 {
-	if(m_nFrameBuffer)
+	if(m_nTextureIndex)
 	{
 		glActiveTexture(GL_TEXTURE0_ARB+nTextureLevel);
-		glBindTexture(GL_TEXTURE_2D,m_nTextureIndex);
-	}
-	else if(m_nFrameBufferDepth)
-	{
-		glActiveTexture(GL_TEXTURE0_ARB+nTextureLevel);
-		glBindTexture(GL_TEXTURE_2D,m_nTextureIndex);
-	}
-	else
-	{
-		glActiveTexture(GL_TEXTURE0_ARB+nTextureLevel);
+		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D,m_nTextureIndex);
 	}
 	return true;
@@ -510,19 +513,10 @@ bool COpenGLTexture::PrepareTexture(IGenericRender *piRender,int nTextureLevel)
 
 void COpenGLTexture::UnprepareTexture(IGenericRender *piRender,int nTextureLevel)
 {
-	if(m_nFrameBuffer)
+	if(m_nTextureIndex)
 	{
 		glActiveTexture(GL_TEXTURE0_ARB+nTextureLevel);
 		glBindTexture(GL_TEXTURE_2D,0);
-	}
-	else if(m_nFrameBufferDepth)
-	{
-		glActiveTexture(GL_TEXTURE0_ARB+nTextureLevel);
-		glBindTexture(GL_TEXTURE_2D,0);
-	}
-	else
-	{
-		glActiveTexture(GL_TEXTURE0_ARB+nTextureLevel);
-		glBindTexture(GL_TEXTURE_2D,m_nTextureIndex);
+		glDisable(GL_TEXTURE_2D);
 	}
 }

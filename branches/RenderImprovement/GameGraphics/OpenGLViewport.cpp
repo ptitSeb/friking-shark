@@ -426,6 +426,198 @@ int COpenGLViewport::CustomXIOErrorHandler( Display*)
   return 0;
 }
 
+#elif defined ANDROID
+
+int TranslateKeyFromAndroid(int nAndroidKey)
+{
+	switch(nAndroidKey)
+	{
+		case AKEYCODE_HOME:return GK_HOME;
+		case AKEYCODE_BACK:return GK_ESCAPE;
+		case AKEYCODE_CALL:return GK_RETURN;
+		case AKEYCODE_ENDCALL:return GK_ESCAPE;
+		case AKEYCODE_0:return GK_NUMPAD0;
+		case AKEYCODE_1:return GK_NUMPAD1;
+		case AKEYCODE_2:return GK_NUMPAD2;
+		case AKEYCODE_3:return GK_NUMPAD3;
+		case AKEYCODE_4:return GK_NUMPAD4;
+		case AKEYCODE_5:return GK_NUMPAD5;
+		case AKEYCODE_6:return GK_NUMPAD6;
+		case AKEYCODE_7:return GK_NUMPAD7;
+		case AKEYCODE_8:return GK_NUMPAD8;
+		case AKEYCODE_9:return GK_NUMPAD9;
+		case AKEYCODE_STAR:return GK_MULTIPLY;
+		case AKEYCODE_POUND:return 0;
+		case AKEYCODE_DPAD_UP:return GK_UP;
+		case AKEYCODE_DPAD_DOWN:return GK_DOWN;
+		case AKEYCODE_DPAD_LEFT:return GK_LEFT;
+		case AKEYCODE_DPAD_RIGHT:return GK_RIGHT;
+		case AKEYCODE_DPAD_CENTER:return 0;
+		case AKEYCODE_VOLUME_UP:return 0;
+		case AKEYCODE_VOLUME_DOWN:return 0;
+		case AKEYCODE_POWER:return 0;
+		case AKEYCODE_CAMERA:return 0;
+		case AKEYCODE_CLEAR:return 0;
+		case AKEYCODE_A:return 'a';
+		case AKEYCODE_B:return 'b';
+		case AKEYCODE_C:return 'c';
+		case AKEYCODE_D:return 'd';
+		case AKEYCODE_E:return 'e';
+		case AKEYCODE_F:return 'f';
+		case AKEYCODE_G:return 'g';
+		case AKEYCODE_H:return 'h';
+		case AKEYCODE_I:return 'i';
+		case AKEYCODE_J:return 'j';
+		case AKEYCODE_K:return 'k';
+		case AKEYCODE_L:return 'l';
+		case AKEYCODE_M:return 'm';
+		case AKEYCODE_N:return 'n';
+		case AKEYCODE_O:return 'o';
+		case AKEYCODE_P:return 'p';
+		case AKEYCODE_Q:return 'q';
+		case AKEYCODE_R:return 'r';
+		case AKEYCODE_S:return 's';
+		case AKEYCODE_T:return 't';
+		case AKEYCODE_U:return 'u';
+		case AKEYCODE_V:return 'v';
+		case AKEYCODE_W:return 'w';
+		case AKEYCODE_X:return 'x';
+		case AKEYCODE_Y:return 'y';
+		case AKEYCODE_Z:return 'z';
+		case AKEYCODE_COMMA:return ',';
+		case AKEYCODE_PERIOD:return '.';
+		case AKEYCODE_ALT_LEFT:return GK_LMENU;
+		case AKEYCODE_ALT_RIGHT:return GK_RMENU;
+		case AKEYCODE_SHIFT_LEFT:return GK_LSHIFT;
+		case AKEYCODE_SHIFT_RIGHT:return GK_RSHIFT;
+		case AKEYCODE_TAB:return '\t';
+		case AKEYCODE_SPACE:return ' ';
+		case AKEYCODE_SYM:return 0;
+		case AKEYCODE_EXPLORER:return 0;
+		case AKEYCODE_ENVELOPE:return 0;
+		case AKEYCODE_ENTER:return GK_RETURN;
+		case AKEYCODE_DEL: return GK_DELETE;
+		case AKEYCODE_GRAVE:return 0;
+		case AKEYCODE_MINUS:return '-';
+		case AKEYCODE_EQUALS:return '=';
+		case AKEYCODE_LEFT_BRACKET:return '{';
+		case AKEYCODE_RIGHT_BRACKET:return '}';
+		case AKEYCODE_BACKSLASH:return '\\';
+		case AKEYCODE_SEMICOLON:return ';';
+		case AKEYCODE_APOSTROPHE:return '\'';
+		case AKEYCODE_SLASH:return '/';
+		case AKEYCODE_AT:return '@';
+		case AKEYCODE_NUM:return '#';
+		case AKEYCODE_HEADSETHOOK:return 0;
+		case AKEYCODE_FOCUS:return 0;
+		case AKEYCODE_PLUS:return '+';
+		case AKEYCODE_MENU:return 0;
+		case AKEYCODE_NOTIFICATION:return 0;
+		case AKEYCODE_SEARCH:return 0;
+		case AKEYCODE_MEDIA_PLAY_PAUSE:return 0;
+		case AKEYCODE_MEDIA_STOP:return 0;
+		case AKEYCODE_MEDIA_NEXT:return 0;
+		case AKEYCODE_MEDIA_PREVIOUS:return 0;
+		case AKEYCODE_MEDIA_REWIND:return 0;
+		case AKEYCODE_MEDIA_FAST_FORWARD:return 0;
+		case AKEYCODE_MUTE:return 0;
+		case AKEYCODE_PAGE_UP:return GK_PAGEUP;
+		case AKEYCODE_PAGE_DOWN:return GK_PAGEDOWN;
+		case AKEYCODE_PICTSYMBOLS:return 0;
+		case AKEYCODE_SWITCH_CHARSET:return 0;
+		case AKEYCODE_BUTTON_A:return 0;
+		case AKEYCODE_BUTTON_B:return 0;
+		case AKEYCODE_BUTTON_C:return 0;
+		case AKEYCODE_BUTTON_X:return 0;
+		case AKEYCODE_BUTTON_Y:return 0;
+		case AKEYCODE_BUTTON_Z:return 0;
+		case AKEYCODE_BUTTON_L1:return 0;
+		case AKEYCODE_BUTTON_R1:return 0;
+		case AKEYCODE_BUTTON_L2:return 0;
+		case AKEYCODE_BUTTON_R2:return 0;
+		case AKEYCODE_BUTTON_THUMBL:return 0;
+		case AKEYCODE_BUTTON_THUMBR:return 0;
+		case AKEYCODE_BUTTON_START:return 0;
+		case AKEYCODE_BUTTON_SELECT:return GK_RETURN;
+		case AKEYCODE_BUTTON_MODE:return 0;
+	};
+	return 0;
+}
+
+int TranslateKeyToAndroid(int nGameKey)
+{
+	switch(nGameKey)
+	{
+		case GK_HOME:AKEYCODE_HOME;
+		case GK_ESCAPE:AKEYCODE_BACK;
+		case GK_NUMPAD0:AKEYCODE_0;
+		case GK_NUMPAD1:AKEYCODE_1;
+		case GK_NUMPAD2:AKEYCODE_2;
+		case GK_NUMPAD3:AKEYCODE_3;
+		case GK_NUMPAD4:AKEYCODE_4;
+		case GK_NUMPAD5:AKEYCODE_5;
+		case GK_NUMPAD6:AKEYCODE_6;
+		case GK_NUMPAD7:AKEYCODE_7;
+		case GK_NUMPAD8:AKEYCODE_8;
+		case GK_NUMPAD9:AKEYCODE_9;
+		case GK_MULTIPLY:AKEYCODE_STAR;
+		case GK_UP:AKEYCODE_DPAD_UP;
+		case GK_DOWN:AKEYCODE_DPAD_DOWN;
+		case GK_LEFT:AKEYCODE_DPAD_LEFT;
+		case GK_RIGHT:AKEYCODE_DPAD_RIGHT;
+		case 'a':AKEYCODE_A;
+		case 'b':AKEYCODE_B;
+		case 'c':AKEYCODE_C;
+		case 'd':AKEYCODE_D;
+		case 'e':AKEYCODE_E;
+		case 'f':AKEYCODE_F;
+		case 'g':AKEYCODE_G;
+		case 'h':AKEYCODE_H;
+		case 'i':AKEYCODE_I;
+		case 'j':AKEYCODE_J;
+		case 'k':AKEYCODE_K;
+		case 'l':AKEYCODE_L;
+		case 'm':AKEYCODE_M;
+		case 'n':AKEYCODE_N;
+		case 'o':AKEYCODE_O;
+		case 'p':AKEYCODE_P;
+		case 'q':AKEYCODE_Q;
+		case 'r':AKEYCODE_R;
+		case 's':AKEYCODE_S;
+		case 't':AKEYCODE_T;
+		case 'u':AKEYCODE_U;
+		case 'v':AKEYCODE_V;
+		case 'w':AKEYCODE_W;
+		case 'x':AKEYCODE_X;
+		case 'y':AKEYCODE_Y;
+		case 'z':AKEYCODE_Z;
+		case ',':AKEYCODE_COMMA;
+		case '.':AKEYCODE_PERIOD;
+		case GK_LMENU:AKEYCODE_ALT_LEFT;
+		case GK_RMENU:AKEYCODE_ALT_RIGHT;
+		case GK_LSHIFT:AKEYCODE_SHIFT_LEFT;
+		case GK_RSHIFT:AKEYCODE_SHIFT_RIGHT;
+		case '\t':AKEYCODE_TAB;
+		case ' ':AKEYCODE_SPACE;
+		case GK_RETURN:AKEYCODE_ENTER;
+		case AKEYCODE_DEL: return GK_DELETE;
+		case '-':AKEYCODE_MINUS;
+		case '=':AKEYCODE_EQUALS;
+		case '{':AKEYCODE_LEFT_BRACKET;
+		case '}':AKEYCODE_RIGHT_BRACKET;
+		case '\\':AKEYCODE_BACKSLASH;
+		case ';':AKEYCODE_SEMICOLON;
+		case '\'':AKEYCODE_APOSTROPHE;
+		case '/':AKEYCODE_SLASH;
+		case '@':AKEYCODE_AT;
+		case '#':AKEYCODE_NUM;
+		case '+':AKEYCODE_PLUS;
+		case GK_PAGEUP:AKEYCODE_PAGE_UP;
+		case GK_PAGEDOWN:AKEYCODE_PAGE_DOWN;
+	};
+	return 0;
+}
+
 #endif
 
 COpenGLViewport::COpenGLViewport(void)
@@ -962,6 +1154,10 @@ void COpenGLViewport::SetCallBack(IGenericViewportCallBack *pCallBack)
 
 void COpenGLViewport::Render()
 {
+#ifdef ANDROID
+	if(m_AndroidRenderContext==EGL_NO_CONTEXT){return;}
+#endif
+	
 	glFrontFace(GL_CCW);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
@@ -986,6 +1182,8 @@ void COpenGLViewport::Render()
 	SwapBuffers(m_hDC);
 #elif defined LINUX
 	glXSwapBuffers(m_pXDisplay,m_XWindow);
+#elif defined ANDROID
+	eglSwapBuffers(m_AndroidDisplay,m_AndroidSurface);
 #endif
 }
 
@@ -1093,6 +1291,23 @@ void COpenGLViewport::EnterLoop()
 		{
 			if (source != NULL) {source->process(m_pAndroidApp, source);}
 			
+			while(m_vAndroidInputEvents.size())
+			{
+				SAndroidInputEvent sEvent=m_vAndroidInputEvents.front();
+				m_vAndroidInputEvents.pop_front();
+				
+				if(sEvent.nType==AINPUT_EVENT_TYPE_MOTION) 
+				{
+					if(sEvent.nAction==AMOTION_EVENT_ACTION_DOWN){OnLButtonDown(sEvent.x,sEvent.y);}
+					else if(sEvent.nAction==AMOTION_EVENT_ACTION_UP){OnLButtonUp(sEvent.x,sEvent.y);}
+					else if(sEvent.nAction==AMOTION_EVENT_ACTION_MOVE){OnMouseMove(sEvent.x,sEvent.y);}
+				}
+				else if(sEvent.nType==AINPUT_EVENT_TYPE_KEY) 
+				{
+					if(sEvent.nAction==AKEY_EVENT_ACTION_DOWN){m_sAndroidPressedKeys.insert(sEvent.nGameKey);OnKeyDown(sEvent.nGameKey);}
+					else if(sEvent.nAction==AKEY_EVENT_ACTION_UP){OnKeyUp(sEvent.nGameKey);m_sAndroidPressedKeys.erase(sEvent.nGameKey);}
+				}
+			}
 			if (m_pAndroidApp->destroyRequested != 0) 
 			{
 				RTTRACE("COpenGLViewport::EnterLoop -> Exit, Destroy request received");
@@ -1187,6 +1402,8 @@ bool  COpenGLViewport::IsKeyDown(unsigned int nKey)
 		}
 	}
 	return false;
+#elif defined ANDROID
+	return m_sAndroidPressedKeys.find(nKey)!=m_sAndroidPressedKeys.end();
 #endif
 }
 
@@ -1737,17 +1954,32 @@ bool COpenGLViewport::SetWindowed(unsigned int x,unsigned int y,unsigned int w,u
 }
 
 #ifdef ANDROID
+
+
 int32_t COpenGLViewport::OnAndroidInput(struct android_app *pApplication, AInputEvent *pEvent)
 {
 	COpenGLViewport *pThis=(COpenGLViewport*)pApplication->userData;
-	/*	struct engine* engine = (struct engine*)app->userData;
-	*	if (AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION) 
-	* {
-	*		engine->animating = 1;
-	*		engine->state.x = AMotionEvent_getX(event, 0);
-	*		engine->state.y = AMotionEvent_getY(event, 0);
-	*		return 1;
-	}*/
+	int nType=AInputEvent_getType(pEvent);
+	
+	if(nType==AINPUT_EVENT_TYPE_MOTION) 
+	{
+		SAndroidInputEvent event;
+		event.nType=nType;
+		event.nAction=AMotionEvent_getAction(pEvent);
+		event.x=AMotionEvent_getX(pEvent, 0);
+		event.y=AMotionEvent_getY(pEvent, 0);
+		pThis->m_vAndroidInputEvents.push_back(event);
+		return 0;
+	}
+	else if(nType==AINPUT_EVENT_TYPE_KEY) 
+	{
+		SAndroidInputEvent event;
+		event.nType=nType;
+		event.nAction=AKeyEvent_getAction(pEvent);
+		event.nGameKey=TranslateKeyFromAndroid(AKeyEvent_getKeyCode(pEvent));
+		if(event.nGameKey){pThis->m_vAndroidInputEvents.push_back(event);return 1;}
+		return 0;
+	}
 	return 0;
 }
 
@@ -1756,10 +1988,14 @@ void COpenGLViewport::AndroidCreateRenderContext()
 	const EGLint attribs[] = 
 	{
 		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-		//EGL_RENDERABLE_TYPE,   EGL_OPENGL_ES2_BIT,
-		EGL_BLUE_SIZE, 8,
+#ifndef ANDROID_GLES1
+		EGL_RENDERABLE_TYPE,   EGL_OPENGL_ES2_BIT,
+#endif
+		EGL_RED_SIZE, 8,
 		EGL_GREEN_SIZE, 8,
-		EGL_RED_SIZE, 8,	
+		EGL_BLUE_SIZE, 8,
+		EGL_ALPHA_SIZE, 8,
+		EGL_DEPTH_SIZE, 16,
 		EGL_NONE
 	};
 	EGLint format=0;
@@ -1776,13 +2012,9 @@ void COpenGLViewport::AndroidCreateRenderContext()
 	{
 		eglInitialize(m_AndroidDisplay, 0, 0);
 		eglChooseConfig(m_AndroidDisplay, attribs, &config, 1, &numConfigs);
-		RTTRACE("COpenGLViewport::AndroidCreateRenderContext -> %d available configs",numConfigs);
+		//RTTRACE("COpenGLViewport::AndroidCreateRenderContext -> %d available configs",numConfigs);
 	}
 	
-	/* EGL_NATIVE_VISUAL_ID is an attribute of the EGLConfig that is
-	 * guaranteed to be accepted by ANativeWindow_setBuffersGeometry().
-	 * As soon as we picked a EGLConfig, we can safely reconfigure the
-	 * ANativeWindow buffers to match, using EGL_NATIVE_VISUAL_ID. */
 	eglGetConfigAttrib(m_AndroidDisplay, config, EGL_NATIVE_VISUAL_ID, &format);
 	
 	ANativeWindow_setBuffersGeometry(m_pAndroidApp->window, 0, 0, format);
@@ -1794,13 +2026,16 @@ void COpenGLViewport::AndroidCreateRenderContext()
 		if(!bOk){RTTRACE("COpenGLViewport::AndroidCreateRenderContext -> Failed to create surface");}
 	}
 	if(bOk)
-	{/*
+	{
 		const EGLint contextAttribs[] = 
 		{
+#ifndef ANDROID_GLES1
 			EGL_CONTEXT_CLIENT_VERSION, 2,
+#endif			
 			EGL_NONE
-		};*/
-		m_AndroidRenderContext = eglCreateContext(m_AndroidDisplay, config, NULL, NULL);//contextAttribs);
+		};
+		
+		m_AndroidRenderContext = eglCreateContext(m_AndroidDisplay, config, NULL, contextAttribs);
 		bOk=(m_AndroidRenderContext!=EGL_NO_CONTEXT);
 		if(!bOk){RTTRACE("COpenGLViewport::AndroidCreateRenderContext -> Failed to create render context");}
 	}
@@ -1835,12 +2070,6 @@ void COpenGLViewport::OnAndroidCommand(struct android_app* pApplication, int32_t
 			break;
 		case APP_CMD_INIT_WINDOW:
 			RTTRACE("COpenGLViewport::OnAndroidCommand -> Init window received");
-			/*
-			*			// The window is being shown, get it ready.
-			*			if (engine->app->window != NULL) {
-			*				engine_init_display(engine);
-			*				engine_draw_frame(engine);
-			}*/
 			if (pThis->m_pAndroidApp->window != NULL) 
 			{
 				pThis->AndroidCreateRenderContext();
@@ -1848,31 +2077,12 @@ void COpenGLViewport::OnAndroidCommand(struct android_app* pApplication, int32_t
 			break;
 		case APP_CMD_TERM_WINDOW:
 			RTTRACE("COpenGLViewport::OnAndroidCommand -> Terminate window received");
-			// The window is being hidden or closed, clean it up.
-			//engine_term_display(engine);
 			break;
 		case APP_CMD_GAINED_FOCUS:
 			RTTRACE("COpenGLViewport::OnAndroidCommand -> Setfocus received");
-			/*// When our app gains focus, we start monitoring the accelerometer.
-			*			if (engine->accelerometerSensor != NULL) {
-			*				ASensorEventQueue_enableSensor(engine->sensorEventQueue,
-			*											   engine->accelerometerSensor);
-			*				// We'd like to get 60 events per second (in us).
-			*				ASensorEventQueue_setEventRate(engine->sensorEventQueue,
-			*											   engine->accelerometerSensor, (1000L/60)*1000);
-			}*/
 			break;
 		case APP_CMD_LOST_FOCUS:
 			RTTRACE("COpenGLViewport::OnAndroidCommand -> KillFocus received");
-			/*	// When our app loses focus, we stop monitoring the accelerometer.
-			*			// This is to avoid consuming battery while not being used.
-			*			if (engine->accelerometerSensor != NULL) {
-			*				ASensorEventQueue_disableSensor(engine->sensorEventQueue,
-			*												engine->accelerometerSensor);
-			}
-			// Also stop animating.
-			engine->animating = 0;
-			engine_draw_frame(engine);*/
 			break;
 	}
 }

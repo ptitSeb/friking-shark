@@ -39,6 +39,37 @@ COpenGLShader::~COpenGLShader(void)
 	}
 	m_mUniforms.clear();
 }
+#ifdef ANDROID_GLES1
+
+bool COpenGLShader::Unserialize(ISystemPersistencyNode *piNode){return true;}
+
+// IGenericShader
+
+void COpenGLShader::Load(std::string sVertexShaderFile,std::string sFragmentShaderFile,std::string sPreprocessorDefinitions){}
+void COpenGLShader::Create(std::string sVertexShaderCode,std::string sFragmentShaderCode,std::string sPreprocessorDefinitions){}
+
+bool COpenGLShader::Compile(){return false;}
+
+void COpenGLShader::AddUniform( std::string sUniformName,int nValue,bool temporal){}
+void COpenGLShader::AddUniform( std::string sUniformName,float fValue,bool temporal ){}
+void COpenGLShader::AddUniform( std::string sUniformName,float fValue1,float fValue2,bool temporal ){}
+void COpenGLShader::AddUniform( std::string sUniformName,const CVector &vVector,bool temporal ){}
+void COpenGLShader::AddUniform( std::string sUniformName,const CVector &vColor, float fAlpha,bool temporal ){}
+void COpenGLShader::AddUniform( std::string sUniformName,CMatrix &matrix,bool temporal){}
+
+void COpenGLShader::AddUniformIntegers( std::string sUniformName,unsigned int nValues,int *pValues,bool temporal){}
+void COpenGLShader::AddUniformFloats( std::string sUniformName,unsigned int nValues,float *pValues,bool temporal){}
+void COpenGLShader::AddUniformVectors( std::string sUniformName,unsigned int nValues,const CVector *pvVectors,bool temporal){}
+void COpenGLShader::AddUniformColors( std::string sUniformName,unsigned int nValues,const CVector *pvColor, float *pvfAlphas,bool temporal){}
+void COpenGLShader::AddUniformMatrixes( std::string sUniformName,unsigned int nValues,double *pMatrixes,bool temporal){}
+void COpenGLShader::AddUniformMatrixes( std::string sUniformName,unsigned int nValues,float *pMatrixes,bool temporal){}
+
+void COpenGLShader::AddAttribute( std::string sAttributeName,int nIndex){}
+
+bool COpenGLShader::Activate(){return false;}
+void COpenGLShader::Deactivate(){}
+
+#else
 
 bool COpenGLShader::LoadCodeFile(std::string sSourceFile,std::string *psSourceCode)
 {
@@ -78,7 +109,6 @@ bool COpenGLShader::LoadCodeFile(std::string sSourceFile,std::string *psSourceCo
 bool COpenGLShader::Compile()
 {
   bool bOk=true;
-
   if(m_hShaderProgram==0 && m_bTriedToCompile){return false;}
   
   FreeShader();
@@ -728,3 +758,4 @@ void COpenGLShader::Create( std::string sVertexShaderCode,std::string sFragmentS
 	m_sPreprocessorDefinitions=sPreprocessorDefinitions;
 	m_bTriedToCompile=false;
 }
+#endif

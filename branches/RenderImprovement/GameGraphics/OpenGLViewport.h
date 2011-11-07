@@ -28,6 +28,25 @@
 #include <android/native_activity.h>
 #include <EGL/egl.h>
 #include "../GameEngine/android_native_app_glue.h"
+
+struct SAndroidInputEvent
+{
+	int nType;
+	int nAction;
+	int nGameKey;
+	float x;
+	float y;
+	
+	SAndroidInputEvent()
+	{
+		nType=0;
+		nAction=0;
+		nGameKey=0;
+		x=0;
+		y=0;
+	}
+};
+
 #endif
 
 
@@ -91,6 +110,9 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 		EGLContext m_AndroidRenderContext;
 		int32_t    m_AndroidWidth;
 		int32_t    m_AndroidHeight;
+		
+		std::set<int> m_sAndroidPressedKeys;
+		std::deque<SAndroidInputEvent> m_vAndroidInputEvents;
 		
 		void AndroidCreateRenderContext();
 	#endif

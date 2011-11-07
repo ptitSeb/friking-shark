@@ -137,6 +137,8 @@ void COpenGLFont::RenderText(IGenericRender *piRender,double dFontHeight,double 
 	piRender->ActivateBlending();
 	CVector vOrigin(floor(x),floor(y+dFontHeight),0);
 	
+	bool bTextureSelected=false;
+	
 	int i=0;
 	while(pText[i]!=0)
 	{
@@ -146,14 +148,19 @@ void COpenGLFont::RenderText(IGenericRender *piRender,double dFontHeight,double 
 		{
 			double s1=pCharacterData->dPixelW*dSizeFactor,s2=pCharacterData->dPixelH*dSizeFactor;
 			CVector vCharCenter=vOrigin+piRender->GetCameraRight()*s1*0.5-piRender->GetCameraUp()*s2*0.5;
-			piRender->SelectTexture(m_Texture.m_piTexture,0);
+			if(!bTextureSelected)
+			{
+				bTextureSelected=true;
+				piRender->SelectTexture(m_Texture.m_piTexture,0);
+			}
 			piRender->RenderTexture(vCharCenter,s1,s2,pCharacterData->dTextCoordX,pCharacterData->dTextCoordY,pCharacterData->dTextCoordW,pCharacterData->dTextCoordH);
-			piRender->UnselectTexture(0);
 		}
 
 		vOrigin+=piRender->GetCameraRight()*((pCharacterData->dPixelW+m_dTextureFontCharacterSeparation)*dSizeFactor);
 		i++;
 	}
+	
+	if(bTextureSelected){piRender->UnselectTexture(0);}
 	
 	piRender->PopState();
 }
@@ -169,7 +176,7 @@ void COpenGLFont::RenderText(IGenericRender *piRender,double dFontHeight,CVector
 	
 	CVector vOrigin=vPosition;
 	
-	
+	bool bTextureSelected=false;
 	int i=0;
 	while(pText[i]!=0)
 	{
@@ -179,16 +186,20 @@ void COpenGLFont::RenderText(IGenericRender *piRender,double dFontHeight,CVector
 		{
 			double s1=pCharacterData->dPixelW*dSizeFactor,s2=pCharacterData->dPixelH*dSizeFactor;
 			CVector vCharCenter=vOrigin+piRender->GetCameraRight()*s1*0.5+piRender->GetCameraUp()*s2*0.5;
-			piRender->SetColor(CVector(1.0,1.0,1.0),1.0);
-			piRender->SelectTexture(m_Texture.m_piTexture,0);
+			if(!bTextureSelected)
+			{
+				bTextureSelected=true;
+				piRender->SetColor(CVector(1.0,1.0,1.0),1.0);
+				piRender->SelectTexture(m_Texture.m_piTexture,0);
+			}
 			piRender->RenderTexture(vCharCenter,s1,s2,pCharacterData->dTextCoordX,pCharacterData->dTextCoordY,pCharacterData->dTextCoordW,pCharacterData->dTextCoordH);
-			piRender->UnselectTexture(0);
 		}
 		
 		vOrigin+=piRender->GetCameraRight()*((pCharacterData->dPixelW+m_dTextureFontCharacterSeparation)*dSizeFactor);
 		i++;
 	}
 	
+	if(bTextureSelected){piRender->UnselectTexture(0);}
 	piRender->PopState();
 }
 
