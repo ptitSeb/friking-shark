@@ -110,6 +110,7 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 		EGLContext m_AndroidRenderContext;
 		int32_t    m_AndroidWidth;
 		int32_t    m_AndroidHeight;
+		SGamePos   m_AndroidMousePos;
 		
 		std::set<int> m_sAndroidPressedKeys;
 		std::deque<SAndroidInputEvent> m_vAndroidInputEvents;

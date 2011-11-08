@@ -1277,9 +1277,10 @@ void COpenGLViewport::EnterLoop()
 
 #elif defined ANDROID
 
-	RTTRACE("COpenGLViewport::EnterLoop -> Enter");
+	RTTRACE("COpenGLViewport::EnterLoop -> Enter, Depth %d",m_nLoopDepth);
 
 	int nLoopId=++m_nLoopDepth;
+	
 	while (m_nLoopDepth>=nLoopId /*&& !m_bXExit*/)
 	{
 		// Read all pending events.
@@ -1298,9 +1299,25 @@ void COpenGLViewport::EnterLoop()
 				
 				if(sEvent.nType==AINPUT_EVENT_TYPE_MOTION) 
 				{
-					if(sEvent.nAction==AMOTION_EVENT_ACTION_DOWN){OnLButtonDown(sEvent.x,sEvent.y);}
-					else if(sEvent.nAction==AMOTION_EVENT_ACTION_UP){OnLButtonUp(sEvent.x,sEvent.y);}
-					else if(sEvent.nAction==AMOTION_EVENT_ACTION_MOVE){OnMouseMove(sEvent.x,sEvent.y);}
+					if(sEvent.nAction==AMOTION_EVENT_ACTION_DOWN)
+					{
+						m_AndroidMousePos=SGamePos(sEvent.x,sEvent.y);
+						// Simulate mouse movement to allow some widgets to update state
+						OnMouseMove(sEvent.x,sEvent.y);
+						OnLButtonDown(sEvent.x,sEvent.y); 
+					}
+					else if(sEvent.nAction==AMOTION_EVENT_ACTION_UP)
+					{
+						m_AndroidMousePos=SGamePos(sEvent.x,sEvent.y);
+						// Simulate mouse movement to allow some widgets to update state
+						OnMouseMove(sEvent.x,sEvent.y);
+						OnLButtonUp(sEvent.x,sEvent.y);
+					}
+					else if(sEvent.nAction==AMOTION_EVENT_ACTION_MOVE)
+					{
+						m_AndroidMousePos=SGamePos(sEvent.x,sEvent.y);
+						OnMouseMove(sEvent.x,sEvent.y);
+					}
 				}
 				else if(sEvent.nType==AINPUT_EVENT_TYPE_KEY) 
 				{
@@ -1310,14 +1327,14 @@ void COpenGLViewport::EnterLoop()
 			}
 			if (m_pAndroidApp->destroyRequested != 0) 
 			{
-				RTTRACE("COpenGLViewport::EnterLoop -> Exit, Destroy request received");
+				RTTRACE("COpenGLViewport::EnterLoop -> Exit, Destroy request received, Depth %d",m_nLoopDepth);
 				return;
 			}
 		}
 		Render();
 	}
 	
-	RTTRACE("COpenGLViewport::EnterLoop -> Exit");
+	RTTRACE("COpenGLViewport::EnterLoop -> Exit, Depth %d",m_nLoopDepth);
 	
 #endif
 }
@@ -1329,6 +1346,7 @@ void COpenGLViewport::ExitLoop()
 	if(m_nLoopDepth>0){m_nLoopDepth--;}
 #elif defined ANDROID
 	if(m_nLoopDepth>0){m_nLoopDepth--;}
+	RTTRACE("COpenGLViewport::ExitLoop -> Exit, Depth %d",m_nLoopDepth);
 #endif
 }
 
@@ -1353,8 +1371,12 @@ void  COpenGLViewport::GetCursorPos(int *pX,int *pY)
 		*pX=0;
 		*pY=0;
 	}
+#elif defined ANDROID
+	*pX=(int)m_AndroidMousePos.x;
+	*pY=(int)m_AndroidMousePos.y;
 #endif
 }
+
 void  COpenGLViewport::SetCursorPos(int x,int y)
 {
 #ifdef WIN32
@@ -1365,6 +1387,9 @@ void  COpenGLViewport::SetCursorPos(int x,int y)
 	SetCursorPos(P.x,P.y);
 #elif defined LINUX
 	if(m_XWindow!=None){XWarpPointer(m_pXDisplay,None,m_XWindow,0,0,0,0,x,y);}
+#elif defined ANDROID
+	m_AndroidMousePos.x=x;
+	m_AndroidMousePos.y=y;
 #endif
 }
 
@@ -1969,7 +1994,7 @@ int32_t COpenGLViewport::OnAndroidInput(struct android_app *pApplication, AInput
 		event.x=AMotionEvent_getX(pEvent, 0);
 		event.y=AMotionEvent_getY(pEvent, 0);
 		pThis->m_vAndroidInputEvents.push_back(event);
-		return 0;
+		return 1;
 	}
 	else if(nType==AINPUT_EVENT_TYPE_KEY) 
 	{

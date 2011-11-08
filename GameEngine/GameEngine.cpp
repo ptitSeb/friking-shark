@@ -29,6 +29,7 @@
 #include "android_native_app_glue.h"
 #include <android/sensor.h>
 #include <android/log.h>
+#include <android/window.h>
 android_app *g_pAndroidApp=NULL;
 #endif
 
@@ -81,8 +82,12 @@ void CGameEngineApp::Run()
 			guiManager.Attach("GameGUI","GUIManager");
 			if(guiManager.m_piInterface){guiManager.m_piInterface->EnterGUILoop();}
 			guiManager.Detach();
+			
+			RTTRACE("CGameEngineApp::Run -> Exiting, destroying game system ...");
 
 			piGameSystem->Destroy();
+		
+			RTTRACE("CGameEngineApp::Run -> Exiting, Game system destroyed ...");
 		}
 		else
 		{
@@ -111,6 +116,8 @@ void CGameEngineApp::Run()
 	} 
 
 	REL(piSystemManager);
+	
+	RTTRACE("CGameEngineApp::Run -> Exit");
 }
 
 void CGameEngineApp::InterpretCommandLine(std::string sExecutableFolder,std::vector<std::string> &vParams)
@@ -202,6 +209,7 @@ void android_main(struct android_app* state)
 	// Make sure glue isn't stripped.
 	app_dummy();
 	g_pAndroidApp=state;
+	if(g_pAndroidApp->activity){ANativeActivity_setWindowFlags(g_pAndroidApp->activity,AWINDOW_FLAG_FULLSCREEN,0);}
 	std::string sFolder="";
 	std::vector<std::string> vParams;
 	theApp.InterpretCommandLine(sFolder,vParams);
