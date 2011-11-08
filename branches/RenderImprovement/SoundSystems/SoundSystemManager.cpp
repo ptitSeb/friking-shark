@@ -102,6 +102,8 @@ bool CSoundSystemManager::Unserialize(ISystemPersistencyNode *piNode)
 
 void CSoundSystemManager::Destroy()
 {	
+	RTTRACE("CSoundSystemManager::Destroy -> Enter");
+	
 	std::list<ALuint>::iterator f;
 	for(f=m_vFreeSources.begin();f!=m_vFreeSources.end();f++)
 	{
@@ -116,15 +118,29 @@ void CSoundSystemManager::Destroy()
 		ALuint nSource=i->first;
 		ISoundType *piType=i->second;
 		piType->ReclaimSource(nSource);
+		alSourceStop(nSource);
 		alDeleteSources(1,&nSource);
 		REL(piType);
 	}
 	m_mBusySources.clear();
 
-  if(m_pContext){alcMakeContextCurrent(NULL);alcDestroyContext(m_pContext);m_pContext=NULL;}
-  if(m_pDevice){alcCloseDevice(m_pDevice);m_pDevice=NULL;}
+	if(m_pContext)
+	{
+		RTTRACE("CSoundSystemManager::Destroy -> Unsetting current context");
+		alcMakeContextCurrent(NULL);
+		RTTRACE("CSoundSystemManager::Destroy -> Destroying context");
+		alcDestroyContext(m_pContext);
+		m_pContext=NULL;
+	}
+	if(m_pDevice)
+	{
+		RTTRACE("CSoundSystemManager::Destroy -> Closing device");
+		alcCloseDevice(m_pDevice);
+		m_pDevice=NULL;
+	}
 
 	CSystemObjectBase::Destroy();
+	RTTRACE("CSoundSystemManager::Destroy -> Exit");
 }
 
 void CSoundSystemManager::UpdateListener()

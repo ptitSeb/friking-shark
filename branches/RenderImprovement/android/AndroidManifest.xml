@@ -1,24 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- BEGIN_INCLUDE(manifest) -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
         package="com.games.frikingshark"
-        android:versionCode="1"
-        android:versionName="1.0">
-
-    <!-- This is the platform API where NativeActivity was introduced. -->
+        android:versionCode="102"
+        android:versionName="1.02 Beta">
     <uses-sdk android:minSdkVersion="9" />
 	<uses-feature android:glEsVersion="0x00010000"></uses-feature>
-
-    <!-- This .apk has no Java code itself, so set hasCode to false. -->
-    <application android:label="FrikingShark" android:hasCode="false" android:debuggable="true">
-
-        <!-- Our activity is the built-in NativeActivity framework class.
-             This will take care of integrating with our NDK code. -->
+    <application android:label="@string/app_name" android:description="@string/app_description" android:hasCode="false" android:debuggable="true" android:icon="@drawable/frikingshark">
         <activity android:name="android.app.NativeActivity"
                 android:label="@string/app_name"
                 android:configChanges="orientation|keyboardHidden"
 				 android:debuggable="true">
-            <!-- Tell NativeActivity the name of or .so -->
             <meta-data android:name="android.app.lib_name"
                     android:value="GameEngine" />
             <intent-filter>
@@ -27,6 +18,5 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest> 
-<!-- END_INCLUDE(manifest) -->
+
