@@ -2060,7 +2060,7 @@ void COpenGLViewport::AndroidCreateRenderContext()
 			EGL_NONE
 		};
 		
-		m_AndroidRenderContext = eglCreateContext(m_AndroidDisplay, config, NULL, contextAttribs);
+		m_AndroidRenderContext = eglCreateContext(m_AndroidDisplay, config, EGL_NO_CONTEXT, contextAttribs);
 		bOk=(m_AndroidRenderContext!=EGL_NO_CONTEXT);
 		if(!bOk){RTTRACE("COpenGLViewport::AndroidCreateRenderContext -> Failed to create render context");}
 	}

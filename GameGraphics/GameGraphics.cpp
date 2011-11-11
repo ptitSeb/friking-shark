@@ -31,6 +31,14 @@
 #include "OpenGLFont.h"
 #include "OpenGLShader.h"
 
+#ifdef ANDROID
+	#ifdef ANDROID_GLES1
+		#pragma message ("GameGraphics: Using GLES 1")
+	#else
+		#pragma message ("GameGraphics: Using GLES 2")
+	#endif
+#endif
+
 BEGIN_SYSTEM_MODULE(GameGraphics)
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(COpenGLRender,"Render");
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(COpenGLTexture,"Texture");
