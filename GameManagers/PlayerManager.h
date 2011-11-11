@@ -66,6 +66,9 @@ class CPlayerManager: virtual public CSystemObjectBase,
 	double m_dLevelDifficultyWeight;
 	double m_dPlayerDifficultyWeight;
 	
+	double m_dPlayerDestinationRight;
+	double m_dPlayerDestinationForward;
+	
 	std::map<std::string,SKeyMapping> m_KeyboardMapping;
 	
 	void PrepareResources();
@@ -78,6 +81,9 @@ class CPlayerManager: virtual public CSystemObjectBase,
 	bool CheckKey(IGameGUIManager *piGUIManager,const char *pKeyName);
 	
 	void SetupPlayerStart(CVector vPosition);
+	
+	bool    m_bFireBombMark;
+	bool    m_bFireBulletMark;
 	
 public:
 
@@ -116,7 +122,10 @@ public:
     void Stop();
     void ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction);
 
-
+	void SetFireBulletMark();
+	void SetFireBombMark();
+	void WarpPlayer(double dRight, double dUp);
+	
 	BEGIN_PROP_MAP(CPlayerManager)
 		PROP_VALUE(m_dBaseDifficulty,"BaseDifficulty",0.8);
 		PROP_VALUE(m_dLevelDifficultyWeight,"LevelDifficultyWeight",0.05);

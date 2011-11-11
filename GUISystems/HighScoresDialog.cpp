@@ -49,7 +49,7 @@ void CHighScoresDialog::OnInitDialog()
 	
 	if(m_piTitle)
 	{
-		m_piTitle->SetText(m_nScoreToEdit!=-1?"Reserve Your Name !":"High Scores");
+		m_piTitle->SetText(m_nScoreToEdit!=-1?"High Score !!!":"High Scores");
 	}
 	if(m_piBTOk)
 	{

@@ -658,6 +658,10 @@ struct IPlayerManager:virtual public ISystemUnknown
 	virtual void GetPlayerConfig(SPlayerConfig *pConfig)=0;
 	virtual void SetPlayerConfig(SPlayerConfig *pConfig)=0;
 	
+	virtual void SetFireBulletMark()=0;
+	virtual void SetFireBombMark()=0;
+	virtual void WarpPlayer(double dRight, double dUp)=0;
+	
 	virtual void ProcessInput(IGameGUIManager *piManager,unsigned int dwCurrentTime,double dTimeFraction)=0;
 	
 };

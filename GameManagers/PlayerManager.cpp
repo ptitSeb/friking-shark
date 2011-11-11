@@ -41,6 +41,12 @@ CPlayerManager::CPlayerManager(void)
 	m_dPlayMovementCurrentRoll=0;
 	m_dPlayMovementRollVelocity=360;
 	m_dwPlayMovementLastRollTime=0;
+	m_dPlayerDestinationRight=0;
+	m_dPlayerDestinationForward=0;
+	
+	
+	m_bFireBombMark=false;
+	m_bFireBulletMark=false;
 	
 	PersistencyInitialize();
 }
@@ -118,6 +124,8 @@ void CPlayerManager::Start()
 	m_dwPlayMovementLastRollTime=0;
 	m_dPlayMovementCurrentForward=0;
 	m_dPlayMovementCurrentRight=0;
+	m_dPlayerDestinationRight=0;
+	m_dPlayerDestinationForward=0;
 
 	SetupPlayerStart(m_vPlayerStart);
 }
@@ -222,6 +230,8 @@ void CPlayerManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFractio
 		{
 			m_dPlayMovementCurrentRight=m_piPlayerEntity->GetPhysicInfo()->vPosition.c[2]-vPlayMovementPos.c[2];
 			m_dPlayMovementCurrentForward=m_piPlayerEntity->GetPhysicInfo()->vPosition.c[0]-vPlayMovementPos.c[0];
+			m_dPlayerDestinationRight=m_dPlayMovementCurrentRight;
+			m_dPlayerDestinationForward=m_dPlayMovementCurrentForward;
 		}
 	}
 	
@@ -248,6 +258,65 @@ void CPlayerManager::ProcessInput(IGameGUIManager *piGUIManager,unsigned int dwC
 	if(CheckKey(piGUIManager,"MoveRight")){MovePlayer(KEY_RIGHT,dwCurrentTime,dTimeFraction);}
 	if(CheckKey(piGUIManager,"FireBullets")){m_piPlayer->FireWeaponsOnSlot(0,dwCurrentTime);}
 	if(CheckKey(piGUIManager,"FireBomb")){m_piPlayer->FireWeaponsOnSlot(1,dwCurrentTime);}
+	
+	if(m_bFireBulletMark){m_piPlayer->FireWeaponsOnSlot(0,dwCurrentTime);}
+	if(m_bFireBombMark){m_piPlayer->FireWeaponsOnSlot(1,dwCurrentTime);}
+	
+	CVector vCur(m_dPlayMovementCurrentRight,m_dPlayMovementCurrentForward,0);
+	CVector vDest(m_dPlayerDestinationRight,m_dPlayerDestinationForward,0);
+	CVector vDir=vDest-vCur;
+	vDir.N();
+	
+	if(vDest.c[0]>m_dPlayMovementCurrentRight)
+	{
+		m_dPlayMovementCurrentRight+=m_piPlayer->GetSpeed()*2.0*dTimeFraction*fabs(vDir.c[0]);
+		if(m_dPlayMovementCurrentRight>vDest.c[0]){m_dPlayMovementCurrentRight=vDest.c[0];}
+		else
+		{
+			m_dPlayMovementCurrentRoll+=m_dPlayMovementRollVelocity*dTimeFraction;
+			if(m_dPlayMovementCurrentRoll>m_dPlayMovementMaxRoll){m_dPlayMovementCurrentRoll=m_dPlayMovementMaxRoll;}
+			if(m_dPlayMovementCurrentRoll<-m_dPlayMovementMaxRoll){m_dPlayMovementCurrentRoll=-m_dPlayMovementMaxRoll;}
+			m_dwPlayMovementLastRollTime=dwCurrentTime;
+		}
+	}
+	else if(vDest.c[0]<m_dPlayMovementCurrentRight)
+	{
+		m_dPlayMovementCurrentRight-=m_piPlayer->GetSpeed()*2.0*dTimeFraction*fabs(vDir.c[0]);
+		if(m_dPlayMovementCurrentRight<vDest.c[0]){m_dPlayMovementCurrentRight=vDest.c[0];}
+		else
+		{
+			m_dPlayMovementCurrentRoll-=m_dPlayMovementRollVelocity*dTimeFraction;
+			if(m_dPlayMovementCurrentRoll>m_dPlayMovementMaxRoll){m_dPlayMovementCurrentRoll=m_dPlayMovementMaxRoll;}
+			if(m_dPlayMovementCurrentRoll<-m_dPlayMovementMaxRoll){m_dPlayMovementCurrentRoll=-m_dPlayMovementMaxRoll;}
+			m_dwPlayMovementLastRollTime=dwCurrentTime;
+			
+		}
+		
+	}
+	
+	if(vDest.c[1]>m_dPlayMovementCurrentForward)
+	{
+		m_dPlayMovementCurrentForward+=m_piPlayer->GetSpeed()*2.0*dTimeFraction*fabs(vDir.c[1]);
+		if(m_dPlayMovementCurrentForward>vDest.c[1]){m_dPlayMovementCurrentForward=vDest.c[1];}
+	}
+	else if(vDest.c[1]<m_dPlayMovementCurrentForward)
+	{
+		m_dPlayMovementCurrentForward-=m_piPlayer->GetSpeed()*2.0*dTimeFraction*fabs(vDir.c[1]);
+		if(m_dPlayMovementCurrentForward<vDest.c[1]){m_dPlayMovementCurrentForward=vDest.c[1];}
+	}
+	
+	m_bFireBulletMark=false;
+	m_bFireBombMark=false;
+}
+
+void CPlayerManager::WarpPlayer(double dRight, double dForward)
+{
+	m_dPlayerDestinationRight=dRight-m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayMovementPosition().c[2];
+	m_dPlayerDestinationForward=dForward-m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayMovementPosition().c[0];
+	if(m_dPlayerDestinationRight<m_dPlayMovementMinRight){m_dPlayerDestinationRight=m_dPlayMovementMinRight;}
+	if(m_dPlayerDestinationRight>m_dPlayMovementMaxRight){m_dPlayerDestinationRight=m_dPlayMovementMaxRight;}
+	if(m_dPlayerDestinationForward<m_dPlayMovementMinForward){m_dPlayerDestinationForward=m_dPlayMovementMinForward;}
+	if(m_dPlayerDestinationForward>m_dPlayMovementMaxForward){m_dPlayerDestinationForward=m_dPlayMovementMaxForward;}
 }
 
 bool CPlayerManager::CheckKey(IGameGUIManager *piGUIManager,const char *pKeyName)
@@ -286,8 +355,8 @@ void CPlayerManager::MovePlayer(unsigned long nKey,unsigned int dwCurrentTime,do
 		{
 			m_dPlayMovementCurrentRight=m_dPlayMovementMinRight;
 		}
+		m_dPlayerDestinationRight=m_dPlayMovementCurrentRight;
 		m_dwPlayMovementLastRollTime=dwCurrentTime;
-
 		m_PlayerKilledVelocity-=vPlayMovementRight*(m_piPlayer->GetSpeed()*0.25);
 	}
 
@@ -301,8 +370,8 @@ void CPlayerManager::MovePlayer(unsigned long nKey,unsigned int dwCurrentTime,do
 		{
 			m_dPlayMovementCurrentRight=m_dPlayMovementMaxRight;
 		}
+		m_dPlayerDestinationRight=m_dPlayMovementCurrentRight;
 		m_dwPlayMovementLastRollTime=dwCurrentTime;
-
 		m_PlayerKilledVelocity+=vPlayMovementRight*(m_piPlayer->GetSpeed()*0.25);
 	}
 
@@ -313,7 +382,7 @@ void CPlayerManager::MovePlayer(unsigned long nKey,unsigned int dwCurrentTime,do
 		{
 			m_dPlayMovementCurrentForward=m_dPlayMovementMaxForward;
 		}
-
+		m_dPlayerDestinationForward=m_dPlayMovementCurrentForward;
 		m_PlayerKilledVelocity+=vPlayMovementForward*(m_piPlayer->GetSpeed()*0.25);
 	}
 	if(nKey==KEY_BACK)
@@ -323,7 +392,7 @@ void CPlayerManager::MovePlayer(unsigned long nKey,unsigned int dwCurrentTime,do
 		{
 			m_dPlayMovementCurrentForward=m_dPlayMovementMinForward;
 		}
-
+		m_dPlayerDestinationForward=m_dPlayMovementCurrentForward;
 		m_PlayerKilledVelocity-=vPlayMovementForward*(m_piPlayer->GetSpeed()*0.25);
 	}
 }
@@ -427,6 +496,9 @@ void CPlayerManager::SetupPlayerStart(CVector vPosition)
 		m_eGameStage=ePlayerManagerGameStage_Moving;
 		m_PlayAreaManagerWrapper.m_piPlayAreaManager->StartMovingCamera();
 	}
+	
+	m_bFireBulletMark=false;
+	m_bFireBombMark=false;
 }
 
 void CPlayerManager::SetPlayerStart(CVector vPosition)
@@ -456,3 +528,7 @@ void CPlayerManager::OnKeyboardMappingChanged()
 {
 	m_PlayerProfile.m_piProfile->GetKeyboardMapping(&m_KeyboardMapping);
 }
+
+
+void CPlayerManager::SetFireBulletMark(){m_bFireBulletMark=true;}
+void CPlayerManager::SetFireBombMark(){m_bFireBombMark=true;}

@@ -89,6 +89,8 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	bool         m_bCourtainClosing;
 	unsigned int m_nCourtainStartTime;
 	
+	double m_dOriginalPlayAreaAspectRatio;
+	
 	bool m_bPlayerKilledOnPreviousFrame;
 
 	IGameGUILabel *m_piSTFrameRate;
@@ -143,18 +145,18 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 		CHILD_MAP_ENTRY("Difficulty",m_piSTDifficulty);
 		CHILD_MAP_ENTRY("Mode",m_piSTMode);
 		CHILD_MAP_ENTRY("HighScore",m_piSTHighScore);
-		CHILD_MAP_ENTRY("PlayerLive0",m_piSTLives[0]);
-		CHILD_MAP_ENTRY("PlayerLive1",m_piSTLives[1]);
-		CHILD_MAP_ENTRY("PlayerLive2",m_piSTLives[2]);
-		CHILD_MAP_ENTRY("PlayerLive3",m_piSTLives[3]);
-		CHILD_MAP_ENTRY("PlayerLive4",m_piSTLives[4]);
-		CHILD_MAP_ENTRY("PlayerLive5",m_piSTLives[5]);
-		CHILD_MAP_ENTRY("PlayerBomb0",m_piSTBombs[0]);
-		CHILD_MAP_ENTRY("PlayerBomb1",m_piSTBombs[1]);
-		CHILD_MAP_ENTRY("PlayerBomb2",m_piSTBombs[2]);
-		CHILD_MAP_ENTRY("PlayerBomb3",m_piSTBombs[3]);
-		CHILD_MAP_ENTRY("PlayerBomb4",m_piSTBombs[4]);
-		CHILD_MAP_ENTRY("PlayerBomb5",m_piSTBombs[5]);
+		CHILD_MAP_ENTRY_FLAGS("PlayerLive0",m_piSTLives[0],CMEF_OPTIONAL);
+		CHILD_MAP_ENTRY_FLAGS("PlayerLive1",m_piSTLives[1],CMEF_OPTIONAL);
+		CHILD_MAP_ENTRY_FLAGS("PlayerLive2",m_piSTLives[2],CMEF_OPTIONAL);
+		CHILD_MAP_ENTRY_FLAGS("PlayerLive3",m_piSTLives[3],CMEF_OPTIONAL);
+		CHILD_MAP_ENTRY_FLAGS("PlayerLive4",m_piSTLives[4],CMEF_OPTIONAL);
+		CHILD_MAP_ENTRY_FLAGS("PlayerLive5",m_piSTLives[5],CMEF_OPTIONAL);
+		CHILD_MAP_ENTRY_FLAGS("PlayerBomb0",m_piSTBombs[0],CMEF_OPTIONAL);
+		CHILD_MAP_ENTRY_FLAGS("PlayerBomb1",m_piSTBombs[1],CMEF_OPTIONAL);
+		CHILD_MAP_ENTRY_FLAGS("PlayerBomb2",m_piSTBombs[2],CMEF_OPTIONAL);
+		CHILD_MAP_ENTRY_FLAGS("PlayerBomb3",m_piSTBombs[3],CMEF_OPTIONAL);
+		CHILD_MAP_ENTRY_FLAGS("PlayerBomb4",m_piSTBombs[4],CMEF_OPTIONAL);
+		CHILD_MAP_ENTRY_FLAGS("PlayerBomb5",m_piSTBombs[5],CMEF_OPTIONAL);
 	END_CHILD_MAP()
 	
 	BEGIN_PROP_MAP(CGameInterface)
@@ -165,6 +167,29 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 		PROP_VALUE_FLAGS(m_nFirstExtraLivePoints,"FirstExtraLivePoints",DEFAULT_FIRST_EXTRA_LIVE_POINTS,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_nNextExtraLivePoints,"NextExtraLivePoints",DEFAULT_NEXT_EXTRA_LIVE_POINTS,MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP()
+	
+	#ifdef ANDROID
+	
+	struct SAndroidVirtualJoystick
+	{
+		CVector      vLastPos;
+		unsigned int nLastTapTime;
+		unsigned int nLastPosTime;
+		unsigned int nDoubleTapInterval;
+		
+		SAndroidVirtualJoystick()
+		{
+			nLastPosTime=0;
+			nLastTapTime=0;
+			nDoubleTapInterval=400;
+		}
+	};
+	
+	SAndroidVirtualJoystick m_sAndroidJoystick;
+	
+	void OnMouseDown(int nButton,double x,double y);
+	void OnMouseUp(int nButton,double x,double y);
+	#endif
 	
 	void RenderCourtain(IGenericRender *piRender);
 

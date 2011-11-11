@@ -24,6 +24,7 @@ class CLevelOptions: virtual public CGameDialogBase,virtual public IGameGUIButto
 	EGameDifficulty m_eDifficulty;
 	
 	unsigned int m_nSelectedLevel;
+	unsigned int m_nAvailableLevels;
 	
 	CGenericFontWrapper m_LevelUnselectedFont;
 	CGenericFontWrapper m_LevelSelectedFont;
@@ -62,7 +63,7 @@ public:
 	void OnInitDialog();
 	void OnKeyDown(int nKey,bool *pbProcessed);
 	
-	bool SelectOptions(IGameWindow *piParent,EGameMode *pMode,EGameDifficulty *pDifficulty,unsigned int *pnSelectedLevel);
+	bool SelectOptions(IGameWindow *piParent,unsigned int nAvailableLevels,EGameMode *pMode,EGameDifficulty *pDifficulty,unsigned int *pnSelectedLevel);
 	
 	// IGameButtonEvents
 

@@ -72,6 +72,7 @@ public:
 	EGameMode 			  m_eLastMode;
 	EGameDifficulty       m_eLastDifficulty;
 	unsigned int 		  m_nLastLevel;
+	unsigned int 		  m_nAvailableLevels;
 	
 	unsigned int 		  m_nMasterVolume;
 	unsigned int 		  m_nMusicVolume;
@@ -120,6 +121,7 @@ class CMainWindow: virtual public CGameWindowBase,virtual public IGameInterfaceW
 	CSaveDialogWrapper   	 m_SaveDialog;
 	
 	unsigned int m_nContinuePauseStartTime;
+	unsigned int m_nAvailableLevels;
 	
 	SPlayerData m_PlayerData;
 	
@@ -141,6 +143,7 @@ public:
 	void OnKeyDown(int nKey,bool *pbProcessed);
 	void OnWantFocus(bool *pbWant);
 	void OnDraw(IGenericRender *piRender);
+	void OnDrawMouseCursor(SGamePos position,IGenericRender *piRender,bool *pbDrawed);
 	
 	void	OnScenarioFinished(eScenarioFinishedReason eReason);
 	void	OnGameOverCourtainClosed();

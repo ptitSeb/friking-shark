@@ -27,6 +27,7 @@ CLevelOptions::CLevelOptions(void)
 	m_eMode=eGameMode_Normal;
 	m_eDifficulty=eGameDifficulty_Normal;
 	m_nSelectedLevel=0;
+	m_nAvailableLevels=0;
 }
 
 CLevelOptions::~CLevelOptions(void)
@@ -101,22 +102,37 @@ void CLevelOptions::UpdateGUI()
 	double dFontSize=0;
 	if(m_piBTLevel1 && m_piBTLevel2 && m_piBTLevel3 && m_piBTLevel4 && m_piBTLevel5)
 	{
-		m_piBTLevel1->GetFont(NULL,&dFontSize);
-		m_piBTLevel1->SetFont(m_nSelectedLevel==0?m_LevelSelectedFont.m_piFont:m_LevelUnselectedFont.m_piFont,dFontSize);
-		m_piBTLevel2->SetFont(m_nSelectedLevel==1?m_LevelSelectedFont.m_piFont:m_LevelUnselectedFont.m_piFont,dFontSize);
-		m_piBTLevel3->SetFont(m_nSelectedLevel==2?m_LevelSelectedFont.m_piFont:m_LevelUnselectedFont.m_piFont,dFontSize);
-		m_piBTLevel4->SetFont(m_nSelectedLevel==3?m_LevelSelectedFont.m_piFont:m_LevelUnselectedFont.m_piFont,dFontSize);
-		m_piBTLevel5->SetFont(m_nSelectedLevel==4?m_LevelSelectedFont.m_piFont:m_LevelUnselectedFont.m_piFont,dFontSize);
-		m_piBTLevel1->SetTextColor(m_nSelectedLevel==0?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==0?1.0:0.5);
-		m_piBTLevel2->SetTextColor(m_nSelectedLevel==1?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==1?1.0:0.5);
-		m_piBTLevel3->SetTextColor(m_nSelectedLevel==2?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==2?1.0:0.5);
-		m_piBTLevel4->SetTextColor(m_nSelectedLevel==3?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==3?1.0:0.5);
-		m_piBTLevel5->SetTextColor(m_nSelectedLevel==4?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==4?1.0:0.5);
-		m_piBTLevel1->SetBackgroundColor(m_nSelectedLevel==0?CVector(1,1,1):CVector(0.8,0.8,0.8),m_nSelectedLevel==0?1.0:0.5);
-		m_piBTLevel2->SetBackgroundColor(m_nSelectedLevel==1?CVector(1,1,1):CVector(0.8,0.8,0.8),m_nSelectedLevel==1?1.0:0.5);
-		m_piBTLevel3->SetBackgroundColor(m_nSelectedLevel==2?CVector(1,1,1):CVector(0.8,0.8,0.8),m_nSelectedLevel==2?1.0:0.5);
-		m_piBTLevel4->SetBackgroundColor(m_nSelectedLevel==3?CVector(1,1,1):CVector(0.8,0.8,0.8),m_nSelectedLevel==3?1.0:0.5);
-		m_piBTLevel5->SetBackgroundColor(m_nSelectedLevel==4?CVector(1,1,1):CVector(0.8,0.8,0.8),m_nSelectedLevel==4?1.0:0.5);
+		if(m_piBTLevel1->IsActive())
+		{
+			m_piBTLevel1->GetFont(NULL,&dFontSize);
+			m_piBTLevel1->SetFont(m_nSelectedLevel==0?m_LevelSelectedFont.m_piFont:m_LevelUnselectedFont.m_piFont,dFontSize);
+			m_piBTLevel1->SetTextColor(m_nSelectedLevel==0?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==0?1.0:0.5);
+			m_piBTLevel1->SetBackgroundColor(m_nSelectedLevel==0?CVector(1,1,1):CVector(0.8,0.8,0.8),m_nSelectedLevel==0?1.0:0.5);
+		}
+		if(m_piBTLevel2->IsActive())
+		{
+			m_piBTLevel2->SetFont(m_nSelectedLevel==1?m_LevelSelectedFont.m_piFont:m_LevelUnselectedFont.m_piFont,dFontSize);
+			m_piBTLevel2->SetTextColor(m_nSelectedLevel==1?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==1?1.0:0.5);
+			m_piBTLevel2->SetBackgroundColor(m_nSelectedLevel==1?CVector(1,1,1):CVector(0.8,0.8,0.8),m_nSelectedLevel==1?1.0:0.5);
+		}
+		if(m_piBTLevel3->IsActive())
+		{
+			m_piBTLevel3->SetTextColor(m_nSelectedLevel==2?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==2?1.0:0.5);
+			m_piBTLevel3->SetFont(m_nSelectedLevel==2?m_LevelSelectedFont.m_piFont:m_LevelUnselectedFont.m_piFont,dFontSize);
+			m_piBTLevel3->SetBackgroundColor(m_nSelectedLevel==2?CVector(1,1,1):CVector(0.8,0.8,0.8),m_nSelectedLevel==2?1.0:0.5);
+		}
+		if(m_piBTLevel4->IsActive())
+		{
+			m_piBTLevel4->SetFont(m_nSelectedLevel==3?m_LevelSelectedFont.m_piFont:m_LevelUnselectedFont.m_piFont,dFontSize);
+			m_piBTLevel4->SetTextColor(m_nSelectedLevel==3?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==3?1.0:0.5);
+			m_piBTLevel4->SetBackgroundColor(m_nSelectedLevel==3?CVector(1,1,1):CVector(0.8,0.8,0.8),m_nSelectedLevel==3?1.0:0.5);
+		}
+		if(m_piBTLevel5->IsActive())
+		{
+			m_piBTLevel5->SetFont(m_nSelectedLevel==4?m_LevelSelectedFont.m_piFont:m_LevelUnselectedFont.m_piFont,dFontSize);
+			m_piBTLevel5->SetTextColor(m_nSelectedLevel==4?CVector(1,1,1):CVector(0.5,0.5,0.5),m_nSelectedLevel==4?1.0:0.5);
+			m_piBTLevel5->SetBackgroundColor(m_nSelectedLevel==4?CVector(1,1,1):CVector(0.8,0.8,0.8),m_nSelectedLevel==4?1.0:0.5);
+		}
 	}
 }
 
@@ -129,13 +145,20 @@ void CLevelOptions::OnInitDialog()
 		m_piBTOk->DisableSounds();
 		m_piGUIManager->SetFocus(m_piBTOk);
 		m_piBTOk->EnableSounds();
+		
+		m_piBTLevel1->Activate(m_nAvailableLevels>=1);
+		m_piBTLevel2->Activate(m_nAvailableLevels>=2);
+		m_piBTLevel3->Activate(m_nAvailableLevels>=3);
+		m_piBTLevel4->Activate(m_nAvailableLevels>=4);
+		m_piBTLevel5->Activate(m_nAvailableLevels>=5);
 	}
 }
 
-bool CLevelOptions::SelectOptions(IGameWindow *piParent,EGameMode *pMode,EGameDifficulty *pDifficulty,unsigned int *pnSelectedLevel)
+bool CLevelOptions::SelectOptions(IGameWindow *piParent,unsigned int nAvailableLevels,EGameMode *pMode,EGameDifficulty *pDifficulty,unsigned int *pnSelectedLevel)
 {
 	m_eMode=*pMode;
 	m_nSelectedLevel=*pnSelectedLevel;
+	m_nAvailableLevels=nAvailableLevels;
 	m_eDifficulty=*pDifficulty;
 	int nRes=Execute(piParent);
 	*pMode=m_eMode;
