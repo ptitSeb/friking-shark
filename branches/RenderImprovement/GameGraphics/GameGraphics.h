@@ -223,7 +223,7 @@ public:
 	virtual CVector		GetPixelColor(unsigned long x, unsigned long y)=0;
 	virtual double		GetPixelAlpha(unsigned long x, unsigned long y)=0;
 	
-	virtual bool		Load(std::string sFileName,CVector *pColorKey=NULL,std::string *pAlphaFile=NULL,float fOpacity=1.0,bool bGenerateMipmaps=true)=0;
+	virtual bool		Load(std::string sFileName,CVector *pColorKey=NULL,std::string *pAlphaFile=NULL,float fOpacity=1.0,bool bGenerateMipmaps=true, bool bResident=false)=0;
 	virtual bool		Create( unsigned nWidth,unsigned nHeight,IGenericViewport *piViewport)=0;
 	virtual bool		CreateDepth( unsigned nWidth,unsigned nHeight,IGenericViewport *piViewport)=0;
 
@@ -234,6 +234,8 @@ public:
 
 	virtual bool PrepareTexture(IGenericRender *piRender,int nTextureLevel)=0;
 	virtual void UnprepareTexture(IGenericRender *piRender,int nTextureLevel)=0;
+	
+	virtual void ReleaseResources()=0;
 };
 
 class IGenericModel:virtual public ISystemUnknown

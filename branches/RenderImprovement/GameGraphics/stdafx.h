@@ -30,13 +30,9 @@
 #include "GameGraphics.h"
 #include "OpenGLGraphics.h"
 
-#define ANDROID_GLES1
 #define GL_GLEXT_PROTOTYPES
 #ifdef ANDROID
-	
-	
 	#ifdef ANDROID_GLES1
-		
 		#include <GLES/gl.h>
 		typedef GLuint GLhandleARB;
 		typedef char GLcharARB;

@@ -166,7 +166,7 @@ struct SRenderOptions
 		bEnableHeightFog=false;
 		bEnableTextures=true;
 		bEnableLighting=false;
-		bEnableShadows=true;
+		bEnableShadows=false;
 		bEnableSolid=true;
 		bEnableBlending=true;
 		bEnableAutoShadowVolume=true;

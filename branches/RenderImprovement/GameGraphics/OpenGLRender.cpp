@@ -24,6 +24,12 @@
 #define MAX_OBJECT_INSTANCES 64
 #define MAX_DYNAMIC_LIGHTS 7
 
+#ifdef ANDROID 
+	#define DEFAULT_SHADOW_SIZE 512
+#else
+	#define DEFAULT_SHADOW_SIZE 1024
+#endif
+
 COpenGLRender::COpenGLRender(void)
 {
 	m_bLightingPrepared=false;
@@ -2223,7 +2229,7 @@ void COpenGLRender::PrepareSunShadows()
 	{
 		if(m_ShadowTexture.Create(m_piSystem,"Texture",""))
 		{
-			if(!m_ShadowTexture.m_piTexture->CreateDepth(1024,1024,m_piCurrentViewport))
+			if(!m_ShadowTexture.m_piTexture->CreateDepth(DEFAULT_SHADOW_SIZE,DEFAULT_SHADOW_SIZE,m_piCurrentViewport))
 			{
 				m_ShadowTexture.Destroy();
 			}
@@ -2235,7 +2241,11 @@ void COpenGLRender::PrepareSunShadows()
 		{
 			if(m_ShadowShader.Create(m_piSystem,"Shader",""))
 			{
+#ifdef ANDROID
+				m_ShadowShader.m_piShader->Load("Shaders/Android-ShadowBufferShader-Vertex.c","Shaders/Android-ShadowBufferShader-Fragment.c","");
+#else
 				m_ShadowShader.m_piShader->Load("Shaders/ShadowBufferShader-Vertex.c","Shaders/ShadowBufferShader-Fragment.c","");
+#endif
 			}
 		}
 	}
@@ -2794,6 +2804,7 @@ void COpenGLRender::RenderModelStages(bool bRenderingShadow,bool bShadowReceptio
 				if(vAngles.c[PITCH]){tmp.R(AxisPosZ,DegreesToRadians(vAngles.c[PITCH]));m*=tmp;}
 				if(vAngles.c[YAW]){tmp.R(AxisPosY,DegreesToRadians(vAngles.c[YAW]));m*=tmp;}
 				if(vPos.c[0] || vPos.c[1] || vPos.c[2]){tmp.T(vPos);m*=tmp;}
+				m.Transpose();
 				for(int x=0;x<16;x++){*pfMatrixes++=((double*)m.e)[x];}
 				nInstances++;
 				
@@ -3240,8 +3251,12 @@ void COpenGLRender::AddShader( const SShaderKey &key )
 		 }
 		 else if(key.eShadingModel==eShadingModel_Phong)
 		 {*/
-		wrapper.m_piShader->Load("Shaders/RenderShader-Phong-Vertex.c","Shaders/RenderShader-Phong-Fragment.c",sPreprocessor);
-	//}
+#ifdef ANDROID
+			wrapper.m_piShader->Load("Shaders/Android-RenderShader-Vertex.c","Shaders/Android-RenderShader-Fragment.c",sPreprocessor);
+#else
+			wrapper.m_piShader->Load("Shaders/RenderShader-Phong-Vertex.c","Shaders/RenderShader-Phong-Fragment.c",sPreprocessor);
+#endif
+		//}
 		
 		if(key.nTextureUnits>=1){wrapper.m_piShader->AddUniform("Texture0",(int)0,false);wrapper.m_piShader->AddUniform("uTexMatrix0",identity,false);}
 		if(key.nTextureUnits>=2){wrapper.m_piShader->AddUniform("Texture1",(int)1,false);wrapper.m_piShader->AddUniform("uTexMatrix1",identity,false);}
@@ -3358,7 +3373,12 @@ void COpenGLRender::ReloadShaders()
 	
 	if(m_ShadowShader.m_piShader)
 	{
+#ifdef ANDROID
+		m_ShadowShader.m_piShader->Load("Shaders/Android-ShadowBufferShader-Vertex.c","Shaders/Android-ShadowBufferShader-Fragment.c","");
+#else
 		m_ShadowShader.m_piShader->Load("Shaders/ShadowBufferShader-Vertex.c","Shaders/ShadowBufferShader-Fragment.c","");
+#endif
+		
 		m_ShadowShader.m_piShader->Compile();
 	}
 #endif

@@ -77,18 +77,18 @@ bool COpenGLShader::LoadCodeFile(std::string sSourceFile,std::string *psSourceCo
 	unsigned int dwSize=0;
 	bool bOk=false;
 
-	FILE *pFile=fopen(sSourceFile.c_str(),"rb");
+	AFILE *pFile=afopen(sSourceFile.c_str(),"rb");
 	if(pFile!=NULL)
 	{
-		fseek(pFile,0,SEEK_END);
-		dwSize=ftell(pFile);
-		fseek(pFile,0,SEEK_SET);
+		afseek(pFile,0,SEEK_END);
+		dwSize=aftell(pFile);
+		afseek(pFile,0,SEEK_SET);
 		if(dwSize)
 		{
 			pSource=new char [dwSize+1];
 			if(pSource)
 			{
-				if(fread(pSource,dwSize,1,pFile)==1)
+				if(afread(pSource,dwSize,1,pFile)==1)
 				{
 					pSource[dwSize]=0;
 					bOk=true;
@@ -96,7 +96,7 @@ bool COpenGLShader::LoadCodeFile(std::string sSourceFile,std::string *psSourceCo
 			}
 		}
 	}
-	if(pFile){fclose(pFile);pFile=NULL;}
+	if(pFile){afclose(pFile);pFile=NULL;}
 	if(bOk)
 	{
 		*psSourceCode=pSource;
@@ -108,99 +108,116 @@ bool COpenGLShader::LoadCodeFile(std::string sSourceFile,std::string *psSourceCo
 
 bool COpenGLShader::Compile()
 {
-  bool bOk=true;
-  if(m_hShaderProgram==0 && m_bTriedToCompile){return false;}
-  
-  FreeShader();
-  if(m_sFragmentShaderCode.length()==0 && m_sVertexShaderCode.length()==0){return false;}
-  m_bTriedToCompile=true;
-  
-  m_hShaderProgram=glCreateProgramObjectARB();
-  bOk=(m_hShaderProgram!=0);
+	bool bOk=true;
+	if(m_hShaderProgram==0 && m_bTriedToCompile){return false;}
 
-  if(bOk && m_sVertexShaderCode.length())
-  {
-    m_hVertexShader=glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
-    if(m_hVertexShader)
-    {
-      GLint glResult=0,iSize=m_sVertexShaderCode.length();
-	  const char *psCode=m_sVertexShaderCode.c_str();
-	  if(bOk){glShaderSourceARB(m_hVertexShader,1,const_cast<const GLcharARB**>(&psCode),&iSize);}
-      if(bOk)
-	  {
-		  glCompileShaderARB(m_hVertexShader);
-		  glGetShaderiv(m_hVertexShader,GL_COMPILE_STATUS,&glResult);
-		  bOk=(glResult==1);
+	FreeShader();
+	if(m_sFragmentShaderCode.length()==0 && m_sVertexShaderCode.length()==0){return false;}
+	m_bTriedToCompile=true;
 
-		  char sOuputBuffer[1024*16];
-		  sOuputBuffer[0]=0;
-		  int nLength=0;
-		  glGetShaderInfoLog(m_hVertexShader,sizeof(sOuputBuffer),&nLength,sOuputBuffer);
-		  if(!bOk){RTTRACE("COpenGLShader::Compile -> Vertex Shader compilation Failed");}
-		  if(sOuputBuffer[0]!=0){RTTRACE(sOuputBuffer);}
-		  //if(sOuputBuffer[0]!=0){RTTRACE(m_sVertexShaderCode.c_str());}
-	  }
-      if(bOk){glAttachObjectARB(m_hShaderProgram,m_hVertexShader);}
+	if(bOk && m_sVertexShaderCode.length())
+	{
+		m_hVertexShader=glCreateShader(GL_VERTEX_SHADER);
+		if(m_hVertexShader)
+		{
+			GLint glResult=0;
+			const char *psCode=m_sVertexShaderCode.c_str();
+			if(bOk){glShaderSource(m_hVertexShader,1,const_cast<const GLcharARB**>(&psCode),NULL);}
+			if(bOk)
+			{
+				glCompileShader(m_hVertexShader);
+				glGetShaderiv(m_hVertexShader,GL_COMPILE_STATUS,&glResult);
+				bOk=(glResult==1);
+
+				char sOuputBuffer[1024*16];
+				sOuputBuffer[0]=0;
+				int nLength=0;
+				glGetShaderInfoLog(m_hVertexShader,sizeof(sOuputBuffer),&nLength,sOuputBuffer);
+				if(!bOk){RTTRACE("COpenGLShader::Compile -> %s: Vertex Shader compilation Failed",m_sFragmentShader.c_str());}
+				if(sOuputBuffer[0]!=0){RTTRACE(sOuputBuffer);}
+				//if(sOuputBuffer[0]!=0){RTTRACE(m_sVertexShaderCode.c_str());}
+			}
+		}
+		else
+		{
+		bOk=false;
+		}
 	}
-    else
-    {
-      bOk=false;
-    }
-  }
-  if(bOk && m_sFragmentShaderCode.length())
-  {
-    m_hFragmentShader=glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
-    if(m_hFragmentShader)
-    {
-	  GLint glResult=0,iSize=m_sFragmentShaderCode.length();
-	  const char *psCode=m_sFragmentShaderCode.c_str();
-	  if(bOk){glShaderSourceARB(m_hFragmentShader,1,const_cast<const GLcharARB**>(&psCode),&iSize);}
-      if(bOk)
-	  {
-		  glCompileShaderARB(m_hFragmentShader);
-		  glGetShaderiv(m_hFragmentShader,GL_COMPILE_STATUS,&glResult);
-		  bOk=(glResult==1);
 
-		  char sOuputBuffer[1024*16];
-		  sOuputBuffer[0]=0;
-		  int nLength=0;
-		  glGetShaderInfoLog(m_hFragmentShader,sizeof(sOuputBuffer),&nLength,sOuputBuffer);
-		  if(!bOk){RTTRACE("COpenGLShader::Compile -> Fragment Shader compilation Failed");}
-		  if(sOuputBuffer[0]!=0){RTTRACE(sOuputBuffer);}
-		  //if(sOuputBuffer[0]!=0){RTTRACE(m_sFragmentShaderCode.c_str());}
-	  }
-      if(bOk){glAttachObjectARB(m_hShaderProgram,m_hFragmentShader);}
+	if(bOk && m_sFragmentShaderCode.length())
+	{
+		m_hFragmentShader=glCreateShader(GL_FRAGMENT_SHADER);
+		if(m_hFragmentShader)
+		{
+			GLint glResult=0;
+			const char *psCode=m_sFragmentShaderCode.c_str();
+			if(bOk){glShaderSource(m_hFragmentShader,1,const_cast<const GLcharARB**>(&psCode),NULL);}
+			if(bOk)
+			{
+				glCompileShader(m_hFragmentShader);
+				glGetShaderiv(m_hFragmentShader,GL_COMPILE_STATUS,&glResult);
+				bOk=(glResult==1);
+				
+				char sOuputBuffer[1024*16];
+				sOuputBuffer[0]=0;
+				int nLength=0;
+				glGetShaderInfoLog(m_hFragmentShader,sizeof(sOuputBuffer),&nLength,sOuputBuffer);
+				if(!bOk){RTTRACE("COpenGLShader::Compile -> %s : Fragment Shader compilation Failed",m_sFragmentShader.c_str());}
+				if(sOuputBuffer[0]!=0){RTTRACE(sOuputBuffer);}
+				//if(sOuputBuffer[0]!=0){RTTRACE(m_sFragmentShaderCode.c_str());}
+			}
+		}
+		else
+		{
+			bOk=false;
+		}
+	}
 
-    }
-    else
-    {
-      bOk=false;
-    }
-  }
-  
-  std::map<std::string,SAttributeData>::iterator iAttribute;
-  for(iAttribute=m_mAttributes.begin();iAttribute!=m_mAttributes.end();iAttribute++)
-  {
-	  SAttributeData *pData=&iAttribute->second;
-	  glBindAttribLocation(m_hShaderProgram,pData->nIndex,iAttribute->first.c_str());
-	  pData->bModified=false;
-  }
-  
-  if(bOk)
-  {
-    GLint glResult=0;
-	glLinkProgramARB(m_hShaderProgram);
-	glGetProgramiv(m_hShaderProgram,GL_LINK_STATUS,&glResult);
-    bOk=(glResult==1);
-	char sOuputBuffer[1024*16];
-	sOuputBuffer[0]=0;
-	int nLength=0;
-	glGetProgramInfoLog(m_hShaderProgram,sizeof(sOuputBuffer),&nLength,sOuputBuffer);
-	if(sOuputBuffer[0]!=0){RTTRACE(sOuputBuffer);}
-	RTTRACE(bOk?"COpenGLShader::Compile -> Shader link Succeeded":"COpenGLShader::Compile -> Shader link failed");
-  }
-  if(!bOk){FreeShader();}
-  return bOk;
+	m_hShaderProgram=glCreateProgram();
+	bOk=(m_hShaderProgram!=0);
+	int error=glGetError();// clear errors
+
+	if(bOk)
+	{
+		glAttachShader(m_hShaderProgram,m_hVertexShader);
+		error=glGetError();
+		if(error!=GL_NO_ERROR){RTTRACE("COpenGLShader::Compile -> %s: failed to attach vertex shader %d to program %d, error %x",m_sVertexShader.c_str(),m_hVertexShader,m_hShaderProgram,error);}
+		else {RTTRACE("COpenGLShader::Compile -> %s: Vertex shader %d attached to program %d",m_sVertexShader.c_str(),m_hVertexShader,m_hShaderProgram);}
+	}
+
+	if(bOk)
+	{
+		glAttachShader(m_hShaderProgram,m_hFragmentShader);
+		error=glGetError();
+		if(error!=GL_NO_ERROR){RTTRACE("COpenGLShader::Compile -> %s: failed to attach fragment shader %d to program %d, error %x",m_sFragmentShader.c_str(),m_hFragmentShader,m_hShaderProgram,error);}
+		else {RTTRACE("COpenGLShader::Compile -> %s: Framgent shader %d attached to program %d",m_sVertexShader.c_str(),m_hVertexShader,m_hShaderProgram);}
+	}
+
+	std::map<std::string,SAttributeData>::iterator iAttribute;
+	for(iAttribute=m_mAttributes.begin();iAttribute!=m_mAttributes.end();iAttribute++)
+	{
+		SAttributeData *pData=&iAttribute->second;
+		glBindAttribLocation(m_hShaderProgram,pData->nIndex,iAttribute->first.c_str());
+		if(error!=GL_NO_ERROR){RTTRACE("COpenGLShader::Compile -> %s: failed to bomd attrib location for %s, error %x",m_sFragmentShader.c_str(),iAttribute->first.c_str(),error);}
+		pData->bModified=false;
+	}
+
+	if(bOk)
+	{
+		GLint glResult=0;
+		glLinkProgramARB(m_hShaderProgram);
+		glValidateProgram(m_hShaderProgram);
+		glGetProgramiv(m_hShaderProgram,GL_LINK_STATUS,&glResult);
+		bOk=(glResult==1);
+		char sOuputBuffer[1024*16];
+		sOuputBuffer[0]=0;
+		int nLength=0;
+		glGetProgramInfoLog(m_hShaderProgram,sizeof(sOuputBuffer),&nLength,sOuputBuffer);
+		RTTRACE(bOk?"COpenGLShader::Compile -> Shader link Succeeded":"COpenGLShader::Compile -> Shader link failed");
+		if(sOuputBuffer[0]!=0){RTTRACE(sOuputBuffer);}
+	}
+	if(!bOk){FreeShader();}
+	return bOk;
 }
 
 void COpenGLShader::FreeShader()
@@ -225,17 +242,26 @@ bool COpenGLShader::Activate()
 	  if(!Compile()){return false;}
 	}
   
+    int nError=glGetError();
 	glUseProgramObjectARB(m_hShaderProgram);
-  
+	nError=glGetError();
+	if(nError!=GL_NO_ERROR){RTTRACE("COpenGLShader::Activate -> Failed to activate shader %d, error %x",m_hShaderProgram,nError);}
+	
 	std::map<std::string,SUniformData*>::iterator iUniform;
 	for(iUniform=m_mUniforms.begin();iUniform!=m_mUniforms.end();iUniform++)
 	{
 		SUniformData *pData=iUniform->second;
-		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, iUniform->first.c_str());}
+		if(pData->nLocation==-1)
+		{
+			pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, iUniform->first.c_str());
+			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",iUniform->first.c_str(),glGetError());}
+		}
 		if(!pData->bModified){continue;}
 		if(pData->bTemporal){continue;}
+		if(pData->nLocation==-1){continue;}
 		pData->bModified=false;
 		
+		glGetError();
 		switch(pData->eType)
 		{
 			case eUniformType_Int:
@@ -254,7 +280,7 @@ bool COpenGLShader::Activate()
 				glUniform4fvARB(pData->nLocation,1,pData->data.fFloats);
 			break;
 			case eUniformType_Matrix:
-				glUniformMatrix4fvARB(pData->nLocation,1,true,pData->data.fFloats);
+				glUniformMatrix4fvARB(pData->nLocation,1,false,pData->data.fFloats);
 			break;
 			case eUniformType_IntArray:
 				glUniform1ivARB(pData->nLocation,pData->nElements,(int*)pData->pBuffer);
@@ -269,10 +295,15 @@ bool COpenGLShader::Activate()
 				glUniform4fvARB(pData->nLocation,pData->nElements,(float*)pData->pBuffer);
 			break;
 			case eUniformType_MatrixArray:
-				glUniformMatrix4fvARB(pData->nLocation,pData->nElements,true,(float*)pData->pBuffer);
+				glUniformMatrix4fvARB(pData->nLocation,pData->nElements,false,(float*)pData->pBuffer);
 			break;
 			default:
 				break;
+		}
+		int error=glGetError();
+		if(error!=GL_NO_ERROR)
+		{
+			RTTRACE("COpenGLShader::Activate -> Failed to set uniform value %s: %x, type %d, elements %d",iUniform->first.c_str(),error,pData->eType,pData->nElements);
 		}
 	}
 	
@@ -310,7 +341,11 @@ void COpenGLShader::AddUniform( std::string sUniformName,int nValue,bool bTempor
 	
 	if(m_bActive)
 	{
-		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());}
+		if(pData->nLocation==-1)
+		{
+			pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());
+			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
+		}
 		if(pData->nLocation!=-1){pData->bModified=false;glUniform1iARB(pData->nLocation,pData->data.nInteger);}
 	}
 }
@@ -343,7 +378,11 @@ void COpenGLShader::AddUniform( std::string sUniformName,float fValue,bool bTemp
 	
 	if(m_bActive)
 	{
-		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());}
+		if(pData->nLocation==-1)
+		{
+			pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());
+			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
+		}
 		if(pData->nLocation!=-1){pData->bModified=false;glUniform1fARB(pData->nLocation,pData->data.fFloats[0]);}
 	}
 }
@@ -377,7 +416,11 @@ void COpenGLShader::AddUniform( std::string sUniformName,float fValue1,float fVa
 	
 	if(m_bActive)
 	{
-		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());}
+		if(pData->nLocation==-1)
+		{
+			pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());
+			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
+		}
 		if(pData->nLocation!=-1){pData->bModified=false;glUniform2fvARB(pData->nLocation,1,pData->data.fFloats);}
 	}
 }
@@ -413,7 +456,11 @@ void COpenGLShader::AddUniform( std::string sUniformName,const CVector &vVector,
 	
 	if(m_bActive)
 	{
-		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());}
+		if(pData->nLocation==-1)
+		{
+			pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());
+			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
+		}
 		if(pData->nLocation!=-1){pData->bModified=false;glUniform3fvARB(pData->nLocation,1,pData->data.fFloats);}
 	}
 }
@@ -449,7 +496,11 @@ void COpenGLShader::AddUniform( std::string sUniformName,const CVector &vColor, 
 	
 	if(m_bActive)
 	{
-		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());}
+		if(pData->nLocation==-1)
+		{
+			pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());
+			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
+		}
 		if(pData->nLocation!=-1){pData->bModified=false;glUniform4fvARB(pData->nLocation,1,pData->data.fFloats);}
 	}
 }
@@ -471,15 +522,22 @@ void COpenGLShader::AddUniform( std::string sUniformName,CMatrix &matrix,bool bT
 	pData->nElements=0;
 	if(pData->pBuffer){delete [] pData->pBuffer;pData->pBuffer=NULL;}
 	
+	CMatrix transpose=matrix;
+	transpose.Transpose();
+	
 	for(int x=0;x<16;x++)
 	{
-		pData->data.fFloats[x]=(float)((double*)matrix.e)[x];
+		pData->data.fFloats[x]=(float)((double*)transpose.e)[x];
 	}
 	
 	if(m_bActive)
 	{
-		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());}
-		if(pData->nLocation!=-1){pData->bModified=false;glUniformMatrix4fvARB(pData->nLocation,1,true,pData->data.fFloats);}
+		if(pData->nLocation==-1)
+		{
+			pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());
+			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
+		}
+		if(pData->nLocation!=-1){pData->bModified=false;glUniformMatrix4fvARB(pData->nLocation,1,false,pData->data.fFloats);}
 	}
 }  
 
@@ -513,7 +571,11 @@ void COpenGLShader::AddUniformIntegers( std::string sUniformName,unsigned int nV
 	
 	if(m_bActive)
 	{
-		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());}
+		if(pData->nLocation==-1)
+		{
+			pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());
+			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
+		}
 		if(pData->nLocation!=-1){pData->bModified=false;glUniform1ivARB(pData->nLocation,nValues,pValues);}
 	}	
 }
@@ -548,7 +610,11 @@ void COpenGLShader::AddUniformFloats( std::string sUniformName,unsigned int nVal
 	
 	if(m_bActive)
 	{
-		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());}
+		if(pData->nLocation==-1)
+		{
+			pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());
+			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
+		}
 		if(pData->nLocation!=-1){pData->bModified=false;glUniform1fvARB(pData->nLocation,nValues,pValues);}
 	}	
 }
@@ -586,7 +652,11 @@ void COpenGLShader::AddUniformVectors( std::string sUniformName,unsigned int nVa
 	
 	if(m_bActive)
 	{
-		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());}
+		if(pData->nLocation==-1)
+		{
+			pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());
+			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
+		}
 		if(pData->nLocation!=-1){pData->bModified=false;glUniform3fvARB(pData->nLocation,nValues,(float*)pData->pBuffer);}
 	}
 }
@@ -627,7 +697,11 @@ void COpenGLShader::AddUniformColors( std::string sUniformName,unsigned int nVal
 	if(m_bActive)
 	{
 		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());}
-		if(pData->nLocation!=-1){pData->bModified=false;glUniform4fvARB(pData->nLocation,nValues,(float*)pData->pBuffer);}
+		if(pData->nLocation!=-1)
+		{
+			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
+			pData->bModified=false;glUniform4fvARB(pData->nLocation,nValues,(float*)pData->pBuffer);
+		}
 	}
 }
 
@@ -658,8 +732,12 @@ void COpenGLShader::AddUniformMatrixes( std::string sUniformName,unsigned int nV
 	
 	if(m_bActive)
 	{
-		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());}
-		if(pData->nLocation!=-1){pData->bModified=false;glUniformMatrix4fvARB(pData->nLocation,nValues,true,(float*)pData->pBuffer);}
+		if(pData->nLocation==-1)
+		{
+			pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());
+			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
+		}
+		if(pData->nLocation!=-1){pData->bModified=false;glUniformMatrix4fvARB(pData->nLocation,nValues,false,(float*)pData->pBuffer);}
 	}
 }  
 
@@ -700,8 +778,12 @@ void COpenGLShader::AddUniformMatrixes( std::string sUniformName,unsigned int nV
 	
 	if(m_bActive)
 	{
-		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());}
-		if(pData->nLocation!=-1){pData->bModified=false;glUniformMatrix4fvARB(pData->nLocation,nValues,true,pMatrixes);}
+		if(pData->nLocation==-1)
+		{
+			pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());
+			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
+		}
+		if(pData->nLocation!=-1){pData->bModified=false;glUniformMatrix4fvARB(pData->nLocation,nValues,false,pMatrixes);}
 	}	
 }  
 
