@@ -22,6 +22,7 @@
 #include "OpenGLGraphics.h"
 #include "OpenGLTexture.h"
 #define PNG_SKIP_SETJMP_CHECK
+#define PNG_NO_PEDANTIC_WARNINGS
 #include <png.h>
 
 #pragma pack(push,1)
@@ -125,7 +126,7 @@ bool LoadPngFile(const char *pFileName,unsigned int nBits,unsigned int *pnWidth,
 	if(bOk){bOk=(setjmp(png_jmpbuf(pPNGHeader))==0);}
 	if(bOk){png_init_io(pPNGHeader, pFile);}
 	if(bOk){png_set_sig_bytes(pPNGHeader, 0);}
-	if(bOk){png_read_png(pPNGHeader, pPNGInfo, PNG_TRANSFORM_STRIP_16 | PNG_TRANSFORM_PACKING | PNG_TRANSFORM_EXPAND, png_voidp_NULL);}
+	if(bOk){png_read_png(pPNGHeader, pPNGInfo, PNG_TRANSFORM_STRIP_16 | PNG_TRANSFORM_PACKING | PNG_TRANSFORM_EXPAND, NULL);}
 	if(bOk){bOk=(pPNGInfo->color_type==PNG_COLOR_TYPE_RGBA || pPNGInfo->color_type==PNG_COLOR_TYPE_RGB);}
 	if(bOk)
 	{
