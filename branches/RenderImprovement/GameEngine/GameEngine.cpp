@@ -123,7 +123,7 @@ void CGameEngineApp::Run()
 void CGameEngineApp::InterpretCommandLine(std::string sExecutableFolder,std::vector<std::string> &vParams)
 {
 #ifdef ANDROID
-	g_sRootFolder="./";
+	g_sRootFolder=".";
 #else
 	g_sRootFolder=AppendPathSeparator(sExecutableFolder)+".." PATH_SEPARATOR ".." PATH_SEPARATOR "Resources";
 #endif
@@ -209,7 +209,7 @@ void android_main(struct android_app* state)
 	// Make sure glue isn't stripped.
 	app_dummy();
 	g_pAndroidApp=state;
-	if(g_pAndroidApp->activity){ANativeActivity_setWindowFlags(g_pAndroidApp->activity,AWINDOW_FLAG_FULLSCREEN,0);}
+	if(g_pAndroidApp->activity){ANativeActivity_setWindowFlags(g_pAndroidApp->activity,AWINDOW_FLAG_FULLSCREEN|AWINDOW_FLAG_KEEP_SCREEN_ON,0);}
 	std::string sFolder="";
 	std::vector<std::string> vParams;
 	theApp.InterpretCommandLine(sFolder,vParams);

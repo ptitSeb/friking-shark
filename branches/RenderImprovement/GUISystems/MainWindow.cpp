@@ -23,8 +23,7 @@
 #include "GUISystems.h"
 #include "MainWindow.h"
 
-#define AVAILABLE_LEVELS 5
-
+#define MAX_LEVELS 64
 extern CSystemModuleHelper *g_pSystemModuleHelper;
 
 CMainWindow::CMainWindow(void)
@@ -32,6 +31,7 @@ CMainWindow::CMainWindow(void)
 	m_eStage=eInterfaceStage_None;
 	m_dBackgroundAlpha=0;
 	m_nContinuePauseStartTime=0;
+	m_nAvailableLevels=0;
 	m_bVisible=true;
 }
 
@@ -92,6 +92,14 @@ bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 		}
 		
 		m_piGUIManager->SetFocus(this);
+	}
+	
+	for(int x=0;x<MAX_LEVELS;x++)
+	{
+		char sFile[200];
+		sprintf(sFile,"Level%d.ges",x+1);
+		if(!afexists(sFile)){break;}
+		m_nAvailableLevels++;
 	}
 	return bResult;
 }
@@ -262,7 +270,7 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 			}
 			else if(result==eMainMenuAction_NewGame)
 			{
-				if(m_LevelOptionsDialog.m_piLevelOptions->SelectOptions(this,&m_PlayerData.m_eLastMode,&m_PlayerData.m_eLastDifficulty,&m_PlayerData.m_nLastLevel))
+				if(m_LevelOptionsDialog.m_piLevelOptions->SelectOptions(this,m_nAvailableLevels,&m_PlayerData.m_eLastMode,&m_PlayerData.m_eLastDifficulty,&m_PlayerData.m_nLastLevel))
 				{
 					m_PlayerData.m_CurrentGame=SGameState();
 					m_PlayerData.m_CurrentGame.nLivesLeft=3;
@@ -296,7 +304,7 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 				
 				if(result==eGameMenuAction_EndGame)
 				{
-					if(ConfirmDialog("End current game?","Friking shark",eMessageDialogType_Warning))
+					if(ConfirmDialog("End game?","Friking shark",eMessageDialogType_Warning))
 					{
 						m_eStage=eInterfaceStage_WaitingForManualGameEndCourtain;
 						m_piGameInterface->StopManuallyWithCourtain();
@@ -401,11 +409,12 @@ void CMainWindow::OnScenarioFinished(eScenarioFinishedReason eReason)
 		m_PlayerData.m_CurrentGame.nWeapon=sGameState.nWeapon;
 		m_PlayerData.m_CurrentGame.nBombs=3;
 		m_PlayerData.m_CurrentGame.nLevel++;
+		
 		m_PlayerData.m_CurrentGame.nCheckpoint=-1;
 		
-		if(m_PlayerData.m_CurrentGame.nLevel>=AVAILABLE_LEVELS)
+		if(m_PlayerData.m_CurrentGame.nLevel>=m_nAvailableLevels)
 		{
-			m_PlayerData.m_CurrentGame.nLevel=1;
+			m_PlayerData.m_CurrentGame.nLevel=m_nAvailableLevels>1?1:0;
 			if(m_PlayerData.m_CurrentGame.eDifficulty<eGameDifficulty_VeryHard)
 				{m_PlayerData.m_CurrentGame.eDifficulty=(EGameDifficulty)((int)m_PlayerData.m_CurrentGame.eDifficulty+1);}
 		}
@@ -480,4 +489,11 @@ void CMainWindow::OnPlayerKilled()
 	m_PlayerData.m_CurrentGame.nWeapon=sGameState.nWeapon;
 	m_PlayerData.m_CurrentGame.nBombs=sGameState.nBombs;
 	m_PlayerData.m_CurrentGame.nCheckpoint=sGameState.nCheckpoint;
+}
+
+void CMainWindow::OnDrawMouseCursor(SGamePos position,IGenericRender *piRender,bool *pbDrawed)
+{
+#ifndef ANDROID
+	CGameWindowBase::OnDrawMouseCursor(position,piRender,pbDrawed);
+#endif
 }

@@ -26,7 +26,7 @@
 CGameInterface::CGameInterface(void)
 {
 	m_eState=eGameInterfaceState_Idle;
-	m_bActive=false;
+	m_bActive=true;
 	m_eGameMode=eGameMode_Normal;
 	m_eGameDifficulty=eGameDifficulty_Easy;
 	m_bCompleted=false;
@@ -65,6 +65,9 @@ CGameInterface::CGameInterface(void)
 	m_piLiveSound=NULL;
 	m_nEndPoints=0;
 	m_nEndBombs=0;
+	m_dOriginalPlayAreaAspectRatio=1.0;
+	for(int x=0;x<MAX_LIVES_TO_DISPLAY;x++){m_piSTLives[x]=NULL;}
+	for(int x=0;x<MAX_BOMBS_TO_DISPLAY;x++){m_piSTBombs[x]=NULL;}
 }
 
 CGameInterface::~CGameInterface(void)
@@ -154,9 +157,13 @@ void CGameInterface::InitializeGameSystem()
 
 bool CGameInterface::LoadScenario(std::string sScenario)
 {
+	InitializeGameSystem();
+	
 	if(!m_bGameSystemInitialized){return false;}
 	bool bResult=true;
 	m_GameControllerWrapper.m_piGameController->LoadScenario(sScenario);
+	
+	m_dOriginalPlayAreaAspectRatio=1.0;
 	
 	if(m_PlayAreaManagerWrapper.m_piPlayAreaManager)
 	{
@@ -167,6 +174,15 @@ bool CGameInterface::LoadScenario(std::string sScenario)
 		set<double>::iterator i=m_sCheckpointPositions.begin();
 		if(i!=m_sCheckpointPositions.end()){m_vDemoStartPosition.c[0]=*i;i++;}
 		if(i!=m_sCheckpointPositions.end()){m_vDemoEndPosition.c[0]=*i;i++;}
+	
+		IPlayAreaDesign *piDesign=QI(IPlayAreaDesign,m_PlayAreaManagerWrapper.m_piPlayAreaManager);
+		if(piDesign)
+		{
+			SPlayAreaConfig sConfig;
+			piDesign->GetPlayAreaConfig(&sConfig);
+			m_dOriginalPlayAreaAspectRatio= sConfig.dCameraAspectRatio;
+		}
+		REL(piDesign);
 	}
 		
 	m_bCompleted=false;
@@ -238,6 +254,7 @@ void CGameInterface::StartGameInternal(unsigned int nPoints, unsigned int nLives
 
 void CGameInterface::StartDemo()
 {
+	InitializeGameSystem();
 	if(!m_bGameSystemInitialized){return;}
 	m_bDemoMode=true;
 	m_eGameMode=eGameMode_God;
@@ -320,6 +337,11 @@ void CGameInterface::CloseScenario()
 		m_GameControllerWrapper.m_piGameController->Stop();
 		m_GameControllerWrapper.m_piGameController->CloseScenario();
 	}
+	
+	if(m_piGameSystem){m_piGameSystem->DestroyAllObjects();}
+	if(m_piGameSystem){m_piGameSystem->Destroy();}
+	REL(m_piGameSystem);
+	m_bGameSystemInitialized=false;
 	m_bCompleted=false;
 }
 
@@ -627,11 +649,24 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 			SGameRect sRect;
 			
 			m_piParent->GetRealRect(&sParentRect);
-			double dPlayAreaAspectRatio=piCamera->GetAspectRatio();
+		
 			sRect.y=0;
-			sRect.w=sParentRect.h*dPlayAreaAspectRatio;
+			sRect.w=sParentRect.h*m_dOriginalPlayAreaAspectRatio;
 			sRect.x=(sParentRect.w-sRect.w)*0.5;
 			sRect.h=sParentRect.h;
+
+			if(sRect.w>sParentRect.w){sRect.w=sParentRect.w;sRect.x=(sParentRect.w-sRect.w)*0.5;}
+			if(sRect.h>sParentRect.h){sRect.h=sParentRect.h;sRect.y=(sParentRect.h-sRect.h)*0.5;}
+			
+			IPlayAreaDesign *piDesign=QI(IPlayAreaDesign,m_PlayAreaManagerWrapper.m_piPlayAreaManager);
+			if(piDesign)
+			{
+				SPlayAreaConfig sConfig;
+				piDesign->GetPlayAreaConfig(&sConfig);
+				sConfig.dCameraAspectRatio=sRect.w/sRect.h;
+				piDesign->SetPlayAreaConfig(&sConfig);
+			}
+			REL(piDesign);
 			
 			SetReferenceSystem(eGameGUIReferenceSystem_Absolute);
 			SetRect(&sRect);
@@ -680,6 +715,65 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 	
 	UpdateGUI(dwCurrentTime);
 }
+#ifdef ANDROID
+
+void CGameInterface::ProcessInput()
+{
+	if(!m_bGameSystemInitialized){return;}
+	bool bControlKeyPressed=false;
+	if(m_bFrozen){return;}
+	if(m_bDemoMode){return;}
+	if(m_bCourtainOpening || m_bCourtainClosing){return;}
+	if(m_nLivesLeft==0){return;}
+	
+	if(!m_FrameManagerWrapper.m_piFrameManager->IsPaused())
+	{
+		if(m_piGUIManager->HasMouseCapture(this))
+		{
+			IGenericCamera *piCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera();
+			if(piCamera && m_piPlayerEntity)
+			{
+				SGamePos sPos;
+				m_piGUIManager->GetMousePosition(this,&sPos);
+				CLine mouseRay=GetMouseRay(sPos.x,sPos.y,10000.0,piCamera);
+				CPlane plane(AxisPosY,m_piPlayerEntity->GetPhysicInfo()->vPosition);
+				CVector vCut;
+				
+				if(plane.Cut(mouseRay.m_Points[0],mouseRay.m_Points[1],&vCut))
+				{
+					m_PlayerManagerWrapper.m_piPlayerManager->WarpPlayer(vCut.c[2],vCut.c[0]+20.0);
+				}
+			}
+			REL(piCamera);
+		}
+		m_PlayerManagerWrapper.m_piPlayerManager->SetFireBulletMark();
+	}
+}
+
+void CGameInterface::OnMouseDown(int nButton,double x,double y)
+{
+	m_piGUIManager->SetMouseCapture(this);
+	
+	unsigned int nTapTime=GetTimeStamp();
+	if(m_sAndroidJoystick.nLastTapTime+m_sAndroidJoystick.nDoubleTapInterval>nTapTime)
+	{
+		// Double tap!
+		m_PlayerManagerWrapper.m_piPlayerManager->SetFireBombMark();
+		m_sAndroidJoystick.nLastTapTime=0;
+	}
+	else
+	{
+		m_sAndroidJoystick.nLastTapTime=nTapTime;
+	}
+}
+
+void CGameInterface::OnMouseUp(int nButton,double x,double y)
+{
+	if(!m_piGUIManager->HasMouseCapture(this)){return;}
+	m_piGUIManager->ReleaseMouseCapture();
+}
+
+#else
 
 void CGameInterface::ProcessInput()
 {
@@ -706,7 +800,9 @@ void CGameInterface::ProcessInput()
 		}
 	}
 	if(m_piGUIManager->IsKeyDown(GK_PAUSE)){ProcessKey(KEY_PAUSE);}
+	
 }
+#endif
 
 void CGameInterface::ProcessKey(unsigned short nKey)
 {
@@ -914,3 +1010,4 @@ void CGameInterface::GetGameState(SGameState *pState)
 	pState->eMode=m_eGameMode;
 	pState->nCheckpoint=m_nCheckpoint;
 }
+

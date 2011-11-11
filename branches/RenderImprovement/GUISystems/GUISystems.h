@@ -128,7 +128,7 @@ class ILevelOptions: virtual public IGameWindow
 {	
 public:
 	
-	virtual bool SelectOptions(IGameWindow *piParent,EGameMode *pMode,EGameDifficulty *pDifficulty,unsigned int *pnSelectedLevel)=0;
+	virtual bool SelectOptions(IGameWindow *piParent,unsigned int nAvailableLevels,EGameMode *pMode,EGameDifficulty *pDifficulty,unsigned int *pnSelectedLevel)=0;
 	
 	virtual ~ILevelOptions(){}
 };
