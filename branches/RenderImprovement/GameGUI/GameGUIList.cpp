@@ -113,16 +113,16 @@ void CGameGUIList::OnDraw(IGenericRender *piRender)
 
 	// Boton superior
 	piRender->SetColor(m_vScrollButtonColor,1);
-	piRender->RenderRect(m_rScrollUp.x,m_rScrollUp.y,m_rScrollUp.w,m_rScrollUp.h);
+	piRender->RenderRect(m_rRealRect.x+m_rScrollUp.x,m_rRealRect.y+m_rScrollUp.y,m_rScrollUp.w,m_rScrollUp.h);
 	// ScrollBar
 	piRender->SetColor(m_vScrollBkColor,m_dBackgroundAlpha);
-	piRender->RenderRect(m_rScroll.x,m_rScroll.y,m_rScroll.w,m_rScroll.h);
+	piRender->RenderRect(m_rRealRect.x+m_rScroll.x,m_rRealRect.y+m_rScroll.y,m_rScroll.w,m_rScroll.h);
 	// Thumb
 	piRender->SetColor(m_vScrollButtonColor,1);
-	piRender->RenderRect(m_rScrollThumb.x,m_rScrollThumb.y,m_rScrollThumb.w,m_rScrollThumb.h);
+	piRender->RenderRect(m_rRealRect.x+m_rScrollThumb.x,m_rRealRect.y+m_rScrollThumb.y,m_rScrollThumb.w,m_rScrollThumb.h);
 	// Boton inferior
 	piRender->SetColor(m_vScrollButtonColor,1);
-	piRender->RenderRect(m_rScrollDown.x,m_rScrollDown.y,m_rScrollDown.w,m_rScrollDown.h);
+	piRender->RenderRect(m_rRealRect.x+m_rScrollDown.x,m_rRealRect.y+m_rScrollDown.y,m_rScrollDown.w,m_rScrollDown.h);
 	piRender->PopState();
   }
   
@@ -132,14 +132,14 @@ void CGameGUIList::OnDraw(IGenericRender *piRender)
 	if(m_nSelectedElement==(int)x)
 	{
 	  piRender->SetColor(m_vSelectedBackgroundColor,m_dTextAlpha);
-	  piRender->RenderRect(0,y,dElementWidth,m_dFontPixelHeight);
+	  piRender->RenderRect(m_rRealRect.x,m_rRealRect.y+y,dElementWidth,m_dFontPixelHeight);
 	  piRender->SetColor(m_vSelectedTextColor,m_dTextAlpha);
 	}
 	else
 	{
 	  piRender->SetColor(m_vTextColor,m_dTextAlpha);
 	}
-	piFont->RenderTextEx(piRender,dFontSize,1,y,dElementWidth,m_dFontPixelHeight,m_vElements[x].c_str(),eTextAlignment_Left,eTextAlignment_Center);
+	piFont->RenderTextEx(piRender,dFontSize,m_rRealRect.x+1,m_rRealRect.y+y,dElementWidth,m_dFontPixelHeight,m_vElements[x].c_str(),eTextAlignment_Left,eTextAlignment_Center);
   }
   
   REL(piFont);

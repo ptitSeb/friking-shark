@@ -208,35 +208,14 @@ void CGameGUIManager::RenderWindow(IGenericRender *piRender,IGameWindow *piWindo
 	IGameWindow *piParent=piWindow->GetParent();
 	
 	piWindow->GetRealRect(&rRect);
-	m_Render.m_piRender->SetOrthographicProjection(rRect.w,rRect.h);
-	m_Render.m_piRender->SetViewport(rRect.x,rRect.y,rRect.w,rRect.h);
-	m_Render.m_piRender->SetCamera(CVector(rRect.w*0.5,rRect.h*0.5,200),90,0,0);
-	m_Render.m_piRender->DeactivateDepth();
-
+	
 	SGameRect rClipRect=rRect;
 	rClipRect.ClipToRect(&rParentClipRect);
 	
-	if(!piWindow->IsPopup() && piParent)
-	{
-		piRender->ActivateClipping(true); 
-		piRender->SetClipRect(rClipRect.x,rClipRect.y,rClipRect.w,rClipRect.h);
-	}
-
 	piWindow->OnDrawBackground(piRender);
-
-	m_Render.m_piRender->SetOrthographicProjection(rRect.w,rRect.h);
-	m_Render.m_piRender->SetViewport(rRect.x,rRect.y,rRect.w,rRect.h);
-	m_Render.m_piRender->SetCamera(CVector(rRect.w*0.5,rRect.h*0.5,200),90,0,0);
-	m_Render.m_piRender->DeactivateDepth();
 	piWindow->OnDraw(piRender);
 
-	if(!piWindow->IsPopup() && piParent)
-	{
-		piRender->ActivateClipping(false);
-	}
-
 	piWindow->GetChildren(&vChildren);
-
 	for(iChildren=vChildren.begin();iChildren!=vChildren.end();iChildren++)
 	{
 		IGameWindow *piChild=*iChildren;
@@ -249,6 +228,22 @@ void CGameGUIManager::RenderWindow(IGenericRender *piRender,IGameWindow *piWindo
 	REL(piParent);
 }
 
+void CGameGUIManager::RestoreViewport()
+{
+	if(m_Render.m_piRender==NULL){return;}
+	
+	SGameSize size;
+	SGameRect sClipRect;
+	GetWindowSize(&size);
+	sClipRect.w=size.w;
+	sClipRect.h=size.h;
+	
+	m_Render.m_piRender->SetClipRect(0,0,size.w,size.h);
+	m_Render.m_piRender->SetOrthographicProjection(size.w,size.h);
+	m_Render.m_piRender->SetViewport(0,0,size.w,size.h);
+	m_Render.m_piRender->SetCamera(CVector(size.w*0.5,size.h*0.5,200),90,0,0);	
+}
+
 void CGameGUIManager::OnRender()
 {
 	SGameSize size;
@@ -257,7 +252,10 @@ void CGameGUIManager::OnRender()
 	sClipRect.w=size.w;
 	sClipRect.h=size.h;
 
-	m_Render.m_piRender->SetClipRect(0,0,sClipRect.w,sClipRect.h);
+	m_Render.m_piRender->ActivateBlending();
+	m_Render.m_piRender->DeactivateDepth();
+	
+	RestoreViewport();
 
 	RenderWindow(m_Render.m_piRender,m_piMainWindow,sClipRect);
 	for(unsigned x=0;x<m_vPopups.size();x++)
@@ -269,11 +267,6 @@ void CGameGUIManager::OnRender()
 	}
 	if(m_bShowMouseCursor)
 	{
-		m_Render.m_piRender->SetClipRect(0,0,sClipRect.w,sClipRect.h);
-		m_Render.m_piRender->SetOrthographicProjection(size.w,size.h);
-		m_Render.m_piRender->SetViewport(0,0,size.w,size.h);
-		m_Render.m_piRender->SetCamera(CVector(size.w*0.5,size.h*0.5,200),90,0,0);
-
 		int px=0,py=0;
 		if(m_Viewport.m_piViewport){m_Viewport.m_piViewport->GetCursorPos(&px,&py);}
 

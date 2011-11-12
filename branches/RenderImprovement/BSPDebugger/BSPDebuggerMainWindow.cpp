@@ -184,9 +184,9 @@ void CBSPDebuggerMainWindow::OnDraw(IGenericRender *piRender)
 	
 	ProcessInput(m_FrameManager.m_piFrameManager->GetTimeFraction(),m_FrameManager.m_piFrameManager->GetRealTimeFraction());
 	
-	piRender->ActivateDepth();
 	piRender->PushOptions();
 	piRender->PushState();
+	piRender->ActivateDepth();
 
 	m_bTextures?piRender->EnableTextures():piRender->DisableTextures();
 	m_bSolid?piRender->EnableSolid():piRender->DisableSolid();
@@ -323,7 +323,7 @@ void CBSPDebuggerMainWindow::OnDraw(IGenericRender *piRender)
 	
 	piRender->PopOptions();
 	piRender->PopState();
-
+	
 	if(m_piSTFps)
 	{
 		char A[200];
@@ -331,6 +331,8 @@ void CBSPDebuggerMainWindow::OnDraw(IGenericRender *piRender)
 		
 		m_piSTFps->SetText(A);
 	}
+	
+	m_piGUIManager->RestoreViewport();
 }
 
 void CBSPDebuggerMainWindow::ProcessFileOpen()

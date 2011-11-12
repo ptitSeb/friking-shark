@@ -223,6 +223,8 @@ void CIATestMainWindow::OnDraw(IGenericRender *piRender)
 	{
 		i->second->Render();
 	}
+	
+	m_piGUIManager->RestoreViewport();
 }
 
 void CIATestMainWindow::UpdateScenarioButtons()

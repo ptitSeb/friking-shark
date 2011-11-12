@@ -114,8 +114,8 @@ void CGameGUIEdit::OnDraw(IGenericRender *piRender)
 			  std::string sSel=m_sText.substr(nSelectionStart,nSelectionEnd-nSelectionStart);
 			  std::string sPost=m_sText.substr(nSelectionEnd,m_sText.length()-nSelectionEnd);
 			  
-			  double dx=EDITOR_TOTAL_MARGIN;
-			  double dy=EDITOR_TOTAL_MARGIN;
+			  double dx=m_rRealRect.x+EDITOR_TOTAL_MARGIN;
+			  double dy=m_rRealRect.y+EDITOR_TOTAL_MARGIN;
 			  double dw=m_rRealRect.w-EDITOR_TOTAL_MARGIN*2.0;
 			  double dh=m_rRealRect.h-EDITOR_TOTAL_MARGIN*2.0;
 			  if(sPre.length())
@@ -145,7 +145,7 @@ void CGameGUIEdit::OnDraw(IGenericRender *piRender)
 			else
 			{
 			  piRender->SetColor(m_vTextColor,m_dTextAlpha);
-			  piFont->RenderTextEx(piRender,dFontSize,EDITOR_TOTAL_MARGIN,EDITOR_TOTAL_MARGIN,m_rRealRect.w-EDITOR_TOTAL_MARGIN*2.0,m_rRealRect.h-EDITOR_TOTAL_MARGIN*2.0,m_sText.c_str(),m_eHorizontalAlignment,m_eVerticalAlignment);
+			  piFont->RenderTextEx(piRender,dFontSize,m_rRealRect.x+EDITOR_TOTAL_MARGIN,m_rRealRect.y+EDITOR_TOTAL_MARGIN,m_rRealRect.w-EDITOR_TOTAL_MARGIN*2.0,m_rRealRect.h-EDITOR_TOTAL_MARGIN*2.0,m_sText.c_str(),m_eHorizontalAlignment,m_eVerticalAlignment);
 			}
 			piFont->CalcTextSize(dFontSize,m_sText.substr(0,m_nEditionPos).c_str(),&dTextWidth,&dTextHeight);
 		}
@@ -155,12 +155,12 @@ void CGameGUIEdit::OnDraw(IGenericRender *piRender)
 	piRender->ActivateBlending();
 	piRender->DeactivateSolid();
 	piRender->SetColor(m_vBorderColor,bFocused?m_dBorderAlpha:m_dBorderAlpha*0.5);
-	piRender->RenderRect(CVector(m_rRealRect.w*0.5,m_rRealRect.h*0.5,0),AxisNegX,AxisPosY,m_rRealRect.w-2.0,m_rRealRect.h-2.0);
+	piRender->RenderRect(CVector(m_rRealRect.x+m_rRealRect.w*0.5,m_rRealRect.y+m_rRealRect.h*0.5,0),AxisNegX,AxisPosY,m_rRealRect.w-2.0,m_rRealRect.h-2.0);
 	piRender->DeactivateBlending();
 	
 	if(bFocused)
 	{
-		piRender->RenderLine(CVector(dTextWidth+EDITOR_TOTAL_MARGIN,EDITOR_TOTAL_MARGIN,0),CVector(dTextWidth+EDITOR_TOTAL_MARGIN,m_rRealRect.h-EDITOR_TOTAL_MARGIN,0),m_vTextColor,0xFFFF);
+		piRender->RenderLine(CVector(m_rRealRect.x+dTextWidth+EDITOR_TOTAL_MARGIN,m_rRealRect.y+EDITOR_TOTAL_MARGIN,0),CVector(m_rRealRect.x+dTextWidth+EDITOR_TOTAL_MARGIN,m_rRealRect.y+m_rRealRect.h-EDITOR_TOTAL_MARGIN,0),m_vTextColor,0xFFFF);
 	}
 	piRender->PopState();
 

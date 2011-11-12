@@ -358,57 +358,6 @@ bool COpenGLRender::IsClippingActive()
 	return bActive!=0;
 }
 
-
-void COpenGLRender::Clear(const CVector &vColor,double dAlpha)
-{
-	float pVertexBuffer[12];
-	float pColorBuffer[16];
-	GLushort pFaceIndexes[12];
-	
-	pVertexBuffer[0]=m_dProjectionWidth;
-	pVertexBuffer[1]=m_dProjectionHeight;
-	pVertexBuffer[2]=0;
-	
-	pVertexBuffer[3]=0;
-	pVertexBuffer[4]=m_dProjectionHeight;
-	pVertexBuffer[5]=0;
-	
-	pVertexBuffer[6]=0;
-	pVertexBuffer[7]=0;
-	pVertexBuffer[8]=0;
-	
-	pVertexBuffer[9]=m_dProjectionWidth;
-	pVertexBuffer[10]=0;
-	pVertexBuffer[11]=0;
-	
-	pFaceIndexes[0]=0;
-	pFaceIndexes[1]=1;
-	pFaceIndexes[2]=2;
-	pFaceIndexes[3]=0;
-	pFaceIndexes[4]=2;
-	pFaceIndexes[5]=3;
-	
-	pColorBuffer[0]=vColor.c[0];
-	pColorBuffer[1]=vColor.c[1];
-	pColorBuffer[2]=vColor.c[2];
-	pColorBuffer[3]=dAlpha;
-	pColorBuffer[4]=vColor.c[0];
-	pColorBuffer[5]=vColor.c[1];
-	pColorBuffer[6]=vColor.c[2];
-	pColorBuffer[7]=dAlpha;
-	pColorBuffer[8]=vColor.c[0];
-	pColorBuffer[9]=vColor.c[1];
-	pColorBuffer[10]=vColor.c[2];
-	pColorBuffer[11]=dAlpha;
-	pColorBuffer[12]=vColor.c[0];
-	pColorBuffer[13]=vColor.c[1];
-	pColorBuffer[14]=vColor.c[2];
-	pColorBuffer[15]=dAlpha;
-	SetVertexPointers(pVertexBuffer,NULL,pColorBuffer,0,NULL);
-	glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_SHORT,pFaceIndexes);
-}
-
-
 void COpenGLRender::SetColor(const CVector &vColor,double dAlpha)
 {
 	m_vColor=vColor;
@@ -910,6 +859,75 @@ void COpenGLRender::RenderRect(const CVector &vCenter,const CVector &vAxisW,cons
 	pColorBuffer[13]=m_vColor.c[1];
 	pColorBuffer[14]=m_vColor.c[2];
 	pColorBuffer[15]=m_dAlpha;
+	
+	SetVertexPointers(pVertexBuffer,NULL,pColorBuffer,0,NULL);
+	if(m_sRenderState.bActiveSolid)
+	{
+		GLushort pFaceIndexes[6];
+		pFaceIndexes[0]=0;
+		pFaceIndexes[1]=1;
+		pFaceIndexes[2]=2;
+		pFaceIndexes[3]=0;
+		pFaceIndexes[4]=2;
+		pFaceIndexes[5]=3;
+		
+		glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_SHORT,pFaceIndexes);
+	}
+	else
+	{	
+		GLushort pFaceIndexes[4];
+		pFaceIndexes[0]=0;
+		pFaceIndexes[1]=1;
+		pFaceIndexes[2]=2;
+		pFaceIndexes[3]=3;
+		
+		glDrawElements(GL_LINE_LOOP,4,GL_UNSIGNED_SHORT,pFaceIndexes);
+	}
+}
+
+void COpenGLRender::RenderRect(double x,double y,double w,double h,CVector &vColor,double dAlpha)
+{
+	CVector v[4];
+	v[0]=CVector(x,y,0);
+	v[1]=CVector(x+w,y,0);
+	v[2]=CVector(x+w,y+h,0);
+	v[3]=CVector(x,y+h,0);
+	
+	float pVertexBuffer[12];
+	float pColorBuffer[16];
+	
+	pVertexBuffer[0]=v[0].c[0];
+	pVertexBuffer[1]=v[0].c[1];
+	pVertexBuffer[2]=v[0].c[2];
+	
+	pVertexBuffer[3]=v[1].c[0];
+	pVertexBuffer[4]=v[1].c[1];
+	pVertexBuffer[5]=v[1].c[2];
+	
+	pVertexBuffer[6]=v[2].c[0];
+	pVertexBuffer[7]=v[2].c[1];
+	pVertexBuffer[8]=v[2].c[2];
+	
+	pVertexBuffer[9]=v[3].c[0];
+	pVertexBuffer[10]=v[3].c[1];
+	pVertexBuffer[11]=v[3].c[2];
+	
+	pColorBuffer[0]=vColor.c[0];
+	pColorBuffer[1]=vColor.c[1];
+	pColorBuffer[2]=vColor.c[2];
+	pColorBuffer[3]=dAlpha;
+	pColorBuffer[4]=vColor.c[0];
+	pColorBuffer[5]=vColor.c[1];
+	pColorBuffer[6]=vColor.c[2];
+	pColorBuffer[7]=dAlpha;
+	pColorBuffer[8]=vColor.c[0];
+	pColorBuffer[9]=vColor.c[1];
+	pColorBuffer[10]=vColor.c[2];
+	pColorBuffer[11]=dAlpha;
+	pColorBuffer[12]=vColor.c[0];
+	pColorBuffer[13]=vColor.c[1];
+	pColorBuffer[14]=vColor.c[2];
+	pColorBuffer[15]=dAlpha;
 	
 	SetVertexPointers(pVertexBuffer,NULL,pColorBuffer,0,NULL);
 	if(m_sRenderState.bActiveSolid)
@@ -1783,7 +1801,7 @@ void COpenGLRender::RenderModel(const CVector &vOrigin,const CVector &vOrientati
 	{
 		bool bSkip=false;
 
-		if(m_sRenderOptions.bEnableShadows)
+		if(m_sRenderOptions.bEnableShadows && m_sRenderOptions.bEnableAutoShadowVolume)
 		{
 			bool    pbBBoxVolumePointOutSide[8];
 			CVector vBBoxVolume[8];

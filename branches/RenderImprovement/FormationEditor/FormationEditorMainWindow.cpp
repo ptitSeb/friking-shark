@@ -259,10 +259,10 @@ void CFormationEditorMainWindow::OnDraw(IGenericRender *piRender)
 	ProcessInput(m_FrameManager.m_piFrameManager->GetTimeFraction(),m_FrameManager.m_piFrameManager->GetRealTimeFraction());
 	
 	if(m_bPauseOnNextFrame){m_FrameManager.m_piFrameManager->SetPauseOnNextFrame(true);m_bPauseOnNextFrame=false;}
-	m_Render.m_piRender->ActivateDepth();
 	m_Render.m_piRender->PushOptions();
 	m_Render.m_piRender->PushState();
-
+	m_Render.m_piRender->ActivateDepth();
+	
 	m_bTextures?m_Render.m_piRender->EnableTextures():m_Render.m_piRender->DisableTextures();
 	m_bSolid?m_Render.m_piRender->EnableSolid():m_Render.m_piRender->DisableSolid();
 	m_Render.m_piRender->EnableBlending();
@@ -416,6 +416,7 @@ void CFormationEditorMainWindow::OnDraw(IGenericRender *piRender)
 	}
 
 	UpdateLayerPanel();
+	m_piGUIManager->RestoreViewport();
 }
 void CFormationEditorMainWindow::ProcessFileNew()
 {

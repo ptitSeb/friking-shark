@@ -706,12 +706,10 @@ void CGameWindowBase::OnDrawMouseCursor(SGamePos position,IGenericRender *piRend
 	{
 		unsigned dWidth=0,dHeight=0;
 		m_MouseCursorTexture.m_piTexture->GetSize(&dWidth,&dHeight);
-		piRender->ActivateBlending();
 		piRender->SetColor(CVector(1,1,1),1);
 		piRender->SelectTexture(m_MouseCursorTexture.m_piTexture,0);
 		piRender->RenderTexture(CVector(position.x+dWidth*0.5,position.y-dHeight*0.5,0),dWidth,dHeight);
 		piRender->UnselectTexture(0);
-		piRender->DeactivateBlending();
 		(*pbDrawed)=true;
 	}
 }
@@ -720,20 +718,16 @@ void CGameWindowBase::OnDrawBackground(IGenericRender *piRender)
 {
 	if(m_BackgroundTexture.m_piTexture)
 	{
-		piRender->ActivateBlending();
 		piRender->SetColor(m_vBackgroundColor,m_dBackgroundAlpha);
 		piRender->SelectTexture(m_BackgroundTexture.m_piTexture,0);
-		piRender->RenderTexture(CVector(m_rRealRect.w*0.5,m_rRealRect.h*0.5,0),m_rRealRect.w,m_rRealRect.h);
+		piRender->RenderTexture(CVector(m_rRealRect.x+m_rRealRect.w*0.5,m_rRealRect.y+m_rRealRect.h*0.5,0),m_rRealRect.w,m_rRealRect.h);
 		piRender->UnselectTexture(0);
-		piRender->DeactivateBlending();
 	}
 	else
 	{
 		if(m_dBackgroundAlpha!=0.0)
 		{
-			piRender->ActivateBlending();
-			piRender->Clear(m_vBackgroundColor,m_dBackgroundAlpha);
-			piRender->DeactivateBlending();
+			piRender->RenderRect(m_rRealRect.x,m_rRealRect.y,m_rRealRect.w,m_rRealRect.h,m_vBackgroundColor,m_dBackgroundAlpha);
 		}
 	}
 
@@ -744,9 +738,14 @@ void CGameWindowBase::OnDrawBackground(IGenericRender *piRender)
 		CVector vSize=vMaxs-vMins;
 		CVector vCenter=(vMaxs+vMins)*0.5;
 		vCenter.c[1]=vMaxs.c[1]+1;
+		piRender->ActivateDepth();
 		piRender->SetOrthographicProjection(vSize.c[0],vSize.c[2]);
 		piRender->SetCamera(vCenter,0,-90,0);
+		piRender->SetViewport(m_rRealRect.x,m_rRealRect.y,m_rRealRect.w,m_rRealRect.h);
 		piRender->RenderModel(Origin,Origin,m_BackgroundModel.m_piModel);
+		piRender->DeactivateDepth();
+		
+		m_piGUIManager->RestoreViewport();
 	}
 }
 void CGameWindowBase::OnDraw(IGenericRender *piRender){}
