@@ -134,6 +134,7 @@ COpenGLTexture::COpenGLTexture(void)
 
 void COpenGLTexture::Clear()
 {
+	
 	if(m_pBuffer)
 	{
 		delete [] m_pBuffer;
@@ -170,7 +171,7 @@ std::string COpenGLTexture::GetAlphaFileName(){return m_sAlphaFileName;}
 void		COpenGLTexture::GetSize(unsigned *pdwWidth,unsigned *pdwHeight){*pdwWidth=m_dwWidth;*pdwHeight=m_dwHeight;}
 bool		COpenGLTexture::HasColorKey(){return m_bColorKey;}
 CVector		COpenGLTexture::GetColorKey(){return m_vColorKey;}
-bool COpenGLTexture::LoadFromFile()
+bool COpenGLTexture::LoadFromFile(bool bResident)
 {
 	int nStartTime=GetTimeStamp();
 	bool bForceAlpha=(m_bColorKey || m_sAlphaFileName!="" || m_fOpacity<=1.0 || m_bRenderTarget);
@@ -178,6 +179,7 @@ bool COpenGLTexture::LoadFromFile()
 	m_dwColorType=GL_RGB;
 	if(LoadImageHelper(m_sFileName,&m_dwWidth,&m_dwHeight,&m_pBuffer,bForceAlpha,&m_dwColorType))
 	{
+		
 		if(m_sAlphaFileName!="")
 		{
 			unsigned char	*pAlphaBuffer=NULL;
@@ -288,6 +290,12 @@ bool COpenGLTexture::LoadFromFile()
 	{
 		RTTRACE("COpenGLTexture::LoadFromFile -> Failed to load texture %s",m_sFileName.c_str());
 	}
+	
+	if(!bResident)
+	{
+		delete [] m_pBuffer;
+		m_pBuffer=NULL;
+	}
 
 	return bResult;
 }
@@ -295,7 +303,7 @@ bool COpenGLTexture::LoadFromFile()
 bool COpenGLTexture::Unserialize(ISystemPersistencyNode *piNode)
 {
 	bool bResult=CSystemObjectBase::Unserialize(piNode);
-	if(bResult){bResult=LoadFromFile();}
+	if(bResult){bResult=LoadFromFile(false);}
 	return bResult;
 }
 bool COpenGLTexture::HasAlphaChannel(){return (m_dwColorType==GL_RGBA);}
@@ -303,7 +311,7 @@ bool COpenGLTexture::HasAlphaChannel(){return (m_dwColorType==GL_RGBA);}
 unsigned long COpenGLTexture::GetByteBufferLength(){return HasAlphaChannel()?m_dwHeight*m_dwWidth*4:m_dwHeight*m_dwWidth*3;}
 void		  *COpenGLTexture::GetByteBuffer(){return m_pBuffer;}
 
-bool COpenGLTexture::Load(std::string sFileName,CVector *pColorKey,std::string *pAlphaFile,float fOpacity,bool bGenerateMipmaps)
+bool COpenGLTexture::Load(std::string sFileName,CVector *pColorKey,std::string *pAlphaFile,float fOpacity,bool bGenerateMipmaps, bool bResident)
 {
 	Clear();
 	m_sFileName=sFileName;
@@ -321,11 +329,12 @@ bool COpenGLTexture::Load(std::string sFileName,CVector *pColorKey,std::string *
 		delete [] m_pBuffer;
 		m_pBuffer=NULL;
 	}
-	return LoadFromFile();
+	return LoadFromFile(bResident);
 }
 
 CVector COpenGLTexture::GetPixelColor( unsigned long x, unsigned long y )
 {
+	if(m_pBuffer==NULL){return Origin;}
 	CVector vResult;
 	if(x<m_dwWidth && y<m_dwHeight)
 	{
@@ -339,6 +348,7 @@ CVector COpenGLTexture::GetPixelColor( unsigned long x, unsigned long y )
 
 double COpenGLTexture::GetPixelAlpha( unsigned long x, unsigned long y )
 {
+	if(m_pBuffer==NULL){return Origin;}
 	if(!HasAlphaChannel()){return m_fOpacity;}
 	if(x<m_dwWidth && y<m_dwHeight)
 	{
@@ -413,7 +423,7 @@ bool COpenGLTexture::CreateFrameBuffer(bool bDepth)
 		GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,0);
 		bool bOk=(status == GL_FRAMEBUFFER_COMPLETE_EXT);
-		if(!bOk){RTTRACE("COpenGLTexture::CreateFrameBuffer -> Failed to complete frame buffer, error 0x%0x",status);}
+		if(!bOk){RTTRACE("COpenGLTexture::CreateFrameBuffer -> Failed to complete frame buffer, error 0x%08x",status);}
 		return bOk;
 	}
 	else
@@ -519,4 +529,10 @@ void COpenGLTexture::UnprepareTexture(IGenericRender *piRender,int nTextureLevel
 		glBindTexture(GL_TEXTURE_2D,0);
 		glDisable(GL_TEXTURE_2D);
 	}
+}
+
+void COpenGLTexture::ReleaseResidentData()
+{
+	delete [] m_pBuffer;
+	m_pBuffer=NULL;
 }

@@ -235,7 +235,7 @@ public:
 	virtual bool PrepareTexture(IGenericRender *piRender,int nTextureLevel)=0;
 	virtual void UnprepareTexture(IGenericRender *piRender,int nTextureLevel)=0;
 	
-	virtual void ReleaseResources()=0;
+	virtual void ReleaseResidentData()=0;
 };
 
 class IGenericModel:virtual public ISystemUnknown

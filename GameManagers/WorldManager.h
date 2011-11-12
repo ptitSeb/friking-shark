@@ -172,7 +172,6 @@ public:
 		PROP(m_vTerrainHeightLayers,"HeightLayers")
 		PROP(m_vTerrainColorLayers,"ColorLayers")
 		PROP(m_sTerrainColorMap,"ColorMapFile")
-		PROP(m_TerrainColorMap,"ColorMap")
 		PROP(m_sTerrainBaseModel,"BaseModelFile")
 		PROP(m_TerrainBaseModel,"BaseModel")
 		PROP_FLAGS(m_TerrainSky,"Sky",MRPF_NORMAL|MRPF_OPTIONAL)

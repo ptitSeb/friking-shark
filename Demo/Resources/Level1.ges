@@ -4033,19 +4033,6 @@ Terrain
 			}
 		}
 	}
-	ColorMap
-	{
-		Class=Texture
-		Data
-		{
-			Archivo=./Textures/Level1TerrainColorMap.png
-			ArchivoAlpha=""
-			ColorKey=0.000000,0.000000,0.000000
-			UsarColorKey=0
-		}
-		Name=""
-		System=GameResources
-	}
 	ColorMapFile=./Textures/Level1TerrainColorMap.png
 	Fog
 	{
@@ -4064,7 +4051,7 @@ Terrain
 				HorzResolution=4.000000
 				MaxHeight=0.380000
 				MinHeight=0.000000
-				Texture=LechoInferior.png
+				Texture=./Textures/LechoInferior.png
 				VertResolution=4.000000
 			}
 			NormalMap
@@ -4073,7 +4060,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=LechoInferior.png
+					Archivo=./Textures/LechoInferior.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0
@@ -4090,7 +4077,7 @@ Terrain
 				HorzResolution=4.500000
 				MaxHeight=0.880000
 				MinHeight=0.280000
-				Texture=LechoSuperior.png
+				Texture=./Textures/LechoSuperior.png
 				VertResolution=4.500000
 			}
 			NormalMap
@@ -4099,7 +4086,7 @@ Terrain
 				Class=Texture
 				Data
 				{
-					Archivo=LechoSuperior.png
+					Archivo=./Textures/LechoSuperior.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
 					UsarColorKey=0

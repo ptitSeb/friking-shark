@@ -7048,19 +7048,6 @@ Terrain
 			}
 		}
 	}
-	ColorMap
-	{
-		Class=Texture
-		Data
-		{
-			Archivo=./Textures/Level4TerrainColorMap.png
-			ArchivoAlpha=""
-			ColorKey=0.000000,0.000000,0.000000
-			UsarColorKey=0
-		}
-		Name=""
-		System=GameResources
-	}
 	ColorMapFile=./Textures/Level4TerrainColorMap.png
 	Fog
 	{
