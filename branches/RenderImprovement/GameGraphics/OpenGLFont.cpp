@@ -42,7 +42,7 @@ bool COpenGLFont::LoadTextureFont()
 	bool bResult=true;
 
 	bResult=m_Texture.Create(m_piSystem->GetName(),"Texture","");
-	if(bResult){bResult=m_Texture.m_piTexture->Load(m_sTextureFontFileName,NULL,&m_sTextureFontAlphaFileName,1.0,false);}
+	if(bResult){bResult=m_Texture.m_piTexture->Load(m_sTextureFontFileName,NULL,&m_sTextureFontAlphaFileName,1.0,false,true);}
 	if(bResult){m_Texture.m_piTexture->GetSize(&dwWidth,&dwHeight);}
 	if(bResult)
 	{
@@ -99,6 +99,7 @@ bool COpenGLFont::LoadTextureFont()
 	m_vTextureFontCharacters[' '].dPixelH=m_dwTextureHeight;
 	m_vTextureFontCharacters[' '].bPresent=true;
 
+	if(m_Texture.m_piTexture){m_Texture.m_piTexture->ReleaseResidentData();}
 	if(!bResult){RTTRACE("COpenGLFont::Unserialize -> Failed to create texture font from file '%s'",m_sTextureFontFileName.c_str());}
 	return bResult;
 }

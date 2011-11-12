@@ -4773,6 +4773,7 @@ Terrain
 			ArchivoAlpha=""
 			ColorKey=0.000000,0.000000,0.000000
 			UsarColorKey=0
+			Resident=1
 		}
 		Name=""
 		System=GameResources

@@ -71,6 +71,13 @@ void CWorldManager::LoadScenario(ISystemPersistencyNode *piNode)
 	CloseScenario();
 	m_WaterModel.Create("GameResources","Model","");
 	PersistencyLoad(piNode->GetNode("Terrain"),"Terrain");
+	
+	if(m_sTerrainColorMap.length())
+	{
+		bool bOk=m_TerrainColorMap.Create("GameResources","Texture","");
+		if(bOk){bOk=m_TerrainColorMap.m_piTexture->Load(m_sTerrainColorMap,NULL,NULL,1.0,true,true);}
+		if(!bOk){m_TerrainColorMap.Destroy();}
+	}
 	UpdateTerrain();
 }
 
@@ -236,7 +243,7 @@ bool CWorldManager::SetTerrainColorMap( std::string sColorMap )
 	bool bOk=false;
 	m_sTerrainColorMap=sColorMap;
 	bOk=m_TerrainColorMap.Create("GameResources","Texture","");
-	if(bOk){bOk=m_TerrainColorMap.m_piTexture->Load(sColorMap);}
+	if(bOk){bOk=m_TerrainColorMap.m_piTexture->Load(sColorMap,NULL,NULL,1.0,true,true);}
 	return bOk;
 }
 

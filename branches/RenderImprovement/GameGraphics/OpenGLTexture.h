@@ -57,7 +57,7 @@ class COpenGLTexture : virtual public CSystemObjectBase,virtual public IGenericT
 
 	void Clear();
 
-	bool LoadFromFile();
+	bool LoadFromFile(bool bResident);
 	bool Unserialize(ISystemPersistencyNode *piNode);
 
 	bool CreateBackBuffer(bool bDepth,IGenericViewport *piViewport);
@@ -93,12 +93,13 @@ public:
 	CVector		GetPixelColor(unsigned long x, unsigned long y);
 	double		GetPixelAlpha(unsigned long x, unsigned long y);
 	
-	virtual bool Load(std::string sFileName,CVector *pColorKey,std::string *pAlphaFile,float fOpacity,bool bGenerateMipmaps);
+	virtual bool Load(std::string sFileName,CVector *pColorKey,std::string *pAlphaFile,float fOpacity,bool bGenerateMipmaps, bool bResident);
 	virtual bool Create( unsigned nWidth,unsigned nHeight,IGenericViewport *piViewport );
 	virtual bool CreateDepth( unsigned nWidth,unsigned nHeight ,IGenericViewport *piViewport);
 	virtual bool StartRenderingToTexture();
 	virtual void StopRenderingToTexture();
 
+	virtual void ReleaseResidentData();
 	virtual bool PrepareTexture(IGenericRender *piRender,int nTextureLevel);
 	virtual void UnprepareTexture(IGenericRender *piRender,int nTextureLevel);
 
