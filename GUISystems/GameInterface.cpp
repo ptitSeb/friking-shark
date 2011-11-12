@@ -38,7 +38,7 @@ CGameInterface::CGameInterface(void)
 	m_dwNextAcceptedPauseKeyTime=0;
 	m_bFrozen=false;
 	m_bResumeAfterFreeze=false;
-	m_bShowPerformanceIndicators=false;
+	m_bShowPerformanceIndicators=true;
 	m_bPlayerKilledOnPreviousFrame=false;
 	m_nCheckpoint=-1;
 	m_bDemoMode=true;
@@ -363,30 +363,22 @@ void CGameInterface::RenderCourtain(IGenericRender *piRender)
 		if(dCourtainProgress>1.0){dCourtainProgress=1.0;m_bCourtainOpening=false;m_bCourtainOpen=true;}
 		dCourtainPosition=1.0-dCourtainProgress;
 	}
-
-	piRender->PushState();
-	piRender->SetOrthographicProjection(m_rRealRect.w,m_rRealRect.h);
-	piRender->SetViewport(m_rRealRect.x,m_rRealRect.y,m_rRealRect.w,m_rRealRect.h);
-	piRender->SetCamera(CVector(m_rRealRect.w*0.5,m_rRealRect.h*0.5,200),90,0,0);
-
-	piRender->DeactivateDepth();
-	piRender->ActivateSolid();
-	piRender->SetColor(CVector(0,0,0),0);
 	
+	CVector black;
+	piRender->ActivateSolid();
 	if(m_bCourtainClosed)
 	{
-		piRender->RenderRect(0,0,m_rRealRect.w,m_rRealRect.h);
+		piRender->RenderRect(m_rRealRect.x,m_rRealRect.y,m_rRealRect.w,m_rRealRect.h,black,1);
 	}
 	else
 	{
 		double cx=m_rRealRect.w*0.5*dCourtainPosition;
 		double cy=m_rRealRect.h*0.5*dCourtainPosition;
-		piRender->RenderRect(0,0,cx,cy);
-		piRender->RenderRect(m_rRealRect.w-cx,0,cx,cy);
-		piRender->RenderRect(0,m_rRealRect.h-cy,cx,cy);
-		piRender->RenderRect(m_rRealRect.w-cx,m_rRealRect.h-cy,cx,cy);
+		piRender->RenderRect(m_rRealRect.x,m_rRealRect.y,cx,cy,black,1);
+		piRender->RenderRect(m_rRealRect.x+m_rRealRect.w-cx,m_rRealRect.y,cx,cy,black,1);
+		piRender->RenderRect(m_rRealRect.x,m_rRealRect.y+m_rRealRect.h-cy,cx,cy,black,1);
+		piRender->RenderRect(m_rRealRect.x+m_rRealRect.w-cx,m_rRealRect.y+m_rRealRect.h-cy,cx,cy,black,1);
 	}
-	piRender->PopState();
 }
 
 bool CGameInterface::IsPaused()
@@ -707,13 +699,17 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 			piRender->DeactivateDepth();
 			piRender->PopState();
 			piRender->PopOptions();
+			
+			m_piGUIManager->RestoreViewport();
 		}
 		REL(piCamera);
 	}
 
+	
 	RenderCourtain(piRender);
 	
 	UpdateGUI(dwCurrentTime);
+	
 }
 #ifdef ANDROID
 

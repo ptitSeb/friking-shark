@@ -202,15 +202,6 @@ void CGameGUIColorDialog::OnDraw(IGenericRender *piRender)
 	m_piSTSSelector->GetRealRect(&sSRect);
 	m_piSTVSelector->GetRealRect(&sVRect);
 	
-	sHRect.x-=m_rRealRect.x;
-	sHRect.y-=m_rRealRect.y;
-	sSRect.x-=m_rRealRect.x;
-	sSRect.y-=m_rRealRect.y;
-	sVRect.x-=m_rRealRect.x;
-	sVRect.y-=m_rRealRect.y;
-	sSVRect.x-=m_rRealRect.x;
-	sSVRect.y-=m_rRealRect.y;
-	
 	CVector vSVOrig(sSVRect.x,sSVRect.y,0);
 	CVector vHOrig(sHRect.x,sHRect.y,0);
 	CVector vSOrig(sSRect.x,sSRect.y,0);

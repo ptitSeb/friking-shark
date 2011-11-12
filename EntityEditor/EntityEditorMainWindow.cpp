@@ -248,10 +248,10 @@ void CEntityEditorMainWindow::OnDraw(IGenericRender *piRender)
 		m_Camera.m_piCamera->SetPosition(vNewCameraPos);
 	}
 	
-	m_Render.m_piRender->ActivateDepth();
 	m_Render.m_piRender->PushOptions();
 	m_Render.m_piRender->PushState();
-
+	m_Render.m_piRender->ActivateDepth();
+	
 	m_bTextures?m_Render.m_piRender->EnableTextures():m_Render.m_piRender->DisableTextures();
 	m_bSolid?m_Render.m_piRender->EnableSolid():m_Render.m_piRender->DisableSolid();
 	m_Render.m_piRender->EnableBlending();
@@ -405,7 +405,9 @@ void CEntityEditorMainWindow::OnDraw(IGenericRender *piRender)
 		m_piBTBBoxGroupProtectiveNormal->SetBackgroundColor(CVector(1,1,1),0.1);
 		m_piBTBBoxGroupProtectiveDestroyed->SetBackgroundColor(CVector(1,1,1),0.1);
 	}
+	m_piGUIManager->RestoreViewport();
 }
+
 void CEntityEditorMainWindow::ProcessFileNew()
 {
 	if(m_ClassSelector.m_piClassSelector==NULL){return;}

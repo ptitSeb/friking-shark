@@ -478,7 +478,6 @@ public:
 	virtual void SetClipRect(double x,double y,double cx, double cy)=0;
 	virtual void GetClipRect(double *px,double *py,double *pcx, double *pcy)=0;
 	
-	virtual void Clear(const CVector &vColor,double dAlpha)=0;
 	virtual void SetColor(const CVector &vColor,double dAlpha)=0;
 
 	virtual void SelectTexture(IGenericTexture *pTexture,int nTextureLevel)=0;
@@ -504,6 +503,7 @@ public:
 	virtual void RenderLineStrip(unsigned int nPoints,const CVector *pPoints,const CVector &vColor,unsigned long nStipple=0x8888)=0;
 	virtual void RenderRect(const CVector &vCenter,const CVector &vAxisW,const CVector &vAxisH,double w,double h)=0;
 	virtual void RenderRect(double x, double y,double w,double h)=0;
+	virtual void RenderRect(double x,double y,double w,double h,CVector &vColor,double dAlpha)=0;
 	virtual void RenderPolygon(unsigned int nVertexes,const CVector *pVertexes,const CVector *pColors)=0;
 	virtual void RenderPyramid(const CVector &vTopVertex,const CVector &vSizes,bool bSolid)=0;
 	virtual void RenderPyramid(const CVector &vTopVertex,double dUpperSizeX,double dUpperSizeZ,double dLowerSizeX,double dLowerSizeZ,double dHeight,bool bSolid)=0;

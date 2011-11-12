@@ -420,10 +420,10 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 	
 	if(m_bPauseOnNextFrame){m_FrameManager.m_piFrameManager->SetPauseOnNextFrame(true);m_bPauseOnNextFrame=false;}
 	
-	m_Render.m_piRender->ActivateDepth();
 	m_Render.m_piRender->PushOptions();
 	m_Render.m_piRender->PushState();
-
+	m_Render.m_piRender->ActivateDepth();
+	
 	m_bTextures?m_Render.m_piRender->EnableTextures():m_Render.m_piRender->DisableTextures();
 	m_bSolid?m_Render.m_piRender->EnableSolid():m_Render.m_piRender->DisableSolid();
 	m_bBlend?m_Render.m_piRender->EnableBlending():m_Render.m_piRender->DisableBlending();
@@ -615,7 +615,10 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 		m_nLastStatsTime=GetTimeStamp();		
 	}
 	UpdateLayerPanel();
+	
+	m_piGUIManager->RestoreViewport();
 }
+
 void CScenarioEditorMainWindow::ProcessFileNew()
 {
 	if(ConfirmDialog("Reset all and start a new project?","New project",eMessageDialogType_Warning))

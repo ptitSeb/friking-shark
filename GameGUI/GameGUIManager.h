@@ -117,6 +117,8 @@ public:
 
 	bool 		 DetectDrag(double dx,double dy);
 	
+	void		 RestoreViewport();
+	
 	CGameGUIManager(void);
 	~CGameGUIManager(void);
 };

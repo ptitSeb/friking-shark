@@ -30,7 +30,7 @@ CFormationEditorObjectLabel::~CFormationEditorObjectLabel(void)
 
 void CFormationEditorObjectLabel::OnDrawBackground( IGenericRender *piRender )
 {
-	piRender->Clear(m_vBackgroundColor,m_dBackgroundAlpha);
+	piRender->RenderRect(m_rRealRect.x,m_rRealRect.y,m_rRealRect.w,m_rRealRect.h,m_vBackgroundColor,m_dBackgroundAlpha);
 	CVector vMaxs,vMins;
 	if(m_piDesignObject){m_piDesignObject->DesignGetAABBox(Origin,Origin,&vMins,&vMaxs);}
 	CVector vSize=(vMaxs-vMins)*1.2;
@@ -40,6 +40,7 @@ void CFormationEditorObjectLabel::OnDrawBackground( IGenericRender *piRender )
 	double dAspectRatio=m_rRealRect.h?m_rRealRect.w/m_rRealRect.h:0;
 	piRender->SetOrthographicProjection(dMaxSize*dAspectRatio,dMaxSize);
 	piRender->SetCamera(vCenter+CVector(0,vSize.c[1]+10,0),0,-90,0);
+	piRender->SetViewport(m_rRealRect.x,m_rRealRect.y,m_rRealRect.w,m_rRealRect.h);
 	piRender->PushState();
 	piRender->ActivateDepth();
 	if(m_piDesignObject){m_piDesignObject->DesignRender(piRender,Origin,m_vVisualizationAngles,false);}
@@ -47,6 +48,7 @@ void CFormationEditorObjectLabel::OnDrawBackground( IGenericRender *piRender )
 	if(m_FrameManager.m_piFrameManager==NULL){m_FrameManager.Attach("GameSystem","FrameManager");}
 	if(m_FrameManager.m_piFrameManager){m_vVisualizationAngles.c[YAW]+=30.0*m_FrameManager.m_piFrameManager->GetRealTimeFraction();}
 	piRender->PopState();
+	m_piGUIManager->RestoreViewport();
 }	
 
 void CFormationEditorObjectLabel::SetObject(IDesignObject *piObject)

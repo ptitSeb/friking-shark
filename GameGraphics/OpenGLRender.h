@@ -556,7 +556,6 @@ public:
 	void SetClipRect(double x,double y,double cx, double cy);
 	void GetClipRect(double *px,double *py,double *pcx, double *pcy);
 	
-	void Clear(const CVector &vColor,double dAlpha);
 	void SetColor(const CVector &vColor,double dAlpha);
 
 	void SelectFont(const char *pFamilyName,double dSize);
@@ -587,6 +586,7 @@ public:
 	void RenderLineStrip(unsigned int nLines,const CVector *pPoints,const CVector &vColor,unsigned long nStipple=0x8888);
 	void RenderRect(const CVector &vCenter,const CVector &vAxisW,const CVector &vAxisH,double w,double h);
 	void RenderRect(double x, double y,double w,double h);
+	void RenderRect(double x,double y,double w,double h,CVector &vColor,double dAlpha);
 	void RenderPolygon(unsigned int nVertexes,const CVector *pVertexes,const CVector *pColors);
 	void RenderPyramid(const CVector &vTopVertex,const CVector &vSizes,bool bSolid);
 	void RenderPyramid(const CVector &vTopVertex,double dUpperSizeX,double dUpperSizeZ,double dLowerSizeX,double dLowerSizeZ,double dHeight,bool bSolid);

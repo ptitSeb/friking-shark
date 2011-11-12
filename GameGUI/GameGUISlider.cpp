@@ -65,11 +65,8 @@ void CGameGUISlider::OnDrawBackground(IGenericRender *piRender)
 	}
 		
 	SGameRect sOriginalClipRect=m_rRealRect;
-	if(piRender->IsClippingActive())
-	{
-		piRender->GetClipRect(&sOriginalClipRect.x,&sOriginalClipRect.y,&sOriginalClipRect.w,&sOriginalClipRect.h);
-	}
-	
+	piRender->GetClipRect(&sOriginalClipRect.x,&sOriginalClipRect.y,&sOriginalClipRect.w,&sOriginalClipRect.h);
+
 	SGameRect sFullRect=m_rRealRect;
 	SGameRect sEmptyRect=m_rRealRect;
 	
@@ -88,18 +85,16 @@ void CGameGUISlider::OnDrawBackground(IGenericRender *piRender)
 	{
 		if(m_HoverTexture.m_piTexture)
 		{
-			piRender->ActivateBlending();
 			piRender->SetColor(m_vHoverBackgroundColor,m_dHoverBackgroundAlpha);
 			piRender->SelectTexture(m_FullHoverTexture.m_piTexture,0);
-			piRender->RenderTexture(CVector(m_rRealRect.w*0.5,m_rRealRect.h*0.5,0),m_rRealRect.w,m_rRealRect.h);
+			piRender->RenderTexture(CVector(m_rRealRect.x+m_rRealRect.w*0.5,m_rRealRect.y+m_rRealRect.h*0.5,0),m_rRealRect.w,m_rRealRect.h);
 			piRender->UnselectTexture(0);
-			piRender->DeactivateBlending();
 		}
 		else
 		{
 			if(m_dHoverBackgroundAlpha!=0.0)
 			{
-				piRender->Clear(m_vHoverBackgroundColor,m_dHoverBackgroundAlpha);
+				piRender->RenderRect(m_rRealRect.x,m_rRealRect.y,m_rRealRect.w,m_rRealRect.h,m_vHoverBackgroundColor,m_dHoverBackgroundAlpha);
 			}
 		}
 	}
@@ -107,18 +102,16 @@ void CGameGUISlider::OnDrawBackground(IGenericRender *piRender)
 	{
 		if(m_BackgroundTexture.m_piTexture)
 		{
-			piRender->ActivateBlending();
 			piRender->SetColor(m_vBackgroundColor,m_dBackgroundAlpha);
 			piRender->SelectTexture(m_FullTexture.m_piTexture,0);
-			piRender->RenderTexture(CVector(m_rRealRect.w*0.5,m_rRealRect.h*0.5,0),m_rRealRect.w,m_rRealRect.h);
+			piRender->RenderTexture(CVector(m_rRealRect.x+m_rRealRect.w*0.5,m_rRealRect.y+m_rRealRect.h*0.5,0),m_rRealRect.w,m_rRealRect.h);
 			piRender->UnselectTexture(0);
-			piRender->DeactivateBlending();
 		}
 		else
 		{
 			if(m_dBackgroundAlpha!=0.0)
 			{
-				piRender->Clear(m_vBackgroundColor,m_dBackgroundAlpha);
+				piRender->RenderRect(m_rRealRect.x,m_rRealRect.y,m_rRealRect.w,m_rRealRect.h,m_vBackgroundColor,m_dBackgroundAlpha);
 			}
 		}
 	}

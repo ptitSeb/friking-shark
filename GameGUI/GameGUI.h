@@ -98,7 +98,7 @@ public:
 	virtual void ExitGUILoop()=0; 
 
 	virtual void				GetWindowSize(SGameSize	*pSize)=0; // Rectangulo de la ventana de windows
-
+	
 	virtual void				GetMousePosition(IGameWindow *piWindow,SGamePos *pPos)=0;
 	virtual void				SetMousePosition(IGameWindow *piWindow,SGamePos &pPos)=0;
 
@@ -132,6 +132,9 @@ public:
 	
 	virtual void GetScreenProperties(SGameScreenProperties *pProperties)=0;
 	virtual void SetScreenProperties(SGameScreenProperties *pProperties)=0;
+	
+	virtual void		RestoreViewport()=0;
+	
 };
 
 class IGameWindow: virtual public ISystemObject
