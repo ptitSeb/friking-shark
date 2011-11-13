@@ -169,17 +169,19 @@ void	CModelAnimationObjectType::SetAngles(CVector vAngles){m_vAngles=vAngles;}
 CModelAnimationObject::CModelAnimationObject(CModelAnimationObjectType *pType,IAnimation *piAnimation)
 :CAnimationObjectBase(pType,piAnimation)
 {
-    m_nCurrentFrame=0;
-    m_pType=pType;
-    m_bVisible=false;
+	m_nCurrentFrame=0;
+	m_pType=pType;
+	m_bVisible=false;
+	m_bLastReferenceSystemComputed=false;
 }
 
 void CModelAnimationObject::Activate(unsigned int dwCurrentTime)
 {
-    CAnimationObjectBase::Activate(dwCurrentTime);
+	CAnimationObjectBase::Activate(dwCurrentTime);
+	m_bLastReferenceSystemComputed=false;
 	m_vPosition=m_pType->m_vPosition;
 	m_vAngles=m_pType->m_vAngles;
-    UpdateVisibility(dwCurrentTime);
+	UpdateVisibility(dwCurrentTime);
 }
 
 void CModelAnimationObject::Render(IGenericRender *piRender,IGenericCamera *piCamera)
@@ -198,7 +200,7 @@ void CModelAnimationObject::Render(IGenericRender *piRender,IGenericCamera *piCa
 	}
 	
 	CVector vTempPos,vTempAngles;
-	ComputeReferenceSystem(vPosition,vAngles,m_vPosition,m_vAngles,&vTempPos,&vTempAngles);
+	ComputeReferenceSystemWithCache(vPosition,vAngles,m_vPosition,m_vAngles,&vTempPos,&vTempAngles);
 	
 	piRender->PushState();
 	if(!m_pType->m_bCastShadow){piRender->DeactivateShadowEmission();}
@@ -236,6 +238,7 @@ bool CModelAnimationObject::ProcessFrame(IPhysicManager *pPhysicManager,unsigned
 	else
 	{
 		m_vAngles+=m_pType->m_vAngularVelocity*dInterval;
+		m_bLastReferenceSystemComputed=false;
 	}
 	
 	if(m_pType->m_vKeyFrames.size())
@@ -257,6 +260,7 @@ bool CModelAnimationObject::ProcessFrame(IPhysicManager *pPhysicManager,unsigned
 			if(dKeyFraction>1.0){dKeyFraction=1.0;}
 			m_vAngles=vPrevAngles+(m_pType->m_vKeyFrames[nNextKeyFrame].vAngles-vPrevAngles)*dKeyFraction;
 			m_vPosition=vPrevPosition+(m_pType->m_vKeyFrames[nNextKeyFrame].vPosition-vPrevPosition)*dKeyFraction;
+			m_bLastReferenceSystemComputed=false;
 		}
 			
 	}
@@ -295,7 +299,7 @@ CTraceInfo CModelAnimationObject::GetTrace(const CVector &vOrigin,const CVector 
 	if(m_pType->m_ModelWrapper.m_piModel)
 	{
 		CVector vTempPos,vTempAngles;
-		ComputeReferenceSystem(vOrigin,vAngles,m_vPosition,m_vAngles,&vTempPos,&vTempAngles);		
+		ComputeReferenceSystemWithCache(vOrigin,vAngles,m_vPosition,m_vAngles,&vTempPos,&vTempAngles);
 		return m_pType->m_ModelWrapper.m_piModel->GetTrace(vTempPos,vTempAngles,p1,p2);
 	}
 	else
@@ -305,4 +309,24 @@ CTraceInfo CModelAnimationObject::GetTrace(const CVector &vOrigin,const CVector 
 		info.m_vTracePos=p2;
 		return info;
 	}
+}
+
+void CModelAnimationObject::ComputeReferenceSystemWithCache(const CVector &vRefSysPos,const CVector &vRefSysAngles,const CVector &vPosition,const CVector &vAngles,CVector *pvPosition,CVector *pvAngles)
+{
+	if(m_bLastReferenceSystemComputed)
+	{
+		if(vRefSysAngles==m_vLastParentAngles)
+		{
+			*pvPosition=m_vLastGlobalPosition-m_vLastParentPosition+vRefSysPos;
+			*pvAngles=m_vLastGlobalAngles;
+			return;
+		}
+	}
+	
+	ComputeReferenceSystem(vRefSysPos,vRefSysAngles,vPosition,vAngles,pvPosition,pvAngles);
+	m_bLastReferenceSystemComputed=true;
+	m_vLastParentPosition=vRefSysPos;
+	m_vLastParentAngles=vRefSysAngles;
+	m_vLastGlobalPosition=*pvPosition;
+	m_vLastGlobalAngles=*pvAngles;
 }

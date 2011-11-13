@@ -105,6 +105,14 @@ class CModelAnimationObject: public CAnimationObjectBase
 	CVector                     m_vAngles;
 	CVector                     m_vPosition;
 	
+	bool						m_bLastReferenceSystemComputed;
+	CVector 					m_vLastParentPosition;
+	CVector 					m_vLastParentAngles;
+	CVector 					m_vLastGlobalPosition;
+	CVector 					m_vLastGlobalAngles;
+	
+	void ComputeReferenceSystemWithCache( const CVector &vRefSysPos,const CVector &vRefSysAngles,const CVector &vPosition,const CVector &vAngles,CVector *pvPosition,CVector *pvAngles);
+	
     void Activate(unsigned int dwCurrentTime);
     void UpdateVisibility(unsigned int dwCurrentTime);
     void Render(IGenericRender *piRender,IGenericCamera *piCamera);
