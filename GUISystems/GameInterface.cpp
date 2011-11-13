@@ -38,7 +38,7 @@ CGameInterface::CGameInterface(void)
 	m_dwNextAcceptedPauseKeyTime=0;
 	m_bFrozen=false;
 	m_bResumeAfterFreeze=false;
-	m_bShowPerformanceIndicators=true;
+	m_bShowPerformanceIndicators=false;
 	m_bPlayerKilledOnPreviousFrame=false;
 	m_nCheckpoint=-1;
 	m_bDemoMode=true;
@@ -372,6 +372,7 @@ void CGameInterface::RenderCourtain(IGenericRender *piRender)
 	}
 	else
 	{
+		
 		double cx=m_rRealRect.w*0.5*dCourtainPosition;
 		double cy=m_rRealRect.h*0.5*dCourtainPosition;
 		piRender->RenderRect(m_rRealRect.x,m_rRealRect.y,cx,cy,black,1);
@@ -646,9 +647,12 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 			sRect.w=sParentRect.h*m_dOriginalPlayAreaAspectRatio;
 			sRect.x=(sParentRect.w-sRect.w)*0.5;
 			sRect.h=sParentRect.h;
-
+			
 			if(sRect.w>sParentRect.w){sRect.w=sParentRect.w;sRect.x=(sParentRect.w-sRect.w)*0.5;}
 			if(sRect.h>sParentRect.h){sRect.h=sParentRect.h;sRect.y=(sParentRect.h-sRect.h)*0.5;}
+			
+			sRect.x=floor(sRect.x);
+			sRect.y=floor(sRect.y);
 			
 			IPlayAreaDesign *piDesign=QI(IPlayAreaDesign,m_PlayAreaManagerWrapper.m_piPlayAreaManager);
 			if(piDesign)
@@ -687,7 +691,7 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 			piRender->EnableHeightFog();
 			piRender->DisableAutoShadowVolume();
 			
-			piRender->SetShadingModel(eShadingModel_Phong);
+			piRender->SetShadingModel(eShadingModel_Balanced);
 			piRender->StartStagedRendering();
 			m_WorldManagerWrapper.m_piWorldManager->SetupRenderingEnvironment(piRender);
 			m_EntityManagerWrapper.m_piEntityManager->RenderEntities(piRender,piCamera);
@@ -789,6 +793,16 @@ void CGameInterface::ProcessInput()
 			if(m_piSTFrameRate){m_piSTFrameRate->Show(m_bShowPerformanceIndicators);}
 			if(m_piSTObjectCount){m_piSTObjectCount->Show(m_bShowPerformanceIndicators);}
 			if(m_piSTEntityCount){m_piSTEntityCount->Show(m_bShowPerformanceIndicators);}
+		}
+		if(m_piGUIManager->IsKeyDown(GK_F12))
+		{
+			CGenericRenderWrapper wrapper;
+			wrapper.Attach("GameGUI","Render");
+			if(wrapper.m_piRender)
+			{
+				wrapper.m_piRender->ReloadShaders();
+			}
+			bControlKeyPressed=true;
 		}
 		if(bControlKeyPressed)
 		{

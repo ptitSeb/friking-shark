@@ -125,7 +125,8 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 	void InitializeKeyNames();
 	
 	bool Init(std::string sClass,std::string sName,ISystem *piSystem);
-	
+
+	void SetupBasicRenderOptions();
 public:
 
 	bool  	m_bShowSystemMouseCursor;

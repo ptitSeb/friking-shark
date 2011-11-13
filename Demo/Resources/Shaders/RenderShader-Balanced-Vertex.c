@@ -1,54 +1,87 @@
+#version 330 
 
-uniform int  g_ActiveLights;
-uniform vec3 g_vHeightFogMins;
-uniform vec3 g_vHeightFogMaxs;
-uniform mat4 CameraModelViewInverse;
-varying vec3 g_WorldVertexPos;
-varying vec4 g_EyeVertexPos;
+uniform mat4 uView;
+uniform mat4 uModel[MAX_OBJECT_INSTANCES];
+uniform mat4 uProjection;
 
+uniform mat4 uTexMatrix0;
+uniform mat4 uTexMatrix1;
+uniform vec4 uMaterialDiffuse;
+uniform vec4 uMaterialSpecular;
+uniform float uMaterialShininess;
+
+uniform float uDisableVertexColor;
+
+in vec3 aVertex;
+in vec2 aTexCoord0;
+in vec2 aTexCoord1;
+in vec4 aVertexColor;
+in vec3 aNormal;
+in vec2 aNorCoord;
+in vec3 aTangent;
+in vec3 aBitangent;
+
+out vec4 g_WorldVertexPos;
+out vec4 g_EyeVertexPos;
+out vec4 g_Color;
+out vec2 g_TexCoord0;
+out vec2 g_TexCoord1;
+out vec2 g_SkyCoord;
+
+#ifdef ENABLE_FOG
+uniform vec3 uFogMins;
+uniform vec3 uFogMaxs;
+out float g_fFogFactor;
+#endif
 #ifdef ENABLE_SKY_SHADOW
 uniform vec4 SkyData;
 #endif
-#ifdef ENABLE_LIGHTING
-varying vec4 g_ambdiffspec;
-#ifdef ENABLE_NORMAL_MAP
-varying vec3 g_TangentSpaceX;
-varying vec3 g_TangentSpaceY;
-varying vec3 g_TangentSpaceZ;
-#else
-varying vec3 g_normal; 
+#ifdef ENABLE_SHADOWS
+uniform mat4 uShadowMatrix;
+out vec4 g_ShadowCoord;
 #endif
+#ifdef ENABLE_LIGHTING
+uniform vec3 uWorldEyeDir;
+out vec3 g_WorldNormal;
+out vec4 g_DynamicDiffuse;
+out vec4 g_DynamicSpecular;
 
+uniform int  uDynamicLights;
+uniform float uDynamicRange[MAX_DYNAMIC_LIGHTS];
+uniform vec3 uDynamicPosition[MAX_DYNAMIC_LIGHTS];
+uniform vec4 uDynamicDiffuse[MAX_DYNAMIC_LIGHTS];
+uniform vec4 uDynamicSpecular[MAX_DYNAMIC_LIGHTS];
 
-void PointLight(const in int  i,
-				const in vec3 ecPosition3,
+void DynamicLight(const in int  i,
 				const in vec3 normal,
-				inout    vec4 ambient,
 				inout    vec4 diffuse,
 				inout    vec4 specular)
 {
-	// Compute distance between surface and light position
-	float d = length(gl_LightSource[i].position.xyz - ecPosition3);
-	vec3 L = normalize(gl_LightSource[i].position.xyz - ecPosition3);
-	float lambertTerm = max(dot(normal,L),0.0);
-	float attenuation = 1.0 / (gl_LightSource[i].constantAttenuation +gl_LightSource[i].linearAttenuation * d +gl_LightSource[i].quadraticAttenuation * d * d);
-	ambient+= gl_LightSource[i].ambient*lambertTerm * attenuation;
-	diffuse +=gl_LightSource[i].diffuse*lambertTerm* attenuation;
-	if(gl_FrontMaterial.shininess>0.0)
-	{
-		vec3 E = normalize(-ecPosition3);
-		vec3 R = reflect(-L, normal);
-		float specularFactor = pow(max(dot(R, E), 0.0),gl_FrontMaterial.shininess);
-		specular += gl_LightSource[i].specular *gl_FrontMaterial.specular* specularFactor * attenuation;
-	}
-}
-#endif
-#ifdef ENABLE_FOG
-varying float g_fFogFactor;
-#endif 
+	vec3 lightVec=uDynamicPosition[i].xyz - g_WorldVertexPos.xyz;
+	
+//	if(squareddist>uDynamicRange[i]*uDynamicRange[i]){return;}
 
+	float lambertTerm = dot(normal,lightVec); //  lambertTerm is in fact lambertTerm*distance
+	if(lambertTerm<0.0){return;}
+
+	// Compute distance between surface and light position
+	float squareddist=dot(lightVec,lightVec);
+	float attenuation=uDynamicRange[i]/squareddist;
+	diffuse+=uDynamicDiffuse[i]*lambertTerm*attenuation;
+	if(uMaterialShininess<=0.0){return;}
+
+	vec3 R = reflect(-normalize(lightVec), normal);
+	float specularFactor = pow(max(dot(R, -uWorldEyeDir), 0.0),uMaterialShininess);
+	specular += uDynamicSpecular[i]* specularFactor*attenuation*sqrt(squareddist);
+} 
+#endif
+
+#ifdef ENABLE_NORMAL_MAP
+out vec3 g_WorldTangent;
+out vec3 g_WorldBitangent;
+#endif
 void GetTagent(const in vec3 normal,
-				out    vec3 tangent)
+			   out    vec3 tangent)
 {
 	vec3 c1 = cross(normal, vec3(0.0, 0.0, 1.0)); 
 	vec3 c2 = cross(normal, vec3(0.0, 1.0, 0.0)); 
@@ -57,72 +90,54 @@ void GetTagent(const in vec3 normal,
 
 void main (void)
 {
-	vec4 LocalVertexPos=gl_Vertex;
-	g_EyeVertexPos=gl_ModelViewMatrix * LocalVertexPos;
-	vec4 WorldVertexPos=CameraModelViewInverse * g_EyeVertexPos;
-	g_WorldVertexPos=WorldVertexPos.xyz;
+	g_WorldVertexPos=uModel[gl_InstanceID]*vec4(aVertex,1.0);
+	g_EyeVertexPos=uView*g_WorldVertexPos;
 
-#ifdef ENABLE_LIGHTING
 	#ifdef ENABLE_NORMAL_MAP
-	vec3 vTangent;
-	vec3 g_normal=normalize(gl_NormalMatrix * gl_Normal);
-	GetTagent(gl_Normal,vTangent);
-	vec3 n = g_normal;
-	vec3 t = normalize(gl_NormalMatrix * vTangent);
-	vec3 b = cross(n, t);
-	g_TangentSpaceX=t;
-	g_TangentSpaceY=b;
-	g_TangentSpaceZ=n;
-	
-	#else
-	g_normal=normalize(gl_NormalMatrix * gl_Normal);
-	#endif
-#endif
-	
-	vec4 amb=vec4(0);
-	vec4 diff=vec4(0);
-	vec4 spec=vec4(0);
-	gl_Position = ftransform();
+	g_WorldTangent=(uModel[gl_InstanceID]*vec4(aTangent,0.0)).xyz;
+	g_WorldBitangent=(uModel[gl_InstanceID]*vec4(aBitangent,0.0)).xyz;
+	#endif	
 	#ifdef ENABLE_LIGHTING
-	for(int x=1;x<g_ActiveLights;x++)
+	g_WorldNormal=(uModel[gl_InstanceID]*vec4(aNormal,0.0)).xyz;
+	g_Color=mix(aVertexColor,vec4(1.0),uDisableVertexColor);
+	vec4 dyndiff=vec4(0.0);
+	vec4 dynspec=vec4(0.0);
+	for(int x=0;x<uDynamicLights;x++)
 	{
-		PointLight(x, g_EyeVertexPos.xyz, g_normal, amb, diff, spec);
+		DynamicLight(x, g_WorldNormal, dyndiff, dynspec);
 	}
-	g_ambdiffspec=gl_LightModel.ambient+amb+diff+spec*gl_FrontMaterial.specular;
+	g_DynamicDiffuse=dyndiff;
+	g_DynamicSpecular=dynspec;
+	#else
+	g_Color=mix(aVertexColor,uMaterialDiffuse,uDisableVertexColor);
 	#endif
+
+	
+	gl_Position = uProjection*g_EyeVertexPos;
 
 #ifdef ENABLE_FOG
-	float fFogSize=g_vHeightFogMaxs.y-g_vHeightFogMins.y;
-	float fFogDist=WorldVertexPos.y-g_vHeightFogMins.y;
+	float fFogSize=uFogMaxs.y-uFogMins.y;
+	float fFogDist=g_WorldVertexPos.y-uFogMins.y;
 	g_fFogFactor=1.0-fFogDist/fFogSize;
- 	g_fFogFactor*=1.0-step(g_vHeightFogMaxs.x,WorldVertexPos.x);
-	g_fFogFactor*=step(g_vHeightFogMins.x,WorldVertexPos.x);
+ 	g_fFogFactor*=1.0-step(uFogMaxs.x,g_WorldVertexPos.x);
+	g_fFogFactor*=step(uFogMins.x,g_WorldVertexPos.x);
 	g_fFogFactor=clamp(g_fFogFactor,0.0,1.0);
 #endif
 	
-	gl_FrontColor=gl_Color;
 	
 #ifdef ENABLE_TEXTURES
-	gl_TexCoord[0]=gl_TextureMatrix[0]*gl_MultiTexCoord0;
+	g_TexCoord0=(uTexMatrix0*vec4(aTexCoord0,0.0,0.0)).xy;
 	#if TEXTURE_UNITS > 1
-	gl_TexCoord[1]=gl_TextureMatrix[1]*gl_MultiTexCoord1;
+	g_TexCoord1=(uTexMatrix1*vec4(aTexCoord1,0.0,0.0)).xy;
 	#endif
 #endif
 
-#ifdef ENABLE_NORMAL_MAP
-	gl_TexCoord[NORMAL_MAP_TEXTURE_LEVEL]=gl_TextureMatrix[NORMAL_MAP_TEXTURE_LEVEL]*gl_MultiTexCoord2;
+#ifdef ENABLE_SKY_SHADOW
+	g_SkyCoord.s = (g_WorldVertexPos.x/SkyData.y)+SkyData.x;
+	g_SkyCoord.t = (g_WorldVertexPos.z/SkyData.z);
 #endif
 	
-#ifdef ENABLE_SKY_SHADOW
-	gl_TexCoord[SKY_TEXTURE_LEVEL].s = (g_WorldVertexPos.x/SkyData.y)+SkyData.x;
-	gl_TexCoord[SKY_TEXTURE_LEVEL].t = (g_WorldVertexPos.z/SkyData.z);
-	gl_TexCoord[SKY_TEXTURE_LEVEL].p = 0.0;
-	gl_TexCoord[SKY_TEXTURE_LEVEL].q = 0.0;
-#endif
 #ifdef ENABLE_SHADOWS
-	gl_TexCoord[SHADOW_TEXTURE_LEVEL].s = dot(g_EyeVertexPos, gl_EyePlaneS[SHADOW_TEXTURE_LEVEL]);
-	gl_TexCoord[SHADOW_TEXTURE_LEVEL].t = dot(g_EyeVertexPos, gl_EyePlaneT[SHADOW_TEXTURE_LEVEL]);
-	gl_TexCoord[SHADOW_TEXTURE_LEVEL].p = dot(g_EyeVertexPos, gl_EyePlaneR[SHADOW_TEXTURE_LEVEL]);
-	gl_TexCoord[SHADOW_TEXTURE_LEVEL].q = dot(g_EyeVertexPos, gl_EyePlaneQ[SHADOW_TEXTURE_LEVEL]);
+	g_ShadowCoord=uShadowMatrix*g_WorldVertexPos;
 #endif
 }

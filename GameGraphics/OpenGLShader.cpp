@@ -175,22 +175,22 @@ bool COpenGLShader::Compile()
 
 	m_hShaderProgram=glCreateProgram();
 	bOk=(m_hShaderProgram!=0);
-	int error=glGetError();// clear errors
+	//int error=glGetError();// clear errors
 
 	if(bOk)
 	{
 		glAttachShader(m_hShaderProgram,m_hVertexShader);
-		error=glGetError();
-		if(error!=GL_NO_ERROR){RTTRACE("COpenGLShader::Compile -> %s: failed to attach vertex shader %d to program %d, error %x",m_sVertexShader.c_str(),m_hVertexShader,m_hShaderProgram,error);}
-		else {RTTRACE("COpenGLShader::Compile -> %s: Vertex shader %d attached to program %d",m_sVertexShader.c_str(),m_hVertexShader,m_hShaderProgram);}
+		//error=glGetError();
+		//if(error!=GL_NO_ERROR){RTTRACE("COpenGLShader::Compile -> %s: failed to attach vertex shader %d to program %d, error %x",m_sVertexShader.c_str(),m_hVertexShader,m_hShaderProgram,error);}
+		//else {RTTRACE("COpenGLShader::Compile -> %s: Vertex shader %d attached to program %d",m_sVertexShader.c_str(),m_hVertexShader,m_hShaderProgram);}
 	}
 
 	if(bOk)
 	{
 		glAttachShader(m_hShaderProgram,m_hFragmentShader);
-		error=glGetError();
-		if(error!=GL_NO_ERROR){RTTRACE("COpenGLShader::Compile -> %s: failed to attach fragment shader %d to program %d, error %x",m_sFragmentShader.c_str(),m_hFragmentShader,m_hShaderProgram,error);}
-		else {RTTRACE("COpenGLShader::Compile -> %s: Framgent shader %d attached to program %d",m_sVertexShader.c_str(),m_hVertexShader,m_hShaderProgram);}
+		//error=glGetError();
+		//if(error!=GL_NO_ERROR){RTTRACE("COpenGLShader::Compile -> %s: failed to attach fragment shader %d to program %d, error %x",m_sFragmentShader.c_str(),m_hFragmentShader,m_hShaderProgram,error);}
+		//else {RTTRACE("COpenGLShader::Compile -> %s: Framgent shader %d attached to program %d",m_sVertexShader.c_str(),m_hVertexShader,m_hShaderProgram);}
 	}
 
 	std::map<std::string,SAttributeData>::iterator iAttribute;
@@ -198,7 +198,8 @@ bool COpenGLShader::Compile()
 	{
 		SAttributeData *pData=&iAttribute->second;
 		glBindAttribLocation(m_hShaderProgram,pData->nIndex,iAttribute->first.c_str());
-		if(error!=GL_NO_ERROR){RTTRACE("COpenGLShader::Compile -> %s: failed to bomd attrib location for %s, error %x",m_sFragmentShader.c_str(),iAttribute->first.c_str(),error);}
+		//error=glGetError();
+		//if(error!=GL_NO_ERROR){RTTRACE("COpenGLShader::Compile -> %s: failed to bomd attrib location for %s, error %x",m_sFragmentShader.c_str(),iAttribute->first.c_str(),error);}
 		pData->bModified=false;
 	}
 
@@ -242,10 +243,10 @@ bool COpenGLShader::Activate()
 	  if(!Compile()){return false;}
 	}
   
-    int nError=glGetError();
+    //int nError=glGetError();
 	glUseProgramObjectARB(m_hShaderProgram);
-	nError=glGetError();
-	if(nError!=GL_NO_ERROR){RTTRACE("COpenGLShader::Activate -> Failed to activate shader %d, error %x",m_hShaderProgram,nError);}
+	//nError=glGetError();
+	//if(nError!=GL_NO_ERROR){RTTRACE("COpenGLShader::Activate -> Failed to activate shader %d, error %x",m_hShaderProgram,nError);}
 	
 	std::map<std::string,SUniformData*>::iterator iUniform;
 	for(iUniform=m_mUniforms.begin();iUniform!=m_mUniforms.end();iUniform++)
@@ -261,7 +262,6 @@ bool COpenGLShader::Activate()
 		if(pData->nLocation==-1){continue;}
 		pData->bModified=false;
 		
-		glGetError();
 		switch(pData->eType)
 		{
 			case eUniformType_Int:
@@ -300,11 +300,11 @@ bool COpenGLShader::Activate()
 			default:
 				break;
 		}
-		int error=glGetError();
+	/*	int error=glGetError();
 		if(error!=GL_NO_ERROR)
 		{
 			RTTRACE("COpenGLShader::Activate -> Failed to set uniform value %s: %x, type %d, elements %d",iUniform->first.c_str(),error,pData->eType,pData->nElements);
-		}
+		}*/
 	}
 	
 	m_bActive=true;

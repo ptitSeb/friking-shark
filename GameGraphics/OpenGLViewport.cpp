@@ -831,7 +831,11 @@ void COpenGLViewport::OnCreate(HWND hWnd)
 		if(SetPixelFormat(m_hDC, m_nPixelFormatIndex, &pixelFormat))
 		{
 			m_hRenderContext=wglCreateContext(m_hDC);
-			if(m_hRenderContext){wglMakeCurrent(m_hDC,m_hRenderContext);}
+			if(m_hRenderContext)
+			{
+				wglMakeCurrent(m_hDC,m_hRenderContext);
+				SetupBasicRenderOptions();
+			}
 		}
 	}
 }
@@ -1008,7 +1012,6 @@ bool COpenGLViewport::CreateWindowed(unsigned x, unsigned y, unsigned w, unsigne
 	bOk=true;
 	RTTRACE("COpenGLViewport::CreateWindowed -> Windowed called");
 #endif
-	
 	return bOk;
 }
 
@@ -1069,6 +1072,7 @@ bool COpenGLViewport::CreateFullScreen(unsigned int w,unsigned int h,unsigned in
 	bOk=true;
 	RTTRACE("COpenGLViewport::CreateFullScreen -> Full screen called");
 #endif
+
 	return bOk;
 }
 
@@ -1152,31 +1156,32 @@ void COpenGLViewport::SetCallBack(IGenericViewportCallBack *pCallBack)
 	m_piCallBack=pCallBack;
 }
 
+void COpenGLViewport::SetupBasicRenderOptions()
+{
+	glFrontFace(GL_CCW);
+	glCullFace(GL_BACK);
+	glEnable(GL_CULL_FACE);
+	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+	glDepthFunc(GL_LESS);
+#ifndef ANDROID
+	glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+#endif
+}
+
 void COpenGLViewport::Render()
 {
+	unsigned int nStartTime=GetTimeStamp();
+	//RTTRACE("COpenGLViewport::Render --------------------------------------------- %d",nStartTime);
+	
 #ifdef ANDROID
 	if(m_AndroidRenderContext==EGL_NO_CONTEXT){return;}
 #endif
 	
-	glFrontFace(GL_CCW);
-	glEnable(GL_CULL_FACE);
-	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_TEXTURE_2D);
-	glCullFace(GL_BACK);
-#ifndef ANDROID
-	glEnable(GL_POINT_SMOOTH);
-	glDisable(GL_POLYGON_SMOOTH);
-	glHint(GL_POINT_SMOOTH_HINT,GL_NICEST);
-	glHint(GL_LINE_SMOOTH_HINT,GL_NICEST);
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
-#endif
-	glClearColor(0,0,0,1);
-	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT);
 
 	if(m_piCallBack){m_piCallBack->OnRender();}
 	
-	glFlush();
-	glFinish();
+	unsigned int nFlushStartTime=GetTimeStamp();
 	
 #ifdef WIN32
 	SwapBuffers(m_hDC);
@@ -1185,6 +1190,10 @@ void COpenGLViewport::Render()
 #elif defined ANDROID
 	eglSwapBuffers(m_AndroidDisplay,m_AndroidSurface);
 #endif
+	unsigned int nEndTime=GetTimeStamp();
+	
+	//RTTRACE("COpenGLViewport::Render -> Total swap time %dms",nEndTime-nFlushStartTime);
+	//RTTRACE("COpenGLViewport::Render -> Total frame time %dms",nEndTime-nStartTime);
 }
 
 void COpenGLViewport::OnLButtonDoubleClick(int pointX,int pointY){if(m_piCallBack){m_piCallBack->OnLButtonDoubleClick(pointX,pointY);}}
@@ -1875,7 +1884,8 @@ bool COpenGLViewport::SetFullScreen(unsigned int w,unsigned int h,unsigned int b
 	XMapWindow(m_pXDisplay,m_XWindow);
 	WaitForXEvent(MapNotify);
 	glXMakeCurrent(m_pXDisplay,m_XWindow,m_pGLXContext);
-
+	SetupBasicRenderOptions();
+	
 	SetVideoMode(&mode);
 	GetCurrentVideoMode(&mode);// Get mode to get the fullscreen rect.
 	
@@ -1958,6 +1968,7 @@ bool COpenGLViewport::SetWindowed(unsigned int x,unsigned int y,unsigned int w,u
 	XMapWindow(m_pXDisplay,m_XWindow);
 	WaitForXEvent(MapNotify);
 	glXMakeCurrent(m_pXDisplay,m_XWindow,m_pGLXContext);	
+	SetupBasicRenderOptions();
 	
 	XWindowChanges changes;
 	changes.width=w;
@@ -2074,6 +2085,7 @@ void COpenGLViewport::AndroidCreateRenderContext()
 		eglQuerySurface(m_AndroidDisplay, m_AndroidSurface, EGL_WIDTH, &m_AndroidWidth);
 		eglQuerySurface(m_AndroidDisplay, m_AndroidSurface, EGL_HEIGHT, &m_AndroidHeight);
 		
+		SetupBasicRenderOptions();
 		RTTRACE("COpenGLViewport::InitializeAndroidViewPort -> Viewport initialized %dx%d",m_AndroidWidth,m_AndroidHeight);
 		
 		OnMove(0,0);
@@ -2083,6 +2095,7 @@ void COpenGLViewport::AndroidCreateRenderContext()
 	{
 		RTTRACE("COpenGLViewport::InitializeAndroidViewPort -> Failed to initialize viewport");
 	}
+	
 }
 
 void COpenGLViewport::OnAndroidCommand(struct android_app* pApplication, int32_t nCommand) 
