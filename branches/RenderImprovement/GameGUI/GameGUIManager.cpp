@@ -238,7 +238,6 @@ void CGameGUIManager::RestoreViewport()
 	sClipRect.w=size.w;
 	sClipRect.h=size.h;
 	
-	m_Render.m_piRender->SetClipRect(0,0,size.w,size.h);
 	m_Render.m_piRender->SetOrthographicProjection(size.w,size.h);
 	m_Render.m_piRender->SetViewport(0,0,size.w,size.h);
 	m_Render.m_piRender->SetCamera(CVector(size.w*0.5,size.h*0.5,200),90,0,0);	

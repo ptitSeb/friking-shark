@@ -292,8 +292,18 @@ struct SModelInstance
 {
 	CVector vPos;
 	CVector vAngles;
+	double  dDistanceToCamera;
 	bool bSkipRender;
-	SModelInstance(){bSkipRender=false;}
+	int nId;
+	
+	bool operator<(const SModelInstance &other) const 
+	{ 
+		if(dDistanceToCamera < other.dDistanceToCamera){return true;} 
+		if(dDistanceToCamera > other.dDistanceToCamera){return false;} 
+		return nId<other.nId;
+	}
+	
+	SModelInstance(){bSkipRender=false;dDistanceToCamera=0;nId=0;}
 };
 
 struct SModelStageKey
@@ -325,10 +335,11 @@ struct SModelStage
 {
 	IGenericModel *piModel;
 	IOpenGLModel *piGLModel;
+	double 	      dNearestModel;
 
 	std::vector<SModelInstance> vInstances;
 
-	SModelStage(){piModel=NULL;piGLModel=NULL;}
+	SModelStage(){piModel=NULL;piGLModel=NULL;dNearestModel=0;}
 };
 
 
@@ -341,6 +352,7 @@ struct SShaderKey
 	bool  bWater;
 	bool  bNormalMap;
 	bool  bSkyShadow;
+	std::string sDescription;
 	
 	EShadingModel eShadingModel;
 	
@@ -430,6 +442,13 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IOpenGLRend
 	double 		 m_dShadowAntiFlickeringMargin;
 	
 	unsigned int m_nFirstTimeStamp;
+	unsigned int m_nCurrentActiveTexture;
+	unsigned int m_nCurrentBlendOperator1;
+	unsigned int m_nCurrentBlendOperator2;
+	unsigned int m_nCurrentDepthFunc;
+#ifndef ANDROID
+	unsigned int m_nCurrentPolygonMode;
+#endif
 	
 	bool 		  m_bLightingPrepared;
 	unsigned long m_nActiveLights;
@@ -473,7 +492,8 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IOpenGLRend
 	std::stack<SRenderState> m_sRenderStateStack;
 	std::stack<SRenderOptions> m_sRenderOptionsStack;
 	std::map<SShaderKey,CGenericShaderWrapper> m_mShaders;
-
+	std::map<SShaderKey,std::string> m_mShaderNames;
+	
 	CVector m_vAmbientColor;
 
 	std::vector<IGenericLight *> m_vLights;
@@ -482,6 +502,7 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IOpenGLRend
 	std::map<SLineStageKey,SLineStage>							m_mLineStages;
 	std::map<STextureParticleStageKey,STextureParticleStage>	m_mTextureParticleStages;
 	std::map<SModelStageKey,SModelStage>						m_mModelStages;
+	std::multimap<double,std::pair<const SModelStageKey*,const SModelStage*> > m_mSortedModelStages;
 	
 	SRenderStats m_sStagedStats;
 	
@@ -504,8 +525,9 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IOpenGLRend
 	void RenderLineStages(bool bRenderingShadow,bool bShadowReceptionState);
 	void RenderParticleStages(bool bRenderingShadow,bool bShadowReceptionState);
 	void RenderModelStages(bool bRenderingShadow,bool bShadowReceptionState);
+	void SortModels();
 
-	void AddShader(const SShaderKey &key);
+	void AddShader(SShaderKey &key);
 	
 	void InternalActivateTextures();
 	void InternalDeactivateTextures();

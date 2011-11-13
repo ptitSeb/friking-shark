@@ -262,20 +262,20 @@ bool COpenGLTexture::LoadFromFile(bool bResident)
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_bGenerateMipMaps?GL_LINEAR:GL_NEAREST);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_bGenerateMipMaps?GL_LINEAR:GL_NEAREST);
 			glTexImage2D(GL_TEXTURE_2D, 0, m_dwColorType, m_dwWidth,m_dwHeight, 0,m_dwColorType, GL_UNSIGNED_BYTE, m_pBuffer);
-			int error=glGetError();
-			if(error!=GL_NO_ERROR){RTTRACE("COpenGLTexture::LoadFromFile -> glTexImage2D, error for %s: %d",m_sFileName.c_str(),error);}
+			//int error=glGetError();
+			//if(error!=GL_NO_ERROR){RTTRACE("COpenGLTexture::LoadFromFile -> glTexImage2D, error for %s: %d",m_sFileName.c_str(),error);}
 #else
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_bGenerateMipMaps?GL_NEAREST_MIPMAP_LINEAR:GL_NEAREST);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_bGenerateMipMaps?GL_LINEAR:GL_NEAREST);
 			if(m_bGenerateMipMaps)
 			{
-				gluBuild2DMipmaps(GL_TEXTURE_2D,m_dwColorType==GL_RGBA?4:3,m_dwWidth,m_dwHeight,m_dwColorType,GL_UNSIGNED_BYTE,m_pBuffer);
+				gluBuild2DMipmaps(GL_TEXTURE_2D,m_dwColorType,m_dwWidth,m_dwHeight,m_dwColorType,GL_UNSIGNED_BYTE,m_pBuffer);
 			}
 			else
 			{
-				glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
-				glTexImage2D(GL_TEXTURE_2D, 0, m_dwColorType==GL_RGBA?4:3, m_dwWidth,m_dwHeight, 0,m_dwColorType, GL_UNSIGNED_BYTE, m_pBuffer);
+				glTexImage2D(GL_TEXTURE_2D, 0, m_dwColorType, m_dwWidth,m_dwHeight, 0,m_dwColorType, GL_UNSIGNED_BYTE, m_pBuffer);
 			}
+			
 #endif
 			RTTRACE("COpenGLTexture::LoadFromFile -> Loaded texture %s-id %d, %dx%d (%d ms)",m_sFileName.c_str(),m_nTextureIndex,m_dwWidth,m_dwHeight,GetTimeStamp()-nStartTime);
 		}
@@ -389,9 +389,10 @@ bool COpenGLTexture::CreateFrameBuffer(bool bDepth)
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 #ifndef ANDROID
-			glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
-#endif
 			glTexImage2D(GL_TEXTURE_2D, 0,  GL_DEPTH_COMPONENT, m_dwWidth,m_dwHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+#else
+			glTexImage2D(GL_TEXTURE_2D, 0,  GL_DEPTH_COMPONENT, m_dwWidth,m_dwHeight, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, 0);
+#endif
 		}
 		else
 		{
@@ -399,16 +400,8 @@ bool COpenGLTexture::CreateFrameBuffer(bool bDepth)
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-#ifndef ANDROID
-			glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
-#endif
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_dwWidth,m_dwHeight, 0,GL_RGBA, GL_UNSIGNED_BYTE, 0);
 		}
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_nFrameBufferDepth);
-		glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, m_dwWidth, m_dwHeight);
-		glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,m_nFrameBuffer);
 		if(!bDepth)
 		{		
@@ -514,9 +507,10 @@ bool COpenGLTexture::PrepareTexture(IGenericRender *piRender,int nTextureLevel)
 {
 	if(m_nTextureIndex)
 	{
-		glActiveTexture(GL_TEXTURE0_ARB+nTextureLevel);
-		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D,m_nTextureIndex);
+#ifdef ANDROID_GLES1
+		glEnable(GL_TEXTURE_2D);
+#endif
 	}
 	return true;
 }
@@ -525,9 +519,9 @@ void COpenGLTexture::UnprepareTexture(IGenericRender *piRender,int nTextureLevel
 {
 	if(m_nTextureIndex)
 	{
-		glActiveTexture(GL_TEXTURE0_ARB+nTextureLevel);
-		glBindTexture(GL_TEXTURE_2D,0);
+#ifdef ANDROID_GLES1
 		glDisable(GL_TEXTURE_2D);
+#endif
 	}
 }
 
