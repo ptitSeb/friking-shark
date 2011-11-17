@@ -39,6 +39,7 @@ int	CGameDialogBase::Execute(IGameWindow *piParent)
 	
 	if(CGameWindowBase::InitWindow(piParent,true))
 	{
+		m_piGUIManager->ReleaseMouseCapture();
 		m_piGUIManager->SetFocus(this);
 		
 		OnInitDialog();

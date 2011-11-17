@@ -67,20 +67,29 @@ unsigned int CGameGUIList::GetElementCount(){return m_vElements.size();}
 void 		 CGameGUIList::SetSelectedElement(int nElement){m_nSelectedElement=nElement;if(nElement!=-1){ValidateSelection();}}
 int 		 CGameGUIList::GetSelectedElement(){return m_nSelectedElement;}
 
+void CGameGUIList::UpdateRealRect()
+{
+	CGameWindowBase::UpdateRealRect();
+	
+	double dFontSize=0,dFontPixelWidth=0;
+	IGenericFont *piFont=NULL;
+	GetFont(&piFont,&dFontSize);
+	if(!piFont){return;}
+	piFont->CalcTextSize(dFontSize,"A",&dFontPixelWidth,&m_dFontPixelHeight);
+	m_nVisibleCount=(int)(m_dFontPixelHeight?m_rRealRect.h/m_dFontPixelHeight:0);
+	REL(piFont);
+}
 
 void CGameGUIList::OnDraw(IGenericRender *piRender)
 {
   CGameWindowBase::OnDraw(piRender);
  
-  double dFontSize=0,dFontPixelWidth=0;
-  
+  double dFontSize=0;
   IGenericFont *piFont=NULL;
   GetFont(&piFont,&dFontSize);
   if(!piFont){return;}
-  piFont->CalcTextSize(dFontSize,"A",&dFontPixelWidth,&m_dFontPixelHeight);
   
   double y=m_rRealRect.h;
-  m_nVisibleCount=(int)(m_dFontPixelHeight?m_rRealRect.h/m_dFontPixelHeight:0);
   double dElementWidth=m_rRealRect.w;
   if(m_nVisibleCount<(int)m_vElements.size())
   {

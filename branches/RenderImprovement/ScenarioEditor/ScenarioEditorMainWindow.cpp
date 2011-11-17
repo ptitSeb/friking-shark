@@ -91,7 +91,7 @@ CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 	InitializeChildren();
 	m_piGameSystem=NULL;
 	m_bSimulationStarted=false;
-	m_eShadingModel=eShadingModel_Phong;
+	m_eShadingModel=eShadingModel_Balanced;
 }
 
 CScenarioEditorMainWindow::~CScenarioEditorMainWindow(void)
@@ -155,7 +155,7 @@ bool CScenarioEditorMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 	}
 	
 	
-	OpenScenario("/home/javi/workspace/AndroidPort/Demo/Resources/Level1.ges");
+	//OpenScenario("/home/javi/workspace/AndroidPort/Demo/Resources/Level1.ges");
 	return bOk;
 }
 
@@ -3970,6 +3970,7 @@ void CScenarioEditorMainWindow::RenderRoute( IGenericRender * piRender, int nSel
 	SEntityControls *pEntity=m_vEntityControls[nSelectedEntity];
 	piRender->PushState();
 	piRender->DeactivateDepth();
+	piRender->DeactivateShadowReception();
 
 	CVector vPreviousPoint=pEntity->m_piPlayAreaEntity->GetPosition();
 	for(unsigned x=0;x<pEntity->m_piPlayAreaEntity->GetRoutePoints();x++)

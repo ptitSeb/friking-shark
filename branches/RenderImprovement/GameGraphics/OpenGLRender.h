@@ -21,7 +21,6 @@
 #define TEXTURE_PARTICLE_BUFFER_SIZE 1024
 #define LINE_BUFFER_SIZE			 1024
 #define POINT_BUFFER_SIZE			 1024
-#define SELECTION_BUFFER_SIZE		 1024
 
 
 struct SRenderState
@@ -352,6 +351,7 @@ struct SShaderKey
 	bool  bWater;
 	bool  bNormalMap;
 	bool  bSkyShadow;
+	bool  bPoints;
 	std::string sDescription;
 	
 	EShadingModel eShadingModel;
@@ -360,6 +360,8 @@ struct SShaderKey
 	{
 		if(eShadingModel<otherKey.eShadingModel){return true;}
 		if(eShadingModel>otherKey.eShadingModel){return false;}
+		if(bPoints<otherKey.bPoints){return true;}
+		if(bPoints>otherKey.bPoints){return false;}
 		if(bHeightFog<otherKey.bHeightFog){return true;}
 		if(bHeightFog>otherKey.bHeightFog){return false;}
 		if(bShadows<otherKey.bShadows){return true;}
@@ -377,8 +379,8 @@ struct SShaderKey
 		return false;
 	}
 
-SShaderKey(){eShadingModel=eShadingModel_Gouraud;bHeightFog=false;bShadows=false;nTextureUnits=0;bLighting=false;bWater=false;bNormalMap=false;bSkyShadow=false;}
-SShaderKey(EShadingModel shading,bool heightFog,bool shadows,int textureUnits,bool lighting,bool water,bool normalMap,bool sky){eShadingModel=shading;bHeightFog=heightFog;bShadows=shadows;nTextureUnits=textureUnits;bLighting=lighting;bWater=water;bNormalMap=normalMap;bSkyShadow=sky;}
+SShaderKey(){eShadingModel=eShadingModel_Gouraud;bHeightFog=false;bShadows=false;nTextureUnits=0;bLighting=false;bWater=false;bNormalMap=false;bSkyShadow=false;bPoints=false;}
+SShaderKey(EShadingModel shading,bool heightFog,bool shadows,int textureUnits,bool lighting,bool water,bool normalMap,bool sky,bool points){eShadingModel=shading;bHeightFog=heightFog;bShadows=shadows;nTextureUnits=textureUnits;bLighting=lighting;bWater=water;bNormalMap=normalMap;bSkyShadow=sky;bPoints=points;}
 };
 
 enum EStateChangeShader
@@ -418,8 +420,6 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IOpenGLRend
 	int			m_nViewportH;
 
 	bool		 m_bStagedRendering;
-	GLuint		 m_pSelectionBuffer[SELECTION_BUFFER_SIZE];
-
 	SRenderOptions m_sRenderOptions;
 
 	SRenderState m_sRenderState;
@@ -468,9 +468,17 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IOpenGLRend
 	double m_dSKyShadowXResolution;
 	double m_dSKyShadowZResolution;
 	double m_dSKyShadowOpacity;
+
+	bool 		 m_bSelecting;
+	SGamePos 	 m_SelectionPos;
+	unsigned int m_nSelectionPrecision;
+	
+	bool 		 m_bRenderingPoints;
 	
 	CGenericShaderWrapper m_ShadowShader;
+	CGenericShaderWrapper m_SelectionShader;
 	CGenericShaderWrapper *m_pCurrentShader;
+	CGenericShaderWrapper *m_pShaderBeforeSelection;
 	
 	CGenericTextureWrapper m_ShadowTexture;
 	CGenericLightWrapper  m_SunLight;
@@ -610,8 +618,6 @@ public:
 	void RenderRect(double x, double y,double w,double h);
 	void RenderRect(double x,double y,double w,double h,CVector &vColor,double dAlpha);
 	void RenderPolygon(unsigned int nVertexes,const CVector *pVertexes,const CVector *pColors);
-	void RenderPyramid(const CVector &vTopVertex,const CVector &vSizes,bool bSolid);
-	void RenderPyramid(const CVector &vTopVertex,double dUpperSizeX,double dUpperSizeZ,double dLowerSizeX,double dLowerSizeZ,double dHeight,bool bSolid);
 	void RenderArrowHead(const CVector &vPosition,const CVector &vDirection,CVector &vUp,double dForward,double dUp,double dRight);
 	
 	void ActivateHeightFog(const CVector &vMins,const CVector &vMaxs,const CVector &vColor);

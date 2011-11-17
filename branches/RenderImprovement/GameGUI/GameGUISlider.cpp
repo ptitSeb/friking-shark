@@ -63,59 +63,52 @@ void CGameGUISlider::OnDrawBackground(IGenericRender *piRender)
 		CGameGUIButton::OnDrawBackground(piRender);
 		return;
 	}
-		
-	SGameRect sOriginalClipRect=m_rRealRect;
-	piRender->GetClipRect(&sOriginalClipRect.x,&sOriginalClipRect.y,&sOriginalClipRect.w,&sOriginalClipRect.h);
 
 	SGameRect sFullRect=m_rRealRect;
-	SGameRect sEmptyRect=m_rRealRect;
-	
 	sFullRect.w=m_rRealRect.w*m_dValue;
-	sEmptyRect.x=sFullRect.x+sFullRect.w;
-	sEmptyRect.w=m_rRealRect.w-sFullRect.w;
 		
 	// Draw the default bk texture, that is, the emptypart
-	piRender->SetClipRect(sEmptyRect.x,sEmptyRect.y,sEmptyRect.w,sEmptyRect.h);
 	CGameGUIButton::OnDrawBackground(piRender);
-	
-	// Draw the full texture, that is, the full part
-	piRender->SetClipRect(sFullRect.x,sFullRect.y,sFullRect.w,sFullRect.h);
-	if((m_piGUIManager->HasMouseCapture(this) && m_bHoverEnabled) ||
-		(m_bWantFocus && m_piGUIManager->HasFocus(this)))
+
+	if(m_rRealRect.w!=0)
 	{
-		if(m_HoverTexture.m_piTexture)
+		// Draw the full texture, that is, the full part
+		if((m_piGUIManager->HasMouseCapture(this) && m_bHoverEnabled) ||
+			(m_bWantFocus && m_piGUIManager->HasFocus(this)))
 		{
-			piRender->SetColor(m_vHoverBackgroundColor,m_dHoverBackgroundAlpha);
-			piRender->SelectTexture(m_FullHoverTexture.m_piTexture,0);
-			piRender->RenderTexture(CVector(m_rRealRect.x+m_rRealRect.w*0.5,m_rRealRect.y+m_rRealRect.h*0.5,0),m_rRealRect.w,m_rRealRect.h);
-			piRender->UnselectTexture(0);
+			if(m_HoverTexture.m_piTexture)
+			{
+				piRender->SetColor(m_vHoverBackgroundColor,m_dHoverBackgroundAlpha);
+				piRender->SelectTexture(m_FullHoverTexture.m_piTexture,0);
+				piRender->RenderTexture(CVector(sFullRect.x+sFullRect.w*0.5,sFullRect.y+sFullRect.h*0.5,0),sFullRect.w,sFullRect.h,0,0,sFullRect.w/m_rRealRect.w,1);
+				piRender->UnselectTexture(0);
+			}
+			else
+			{
+				if(m_dHoverBackgroundAlpha!=0.0)
+				{
+					piRender->RenderRect(sFullRect.x,sFullRect.y,sFullRect.w,sFullRect.h,m_vHoverBackgroundColor,m_dHoverBackgroundAlpha);
+				}
+			}
 		}
 		else
 		{
-			if(m_dHoverBackgroundAlpha!=0.0)
+			if(m_BackgroundTexture.m_piTexture)
 			{
-				piRender->RenderRect(m_rRealRect.x,m_rRealRect.y,m_rRealRect.w,m_rRealRect.h,m_vHoverBackgroundColor,m_dHoverBackgroundAlpha);
+				piRender->SetColor(m_vBackgroundColor,m_dBackgroundAlpha);
+				piRender->SelectTexture(m_FullTexture.m_piTexture,0);
+				piRender->RenderTexture(CVector(sFullRect.x+sFullRect.w*0.5,sFullRect.y+sFullRect.h*0.5,0),sFullRect.w,sFullRect.h,0,0,sFullRect.w/m_rRealRect.w,1);
+				piRender->UnselectTexture(0);
+			}
+			else
+			{
+				if(m_dBackgroundAlpha!=0.0)
+				{
+					piRender->RenderRect(sFullRect.x,sFullRect.y,sFullRect.w,sFullRect.h,m_vBackgroundColor,m_dBackgroundAlpha);
+				}
 			}
 		}
 	}
-	else
-	{
-		if(m_BackgroundTexture.m_piTexture)
-		{
-			piRender->SetColor(m_vBackgroundColor,m_dBackgroundAlpha);
-			piRender->SelectTexture(m_FullTexture.m_piTexture,0);
-			piRender->RenderTexture(CVector(m_rRealRect.x+m_rRealRect.w*0.5,m_rRealRect.y+m_rRealRect.h*0.5,0),m_rRealRect.w,m_rRealRect.h);
-			piRender->UnselectTexture(0);
-		}
-		else
-		{
-			if(m_dBackgroundAlpha!=0.0)
-			{
-				piRender->RenderRect(m_rRealRect.x,m_rRealRect.y,m_rRealRect.w,m_rRealRect.h,m_vBackgroundColor,m_dBackgroundAlpha);
-			}
-		}
-	}
-	piRender->SetClipRect(sOriginalClipRect.x,sOriginalClipRect.y,sOriginalClipRect.w,sOriginalClipRect.h);
 }
 
 void CGameGUISlider::OnMouseMove(double x,double y)

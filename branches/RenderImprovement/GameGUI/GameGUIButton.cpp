@@ -105,12 +105,9 @@ void CGameGUIButton::OnSetFocus()
 
 void CGameGUIButton::OnKillFocus(IGameWindow *piFocusedWindow)
 {
-	if(m_bHoverEnabled &&m_bFocusOnHover)
+	if(m_piGUIManager->HasMouseCapture(this))
 	{
-		if(m_piGUIManager->HasMouseCapture(this))
-		{
-			m_piGUIManager->ReleaseMouseCapture();
-		}
+		m_piGUIManager->ReleaseMouseCapture();
 	}
 }
 

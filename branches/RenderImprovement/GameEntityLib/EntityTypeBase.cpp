@@ -32,6 +32,7 @@ CEntityTypeBase::CEntityTypeBase(void)
 	m_nMovementType=PHYSIC_MOVE_TYPE_NORMAL;
 	m_nCollisionType=PHYSIC_COLLISION_TYPE_STUCK;
 	m_nAlignment=ENTITY_ALIGNMENT_NEUTRAL;
+	m_nPlacement=ENTITY_PLACEMENT_GROUND;
 	m_nDamagePoints=10;
 }
 

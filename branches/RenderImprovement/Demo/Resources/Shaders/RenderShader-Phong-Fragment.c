@@ -208,5 +208,13 @@ void main (void)
 	finalcolor.rgb=mix(finalcolor.rgb,uFogColor,g_fFogFactor);
   #endif
 
-	oColor=finalcolor;
+ #ifdef RENDERING_POINTS
+	float tempDist=length(gl_PointCoord-vec2(0.5))*2.0;
+	float dist=1.0-smoothstep(0.8,1.0,tempDist);
+	
+ 	oColor=finalcolor;
+	oColor.a=dist;
+ #else
+ 	oColor=finalcolor;
+ #endif
 }

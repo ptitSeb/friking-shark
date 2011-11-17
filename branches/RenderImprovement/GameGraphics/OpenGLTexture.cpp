@@ -259,13 +259,19 @@ bool COpenGLTexture::LoadFromFile(bool bResident)
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 #ifdef ANDROID
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_bGenerateMipMaps?GL_LINEAR:GL_NEAREST);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_bGenerateMipMaps?GL_LINEAR:GL_NEAREST);
 			glTexImage2D(GL_TEXTURE_2D, 0, m_dwColorType, m_dwWidth,m_dwHeight, 0,m_dwColorType, GL_UNSIGNED_BYTE, m_pBuffer);
+			
+#ifdef ANDROID_GLES1
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_bGenerateMipMaps?GL_LINEAR:GL_NEAREST);
+#else
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_bGenerateMipMaps?GL_LINEAR_MIPMAP_LINEAR:GL_NEAREST);
+			if(m_bGenerateMipMaps){glGenerateMipmap(GL_TEXTURE_2D);}
+#endif
 			//int error=glGetError();
 			//if(error!=GL_NO_ERROR){RTTRACE("COpenGLTexture::LoadFromFile -> glTexImage2D, error for %s: %d",m_sFileName.c_str(),error);}
 #else
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_bGenerateMipMaps?GL_NEAREST_MIPMAP_LINEAR:GL_NEAREST);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_bGenerateMipMaps?GL_LINEAR_MIPMAP_LINEAR:GL_NEAREST);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_bGenerateMipMaps?GL_LINEAR:GL_NEAREST);
 			if(m_bGenerateMipMaps)
 			{
@@ -507,10 +513,10 @@ bool COpenGLTexture::PrepareTexture(IGenericRender *piRender,int nTextureLevel)
 {
 	if(m_nTextureIndex)
 	{
-		glBindTexture(GL_TEXTURE_2D,m_nTextureIndex);
 #ifdef ANDROID_GLES1
 		glEnable(GL_TEXTURE_2D);
 #endif
+		glBindTexture(GL_TEXTURE_2D,m_nTextureIndex);
 	}
 	return true;
 }
