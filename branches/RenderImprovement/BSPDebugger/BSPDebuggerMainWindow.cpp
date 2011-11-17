@@ -167,7 +167,7 @@ void CBSPDebuggerMainWindow::RenderNormal(IGenericRender * piRender,CPolygon * p
 	CVector vMiddle;
 	for(unsigned int x=0;x<pPolygon->m_nVertexes;x++){vMiddle+=pPolygon->m_pVertexes[x];}
 	vMiddle/=(double)pPolygon->m_nVertexes;
-	piRender->RenderLine(vMiddle,vMiddle+pPolygon->m_Plane*m_dNormalSize,vColor,0xFFFF);
+	piRender->RenderLine(vMiddle,vMiddle+pPolygon->m_Plane*m_dNormalSize,0xFFFF,vColor,1);
 	piRender->RenderPoint(vMiddle+pPolygon->m_Plane*m_dNormalSize,5,vColor,1);
 }
 
@@ -213,14 +213,13 @@ void CBSPDebuggerMainWindow::OnDraw(IGenericRender *piRender)
 				{
 					piRender->PushState();
 					piRender->ActivateSolid();
-					piRender->SetColor(vColor,1);
-					piRender->RenderPolygon(pPolygon->m_nVertexes,pPolygon->m_pVertexes,NULL);
+					piRender->RenderPolygon(pPolygon->m_nVertexes,pPolygon->m_pVertexes,vColor,1);
 					piRender->DeactivateSolid();
 					piRender->PopState();
 				}
 				else
 				{
-					piRender->RenderLineStrip(pPolygon->m_nVertexes,pPolygon->m_pVertexes,vColor,0xFFFF);
+					piRender->RenderLineLoop(pPolygon->m_nVertexes,pPolygon->m_pVertexes,0xFFFF,vColor,1);
 				}
 				if(m_bShowNormals){RenderNormal(piRender,pPolygon,vColor*0.5);}
 			}
@@ -236,14 +235,13 @@ void CBSPDebuggerMainWindow::OnDraw(IGenericRender *piRender)
 				{
 					piRender->PushState();
 					piRender->ActivateSolid();
-					piRender->SetColor(vColor,1);
-					piRender->RenderPolygon(pPolygon->m_nVertexes,pPolygon->m_pVertexes,NULL);
+					piRender->RenderPolygon(pPolygon->m_nVertexes,pPolygon->m_pVertexes,vColor,1);
 					piRender->DeactivateSolid();
 					piRender->PopState();
 				}
 				else
 				{
-					piRender->RenderLineStrip(pPolygon->m_nVertexes,pPolygon->m_pVertexes,vColor,0xFFFF);
+					piRender->RenderLineLoop(pPolygon->m_nVertexes,pPolygon->m_pVertexes,0xFFFF,vColor,1);
 				}
 			}
 		}
@@ -259,7 +257,7 @@ void CBSPDebuggerMainWindow::OnDraw(IGenericRender *piRender)
 				CPolygon *pPolygon=i->first;
 				if(i->second==nSide && pPolygon->m_nVertexes>1)
 				{
-					piRender->RenderLineStrip(pPolygon->m_nVertexes,pPolygon->m_pVertexes,CVector(dColor,dColor,dColor),0xFFFF);
+					piRender->RenderLineLoop(pPolygon->m_nVertexes,pPolygon->m_pVertexes,0xFFFF,CVector(dColor,dColor,dColor),1);
 				}
 			}
 			dColor*=0.6;
@@ -282,9 +280,8 @@ void CBSPDebuggerMainWindow::OnDraw(IGenericRender *piRender)
 		CVector vColor=CVector(0,0,1);
 		piRender->PushOptions();
 		piRender->ActivateSolid();
-		piRender->SetColor(vColor,1);
-		piRender->RenderPolygon(m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_nVertexes,m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_pVertexes,NULL);
-		piRender->RenderPolygon(m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_nVertexes,pInverted,NULL);
+		piRender->RenderPolygon(m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_nVertexes,m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_pVertexes,vColor,1);
+		piRender->RenderPolygon(m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_nVertexes,pInverted,vColor,1);
 		if(m_bShowNormals){RenderNormal(piRender,m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon,vColor*0.5);}
 		piRender->PopOptions();
 
@@ -293,8 +290,8 @@ void CBSPDebuggerMainWindow::OnDraw(IGenericRender *piRender)
 	}
 	if(m_TraceInfo.m_bTraceHit)
 	{
-		piRender->RenderPoint(m_TraceInfo.m_vTracePos,10,CVector(1,1,0),1);
-		piRender->RenderLine(m_Trace.m_Points[0],m_TraceInfo.m_vTracePos,CVector(1,1,0),0x8888);
+		piRender->RenderPoint(m_TraceInfo.m_vTracePos,10,ColorYellow,1);
+		piRender->RenderLine(m_Trace.m_Points[0],m_TraceInfo.m_vTracePos,0x8888,ColorYellow,1);
 		piRender->DeactivateDepth();
 		
 		if(m_pCurrentBSPNode && m_TraceInfo.m_bTraceHit)
@@ -302,8 +299,8 @@ void CBSPDebuggerMainWindow::OnDraw(IGenericRender *piRender)
 			double dSide=m_pCurrentBSPNode->plane.GetSide(m_TraceInfo.m_vTracePos);
 			CVector vPlaneProj=m_TraceInfo.m_vTracePos-m_pCurrentBSPNode->plane*dSide;
 			
-			piRender->RenderPoint(vPlaneProj,10,dSide>=0?CVector(0,0,1):CVector(1,0,0),1);
-			piRender->RenderLine(vPlaneProj,m_TraceInfo.m_vTracePos,dSide>=0?CVector(0,0,1):CVector(1,0,0),0x8888);
+			piRender->RenderPoint(vPlaneProj,10,dSide>=0?ColorBlue:ColorRed,1);
+			piRender->RenderLine(vPlaneProj,m_TraceInfo.m_vTracePos,0x8888,dSide>=0?ColorBlue:ColorRed,1);
 			
 			double dFontSize=0;
 			IGenericFont *piFont=NULL;
@@ -313,8 +310,7 @@ void CBSPDebuggerMainWindow::OnDraw(IGenericRender *piRender)
 			{
 				char sDescr[1024];
 				sprintf(sDescr,"%s: %f",dSide>=0?"O":"I",dSide);
-				piRender->SetColor(CVector(1,1,1),1);
-				piFont->RenderText(piRender,dFontSize,vPlaneProj,sDescr);
+				piFont->RenderText(piRender,dFontSize,vPlaneProj,sDescr,ColorWhite,1);
 			}
 			REL(piFont);
 		}

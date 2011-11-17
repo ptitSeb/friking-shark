@@ -78,9 +78,8 @@ void CGameGUISlider::OnDrawBackground(IGenericRender *piRender)
 		{
 			if(m_HoverTexture.m_piTexture)
 			{
-				piRender->SetColor(m_vHoverBackgroundColor,m_dHoverBackgroundAlpha);
 				piRender->SelectTexture(m_FullHoverTexture.m_piTexture,0);
-				piRender->RenderTexture(CVector(sFullRect.x+sFullRect.w*0.5,sFullRect.y+sFullRect.h*0.5,0),sFullRect.w,sFullRect.h,0,0,sFullRect.w/m_rRealRect.w,1);
+				piRender->RenderTexture(CVector(sFullRect.x+sFullRect.w*0.5,sFullRect.y+sFullRect.h*0.5,0),sFullRect.w,sFullRect.h,0,0,sFullRect.w/m_rRealRect.w,1,m_vHoverBackgroundColor,m_dHoverBackgroundAlpha);
 				piRender->UnselectTexture(0);
 			}
 			else
@@ -95,9 +94,8 @@ void CGameGUISlider::OnDrawBackground(IGenericRender *piRender)
 		{
 			if(m_BackgroundTexture.m_piTexture)
 			{
-				piRender->SetColor(m_vBackgroundColor,m_dBackgroundAlpha);
 				piRender->SelectTexture(m_FullTexture.m_piTexture,0);
-				piRender->RenderTexture(CVector(sFullRect.x+sFullRect.w*0.5,sFullRect.y+sFullRect.h*0.5,0),sFullRect.w,sFullRect.h,0,0,sFullRect.w/m_rRealRect.w,1);
+				piRender->RenderTexture(CVector(sFullRect.x+sFullRect.w*0.5,sFullRect.y+sFullRect.h*0.5,0),sFullRect.w,sFullRect.h,0,0,sFullRect.w/m_rRealRect.w,1,m_vBackgroundColor,m_dBackgroundAlpha);
 				piRender->UnselectTexture(0);
 			}
 			else

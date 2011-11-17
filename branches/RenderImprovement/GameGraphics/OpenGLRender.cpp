@@ -130,9 +130,6 @@ COpenGLRender::COpenGLRender(void)
 	m_nActiveLights=0;
 	m_bActiveHeightFog=false;
 
-	m_vColor=CVector(0,0,0);
-	m_dAlpha=1;
-
 	m_dStagedRenderingMinZ=0;
 	m_dStagedRenderingMaxZ=0;
 	m_dMinDistanceToLight=10000;
@@ -375,16 +372,6 @@ bool COpenGLRender::IsClippingActive()
 	return bActive!=0;
 }
 
-void COpenGLRender::SetColor(const CVector &vColor,double dAlpha)
-{
-	m_vColor=vColor;
-	m_dAlpha=dAlpha;
-	/*if(!m_bStagedRendering)
-	{
-		glColor4d(vColor.c[0],vColor.c[1],vColor.c[2],dAlpha);
-	}*/
-}
-
 void COpenGLRender::SelectTexture(IGenericTexture *pTexture,int nTextureLevel)
 {
 	if(!m_sRenderOptions.bEnableTextures){return;}
@@ -493,12 +480,12 @@ void COpenGLRender::UnselectSkyShadow()
 	REL(m_piSkyShadow);
 }
 
-void COpenGLRender::RenderTexture(const CVector &vOrigin,double s1,double s2)
+void COpenGLRender::RenderTexture(const CVector &vOrigin,double s1,double s2,const CVector &vColor,double dAlpha)
 {
-	RenderTexture(vOrigin,s1,s2,0,0,1,1);
+	RenderTexture(vOrigin,s1,s2,0,0,1,1,vColor,dAlpha);
 }
 
-void COpenGLRender::RenderTexture(const CVector &vOrigin,double s1,double s2,double dTexX,double dTexY,double dTexW,double dTexH)
+void COpenGLRender::RenderTexture(const CVector &vOrigin,double s1,double s2,double dTexX,double dTexY,double dTexW,double dTexH,const CVector &vColor,double dAlpha)
 {
 	if(m_bStagedRendering)
 	{
@@ -547,10 +534,10 @@ void COpenGLRender::RenderTexture(const CVector &vOrigin,double s1,double s2,dou
 			*pVertexBuffer++=(float)(vOrigin.c[0]+vVertex[x].c[0]);
 			*pVertexBuffer++=(float)(vOrigin.c[1]+vVertex[x].c[1]);
 			*pVertexBuffer++=(float)(vOrigin.c[2]+vVertex[x].c[2]);
-			*pColorBuffer++=(float)m_vColor.c[0];
-			*pColorBuffer++=(float)m_vColor.c[1];
-			*pColorBuffer++=(float)m_vColor.c[2];
-			*pColorBuffer++=(float)m_dAlpha;
+			*pColorBuffer++=(float)vColor.c[0];
+			*pColorBuffer++=(float)vColor.c[1];
+			*pColorBuffer++=(float)vColor.c[2];
+			*pColorBuffer++=(float)dAlpha;
 		}
 		*pTexBuffer++=dTexX+dTexW;*pTexBuffer++=dTexY+dTexH;
 		*pTexBuffer++=dTexX;*pTexBuffer++=dTexY+dTexH;
@@ -613,22 +600,22 @@ void COpenGLRender::RenderTexture(const CVector &vOrigin,double s1,double s2,dou
 		pFaceIndexes[4]=2;
 		pFaceIndexes[5]=3;
 		
-		pColorBuffer[0]=m_vColor.c[0];
-		pColorBuffer[1]=m_vColor.c[1];
-		pColorBuffer[2]=m_vColor.c[2];
-		pColorBuffer[3]=m_dAlpha;
-		pColorBuffer[4]=m_vColor.c[0];
-		pColorBuffer[5]=m_vColor.c[1];
-		pColorBuffer[6]=m_vColor.c[2];
-		pColorBuffer[7]=m_dAlpha;
-		pColorBuffer[8]=m_vColor.c[0];
-		pColorBuffer[9]=m_vColor.c[1];
-		pColorBuffer[10]=m_vColor.c[2];
-		pColorBuffer[11]=m_dAlpha;
-		pColorBuffer[12]=m_vColor.c[0];
-		pColorBuffer[13]=m_vColor.c[1];
-		pColorBuffer[14]=m_vColor.c[2];
-		pColorBuffer[15]=m_dAlpha;
+		pColorBuffer[0]=vColor.c[0];
+		pColorBuffer[1]=vColor.c[1];
+		pColorBuffer[2]=vColor.c[2];
+		pColorBuffer[3]=dAlpha;
+		pColorBuffer[4]=vColor.c[0];
+		pColorBuffer[5]=vColor.c[1];
+		pColorBuffer[6]=vColor.c[2];
+		pColorBuffer[7]=dAlpha;
+		pColorBuffer[8]=vColor.c[0];
+		pColorBuffer[9]=vColor.c[1];
+		pColorBuffer[10]=vColor.c[2];
+		pColorBuffer[11]=dAlpha;
+		pColorBuffer[12]=vColor.c[0];
+		pColorBuffer[13]=vColor.c[1];
+		pColorBuffer[14]=vColor.c[2];
+		pColorBuffer[15]=dAlpha;
 		
 		float *pTexVertexBufferTemp=pTexVertexBuffer;
 		SetVertexPointers(pVertexBuffer,NULL,pColorBuffer,1,&pTexVertexBufferTemp);
@@ -636,29 +623,29 @@ void COpenGLRender::RenderTexture(const CVector &vOrigin,double s1,double s2,dou
 	}
 }
 
-void COpenGLRender::RenderBBox(const CVector &vOrigin,const CVector &vOrientation,const CVector &vMins,const CVector &vMaxs,const CVector &vColor,unsigned long nStipple)
+void COpenGLRender::RenderBBox(const CVector &vOrigin,const CVector &vOrientation,const CVector &vMins,const CVector &vMaxs,unsigned long nStipple,const CVector &vColor,double dAlpha)
 {
 	CVector vPoints[8];
 	CalcBBoxVolume(vOrigin,vOrientation,vMins,vMaxs,vPoints);
 
 	//bottom
-	RenderLine(vPoints[0],vPoints[1],vColor,nStipple);
-	RenderLine(vPoints[1],vPoints[2],vColor,nStipple);
-	RenderLine(vPoints[2],vPoints[3],vColor,nStipple);
-	RenderLine(vPoints[3],vPoints[0],vColor,nStipple);
+	RenderLine(vPoints[0],vPoints[1],nStipple,vColor,dAlpha);
+	RenderLine(vPoints[1],vPoints[2],nStipple,vColor,dAlpha);
+	RenderLine(vPoints[2],vPoints[3],nStipple,vColor,dAlpha);
+	RenderLine(vPoints[3],vPoints[0],nStipple,vColor,dAlpha);
 	// top
-	RenderLine(vPoints[4],vPoints[5],vColor,nStipple);
-	RenderLine(vPoints[5],vPoints[6],vColor,nStipple);
-	RenderLine(vPoints[6],vPoints[7],vColor,nStipple);
-	RenderLine(vPoints[7],vPoints[4],vColor,nStipple);
+	RenderLine(vPoints[4],vPoints[5],nStipple,vColor,dAlpha);
+	RenderLine(vPoints[5],vPoints[6],nStipple,vColor,dAlpha);
+	RenderLine(vPoints[6],vPoints[7],nStipple,vColor,dAlpha);
+	RenderLine(vPoints[7],vPoints[4],nStipple,vColor,dAlpha);
 	// verticals
-	RenderLine(vPoints[0],vPoints[4],vColor,nStipple);
-	RenderLine(vPoints[1],vPoints[5],vColor,nStipple);
-	RenderLine(vPoints[2],vPoints[6],vColor,nStipple);
-	RenderLine(vPoints[3],vPoints[7],vColor,nStipple);
+	RenderLine(vPoints[0],vPoints[4],nStipple,vColor,dAlpha);
+	RenderLine(vPoints[1],vPoints[5],nStipple,vColor,dAlpha);
+	RenderLine(vPoints[2],vPoints[6],nStipple,vColor,dAlpha);
+	RenderLine(vPoints[3],vPoints[7],nStipple,vColor,dAlpha);
 }
 
-void COpenGLRender::RenderBBox(const CVector &vMins,const CVector &vMaxs,const CVector &vColor,unsigned long nStipple)
+void COpenGLRender::RenderBBox(const CVector &vMins,const CVector &vMaxs,unsigned long nStipple,const CVector &vColor,double dAlpha)
 {
 	CVector vPoints[8];
 	// bottom
@@ -671,23 +658,23 @@ void COpenGLRender::RenderBBox(const CVector &vMins,const CVector &vMaxs,const C
 	vPoints[6]=CVector(vMins.c[0],vMaxs.c[1],vMaxs.c[2]);
 	vPoints[7]=CVector(vMins.c[0],vMaxs.c[1],vMins.c[2]);
 	//bottom
-	RenderLine(vPoints[0],vPoints[1],vColor,nStipple);
-	RenderLine(vPoints[1],vPoints[2],vColor,nStipple);
-	RenderLine(vPoints[2],vPoints[3],vColor,nStipple);
-	RenderLine(vPoints[3],vPoints[0],vColor,nStipple);
+	RenderLine(vPoints[0],vPoints[1],nStipple,vColor,dAlpha);
+	RenderLine(vPoints[1],vPoints[2],nStipple,vColor,dAlpha);
+	RenderLine(vPoints[2],vPoints[3],nStipple,vColor,dAlpha);
+	RenderLine(vPoints[3],vPoints[0],nStipple,vColor,dAlpha);
 	// top
-	RenderLine(vPoints[4],vPoints[5],vColor,nStipple);
-	RenderLine(vPoints[5],vPoints[6],vColor,nStipple);
-	RenderLine(vPoints[6],vPoints[7],vColor,nStipple);
-	RenderLine(vPoints[7],vPoints[4],vColor,nStipple);
+	RenderLine(vPoints[4],vPoints[5],nStipple,vColor,dAlpha);
+	RenderLine(vPoints[5],vPoints[6],nStipple,vColor,dAlpha);
+	RenderLine(vPoints[6],vPoints[7],nStipple,vColor,dAlpha);
+	RenderLine(vPoints[7],vPoints[4],nStipple,vColor,dAlpha);
 	// verticals
-	RenderLine(vPoints[0],vPoints[4],vColor,nStipple);
-	RenderLine(vPoints[1],vPoints[5],vColor,nStipple);
-	RenderLine(vPoints[2],vPoints[6],vColor,nStipple);
-	RenderLine(vPoints[3],vPoints[7],vColor,nStipple);
+	RenderLine(vPoints[0],vPoints[4],nStipple,vColor,dAlpha);
+	RenderLine(vPoints[1],vPoints[5],nStipple,vColor,dAlpha);
+	RenderLine(vPoints[2],vPoints[6],nStipple,vColor,dAlpha);
+	RenderLine(vPoints[3],vPoints[7],nStipple,vColor,dAlpha);
 }
 
-void COpenGLRender::RenderLineStrip(unsigned int nLines,const CVector *pPoints,const CVector &vColor,unsigned long nStipple)
+void COpenGLRender::RenderLineLoop(unsigned int nLines,const CVector *pPoints,unsigned long nStipple,const CVector &vColor,double dAlpha)
 {
 	
 	if(m_bStagedRendering)
@@ -727,12 +714,12 @@ void COpenGLRender::RenderLineStrip(unsigned int nLines,const CVector *pPoints,c
 			*pColorBuffer++=(float)vColor.c[0];
 			*pColorBuffer++=(float)vColor.c[1];
 			*pColorBuffer++=(float)vColor.c[2];
-			*pColorBuffer++=1;
+			*pColorBuffer++=(float)dAlpha;
 			
 			*pColorBuffer++=(float)vColor.c[0];
 			*pColorBuffer++=(float)vColor.c[1];
 			*pColorBuffer++=(float)vColor.c[2];
-			*pColorBuffer++=1;
+			*pColorBuffer++=(float)dAlpha;
 			
 			pBuffer->nUsedElements++;
 		}
@@ -757,12 +744,12 @@ void COpenGLRender::RenderLineStrip(unsigned int nLines,const CVector *pPoints,c
 			*pTempColorBuffer++=vColor.c[0];
 			*pTempColorBuffer++=vColor.c[1];
 			*pTempColorBuffer++=vColor.c[2];
-			*pTempColorBuffer++=1;
+			*pTempColorBuffer++=(float)dAlpha;
 			
 			*pTempColorBuffer++=vColor.c[0];
 			*pTempColorBuffer++=vColor.c[1];
 			*pTempColorBuffer++=vColor.c[2];
-			*pTempColorBuffer++=1;
+			*pTempColorBuffer++=(float)dAlpha;
 		}
 		SetVertexPointers(buffer.pVertexBuffer,NULL,buffer.pColorBuffer,0,NULL);
 		glDrawArrays(GL_LINES,0,2*buffer.nUsedElements);
@@ -770,7 +757,7 @@ void COpenGLRender::RenderLineStrip(unsigned int nLines,const CVector *pPoints,c
 }
 
 
-void COpenGLRender::RenderLines(unsigned int nLines,const CVector *pPoints,const CVector &vColor,unsigned long nStipple)
+void COpenGLRender::RenderLines(unsigned int nLines,const CVector *pPoints,unsigned long nStipple,const CVector &vColor,double dAlpha)
 {
 	if(m_bStagedRendering)
 	{
@@ -809,12 +796,12 @@ void COpenGLRender::RenderLines(unsigned int nLines,const CVector *pPoints,const
 			*pColorBuffer++=(float)vColor.c[0];
 			*pColorBuffer++=(float)vColor.c[1];
 			*pColorBuffer++=(float)vColor.c[2];
-			*pColorBuffer++=1;
+			*pColorBuffer++=(float)dAlpha;
 			
 			*pColorBuffer++=(float)vColor.c[0];
 			*pColorBuffer++=(float)vColor.c[1];
 			*pColorBuffer++=(float)vColor.c[2];
-			*pColorBuffer++=1;
+			*pColorBuffer++=(float)dAlpha;
 			
 			pBuffer->nUsedElements++;
 		}
@@ -842,12 +829,12 @@ void COpenGLRender::RenderLines(unsigned int nLines,const CVector *pPoints,const
 			*pColorBuffer++=(float)vColor.c[0];
 			*pColorBuffer++=(float)vColor.c[1];
 			*pColorBuffer++=(float)vColor.c[2];
-			*pColorBuffer++=1;
+			*pColorBuffer++=(float)dAlpha;
 			
 			*pColorBuffer++=(float)vColor.c[0];
 			*pColorBuffer++=(float)vColor.c[1];
 			*pColorBuffer++=(float)vColor.c[2];
-			*pColorBuffer++=1;
+			*pColorBuffer++=(float)dAlpha;
 			
 			buffer.nUsedElements++;
 		}
@@ -859,7 +846,7 @@ void COpenGLRender::RenderLines(unsigned int nLines,const CVector *pPoints,const
 #endif
 	}
 }
-void COpenGLRender::RenderLine(const CVector &v1,const CVector &v2,const CVector &vColor,unsigned long nStipple)
+void COpenGLRender::RenderLine(const CVector &v1,const CVector &v2,unsigned long nStipple,const CVector &vColor,double dAlpha)
 {
 	if(m_bStagedRendering)
 	{
@@ -897,12 +884,12 @@ void COpenGLRender::RenderLine(const CVector &v1,const CVector &v2,const CVector
 		*pColorBuffer++=(float)vColor.c[0];
 		*pColorBuffer++=(float)vColor.c[1];
 		*pColorBuffer++=(float)vColor.c[2];
-		*pColorBuffer++=1;
+		*pColorBuffer++=(float)dAlpha;
 
 		*pColorBuffer++=(float)vColor.c[0];
 		*pColorBuffer++=(float)vColor.c[1];
 		*pColorBuffer++=(float)vColor.c[2];
-		*pColorBuffer++=1;
+		*pColorBuffer++=(float)dAlpha;
 
 		pBuffer->nUsedElements++;
 	}
@@ -928,11 +915,11 @@ void COpenGLRender::RenderLine(const CVector &v1,const CVector &v2,const CVector
 		pColorBuffer[0]=vColor.c[0];
 		pColorBuffer[1]=vColor.c[1];
 		pColorBuffer[2]=vColor.c[2];
-		pColorBuffer[3]=1.0;
+		pColorBuffer[3]=dAlpha;
 		pColorBuffer[4]=vColor.c[0];
 		pColorBuffer[5]=vColor.c[1];
 		pColorBuffer[6]=vColor.c[2];
-		pColorBuffer[7]=1.0;
+		pColorBuffer[7]=dAlpha;
 		
 		SetVertexPointers(pVertexBuffer,NULL,pColorBuffer,0,NULL);
 		glDrawArrays(GL_LINES,0,2);
@@ -943,8 +930,7 @@ void COpenGLRender::RenderLine(const CVector &v1,const CVector &v2,const CVector
 	}
 }
 
-
-void COpenGLRender::RenderRect(const CVector &vCenter,const CVector &vAxisW,const CVector &vAxisH,double w,double h)
+void COpenGLRender::RenderRect(const CVector &vCenter,const CVector &vAxisW,const CVector &vAxisH,double w,double h,CVector &vColor,double dAlpha)
 {	
 	SetCurrentRenderStateShader();
 	
@@ -973,22 +959,22 @@ void COpenGLRender::RenderRect(const CVector &vCenter,const CVector &vAxisW,cons
 	pVertexBuffer[10]=v[3].c[1];
 	pVertexBuffer[11]=v[3].c[2];
 	
-	pColorBuffer[0]=m_vColor.c[0];
-	pColorBuffer[1]=m_vColor.c[1];
-	pColorBuffer[2]=m_vColor.c[2];
-	pColorBuffer[3]=m_dAlpha;
-	pColorBuffer[4]=m_vColor.c[0];
-	pColorBuffer[5]=m_vColor.c[1];
-	pColorBuffer[6]=m_vColor.c[2];
-	pColorBuffer[7]=m_dAlpha;
-	pColorBuffer[8]=m_vColor.c[0];
-	pColorBuffer[9]=m_vColor.c[1];
-	pColorBuffer[10]=m_vColor.c[2];
-	pColorBuffer[11]=m_dAlpha;
-	pColorBuffer[12]=m_vColor.c[0];
-	pColorBuffer[13]=m_vColor.c[1];
-	pColorBuffer[14]=m_vColor.c[2];
-	pColorBuffer[15]=m_dAlpha;
+	pColorBuffer[0]=vColor.c[0];
+	pColorBuffer[1]=vColor.c[1];
+	pColorBuffer[2]=vColor.c[2];
+	pColorBuffer[3]=dAlpha;
+	pColorBuffer[4]=vColor.c[0];
+	pColorBuffer[5]=vColor.c[1];
+	pColorBuffer[6]=vColor.c[2];
+	pColorBuffer[7]=dAlpha;
+	pColorBuffer[8]=vColor.c[0];
+	pColorBuffer[9]=vColor.c[1];
+	pColorBuffer[10]=vColor.c[2];
+	pColorBuffer[11]=dAlpha;
+	pColorBuffer[12]=vColor.c[0];
+	pColorBuffer[13]=vColor.c[1];
+	pColorBuffer[14]=vColor.c[2];
+	pColorBuffer[15]=dAlpha;
 	
 	SetVertexPointers(pVertexBuffer,NULL,pColorBuffer,0,NULL);
 	if(m_sRenderState.bActiveSolid)
@@ -1085,79 +1071,49 @@ void COpenGLRender::RenderRect(double x,double y,double w,double h,CVector &vCol
 		glDrawElements(GL_LINE_LOOP,4,GL_UNSIGNED_SHORT,pFaceIndexes);
 	}
 }
-
-void COpenGLRender::RenderRect(double x,double y,double w,double h)
+void COpenGLRender::RenderPolygon(unsigned int nVertexes,const CVector *pVertexes,const CVector &vColor,double dAlpha)
 {
-	SetCurrentRenderStateShader();
+	if(nVertexes<3){return;}
 	
-	CVector v[4];
-	v[0]=CVector(x,y,0);
-	v[1]=CVector(x+w,y,0);
-	v[2]=CVector(x+w,y+h,0);
-	v[3]=CVector(x,y+h,0);
+	STextureParticleBuffer buffer;
+	float *pTempVertexBuffer=buffer.pVertexBuffer;
+	float *pTempColorBuffer=buffer.pColorBuffer;
 	
-	float pVertexBuffer[12];
-	float pColorBuffer[16];
-	
-	pVertexBuffer[0]=v[0].c[0];
-	pVertexBuffer[1]=v[0].c[1];
-	pVertexBuffer[2]=v[0].c[2];
-	
-	pVertexBuffer[3]=v[1].c[0];
-	pVertexBuffer[4]=v[1].c[1];
-	pVertexBuffer[5]=v[1].c[2];
-	
-	pVertexBuffer[6]=v[2].c[0];
-	pVertexBuffer[7]=v[2].c[1];
-	pVertexBuffer[8]=v[2].c[2];
-	
-	pVertexBuffer[9]=v[3].c[0];
-	pVertexBuffer[10]=v[3].c[1];
-	pVertexBuffer[11]=v[3].c[2];
-	
-	pColorBuffer[0]=m_vColor.c[0];
-	pColorBuffer[1]=m_vColor.c[1];
-	pColorBuffer[2]=m_vColor.c[2];
-	pColorBuffer[3]=m_dAlpha;
-	pColorBuffer[4]=m_vColor.c[0];
-	pColorBuffer[5]=m_vColor.c[1];
-	pColorBuffer[6]=m_vColor.c[2];
-	pColorBuffer[7]=m_dAlpha;
-	pColorBuffer[8]=m_vColor.c[0];
-	pColorBuffer[9]=m_vColor.c[1];
-	pColorBuffer[10]=m_vColor.c[2];
-	pColorBuffer[11]=m_dAlpha;
-	pColorBuffer[12]=m_vColor.c[0];
-	pColorBuffer[13]=m_vColor.c[1];
-	pColorBuffer[14]=m_vColor.c[2];
-	pColorBuffer[15]=m_dAlpha;
-	
-	SetVertexPointers(pVertexBuffer,NULL,pColorBuffer,0,NULL);
-	if(m_sRenderState.bActiveSolid)
+	for(int x=0;x<TEXTURE_PARTICLE_BUFFER_SIZE && x<nVertexes-2;x++)
 	{
-		GLushort pFaceIndexes[6];
-		pFaceIndexes[0]=0;
-		pFaceIndexes[1]=1;
-		pFaceIndexes[2]=2;
-		pFaceIndexes[3]=0;
-		pFaceIndexes[4]=2;
-		pFaceIndexes[5]=3;
+		buffer.nUsedElements++;
+		*pTempVertexBuffer++=pVertexes[0].c[0];
+		*pTempVertexBuffer++=pVertexes[0].c[1];
+		*pTempVertexBuffer++=pVertexes[0].c[2];
 		
-		glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_SHORT,pFaceIndexes);
-	}
-	else
-	{	
-		GLushort pFaceIndexes[4];
-		pFaceIndexes[0]=0;
-		pFaceIndexes[1]=1;
-		pFaceIndexes[2]=2;
-		pFaceIndexes[3]=3;
+		*pTempVertexBuffer++=pVertexes[x+1].c[0];
+		*pTempVertexBuffer++=pVertexes[x+1].c[1];
+		*pTempVertexBuffer++=pVertexes[x+1].c[2];
 		
-		glDrawElements(GL_LINE_LOOP,4,GL_UNSIGNED_SHORT,pFaceIndexes);
+		*pTempVertexBuffer++=pVertexes[x+2].c[0];
+		*pTempVertexBuffer++=pVertexes[x+2].c[1];
+		*pTempVertexBuffer++=pVertexes[x+2].c[2];
+		
+		*pTempColorBuffer++=vColor.c[0];
+		*pTempColorBuffer++=vColor.c[1];
+		*pTempColorBuffer++=vColor.c[2];
+		*pTempColorBuffer++=dAlpha;
+		
+		*pTempColorBuffer++=vColor.c[0];
+		*pTempColorBuffer++=vColor.c[1];
+		*pTempColorBuffer++=vColor.c[2];
+		*pTempColorBuffer++=dAlpha;
+		
+		*pTempColorBuffer++=vColor.c[0];
+		*pTempColorBuffer++=vColor.c[1];
+		*pTempColorBuffer++=vColor.c[2];
+		*pTempColorBuffer++=dAlpha;
 	}
+	SetVertexPointers(buffer.pVertexBuffer,NULL,buffer.pColorBuffer,0,NULL);
+	glDrawArrays(GL_TRIANGLES,0,3*buffer.nUsedElements);
 }
 
-void COpenGLRender::RenderPolygon(unsigned int nVertexes,const CVector *pVertexes,const CVector *pColors)
+void COpenGLRender::RenderPolygon(unsigned int nVertexes,const CVector *pVertexes,const CVector *pColors,const double *pdAlphas)
 {
 	if(nVertexes<3){return;}
 	
@@ -1180,46 +1136,26 @@ void COpenGLRender::RenderPolygon(unsigned int nVertexes,const CVector *pVertexe
 		*pTempVertexBuffer++=pVertexes[x+2].c[1];
 		*pTempVertexBuffer++=pVertexes[x+2].c[2];
 
-		if(pColors)
-		{
-			*pTempColorBuffer++=pColors[0].c[0];
-			*pTempColorBuffer++=pColors[0].c[1];
-			*pTempColorBuffer++=pColors[0].c[2];
-			*pTempColorBuffer++=m_dAlpha;
-			
-			*pTempColorBuffer++=pColors[x+1].c[0];
-			*pTempColorBuffer++=pColors[x+1].c[1];
-			*pTempColorBuffer++=pColors[x+1].c[2];
-			*pTempColorBuffer++=m_dAlpha;
-			
-			*pTempColorBuffer++=pColors[x+2].c[0];
-			*pTempColorBuffer++=pColors[x+2].c[1];
-			*pTempColorBuffer++=pColors[x+2].c[2];
-			*pTempColorBuffer++=m_dAlpha;
-		}
-		else
-		{
-			*pTempColorBuffer++=m_vColor.c[0];
-			*pTempColorBuffer++=m_vColor.c[1];
-			*pTempColorBuffer++=m_vColor.c[2];
-			*pTempColorBuffer++=m_dAlpha;
-			
-			*pTempColorBuffer++=m_vColor.c[0];
-			*pTempColorBuffer++=m_vColor.c[1];
-			*pTempColorBuffer++=m_vColor.c[2];
-			*pTempColorBuffer++=m_dAlpha;
-			
-			*pTempColorBuffer++=m_vColor.c[0];
-			*pTempColorBuffer++=m_vColor.c[1];
-			*pTempColorBuffer++=m_vColor.c[2];
-			*pTempColorBuffer++=m_dAlpha;
-		}
+		*pTempColorBuffer++=pColors[0].c[0];
+		*pTempColorBuffer++=pColors[0].c[1];
+		*pTempColorBuffer++=pColors[0].c[2];
+		*pTempColorBuffer++=pdAlphas[0];
+		
+		*pTempColorBuffer++=pColors[x+1].c[0];
+		*pTempColorBuffer++=pColors[x+1].c[1];
+		*pTempColorBuffer++=pColors[x+1].c[2];
+		*pTempColorBuffer++=pdAlphas[x+1];
+		
+		*pTempColorBuffer++=pColors[x+2].c[0];
+		*pTempColorBuffer++=pColors[x+2].c[1];
+		*pTempColorBuffer++=pColors[x+2].c[2];
+		*pTempColorBuffer++=pdAlphas[x+2];
 	}
 	SetVertexPointers(buffer.pVertexBuffer,NULL,buffer.pColorBuffer,0,NULL);
 	glDrawArrays(GL_TRIANGLES,0,3*buffer.nUsedElements);
 }
 
-void COpenGLRender::RenderArrowHead(const CVector &vPosition,const CVector &vDirection,CVector &vUp,double dForward,double dUp,double dRight)
+void COpenGLRender::RenderArrowHead(const CVector &vPosition,const CVector &vDirection,CVector &vUp,double dForward,double dUp,double dRight,const CVector &vColor,double dAlpha)
 {
 	CVector pvBase[4];
 	CVector vHead;
@@ -1233,6 +1169,7 @@ void COpenGLRender::RenderArrowHead(const CVector &vPosition,const CVector &vDir
 	
 	STextureParticleBuffer buffer;
 	float *pTempVertexBuffer=buffer.pVertexBuffer;	
+	float *pTempColorBuffer=buffer.pColorBuffer;	
 	*pTempVertexBuffer++=pvBase[0].c[0];
 	*pTempVertexBuffer++=pvBase[0].c[1];
 	*pTempVertexBuffer++=pvBase[0].c[2];
@@ -1248,9 +1185,36 @@ void COpenGLRender::RenderArrowHead(const CVector &vPosition,const CVector &vDir
 	*pTempVertexBuffer++=vHead.c[0];
 	*pTempVertexBuffer++=vHead.c[1];
 	*pTempVertexBuffer++=vHead.c[2];
+	
+	
+	*pTempColorBuffer++=vColor.c[0];
+	*pTempColorBuffer++=vColor.c[1];
+	*pTempColorBuffer++=vColor.c[2];
+	*pTempColorBuffer++=dAlpha;
+
+	*pTempColorBuffer++=vColor.c[0];
+	*pTempColorBuffer++=vColor.c[1];
+	*pTempColorBuffer++=vColor.c[2];
+	*pTempColorBuffer++=dAlpha;
+	
+	*pTempColorBuffer++=vColor.c[0];
+	*pTempColorBuffer++=vColor.c[1];
+	*pTempColorBuffer++=vColor.c[2];
+	*pTempColorBuffer++=dAlpha;
+	
+	*pTempColorBuffer++=vColor.c[0];
+	*pTempColorBuffer++=vColor.c[1];
+	*pTempColorBuffer++=vColor.c[2];
+	*pTempColorBuffer++=dAlpha;
+	
+	*pTempColorBuffer++=vColor.c[0];
+	*pTempColorBuffer++=vColor.c[1];
+	*pTempColorBuffer++=vColor.c[2];
+	*pTempColorBuffer++=dAlpha;
+	
 	unsigned short pFaces[18]={0,1,2,  0,2,3,  4,1,0,   4,2,1   ,4,3,2,  4,0,3};
 
-	SetVertexPointers(buffer.pVertexBuffer,NULL,NULL,0,NULL);
+	SetVertexPointers(buffer.pVertexBuffer,NULL,buffer.pColorBuffer,0,NULL);
 	glDrawElements(GL_TRIANGLES,18,GL_UNSIGNED_SHORT,pFaces);
 }
 
@@ -2186,7 +2150,7 @@ void COpenGLRender::RenderModel(const CVector &vOrigin,const CVector &vOrientati
 	}
 }
 
-void COpenGLRender::RenderParticle(IGenericTexture *piTexture,const CVector &vOrigin,double dAngle,double s1,double s2,const CVector &vColor,double dAlpha,double dTextX,double dTextY,double dTextW,double dTextH)
+void COpenGLRender::RenderParticle(IGenericTexture *piTexture,const CVector &vOrigin,double dAngle,double s1,double s2,double dTextX,double dTextY,double dTextW,double dTextH,const CVector &vColor,double dAlpha)
 {
 	if(m_bStagedRendering)
 	{

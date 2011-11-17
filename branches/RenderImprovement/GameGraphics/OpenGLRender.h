@@ -453,8 +453,6 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IOpenGLRend
 	bool 		  m_bLightingPrepared;
 	unsigned long m_nActiveLights;
 
-	CVector m_vColor;
-	double  m_dAlpha;
 	IGenericViewport *m_piCurrentViewport;
 	IGenericTexture  *m_piNormalMap;
 	IGenericTexture  *m_piSkyShadow;
@@ -586,8 +584,6 @@ public:
 	void SetClipRect(double x,double y,double cx, double cy);
 	void GetClipRect(double *px,double *py,double *pcx, double *pcy);
 	
-	void SetColor(const CVector &vColor,double dAlpha);
-
 	void SelectFont(const char *pFamilyName,double dSize);
 	void SelectTexture(IGenericTexture *pTexture,int nTextureLevel);
 	void SetTextureMatrix(CMatrix *pMatrix,int nTextureLevel);	
@@ -601,24 +597,24 @@ public:
 	void UnselectSkyShadow();
 	
 	void CalcTextSize(const char *pText,double *pdWidth,double *pdHeight);
-	virtual void RenderPoint(const CVector &vPosition,double dSize,const CVector &vColor,double dAlpha);
-	void RenderText(double x,double y,const char *pText);
-	void RenderTextEx(double x,double y,double w,double h,const char *pText,eTextAlignment dwHorzAlign,eTextAlignment dwVertAlign);
-	void RenderTexture(const CVector &vOrigin,double s1,double s2);
-	void RenderTexture(const CVector &vOrigin,double s1,double s2,double dTexX,double dTexY,double dTexW,double dTexH);
-	void RenderParticle(IGenericTexture *piTexture,const CVector &vOrigin,double dAngle,double s1,double s2,const CVector &vColor,double dAlpha,double dTextX,double dTextY,double dTextW,double dTextH);
+	void RenderPoint(const CVector &vPosition,double dSize,const CVector &vColor,double dAlpha);
+	void RenderText(double x,double y,const char *pText,const CVector &vColor,double dAlpha);
+	void RenderTextEx(double x,double y,double w,double h,const char *pText,eTextAlignment dwHorzAlign,eTextAlignment dwVertAlign,const CVector &vColor,double dAlpha);
+	void RenderTexture(const CVector &vOrigin,double s1,double s2,const CVector &vColor,double dAlpha);
+	void RenderTexture(const CVector &vOrigin,double s1,double s2,double dTexX,double dTexY,double dTexW,double dTexH,const CVector &vColor,double dAlpha);
+	void RenderParticle(IGenericTexture *piTexture,const CVector &vOrigin,double dAngle,double s1,double s2,double dTextX,double dTextY,double dTextW,double dTextH,const CVector &vColor,double dAlpha);
 	void RenderModel(const CVector &vOrigin,const CVector &vOrientation,IGenericModel *piModel,unsigned int nAnimation,unsigned int nFrame);
 	
-	void RenderBBox(const CVector &vMins,const CVector &vMaxs,const CVector &vColor,unsigned long nStipple);
-	void RenderBBox(const CVector &vOrigin,const CVector &vOrientation,const CVector &vMins,const CVector &vMaxs,const CVector &vColor,unsigned long nStipple=0x8888);
-	void RenderLine(const CVector &v1,const CVector &v2,const CVector &vColor,unsigned long nStipple);
-	void RenderLines(unsigned int nLines,const CVector *pPoints,const CVector &vColor,unsigned long nStipple=0x8888);
-	void RenderLineStrip(unsigned int nLines,const CVector *pPoints,const CVector &vColor,unsigned long nStipple=0x8888);
-	void RenderRect(const CVector &vCenter,const CVector &vAxisW,const CVector &vAxisH,double w,double h);
-	void RenderRect(double x, double y,double w,double h);
+	void RenderBBox(const CVector &vMins,const CVector &vMaxs,unsigned long nStipple,const CVector &vColor,double dAlpha);
+	void RenderBBox(const CVector &vOrigin,const CVector &vOrientation,const CVector &vMins,const CVector &vMaxs,unsigned long nStipple,const CVector &vColor,double dAlpha);
+	void RenderLine(const CVector &v1,const CVector &v2,unsigned long nStipple,const CVector &vColor,double dAlpha);
+	void RenderLines(unsigned int nLines,const CVector *pPoints,unsigned long nStipple,const CVector &vColor,double dAlpha);
+	void RenderLineLoop(unsigned int nLines,const CVector *pPoints,unsigned long nStipple,const CVector &vColor,double dAlpha);
+	void RenderRect(const CVector &vCenter,const CVector &vAxisW,const CVector &vAxisH,double w,double h,CVector &vColor,double dAlpha);
 	void RenderRect(double x,double y,double w,double h,CVector &vColor,double dAlpha);
-	void RenderPolygon(unsigned int nVertexes,const CVector *pVertexes,const CVector *pColors);
-	void RenderArrowHead(const CVector &vPosition,const CVector &vDirection,CVector &vUp,double dForward,double dUp,double dRight);
+	void RenderPolygon(unsigned int nVertexes,const CVector *pVertexes,const CVector &vColor,double dAlpha);
+	void RenderPolygon(unsigned int nVertexes,const CVector *pVertexes,const CVector *pColors,const double *pdAlphas);
+	void RenderArrowHead(const CVector &vPosition,const CVector &vDirection,CVector &vUp,double dForward,double dUp,double dRight,const CVector &vColor,double dAlpha);
 	
 	void ActivateHeightFog(const CVector &vMins,const CVector &vMaxs,const CVector &vColor);
 	void DeactivateHeightFog();

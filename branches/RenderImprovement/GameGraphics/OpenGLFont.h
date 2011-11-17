@@ -69,9 +69,9 @@ public:
 	END_PROP_MAP();
 
 	void CalcTextSize(double dFontHeight,const char *pText,double *pdWidth,double *pdHeight);
-	void RenderText(IGenericRender *piRender,double dFontHeight,double x,double y,const char *pText);
-	void RenderText(IGenericRender *piRender,double dFontHeight,CVector vPosition,const char *pText);
-	void RenderTextEx(IGenericRender *piRender,double dFontHeight,double x,double y,double w,double h,const char *pText,eTextAlignment dwHorzAlign,eTextAlignment dwVertAlign);
+	void RenderText(IGenericRender *piRender,double dFontHeight,double x,double y,const char *pText,const CVector &vColor,double dAlpha);
+	void RenderText(IGenericRender *piRender,double dFontHeight,CVector vPosition,const char *pText,const CVector &vColor,double dAlpha);
+	void RenderTextEx(IGenericRender *piRender,double dFontHeight,double x,double y,double w,double h,const char *pText,eTextAlignment dwHorzAlign,eTextAlignment dwVertAlign,const CVector &vColor,double dAlpha);
 
 	COpenGLFont(void);
 	~COpenGLFont(void);

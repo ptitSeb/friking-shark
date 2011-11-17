@@ -706,9 +706,8 @@ void CGameWindowBase::OnDrawMouseCursor(SGamePos position,IGenericRender *piRend
 	{
 		unsigned dWidth=0,dHeight=0;
 		m_MouseCursorTexture.m_piTexture->GetSize(&dWidth,&dHeight);
-		piRender->SetColor(CVector(1,1,1),1);
 		piRender->SelectTexture(m_MouseCursorTexture.m_piTexture,0);
-		piRender->RenderTexture(CVector(position.x+dWidth*0.5,position.y-dHeight*0.5,0),dWidth,dHeight);
+		piRender->RenderTexture(CVector(position.x+dWidth*0.5,position.y-dHeight*0.5,0),dWidth,dHeight,ColorWhite,1);
 		piRender->UnselectTexture(0);
 		(*pbDrawed)=true;
 	}
@@ -718,9 +717,8 @@ void CGameWindowBase::OnDrawBackground(IGenericRender *piRender)
 {
 	if(m_BackgroundTexture.m_piTexture)
 	{
-		piRender->SetColor(m_vBackgroundColor,m_dBackgroundAlpha);
 		piRender->SelectTexture(m_BackgroundTexture.m_piTexture,0);
-		piRender->RenderTexture(CVector(m_rRealRect.x+m_rRealRect.w*0.5,m_rRealRect.y+m_rRealRect.h*0.5,0),m_rRealRect.w,m_rRealRect.h);
+		piRender->RenderTexture(CVector(m_rRealRect.x+m_rRealRect.w*0.5,m_rRealRect.y+m_rRealRect.h*0.5,0),m_rRealRect.w,m_rRealRect.h,m_vBackgroundColor,m_dBackgroundAlpha);
 		piRender->UnselectTexture(0);
 	}
 	else

@@ -117,9 +117,8 @@ void CGameGUIButton::OnDrawBackground(IGenericRender *piRender)
 	{
 		if(m_DeactivatedTexture.m_piTexture)
 		{
-			piRender->SetColor(m_vDeactivatedBackgroundColor,m_dDeactivatedBackgroundAlpha);
 			piRender->SelectTexture(m_DeactivatedTexture.m_piTexture,0);
-			piRender->RenderTexture(CVector(m_rRealRect.x+m_rRealRect.w*0.5,m_rRealRect.y+m_rRealRect.h*0.5,0),m_rRealRect.w,m_rRealRect.h);
+			piRender->RenderTexture(CVector(m_rRealRect.x+m_rRealRect.w*0.5,m_rRealRect.y+m_rRealRect.h*0.5,0),m_rRealRect.w,m_rRealRect.h,m_vDeactivatedBackgroundColor,m_dDeactivatedBackgroundAlpha);
 			piRender->UnselectTexture(0);
 		}
 		else
@@ -135,9 +134,8 @@ void CGameGUIButton::OnDrawBackground(IGenericRender *piRender)
 	{
 		if(m_HoverTexture.m_piTexture)
 		{
-			piRender->SetColor(m_vHoverBackgroundColor,m_dHoverBackgroundAlpha);
 			piRender->SelectTexture(m_HoverTexture.m_piTexture,0);
-			piRender->RenderTexture(CVector(m_rRealRect.x+m_rRealRect.w*0.5,m_rRealRect.y+m_rRealRect.h*0.5,0),m_rRealRect.w,m_rRealRect.h);
+			piRender->RenderTexture(CVector(m_rRealRect.x+m_rRealRect.w*0.5,m_rRealRect.y+m_rRealRect.h*0.5,0),m_rRealRect.w,m_rRealRect.h,m_vHoverBackgroundColor,m_dHoverBackgroundAlpha);
 			piRender->UnselectTexture(0);
 		}
 		else

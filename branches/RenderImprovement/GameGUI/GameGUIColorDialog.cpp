@@ -209,6 +209,7 @@ void CGameGUIColorDialog::OnDraw(IGenericRender *piRender)
 	
 	CVector vVertexes[4];
 	CVector vColors[4];
+	double  pAlphas[4]={1,1,1,1};
 	CVector vHeight=CVector(0,sHRect.h/360.0,0);
 	for(int x=0;x<360;x++)
 	{
@@ -217,7 +218,7 @@ void CGameGUIColorDialog::OnDraw(IGenericRender *piRender)
 	  vVertexes[1]=vHOrig+(AxisPosX*sHRect.w);
 	  vVertexes[2]=vHOrig+(AxisPosX*sHRect.w)+vHeight;
 	  vVertexes[3]=vHOrig+vHeight;
-	  piRender->RenderPolygon(4,vVertexes,vColors);
+	  piRender->RenderPolygon(4,vVertexes,vColors,pAlphas);
 	  vHOrig+=vHeight;
 	}
 	
@@ -229,7 +230,7 @@ void CGameGUIColorDialog::OnDraw(IGenericRender *piRender)
 	  vVertexes[1]=vSOrig+(AxisPosX*sSRect.w);
 	  vVertexes[2]=vSOrig+(AxisPosX*sSRect.w)+vHeight;
 	  vVertexes[3]=vSOrig+vHeight;
-	  piRender->RenderPolygon(4,vVertexes,vColors);
+	  piRender->RenderPolygon(4,vVertexes,vColors,pAlphas);
 	  vSOrig+=vHeight;
 	}
 	
@@ -241,7 +242,7 @@ void CGameGUIColorDialog::OnDraw(IGenericRender *piRender)
 	  vVertexes[1]=vVOrig+(AxisPosX*sVRect.w);
 	  vVertexes[2]=vVOrig+(AxisPosX*sVRect.w)+vHeight;
 	  vVertexes[3]=vVOrig+vHeight;
-	  piRender->RenderPolygon(4,vVertexes,vColors);
+	  piRender->RenderPolygon(4,vVertexes,vColors,pAlphas);
 	  vVOrig+=vHeight;
 	}
 	
@@ -257,7 +258,7 @@ void CGameGUIColorDialog::OnDraw(IGenericRender *piRender)
 		vVertexes[1]=vSVOrig+vWidth;
 		vVertexes[2]=vSVOrig+vWidth+vHeight;
 		vVertexes[3]=vSVOrig+vHeight;
-		piRender->RenderPolygon(4,vVertexes,vColors);
+		piRender->RenderPolygon(4,vVertexes,vColors,pAlphas);
 		vSVOrig+=vHeight;
 	  }
 	  vSVOrig=vTemp+vWidth;
@@ -270,22 +271,16 @@ void CGameGUIColorDialog::OnDraw(IGenericRender *piRender)
 	piRender->RenderPoint(vTemp,3,vBlack,1);
 
 	// H helper thumb (a Line)
-	piRender->SetColor(vWhite,1);
-	piRender->RenderRect(sHRect.x,sHRect.y+((sHRect.h*hsvColor.c[0])/360.0)-1.0,sHRect.w,3);	
-	piRender->SetColor(vBlack,1);
-	piRender->RenderRect(sHRect.x,sHRect.y+(sHRect.h*hsvColor.c[0])/360.0,sHRect.w,1);	
+	piRender->RenderRect(sHRect.x,sHRect.y+((sHRect.h*hsvColor.c[0])/360.0)-1.0,sHRect.w,3,ColorWhite,1.0);
+	piRender->RenderRect(sHRect.x,sHRect.y+(sHRect.h*hsvColor.c[0])/360.0,sHRect.w,1,ColorBlack,1.0);
 	
 	// S helper thumb (a Line)
-	piRender->SetColor(vWhite,1);
-	piRender->RenderRect(sSRect.x,sSRect.y+(sSRect.h*hsvColor.c[1])-1.0,sSRect.w,3);	
-	piRender->SetColor(vBlack,1);
-	piRender->RenderRect(sSRect.x,sSRect.y+(sSRect.h*hsvColor.c[1]),sSRect.w,1);	
+	piRender->RenderRect(sSRect.x,sSRect.y+(sSRect.h*hsvColor.c[1])-1.0,sSRect.w,3,ColorWhite,1.0);
+	piRender->RenderRect(sSRect.x,sSRect.y+(sSRect.h*hsvColor.c[1]),sSRect.w,1,ColorBlack,1.0);
 		
 	// V helper thumb (a Line)
-	piRender->SetColor(vWhite,1);
-	piRender->RenderRect(sVRect.x,sVRect.y+(sVRect.h*hsvColor.c[2])-1.0,sVRect.w,3);	
-	piRender->SetColor(vBlack,1);
-	piRender->RenderRect(sVRect.x,sVRect.y+(sVRect.h*hsvColor.c[2]),sVRect.w,1);	
+	piRender->RenderRect(sVRect.x,sVRect.y+(sVRect.h*hsvColor.c[2])-1.0,sVRect.w,3,ColorWhite,1.0);
+	piRender->RenderRect(sVRect.x,sVRect.y+(sVRect.h*hsvColor.c[2]),sVRect.w,1,ColorBlack,1.0);
 
 	char sTemp[256];
 	CVector vRGB=HSVToRGB(m_vColor);

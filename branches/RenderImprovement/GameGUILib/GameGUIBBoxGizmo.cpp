@@ -46,17 +46,13 @@ void CGameGUIBBoxGizmo::RenderArrow(IGenericRender *piRender,CVector vPosition,C
 	piRender->ActivateSolid();
 	piRender->ActivateDepth();
 	piRender->ActivateBlending();
-	piRender->SetColor(vColor,0.5);
-
-	piRender->RenderLine(vPoint1,vPoint2,vColor,0xFFFF);
-	piRender->SetColor(vColor,1);
-	piRender->RenderArrowHead(vPoint2,vDirection,vUp,m_dArrowSize*0.2,m_dArrowSize*0.05,m_dArrowSize*0.05);
+	piRender->RenderLine(vPoint1,vPoint2,0xFFFF,vColor,0.5);
+	piRender->RenderArrowHead(vPoint2,vDirection,vUp,m_dArrowSize*0.2,m_dArrowSize*0.05,m_dArrowSize*0.05,vColor,1);
 
 	piRender->DeactivateDepth();
 	piRender->DeactivateSolid();
-	piRender->RenderLine(vPoint1,vPoint2,vColor,0x1111);
-	piRender->SetColor(vColor,1);
-	piRender->RenderArrowHead(vPoint2,vDirection,vUp,m_dArrowSize*0.2,m_dArrowSize*0.05,m_dArrowSize*0.05);
+	piRender->RenderLine(vPoint1,vPoint2,0x1111,vColor,1);
+	piRender->RenderArrowHead(vPoint2,vDirection,vUp,m_dArrowSize*0.2,m_dArrowSize*0.05,m_dArrowSize*0.05,vColor,1);
 
 	piRender->PopState();
 }

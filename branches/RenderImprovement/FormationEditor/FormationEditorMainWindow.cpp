@@ -321,7 +321,6 @@ void CFormationEditorMainWindow::OnDraw(IGenericRender *piRender)
 		m_PlayAreaManagerWrapper.m_piPlayAreaDesign->DesignRender(piRender);
 
 		piRender->EndStagedRendering();
-		piRender->SetColor(CVector(1,1,1),1);
 
 		double dFontSize=0;
 		IGenericFont *piFont=NULL;
@@ -354,7 +353,7 @@ void CFormationEditorMainWindow::OnDraw(IGenericRender *piRender)
 						vPos+=m_Camera.m_piCamera->GetUpVector()*piType->DesignGetRadius();
 						vPos-=m_Camera.m_piCamera->GetRightVector()*piType->DesignGetRadius();
 					}
-					piFont->RenderText(piRender,dFontSize,vPos,sDescr);
+					piFont->RenderText(piRender,dFontSize,vPos,sDescr,ColorWhite,1);
 					REL(piType);
 				}
 			}
@@ -379,23 +378,18 @@ void CFormationEditorMainWindow::OnDraw(IGenericRender *piRender)
 
 
 		piRender->ActivateSolid();
-
-		piRender->SetColor(CVector(1,1,1),0.1);
-		piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2]);
+		piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2],ColorWhite,0.1);
 		//Left scroll
-		piRender->SetColor(CVector(1,1,1),0.05);
-		piRender->RenderRect(vCenter-CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
+		piRender->RenderRect(vCenter-CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll,ColorWhite,0.05);
 		//Right scroll
-		piRender->SetColor(CVector(1,1,1),0.05);
-		piRender->RenderRect(vCenter+CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
+		piRender->RenderRect(vCenter+CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll,ColorWhite,0.05);
 		
 		piRender->DeactivateSolid();
 		piRender->DeactivateDepth();
 		
-		piRender->SetColor(CVector(1,1,1),1.0);
-		piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2]);
-		piRender->RenderRect(vCenter-CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
-		piRender->RenderRect(vCenter+CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll);
+		piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2],ColorWhite,1.0);
+		piRender->RenderRect(vCenter-CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll,ColorWhite,1.0);
+		piRender->RenderRect(vCenter+CVector(0,0,vSize.c[2]*0.5+vPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],vPlayAreaConfig.dCameraScroll,ColorWhite,1.0);
 	
 		m_Render.m_piRender->PopState();
 	}
@@ -1517,7 +1511,7 @@ void CFormationEditorMainWindow::RenderRoute( IGenericRender * piRender, int nEn
 
 		m_FormationType.m_piFormationTypeDesign->GetElementRoutePoint(nEntity,x,&point);
 		CVector vWorld=FormationToWorld(point.vPosition);
-		piRender->RenderLine(vPreviousPoint,vWorld,vLineColor);
+		piRender->RenderLine(vPreviousPoint,vWorld,0x8888,vLineColor,1);
 		piRender->RenderPoint(vWorld,dPointSize,vPointColor,1.0);
 		vPreviousPoint=vWorld;
 	}

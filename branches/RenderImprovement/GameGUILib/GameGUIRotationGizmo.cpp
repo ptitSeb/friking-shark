@@ -64,7 +64,6 @@ void CGameGUIRotationGizmo::RenderAngle(IGenericRender *piRender,IGenericCamera 
 		piRender->PushState();
 		piRender->DeactivateDepth();
 		piRender->DeactivateSolid();
-		piRender->SetColor(vColor,1);
 	}
 	CVector vPoints[ROTATION_GIZMO_SEGMENTS];
 	unsigned int nSegments=ROTATION_GIZMO_SEGMENTS;
@@ -92,8 +91,8 @@ void CGameGUIRotationGizmo::RenderAngle(IGenericRender *piRender,IGenericCamera 
 			vBackPoints[nBackPoints++]=vPoint2;
 		}
 	}
-	if(nFrontPoints){piRender->RenderLines(nFrontPoints/2,vFrontPoints,vColor,0xFFFF);}
-	if(nBackPoints){piRender->RenderLines(nBackPoints/2,vBackPoints,vColor,0x1111);}
+	if(nFrontPoints){piRender->RenderLines(nFrontPoints/2,vFrontPoints,0xFFFF,vColor,1);}
+	if(nBackPoints){piRender->RenderLines(nBackPoints/2,vBackPoints,0x1111,vColor,1);}
 	if(!bSelection)
 	{
 		piRender->PopState();

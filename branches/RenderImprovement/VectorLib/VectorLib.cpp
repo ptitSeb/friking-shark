@@ -33,6 +33,17 @@ CVector AxisNegX(-1,0,0);
 CVector AxisNegY(0,-1,0);
 CVector AxisNegZ(0,0,-1);
 CVector Origin(0,0,0);
+CVector ColorWhite(1,1,1);
+CVector ColorBlack(0,0,0);
+CVector ColorRed(1,0,0);
+CVector ColorGreen(0,1,0);
+CVector ColorBlue(0,0,1);
+CVector ColorYellow(1,1,0);
+CVector ColorDarkRed(0.5,0,0);
+CVector ColorDarkGreen(0,0.5,0);
+CVector ColorDarkBlue(0,0,0.5);
+CVector ColorDarkYellow(0.5,0.5,0);
+
 
 CBSPNode *BSPFromConvexPolygon(CPolygon *pPolygon);
 

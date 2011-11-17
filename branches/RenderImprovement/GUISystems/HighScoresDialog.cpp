@@ -294,7 +294,7 @@ void CHighScoresDialog::OnDraw(IGenericRender *piRender)
 					
 					piFont=m_EditionFonts[nFont].m_piFont;
 				}
-				piFont->RenderTextEx(piRender,pdFontSizes[c],psRects[c].x,psRects[c].y,psRects[c].w,psRects[c].h,ppTexts[c],pAlignments[c],eTextAlignment_Center);
+				piFont->RenderTextEx(piRender,pdFontSizes[c],psRects[c].x,psRects[c].y,psRects[c].w,psRects[c].h,ppTexts[c],pAlignments[c],eTextAlignment_Center,ColorWhite,1);
 			}
 			psRects[c].y-=m_nRowSize;
 		}

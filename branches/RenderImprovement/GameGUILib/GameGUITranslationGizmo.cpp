@@ -56,15 +56,13 @@ void CGameGUITranslationGizmo::RenderAxis(IGenericRender *piRender,CVector vDir,
 	piRender->PushState();
 	piRender->ActivateSolid();
 	piRender->ActivateDepth();
-	piRender->RenderLine(vPoint1,vPoint2,vColor,0xFFFF);
-	piRender->SetColor(vColor,1);
-	piRender->RenderArrowHead(vPoint2,vDir,vUp,m_dSize*0.2,m_dSize*0.05,m_dSize*0.05);
+	piRender->RenderLine(vPoint1,vPoint2,0xFFFF,vColor,1);
+	piRender->RenderArrowHead(vPoint2,vDir,vUp,m_dSize*0.2,m_dSize*0.05,m_dSize*0.05,vColor,1);
 
 	piRender->DeactivateDepth();
 	piRender->DeactivateSolid();
-	piRender->RenderLine(vPoint1,vPoint2,vColor,0x1111);
-	piRender->SetColor(vColor,1);
-	piRender->RenderArrowHead(vPoint2,vDir,vUp,m_dSize*0.2,m_dSize*0.05,m_dSize*0.05);
+	piRender->RenderLine(vPoint1,vPoint2,0x1111,vColor,1);
+	piRender->RenderArrowHead(vPoint2,vDir,vUp,m_dSize*0.2,m_dSize*0.05,m_dSize*0.05,vColor,1);
 
 	piRender->PopState();
 }
@@ -83,15 +81,13 @@ void CGameGUITranslationGizmo::RenderAxisPlane(IGenericRender *piRender,CVector 
 	piRender->ActivateBlending();
 	piRender->DeactivateSolid();
 	piRender->DeactivateDepth();
-	piRender->SetColor(vColor,0.5);
-	piRender->RenderPolygon(3,pVertexes,NULL);
-	piRender->RenderPolygon(3,pVertexesFlipped,NULL);
+	piRender->RenderPolygon(3,pVertexes,vColor,0.5);
+	piRender->RenderPolygon(3,pVertexesFlipped,vColor,0.5);
 
 	piRender->ActivateSolid();
 	piRender->ActivateDepth();
-	piRender->SetColor(vColor,0.5);
-	piRender->RenderPolygon(3,pVertexes,NULL);
-	piRender->RenderPolygon(3,pVertexesFlipped,NULL);
+	piRender->RenderPolygon(3,pVertexes,vColor,0.5);
+	piRender->RenderPolygon(3,pVertexesFlipped,vColor,0.5);
 	piRender->PopState();
 }
 
