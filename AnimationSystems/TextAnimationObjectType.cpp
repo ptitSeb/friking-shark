@@ -52,7 +52,7 @@ void CTextAnimationObjectType::DesignRender( IGenericRender *piRender,CVector &v
 			m_FontWrapper.m_piFont->CalcTextSize(m_dFontSize,m_sText.c_str(),&dWidth,&dHeight);
 			vTempPos-=piRender->GetCameraRight()*(dWidth*0.5);
 			vTempPos-=piRender->GetCameraUp()*(dHeight*0.5);
-			m_FontWrapper.m_piFont->RenderText(piRender,m_dFontSize,vTempPos,m_sText.c_str());
+			m_FontWrapper.m_piFont->RenderText(piRender,m_dFontSize,vTempPos,m_sText.c_str(),ColorWhite,1);
 		}
 	}
 }

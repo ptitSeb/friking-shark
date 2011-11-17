@@ -130,7 +130,7 @@ void COpenGLFont::CalcTextSize(double dFontHeight,const char *pText,double *pdWi
 		x++;
 	}
 }
-void COpenGLFont::RenderText(IGenericRender *piRender,double dFontHeight,double x,double y,const char *pText)
+void COpenGLFont::RenderText(IGenericRender *piRender,double dFontHeight,double x,double y,const char *pText,const CVector &vColor,double dAlpha)
 {
 	double dSizeFactor=dFontHeight/(double)m_dwTextureHeight;
 
@@ -154,7 +154,7 @@ void COpenGLFont::RenderText(IGenericRender *piRender,double dFontHeight,double 
 				bTextureSelected=true;
 				piRender->SelectTexture(m_Texture.m_piTexture,0);
 			}
-			piRender->RenderTexture(vCharCenter,s1,s2,pCharacterData->dTextCoordX,pCharacterData->dTextCoordY,pCharacterData->dTextCoordW,pCharacterData->dTextCoordH);
+			piRender->RenderTexture(vCharCenter,s1,s2,pCharacterData->dTextCoordX,pCharacterData->dTextCoordY,pCharacterData->dTextCoordW,pCharacterData->dTextCoordH,vColor,dAlpha);
 		}
 
 		vOrigin+=piRender->GetCameraRight()*((pCharacterData->dPixelW+m_dTextureFontCharacterSeparation)*dSizeFactor);
@@ -166,7 +166,7 @@ void COpenGLFont::RenderText(IGenericRender *piRender,double dFontHeight,double 
 	piRender->PopState();
 }
 
-void COpenGLFont::RenderText(IGenericRender *piRender,double dFontHeight,CVector vPosition,const char *pText)
+void COpenGLFont::RenderText(IGenericRender *piRender,double dFontHeight,CVector vPosition,const char *pText,const CVector &vColor,double dAlpha)
 {
 	double dSizeFactor=dFontHeight/(double)m_dwTextureHeight;
 	
@@ -190,10 +190,9 @@ void COpenGLFont::RenderText(IGenericRender *piRender,double dFontHeight,CVector
 			if(!bTextureSelected)
 			{
 				bTextureSelected=true;
-				piRender->SetColor(CVector(1.0,1.0,1.0),1.0);
 				piRender->SelectTexture(m_Texture.m_piTexture,0);
 			}
-			piRender->RenderTexture(vCharCenter,s1,s2,pCharacterData->dTextCoordX,pCharacterData->dTextCoordY,pCharacterData->dTextCoordW,pCharacterData->dTextCoordH);
+			piRender->RenderTexture(vCharCenter,s1,s2,pCharacterData->dTextCoordX,pCharacterData->dTextCoordY,pCharacterData->dTextCoordW,pCharacterData->dTextCoordH,vColor,dAlpha);
 		}
 		
 		vOrigin+=piRender->GetCameraRight()*((pCharacterData->dPixelW+m_dTextureFontCharacterSeparation)*dSizeFactor);
@@ -204,7 +203,7 @@ void COpenGLFont::RenderText(IGenericRender *piRender,double dFontHeight,CVector
 	piRender->PopState();
 }
 
-void COpenGLFont::RenderTextEx(IGenericRender *piRender,double dFontHeight,double x,double y,double w,double h,const char *pText,eTextAlignment dwHorzAlign,eTextAlignment dwVertAlign)
+void COpenGLFont::RenderTextEx(IGenericRender *piRender,double dFontHeight,double x,double y,double w,double h,const char *pText,eTextAlignment dwHorzAlign,eTextAlignment dwVertAlign,const CVector &vColor,double dAlpha)
 {
 	double dTextW=0,dTextH=0;
 	double dPosX=0,dPosY=0;
@@ -237,7 +236,7 @@ void COpenGLFont::RenderTextEx(IGenericRender *piRender,double dFontHeight,doubl
 		dPosY=y+(h*0.5)-(dTextH*0.5);
 		break;
 	}
-	RenderText(piRender,dFontHeight,dPosX,dPosY,pText);
+	RenderText(piRender,dFontHeight,dPosX,dPosY,pText,vColor,dAlpha);
 	//RTTRACE("COpenGLFonts::RenderTextEx -> '%s': Box(%d,%d - %d,%d): H%d,V%d, pos %d,%d",pText,(int)x,(int)y,(int)w,(int)h,dwHorzAlign,dwVertAlign,(int)dPosX,(int)dPosY);
 	//RTTRACE("COpenGLFonts::RenderTextEx -> T: %d x %d",(int)dTextW,(int)dTextH);
 	//RTTRACE("COpenGLFonts::RenderTextEx -> P: %d x %d",(int)dPosX,(int)dPosY);

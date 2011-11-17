@@ -310,22 +310,18 @@ void CScenarioEditorMainWindow::RenderPlayArea(bool bSelectionRender)
 	m_Render.m_piRender->ActivateSolid();
 	if(bSelectionRender){m_Render.m_piRender->SetSelectionId(SELECT_PLAY_AREA_INDEX);}
 	
-	m_Render.m_piRender->SetColor(CVector(1,1,1),0.1);
-	m_Render.m_piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2]);
+	m_Render.m_piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2],ColorWhite,0.1);
 	//Left scroll
-	m_Render.m_piRender->SetColor(CVector(1,1,1),0.05);
-	m_Render.m_piRender->RenderRect(vCenter-CVector(0,0,vSize.c[2]*0.5+sPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],sPlayAreaConfig.dCameraScroll);
+	m_Render.m_piRender->RenderRect(vCenter-CVector(0,0,vSize.c[2]*0.5+sPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],sPlayAreaConfig.dCameraScroll,ColorWhite,0.05);
 	//Right scroll
-	m_Render.m_piRender->SetColor(CVector(1,1,1),0.05);
-	m_Render.m_piRender->RenderRect(vCenter+CVector(0,0,vSize.c[2]*0.5+sPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],sPlayAreaConfig.dCameraScroll);
+	m_Render.m_piRender->RenderRect(vCenter+CVector(0,0,vSize.c[2]*0.5+sPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],sPlayAreaConfig.dCameraScroll,ColorWhite,0.05);
 	
 	m_Render.m_piRender->DeactivateDepth();
 	m_Render.m_piRender->DeactivateSolid();
 	
-	m_Render.m_piRender->SetColor(CVector(1,1,1),1.0);
-	m_Render.m_piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2]);
-	m_Render.m_piRender->RenderRect(vCenter-CVector(0,0,vSize.c[2]*0.5+sPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],sPlayAreaConfig.dCameraScroll);
-	m_Render.m_piRender->RenderRect(vCenter+CVector(0,0,vSize.c[2]*0.5+sPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],sPlayAreaConfig.dCameraScroll);
+	m_Render.m_piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2],ColorWhite,1.0);
+	m_Render.m_piRender->RenderRect(vCenter-CVector(0,0,vSize.c[2]*0.5+sPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],sPlayAreaConfig.dCameraScroll,ColorWhite,1.0);
+	m_Render.m_piRender->RenderRect(vCenter+CVector(0,0,vSize.c[2]*0.5+sPlayAreaConfig.dCameraScroll*0.5),AxisPosX,AxisPosZ,vSize.c[0],sPlayAreaConfig.dCameraScroll,ColorWhite,1.0);
 	m_Render.m_piRender->PopState();
 }
 
@@ -357,11 +353,11 @@ void CScenarioEditorMainWindow::RenderPlayerRoutes(bool bSelectionRender)
 		{
 			if(sPlayerConfig.bPlayerTakeOffEnabled)
 			{
-				m_Render.m_piRender->RenderLine(sPlayerConfig.pvPlayerTakeOffPoints[x],sPlayerConfig.pvPlayerTakeOffPoints[x+1],CVector(0,0,1),0xFFFF);
+				m_Render.m_piRender->RenderLine(sPlayerConfig.pvPlayerTakeOffPoints[x],sPlayerConfig.pvPlayerTakeOffPoints[x+1],0xFFFF,ColorBlue,1);
 			}
 			if(sPlayerConfig.bPlayerLandingEnabled)
 			{
-				m_Render.m_piRender->RenderLine(sPlayerConfig.pvPlayerLandingPoints[x],sPlayerConfig.pvPlayerLandingPoints[x+1],CVector(1,0,0),0xFFFF);
+				m_Render.m_piRender->RenderLine(sPlayerConfig.pvPlayerLandingPoints[x],sPlayerConfig.pvPlayerLandingPoints[x+1],0xFFFF,ColorRed,1);
 			}
 		}
 	}
@@ -389,18 +385,17 @@ void CScenarioEditorMainWindow::RenderCheckPoints(bool bSelectionRender)
 			CVector vCenter=(vPlayAreaMaxs+vPlayAreaMins)*0.5;
 			CVector vSize=(vPlayAreaMaxs-vPlayAreaMins);
 			
+			CVector vColor(1,0,1);
 			m_Render.m_piRender->ActivateSolid();
-			m_Render.m_piRender->SetColor(CVector(1,0,1),0.1);
-			m_Render.m_piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2]);
+			m_Render.m_piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2],vColor,0.1);
 
 			m_Render.m_piRender->DeactivateSolid();
-			m_Render.m_piRender->SetColor(CVector(1,0,1),1);
-			m_Render.m_piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2]);
+			m_Render.m_piRender->RenderRect(vCenter,AxisPosX,AxisPosZ,vSize.c[0],vSize.c[2],vColor,1.0);
 		}
 	}
 	if(!bSelectionRender)
 	{
-		m_Render.m_piRender->RenderLine(sPlayerConfig.pvPlayerTakeOffPoints[3],sPlayerConfig.pvPlayerLandingPoints[0],CVector(1,0,1),0xFFFF);
+		m_Render.m_piRender->RenderLine(sPlayerConfig.pvPlayerTakeOffPoints[3],sPlayerConfig.pvPlayerLandingPoints[0],0xFFFF,CVector(1,0,1),1);
 	}
 	
 	m_Render.m_piRender->PopState();
@@ -507,7 +502,7 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 					vPos+=m_Camera.m_piCamera->GetUpVector()*piType->DesignGetRadius();
 					vPos-=m_Camera.m_piCamera->GetRightVector()*piType->DesignGetRadius();
 				}
-				if(piFont){piFont->RenderText(piRender,dFontSize,vPos,sDescr);}
+				if(piFont){piFont->RenderText(piRender,dFontSize,vPos,sDescr,ColorWhite,1);}
 				REL(piType);
 			}
 			REL(piFont);		
@@ -529,7 +524,7 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 	CVector vSunPosition;
 	m_Render.m_piRender->GetSunLight(&vSunPosition,NULL,NULL,NULL,NULL);
 	m_Render.m_piRender->RenderPoint(vSunPosition,10,CVector(0,0,1),1.0);
-	m_Render.m_piRender->RenderLine(vSunPosition,vSunPosition+CVector(0,-vSunPosition.c[1],0),CVector(0,0,1),0x8888);
+	m_Render.m_piRender->RenderLine(vSunPosition,vSunPosition+CVector(0,-vSunPosition.c[1],0),0x8888,CVector(0,0,1),1);
 	
 	if(m_piSTFps)
 	{
@@ -3977,7 +3972,7 @@ void CScenarioEditorMainWindow::RenderRoute( IGenericRender * piRender, int nSel
 	{
 		SRoutePoint point;
 		pEntity->m_piPlayAreaEntity->GetRoutePoint(x,&point);
-		piRender->RenderLine(vPreviousPoint,point.vPosition,CVector(0.8,0.8,0.8));
+		piRender->RenderLine(vPreviousPoint,point.vPosition,0x8888,CVector(0.8,0.8,0.8),1);
 		piRender->RenderPoint(point.vPosition,nSelectedRoutePoint==(int)x?10:5,nSelectedRoutePoint==(int)x?CVector(0,0,0.8):CVector(0.8,0.8,0.8),1.0);
 		vPreviousPoint=point.vPosition;
 	}

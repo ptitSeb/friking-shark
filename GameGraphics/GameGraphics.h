@@ -348,9 +348,9 @@ struct IGenericFont:virtual public ISystemUnknown
 public:
 
 	virtual void CalcTextSize(double dFontHeight,const char *pText,double *pdWidth,double *pdHeight)=0;
-	virtual void RenderText(IGenericRender *piRender,double dFontHeight,double x,double y,const char *pText)=0;
-	virtual void RenderText(IGenericRender *piRender,double dFontHeight,CVector vPosition,const char *pText)=0;
-	virtual void RenderTextEx(IGenericRender *piRender,double dFontHeight,double x,double y,double w,double h,const char *pText,eTextAlignment dwHorzAlign,eTextAlignment dwVertAlign)=0;
+	virtual void RenderText(IGenericRender *piRender,double dFontHeight,double x,double y,const char *pText,const CVector &vColor,double dAlpha)=0;
+	virtual void RenderText(IGenericRender *piRender,double dFontHeight,CVector vPosition,const char *pText,const CVector &vColor,double dAlpha)=0;
+	virtual void RenderTextEx(IGenericRender *piRender,double dFontHeight,double x,double y,double w,double h,const char *pText,eTextAlignment dwHorzAlign,eTextAlignment dwVertAlign,const CVector &vColor,double dAlpha)=0;
 };
 
 struct IGenericShader:virtual public ISystemUnknown
@@ -478,8 +478,6 @@ public:
 	virtual void SetClipRect(double x,double y,double cx, double cy)=0;
 	virtual void GetClipRect(double *px,double *py,double *pcx, double *pcy)=0;
 	
-	virtual void SetColor(const CVector &vColor,double dAlpha)=0;
-
 	virtual void SelectTexture(IGenericTexture *pTexture,int nTextureLevel)=0;
 	virtual void SetTextureMatrix(CMatrix *pMatrix,int nTextureLevel)=0;
 	virtual void UnselectTexture(int nTextureLevel)=0;
@@ -491,21 +489,21 @@ public:
 	virtual void SelectSkyShadow(IGenericTexture *pTexture)=0;
 	virtual void UnselectSkyShadow()=0;
 	
-	virtual void RenderPoint(const CVector &vPosition,double dSize,const CVector &vColor,double dAlpha)=0;
-	virtual void RenderTexture(const CVector &vOrigin,double s1,double s2)=0;
-	virtual void RenderTexture(const CVector &vOrigin,double s1,double s2,double dTexX,double dTexY,double dTexW,double dTexH)=0;
-	virtual void RenderParticle(IGenericTexture *piTexture,const CVector &vOrigin,double dAngle,double s1,double s2,const CVector &vColor,double dAlpha,double dTextX,double dTextY,double dTextW,double dTextH)=0;
+	virtual void RenderPoint(const CVector &vPosition,double dSize,const CVector &vColor,const double dAlpha)=0;
+	virtual void RenderTexture(const CVector &vOrigin,double s1,double s2,const CVector &vColor,double dAlpha)=0;
+	virtual void RenderTexture(const CVector &vOrigin,double s1,double s2,double dTexX,double dTexY,double dTexW,double dTexH,const CVector &vColor,double dAlpha)=0;
+	virtual void RenderParticle(IGenericTexture *piTexture,const CVector &vOrigin,double dAngle,double s1,double s2,double dTextX,double dTextY,double dTextW,double dTextH,const CVector &vColor,double dAlpha)=0;
 	virtual void RenderModel(const CVector &vOrigin,const CVector &vOrientation,IGenericModel *piModel,unsigned int nAnimation=0,unsigned int nFrame=0)=0;
-	virtual void RenderBBox(const CVector &vMins,const CVector &vMaxs,const CVector &vColor,unsigned long nStipple=0x8888)=0;
-	virtual void RenderBBox(const CVector &vOrigin,const CVector &vOrientation,const CVector &vMins,const CVector &vMaxs,const CVector &vColor,unsigned long nStipple=0x8888)=0;
-	virtual void RenderLine(const CVector &v1,const CVector &v2,const CVector &vColor,unsigned long nStipple=0x8888)=0;
-	virtual void RenderLines(unsigned int nLines,const CVector *pPoints,const CVector &vColor,unsigned long nStipple=0x8888)=0;
-	virtual void RenderLineStrip(unsigned int nPoints,const CVector *pPoints,const CVector &vColor,unsigned long nStipple=0x8888)=0;
-	virtual void RenderRect(const CVector &vCenter,const CVector &vAxisW,const CVector &vAxisH,double w,double h)=0;
-	virtual void RenderRect(double x, double y,double w,double h)=0;
+	virtual void RenderBBox(const CVector &vMins,const CVector &vMaxs,unsigned long nStipple,const CVector &vColor,double dAlpha)=0;
+	virtual void RenderBBox(const CVector &vOrigin,const CVector &vOrientation,const CVector &vMins,const CVector &vMaxs,unsigned long nStipple,const CVector &vColor,double dAlpha)=0;
+	virtual void RenderLine(const CVector &v1,const CVector &v2,unsigned long nStipple,const CVector &vColor,double dAlpha)=0;
+	virtual void RenderLines(unsigned int nLines,const CVector *pPoints,unsigned long nStipple,const CVector &vColor,double dAlpha)=0;
+	virtual void RenderLineLoop(unsigned int nLines,const CVector *pPoints,unsigned long nStipple,const CVector &vColor,double dAlpha)=0;
+	virtual void RenderRect(const CVector &vCenter,const CVector &vAxisW,const CVector &vAxisH,double w,double h,CVector &vColor,double dAlpha)=0;
 	virtual void RenderRect(double x,double y,double w,double h,CVector &vColor,double dAlpha)=0;
-	virtual void RenderPolygon(unsigned int nVertexes,const CVector *pVertexes,const CVector *pColors)=0;
-	virtual void RenderArrowHead(const CVector &vPosition,const CVector &vDirection,CVector &vUp,double dForward,double dUp,double dRight)=0;
+	virtual void RenderPolygon(unsigned int nVertexes,const CVector *pVertexes,const CVector &vColor,double dAlpha)=0;
+	virtual void RenderPolygon(unsigned int nVertexes,const CVector *pVertexes,const CVector *pColors,const double *pdAlphas)=0;
+	virtual void RenderArrowHead(const CVector &vPosition,const CVector &vDirection,CVector &vUp,double dForward,double dUp,double dRight,const CVector &vColor,double dAlpha)=0;
 	
 
 	// Render state

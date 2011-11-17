@@ -332,6 +332,16 @@ extern CVector AxisNegX;
 extern CVector AxisNegY;
 extern CVector AxisNegZ;
 extern CVector Origin;
+extern CVector ColorWhite;
+extern CVector ColorBlack;
+extern CVector ColorRed;
+extern CVector ColorGreen;
+extern CVector ColorBlue;
+extern CVector ColorYellow;
+extern CVector ColorDarkRed;
+extern CVector ColorDarkGreen;
+extern CVector ColorDarkBlue;
+extern CVector ColorDarkYellow;
 
 bool MRPersistencySave(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CVector> *pItem);
 bool MRPersistencyLoad(ISystemPersistencyNode *piNode,CMRPersistentReferenceT<CVector> *pItem);

@@ -57,7 +57,7 @@ void CFormationType::DesignRender( IGenericRender *piRender,CVector &vPosition,C
 		piRender->PushState();
 		piRender->DeactivateShadowReception();
 		piRender->DeactivateHeightFog();
-		piRender->RenderBBox(vMins,vMaxs,CVector(0.7,0.7,0.7),0xFFFF);
+		piRender->RenderBBox(vMins,vMaxs,0xFFFF,CVector(0.7,0.7,0.7),1);
 		piRender->PopState();
 	}
 
@@ -75,11 +75,11 @@ void CFormationType::DesignRender( IGenericRender *piRender,CVector &vPosition,C
 				CVector vPos2=m_vElements[x].m_Route.GetPlayAreaElementPoint(vPosition,y+1);
 				if(bSelected)
 				{
-					piRender->RenderLine(vPos1,vPos2,CVector(1,1,1),0x8888);
+					piRender->RenderLine(vPos1,vPos2,0x8888,CVector(1,1,1),1);
 				}
 				else
 				{
-					piRender->RenderLine(vPos1,vPos2,CVector(0.5,0.5,0.5),0x8888);
+					piRender->RenderLine(vPos1,vPos2,0x8888,CVector(0.5,0.5,0.5),1);
 				}
 			}
 			piRender->PopState();
