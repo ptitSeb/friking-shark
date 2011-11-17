@@ -233,7 +233,11 @@ bool CModelAnimationObject::ProcessFrame(IPhysicManager *pPhysicManager,unsigned
 
 	if(m_pType->m_vAngularVelocity.c[0]==0 && m_pType->m_vAngularVelocity.c[1]==0 && m_pType->m_vAngularVelocity.c[2]==0)
 	{
-		m_vAngles=m_pType->m_vAngles;
+		if(m_vAngles!=m_pType->m_vAngles)
+		{
+			m_vAngles=m_pType->m_vAngles;
+			m_bLastReferenceSystemComputed=false;
+		}
 	}
 	else
 	{
@@ -266,7 +270,11 @@ bool CModelAnimationObject::ProcessFrame(IPhysicManager *pPhysicManager,unsigned
 	}
 	else
 	{
-		m_vPosition=m_pType->m_vPosition;
+		if(m_vPosition!=m_pType->m_vPosition)
+		{
+			m_vPosition=m_pType->m_vPosition;
+			m_bLastReferenceSystemComputed=false;
+		}
 	}
 	
 	
