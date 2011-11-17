@@ -28,8 +28,9 @@ class CEntityEditorObjectListSelector: public CGameDialogBase, virtual public IE
 	IGameGUIList  *m_piLSObjects;
 	
 	std::vector<IDesignObject *>    *m_pvObjects;
-	unsigned long m_nSelectedObject;
+	int m_nSelectedObject;
 	
+	void EndDialog(int nResult);
 	
 	void OnInitDialog();
 	void OnEndDialog();

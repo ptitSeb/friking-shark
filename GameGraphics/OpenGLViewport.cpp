@@ -1163,8 +1163,18 @@ void COpenGLViewport::SetupBasicRenderOptions()
 	glEnable(GL_CULL_FACE);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 	glDepthFunc(GL_LESS);
+	
 #ifndef ANDROID
 	glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+#endif
+	
+#ifdef ANDROID_GLES1
+	glEnable(GL_POINT_SMOOTH);
+	glHint(GL_POINT_SMOOTH_HINT,GL_NICEST);
+#else
+	#ifndef ANDROID
+		glEnable(GL_POINT_SPRITE);
+	#endif
 #endif
 }
 

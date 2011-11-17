@@ -73,6 +73,7 @@ ELSE()
 		GameRunTimeLib
 		VectorLib
 		GameEntityLib
+		pthread
 	)
 
 ENDIF()

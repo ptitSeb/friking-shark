@@ -21,7 +21,7 @@
 
 CEntityEditorObjectListSelector::CEntityEditorObjectListSelector(void)
 {
-	m_nSelectedObject=0;
+	m_nSelectedObject=-1;
 	m_pvObjects=NULL;
 	
 	InitializeChildren();
@@ -53,6 +53,12 @@ void CEntityEditorObjectListSelector::OnInitDialog()
 	}
 }
 
+void CEntityEditorObjectListSelector::EndDialog(int nResult)
+{
+	if(nResult==DIALOG_OK && m_nSelectedObject==-1){return;}	
+	CGameDialogBase::EndDialog(nResult);
+}
+
 void CEntityEditorObjectListSelector::OnEndDialog()
 {
 	if(m_piLSObjects){m_piLSObjects->Clear();}
@@ -62,11 +68,10 @@ void CEntityEditorObjectListSelector::OnEndDialog()
 
 bool CEntityEditorObjectListSelector::SelectObject(std::string sTitle,IGameWindow *piParent,std::vector<IDesignObject *> *vObjects,unsigned long *pnSelectedObject)
 {
-	if(pnSelectedObject){*pnSelectedObject=0;}
 	m_sTitle=sTitle;
 	m_pvObjects=vObjects;
 	bool bOk=(Execute(piParent)==1);
-	if(bOk && pnSelectedObject){*pnSelectedObject=m_nSelectedObject;}
+	if(bOk && m_nSelectedObject!=-1 && pnSelectedObject){*pnSelectedObject=m_nSelectedObject;}
 	return bOk;
 }
 

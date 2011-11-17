@@ -71,6 +71,7 @@ public:
 	
 	void DestroyWindow();
 	
+	void UpdateRealRect();
 	void OnDraw(IGenericRender *piRender);
 	void OnKeyDown(int nKey,bool *pbProcessed);
 	void OnMouseDown(int nButton,double x,double y);
