@@ -223,6 +223,8 @@ bool COpenGLShader::Compile()
 
 void COpenGLShader::FreeShader()
 {
+	if(m_hShaderProgram && m_bActive){glUseProgramObjectARB(0);}
+	
 	if(m_hVertexShader){glDetachObjectARB(m_hShaderProgram,m_hVertexShader);glDeleteShader(m_hVertexShader);m_hVertexShader=0;}
 	if(m_hFragmentShader){glDetachObjectARB(m_hShaderProgram,m_hFragmentShader);glDeleteShader(m_hFragmentShader);m_hFragmentShader=0;}
 	if(m_hShaderProgram){glDeleteProgram(m_hShaderProgram);m_hShaderProgram=0;}
@@ -233,6 +235,7 @@ void COpenGLShader::FreeShader()
 		SUniformData *pData=i->second;
 		pData->bModified=!pData->bTemporal;
 		pData->nLocation=-1;
+		pData->bTriedToGetLocation=false;
 	}
 }
 
@@ -252,15 +255,17 @@ bool COpenGLShader::Activate()
 	for(iUniform=m_mUniforms.begin();iUniform!=m_mUniforms.end();iUniform++)
 	{
 		SUniformData *pData=iUniform->second;
-		if(pData->nLocation==-1)
+		if(pData->nLocation==-1 && !pData->bTriedToGetLocation)
 		{
+			pData->bTriedToGetLocation=true;
 			pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, iUniform->first.c_str());
-			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",iUniform->first.c_str(),glGetError());}
+			if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",iUniform->first.c_str(),glGetError());}
 		}
 		if(!pData->bModified){continue;}
 		if(pData->bTemporal){continue;}
 		if(pData->nLocation==-1){continue;}
 		pData->bModified=false;
+		//RTTRACE("SetUniform %s",iUniform->first.c_str());
 		
 		switch(pData->eType)
 		{
@@ -341,12 +346,14 @@ void COpenGLShader::AddUniform( std::string sUniformName,int nValue,bool bTempor
 	
 	if(m_bActive)
 	{
-		if(pData->nLocation==-1)
+		if(pData->nLocation==-1 && !pData->bTriedToGetLocation)
 		{
+			pData->bTriedToGetLocation=true;
 			pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());
-			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
+			if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
 		}
 		if(pData->nLocation!=-1){pData->bModified=false;glUniform1iARB(pData->nLocation,pData->data.nInteger);}
+		//if(pData->nLocation!=-1){RTTRACE("SetUniform %s",i->first.c_str());}
 	}
 }
 
@@ -378,12 +385,14 @@ void COpenGLShader::AddUniform( std::string sUniformName,float fValue,bool bTemp
 	
 	if(m_bActive)
 	{
-		if(pData->nLocation==-1)
+		if(pData->nLocation==-1 && !pData->bTriedToGetLocation)
 		{
+			pData->bTriedToGetLocation=true;
 			pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());
-			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
+			if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
 		}
 		if(pData->nLocation!=-1){pData->bModified=false;glUniform1fARB(pData->nLocation,pData->data.fFloats[0]);}
+		//if(pData->nLocation!=-1){RTTRACE("SetUniform %s",i->first.c_str());}
 	}
 }
   
@@ -416,12 +425,14 @@ void COpenGLShader::AddUniform( std::string sUniformName,float fValue1,float fVa
 	
 	if(m_bActive)
 	{
-		if(pData->nLocation==-1)
+		if(pData->nLocation==-1 && !pData->bTriedToGetLocation)
 		{
+			pData->bTriedToGetLocation=true;
 			pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());
-			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
+			if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
 		}
 		if(pData->nLocation!=-1){pData->bModified=false;glUniform2fvARB(pData->nLocation,1,pData->data.fFloats);}
+		//if(pData->nLocation!=-1){RTTRACE("SetUniform %s",i->first.c_str());}
 	}
 }
   
@@ -456,12 +467,14 @@ void COpenGLShader::AddUniform( std::string sUniformName,const CVector &vVector,
 	
 	if(m_bActive)
 	{
-		if(pData->nLocation==-1)
+		if(pData->nLocation==-1 && !pData->bTriedToGetLocation)
 		{
+			pData->bTriedToGetLocation=true;
 			pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());
-			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
+			if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
 		}
 		if(pData->nLocation!=-1){pData->bModified=false;glUniform3fvARB(pData->nLocation,1,pData->data.fFloats);}
+		//if(pData->nLocation!=-1){RTTRACE("SetUniform %s",i->first.c_str());}
 	}
 }
   
@@ -496,12 +509,14 @@ void COpenGLShader::AddUniform( std::string sUniformName,const CVector &vColor, 
 	
 	if(m_bActive)
 	{
-		if(pData->nLocation==-1)
+		if(pData->nLocation==-1 && !pData->bTriedToGetLocation)
 		{
+			pData->bTriedToGetLocation=true;
 			pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());
-			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
+			if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
 		}
 		if(pData->nLocation!=-1){pData->bModified=false;glUniform4fvARB(pData->nLocation,1,pData->data.fFloats);}
+		//if(pData->nLocation!=-1){RTTRACE("SetUniform %s",i->first.c_str());}
 	}
 }
   
@@ -532,12 +547,14 @@ void COpenGLShader::AddUniform( std::string sUniformName,CMatrix &matrix,bool bT
 	
 	if(m_bActive)
 	{
-		if(pData->nLocation==-1)
+		if(pData->nLocation==-1 && !pData->bTriedToGetLocation)
 		{
+			pData->bTriedToGetLocation=true;
 			pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());
-			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
+			if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
 		}
 		if(pData->nLocation!=-1){pData->bModified=false;glUniformMatrix4fvARB(pData->nLocation,1,false,pData->data.fFloats);}
+		//if(pData->nLocation!=-1){RTTRACE("SetUniform %s",i->first.c_str());}
 	}
 }  
 
@@ -571,12 +588,14 @@ void COpenGLShader::AddUniformIntegers( std::string sUniformName,unsigned int nV
 	
 	if(m_bActive)
 	{
-		if(pData->nLocation==-1)
+		if(pData->nLocation==-1 && !pData->bTriedToGetLocation)
 		{
+			pData->bTriedToGetLocation=true;
 			pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());
-			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
+			if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
 		}
 		if(pData->nLocation!=-1){pData->bModified=false;glUniform1ivARB(pData->nLocation,nValues,pValues);}
+		//if(pData->nLocation!=-1){RTTRACE("SetUniform %s",i->first.c_str());}
 	}	
 }
 
@@ -610,12 +629,14 @@ void COpenGLShader::AddUniformFloats( std::string sUniformName,unsigned int nVal
 	
 	if(m_bActive)
 	{
-		if(pData->nLocation==-1)
+		if(pData->nLocation==-1 && !pData->bTriedToGetLocation)
 		{
+			pData->bTriedToGetLocation=true;
 			pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());
-			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
+			if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
 		}
 		if(pData->nLocation!=-1){pData->bModified=false;glUniform1fvARB(pData->nLocation,nValues,pValues);}
+		//if(pData->nLocation!=-1){RTTRACE("SetUniform %s",i->first.c_str());}
 	}	
 }
 
@@ -652,12 +673,14 @@ void COpenGLShader::AddUniformVectors( std::string sUniformName,unsigned int nVa
 	
 	if(m_bActive)
 	{
-		if(pData->nLocation==-1)
+		if(pData->nLocation==-1 && !pData->bTriedToGetLocation)
 		{
+			pData->bTriedToGetLocation=true;
 			pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());
-			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
+			if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
 		}
 		if(pData->nLocation!=-1){pData->bModified=false;glUniform3fvARB(pData->nLocation,nValues,(float*)pData->pBuffer);}
+		//if(pData->nLocation!=-1){RTTRACE("SetUniform %s",i->first.c_str());}
 	}
 }
 
@@ -696,12 +719,17 @@ void COpenGLShader::AddUniformColors( std::string sUniformName,unsigned int nVal
 	
 	if(m_bActive)
 	{
-		if(pData->nLocation==-1){pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());}
+		if(pData->nLocation==-1 && !pData->bTriedToGetLocation)
+		{
+			pData->bTriedToGetLocation=true;
+			pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());
+		}
 		if(pData->nLocation!=-1)
 		{
-			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
+			if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
 			pData->bModified=false;glUniform4fvARB(pData->nLocation,nValues,(float*)pData->pBuffer);
 		}
+		//if(pData->nLocation!=-1){RTTRACE("SetUniform %s",i->first.c_str());}
 	}
 }
 
@@ -732,12 +760,14 @@ void COpenGLShader::AddUniformMatrixes( std::string sUniformName,unsigned int nV
 	
 	if(m_bActive)
 	{
-		if(pData->nLocation==-1)
+		if(pData->nLocation==-1 && !pData->bTriedToGetLocation)
 		{
+			pData->bTriedToGetLocation=true;
 			pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());
-			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
+			if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
 		}
 		if(pData->nLocation!=-1){pData->bModified=false;glUniformMatrix4fvARB(pData->nLocation,nValues,false,(float*)pData->pBuffer);}
+		//if(pData->nLocation!=-1){RTTRACE("SetUniform %s",i->first.c_str());}
 	}
 }  
 
@@ -778,12 +808,14 @@ void COpenGLShader::AddUniformMatrixes( std::string sUniformName,unsigned int nV
 	
 	if(m_bActive)
 	{
-		if(pData->nLocation==-1)
+		if(pData->nLocation==-1 && !pData->bTriedToGetLocation)
 		{
+			pData->bTriedToGetLocation=true;
 			pData->nLocation=glGetUniformLocationARB(m_hShaderProgram, sUniformName.c_str());
-			//if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
+			if(pData->nLocation==-1){RTTRACE("COpenGLShader::Activate -> Failed to get uniform '%s' location, error %x",sUniformName.c_str(),glGetError());}
 		}
 		if(pData->nLocation!=-1){pData->bModified=false;glUniformMatrix4fvARB(pData->nLocation,nValues,false,pMatrixes);}
+		//if(pData->nLocation!=-1){RTTRACE("SetUniform %s",i->first.c_str());}
 	}	
 }  
 
@@ -798,7 +830,6 @@ void COpenGLShader::AddAttribute( std::string sAttributeName,int nIndex)
 
 void COpenGLShader::Deactivate()
 {
-	if(m_hShaderProgram){glUseProgramObjectARB(0);}
 	m_bActive=false;
 }
 

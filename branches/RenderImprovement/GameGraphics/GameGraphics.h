@@ -541,6 +541,8 @@ public:
 	
 	virtual void ActivateDepth()=0;
 	virtual void DeactivateDepth()=0;
+	virtual void ActivateDepthWrite()=0;
+	virtual void DeactivateDepthWrite()=0;
 	virtual void SetDepthFunction(EDepthFunction eDepthFunction)=0;
 
 	virtual void ActivateShadowEmission()=0;
@@ -612,7 +614,9 @@ public:
 	
 	virtual void PushOptions()=0;
 	virtual void PopOptions()=0;
-
+	
+	virtual void StartFrame()=0;
+	virtual void EndFrame()=0;
 };
 
 #endif

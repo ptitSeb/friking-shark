@@ -147,8 +147,9 @@ void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCam
 		{
 			piRender->PushState();
 			piRender->DeactivateTextures();
-			piRender->DeactivateShadowEmission();
 			piRender->DeactivateLighting();
+			piRender->DeactivateShadowEmission();
+			piRender->ActivateShadowReception();
 			piRender->ActivateBlending();
 			piRender->SetDepthFunction(eDepthFunction_LessOrEqual);
 			piRender->RenderModel(Origin,Origin,m_TerrainBaseModel.m_piModel);
@@ -174,6 +175,7 @@ void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCam
 			{
 				piRender->PushState();
 				piRender->DeactivateShadowEmission();
+				piRender->ActivateShadowReception();
 				piRender->ActivateLighting();
 				piRender->ActivateBlending();
 				piRender->SetDepthFunction(eDepthFunction_LessOrEqual);
@@ -201,6 +203,7 @@ void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCam
 			piRender->SetWaterMappingSize(m_TerrainWater.m_Config.dHorizontalResolution,m_TerrainWater.m_Config.dVerticalResolution);
 			piRender->SetWaterMappingOffset(dWaterOffset,0);
 			piRender->DeactivateShadowEmission();
+			piRender->ActivateShadowReception();
 			if(piRender->GetShadingModel()==eShadingModel_Phong)
 			{
 				piRender->ActivateLighting();

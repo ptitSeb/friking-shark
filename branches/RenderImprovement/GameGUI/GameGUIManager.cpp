@@ -251,6 +251,7 @@ void CGameGUIManager::OnRender()
 	sClipRect.w=size.w;
 	sClipRect.h=size.h;
 
+	m_Render.m_piRender->StartFrame();
 	m_Render.m_piRender->ActivateBlending();
 	m_Render.m_piRender->DeactivateDepth();
 	
@@ -283,6 +284,7 @@ void CGameGUIManager::OnRender()
 		}
 		REL(piWindow);
 	}
+	m_Render.m_piRender->EndFrame();
 }
 
 void CGameGUIManager::GetWindowSize(SGameSize *pSize)

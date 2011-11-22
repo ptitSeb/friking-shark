@@ -324,6 +324,8 @@ void COpenGLModel::Render(IGenericRender *piRender,unsigned long nAnimation,unsi
 
 void COpenGLModel::UpdateBufferObjects()
 {
+	bool bStrided=false;
+
 	for(unsigned long x=0;x<m_vAnimations.size();x++)
 	{
 		SModelAnimation *pAnimation=m_vAnimations[x];
@@ -336,7 +338,7 @@ void COpenGLModel::UpdateBufferObjects()
 				SModelRenderBuffer *pBuffer=pFrame->vRenderBuffers[nBuffer];
 
 				UpdateTangentBasis(pBuffer);
-				
+
 				// Compute BBox
 				float *pVertexCursor=pBuffer->pVertexArray;
 				for(int v=0;v<pBuffer->nVertexes;v++)
@@ -350,24 +352,69 @@ void COpenGLModel::UpdateBufferObjects()
 				}
 
 				// Buffer objects
-
+				
 				if(pBuffer->nBufferObject!=0){glDeleteBuffers(1,&pBuffer->nBufferObject);pBuffer->nBufferObject=0;}
 				if(pBuffer->nIndexesBufferObject!=0){glDeleteBuffers(1,&pBuffer->nIndexesBufferObject);pBuffer->nIndexesBufferObject=0;}
-
+#ifndef ANDROID
+				if(pBuffer->nVertexArrayObject!=0){glDeleteVertexArrays(1,&pBuffer->nVertexArrayObject);pBuffer->nVertexArrayObject=0;}
+#endif
 				int nDataPerVertex=0;
-				if(pBuffer->pVertexArray){nDataPerVertex+=3;}
-				if(pBuffer->pNormalArray){nDataPerVertex+=3;}
-				if(pBuffer->pColorArray){nDataPerVertex+=4;}
-				if(pBuffer->pNormalMapArray){nDataPerVertex+=2;}
-				if(pBuffer->pTangentArray){nDataPerVertex+=3;}
-				if(pBuffer->pBitangentArray){nDataPerVertex+=3;}
-				for(unsigned long nTexture=0;nTexture<pBuffer->vTextureLevels.size();nTexture++)
+				unsigned int nOffset=0;
+				if(bStrided)
 				{
-					SModelTextureLevel *pTextureLevel=pBuffer->vTextureLevels[nTexture];
-					//&& pTextureLevel->texture.m_piTexture 
-					if(pTextureLevel && pTextureLevel->pTexVertexArray){nDataPerVertex+=2;}
-				}
+					if(pBuffer->pVertexArray){pBuffer->nVertexOffset=nDataPerVertex*sizeof(GLfloat);nDataPerVertex+=3;}
+					if(pBuffer->pNormalArray){pBuffer->nNormalOffset=nDataPerVertex*sizeof(GLfloat);nDataPerVertex+=3;}
+					if(pBuffer->pColorArray){pBuffer->nColorOffset=nDataPerVertex*sizeof(GLfloat);nDataPerVertex+=4;}
+					if(pBuffer->pNormalMapArray){pBuffer->nNormalMapOffset=nDataPerVertex*sizeof(GLfloat);nDataPerVertex+=2;}
+					if(pBuffer->pTangentArray){pBuffer->nTangentOffset=nDataPerVertex*sizeof(GLfloat);nDataPerVertex+=3;}
+					if(pBuffer->pBitangentArray){pBuffer->nBitangentOffset=nDataPerVertex*sizeof(GLfloat);nDataPerVertex+=3;}
+					for(unsigned long nTexture=0;nTexture<pBuffer->vTextureLevels.size();nTexture++)
+					{
+						SModelTextureLevel *pTextureLevel=pBuffer->vTextureLevels[nTexture];
+						//&& pTextureLevel->texture.m_piTexture 
+						pBuffer->pTexOffset[nTexture]=nDataPerVertex*sizeof(GLfloat);
+						if(pTextureLevel && pTextureLevel->pTexVertexArray){nDataPerVertex+=2;}
+					}
+					pBuffer->nVertexStride=nDataPerVertex*sizeof(GLfloat);
+					pBuffer->nNormalStride=nDataPerVertex*sizeof(GLfloat);
+					pBuffer->nColorStride=nDataPerVertex*sizeof(GLfloat);
+					pBuffer->nTangentStride=nDataPerVertex*sizeof(GLfloat);
+					pBuffer->nBitangentStride=nDataPerVertex*sizeof(GLfloat);
+					pBuffer->nNormalMapStride=nDataPerVertex*sizeof(GLfloat);
 
+					for(unsigned long nTexture=0;nTexture<pBuffer->vTextureLevels.size();nTexture++)
+					{
+						pBuffer->pTexStride[nTexture]=nDataPerVertex*sizeof(GLfloat);
+					}
+				}
+				else
+				{
+					if(pBuffer->pVertexArray){pBuffer->nVertexOffset=pBuffer->nVertexes*nDataPerVertex*sizeof(GLfloat);nDataPerVertex+=3;}
+					if(pBuffer->pNormalArray){pBuffer->nNormalOffset=pBuffer->nVertexes*nDataPerVertex*sizeof(GLfloat);nDataPerVertex+=3;}
+					if(pBuffer->pColorArray){pBuffer->nColorOffset=pBuffer->nVertexes*nDataPerVertex*sizeof(GLfloat);nDataPerVertex+=4;}
+					if(pBuffer->pNormalMapArray){pBuffer->nNormalMapOffset=pBuffer->nVertexes*nDataPerVertex*sizeof(GLfloat);nDataPerVertex+=2;}
+					if(pBuffer->pTangentArray){pBuffer->nTangentOffset=pBuffer->nVertexes*nDataPerVertex*sizeof(GLfloat);nDataPerVertex+=3;}
+					if(pBuffer->pBitangentArray){pBuffer->nBitangentOffset=pBuffer->nVertexes*nDataPerVertex*sizeof(GLfloat);nDataPerVertex+=3;}
+					
+					for(unsigned long nTexture=0;nTexture<pBuffer->vTextureLevels.size();nTexture++)
+					{
+						SModelTextureLevel *pTextureLevel=pBuffer->vTextureLevels[nTexture];
+						if(pTextureLevel && pTextureLevel->pTexVertexArray)
+						{
+							pBuffer->pTexOffset[nTexture]=pBuffer->nVertexes*nDataPerVertex*sizeof(GLfloat);
+							nDataPerVertex+=2;
+						}
+					}
+				}
+				#ifndef ANDROID
+				glGenVertexArrays(1,&pBuffer->nVertexArrayObject);
+				pBuffer->bVertexArrayConfigured=false;
+				if(pBuffer->nVertexArrayObject==0)
+				{
+					RTTRACE("COpenGLModel::UpdateBufferObjects -> Failed to create vertex array object");
+				}
+				#endif
+				
 				// Generacion del buffer object
 				glGenBuffers(1,&pBuffer->nBufferObject);
 				int nError=glGetError();
@@ -376,47 +423,61 @@ void COpenGLModel::UpdateBufferObjects()
 					glBindBuffer(GL_ARRAY_BUFFER,pBuffer->nBufferObject);
 					GLfloat *pBufferObject = new GLfloat[pBuffer->nVertexes*nDataPerVertex];
 
-					unsigned int dwOffset=0;
-					if(pBuffer->pVertexArray)
+					if(bStrided)
 					{
-						memcpy(((unsigned char*)pBufferObject)+dwOffset,pBuffer->pVertexArray,pBuffer->nVertexes*3*sizeof(GLfloat));
-						dwOffset+=pBuffer->nVertexes*3*sizeof(GLfloat);
-					}
-					if(pBuffer->pNormalArray)
-					{
-						memcpy(((unsigned char*)pBufferObject)+dwOffset,pBuffer->pNormalArray,pBuffer->nVertexes*3*sizeof(GLfloat));
-						dwOffset+=pBuffer->nVertexes*3*sizeof(GLfloat);
-					}
-					if(pBuffer->pColorArray)
-					{
-						memcpy(((unsigned char*)pBufferObject)+dwOffset,pBuffer->pColorArray,pBuffer->nVertexes*4*sizeof(GLfloat));
-						dwOffset+=pBuffer->nVertexes*4*sizeof(GLfloat);
-					}
-					if(pBuffer->pNormalMapArray)
-					{
-						memcpy(((unsigned char*)pBufferObject)+dwOffset,pBuffer->pNormalMapArray,pBuffer->nVertexes*2*sizeof(GLfloat));
-						dwOffset+=pBuffer->nVertexes*2*sizeof(GLfloat);
-					}
-					if(pBuffer->pTangentArray)
-					{
-						memcpy(((unsigned char*)pBufferObject)+dwOffset,pBuffer->pTangentArray,pBuffer->nVertexes*3*sizeof(GLfloat));
-						dwOffset+=pBuffer->nVertexes*3*sizeof(GLfloat);
-					}
-					if(pBuffer->pBitangentArray)
-					{
-						memcpy(((unsigned char*)pBufferObject)+dwOffset,pBuffer->pBitangentArray,pBuffer->nVertexes*3*sizeof(GLfloat));
-						dwOffset+=pBuffer->nVertexes*3*sizeof(GLfloat);
-					}
-					for(unsigned long nTexture=0;nTexture<pBuffer->vTextureLevels.size();nTexture++)
-					{
-						SModelTextureLevel *pTextureLevel=pBuffer->vTextureLevels[nTexture];
-						// && pTextureLevel->texture.m_piTexture
-						if(pTextureLevel && pTextureLevel->pTexVertexArray)
+						GLfloat *pTempVertex=pBuffer->pVertexArray;
+						GLfloat *pTempNormal=pBuffer->pNormalArray;
+						GLfloat *pTempColor=pBuffer->pColorArray;
+						GLfloat *pTempNormalMap=pBuffer->pNormalMapArray;
+						GLfloat *pTempTangent=pBuffer->pTangentArray;
+						GLfloat *pTempBitangent=pBuffer->pBitangentArray;
+						GLfloat **pTempTex=new float*[pBuffer->vTextureLevels.size()];
+						GLfloat *pDest=pBufferObject;
+
+						for(unsigned int x=0;x<pBuffer->vTextureLevels.size();x++)
 						{
-							memcpy(((unsigned char*)pBufferObject)+dwOffset,pTextureLevel->pTexVertexArray,pBuffer->nVertexes*2*sizeof(GLfloat));
-							dwOffset+=pBuffer->nVertexes*2*sizeof(GLfloat);
+							pTempTex[x]=pBuffer->vTextureLevels[x]->pTexVertexArray;
+						}
+
+						for(unsigned int x=0;x<pBuffer->nVertexes;x++)
+						{
+							unsigned int dwOffset=0;
+
+							if(pBuffer->pVertexArray){*pDest++=*pTempVertex++;*pDest++=*pTempVertex++;*pDest++=*pTempVertex++;}
+							if(pBuffer->pNormalArray){*pDest++=*pTempNormal++;*pDest++=*pTempNormal++;*pDest++=*pTempNormal++;}
+							if(pBuffer->pColorArray){*pDest++=*pTempColor++;*pDest++=*pTempColor++;*pDest++=*pTempColor++;*pDest++=*pTempColor++;}
+							if(pBuffer->pNormalMapArray){*pDest++=*pTempNormalMap++;*pDest++=*pTempNormalMap++;*pDest++=*pTempNormalMap++;}
+							if(pBuffer->pTangentArray){*pDest++=*pTempTangent++;*pDest++=*pTempTangent++;*pDest++=*pTempTangent++;}
+							if(pBuffer->pBitangentArray){*pDest++=*pTempBitangent++;*pDest++=*pTempBitangent++;*pDest++=*pTempBitangent++;}
+							for(unsigned long nTexture=0;nTexture<pBuffer->vTextureLevels.size();nTexture++)
+							{
+								SModelTextureLevel *pTextureLevel=pBuffer->vTextureLevels[nTexture];
+								if(pTextureLevel && pTextureLevel->pTexVertexArray){*pDest++=*pTempTex[nTexture]++;*pDest++=*pTempTex[nTexture]++;}
+							}
+
+						}
+						delete [] pTempTex;
+						pTempTex=NULL;
+					}
+					else
+					{
+						if(pBuffer->pVertexArray){memcpy(((unsigned char*)pBufferObject)+pBuffer->nVertexOffset,pBuffer->pVertexArray,pBuffer->nVertexes*3*sizeof(GLfloat));}
+						if(pBuffer->pNormalArray){memcpy(((unsigned char*)pBufferObject)+pBuffer->nNormalOffset,pBuffer->pNormalArray,pBuffer->nVertexes*3*sizeof(GLfloat));}
+						if(pBuffer->pColorArray){memcpy(((unsigned char*)pBufferObject)+pBuffer->nColorOffset,pBuffer->pColorArray,pBuffer->nVertexes*4*sizeof(GLfloat));}
+						if(pBuffer->pNormalMapArray){memcpy(((unsigned char*)pBufferObject)+pBuffer->nNormalMapOffset,pBuffer->pNormalMapArray,pBuffer->nVertexes*2*sizeof(GLfloat));}
+						if(pBuffer->pTangentArray){memcpy(((unsigned char*)pBufferObject)+pBuffer->nTangentOffset,pBuffer->pTangentArray,pBuffer->nVertexes*3*sizeof(GLfloat));}
+						if(pBuffer->pBitangentArray){memcpy(((unsigned char*)pBufferObject)+pBuffer->nBitangentOffset,pBuffer->pBitangentArray,pBuffer->nVertexes*3*sizeof(GLfloat));}
+
+						for(unsigned long nTexture=0;nTexture<pBuffer->vTextureLevels.size();nTexture++)
+						{
+							SModelTextureLevel *pTextureLevel=pBuffer->vTextureLevels[nTexture];
+							if(pTextureLevel && pTextureLevel->pTexVertexArray)
+							{
+								memcpy(((unsigned char*)pBufferObject)+pBuffer->pTexOffset[nTexture],pTextureLevel->pTexVertexArray,pBuffer->nVertexes*2*sizeof(GLfloat));
+							}
 						}
 					}
+
 					glBufferData(GL_ARRAY_BUFFER,pBuffer->nVertexes*nDataPerVertex*sizeof(GLfloat),pBufferObject,GL_STATIC_DRAW);
 					if((nError=glGetError())!=GL_NO_ERROR){RTTRACE("COpenGLModel::UpdateBufferObjects -> Error setting buffer size %d",nError);}
 					delete [] pBufferObject;
@@ -428,6 +489,7 @@ void COpenGLModel::UpdateBufferObjects()
 				{
 					RTTRACE("COpenGLModel::UpdateBufferObjects -> Failed to create buffer object");
 				}
+				
 				glGenBuffers(1,&pBuffer->nIndexesBufferObject);
 				nError=glGetError();
 				if(pBuffer->nIndexesBufferObject)
@@ -789,46 +851,90 @@ void COpenGLModel::PrepareRenderBuffer(IOpenGLRender *piRender, unsigned int nAn
 	
 	int nOffset=0;
 	SVertexBufferObject object;
+	object.nVertexArrayObject=pBuffer->nVertexArrayObject;
 	object.nBufferObject=pBuffer->nBufferObject;
 	object.nIndexesBufferObject=pBuffer->nIndexesBufferObject;
-	object.nVertexOffset=nOffset;
-	nOffset+=pBuffer->nVertexes*sizeof(GLfloat)*3;
-	if(!bRenderingShadow)
+	object.nVertexOffset=pBuffer->nVertexOffset;
+	object.nVertexStride=pBuffer->nVertexStride;
+
+	if(pBuffer->pNormalArray)
 	{
-		if(pBuffer->pNormalArray){object.nNormalOffset=nOffset;nOffset+=pBuffer->nVertexes*sizeof(GLfloat)*3;}
-		if(pBuffer->pColorArray){object.nColorOffset=nOffset;nOffset+=pBuffer->nVertexes*sizeof(GLfloat)*4;}
-		
-		if(pBuffer->pNormalMapArray)
+		object.nNormalOffset=pBuffer->nNormalOffset;
+		object.nNormalStride=pBuffer->nNormalStride;
+	}
+	if(pBuffer->pColorArray)
+	{
+		object.nColorOffset=pBuffer->nColorOffset;
+		object.nColorStride=pBuffer->nColorStride;
+	}
+	if(pBuffer->pNormalMapArray)
+	{
+		object.nNormalMapOffset=pBuffer->nNormalMapOffset;
+		object.nNormalMapStride=pBuffer->nNormalMapStride;
+	}
+	if(pBuffer->pTangentArray)
+	{
+		object.nTangentOffset=pBuffer->nTangentOffset;
+		object.nTangentStride=pBuffer->nTangentStride;
+	}
+	if(pBuffer->pBitangentArray)
+	{
+		object.nBitangentOffset=pBuffer->nBitangentOffset;
+		object.nBitangentStride=pBuffer->nBitangentStride;
+	}
+
+	if(piRender->AreTexturesEnabled())
+	{
+		object.nTextures=pBuffer->vTextureLevels.size();
+		for(unsigned int x=0;x<pBuffer->vTextureLevels.size() && x<2;x++)
 		{
-			nOffset+=pBuffer->nVertexes*sizeof(GLfloat)*2;
-			if(bUseNormalMap){object.nNormalMapOffset=nOffset;}
-		}
-		if(pBuffer->pTangentArray)
-		{
-			if(bUseNormalMap){object.nTangentOffset=nOffset;}
-			nOffset+=pBuffer->nVertexes*sizeof(GLfloat)*3;
-		}
-		if(pBuffer->pBitangentArray)
-		{
-			if(bUseNormalMap){object.nBitangentOffset=nOffset;}
-			nOffset+=pBuffer->nVertexes*sizeof(GLfloat)*3;
-		}
-			
-		if(piRender->AreTexturesEnabled())
-		{
-			object.nTextures=pBuffer->vTextureLevels.size();
-			for(unsigned int x=0;x<pBuffer->vTextureLevels.size() && x<2;x++)
+			SModelTextureLevel *pTextureLevel=pBuffer->vTextureLevels[x];
+			if(pTextureLevel && pTextureLevel->texture.m_piTexture && pTextureLevel->pTexVertexArray)
 			{
-				SModelTextureLevel *pTextureLevel=pBuffer->vTextureLevels[x];
-				if(pTextureLevel && pTextureLevel->texture.m_piTexture && pTextureLevel->pTexVertexArray)
+				object.pTexOffsets[x]=pBuffer->pTexOffset[x];
+				object.pTexStrides[x]=pBuffer->pTexStride[x];
+				if(!bRenderingShadow)
 				{
-					object.pTexOffsets[x]=nOffset;nOffset+=pBuffer->nVertexes*sizeof(GLfloat)*2;
-					piRender->SelectTexture(pBuffer->vTextureLevels[x]->texture.m_piTexture,x);
-					if(!pBuffer->vTextureLevels[x]->bTextMatrixIdentity){piRender->SetTextureMatrix(&pBuffer->vTextureLevels[x]->texMatrix,x);}
+					piRender->PrepareTexture(pBuffer->vTextureLevels[x]->texture.m_piTexture,x);
+					if(!pBuffer->vTextureLevels[x]->bTextMatrixIdentity){piRender->SetTextureMatrix(&pBuffer->vTextureLevels[x]->texMatrix,x);}
 				}
 			}
 		}
 	}
+
+#ifndef ANDROID
+	if(pBuffer->nVertexArrayObject && !pBuffer->bVertexArrayConfigured)
+	{
+		pBuffer->bVertexArrayConfigured=true;
+		glBindVertexArray(pBuffer->nVertexArrayObject);
+		glBindBuffer(GL_ARRAY_BUFFER,pBuffer->nBufferObject);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,pBuffer->nIndexesBufferObject);
+		
+		if(object.nVertexOffset!=-1)   {glEnableVertexAttribArray(pRenderMappings->nVertexAttribIndex);}
+		if(object.nColorOffset!=-1)    {glEnableVertexAttribArray(pRenderMappings->nColorAttribIndex);}
+		if(object.nNormalOffset!=-1)   {glEnableVertexAttribArray(pRenderMappings->nNormalAttribIndex);}
+		if(object.nNormalMapOffset!=-1){glEnableVertexAttribArray(pRenderMappings->nNormalMapCoordAttribIndex);}
+		if(object.nTangentOffset!=-1)  {glEnableVertexAttribArray(pRenderMappings->nTangentAttribIndex);}
+		if(object.nBitangentOffset!=-1){glEnableVertexAttribArray(pRenderMappings->nBitangentAttribIndex);}
+		
+		if(object.nVertexOffset!=-1){glVertexAttribPointer(pRenderMappings->nVertexAttribIndex,3,GL_FLOAT,GL_FALSE,object.nVertexStride,(void*)object.nVertexOffset);}
+		if(object.nColorOffset!=-1){glVertexAttribPointer(pRenderMappings->nColorAttribIndex,4,GL_FLOAT,GL_FALSE,object.nColorStride,(void*)object.nColorOffset);}
+		if(object.nNormalOffset!=-1){glVertexAttribPointer(pRenderMappings->nNormalAttribIndex,3,GL_FLOAT,GL_FALSE,object.nNormalStride,(void*)object.nNormalOffset);}
+		if(object.nNormalMapOffset!=-1){glVertexAttribPointer(pRenderMappings->nNormalMapCoordAttribIndex,2,GL_FLOAT,GL_FALSE,object.nNormalMapStride,(void*)object.nNormalMapOffset);}
+		if(object.nTangentOffset!=-1){glVertexAttribPointer(pRenderMappings->nTangentAttribIndex,3,GL_FLOAT,GL_FALSE,object.nTangentStride,(void*)object.nTangentOffset);}
+		if(object.nBitangentOffset!=-1){glVertexAttribPointer(pRenderMappings->nBitangentAttribIndex,3,GL_FLOAT,GL_FALSE,object.nBitangentStride,(void*)object.nBitangentOffset);}
+		for(unsigned int x=0;x<2;x++)
+		{
+			if(object.pTexOffsets[x]!=-1)
+			{
+				glEnableVertexAttribArray(pRenderMappings->pTextureAttribIndex[x]);
+				glVertexAttribPointer(pRenderMappings->pTextureAttribIndex[x],2,GL_FLOAT,GL_FALSE,object.pTexStrides[x],(void*)object.pTexOffsets[x]);
+			}
+		}
+		glBindBuffer(GL_ARRAY_BUFFER,0);
+		glBindVertexArray(0);
+	}
+#endif
 	piRender->SetVertexBufferObject(&object);
 }
 
@@ -865,7 +971,7 @@ void COpenGLModel::UnPrepareRenderBuffer(IOpenGLRender *piRender, unsigned int n
 		{
 			if(pBuffer->vTextureLevels[x]->texture.m_piTexture && pBuffer->vTextureLevels[x]->pTexVertexArray)
 			{
-				piRender->UnselectTexture(x);
+				piRender->UnprepareTexture(x);
 			}
 		}
 	}
@@ -937,9 +1043,12 @@ SModelTextureLevel::~SModelTextureLevel()
 
 SModelRenderBuffer::SModelRenderBuffer()
 {
+	bVertexArrayConfigured=false;
+	
 	fShininess=0;
 	fOpacity=1.0;
-
+	
+	nVertexArrayObject=0;
 	nBufferObject=0;
 	nIndexesBufferObject=0;
 
@@ -952,6 +1061,22 @@ SModelRenderBuffer::SModelRenderBuffer()
 	pBitangentArray=NULL;
 	pColorArray=NULL;
 	pFaceVertexIndexes=NULL;
+
+	nVertexStride=0;
+	nColorStride=0;
+	nNormalStride=0;
+	pTexStride[0]=pTexStride[1]=0;
+	nNormalMapStride=0;
+	nTangentStride=0;
+	nBitangentStride=0;
+
+	nVertexOffset=0;
+	nColorOffset=0;
+	nNormalOffset=0;
+	pTexOffset[0]=pTexOffset[1]=0;
+	nNormalMapOffset=0;
+	nTangentOffset=0;
+	nBitangentOffset=0;
 }
 
 SModelRenderBuffer::~SModelRenderBuffer()
@@ -961,7 +1086,9 @@ SModelRenderBuffer::~SModelRenderBuffer()
 
 	if(nBufferObject!=0){glDeleteBuffers(1,&nBufferObject);nBufferObject=0;}
 	if(nIndexesBufferObject!=0){glDeleteBuffers(1,&nIndexesBufferObject);nIndexesBufferObject=0;}
-
+#ifndef ANDROID
+	if(nVertexArrayObject!=0){glDeleteVertexArrays(1,&nVertexArrayObject);nVertexArrayObject=0;}
+#endif
 	delete [] pVertexArray;
 	delete [] pNormalArray;
 	delete [] pNormalMapArray;

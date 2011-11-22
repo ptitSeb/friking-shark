@@ -18,10 +18,11 @@
 
 #pragma once
 
-#define TEXTURE_PARTICLE_BUFFER_SIZE 1024
-#define LINE_BUFFER_SIZE			 1024
-#define POINT_BUFFER_SIZE			 1024
+#define TRIANGLE_BUFFER_SIZE 		1024
+#define LINE_BUFFER_SIZE			1024
+#define POINT_BUFFER_SIZE			1024
 
+#define MAX_TEXTURE_LEVELS 16
 
 struct SRenderState
 {
@@ -34,6 +35,7 @@ struct SRenderState
 	bool bActiveSkyShadow;
 	
 	bool bActiveDepth;
+	bool bActiveDepthWrite;
 	unsigned long nDepthFunction;
 
 	bool bActiveBlending;
@@ -71,6 +73,8 @@ struct SRenderState
 		if(eShadingModel<otherState.eShadingModel){return -1;}
 		if(eShadingModel>otherState.eShadingModel){return 1;}
 		
+		if(bActiveDepthWrite<otherState.bActiveDepthWrite){return -1;}
+		if(bActiveDepthWrite>otherState.bActiveDepthWrite){return 1;}
 		if(bActiveDepth<otherState.bActiveDepth){return -1;}
 		if(bActiveDepth>otherState.bActiveDepth){return 1;}
 		if(nDepthFunction<otherState.nDepthFunction){return -1;}
@@ -106,13 +110,14 @@ struct SRenderState
 		bActiveTextures=true;
 		bActiveLighting=false;
 		bActiveSolid=true;
-		bActiveShadowEmission=true;
-		bActiveShadowReception=true;
+		bActiveShadowEmission=false;
+		bActiveShadowReception=false;
 		bActiveSkyShadow=false;
 		nTextureLevels=0;
 		eShadingModel=eShadingModel_Balanced;
 
 		bActiveDepth=true;
+		bActiveDepthWrite=true;
 		nDepthFunction=GL_LESS;
 
 		bActiveBlending=false;
@@ -184,27 +189,42 @@ struct SHardwareSupport
 	SHardwareSupport(){bShaders=false;nMaxTextureUnits=2;bObjectInstancing=false;}
 };
 
-struct STextureParticleBuffer
+struct STriangleBuffer
 {
 	int nUsedElements;
-	float pVertexBuffer[3*6*TEXTURE_PARTICLE_BUFFER_SIZE];
-	float pColorBuffer[4*6*TEXTURE_PARTICLE_BUFFER_SIZE];
-	float pTexBuffers[2*6*TEXTURE_PARTICLE_BUFFER_SIZE];
+	float pVertexBuffer[3*3*TRIANGLE_BUFFER_SIZE];
+	float pColorBuffer[4*3*TRIANGLE_BUFFER_SIZE];
+	float pTexBuffer[2*3*TRIANGLE_BUFFER_SIZE];
 
-	STextureParticleBuffer(){nUsedElements=0;}
+	float *pVertexBufferCursor;
+	float *pColorBufferCursor;
+	float *pTexBufferCursor;
+
+	static const unsigned int buffer_size;
+
+	void Reset()
+	{
+		pVertexBufferCursor=pVertexBuffer;
+		pColorBufferCursor=pColorBuffer;
+		pTexBufferCursor=pTexBuffer;
+		nUsedElements=0;
+	}
+	void Next()
+	{
+		pVertexBufferCursor+=9;
+		pColorBufferCursor+=12;
+		pTexBufferCursor+=6;
+		nUsedElements++;
+	}
+	STriangleBuffer(){Reset();}
 };
 
-struct STextureParticleStage
-{
-	std::vector<STextureParticleBuffer*> vBuffers;
-};
-
-struct STextureParticleStageKey
+struct STriangleStageKey
 {
 	SRenderState  sRenderState;
 	IGenericTexture *piTexture;
 
-	bool operator <(const STextureParticleStageKey &otherStage) const
+	bool operator <(const STriangleStageKey &otherStage) const
 	{
 		int nStateComp=sRenderState.Compare(otherStage.sRenderState);
 		if(nStateComp<0){return true;}
@@ -214,10 +234,18 @@ struct STextureParticleStageKey
 		return false;
 	}
 
-	STextureParticleStageKey(){piTexture=NULL;}
-	STextureParticleStageKey(IGenericTexture *texture,SRenderState renderState){piTexture=texture;sRenderState=renderState;}
+	STriangleStageKey(){piTexture=NULL;}
+	STriangleStageKey(IGenericTexture *texture,SRenderState renderState){piTexture=texture;sRenderState=renderState;}
 };
 
+
+struct STriangleStage
+{
+	typedef STriangleBuffer buffer_type;
+	std::vector<STriangleBuffer*> vBuffers;
+
+	void Init(STriangleStageKey &key){ADD(key.piTexture);}
+};
 
 struct SPointBuffer
 {
@@ -225,12 +253,24 @@ struct SPointBuffer
 	float pVertexBuffer[3*2*POINT_BUFFER_SIZE];
 	float pColorBuffer[4*2*POINT_BUFFER_SIZE];
 
-	SPointBuffer(){nUsedElements=0;}
-};
+	float *pVertexBufferCursor;
+	float *pColorBufferCursor;
 
-struct SPointStage
-{
-	std::vector<SPointBuffer*> vBuffers;
+	static const unsigned int buffer_size;
+
+	void Reset()
+	{
+		nUsedElements=0;
+		pVertexBufferCursor=pVertexBuffer;
+		pColorBufferCursor=pColorBuffer;
+	}
+	void Next()
+	{
+		nUsedElements++;
+		pVertexBufferCursor+=3;
+		pColorBufferCursor+=4;
+	}
+	SPointBuffer(){Reset();}
 };
 
 struct SPointStageKey
@@ -253,18 +293,40 @@ struct SPointStageKey
 };
 
 
+struct SPointStage
+{
+	typedef SPointBuffer buffer_type;
+	std::vector<SPointBuffer*> vBuffers;
+
+	void Init(SPointStageKey &key){}
+};
+
 struct SLineBuffer
 {
 	int nUsedElements;
+
 	float pVertexBuffer[3*2*LINE_BUFFER_SIZE];
 	float pColorBuffer[4*2*LINE_BUFFER_SIZE];
 
-	SLineBuffer(){nUsedElements=0;}
-};
+	float *pVertexBufferCursor;
+	float *pColorBufferCursor;
 
-struct SLineStage
-{
-	std::vector<SLineBuffer*> vBuffers;
+	static const unsigned int buffer_size;
+
+	void Reset()
+	{
+		pVertexBufferCursor=pVertexBuffer;
+		pColorBufferCursor=pColorBuffer;
+		nUsedElements=0;
+	}
+	void Next()
+	{
+		pVertexBufferCursor+=6;
+		pColorBufferCursor+=8;
+		nUsedElements++;
+	}
+
+	SLineBuffer(){Reset();}
 };
 
 struct SLineStageKey
@@ -286,6 +348,13 @@ struct SLineStageKey
 	SLineStageKey(SRenderState renderState,unsigned long stipple){sRenderState=renderState;nStipple=stipple;}
 };
 
+struct SLineStage
+{
+	typedef SLineBuffer buffer_type;
+	std::vector<SLineBuffer*> vBuffers;
+
+	void Init(SLineStageKey &key){}
+};
 
 struct SModelInstance
 {
@@ -341,6 +410,36 @@ struct SModelStage
 	SModelStage(){piModel=NULL;piGLModel=NULL;dNearestModel=0;}
 };
 
+template<typename T>
+struct TBufferPool
+{
+	std::stack<T *> m_sFreeBuffers;
+	T *Allocate()
+	{
+		if(m_sFreeBuffers.size())
+		{
+			T *pBuffer=m_sFreeBuffers.top();
+			m_sFreeBuffers.pop();
+			return pBuffer;
+		}
+		return new T;
+	}
+	void Free(T *pBuffer)
+	{
+		pBuffer->Reset();
+		m_sFreeBuffers.push(pBuffer);		
+	}
+	TBufferPool(){};
+	~TBufferPool()
+	{
+		while(m_sFreeBuffers.size())
+		{
+			T *pBuffer=m_sFreeBuffers.top();
+			delete pBuffer;
+			m_sFreeBuffers.pop();
+		}
+	}
+};
 
 struct SShaderKey
 {
@@ -388,12 +487,6 @@ enum EStateChangeShader
 	eStateChange_DoNotUpdateShader,
 	eStateChange_UpdateShader,
 };
-enum EStateChangePolicy
-{
-	eStateChange_Incremental,
-	eStateChange_Force,
-};
-
 
 class COpenGLRender: virtual public CSystemObjectBase,virtual public IOpenGLRender
 {
@@ -424,7 +517,6 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IOpenGLRend
 
 	SRenderState m_sRenderState;
 	SRenderState m_sStagedRenderingState;
-	SRenderState m_sPreStagedRenderingState;
 	SRenderVertexBufferState m_sBufferState;
 	
 	double		 m_dStagedRenderingMinZ;
@@ -471,6 +563,22 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IOpenGLRend
 	SGamePos 	 m_SelectionPos;
 	unsigned int m_nSelectionPrecision;
 	
+	float *m_pLastVertexPointer;
+	float *m_pLastColorPointer;
+	float *m_pLastNormalPointer;
+	float *m_pLastNormalMapPointer;
+	float *m_pLastTangentPointer;
+	float *m_pLastBitangentPointer;
+	float *m_pLastTexPointer[2];
+	
+	int m_nLastVertexStride;
+	int m_nLastColorStride;
+	int m_nLastNormalStride;
+	int m_nLastNormalMapStride;
+	int m_nLastTangentStride;
+	int m_nLastBitangentStride;
+	int m_pLastTexStride[2];
+	
 	bool 		 m_bRenderingPoints;
 	
 	CGenericShaderWrapper m_ShadowShader;
@@ -486,6 +594,10 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IOpenGLRend
 	CPlane				m_CameraRightPlane;
 	CPlane				m_CameraUpPlane;
 
+	unsigned int		m_nCurrentVertexArrayObject;
+	unsigned int 		m_nCurrentVertexBufferObject;
+	unsigned int 		m_nCurrentIndexesBufferObject;
+	
 	bool				m_bRestoreTextureMatrix;
 	bool				m_bShadowVolumeFirstVertex;
 	CVector				m_vShadowVolumeMins;
@@ -502,11 +614,18 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IOpenGLRend
 	
 	CVector m_vAmbientColor;
 
+	TBufferPool<SPointBuffer> 		m_PointBuffers;
+	TBufferPool<SLineBuffer>  		m_LineBuffers;
+	TBufferPool<STriangleBuffer>  	m_TriangleBuffers;
+
+	IGenericTexture *				m_pEffectiveTextureLevels[MAX_TEXTURE_LEVELS];
+	
 	std::vector<IGenericLight *> m_vLights;
 	std::map<unsigned long,IGenericTexture *>					m_mTextureLevels;
+	std::map<unsigned long,IGenericTexture *>					m_mStagedTextureLevels;
 	std::map<SPointStageKey,SPointStage>						m_mPointStages;
 	std::map<SLineStageKey,SLineStage>							m_mLineStages;
-	std::map<STextureParticleStageKey,STextureParticleStage>	m_mTextureParticleStages;
+	std::map<STriangleStageKey,STriangleStage>					m_mTriangleStages;
 	std::map<SModelStageKey,SModelStage>						m_mModelStages;
 	std::multimap<double,std::pair<const SModelStageKey*,const SModelStage*> > m_mSortedModelStages;
 	
@@ -517,7 +636,7 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IOpenGLRend
 	
 	void UpdateProjectionMatrix();
 
-	void SetRenderState(const SRenderState &sNewState,EStateChangePolicy ePolicy=eStateChange_Incremental,EStateChangeShader eShader=eStateChange_UpdateShader);
+	void SetRenderState(const SRenderState &sNewState,EStateChangeShader eShader=eStateChange_UpdateShader);
 	void SetCurrentRenderStateShader();
 	
 	void SetupLightsInShaders();
@@ -526,44 +645,48 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IOpenGLRend
 
 	void ProcessCameraVertex( const CVector &vVertex );
 
-	void RenderAllStages(bool bRenderingShadow,bool bShadowReceptionState);
-	void RenderPointStages(bool bRenderingShadow,bool bShadowReceptionState);
-	void RenderLineStages(bool bRenderingShadow,bool bShadowReceptionState);
-	void RenderParticleStages(bool bRenderingShadow,bool bShadowReceptionState);
-	void RenderModelStages(bool bRenderingShadow,bool bShadowReceptionState);
+	void RenderAllStages(bool bRenderingShadow);
+	void RenderPointStages(bool bRenderingShadow);
+	void RenderLineStages(bool bRenderingShadow);
+	void RenderTriangleStages(bool bRenderingShadow);
+	void RenderModelStages(bool bRenderingShadow);
 	void SortModels();
 
 	void AddShader(SShaderKey &key);
-	
-	void InternalActivateTextures();
-	void InternalDeactivateTextures();
-	
-	void InternalActivateLighting();
-	void InternalDeactivateLighting();
-	
-	void InternalActivateSolid();
-	void InternalDeactivateSolid();
-	
-	void InternalActivateBlending();
-	void InternalDeactivateBlending();
-	void InternalSetBlendingFunction(unsigned int nOperator1,unsigned int nOperator2);
-	void InternalSetBlendingLayer(unsigned int nLayer);
-	
-	void InternalActivateDepth();
-	void InternalDeactivateDepth();
-	void InternalSetDepthFunction(EDepthFunction eDepthFunction);
 	
 	void SetVertexPointers(float *pVertex,float *pNormal,float *pColor,int nTex,float **pTex, float *pNormalTex=NULL,float *pTangent=NULL,float *pBiTangent=NULL);
 	void SetVertexBufferObject(SVertexBufferObject *pVBO);
 	void SetOpenGLMatrix(unsigned int nMatrixMode,CMatrix &pMatrix);
 	
+	void PrepareTexture(IGenericTexture *piTexture,unsigned int nTextureLevel);
+	void UnprepareTexture(unsigned int nTextureLevel);
+	
+	void Flush();
+	
+	template<typename stagekeytype,typename stagetype>
+	stagetype *GetStage(stagekeytype &key,std::map<stagekeytype,stagetype> &stageMap);
+
+	template<typename stagetype>
+	typename stagetype::buffer_type *GetNextStageBufferElement(stagetype *pStage,TBufferPool<typename stagetype::buffer_type> &stagePool);
+
+	template<typename stagetype>
+	typename stagetype::buffer_type *GetNextStageBufferElement(stagetype *pStage,TBufferPool<typename stagetype::buffer_type> &stagePool,typename stagetype::buffer_type *pBuffer);
+
+	void InternalSetOrthographicProjection(double cx,double cy);
+	void InternalSetPerspectiveProjection(double dViewAngle,double dNearPlane,double dFarPlane);
+	void InternalSetViewport(double x,double y,double cx, double cy);
+	void InternalSetCamera(const CVector &vPosition,double dYaw, double dPitch, double dRoll);
+	
+	void SetEffectiveTexture(IGenericTexture *pTexture,int nTextureLevel);
 public:
 
 	bool Init(std::string sClass,std::string sName,ISystem *piSystem);
 	void Destroy();
 
 	// IGenericRender
-
+	void StartFrame();
+	void EndFrame();
+	
 	void SetViewport(IGenericViewport *piViewport);
 
 	IGenericViewport *GetViewPort(); // solo valido entre StartFrame y EndFrame.
@@ -655,7 +778,10 @@ public:
 	void ActivateDepth();
 	void DeactivateDepth();
 	void SetDepthFunction(EDepthFunction eDepthFunction);
-
+	
+	void ActivateDepthWrite();
+	void DeactivateDepthWrite();
+	
 	void ActivateSkyShadow();
 	void DeactivateSkyShadow();
 	bool IsSkyShadowActive();
