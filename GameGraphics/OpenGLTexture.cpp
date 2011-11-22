@@ -481,13 +481,13 @@ bool COpenGLTexture::StartRenderingToTexture()
 	// FrameBuffer Implementation
 	if(m_nFrameBuffer)
 	{
-		glDisable(GL_SCISSOR_TEST);
+		//glDisable(GL_SCISSOR_TEST);
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,m_nFrameBuffer);
 		return true;
 	}
 	else if(m_bDepth && m_nFrameBufferDepth)
 	{
-		glDisable(GL_SCISSOR_TEST);
+		//glDisable(GL_SCISSOR_TEST);
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,m_nFrameBufferDepth);
 		return true;
 	}

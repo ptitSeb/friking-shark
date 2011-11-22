@@ -38,6 +38,8 @@ struct SModelRenderBuffer
 	float		fShininess;
 	float		fOpacity;
 
+	bool        bVertexArrayConfigured;
+	GLuint		nVertexArrayObject;
 	GLuint		nBufferObject;
 	GLuint		nIndexesBufferObject;
 
@@ -50,6 +52,22 @@ struct SModelRenderBuffer
 	GLfloat		*pBitangentArray;
 	GLfloat		*pColorArray;
 	GLuint 		*pFaceVertexIndexes;
+
+	int 		nVertexStride;
+	int 		nColorStride;
+	int 		nNormalStride;
+	int 		pTexStride[2];
+	int 		nNormalMapStride;
+	int 		nTangentStride;
+	int 		nBitangentStride;
+
+	int 		nVertexOffset;
+	int 		nColorOffset;
+	int 		nNormalOffset;
+	int 		pTexOffset[2];
+	int 		nNormalMapOffset;
+	int 		nTangentOffset;
+	int 		nBitangentOffset;
 	
 	CGenericTextureWrapper   normalMap;
 	
@@ -101,6 +119,8 @@ class COpenGLModel : virtual public CSystemObjectBase,virtual public IGenericMod
 	void UpdateTangentBasis(SModelRenderBuffer *pBuffer);
 	void ClearTangentBasis(SModelRenderBuffer *pBuffer);
 	
+	void BuildStridedBuffer(SModelRenderBuffer *pBuffer);
+
 public:
 
 	// IGenericModel

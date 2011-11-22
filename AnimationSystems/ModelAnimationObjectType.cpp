@@ -55,10 +55,10 @@ void CModelAnimationObjectType::DesignRender( IGenericRender *piRender,CVector &
 		if(bSelected)
 		{
 			CVector vMins,vMaxs;
-			piRender->PushState();
-			piRender->DeactivateShadowReception();
-
 			CVector vTempPos,vTempAngles;
+			piRender->PushState();
+			if(m_bCastShadow){piRender->ActivateShadowEmission();}
+			if(m_bReceiveShadows){piRender->ActivateShadowReception();}
 			ComputeReferenceSystem(vPosition,vAngles,m_vPosition,m_vAngles,&vTempPos,&vTempAngles);
 			m_ModelWrapper.m_piModel->GetFrameBBox(0,0,&vMins,&vMaxs);
 			piRender->RenderBBox(vTempPos,vTempAngles,vMins,vMaxs,0x8888,ColorWhite,1);
@@ -70,8 +70,8 @@ void CModelAnimationObjectType::DesignRender( IGenericRender *piRender,CVector &
 			ComputeReferenceSystem(vPosition,vAngles,m_vPosition,m_vAngles,&vTempPos,&vTempAngles);
 			
 			piRender->PushState();
-			if(!m_bCastShadow){piRender->DeactivateShadowEmission();}
-			if(!m_bReceiveShadows){piRender->DeactivateShadowReception();}
+			if(m_bCastShadow){piRender->ActivateShadowEmission();}
+			if(m_bReceiveShadows){piRender->ActivateShadowReception();}
 			if(m_bLighting){piRender->ActivateLighting();}
 			if(m_ShaderWrapper.m_piShader){m_ShaderWrapper.m_piShader->Activate();}
 			piRender->RenderModel(vTempPos,vTempAngles,m_ModelWrapper.m_piModel);
@@ -203,8 +203,8 @@ void CModelAnimationObject::Render(IGenericRender *piRender,IGenericCamera *piCa
 	ComputeReferenceSystemWithCache(vPosition,vAngles,m_vPosition,m_vAngles,&vTempPos,&vTempAngles);
 	
 	piRender->PushState();
-	if(!m_pType->m_bCastShadow){piRender->DeactivateShadowEmission();}
-	if(!m_pType->m_bReceiveShadows){piRender->DeactivateShadowReception();}
+	if(m_pType->m_bCastShadow){piRender->ActivateShadowEmission();}
+	if(m_pType->m_bReceiveShadows){piRender->ActivateShadowReception();}
 	if(m_pType->m_bLighting){piRender->ActivateLighting();}
 	if(m_pType->m_ShaderWrapper.m_piShader){m_pType->m_ShaderWrapper.m_piShader->Activate();}
 	piRender->RenderModel(vTempPos,vTempAngles,m_pType->m_ModelWrapper.m_piModel);

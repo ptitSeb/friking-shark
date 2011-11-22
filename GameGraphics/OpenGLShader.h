@@ -49,10 +49,11 @@ struct SUniformData
 	bool         bModified;
 	bool         bTemporal;
 	int          nLocation;
+	bool         bTriedToGetLocation;
 	unsigned int nElements;
 	char        *pBuffer;
 	
-	SUniformData():eType(eUniformType_None),bModified(false),bTemporal(false),nLocation(-1),nElements(0),pBuffer(NULL)
+	SUniformData():eType(eUniformType_None),bModified(false),bTemporal(false),nLocation(-1),nElements(0),pBuffer(NULL),bTriedToGetLocation(false)
 	{
 		memset(&data,0,sizeof(data));
 	}
