@@ -82,6 +82,11 @@ void CGameMainWindow::GetRealRect(SGameRect *pRect)
 	pRect->h=size.h;
 }
 
+void CGameMainWindow::ComputeClipRect(SGameRect *pRect)
+{
+	GetRealRect(pRect);
+}
+
 void CGameMainWindow::UpdateRealRect()
 {
 	for(unsigned x=0;x<m_vChildren.size();x++)

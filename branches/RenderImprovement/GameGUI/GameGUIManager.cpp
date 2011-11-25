@@ -200,18 +200,12 @@ IGameWindow *CGameGUIManager::GetWindowFromPos(SGamePos *pPosition,bool bOnlyAct
 	return GetWindowFromPos(m_piMainWindow,pPosition,bOnlyActive);
 }
 
-void CGameGUIManager::RenderWindow(IGenericRender *piRender,IGameWindow *piWindow,SGameRect rParentClipRect)
+void CGameGUIManager::RenderWindow(IGenericRender *piRender,IGameWindow *piWindow)
 {
-	SGameRect				  rRect;
 	std::vector<IGameWindow*> vChildren;
 	std::vector<IGameWindow*>::iterator iChildren;
 	IGameWindow *piParent=piWindow->GetParent();
-	
-	piWindow->GetRealRect(&rRect);
-	
-	SGameRect rClipRect=rRect;
-	rClipRect.ClipToRect(&rParentClipRect);
-	
+		
 	piWindow->OnDrawBackground(piRender);
 	piWindow->OnDraw(piRender);
 
@@ -221,7 +215,7 @@ void CGameGUIManager::RenderWindow(IGenericRender *piRender,IGameWindow *piWindo
 		IGameWindow *piChild=*iChildren;
 		if(piChild->IsVisible())
 		{
-			RenderWindow(piRender,piChild,rClipRect);
+			RenderWindow(piRender,piChild);
 		}
 		REL(piChild);
 	}
@@ -233,10 +227,7 @@ void CGameGUIManager::RestoreViewport()
 	if(m_Render.m_piRender==NULL){return;}
 	
 	SGameSize size;
-	SGameRect sClipRect;
 	GetWindowSize(&size);
-	sClipRect.w=size.w;
-	sClipRect.h=size.h;
 	
 	m_Render.m_piRender->SetOrthographicProjection(size.w,size.h);
 	m_Render.m_piRender->SetViewport(0,0,size.w,size.h);
@@ -246,23 +237,20 @@ void CGameGUIManager::RestoreViewport()
 void CGameGUIManager::OnRender()
 {
 	SGameSize size;
-	SGameRect sClipRect;
 	GetWindowSize(&size);
-	sClipRect.w=size.w;
-	sClipRect.h=size.h;
-
+	
 	m_Render.m_piRender->StartFrame();
 	m_Render.m_piRender->ActivateBlending();
 	m_Render.m_piRender->DeactivateDepth();
 	
 	RestoreViewport();
 
-	RenderWindow(m_Render.m_piRender,m_piMainWindow,sClipRect);
+	RenderWindow(m_Render.m_piRender,m_piMainWindow);
 	for(unsigned x=0;x<m_vPopups.size();x++)
 	{
 		if(m_vPopups[x]->IsVisible())
 		{
-			RenderWindow(m_Render.m_piRender,m_vPopups[x],sClipRect);
+			RenderWindow(m_Render.m_piRender,m_vPopups[x]);
 		}
 	}
 	if(m_bShowMouseCursor)

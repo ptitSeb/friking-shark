@@ -406,7 +406,7 @@ void COpenGLModel::UpdateBufferObjects()
 						}
 					}
 				}
-				#ifndef ANDROID
+				#if !defined ANDROID && !defined ANDROID_GLES1
 				glGenVertexArrays(1,&pBuffer->nVertexArrayObject);
 				pBuffer->bVertexArrayConfigured=false;
 				if(pBuffer->nVertexArrayObject==0)
@@ -731,14 +731,23 @@ void COpenGLModel::GetRenderBufferNormalMap( unsigned long nAnimation,unsigned l
 	if(ppiTexture){*ppiTexture=ADD(pBuffer->normalMap.m_piTexture);}
 }
 
-void COpenGLModel::GetRenderBufferTextureMatrix(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,CMatrix *pMatrix)
+void COpenGLModel::GetRenderBufferTextureLevels(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long *pnTextureLevels)
 {
 	if(m_bLoadPending){LoadFromFile();}
 	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation, nFrame, nBuffer);
 	if(pBuffer==NULL){return;}
-	while(nTextureLevel>=pBuffer->vTextureLevels.size()){pBuffer->vTextureLevels.push_back(new SModelTextureLevel);}
+	*pnTextureLevels=pBuffer->vTextureLevels.size();
+}
+
+void COpenGLModel::GetRenderBufferTextureMatrix(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,CMatrix *pMatrix,bool *pbIdentity)
+{
+	if(m_bLoadPending){LoadFromFile();}
+	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation, nFrame, nBuffer);
+	if(pBuffer==NULL){return;}
+	if(nTextureLevel>=pBuffer->vTextureLevels.size()){*pbIdentity=true;return;}
 	SModelTextureLevel *pTextureLevel= pBuffer->vTextureLevels[nTextureLevel];
-	*pMatrix=pTextureLevel->texMatrix;
+	if(pMatrix){*pMatrix=pTextureLevel->texMatrix;}
+	if(pbIdentity){*pbIdentity=pTextureLevel->bTextMatrixIdentity;}
 }
 
 
@@ -896,7 +905,6 @@ void COpenGLModel::PrepareRenderBuffer(IOpenGLRender *piRender, unsigned int nAn
 				if(!bRenderingShadow)
 				{
 					piRender->PrepareTexture(pBuffer->vTextureLevels[x]->texture.m_piTexture,x);
-					if(!pBuffer->vTextureLevels[x]->bTextMatrixIdentity){piRender->SetTextureMatrix(&pBuffer->vTextureLevels[x]->texMatrix,x);}
 				}
 			}
 		}
@@ -935,7 +943,18 @@ void COpenGLModel::PrepareRenderBuffer(IOpenGLRender *piRender, unsigned int nAn
 		glBindVertexArray(0);
 	}
 #endif
-	piRender->SetVertexBufferObject(&object);
+	if(pBuffer->nBufferObject)
+	{
+		piRender->SetVertexBufferObject(&object);
+	}
+	else
+	{
+		float *pTexLevels[2];
+		pTexLevels[0]=pBuffer->vTextureLevels.size()>0?pBuffer->vTextureLevels[0]->pTexVertexArray:NULL;
+		pTexLevels[1]=pBuffer->vTextureLevels.size()>1?pBuffer->vTextureLevels[1]->pTexVertexArray:NULL;
+		piRender->SetVertexPointers(pBuffer->pVertexArray,pBuffer->pNormalArray,pBuffer->pColorArray,pBuffer->vTextureLevels.size(),pTexLevels,pBuffer->pNormalMapArray,pBuffer->pTangentArray,pBuffer->pBitangentArray);
+	}
+
 }
 
 
@@ -955,7 +974,7 @@ void COpenGLModel::CallRenderBuffer(IOpenGLRender *piRender, unsigned int nAnima
 	}
 	else
 	{
-		glDrawElements(GL_TRIANGLES,pBuffer->nFaces*3,GL_UNSIGNED_SHORT,pBuffer->pFaceVertexIndexes);
+		glDrawElements(GL_TRIANGLES,pBuffer->nFaces*3,GL_UNSIGNED_INT,pBuffer->pFaceVertexIndexes);
 	}
 }
 
@@ -963,7 +982,15 @@ void COpenGLModel::UnPrepareRenderBuffer(IOpenGLRender *piRender, unsigned int n
 {
 	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation,nFrame,nBuffer);
 	if(pBuffer==NULL){return;}
-	piRender->SetVertexBufferObject(NULL);
+	if(pBuffer->nBufferObject)
+	{
+		piRender->SetVertexBufferObject(NULL);
+	}
+	else
+	{
+		piRender->SetVertexPointers(NULL,NULL,NULL,0,NULL,NULL,NULL,NULL);
+	}
+		
 
 	if(!bRenderingShadow && piRender->AreTexturesEnabled())
 	{

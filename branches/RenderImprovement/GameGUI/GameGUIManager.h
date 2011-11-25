@@ -37,7 +37,7 @@ class CGameGUIManager :	virtual public CSystemObjectBase,virtual public IGameGUI
 
 	std::vector<IGameWindow*> m_vPopups;
 
-	void RenderWindow(IGenericRender *piRender,IGameWindow *piWindow,SGameRect rParentClipRect);
+	void RenderWindow(IGenericRender *piRender,IGameWindow *piWindow);
 	void ProcessMouseActivation(IGameWindow *piWindow);
 
 	IGameWindow *GetWindowFromPos(SGamePos *pPosition,bool bOnlyActive);

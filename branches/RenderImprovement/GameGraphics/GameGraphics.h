@@ -280,7 +280,8 @@ public:
 	
 	virtual void		  GetRenderBufferMaterial(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,CVector *pvAmbientColor,CVector *pvDiffuseColor,CVector *pvSpecularColor, float *pfShininess, float *pfOpacity)=0;
 	virtual void		  GetRenderBufferTexture(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,IGenericTexture **ppiTexture)=0;
-	virtual void		  GetRenderBufferTextureMatrix(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,CMatrix *pMatrix)=0;
+	virtual void		  GetRenderBufferTextureLevels(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long *pnTextureLevels)=0;
+	virtual void		  GetRenderBufferTextureMatrix(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long nTextureLevel,CMatrix *pMatrix,bool *pbIdentity)=0;
 	virtual void		  GetRenderBufferVertexes(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long *pVertexes,float **ppVertexes)=0;
 	virtual void		  GetRenderBufferFaces(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,unsigned long *pFaces,unsigned int **ppFacesVertexes)=0;
 	virtual void		  GetRenderBufferNormals(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,float **ppNormals)=0;
@@ -473,13 +474,13 @@ public:
 	virtual CVector GetCameraUp()=0;
 
 
-	virtual void ActivateClipping(bool bActivate)=0;
+	virtual void ActivateClipping()=0;
+	virtual void DeactivateClipping()=0;
 	virtual bool IsClippingActive()=0;
 	virtual void SetClipRect(double x,double y,double cx, double cy)=0;
 	virtual void GetClipRect(double *px,double *py,double *pcx, double *pcy)=0;
 	
 	virtual void SelectTexture(IGenericTexture *pTexture,int nTextureLevel)=0;
-	virtual void SetTextureMatrix(CMatrix *pMatrix,int nTextureLevel)=0;
 	virtual void UnselectTexture(int nTextureLevel)=0;
 	
 	virtual void SelectNormalMap(IGenericTexture *pTexture)=0;
@@ -489,7 +490,7 @@ public:
 	virtual void SelectSkyShadow(IGenericTexture *pTexture)=0;
 	virtual void UnselectSkyShadow()=0;
 	
-	virtual void RenderPoint(const CVector &vPosition,double dSize,const CVector &vColor,const double dAlpha)=0;
+	virtual void RenderPoint(const CVector &vPosition,double dSize,const CVector &vColor,double dAlpha)=0;
 	virtual void RenderTexture(const CVector &vOrigin,double s1,double s2,const CVector &vColor,double dAlpha)=0;
 	virtual void RenderTexture(const CVector &vOrigin,double s1,double s2,double dTexX,double dTexY,double dTexW,double dTexH,const CVector &vColor,double dAlpha)=0;
 	virtual void RenderParticle(IGenericTexture *piTexture,const CVector &vOrigin,double dAngle,double s1,double s2,double dTextX,double dTextY,double dTextW,double dTextH,const CVector &vColor,double dAlpha)=0;

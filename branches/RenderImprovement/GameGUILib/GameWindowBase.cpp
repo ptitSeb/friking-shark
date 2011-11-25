@@ -903,3 +903,13 @@ CLine CGameWindowBase::GetMouseRay(double x,double y,double dLength,IGenericCame
 	return line;
 }
 
+void CGameWindowBase::ComputeClipRect(SGameRect *pRect)
+{
+	*pRect=m_rRealRect;	
+	if(m_piParent)
+	{
+		SGameRect sParentClipRect;
+		m_piParent->ComputeClipRect(&sParentClipRect);
+		pRect->ClipToRect(&sParentClipRect);
+	}
+}

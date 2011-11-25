@@ -17,6 +17,7 @@
 
 
 #include "./stdafx.h"
+
 #include <algorithm>
 #include "OpenGLGraphics.h"
 #include "OpenGLRender.h"
@@ -92,6 +93,9 @@ void glhOrtho(CMatrix *pMatrix, double dLeft, double dRight, double dBottom, dou
 
 COpenGLRender::COpenGLRender(void)
 {
+	m_nStagedTextureLevels=0;
+	m_nTextureLevels=0;
+
 	m_nCurrentVertexArrayObject=0;
 	m_nCurrentVertexBufferObject=0;
 	m_nCurrentIndexesBufferObject=0;
@@ -172,8 +176,9 @@ COpenGLRender::COpenGLRender(void)
 	m_pLastTexPointer[0]=NULL;
 	m_pLastTexPointer[1]=NULL;
 	
-	memset(m_pEffectiveTextureLevels,0,sizeof(m_pEffectiveTextureLevels));
-	
+	memset(m_ppiEffectiveTextureLevels,0,sizeof(m_ppiEffectiveTextureLevels));
+	memset(m_ppiStagedTextureLevels,0,sizeof(m_ppiStagedTextureLevels));
+	memset(m_ppiTextureLevels,0,sizeof(m_ppiTextureLevels));
 }
 
 COpenGLRender::~COpenGLRender(void)
@@ -384,17 +389,15 @@ void COpenGLRender::InternalSetCamera(const CVector &vPosition,double dYaw, doub
 }
 
 
-void COpenGLRender::ActivateClipping(bool bActive)
+void COpenGLRender::ActivateClipping()
 {
 #pragma message ("ver como se gestion el clipping")
-	if(bActive)
-	{
-		glEnable(GL_SCISSOR_TEST);
-	}
-	else
-	{
-		glDisable(GL_SCISSOR_TEST);
-	}
+	glEnable(GL_SCISSOR_TEST);
+}
+
+void COpenGLRender::DeactivateClipping()
+{
+	glDisable(GL_SCISSOR_TEST);
 }
 
 void COpenGLRender::SetClipRect(double x,double y,double cx, double cy)
@@ -423,56 +426,25 @@ void COpenGLRender::SelectTexture(IGenericTexture *pTexture,int nTextureLevel)
 {
 	if(!m_sRenderOptions.bEnableTextures){return;}
 	if(!m_sStagedRenderingState.bActiveTextures){return;}
-	
-	IGenericTexture *piOldTexture=m_mStagedTextureLevels[nTextureLevel];
-	REL(piOldTexture);
-
-	m_mStagedTextureLevels[nTextureLevel]=ADD(pTexture);
-}
-
-void COpenGLRender::SetTextureMatrix(CMatrix *pMatrix,int nTextureLevel)
-{
-	if(!m_sRenderOptions.bEnableTextures){return;}
-	if(!m_sStagedRenderingState.bActiveTextures){return;}
-	
-	#pragma message ("COpenGLRender::SetTextureMatrix -> ver como se gestionan las matrices")
-/*
-	if(m_pCurrentShader){m_pCurrentShader->m_piShader->AddUniform(nTextureLevel==0?"uTexMatrix0":"uTexMatrix1",*pMatrix,false);}
-	
-#ifdef ANDROID_GLES1
-	float pfMatrix[16];
-	ToOpenGLMatrix(pMatrix,pfMatrix);
-	if(m_nCurrentActiveTexture!=nTextureLevel){glActiveTexture(GL_TEXTURE0_ARB+nTextureLevel);m_nCurrentActiveTexture=nTextureLevel;}
-	glMatrixMode(GL_TEXTURE);
-	glLoadMatrixf(pfMatrix);
-	glMatrixMode(GL_MODELVIEW);
-#endif
-	
-	m_bRestoreTextureMatrix=true;*/
+	if(nTextureLevel>MAX_TEXTURE_LEVELS){return;}
+	if(m_ppiStagedTextureLevels[nTextureLevel])
+	{
+		m_nStagedTextureLevels--;
+		REL(m_ppiStagedTextureLevels[nTextureLevel]);
+	}
+	m_ppiStagedTextureLevels[nTextureLevel]=ADD(pTexture);
+	m_nStagedTextureLevels++;
 }
 
 void COpenGLRender::UnselectTexture(int nTextureLevel)
 {
 	if(!m_sRenderOptions.bEnableTextures){return;}
-	IGenericTexture *piTexture=m_mStagedTextureLevels[nTextureLevel];
-	/*if(!m_bStagedRendering && m_bRestoreTextureMatrix)
+	if(nTextureLevel>MAX_TEXTURE_LEVELS){return;}
+	if(m_ppiStagedTextureLevels[nTextureLevel])
 	{
-		CMatrix identity;
-		if(m_pCurrentShader){m_pCurrentShader->m_piShader->AddUniform(nTextureLevel==0?"uTexMatrix0":"uTexMatrix1",identity,false);}
-#ifdef ANDROID_GLES1
-		glMatrixMode(GL_TEXTURE);
-		glLoadIdentity();
-		glMatrixMode(GL_MODELVIEW);
-#endif
-		m_bRestoreTextureMatrix=false;
+		REL(m_ppiStagedTextureLevels[nTextureLevel]);
+		m_nStagedTextureLevels--;
 	}
-	if(!m_bStagedRendering && piTexture)
-	{
-		if(m_nCurrentActiveTexture!=nTextureLevel){glActiveTexture(GL_TEXTURE0_ARB+nTextureLevel);m_nCurrentActiveTexture=nTextureLevel;}
-		piTexture->UnprepareTexture(this,nTextureLevel);
-	}*/
-	REL(piTexture);
-	m_mStagedTextureLevels.erase(nTextureLevel);
 }
 
 void COpenGLRender::SelectNormalMap(IGenericTexture *pNormalMap)
@@ -480,17 +452,11 @@ void COpenGLRender::SelectNormalMap(IGenericTexture *pNormalMap)
 	if(!m_sRenderOptions.bEnableNormalMaps){return;}
 	REL(m_piNormalMap);
 	m_piNormalMap=ADD(pNormalMap);
-	/*
-	if(m_nCurrentActiveTexture!=m_nNormalMapTextureLevel){glActiveTexture(GL_TEXTURE0_ARB+m_nNormalMapTextureLevel);m_nCurrentActiveTexture=m_nNormalMapTextureLevel;}
-	if(!m_bStagedRendering){m_piNormalMap->PrepareTexture(this,m_nNormalMapTextureLevel);}*/
 }
 
 void COpenGLRender::UnselectNormalMap()
 {
-	if(!m_sRenderOptions.bEnableNormalMaps){return;}
-	/*if(m_nCurrentActiveTexture!=m_nNormalMapTextureLevel){glActiveTexture(GL_TEXTURE0_ARB+m_nNormalMapTextureLevel);m_nCurrentActiveTexture=m_nNormalMapTextureLevel;}
-	if(!m_bStagedRendering && m_piNormalMap){m_piNormalMap->UnprepareTexture(this,m_nNormalMapTextureLevel);}*/
-	REL(m_piNormalMap);
+	if(!m_sRenderOptions.bEnableNormalMaps){return;}	REL(m_piNormalMap);
 }
 
 void COpenGLRender::SetSkyShadowParameters(double dSpeed, double dXResolution, double dZResolution, double dOpacity)
@@ -506,20 +472,10 @@ void COpenGLRender::SelectSkyShadow(IGenericTexture *pSkyShadow)
 	if(!m_sRenderOptions.bEnableSkyShadow){return;}
 	REL(m_piSkyShadow);
 	m_piSkyShadow=ADD(pSkyShadow);
-	/*if(!m_bStagedRendering && m_piSkyShadow && m_sRenderState.bActiveSkyShadow)
-	{
-		if(m_nCurrentActiveTexture!=m_nSkyShadowTextureLevel){glActiveTexture(GL_TEXTURE0_ARB+m_nSkyShadowTextureLevel);m_nCurrentActiveTexture=m_nSkyShadowTextureLevel;}
-		if(m_piSkyShadow){m_piSkyShadow->PrepareTexture(this,m_nSkyShadowTextureLevel);}
-	}*/
 }
 
 void COpenGLRender::UnselectSkyShadow()
 {
-	/*if(!m_bStagedRendering && m_piSkyShadow)
-	{
-		if(m_nCurrentActiveTexture!=m_nSkyShadowTextureLevel){glActiveTexture(GL_TEXTURE0_ARB+m_nSkyShadowTextureLevel);m_nCurrentActiveTexture=m_nSkyShadowTextureLevel;}
-		if(m_piSkyShadow){m_piSkyShadow->UnprepareTexture(this,m_nSkyShadowTextureLevel);}
-	}*/
 	REL(m_piSkyShadow);
 }
 
@@ -587,8 +543,7 @@ void COpenGLRender::RenderTexture(const CVector &vOrigin,double s1,double s2,con
 
 void COpenGLRender::RenderTexture(const CVector &vOrigin,double s1,double s2,double dTexX,double dTexY,double dTexW,double dTexH,const CVector &vColor,double dAlpha)
 {
-	std::map<unsigned long,IGenericTexture *>::iterator iTexture=m_mStagedTextureLevels.find(0);
-	STriangleStageKey key(iTexture==m_mStagedTextureLevels.end()?NULL:iTexture->second,m_sStagedRenderingState);
+	STriangleStageKey key(m_ppiStagedTextureLevels[0],m_sStagedRenderingState);
 	STriangleStage *pStage=GetStage(key,m_mTriangleStages);
 	STriangleBuffer *pBuffer=GetNextStageBufferElement(pStage,m_TriangleBuffers);
 
@@ -1935,7 +1890,11 @@ void COpenGLRender::PrepareSunShadows()
 	vLightForward=m_vLastShadowCameraTarget-vLightPosition;
 	vLightForward.N();
 	vLightAngles=AnglesFromVector(vLightForward);
-	VectorsFromAngles(vLightAngles,NULL,&vLightRight,&vLightUp);
+	vLightRight=AxisPosX;
+	vLightUp=vLightRight^vLightForward;
+	vLightRight=vLightUp^vLightForward;
+	vLightAngles=AnglesFromVectors(vLightForward,vLightRight,vLightUp);
+	//VectorsFromAngles(vLightAngles,NULL,&vLightRight,&vLightUp);
 	
 	double dLightMinRigthAngle=0,dLightMaxRigthAngle=0;
 	double dLightMinUpAngle=0,dLightMaxUpAngle=0;
@@ -2219,7 +2178,7 @@ void COpenGLRender::EndFrame()
 	}
 	for(unsigned int x=0;x<MAX_TEXTURE_LEVELS;x++)
 	{
-		REL(m_pEffectiveTextureLevels[x]);
+		REL(m_ppiEffectiveTextureLevels[x]);
 	}
 }
 
@@ -2332,28 +2291,22 @@ void COpenGLRender::SetRenderState( const SRenderState &sNewState,EStateChangeSh
 	{
 		if(sNewState.bActiveHeightFog)
 		{
-			if(!m_bStagedRendering)
+			#ifdef ANDROID_GLES1
+			if(m_vCameraForward==AxisNegY)
 			{
-				#ifdef ANDROID_GLES1
-				if(m_vCameraForward==AxisNegY)
-				{
-					glEnable(GL_FOG);
-					glFogf(GL_FOG_START,m_vCameraPos.c[1]-sNewState.vHeightFogMaxs);
-					glFogf(GL_FOG_END,m_vCameraPos.c[1]-sNewState.vHeightFogMins);
-				}
-				float vHeightFogColor[3]={(float)sNewState.vHeightFogColor.c[0],(float)sNewState.vHeightFogColor.c[1],(float)sNewState.vHeightFogColor.c[2]};
-				glFogfv(GL_FOG_COLOR,vHeightFogColor);
-				glFogf(GL_FOG_MODE,GL_LINEAR);
-				#endif
-			}	
+				glEnable(GL_FOG);
+				glFogf(GL_FOG_START,m_vCameraPos.c[1]-sNewState.vHeightFogMaxs.c[1]);
+				glFogf(GL_FOG_END,m_vCameraPos.c[1]-sNewState.vHeightFogMins.c[1]);
+			}
+			float vHeightFogColor[3]={(float)sNewState.vHeightFogColor.c[0],(float)sNewState.vHeightFogColor.c[1],(float)sNewState.vHeightFogColor.c[2]};
+			glFogfv(GL_FOG_COLOR,vHeightFogColor);
+			glFogf(GL_FOG_MODE,GL_LINEAR);
+			#endif
 		}
 		else
 		{
 			#ifdef ANDROID_GLES1
-			if(!m_bStagedRendering && m_vCameraForward==AxisNegY)
-			{
-				glDisable(GL_FOG);
-			}
+			glDisable(GL_FOG);
 			#endif
 		}
 		
@@ -2377,7 +2330,7 @@ void COpenGLRender::SetCurrentRenderStateShader()
 	
 #ifndef ANDROID_GLES1
 	bool bTempSkyShadow=m_piSkyShadow && m_piSkyShadow && m_sRenderOptions.bEnableSkyShadow && m_sRenderState.bActiveSkyShadow && m_sRenderState.bActiveShadowReception;
-	SShaderKey key(m_sRenderState.eShadingModel,m_sRenderState.bActiveHeightFog,m_sRenderOptions.bEnableShadows && m_sRenderState.bActiveShadowReception,m_sRenderState.bActiveTextures && m_sRenderOptions.bEnableTextures?m_mTextureLevels.size()!=0:false,m_sRenderOptions.bEnableLighting && m_sRenderState.bActiveLighting,m_sRenderState.bActiveWater,m_sRenderOptions.bEnableNormalMaps && m_piNormalMap,bTempSkyShadow,m_bRenderingPoints);
+	SShaderKey key(m_sRenderState.eShadingModel,m_sRenderState.bActiveHeightFog,m_sRenderOptions.bEnableShadows && m_sRenderState.bActiveShadowReception,m_sRenderState.bActiveTextures && m_sRenderOptions.bEnableTextures?m_nTextureLevels!=0:false,m_sRenderOptions.bEnableLighting && m_sRenderState.bActiveLighting,m_sRenderState.bActiveWater,m_sRenderOptions.bEnableNormalMaps && m_piNormalMap,bTempSkyShadow,m_bRenderingPoints);
 	std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader=m_mShaders.find(key);
 	CGenericShaderWrapper *pNewShader=(iShader==m_mShaders.end())?NULL:&iShader->second;
 	if(!pNewShader)
@@ -2409,7 +2362,6 @@ void COpenGLRender::SetCurrentRenderStateShader()
 			}
 		}
 	}
-//	m_pCurrentShader->m_piShader->AddUniform("uDisableTextures",(float)(!m_sRenderState.bActiveTextures || m_mTextureLevels.size()==0),false);
 #endif
 }
 
@@ -2489,6 +2441,9 @@ void COpenGLRender::DumpStagedRenderingStats()
 
 void COpenGLRender::RenderModelStages(bool bRenderingShadow)
 {
+	unsigned int pMatrixesToRestore[MAX_TEXTURE_LEVELS];
+	unsigned int nMatrixesToRestore=0;
+	
 	// Flush Model Stages
 	std::multimap<double,std::pair<const SModelStageKey*,const SModelStage*> >::iterator iSortedModelStage;
 	for(iSortedModelStage=m_mSortedModelStages.begin();iSortedModelStage!=m_mSortedModelStages.end();iSortedModelStage++)
@@ -2556,6 +2511,29 @@ void COpenGLRender::RenderModelStages(bool bRenderingShadow)
 						GLfloat  pSpecular[]={(float)vSpecularColor.c[0],(float)vSpecularColor.c[1],(float)vSpecularColor.c[2],fOpacity};
 						glMaterialfv(GL_FRONT,GL_SPECULAR,pSpecular);
 						glMaterialf(GL_FRONT,GL_SHININESS,fShininess);
+						
+						unsigned long nLevels=0;
+						pStage->piModel->GetRenderBufferTextureLevels(pKey->nAnimation,pKey->nFrame,nBuffer,&nLevels);
+						for(unsigned long x=0;x<nLevels && x<MAX_TEXTURE_LEVELS;x++)
+						{
+							bool bIdentity=false;
+							pStage->piModel->GetRenderBufferTextureMatrix(pKey->nAnimation,pKey->nFrame,nBuffer,x,NULL,&bIdentity);
+							if(!bIdentity)
+							{
+								CMatrix matrix;
+								pStage->piModel->GetRenderBufferTextureMatrix(pKey->nAnimation,pKey->nFrame,nBuffer,x,&matrix,&bIdentity);
+
+								float pfMatrix[16];
+								ToOpenGLMatrix(&matrix,pfMatrix);
+								if(m_nCurrentActiveTexture!=x){glActiveTexture(GL_TEXTURE0_ARB+x);m_nCurrentActiveTexture=x;}
+								glMatrixMode(GL_TEXTURE);
+								glLoadMatrixf(pfMatrix);
+								glMatrixMode(GL_MODELVIEW);
+								
+								pMatrixesToRestore[nMatrixesToRestore]=x;
+								nMatrixesToRestore++;
+							}
+						}
 #else
 						
 						SetCurrentRenderStateShader();
@@ -2565,13 +2543,31 @@ void COpenGLRender::RenderModelStages(bool bRenderingShadow)
 							CVector vAmbientColor,vDiffuseColor,vSpecularColor;
 							float fShininess,fOpacity;
 							float *pColors=NULL;
+							unsigned long nLevels=0;
 							pStage->piModel->GetRenderBufferMaterial(pKey->nAnimation,pKey->nFrame,nBuffer,&vAmbientColor,&vDiffuseColor,&vSpecularColor, &fShininess, &fOpacity);
 							pStage->piModel->GetRenderBufferColors(pKey->nAnimation,pKey->nFrame,nBuffer,&pColors);
+							pStage->piModel->GetRenderBufferTextureLevels(pKey->nAnimation,pKey->nFrame,nBuffer,&nLevels);
+							for(unsigned long x=0;x<nLevels && x<MAX_TEXTURE_LEVELS;x++)
+							{
+								bool bIdentity=false;
+								pStage->piModel->GetRenderBufferTextureMatrix(pKey->nAnimation,pKey->nFrame,nBuffer,x,NULL,&bIdentity);
+								if(!bIdentity)
+								{
+									CMatrix matrix;
+									pStage->piModel->GetRenderBufferTextureMatrix(pKey->nAnimation,pKey->nFrame,nBuffer,x,&matrix,&bIdentity);
+									if(m_pCurrentShader){m_pCurrentShader->m_piShader->AddUniform(x==0?"uTexMatrix0":"uTexMatrix1",matrix,false);}
+									pMatrixesToRestore[nMatrixesToRestore]=x;
+									nMatrixesToRestore++;
+								}
+							}
 							
 							m_pCurrentShader->m_piShader->AddUniform("uDisableVertexColor",(float)(pColors?0.0:1.0),true);
-							m_pCurrentShader->m_piShader->AddUniform("uMaterialSpecular",vSpecularColor,fOpacity,true);
 							m_pCurrentShader->m_piShader->AddUniform("uMaterialDiffuse",vDiffuseColor,fOpacity,true);
-							m_pCurrentShader->m_piShader->AddUniform("uMaterialShininess",fShininess,true);
+							if(pKey->sRenderState.bActiveLighting)
+							{
+								m_pCurrentShader->m_piShader->AddUniform("uMaterialSpecular",vSpecularColor,fOpacity,true);
+								m_pCurrentShader->m_piShader->AddUniform("uMaterialShininess",fShininess,true);
+							}
 						}
 #endif
 					}
@@ -2623,6 +2619,20 @@ void COpenGLRender::RenderModelStages(bool bRenderingShadow)
 		#endif
 			if(bRenderBufferPrepared)
 			{
+				for(unsigned int x=0;x<nMatrixesToRestore;x++)
+				{
+					CMatrix identity;
+					if(m_pCurrentShader){m_pCurrentShader->m_piShader->AddUniform(pMatrixesToRestore[x]==0?"uTexMatrix0":"uTexMatrix1",identity,false);}
+					
+					#ifdef ANDROID_GLES1
+					if(m_nCurrentActiveTexture!=x){glActiveTexture(GL_TEXTURE0_ARB+x);m_nCurrentActiveTexture=x;}
+					glMatrixMode(GL_TEXTURE);
+					glLoadIdentity();
+					glMatrixMode(GL_MODELVIEW);
+					#endif
+				}
+				nMatrixesToRestore=0;
+				
 				pStage->piGLModel->UnPrepareRenderBuffer(this,pKey->nAnimation,pKey->nFrame,nBuffer,bRenderingShadow,&m_RenderMappings);
 			}
 		}
@@ -2633,32 +2643,49 @@ void COpenGLRender::SetEffectiveTexture(IGenericTexture *pTexture,int nTextureLe
 {
 	if(nTextureLevel>MAX_TEXTURE_LEVELS){return;}
 	if(pTexture==NULL){return;}
-	
-	IGenericTexture *piOldTexture=m_pEffectiveTextureLevels[nTextureLevel];
+
+	IGenericTexture *piOldTexture=m_ppiEffectiveTextureLevels[nTextureLevel];
 	if(pTexture==piOldTexture){return;}
-	
+
 	if(m_nCurrentActiveTexture!=nTextureLevel){glActiveTexture(GL_TEXTURE0_ARB+nTextureLevel);m_nCurrentActiveTexture=nTextureLevel;}
 	if(piOldTexture){piOldTexture->UnprepareTexture(this,nTextureLevel);}	
-	
-	m_pEffectiveTextureLevels[nTextureLevel]=ADD(pTexture);
+
+	m_ppiEffectiveTextureLevels[nTextureLevel]=ADD(pTexture);
 	pTexture->PrepareTexture(this,nTextureLevel);
 	REL(piOldTexture);
+	
+	#ifdef ANDROID_GLES1
+	glEnable(GL_TEXTURE_2D);
+	#endif
 }
 
 void COpenGLRender::PrepareTexture(IGenericTexture *piTexture,unsigned int nTextureLevel)
 {
-	IGenericTexture *piOldTexture=m_mTextureLevels[nTextureLevel];	
-	REL(piOldTexture);
-	m_mTextureLevels[nTextureLevel]=ADD(piTexture);
-	
+	if(nTextureLevel>MAX_TEXTURE_LEVELS){return;}
+	if(m_ppiTextureLevels[nTextureLevel]!=NULL)
+	{
+		REL(m_ppiTextureLevels[nTextureLevel]);
+		m_nTextureLevels--;
+	}
+
+	m_ppiTextureLevels[m_nTextureLevels]=ADD(piTexture);
+	m_nTextureLevels++;
 	SetEffectiveTexture(piTexture,nTextureLevel);
 }
 
 void COpenGLRender::UnprepareTexture(unsigned int nTextureLevel)
 {
-	IGenericTexture *piTexture=m_mTextureLevels[nTextureLevel];
-	m_mTextureLevels.erase(nTextureLevel);
-	REL(piTexture);	
+	if(nTextureLevel>MAX_TEXTURE_LEVELS){return;}
+	if(m_ppiTextureLevels[nTextureLevel]==NULL){return;}
+	
+	REL(m_ppiTextureLevels[nTextureLevel]);
+	m_nTextureLevels--;
+	
+	#ifdef ANDROID_GLES1
+	if(m_nCurrentActiveTexture!=nTextureLevel){glActiveTexture(GL_TEXTURE0_ARB+nTextureLevel);m_nCurrentActiveTexture=nTextureLevel;}
+	glDisable(GL_TEXTURE_2D);
+	REL(m_ppiEffectiveTextureLevels[nTextureLevel]);
+	#endif
 }
 
 void COpenGLRender::RenderTriangleStages(bool bRenderingShadow)
@@ -2773,8 +2800,10 @@ void COpenGLRender::SetVertexBufferObject(SVertexBufferObject *pVBO)
 {
 	if(pVBO==NULL)
 	{
+#ifndef ANDROID
 		glBindVertexArray(0);
 		m_nCurrentVertexArrayObject=0;
+#endif
 		return;
 	}
 #ifndef ANDROID
@@ -2874,7 +2903,7 @@ void COpenGLRender::SetVertexPointers(float *pVertex,float *pNormal,float *pColo
 		glBindVertexArray(0);
 	}
 #endif
-	
+
 	if(m_nCurrentVertexBufferObject!=0)
 	{
 		m_nCurrentVertexBufferObject=0;
@@ -3110,8 +3139,18 @@ void COpenGLRender::AddShader( SShaderKey &key )
 		}
 #endif
 		
-		if(key.nTextureUnits>=1){wrapper.m_piShader->AddUniform("Texture0",(int)0,false);wrapper.m_piShader->AddUniform("uTexMatrix0",identity,false);}
-		if(key.nTextureUnits>=1){wrapper.m_piShader->AddUniform("Texture1",(int)1,false);wrapper.m_piShader->AddUniform("uTexMatrix1",identity,false);}
+		if(key.nTextureUnits>=1)
+		{
+			wrapper.m_piShader->AddUniform("Texture0",(int)0,false);
+			wrapper.m_piShader->AddUniform("uTexMatrix0",identity,false);
+			wrapper.m_piShader->AddAttribute("aTexCoord0",(int)m_RenderMappings.pTextureAttribIndex[0]);
+		}
+		if(key.nTextureUnits>=2)
+		{
+			wrapper.m_piShader->AddUniform("Texture1",(int)1,false);
+			wrapper.m_piShader->AddUniform("uTexMatrix1",identity,false);
+			wrapper.m_piShader->AddAttribute("aTexCoord1",(int)m_RenderMappings.pTextureAttribIndex[1]);
+		}
 		if(key.bSkyShadow){wrapper.m_piShader->AddUniform("SkyShadowMap",(int)m_nSkyShadowTextureLevel,false);}
 		if(key.bShadows){wrapper.m_piShader->AddUniform("ShadowMap",(int)m_nShadowTextureLevel,false);}
 		if(key.bNormalMap)
@@ -3123,8 +3162,6 @@ void COpenGLRender::AddShader( SShaderKey &key )
 		}
 		wrapper.m_piShader->AddAttribute("aVertex",(int)m_RenderMappings.nVertexAttribIndex);
 		wrapper.m_piShader->AddAttribute("aNormal",(int)m_RenderMappings.nNormalAttribIndex);
-		wrapper.m_piShader->AddAttribute("aTexCoord0",(int)m_RenderMappings.pTextureAttribIndex[0]);
-		wrapper.m_piShader->AddAttribute("aTexCoord1",(int)m_RenderMappings.pTextureAttribIndex[1]);
 		wrapper.m_piShader->AddAttribute("aVertexColor",(int)m_RenderMappings.nColorAttribIndex);
 		
 		wrapper.m_piShader->AddUniform("uModel",identity,false);

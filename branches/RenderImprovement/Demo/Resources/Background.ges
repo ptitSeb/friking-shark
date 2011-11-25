@@ -539,6 +539,7 @@ Terrain
 					Archivo=./Textures/sandPeq.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
+					GenerateMipmaps=1
 					UsarColorKey=0
 				}
 				Name=""
@@ -565,6 +566,7 @@ Terrain
 				Archivo=./Textures/Clouds.png
 				ArchivoAlpha=""
 				ColorKey=0.000000,0.000000,0.000000
+				GenerateMipmaps=1
 				UsarColorKey=0
 			}
 			Name=""
@@ -586,7 +588,7 @@ Terrain
 			HorzResolution=50.500000
 			Maxs=1931.621948,17.705995,93.074356
 			Mins=-1224.800293,-0.864870,-93.070404
-			Opacity=0.200000
+			Opacity=0.300000
 			Speed=0.110000
 			Texture1=./Textures/WaterB.png
 			Texture2=./Textures/WaterB.png
@@ -600,6 +602,7 @@ Terrain
 				Archivo=./Textures/WaterB.png
 				ArchivoAlpha=""
 				ColorKey=0.000000,0.000000,0.000000
+				GenerateMipmaps=1
 				UsarColorKey=0
 			}
 			Name=""
@@ -613,6 +616,7 @@ Terrain
 				Archivo=./Textures/WaterB.png
 				ArchivoAlpha=""
 				ColorKey=0.000000,0.000000,0.000000
+				GenerateMipmaps=1
 				UsarColorKey=0
 			}
 			Name=""
