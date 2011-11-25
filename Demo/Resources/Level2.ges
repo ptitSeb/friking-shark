@@ -4703,6 +4703,7 @@ Terrain
 					Archivo=./Textures/ArenaOscura.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
+					GenerateMipmaps=1
 					UsarColorKey=0
 				}
 				Name=""
@@ -4730,6 +4731,7 @@ Terrain
 					Archivo=./Textures/ArenaOscura.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
+					GenerateMipmaps=1
 					UsarColorKey=0
 				}
 				Name=""
@@ -4757,26 +4759,13 @@ Terrain
 					Archivo=./Textures/SandGrey.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
+					GenerateMipmaps=1
 					UsarColorKey=0
 				}
 				Name=""
 				System=GameResources
 			}
 		}
-	}
-	ColorMap
-	{
-		Class=Texture
-		Data
-		{
-			Archivo=./Textures/Level2TerrainColorMap.png
-			ArchivoAlpha=""
-			ColorKey=0.000000,0.000000,0.000000
-			UsarColorKey=0
-			Resident=1
-		}
-		Name=""
-		System=GameResources
 	}
 	ColorMapFile=./Textures/Level2TerrainColorMap.png
 	Fog
@@ -4808,6 +4797,7 @@ Terrain
 					Archivo=./Textures/sandPeq.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
+					GenerateMipmaps=1
 					UsarColorKey=0
 				}
 				Name=""
@@ -4834,6 +4824,7 @@ Terrain
 				Archivo=./Textures/Clouds.png
 				ArchivoAlpha=""
 				ColorKey=0.000000,0.000000,0.000000
+				GenerateMipmaps=1
 				UsarColorKey=0
 			}
 			Name=""
@@ -4855,7 +4846,7 @@ Terrain
 			HorzResolution=50.500000
 			Maxs=732.511841,17.703619,93.074356
 			Mins=-924.632385,-0.466419,-93.074348
-			Opacity=0.200000
+			Opacity=0.300000
 			Speed=0.110000
 			Texture1=./Textures/WaterB.png
 			Texture2=./Textures/WaterB.png
@@ -4869,6 +4860,7 @@ Terrain
 				Archivo=./Textures/WaterB.png
 				ArchivoAlpha=""
 				ColorKey=0.000000,0.000000,0.000000
+				GenerateMipmaps=1
 				UsarColorKey=0
 			}
 			Name=""
@@ -4882,6 +4874,7 @@ Terrain
 				Archivo=./Textures/WaterB.png
 				ArchivoAlpha=""
 				ColorKey=0.000000,0.000000,0.000000
+				GenerateMipmaps=1
 				UsarColorKey=0
 			}
 			Name=""

@@ -126,9 +126,9 @@ void main (void)
 	
 	
 #ifdef ENABLE_TEXTURES
-	g_TexCoord0=(uTexMatrix0*vec4(aTexCoord0,0.0,0.0)).xy;
+	g_TexCoord0=(uTexMatrix0*vec4(aTexCoord0,0.0,1.0)).xy;
 	#if TEXTURE_UNITS > 1
-	g_TexCoord1=(uTexMatrix1*vec4(aTexCoord1,0.0,0.0)).xy;
+	g_TexCoord1=(uTexMatrix1*vec4(aTexCoord1,0.0,1.0)).xy;
 	#endif
 #endif
 

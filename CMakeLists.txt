@@ -141,6 +141,7 @@ IF(ANDROID)
 		install(FILES Demo/Resources/Textures/Clouds.png DESTINATION ${PROJECT_BINARY_DIR}/android/assets/Textures/)
 		install(FILES Demo/Resources/Textures/WaterB.png DESTINATION ${PROJECT_BINARY_DIR}/android/assets/Textures/)
 		install(FILES Demo/Resources/Textures/WaterB.png DESTINATION ${PROJECT_BINARY_DIR}/android/assets/Textures/)
+		install(FILES Demo/Resources/Textures/Level1Water.png DESTINATION ${PROJECT_BINARY_DIR}/android/assets/Textures/)
 
 		install(FILES Demo/Resources/Textures/SmokeAlpha.png DESTINATION ${PROJECT_BINARY_DIR}/android/assets/Textures/)
 		install(FILES Demo/Resources/Textures/Smoke.png DESTINATION ${PROJECT_BINARY_DIR}/android/assets/Textures/)

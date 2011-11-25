@@ -4172,6 +4172,7 @@ Terrain
 					Archivo=./Textures/ConcreteTypeA.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
+					GenerateMipmaps=1
 					UsarColorKey=0
 				}
 				Name=""
@@ -4199,6 +4200,7 @@ Terrain
 					Archivo=./Textures/SandGrey.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
+					GenerateMipmaps=1
 					UsarColorKey=0
 				}
 				Name=""
@@ -4226,6 +4228,7 @@ Terrain
 					Archivo=./Textures/ArenaOscura.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
+					GenerateMipmaps=1
 					UsarColorKey=0
 				}
 				Name=""
@@ -4253,6 +4256,7 @@ Terrain
 					Archivo=./Textures/BluePetrol.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
+					GenerateMipmaps=1
 					UsarColorKey=0
 				}
 				Name=""
@@ -4280,6 +4284,7 @@ Terrain
 					Archivo=./Textures/Bricks.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
+					GenerateMipmaps=1
 					UsarColorKey=0
 				}
 				Name=""
@@ -4317,6 +4322,7 @@ Terrain
 					Archivo=./Textures/ArenaOscura.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
+					GenerateMipmaps=1
 					UsarColorKey=0
 				}
 				Name=""
@@ -4343,6 +4349,7 @@ Terrain
 					Archivo=./Textures/sandPeq.png
 					ArchivoAlpha=""
 					ColorKey=0.000000,0.000000,0.000000
+					GenerateMipmaps=1
 					UsarColorKey=0
 				}
 				Name=""
@@ -4369,6 +4376,7 @@ Terrain
 				Archivo=./Textures/Clouds.png
 				ArchivoAlpha=""
 				ColorKey=0.000000,0.000000,0.000000
+				GenerateMipmaps=1
 				UsarColorKey=0
 			}
 			Name=""
@@ -4390,7 +4398,7 @@ Terrain
 			HorzResolution=50.500000
 			Maxs=1435.498901,17.705995,93.074379
 			Mins=-938.228394,-0.864870,-93.074356
-			Opacity=0.200000
+			Opacity=0.300000
 			Speed=0.110000
 			Texture1=./Textures/WaterB.png
 			Texture2=./Textures/WaterB.png
@@ -4404,6 +4412,7 @@ Terrain
 				Archivo=./Textures/WaterB.png
 				ArchivoAlpha=""
 				ColorKey=0.000000,0.000000,0.000000
+				GenerateMipmaps=1
 				UsarColorKey=0
 			}
 			Name=""
@@ -4417,6 +4426,7 @@ Terrain
 				Archivo=./Textures/WaterB.png
 				ArchivoAlpha=""
 				ColorKey=0.000000,0.000000,0.000000
+				GenerateMipmaps=1
 				UsarColorKey=0
 			}
 			Name=""

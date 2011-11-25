@@ -93,8 +93,8 @@ void ApplyWaterEffect(in sampler2D sampler,in vec2 vCoords, out vec3 color/*,ino
 	
 	vec3 texcolor=texture2D(sampler, uv).xyz;
 	color.rgb = texcolor;
-	color.rgb+=texcolor.rgb*max(0.0,ripplesize)*0.05;
-	color.rgb+=texcolor.rgb*max(0.0,ripplesize2)*0.10;	
+	color.rgb+=texcolor.rgb*max(0.0,ripplesize)*0.075;
+	color.rgb+=texcolor.rgb*max(0.0,ripplesize2)*0.15;	
 }
 #endif
 

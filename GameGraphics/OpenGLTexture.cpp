@@ -513,9 +513,6 @@ bool COpenGLTexture::PrepareTexture(IGenericRender *piRender,int nTextureLevel)
 {
 	if(m_nTextureIndex)
 	{
-#ifdef ANDROID_GLES1
-		glEnable(GL_TEXTURE_2D);
-#endif
 		glBindTexture(GL_TEXTURE_2D,m_nTextureIndex);
 	}
 	return true;
@@ -523,12 +520,6 @@ bool COpenGLTexture::PrepareTexture(IGenericRender *piRender,int nTextureLevel)
 
 void COpenGLTexture::UnprepareTexture(IGenericRender *piRender,int nTextureLevel)
 {
-	if(m_nTextureIndex)
-	{
-#ifdef ANDROID_GLES1
-		glDisable(GL_TEXTURE_2D);
-#endif
-	}
 }
 
 void COpenGLTexture::ReleaseResidentData()

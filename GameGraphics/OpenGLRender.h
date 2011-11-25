@@ -618,11 +618,14 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IOpenGLRend
 	TBufferPool<SLineBuffer>  		m_LineBuffers;
 	TBufferPool<STriangleBuffer>  	m_TriangleBuffers;
 
-	IGenericTexture *				m_pEffectiveTextureLevels[MAX_TEXTURE_LEVELS];
+	IGenericTexture *				m_ppiEffectiveTextureLevels[MAX_TEXTURE_LEVELS];
+	IGenericTexture *				m_ppiTextureLevels[MAX_TEXTURE_LEVELS];
+	IGenericTexture *				m_ppiStagedTextureLevels[MAX_TEXTURE_LEVELS];
+
+	unsigned int 					m_nStagedTextureLevels;
+	unsigned int 					m_nTextureLevels;
 	
-	std::vector<IGenericLight *> m_vLights;
-	std::map<unsigned long,IGenericTexture *>					m_mTextureLevels;
-	std::map<unsigned long,IGenericTexture *>					m_mStagedTextureLevels;
+	std::vector<IGenericLight *> 								m_vLights;
 	std::map<SPointStageKey,SPointStage>						m_mPointStages;
 	std::map<SLineStageKey,SLineStage>							m_mLineStages;
 	std::map<STriangleStageKey,STriangleStage>					m_mTriangleStages;
@@ -701,7 +704,8 @@ public:
 	CVector GetCameraRight();
 	CVector GetCameraUp();
 
-	void ActivateClipping(bool bActivate);
+	void ActivateClipping();
+	void DeactivateClipping();
 	bool IsClippingActive();
 	
 	void SetClipRect(double x,double y,double cx, double cy);
@@ -709,7 +713,6 @@ public:
 	
 	void SelectFont(const char *pFamilyName,double dSize);
 	void SelectTexture(IGenericTexture *pTexture,int nTextureLevel);
-	void SetTextureMatrix(CMatrix *pMatrix,int nTextureLevel);	
 	void UnselectTexture(int nTextureLevel);
 	
 	void SelectNormalMap(IGenericTexture *pTexture);

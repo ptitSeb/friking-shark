@@ -38,6 +38,12 @@ void CScenarioEditorObjectLabel::OnDrawBackground( IGenericRender *piRender )
 	vCenter.c[1]=vMaxs.c[1]+10;
 	double dMaxSize=max(vSize.c[0],vSize.c[2]);
 	double dAspectRatio=m_rRealRect.h?m_rRealRect.w/m_rRealRect.h:0;
+
+	SGameRect sClipRect;
+	ComputeClipRect(&sClipRect);
+	
+	piRender->ActivateClipping();
+	piRender->SetClipRect(sClipRect.x,sClipRect.y,sClipRect.w,sClipRect.h);
 	piRender->SetOrthographicProjection(dMaxSize*dAspectRatio,dMaxSize);
 	piRender->SetCamera(vCenter+CVector(0,vSize.c[1]+10,0),0,-90,0);
 	piRender->SetViewport(m_rRealRect.x,m_rRealRect.y,m_rRealRect.w,m_rRealRect.h);
@@ -49,6 +55,7 @@ void CScenarioEditorObjectLabel::OnDrawBackground( IGenericRender *piRender )
 	if(m_FrameManager.m_piFrameManager){m_vVisualizationAngles.c[YAW]+=30.0*m_FrameManager.m_piFrameManager->GetRealTimeFraction();}
 	piRender->PopState();
 	m_piGUIManager->RestoreViewport();
+	piRender->DeactivateClipping();
 }	
 
 void CScenarioEditorObjectLabel::SetObject(IDesignObject *piObject)

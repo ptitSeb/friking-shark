@@ -47,6 +47,7 @@ public:
 	void	SetFont(IGenericFont *piFont,double dSize);
 	void	GetFont(IGenericFont **ppiFont,double *pdSize);
 
+	void 	ComputeClipRect(SGameRect *pRect);
 	void	UpdateRealRect();
 	void	GetRealRect(SGameRect *pRect);
 	double  GetSizeInLayout();

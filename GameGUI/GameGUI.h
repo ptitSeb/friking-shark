@@ -161,6 +161,7 @@ public:
 	virtual void		SetFont(IGenericFont *piFont,double dSize)=0;
 	virtual void		GetFont(IGenericFont **ppiFont,double *pdSize)=0;
 
+	virtual void 		ComputeClipRect(SGameRect *pRect)=0;
 	virtual void		UpdateRealRect()=0;
 	virtual void		GetRealRect(SGameRect *pRect)=0;
 	virtual	double 		GetSizeInLayout()=0;

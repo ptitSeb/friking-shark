@@ -111,6 +111,8 @@ protected:
 	IGameWindow *FindPreviousFocusableWindow(IGameWindow *pReference);
 	IGameWindow *FindClosestFocusableWindow(IGameWindow *pReference,EFocusableSearchDirection eDirection);
 	
+	void ComputeClipRect(SGameRect *pRect);
+	
 public:
 
 	BEGIN_PROP_MAP(CGameWindowBase)
