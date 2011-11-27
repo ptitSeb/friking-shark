@@ -44,12 +44,8 @@ CPointParticle::CPointParticle(CPointParticleType *pType,IParticleEmitter *piEmi
 
 void CPointParticle::CustomRender(IGenericRender *piRender,IGenericCamera *piCamera)
 {
-	piRender->DeactivateShadowReception();
-	piRender->ActivateBlending();
 	piRender->SetBlendingFunction(m_pType->m_dwBlendOp1,m_pType->m_dwBlendOp2);
 	piRender->RenderPoint(m_PhysicInfo.vPosition,m_dSize,m_vColor,m_dAlpha);
 	piRender->SetBlendingFunction(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	piRender->DeactivateBlending();
-	piRender->ActivateShadowReception();
 }
 

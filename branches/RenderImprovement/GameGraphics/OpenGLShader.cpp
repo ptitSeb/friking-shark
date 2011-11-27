@@ -663,7 +663,7 @@ void COpenGLShader::AddUniformVectors( std::string sUniformName,unsigned int nVa
 	pData->nElements=nValues;
 	
 	float *pFloats=(float*)pData->pBuffer;
-	for(int x=0;x<nValues;x++)
+	for(unsigned int x=0;x<nValues;x++)
 	{
 		*pFloats++=(float)pvVectors->c[0];
 		*pFloats++=(float)pvVectors->c[1];
@@ -707,7 +707,7 @@ void COpenGLShader::AddUniformColors( std::string sUniformName,unsigned int nVal
 	pData->nElements=nValues;
 	
 	float *pFloats=(float*)pData->pBuffer;
-	for(int x=0;x<nValues;x++)
+	for(unsigned int x=0;x<nValues;x++)
 	{
 		*pFloats++=(float)pvColors->c[0];
 		*pFloats++=(float)pvColors->c[1];
@@ -756,7 +756,7 @@ void COpenGLShader::AddUniformMatrixes( std::string sUniformName,unsigned int nV
 	pData->nElements=nValues;
 	
 	float *pFloats=(float*)pData->pBuffer;
-	for(int x=0;x<nValues*16;x++){pFloats[x]=(float)pMatrixes[x];}
+	for(unsigned int x=0;x<nValues*16;x++){pFloats[x]=(float)pMatrixes[x];}
 	
 	if(m_bActive)
 	{

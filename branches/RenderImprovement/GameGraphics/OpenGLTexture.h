@@ -100,8 +100,8 @@ public:
 	virtual void StopRenderingToTexture();
 
 	virtual void ReleaseResidentData();
-	virtual bool PrepareTexture(IGenericRender *piRender,int nTextureLevel);
-	virtual void UnprepareTexture(IGenericRender *piRender,int nTextureLevel);
+	virtual bool PrepareTexture(int nTextureLevel);
+	virtual void UnprepareTexture(int nTextureLevel);
 
 	COpenGLTexture(void);
 	~COpenGLTexture(void);

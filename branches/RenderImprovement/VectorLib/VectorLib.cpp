@@ -2702,3 +2702,67 @@ void ComputeTangentBasis(unsigned int nVertexes, float *pVertexes, unsigned int 
 	delete[] tan1;
 	delete[] tan2;
 }
+
+
+void ComputeFrustumMatrix(CMatrix *pMatrix, double left, double right, double bottom, double top,double znear, double zfar)
+{
+	double temp, temp2, temp3, temp4;
+	temp = 2.0 * znear;
+	temp2 = right - left;
+	temp3 = top - bottom;
+	temp4 = zfar - znear;
+	pMatrix->e[0][0] = temp / temp2;
+	pMatrix->e[1][0] = 0.0;
+	pMatrix->e[2][0] = 0.0;
+	pMatrix->e[3][0] = 0.0;
+	pMatrix->e[0][1] = 0.0;
+	pMatrix->e[1][1] = temp / temp3;
+	pMatrix->e[2][1] = 0.0;
+	pMatrix->e[3][1] = 0.0;
+	pMatrix->e[0][2] = (right + left) / temp2;
+	pMatrix->e[1][2] = (top + bottom) / temp3;
+	pMatrix->e[2][2] = (-zfar - znear) / temp4;
+	pMatrix->e[3][2] = -1.0;
+	pMatrix->e[0][3] = 0.0;
+	pMatrix->e[1][3] = 0.0;
+	pMatrix->e[2][3] = (-temp * zfar) / temp4;
+	pMatrix->e[3][3] = 0.0;
+}
+
+void ComputePerspectiveMatrix(CMatrix *pMatrix, double fovyInDegrees, double aspectRatio,double znear, double zfar)
+{
+	double ymax, xmax;
+	ymax = znear * tanf(fovyInDegrees * PI / 360.0);
+	xmax = ymax * aspectRatio;
+	ComputeFrustumMatrix(pMatrix, -xmax, xmax, -ymax, ymax, znear, zfar);
+}
+
+void ComputeOrthographicMatrix(CMatrix *pMatrix, double dLeft, double dRight, double dBottom, double dTop,double dNear, double dFar)
+{
+	pMatrix->e[0][0]=2.0/(dRight-dLeft);
+	pMatrix->e[1][0]=0;
+	pMatrix->e[2][0]=0;
+	pMatrix->e[3][0]=0;
+	pMatrix->e[0][1]=0;
+	pMatrix->e[1][1]=2.0/(dTop-dBottom);
+	pMatrix->e[2][1]=0;
+	pMatrix->e[3][1]=0;
+	pMatrix->e[0][2]=0;
+	pMatrix->e[1][2]=0;
+	pMatrix->e[2][2]=-2.0/(dFar-dNear);
+	pMatrix->e[3][2]=0;
+	pMatrix->e[0][3]=-(dRight+dLeft)/(dRight-dLeft);
+	pMatrix->e[1][3]=-(dTop+dBottom)/(dTop-dBottom);
+	pMatrix->e[2][3]=-(dFar+dNear)/(dFar-dNear);
+	pMatrix->e[3][3]=1.0;
+}
+
+void ComputeCameraMatrix(CMatrix *pMatrix,const CVector &vPosition,double dYaw, double dPitch, double dRoll)
+{
+	CMatrix tmp,identity;
+	pMatrix->I();
+	if(vPosition.c[0] || vPosition.c[1] || vPosition.c[2]){tmp.T(Origin-vPosition);(*pMatrix)*=tmp;}
+	if(dYaw!=90.0){tmp.R(AxisPosY,DegreesToRadians(0-(dYaw-90)));(*pMatrix)*=tmp;}
+	if(dPitch){tmp.R(AxisPosX,DegreesToRadians(0-dPitch));(*pMatrix)*=tmp;}
+	if(dRoll){tmp.R(AxisPosZ,DegreesToRadians(0-dRoll));(*pMatrix)*=tmp;}
+}

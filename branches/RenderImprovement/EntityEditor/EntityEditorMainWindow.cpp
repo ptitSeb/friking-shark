@@ -257,6 +257,7 @@ void CEntityEditorMainWindow::OnDraw(IGenericRender *piRender)
 	m_Render.m_piRender->EnableBlending();
 	m_Render.m_piRender->EnableShadows();
 	m_Render.m_piRender->EnableLighting();
+	m_Render.m_piRender->EnableAutoShadowVolume();
 	m_Render.m_piRender->DisableHeightFog();
 	
 	

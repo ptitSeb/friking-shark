@@ -19,6 +19,10 @@
 #ifndef _STDAFX_
 #define _STDAFX_
 
+#ifdef WIN32
+#pragma warning ( disable : 4244 )
+#endif
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -28,7 +32,6 @@
 #include "GameRunTimeLib.h"
 #include "VectorLib.h"
 #include "GameGraphics.h"
-#include "OpenGLGraphics.h"
 
 #define GL_GLEXT_PROTOTYPES
 #ifdef ANDROID
@@ -56,11 +59,17 @@
 		#define glFramebufferRenderbufferEXT glFramebufferRenderbuffer
 		#define glCheckFramebufferStatusEXT glCheckFramebufferStatus
 		static void glColorMaterial( GLenum face, GLenum mode ){};
+		static void glDisableVertexAttribArray (GLuint index){}
+		static void glEnableVertexAttribArray (GLuint index){}
+		static void glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid *pointer){}
+		
 	#else
 		#include <GLES2/gl2.h>
-
+		
 		typedef GLuint GLhandleARB;
 		typedef char GLcharARB;
+		
+		static void glPointSize(GLfloat ){};
 		
 		#define GL_FRAGMENT_SHADER_ARB GL_FRAGMENT_SHADER
 		#define GL_VERTEX_SHADER_ARB GL_VERTEX_SHADER
@@ -104,13 +113,33 @@
 		#define glFramebufferRenderbufferEXT glFramebufferRenderbuffer
 		#define glCheckFramebufferStatusEXT glCheckFramebufferStatus
 	#endif
+		
+	#define GL_LINE 0
+	#define GL_FILL 0
+	#define GL_LINE_STIPPLE 0
+	static void glEnableLineStipple(){};
+	static void glDisableLineStipple(){};
+	static void glLineStipple( GLint factor, GLushort pattern ){};
+	static void glPolygonMode( GLenum face, GLenum mode ){};
+	static void glGenVertexArrays(GLsizei n, GLuint * arrays){for(GLsizei x=0;x<n;x++){arrays[n]=0;}}
+	static void glDeleteVertexArrays(GLsizei n, const GLuint * arrays){}
+	static void glBindVertexArray(GLuint array){}
+	static void glDrawElementsInstancedARB(GLenum mode, GLsizei count, GLenum type, const GLvoid * indices, GLsizei primcount){}
+	
 #else
-#include "GLee.h"
-#include <GL/glu.h>
+	#include "GLee.h"
+	#include <GL/glu.h>
+		
+	static void glEnableLineStipple(){glEnable(GL_LINE_STIPPLE);};
+	static void glDisableLineStipple(){glDisable(GL_LINE_STIPPLE);};
+		
 #endif
+
+#include "OpenGLGraphics.h"
 
 DECLARE_CUSTOM_WRAPPER1(CGenericTextureWrapper,IGenericTexture,m_piTexture)
 DECLARE_CUSTOM_WRAPPER1(CGenericLightWrapper,IGenericLight,m_piLight)
 DECLARE_CUSTOM_WRAPPER1(CGenericShaderWrapper,IGenericShader,m_piShader)
+DECLARE_CUSTOM_WRAPPER1(COpenGLRenderWrapper,IOpenGLRender,m_piOpenGLRender)
 
 #endif

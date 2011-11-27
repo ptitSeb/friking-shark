@@ -24,22 +24,27 @@
 #include "OpenGLGraphics.h"
 #include "OpenGLCamera.h"
 #include "OpenGLLight.h"
-#include "OpenGLRender.h"
 #include "OpenGLTexture.h"
 #include "OpenGLModel.h"
 #include "OpenGLViewport.h"
 #include "OpenGLFont.h"
 #include "OpenGLShader.h"
+#include "OpenGLRender.h"
 
-#ifdef ANDROID
-	#ifdef ANDROID_GLES1
-		#pragma message ("GameGraphics: Using GLES 1")
-	#else
-		#pragma message ("GameGraphics: Using GLES 2")
-	#endif
+#ifndef ANDROID_GLES2
+#include "OpenGLRenderForwardFixed.h"
+#endif
+#ifndef ANDROID_GLES1
+#include "OpenGLRenderForwardShader.h"
 #endif
 
 BEGIN_SYSTEM_MODULE(GameGraphics)
+#ifndef ANDROID_GLES2
+	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(COpenGLRenderForwardFixed,"RenderForwardFixed");
+#endif
+#ifndef ANDROID_GLES1
+	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(COpenGLRenderForwardShader,"RenderForwardShader");
+#endif
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(COpenGLRender,"Render");
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(COpenGLTexture,"Texture");
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(COpenGLModel,"Model");

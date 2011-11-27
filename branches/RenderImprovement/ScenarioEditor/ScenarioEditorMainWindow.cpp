@@ -428,10 +428,11 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 	m_bShadows?m_Render.m_piRender->EnableShadows():m_Render.m_piRender->DisableShadows();
 	m_bFog?m_Render.m_piRender->EnableHeightFog():m_Render.m_piRender->DisableHeightFog();
 	m_bStats?m_Render.m_piRender->EnableStagedRenderingStats():m_Render.m_piRender->DisableStagedRenderingStats();
-
+	m_bSimulationStarted && !m_bInspectionMode?m_Render.m_piRender->DisableAutoShadowVolume():m_Render.m_piRender->EnableAutoShadowVolume();
+	
 	if(m_bSimulationStarted)
-	{		
-		if(!m_bInspectionMode){m_PlayerManagerWrapper.m_piPlayerManager->ProcessInput(m_piGUIManager,m_FrameManager.m_piFrameManager->GetCurrentTime(),m_FrameManager.m_piFrameManager->GetTimeFraction());m_Render.m_piRender->DisableAutoShadowVolume();}
+	{	
+		if(!m_bInspectionMode){m_PlayerManagerWrapper.m_piPlayerManager->ProcessInput(m_piGUIManager,m_FrameManager.m_piFrameManager->GetCurrentTime(),m_FrameManager.m_piFrameManager->GetTimeFraction());}
 		m_GameControllerWrapper.m_piGameController->ProcessFrame(m_FrameManager.m_piFrameManager->GetCurrentTime(),m_FrameManager.m_piFrameManager->GetTimeFraction());
 		IGenericCamera *piPlayCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera();
 		IGenericCamera *piCamera=NULL;
