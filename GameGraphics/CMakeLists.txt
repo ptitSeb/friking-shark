@@ -36,6 +36,31 @@ SET (SRCS_GAMEGRAPHICS
 	./GameGraphics/stdafx.cpp
 )
 IF(ANDROID)
+	IF(ANDROID_GLES1)
+		SET (SRCS_GAMEGRAPHICS
+		${SRCS_GAMEGRAPHICS}
+		./GameGraphics/OpenGLRenderForwardFixed.h
+		./GameGraphics/OpenGLRenderForwardFixed.cpp
+)
+	ELSE()
+		SET (SRCS_GAMEGRAPHICS
+		${SRCS_GAMEGRAPHICS}
+		./GameGraphics/OpenGLRenderForwardShader.h
+		./GameGraphics/OpenGLRenderForwardShader.cpp
+)
+	ENDIF()
+ELSE()
+	SET (SRCS_GAMEGRAPHICS
+	${SRCS_GAMEGRAPHICS}
+	./GameGraphics/OpenGLRenderForwardFixed.h
+	./GameGraphics/OpenGLRenderForwardShader.h
+	./GameGraphics/OpenGLRenderForwardFixed.cpp
+	./GameGraphics/OpenGLRenderForwardShader.cpp
+)
+ENDIF()
+
+
+IF(ANDROID)
 	ADD_LIBRARY ( GameGraphics ${SRCS_GAMEGRAPHICS} )
 ELSE()
 	ADD_LIBRARY ( GameGraphics SHARED ${SRCS_GAMEGRAPHICS} )

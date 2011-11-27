@@ -232,8 +232,8 @@ public:
 
 	// for the render only
 
-	virtual bool PrepareTexture(IGenericRender *piRender,int nTextureLevel)=0;
-	virtual void UnprepareTexture(IGenericRender *piRender,int nTextureLevel)=0;
+	virtual bool PrepareTexture(int nTextureLevel)=0;
+	virtual void UnprepareTexture(int nTextureLevel)=0;
 	
 	virtual void ReleaseResidentData()=0;
 };
@@ -482,10 +482,7 @@ public:
 	
 	virtual void SelectTexture(IGenericTexture *pTexture,int nTextureLevel)=0;
 	virtual void UnselectTexture(int nTextureLevel)=0;
-	
-	virtual void SelectNormalMap(IGenericTexture *pTexture)=0;
-	virtual void UnselectNormalMap()=0;
-	
+		
 	virtual void SetSkyShadowParameters(double dSpeed, double dXResolution, double dZResolution, double dOpacity)=0;
 	virtual void SelectSkyShadow(IGenericTexture *pTexture)=0;
 	virtual void UnselectSkyShadow()=0;

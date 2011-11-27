@@ -322,6 +322,10 @@ void		ToOpenGLMatrix(CMatrix *pMatrix,double *dMatrix);
 void		ToOpenGLMatrix(CMatrix *pMatrix,float *dMatrix);
 
 void 		ComputeReferenceSystem( CVector vRefSysPos,CVector vRefSysAngles,CVector vPosition,CVector vAngles,CVector *pvPosition,CVector *pvAngles,CVector *pvX=NULL,CVector *pvY=NULL,CVector *pvZ=NULL);
+void 		ComputePerspectiveMatrix(CMatrix *pMatrix, double fovyInDegrees, double aspectRatio,double znear, double zfar);
+void 		ComputeCameraMatrix(CMatrix *pMatrix,const CVector &vPosition,double dYaw, double dPitch, double dRoll);
+void 		ComputeOrthographicMatrix(CMatrix *pMatrix, double dLeft, double dRight, double dBottom, double dTop,double dNear, double dFar);
+void 		ComputeFrustumMatrix(CMatrix *pMatrix, double left, double right, double bottom, double top,double znear, double zfar);
 
 void 		ComputeTangentBasis(unsigned int nVertexes, float *pVertexes, unsigned int nFaces, unsigned int *pFaces, float *pTextCoords,float *pNormals,float *pTangents, float *pBitangents);
 

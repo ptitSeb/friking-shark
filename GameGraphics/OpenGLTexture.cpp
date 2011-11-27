@@ -509,7 +509,7 @@ void COpenGLTexture::StopRenderingToTexture()
 #endif
 }
 
-bool COpenGLTexture::PrepareTexture(IGenericRender *piRender,int nTextureLevel)
+bool COpenGLTexture::PrepareTexture(int nTextureLevel)
 {
 	if(m_nTextureIndex)
 	{
@@ -518,7 +518,7 @@ bool COpenGLTexture::PrepareTexture(IGenericRender *piRender,int nTextureLevel)
 	return true;
 }
 
-void COpenGLTexture::UnprepareTexture(IGenericRender *piRender,int nTextureLevel)
+void COpenGLTexture::UnprepareTexture(int nTextureLevel)
 {
 }
 

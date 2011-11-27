@@ -106,7 +106,7 @@ IF(NOT ANDROID)
 	INCLUDE ( ./EntityEditor/CMakeLists.txt )
 	INCLUDE ( ./FormationEditor/CMakeLists.txt )
 	INCLUDE ( ./ScenarioEditor/CMakeLists.txt )
-	INCLUDE ( ./IATestSystems/CMakeLists.txt )
+#	INCLUDE ( ./IATestSystems/CMakeLists.txt )
 ENDIF(NOT ANDROID)
 
 IF(ANDROID)

@@ -355,9 +355,8 @@ void COpenGLModel::UpdateBufferObjects()
 				
 				if(pBuffer->nBufferObject!=0){glDeleteBuffers(1,&pBuffer->nBufferObject);pBuffer->nBufferObject=0;}
 				if(pBuffer->nIndexesBufferObject!=0){glDeleteBuffers(1,&pBuffer->nIndexesBufferObject);pBuffer->nIndexesBufferObject=0;}
-#ifndef ANDROID
 				if(pBuffer->nVertexArrayObject!=0){glDeleteVertexArrays(1,&pBuffer->nVertexArrayObject);pBuffer->nVertexArrayObject=0;}
-#endif
+
 				int nDataPerVertex=0;
 				unsigned int nOffset=0;
 				if(bStrided)
@@ -406,14 +405,12 @@ void COpenGLModel::UpdateBufferObjects()
 						}
 					}
 				}
-				#if !defined ANDROID && !defined ANDROID_GLES1
 				glGenVertexArrays(1,&pBuffer->nVertexArrayObject);
 				pBuffer->bVertexArrayConfigured=false;
 				if(pBuffer->nVertexArrayObject==0)
 				{
 					RTTRACE("COpenGLModel::UpdateBufferObjects -> Failed to create vertex array object");
 				}
-				#endif
 				
 				// Generacion del buffer object
 				glGenBuffers(1,&pBuffer->nBufferObject);
@@ -439,7 +436,7 @@ void COpenGLModel::UpdateBufferObjects()
 							pTempTex[x]=pBuffer->vTextureLevels[x]->pTexVertexArray;
 						}
 
-						for(unsigned int x=0;x<pBuffer->nVertexes;x++)
+						for(int x=0;x<pBuffer->nVertexes;x++)
 						{
 							unsigned int dwOffset=0;
 
@@ -850,13 +847,13 @@ void COpenGLModel::GetBSPOptions(bool *pbLoad)
 	if(pbLoad){*pbLoad=m_bLoadBSP;}
 }
 
-void COpenGLModel::PrepareRenderBuffer(IOpenGLRender *piRender, unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer ,bool bRenderingShadow,SOpenGLRenderMappings *pRenderMappings)
+void COpenGLModel::PrepareRenderBuffer(IOpenGLRender *piGLRender, unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer ,bool bRenderingShadow,SOpenGLRenderMappings *pRenderMappings)
 {
 	if(m_bLoadPending){LoadFromFile();}
 	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation,nFrame,nBuffer);
 	if(pBuffer==NULL){return;}
 	
-	bool bUseNormalMap=(!bRenderingShadow && pBuffer->pNormalMapArray && piRender->AreNormalMapsEnabled());
+	bool bUseNormalMap=(!bRenderingShadow && pBuffer->pNormalMapArray);
 	
 	int nOffset=0;
 	SVertexBufferObject object;
@@ -892,25 +889,32 @@ void COpenGLModel::PrepareRenderBuffer(IOpenGLRender *piRender, unsigned int nAn
 		object.nBitangentStride=pBuffer->nBitangentStride;
 	}
 
-	if(piRender->AreTexturesEnabled())
+	object.nTextures=pBuffer->vTextureLevels.size();
+	for(unsigned int x=0;x<pBuffer->vTextureLevels.size() && x<2;x++)
 	{
-		object.nTextures=pBuffer->vTextureLevels.size();
+		SModelTextureLevel *pTextureLevel=pBuffer->vTextureLevels[x];
+		if(pTextureLevel && pTextureLevel->texture.m_piTexture && pTextureLevel->pTexVertexArray)
+		{
+			object.pTexOffsets[x]=pBuffer->pTexOffset[x];
+			object.pTexStrides[x]=pBuffer->pTexStride[x];
+		}
+	}
+	
+	if(!bRenderingShadow)
+	{
 		for(unsigned int x=0;x<pBuffer->vTextureLevels.size() && x<2;x++)
 		{
 			SModelTextureLevel *pTextureLevel=pBuffer->vTextureLevels[x];
 			if(pTextureLevel && pTextureLevel->texture.m_piTexture && pTextureLevel->pTexVertexArray)
 			{
-				object.pTexOffsets[x]=pBuffer->pTexOffset[x];
-				object.pTexStrides[x]=pBuffer->pTexStride[x];
 				if(!bRenderingShadow)
 				{
-					piRender->PrepareTexture(pBuffer->vTextureLevels[x]->texture.m_piTexture,x);
+					piGLRender->PrepareTexture(pBuffer->vTextureLevels[x]->texture.m_piTexture,x);
 				}
 			}
 		}
 	}
-
-#ifndef ANDROID
+	
 	if(pBuffer->nVertexArrayObject && !pBuffer->bVertexArrayConfigured)
 	{
 		pBuffer->bVertexArrayConfigured=true;
@@ -942,63 +946,67 @@ void COpenGLModel::PrepareRenderBuffer(IOpenGLRender *piRender, unsigned int nAn
 		glBindBuffer(GL_ARRAY_BUFFER,0);
 		glBindVertexArray(0);
 	}
-#endif
+
 	if(pBuffer->nBufferObject)
 	{
-		piRender->SetVertexBufferObject(&object);
+		piGLRender->SetVertexBufferObject(&object);
 	}
 	else
 	{
 		float *pTexLevels[2];
 		pTexLevels[0]=pBuffer->vTextureLevels.size()>0?pBuffer->vTextureLevels[0]->pTexVertexArray:NULL;
 		pTexLevels[1]=pBuffer->vTextureLevels.size()>1?pBuffer->vTextureLevels[1]->pTexVertexArray:NULL;
-		piRender->SetVertexPointers(pBuffer->pVertexArray,pBuffer->pNormalArray,pBuffer->pColorArray,pBuffer->vTextureLevels.size(),pTexLevels,pBuffer->pNormalMapArray,pBuffer->pTangentArray,pBuffer->pBitangentArray);
+		piGLRender->SetVertexPointers(pBuffer->pVertexArray,pBuffer->pNormalArray,pBuffer->pColorArray,pBuffer->vTextureLevels.size(),pTexLevels,pBuffer->pNormalMapArray,pBuffer->pTangentArray,pBuffer->pBitangentArray);
 	}
 
 }
 
 
-void COpenGLModel::CallRenderBuffer(IOpenGLRender *piRender, unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,unsigned int nInstances)
+void COpenGLModel::CallRenderBuffer(IOpenGLRender *piGLRender,  unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer,unsigned int nInstances)
 {
 	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation,nFrame,nBuffer);
 	if(pBuffer==NULL){return;}
 
 	if(pBuffer->nBufferObject)
 	{
-#ifndef ANDROID
-		glDrawElementsInstancedARB(GL_TRIANGLES,pBuffer->nFaces*3,GL_UNSIGNED_SHORT,NULL,nInstances);
-#else
-		if(nInstances!=1){RTTRACE("COpenGLModel::CallRenderBuffer -> ERROR: GLES does not support object instancing !!!");}
-		glDrawElements(GL_TRIANGLES,pBuffer->nFaces*3,GL_UNSIGNED_SHORT,NULL);
-#endif
+		if(nInstances==1)
+		{
+			glDrawElements(GL_TRIANGLES,pBuffer->nFaces*3,GL_UNSIGNED_SHORT,NULL);
+		}
+		else
+		{
+			glDrawElementsInstancedARB(GL_TRIANGLES,pBuffer->nFaces*3,GL_UNSIGNED_SHORT,NULL,nInstances);
+		}
 	}
+#ifndef ANDROID_GLES1
 	else
 	{
 		glDrawElements(GL_TRIANGLES,pBuffer->nFaces*3,GL_UNSIGNED_INT,pBuffer->pFaceVertexIndexes);
 	}
+#endif
 }
 
-void COpenGLModel::UnPrepareRenderBuffer(IOpenGLRender *piRender, unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer ,bool bRenderingShadow,SOpenGLRenderMappings *pRenderMappings)
+void COpenGLModel::UnPrepareRenderBuffer(IOpenGLRender *piGLRender, unsigned int nAnimation,unsigned int nFrame, unsigned int nBuffer ,bool bRenderingShadow,SOpenGLRenderMappings *pRenderMappings)
 {
 	SModelRenderBuffer *pBuffer=GetRenderBuffer(nAnimation,nFrame,nBuffer);
 	if(pBuffer==NULL){return;}
 	if(pBuffer->nBufferObject)
 	{
-		piRender->SetVertexBufferObject(NULL);
+		piGLRender->SetVertexBufferObject(NULL);
 	}
 	else
 	{
-		piRender->SetVertexPointers(NULL,NULL,NULL,0,NULL,NULL,NULL,NULL);
+		piGLRender->SetVertexPointers(NULL,NULL,NULL,0,NULL,NULL,NULL,NULL);
 	}
 		
 
-	if(!bRenderingShadow && piRender->AreTexturesEnabled())
+	if(!bRenderingShadow)
 	{
 		for(unsigned int x=0;x<pBuffer->vTextureLevels.size();x++)
 		{
 			if(pBuffer->vTextureLevels[x]->texture.m_piTexture && pBuffer->vTextureLevels[x]->pTexVertexArray)
 			{
-				piRender->UnprepareTexture(x);
+				piGLRender->UnprepareTexture(x);
 			}
 		}
 	}
@@ -1113,9 +1121,8 @@ SModelRenderBuffer::~SModelRenderBuffer()
 
 	if(nBufferObject!=0){glDeleteBuffers(1,&nBufferObject);nBufferObject=0;}
 	if(nIndexesBufferObject!=0){glDeleteBuffers(1,&nIndexesBufferObject);nIndexesBufferObject=0;}
-#ifndef ANDROID
 	if(nVertexArrayObject!=0){glDeleteVertexArrays(1,&nVertexArrayObject);nVertexArrayObject=0;}
-#endif
+	
 	delete [] pVertexArray;
 	delete [] pNormalArray;
 	delete [] pNormalMapArray;
