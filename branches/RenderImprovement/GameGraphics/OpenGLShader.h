@@ -72,6 +72,14 @@ struct SAttributeData
 	SAttributeData():nIndex(-1),bModified(false){}
 };
 
+struct SDataLocationData
+{
+	int   nIndex;
+	bool  bModified;
+	
+	SDataLocationData():nIndex(-1),bModified(false){}
+};
+
 class COpenGLShader: virtual public CSystemObjectBase, virtual public IGenericShader
 {
   bool        m_bTriedToCompile;
@@ -88,6 +96,7 @@ class COpenGLShader: virtual public CSystemObjectBase, virtual public IGenericSh
   
   std::map<std::string,SUniformData*>  m_mUniforms;
   std::map<std::string,SAttributeData> m_mAttributes;
+  std::map<std::string,SDataLocationData> m_mDataLocations;
   
   bool LoadCodeFile(std::string sSourceFile,std::string *psSourceCode);
   void FreeShader();
@@ -117,6 +126,8 @@ public:
 	void AddUniformMatrixes( std::string sUniformName,unsigned int nValues,float *pMatrixes,bool temporal);
 	
 	void AddAttribute( std::string sAttributeName,int nIndex);
+	
+	void AddData( std::string sDataName,int nValue);
 	
 	bool Activate();
     void Deactivate();

@@ -375,6 +375,8 @@ struct IGenericShader:virtual public ISystemUnknown
 	
 	virtual void AddAttribute( std::string sAttributeName,int nIndex)=0;
 	
+	virtual void AddData( std::string sDataName,int nValue)=0;
+	
 	virtual bool Activate()=0;
 	virtual void Deactivate()=0;
 

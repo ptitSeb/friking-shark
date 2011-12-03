@@ -1676,17 +1676,36 @@ void COpenGLRender::StartFrame()
 
 		if(m_sHardwareSupport.bShaders)
 		{
-			if(m_Kernel.Create(m_piSystem,"RenderForwardShader",""))
+			if(m_Kernel.m_piOpenGLRender==NULL)
 			{
-				if(!m_Kernel.m_piOpenGLRender->Setup(this,m_piCurrentViewport,m_sHardwareSupport))
+				if(m_Kernel.Create(m_piSystem,"RenderDeferred",""))
 				{
-					m_Kernel.Destroy();
-					RTTRACE("COpenGLRender::StartFrame -> Failed to setup shader based render, falling back to fixed pipeline");
+					if(!m_Kernel.m_piOpenGLRender->Setup(this,m_piCurrentViewport,m_sHardwareSupport))
+					{
+						m_Kernel.Destroy();
+						RTTRACE("COpenGLRender::StartFrame -> Failed to setup deferred render, falling back to shader render");
+					}
+				}
+				else
+				{
+					RTTRACE("COpenGLRender::StartFrame -> Failed to create deferred render, falling back to shader render");
 				}
 			}
-			else
+			
+			if(m_Kernel.m_piOpenGLRender==NULL)
 			{
-				RTTRACE("COpenGLRender::StartFrame -> Failed to create shader based render, falling back to fixed pipeline");
+				if(m_Kernel.Create(m_piSystem,"RenderForwardShader",""))
+				{
+					if(!m_Kernel.m_piOpenGLRender->Setup(this,m_piCurrentViewport,m_sHardwareSupport))
+					{
+						m_Kernel.Destroy();
+						RTTRACE("COpenGLRender::StartFrame -> Failed to setup shader based render, falling back to fixed pipeline");
+					}
+				}
+				else
+				{
+					RTTRACE("COpenGLRender::StartFrame -> Failed to create shader based render, falling back to fixed pipeline");
+				}
 			}
 		}
 		if(m_Kernel.m_piOpenGLRender==NULL)
