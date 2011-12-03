@@ -65,6 +65,7 @@ void COpenGLShader::AddUniformMatrixes( std::string sUniformName,unsigned int nV
 void COpenGLShader::AddUniformMatrixes( std::string sUniformName,unsigned int nValues,float *pMatrixes,bool temporal){}
 
 void COpenGLShader::AddAttribute( std::string sAttributeName,int nIndex){}
+void COpenGLShader::AddData( std::string sDataLocationName,int nIndex){}
 
 bool COpenGLShader::Activate(){return false;}
 void COpenGLShader::Deactivate(){}
@@ -202,7 +203,15 @@ bool COpenGLShader::Compile()
 		//if(error!=GL_NO_ERROR){RTTRACE("COpenGLShader::Compile -> %s: failed to bomd attrib location for %s, error %x",m_sFragmentShader.c_str(),iAttribute->first.c_str(),error);}
 		pData->bModified=false;
 	}
-
+	
+	std::map<std::string,SDataLocationData>::iterator iDataLocation;
+	for(iDataLocation=m_mDataLocations.begin();iDataLocation!=m_mDataLocations.end();iDataLocation++)
+	{
+		SDataLocationData *pData=&iDataLocation->second;
+		glBindFragDataLocation(m_hShaderProgram,pData->nIndex,iDataLocation->first.c_str());
+		pData->bModified=false;
+	}
+	
 	if(bOk)
 	{
 		GLint glResult=0;
@@ -826,6 +835,14 @@ void COpenGLShader::AddAttribute( std::string sAttributeName,int nIndex)
 	data.nIndex=nIndex;
 	data.bModified=true;
 	m_mAttributes[sAttributeName]=data;
+}
+
+void COpenGLShader::AddData( std::string sDataLocationName,int nIndex)
+{
+	SDataLocationData data;
+	data.nIndex=nIndex;
+	data.bModified=true;
+	m_mDataLocations[sDataLocationName]=data;
 }
 
 void COpenGLShader::Deactivate()

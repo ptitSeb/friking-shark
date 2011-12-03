@@ -37,6 +37,9 @@
 #ifndef ANDROID_GLES1
 #include "OpenGLRenderForwardShader.h"
 #endif
+#ifndef ANDROID
+#include "OpenGLRenderDeferred.h"
+#endif
 
 BEGIN_SYSTEM_MODULE(GameGraphics)
 #ifndef ANDROID_GLES2
@@ -44,6 +47,9 @@ BEGIN_SYSTEM_MODULE(GameGraphics)
 #endif
 #ifndef ANDROID_GLES1
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(COpenGLRenderForwardShader,"RenderForwardShader");
+#endif
+#ifndef ANDROID
+	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(COpenGLRenderDeferred,"RenderDeferred");
 #endif
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(COpenGLRender,"Render");
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(COpenGLTexture,"Texture");

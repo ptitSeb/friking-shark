@@ -54,8 +54,10 @@ ELSE()
 	${SRCS_GAMEGRAPHICS}
 	./GameGraphics/OpenGLRenderForwardFixed.h
 	./GameGraphics/OpenGLRenderForwardShader.h
+	./GameGraphics/OpenGLRenderDeferred.h
 	./GameGraphics/OpenGLRenderForwardFixed.cpp
 	./GameGraphics/OpenGLRenderForwardShader.cpp
+	./GameGraphics/OpenGLRenderDeferred.cpp
 )
 ENDIF()
 
