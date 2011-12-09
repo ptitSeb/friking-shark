@@ -224,6 +224,10 @@
 				RelativePath=".\SystemUnknownBase.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\TimeMeter.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -276,6 +280,10 @@
 			</File>
 			<File
 				RelativePath=".\SystemUnknownBase.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TimeMeter.h"
 				>
 			</File>
 		</Filter>

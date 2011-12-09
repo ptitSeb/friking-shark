@@ -183,7 +183,14 @@ unsigned int GetTimeStamp()
 	QueryPerformanceCounter(&ldNow);
 	return (unsigned int)(ldNow.QuadPart*1000/ldPerformanceFrequency.QuadPart);
 }
-
+double GetMicrosecondTimeStamp()
+{
+	LARGE_INTEGER ldNow={0};
+	LARGE_INTEGER ldPerformanceFrequency={0};
+	QueryPerformanceFrequency(&ldPerformanceFrequency);
+	QueryPerformanceCounter(&ldNow);
+	return (double)(ldNow.QuadPart*1000/(ldPerformanceFrequency.QuadPart/1000));
+}
 std::string GetWorkingFolder()
 {
 	char sCurrentPath[MAX_PATH]={0};

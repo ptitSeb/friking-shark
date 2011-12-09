@@ -913,6 +913,10 @@ void COpenGLModel::PrepareRenderBuffer(IOpenGLRender *piGLRender, unsigned int n
 				}
 			}
 		}
+		if(pBuffer->normalMap.m_piTexture && pBuffer->pNormalMapArray)
+		{
+			piGLRender->PrepareNormalMap(pBuffer->normalMap.m_piTexture);
+		}
 	}
 	
 	if(pBuffer->nVertexArrayObject && !pBuffer->bVertexArrayConfigured)
@@ -1008,6 +1012,10 @@ void COpenGLModel::UnPrepareRenderBuffer(IOpenGLRender *piGLRender, unsigned int
 			{
 				piGLRender->UnprepareTexture(x);
 			}
+		}
+		if(pBuffer->normalMap.m_piTexture && pBuffer->pNormalMapArray)
+		{
+			piGLRender->UnprepareNormalMap();
 		}
 	}
 }

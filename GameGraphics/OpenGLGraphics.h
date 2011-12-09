@@ -605,6 +605,9 @@ public:
 	virtual void PrepareTexture(IGenericTexture *piTexture,unsigned int nTextureLevel)=0;
 	virtual void UnprepareTexture(unsigned int nTextureLevel)=0;
 	
+	virtual void PrepareNormalMap(IGenericTexture *piNormalMap)=0;
+	virtual void UnprepareNormalMap()=0;
+
 	virtual void StartSelection(SGameRect rWindowRect,IGenericCamera *piCamera,double dx,double dy,double dPrecision)=0;
 	virtual void SetSelectionId(unsigned int nId)=0;
 	virtual int EndSelection()=0;

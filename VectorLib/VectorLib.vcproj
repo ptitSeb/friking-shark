@@ -272,6 +272,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OBJFiles.cpp"
+				>
+			</File>
+			<File
 				RelativePath="StdAfx.cpp"
 				>
 				<FileConfiguration
@@ -342,6 +346,10 @@
 			</File>
 			<File
 				RelativePath=".\GCMFiles.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OBJFiles.h"
 				>
 			</File>
 			<File

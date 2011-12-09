@@ -27,6 +27,9 @@
 #define DEFERRED_SAMPLER_DEPTH 2
 #define DEFERRED_SAMPLER_SHADOW 3
 #define DEFERRED_SAMPLER_SKY 4
+#define DEFERRED_SAMPLER_NORMAL_MAP 5
+
+#define LIGHT_SIZE_INCREMENT 1.5
 
 #ifdef ANDROID 
 	#define DEFAULT_SHADOW_SIZE 512
@@ -80,7 +83,9 @@ COpenGLRenderDeferred::COpenGLRenderDeferred(void)
 	m_pLastBitangentPointer=NULL;
 	m_pLastTexPointer[0]=NULL;
 	m_pLastTexPointer[1]=NULL;
-	
+
+	m_piEffectiveNormalMap=NULL;
+
 	memset(m_ppiEffectiveTextureLevels,0,sizeof(m_ppiEffectiveTextureLevels));
 	memset(m_ppiTextureLevels,0,sizeof(m_ppiTextureLevels));
 }
@@ -138,12 +143,7 @@ bool COpenGLRenderDeferred::Setup(IGenericRender *piRender,IGenericViewport *piV
 		bOk=m_DeferredShaderWaterSun.Create(m_piSystem,"Shader","");
 		if(bOk)
 		{
-			char sTemp[128];
-			std::string sPreprocessor,sDescription=":";
-			sprintf(sTemp,"#define MAX_DYNAMIC_LIGHTS %d\n",MAX_DYNAMIC_LIGHTS);
-			sPreprocessor+=sTemp;
-			
-			m_DeferredShaderWaterSun.m_piShader->Load("Shaders/RenderShader-Deferred-Water-Sun-Vertex.c","Shaders/RenderShader-Deferred-Water-Sun-Fragment.c",sPreprocessor);
+			m_DeferredShaderWaterSun.m_piShader->Load("Shaders/RenderShader-Deferred-Water-Sun-Vertex.c","Shaders/RenderShader-Deferred-Water-Sun-Fragment.c","");
 			bOk=m_DeferredShaderWaterSun.m_piShader->Compile();
 			if(!bOk)
 			{
@@ -167,13 +167,8 @@ bool COpenGLRenderDeferred::Setup(IGenericRender *piRender,IGenericViewport *piV
 		
 		bOk=m_DeferredShaderNoWaterSun.Create(m_piSystem,"Shader","");
 		if(bOk)
-		{
-			char sTemp[128];
-			std::string sPreprocessor,sDescription=":";
-			sprintf(sTemp,"#define MAX_DYNAMIC_LIGHTS %d\n",MAX_DYNAMIC_LIGHTS);
-			sPreprocessor+=sTemp;
-			
-			m_DeferredShaderNoWaterSun.m_piShader->Load("Shaders/RenderShader-Deferred-NoWater-Sun-Vertex.c","Shaders/RenderShader-Deferred-NoWater-Sun-Fragment.c",sPreprocessor);
+		{			
+			m_DeferredShaderNoWaterSun.m_piShader->Load("Shaders/RenderShader-Deferred-NoWater-Sun-Vertex.c","Shaders/RenderShader-Deferred-NoWater-Sun-Fragment.c","");
 			bOk=m_DeferredShaderNoWaterSun.m_piShader->Compile();
 			if(!bOk)
 			{
@@ -199,13 +194,8 @@ bool COpenGLRenderDeferred::Setup(IGenericRender *piRender,IGenericViewport *piV
 	{
 		bOk=m_DeferredShaderDynamic.Create(m_piSystem,"Shader","");
 		if(bOk)
-		{
-			char sTemp[128];
-			std::string sPreprocessor,sDescription=":";
-			sprintf(sTemp,"#define MAX_DYNAMIC_LIGHTS %d\n",MAX_DYNAMIC_LIGHTS);
-			sPreprocessor+=sTemp;
-			
-			m_DeferredShaderDynamic.m_piShader->Load("Shaders/RenderShader-Deferred-Dynamic-Vertex.c","Shaders/RenderShader-Deferred-Dynamic-Fragment.c",sPreprocessor);
+		{			
+			m_DeferredShaderDynamic.m_piShader->Load("Shaders/RenderShader-Deferred-Dynamic-Vertex.c","Shaders/RenderShader-Deferred-Dynamic-Fragment.c","");
 			bOk=m_DeferredShaderDynamic.m_piShader->Compile();
 			if(!bOk)
 			{
@@ -717,7 +707,7 @@ void COpenGLRenderDeferred::RenderDeferred(bool bShadowsPresent,bool bWaterPrese
 				double dLightViewportY=(0.5+dRelUp*0.5)*(double)m_pScene->camera.m_nViewportH;
 				
 				double dPixelsPerUnit=((double)m_pScene->camera.m_nViewportW)/(2.0*dCameraPlaneRight);
-				double dSize=dPixelsPerUnit*piLight->GetOmniRadius();
+				double dSize=dPixelsPerUnit*(piLight->GetOmniRadius()*LIGHT_SIZE_INCREMENT);
 				
 				double dLightTexCoordU=(0.5+dRelRight*0.5);
 				double dLightTexCoordV=(0.5+dRelUp*0.5);
@@ -733,7 +723,7 @@ void COpenGLRenderDeferred::RenderDeferred(bool bShadowsPresent,bool bWaterPrese
 				m_DeferredShaderDynamic.m_piShader->AddUniform("uDynamicPosition",vPosition,false);
 				m_DeferredShaderDynamic.m_piShader->AddUniform("uDynamicDiffuse",piLight->GetDiffuseColor(),1.0,false);
 				m_DeferredShaderDynamic.m_piShader->AddUniform("uDynamicSpecular",piLight->GetSpecularColor(),1.0,false);
-				m_DeferredShaderDynamic.m_piShader->AddUniform("uDynamicRange",(float)piLight->GetOmniRadius(),false);
+				m_DeferredShaderDynamic.m_piShader->AddUniform("uDynamicRange",(float)(piLight->GetOmniRadius()*LIGHT_SIZE_INCREMENT),false);
 
 				CVector vLightOrigin;
 				vLightOrigin=CVector(dLightViewportX,100,dLightViewportY);
@@ -973,7 +963,7 @@ void COpenGLRenderDeferred::SetCurrentRenderStateShader()
 	
 	bool bTempSkyShadow=m_pScene->sky.m_piSkyShadow && m_pScene->sky.m_piSkyShadow && m_sRenderState.bActiveSkyShadow && m_sRenderState.bActiveShadowReception;
 	bool bTempShadow=m_sRenderState.bActiveShadowReception && m_bAnyShadowInTheScene && m_eRenderMode!=eDeferredMode_Forward;
-	SDeferredShaderKey key(m_eRenderMode,m_sRenderState.eShadingModel,m_sRenderState.bActiveHeightFog,bTempShadow,m_sRenderState.bActiveTextures && m_nTextureLevels!=0,m_sRenderState.bActiveLighting,m_sRenderState.bActiveWater,/*m_pOptions->bEnableNormalMaps*/false,bTempSkyShadow,m_bRenderingPoints);
+	SDeferredShaderKey key(m_eRenderMode,m_sRenderState.eShadingModel,m_sRenderState.bActiveHeightFog,bTempShadow,m_sRenderState.bActiveTextures && m_nTextureLevels!=0,m_sRenderState.bActiveLighting,m_sRenderState.bActiveWater,/*m_pOptions->bEnableNormalMaps*/m_piEffectiveNormalMap!=NULL,bTempSkyShadow,m_bRenderingPoints);
 	std::map<SDeferredShaderKey,CGenericShaderWrapper>::iterator iShader=m_mShaders.find(key);
 	CGenericShaderWrapper *pNewShader=(iShader==m_mShaders.end())?NULL:&iShader->second;
 	if(!pNewShader)
@@ -1177,6 +1167,29 @@ void COpenGLRenderDeferred::UnprepareTexture(unsigned int nTextureLevel)
 	m_nTextureLevels--;
 }
 
+void COpenGLRenderDeferred::PrepareNormalMap(IGenericTexture *piNormalMap)
+{	
+	if(piNormalMap==NULL){return;}
+
+	IGenericTexture *piOldNormalMap=m_piEffectiveNormalMap;
+	if(piNormalMap==piOldNormalMap){return;}
+
+	if(m_nCurrentActiveTexture!=m_nNormalMapTextureLevel){glActiveTexture(GL_TEXTURE0_ARB+m_nNormalMapTextureLevel);m_nCurrentActiveTexture=m_nNormalMapTextureLevel;}
+	if(piOldNormalMap){piOldNormalMap->UnprepareTexture(m_nNormalMapTextureLevel);}	
+
+	m_piEffectiveNormalMap=ADD(piNormalMap);
+	piNormalMap->PrepareTexture(m_nNormalMapTextureLevel);
+	REL(piOldNormalMap);
+}
+
+void COpenGLRenderDeferred::UnprepareNormalMap()
+{
+	if(m_piEffectiveNormalMap)
+	{
+		m_piEffectiveNormalMap->UnprepareTexture(m_nNormalMapTextureLevel);
+		REL(m_piEffectiveNormalMap);
+	}
+}
 void COpenGLRenderDeferred::RenderTriangleStages(bool bRenderingShadow)
 {
 	// Flush Texture Particles Stages.

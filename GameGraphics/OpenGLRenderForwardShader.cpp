@@ -75,6 +75,8 @@ COpenGLRenderForwardShader::COpenGLRenderForwardShader(void)
 	m_pLastTexPointer[0]=NULL;
 	m_pLastTexPointer[1]=NULL;
 	
+	m_piEffectiveNormalMap=NULL;
+
 	memset(m_ppiEffectiveTextureLevels,0,sizeof(m_ppiEffectiveTextureLevels));
 	memset(m_ppiTextureLevels,0,sizeof(m_ppiTextureLevels));
 }
@@ -577,7 +579,7 @@ void COpenGLRenderForwardShader::SetCurrentRenderStateShader()
 	if(m_bSelecting){return;}
 	
 	bool bTempSkyShadow=m_pScene->sky.m_piSkyShadow && m_pScene->sky.m_piSkyShadow && m_sRenderState.bActiveSkyShadow && m_sRenderState.bActiveShadowReception;
-	SShaderKey key(m_sRenderState.eShadingModel,m_sRenderState.bActiveHeightFog,m_sRenderState.bActiveShadowReception && m_bAnyShadowInTheScene,m_sRenderState.bActiveTextures && m_nTextureLevels!=0,m_sRenderState.bActiveLighting,m_sRenderState.bActiveWater,/*m_pOptions->bEnableNormalMaps*/false,bTempSkyShadow,m_bRenderingPoints);
+	SShaderKey key(m_sRenderState.eShadingModel,m_sRenderState.bActiveHeightFog,m_sRenderState.bActiveShadowReception && m_bAnyShadowInTheScene,m_sRenderState.bActiveTextures && m_nTextureLevels!=0,m_sRenderState.bActiveLighting,m_sRenderState.bActiveWater,/*m_pOptions->bEnableNormalMaps*/m_piEffectiveNormalMap!=NULL,bTempSkyShadow,m_bRenderingPoints);
 	std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader=m_mShaders.find(key);
 	CGenericShaderWrapper *pNewShader=(iShader==m_mShaders.end())?NULL:&iShader->second;
 	if(!pNewShader)
@@ -780,6 +782,30 @@ void COpenGLRenderForwardShader::UnprepareTexture(unsigned int nTextureLevel)
 	
 	REL(m_ppiTextureLevels[nTextureLevel]);
 	m_nTextureLevels--;
+}
+
+void COpenGLRenderForwardShader::PrepareNormalMap(IGenericTexture *piNormalMap)
+{	
+	if(piNormalMap==NULL){return;}
+
+	IGenericTexture *piOldNormalMap=m_piEffectiveNormalMap;
+	if(piNormalMap==piOldNormalMap){return;}
+
+	if(m_nCurrentActiveTexture!=m_nNormalMapTextureLevel){glActiveTexture(GL_TEXTURE0_ARB+m_nNormalMapTextureLevel);m_nCurrentActiveTexture=m_nNormalMapTextureLevel;}
+	if(piOldNormalMap){piOldNormalMap->UnprepareTexture(m_nNormalMapTextureLevel);}	
+
+	m_piEffectiveNormalMap=ADD(piNormalMap);
+	piNormalMap->PrepareTexture(m_nNormalMapTextureLevel);
+	REL(piOldNormalMap);
+}
+
+void COpenGLRenderForwardShader::UnprepareNormalMap()
+{
+	if(m_piEffectiveNormalMap)
+	{
+		m_piEffectiveNormalMap->UnprepareTexture(m_nNormalMapTextureLevel);
+		REL(m_piEffectiveNormalMap);
+	}
 }
 
 void COpenGLRenderForwardShader::RenderTriangleStages(bool bRenderingShadow)

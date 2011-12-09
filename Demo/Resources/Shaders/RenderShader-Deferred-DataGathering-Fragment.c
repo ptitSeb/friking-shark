@@ -1,4 +1,4 @@
-#version 330
+#version 150
 
 uniform float CurrentRealTime;
 uniform vec3 uFogColor;

@@ -105,6 +105,10 @@ class COpenGLRenderForwardFixed: virtual public CSystemObjectBase, virtual publi
 	
 	void PrepareTexture(IGenericTexture *piTexture,unsigned int nTextureLevel);
 	void UnprepareTexture(unsigned int nTextureLevel);
+
+	void PrepareNormalMap(IGenericTexture *piNormalMap);
+	void UnprepareNormalMap();
+
 	void SetEffectiveTexture(IGenericTexture *pTexture,int nTextureLevel);
 	
 	void AnalyzeStages(bool *pbShadowsPresent,bool *pbLightingPresent);
