@@ -566,16 +566,27 @@ struct SSceneWater
 	SSceneWater(){dSizeU=dSizeV=1;dOffsetU=dOffsetV=0;}
 };
 
+struct SSceneClipping
+{
+	bool bEnabled;
+	SGameRect rRect;
+	
+	SSceneClipping(){bEnabled=false;}
+};
+
 struct SSceneData
 {
 	float          fTime;
+	bool           bClear;
+	CVector        vClearColor;
+	SSceneClipping clipping;   
 	SSceneCamera   camera;
 	SSceneObjects  objects;
 	SSceneLighting lighting;
 	SSceneSky	   sky;
 	SSceneWater	   water;
 
-	SSceneData(){fTime=0;}
+	SSceneData(){bClear=false;fTime=0;}
 };
 
 class IOpenGLRender:virtual public ISystemUnknown

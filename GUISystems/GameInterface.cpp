@@ -38,7 +38,7 @@ CGameInterface::CGameInterface(void)
 	m_dwNextAcceptedPauseKeyTime=0;
 	m_bFrozen=false;
 	m_bResumeAfterFreeze=false;
-	m_bShowPerformanceIndicators=false;
+	m_bShowPerformanceIndicators=true;
 	m_bPlayerKilledOnPreviousFrame=false;
 	m_nCheckpoint=-1;
 	m_bDemoMode=true;

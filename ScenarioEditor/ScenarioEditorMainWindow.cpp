@@ -155,7 +155,8 @@ bool CScenarioEditorMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 	}
 	
 	
-	//OpenScenario("/home/javi/workspace/AndroidPort/Demo/Resources/Level1.ges");
+//	OpenScenario("/home/javi/workspace/AndroidPort/Demo/Resources/Level1.ges");
+//	StartGameSimulation();
 	return bOk;
 }
 
@@ -409,7 +410,14 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 		return;
 	}
 	m_Camera.m_piCamera->SetAspectRatio(m_rRealRect.w/m_rRealRect.h);
-
+/*
+// For debugging purposes
+	if(m_bSimulationStarted && !m_FrameManager.m_piFrameManager->IsPaused() && m_FrameManager.m_piFrameManager->GetCurrentTime()>2000)
+	{
+		m_FrameManager.m_piFrameManager->TogglePauseOnNextFrame();
+	}
+	m_SoundManagerWrapper.m_piSoundManager->SetMute(true);
+*/
 	m_FrameManager.m_piFrameManager->ProcessFrame();
 	ProcessInput(m_FrameManager.m_piFrameManager->GetTimeFraction(),m_FrameManager.m_piFrameManager->GetRealTimeFraction());
 	
@@ -613,6 +621,31 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 	UpdateLayerPanel();
 	
 	m_piGUIManager->RestoreViewport();
+}
+
+void CScenarioEditorMainWindow::OnDrawBackground(IGenericRender *piRender)
+{
+	if(m_dBackgroundAlpha==0.0){return;}
+	
+	IGenericCamera *piPlayCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera();
+	IGenericCamera *piCamera=ADD(m_bInspectionMode?m_Camera.m_piCamera:piPlayCamera);
+	
+	if(m_bSimulationStarted && !m_bInspectionMode && piCamera)
+	{
+		double cx=m_rRealRect.h*piCamera->GetAspectRatio();
+		double dx=(m_rRealRect.w-cx)*0.5;
+		
+		// Render interface lateral bands
+		piRender->RenderRect(m_rRealRect.x,m_rRealRect.y,dx+1,m_rRealRect.h,m_vBackgroundColor,m_dBackgroundAlpha);
+		piRender->RenderRect(m_rRealRect.x+cx+dx-1,m_rRealRect.y,dx+2,m_rRealRect.h,m_vBackgroundColor,m_dBackgroundAlpha);
+	}
+	else
+	{
+		// render full background
+		piRender->RenderRect(m_rRealRect.x,m_rRealRect.y,m_rRealRect.w,m_rRealRect.h,m_vBackgroundColor,m_dBackgroundAlpha);
+	}
+	REL(piCamera);
+	REL(piPlayCamera);
 }
 
 void CScenarioEditorMainWindow::ProcessFileNew()

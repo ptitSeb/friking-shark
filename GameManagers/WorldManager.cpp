@@ -92,6 +92,7 @@ void CWorldManager::CloseScenario()
 	m_vTerrainHeightLayers.clear();
 	m_vTerrainColorLayers.clear();
 	m_TerrainSectors.clear();
+	m_TerrainSectorsWaterFloors.clear();
 	m_WaterModel.Destroy();
 	m_TerrainWater.m_Texture1.Destroy();
 	m_TerrainWater.m_Texture2.Destroy();
@@ -128,7 +129,7 @@ void CWorldManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction
 }
 
 
-void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCamera,bool bAllSectors)
+void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCamera,bool bAllSectors, bool bWaterFloor)
 {
 	double dWaterOffset=0;
 	if(m_WaterModel.m_piModel && m_nWaterRenderBuffer!=-1 && m_TerrainWater.m_Config.dSpeed!=0)
@@ -181,6 +182,34 @@ void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCam
 				piRender->PopState();
 			}
 		}
+		if(bWaterFloor)
+		{
+			for(unsigned int s=0;s<m_TerrainSectorsWaterFloors.size();s++)
+			{
+				IGenericModel *piModel=m_TerrainSectorsWaterFloors[s].m_piModel;
+				bool bRenderSector=true;
+				if(!bAllSectors && m_PlayAreaManagerWrapper.m_piPlayAreaManager)
+				{
+					CVector vMins,vMaxs;
+					piModel->GetFrameBBox(0,0,&vMins,&vMaxs);
+					CVector vCenter=(vMins+vMaxs)*0.5;
+					CVector vSize=vMaxs-vMins;
+					CVector vPos=CVector(vCenter.c[0],vMins.c[1],vCenter.c[2]);
+					bRenderSector=m_PlayAreaManagerWrapper.m_piPlayAreaManager->IsVisible(vPos,vSize.c[0]*0.5);
+				}
+				if(bRenderSector)
+				{
+					piRender->PushState();
+					piRender->DeactivateShadowEmission();
+					piRender->ActivateShadowReception();
+					piRender->ActivateLighting();
+					piRender->ActivateBlending();
+					piRender->SetDepthFunction(eDepthFunction_LessOrEqual);
+					piRender->RenderModel(Origin,Origin,piModel);
+					piRender->PopState();
+				}
+			}
+		}
 	}
 	
 	if(m_WaterModel.m_piModel)
@@ -201,7 +230,7 @@ void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCam
 			piRender->SetWaterMappingSize(m_TerrainWater.m_Config.dHorizontalResolution,m_TerrainWater.m_Config.dVerticalResolution);
 			piRender->SetWaterMappingOffset(dWaterOffset,0);
 			piRender->DeactivateShadowEmission();
-			piRender->ActivateShadowReception();
+			piRender->ActivateShadowReception();/*
 			if(piRender->GetShadingModel()==eShadingModel_Phong)
 			{
 				piRender->ActivateLighting();
@@ -209,7 +238,8 @@ void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCam
 			else
 			{
 				piRender->DeactivateLighting();			
-			}
+		}*/
+			piRender->ActivateLighting();
 			piRender->ActivateBlending();
 			piRender->ActivateWater();
 			piRender->SetDepthFunction(eDepthFunction_LessOrEqual);
@@ -221,12 +251,21 @@ void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCam
 }
 void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCamera)
 {
-	Render(piRender,piCurrentCamera,false);
+	bool bRenderWaterFloor=true;
+	
+	if(m_WaterModel.m_piModel && m_TerrainFog.bEnabled)
+	{
+		bRenderWaterFloor=false;
+		piRender->Clear(m_TerrainFog.vColor);
+	}
+
+	Render(piRender,piCurrentCamera,false,bRenderWaterFloor);
 }
 
 void CWorldManager::DesignRender(IGenericRender *piRender)
 {
-	Render(piRender,NULL,true);
+	piRender->Clear(ColorBlack);
+	Render(piRender,NULL,true,true);
 }
 
 bool CWorldManager::SetTerrainBaseModel( std::string sModel )
@@ -520,6 +559,7 @@ enum ETerrainTexturizationLayer
 	eTerrainTexturizationLayer_None,
 	eTerrainTexturizationLayer_Height,
 	eTerrainTexturizationLayer_ColorMap,
+	eTerrainTexturizationLayer_WaterFloor,
 	eTerrainTexturizationLayer_MAX
 };
 struct STemporalRenderBuffer
@@ -594,6 +634,7 @@ bool CWorldManager::UpdateTerrain()
 	double dSectorSize=vModelSize.c[0]/(double)m_nSectorsToGenerate;
 	
 	m_TerrainSectors.clear();
+	m_TerrainSectorsWaterFloors.clear();
 	
 	std::vector<STemporalRenderBuffer> *pvTempBuffers=new std::vector<STemporalRenderBuffer>[m_nSectorsToGenerate];
 	
@@ -646,7 +687,16 @@ bool CWorldManager::UpdateTerrain()
 			}
 			pvTempBuffers[s].push_back(buffer);
 		}
+		if(m_WaterModel.m_piModel && m_TerrainFog.bEnabled)
+		{
+			STemporalRenderBuffer buffer;
+			buffer.eType=eTerrainTexturizationLayer_WaterFloor;
+			pvTempBuffers[s].push_back(buffer);
+		}
 	}
+	
+	// Load color layers 
+	// Las capas de color tienen mayor prioridad 
 
 	if(!bOk)
 	{
@@ -706,7 +756,6 @@ bool CWorldManager::UpdateTerrain()
 				vColorMapTexture[nVertex].c[1]=1.0-vRelativeVertex.c[2];
 			}
 
-
 			// Determine the destination sector based on the x coordinates of the face
 			double dMinX=std::min(vVertexes[0].c[0],std::min(vVertexes[1].c[0],vVertexes[2].c[0]));
 			int nDestSector=(dMinX-vMins.c[0])/dSectorSize;
@@ -720,6 +769,18 @@ bool CWorldManager::UpdateTerrain()
 
 			for(int x=pvTempBuffers[nDestSector].size()-1;x>=0;x--)
 			{
+				if(pvTempBuffers[nDestSector][x].eType==eTerrainTexturizationLayer_WaterFloor)
+				{
+					if( vVertexes[0].c[1]<=m_TerrainFog.vMins.c[1]
+						&& vVertexes[1].c[1]<=m_TerrainFog.vMins.c[1]
+						&& vVertexes[2].c[1]<=m_TerrainFog.vMins.c[1])
+					{
+						vColors[0]=vColors[1]=vColors[2]=m_TerrainFog.vColor;
+						pnDestBuf[nDestBufs]=x;
+						nDestBufs++;
+						break;
+					}
+				}
 				if(pvTempBuffers[nDestSector][x].eType==eTerrainTexturizationLayer_Height)
 				{
 					for(unsigned long nVertex=0;nVertex<3;nVertex++)
@@ -756,7 +817,6 @@ bool CWorldManager::UpdateTerrain()
 			}
 
 			bool bOpaqueVertexes[3]={0};
-			
 			for (int nDestBuf=0;nDestBuf<nDestBufs;nDestBuf++)
 			{
 				int nDestinationBuffer=pnDestBuf[nDestBuf];
@@ -896,6 +956,10 @@ bool CWorldManager::UpdateTerrain()
 
 			for(unsigned int b=0;b<pvTempBuffers[s].size();b++)
 			{
+				if(pvTempBuffers[s][b].eType==eTerrainTexturizationLayer_WaterFloor)
+				{
+					continue;
+				}
 				STemporalRenderBuffer *pBuffer=&pvTempBuffers[s][b];
 				if(pBuffer->vVertexArray.size()==0)
 				{
@@ -924,7 +988,46 @@ bool CWorldManager::UpdateTerrain()
 			}
 		}
 	}	
- 
+	
+	for(unsigned long s=0;bOk && s<m_nSectorsToGenerate;s++)
+	{
+		CGenericModelWrapper model;
+		bOk=model.Create("GameResources","Model","");
+		if(bOk)
+		{
+			int nAnimation=model.m_piModel->AddAnimation();
+			int nFrame=model.m_piModel->AddAnimationFrame(nAnimation);
+			bool bAddModel=false;
+			
+			for(unsigned int b=0;b<pvTempBuffers[s].size();b++)
+			{
+				if(pvTempBuffers[s][b].eType!=eTerrainTexturizationLayer_WaterFloor)
+				{
+					continue;
+				}
+				STemporalRenderBuffer *pBuffer=&pvTempBuffers[s][b];
+				if(pBuffer->vVertexArray.size()==0)
+				{
+					continue;
+				}
+				bAddModel=true;
+				
+				unsigned long nFaces=pBuffer->vTriangleVertexes.size()/3;
+				unsigned long nVertexes=pBuffer->vVertexArray.size()/3;
+				unsigned long nBuffer=model.m_piModel->AddRenderBuffer(nAnimation,nFrame);
+				
+				model.m_piModel->SetRenderBufferMaterial(nAnimation,nFrame,nBuffer,m_TerrainFog.vColor,m_TerrainFog.vColor,CVector(0,0,0),0,1);
+				model.m_piModel->SetRenderBufferVertexes(nAnimation,nFrame,nBuffer,nVertexes,BufferFromVector(&pBuffer->vVertexArray));
+				model.m_piModel->SetRenderBufferFaces(nAnimation,nFrame,nBuffer,nFaces,BufferFromVector(&pBuffer->vTriangleVertexes));
+				model.m_piModel->SetRenderBufferColors(nAnimation,nFrame,nBuffer,BufferFromVector(&pBuffer->vColorArray));
+			}
+			if(bAddModel)
+			{
+				model.m_piModel->UpdateBufferObjects();
+				m_TerrainSectorsWaterFloors.push_back(model);
+			}
+		}
+	}	
 	
 	if(m_WaterModel.m_piModel)
 	{
@@ -1153,7 +1256,7 @@ void CWorldManager::GetTerrainSky( STerrainSky *pSky,IGenericTexture **ppiTextur
 
 bool CWorldManager::SetTerrainSun( STerrainSun *pSun ){m_TerrainSun=*pSun;return true;}
 void CWorldManager::GetTerrainSun( STerrainSun *pSun ){if(pSun){*pSun=m_TerrainSun;}}
-bool CWorldManager::SetTerrainFog( STerrainFog *pFog ){m_TerrainFog=*pFog;return true;}
+bool CWorldManager::SetTerrainFog( STerrainFog *pFog ){m_TerrainFog=*pFog;UpdateTerrain();return true;}
 void CWorldManager::GetTerrainFog( STerrainFog *pFog ){if(pFog){*pFog=m_TerrainFog;}}
 
 void	CWorldManager::SetTerrainAmbientColor(const CVector &vAmbientColor){m_vTerrainAmbientColor=vAmbientColor;}
@@ -1169,7 +1272,7 @@ void CWorldManager::SetupRenderingEnvironment( IGenericRender *piRender )
 	{
 		piRender->DeactivateHeightFog();
 	}
-
+	
 	if(m_TerrainBaseModel.m_piModel && m_TerrainSectors.size())
 	{
 		CVector vTerrainMaxs,vTerrainMins,vTerrainSize;

@@ -47,6 +47,9 @@ struct SRenderForwardFixedVertexBufferState
 class COpenGLRenderForwardFixed: virtual public CSystemObjectBase, virtual public IOpenGLRender
 {
 	SSceneData     *m_pScene;
+	CVector         m_vClearColor;
+	bool			m_bClippingActive;
+	SGameRect		m_rClipRect;
 	
 	SHardwareSupport m_sHardwareSupport;
 	

@@ -30,6 +30,7 @@
 
 COpenGLRenderForwardShader::COpenGLRenderForwardShader(void)
 {
+	m_bClippingActive=false;
 	m_bAnyShadowInTheScene=false;
 	m_pScene=NULL;
 	m_piCurrentViewport=NULL;
@@ -377,10 +378,32 @@ void COpenGLRenderForwardShader::RenderScene(SSceneData &sScene)
 		return;
 	}
 
+	RTTIMEMETER_SETGLSTEP("Render-Setup");
 	if(sScene.camera.bProjectionModified){SetProjectionMatrix(sScene.camera.m_ProjectionMatrix);}
 	if(sScene.camera.bViewModified){SetModelViewMatrix(sScene.camera.m_ViewMatrix);}
 	if(sScene.camera.bViewportModified){glViewport(sScene.camera.m_nViewportX,sScene.camera.m_nViewportY,sScene.camera.m_nViewportW,sScene.camera.m_nViewportH);}
 
+
+	if(sScene.clipping.bEnabled && !m_bClippingActive){m_bClippingActive=true;glEnable(GL_SCISSOR_TEST);}
+	else if(!sScene.clipping.bEnabled && m_bClippingActive){m_bClippingActive=false;glDisable(GL_SCISSOR_TEST);}
+	if(m_rClipRect!=sScene.clipping.rRect){m_rClipRect=sScene.clipping.rRect;glScissor(m_rClipRect.x,m_rClipRect.y,m_rClipRect.w,m_rClipRect.h);}
+	if(sScene.bClear)
+	{
+		if(m_vClearColor!=sScene.vClearColor)
+		{
+			m_vClearColor=sScene.vClearColor;
+			glClearColor(sScene.vClearColor.c[0],sScene.vClearColor.c[1],sScene.vClearColor.c[2],1.0);
+		}
+		
+		SGameRect rClearRect(sScene.camera.m_nViewportX,sScene.camera.m_nViewportY,sScene.camera.m_nViewportW,sScene.camera.m_nViewportH);
+		if(sScene.clipping.bEnabled){rClearRect.ClipToRect(&m_rClipRect);}
+		glScissor(rClearRect.x,rClearRect.y,rClearRect.w,rClearRect.h);
+		if(!m_bClippingActive){glEnable(GL_SCISSOR_TEST);}
+		glClear(GL_COLOR_BUFFER_BIT);
+		if(!m_bClippingActive){glDisable(GL_SCISSOR_TEST);}
+		glScissor(m_rClipRect.x,m_rClipRect.h,m_rClipRect.w,m_rClipRect.h);
+	}
+	
 	m_pScene=&sScene;
 	
 	bool bShadowsPresent=false,bSkyPresent=false,bLightingPresent=false;
@@ -408,13 +431,20 @@ void COpenGLRenderForwardShader::RenderScene(SSceneData &sScene)
 		if(m_nCurrentActiveTexture!=m_nSkyShadowTextureLevel){glActiveTexture(GL_TEXTURE0_ARB+m_nSkyShadowTextureLevel);m_nCurrentActiveTexture=m_nSkyShadowTextureLevel;}
 		if(sScene.sky.m_piSkyShadow){sScene.sky.m_piSkyShadow->PrepareTexture(m_nSkyShadowTextureLevel);}
 	}
-	
-	if(bShadowsPresent){PrepareSunShadows();}
-	
-	RenderAllStages(false);
 
+	if(bShadowsPresent)
+	{
+
+		RTTIMEMETER_SETGLSTEP("Render-ShadowMap");
+		PrepareSunShadows();
+		RTTIMEMETER_ENDGLSTEP();		
+	}
+	
+	RTTIMEMETER_SETGLSTEP("Render-AllStages-BackBuffer");                                                                                                              
+	RenderAllStages(false);          
+	RTTIMEMETER_ENDGLSTEP();       
 	if(bShadowsPresent){UnprepareSunShadows();}
-		
+ 		
 	if(bSkyPresent)
 	{
 		if(m_nCurrentActiveTexture!=m_nSkyShadowTextureLevel){glActiveTexture(GL_TEXTURE0_ARB+m_nSkyShadowTextureLevel);m_nCurrentActiveTexture=m_nSkyShadowTextureLevel;}
@@ -1030,22 +1060,16 @@ void COpenGLRenderForwardShader::AddShader( SShaderKey &key )
 	{
 		sPreprocessor+="#define ENABLE_SHADOWS\n";
 		sPreprocessor+="#define ENABLE_SOFT_SHADOWS\n";
-		sprintf(sTemp,"#define SHADOW_TEXTURE_LEVEL %d\n",m_nShadowTextureLevel);
-		sPreprocessor+=sTemp;
 		sDescription+="S";
 	}
 	if(key.bNormalMap)
 	{
 		sPreprocessor+="#define ENABLE_NORMAL_MAP\n";
-		sprintf(sTemp,"#define NORMAL_MAP_TEXTURE_LEVEL %d\n",m_nNormalMapTextureLevel);
-		sPreprocessor+=sTemp;
 		sDescription+="N";
 	}
 	if(key.bSkyShadow)
 	{
 		sPreprocessor+="#define ENABLE_SKY_SHADOW\n";
-		sprintf(sTemp,"#define SKY_TEXTURE_LEVEL %d\n",m_nSkyShadowTextureLevel);
-		sPreprocessor+=sTemp;
 		sDescription+="Y";
 	}
 	if(key.nTextureUnits)
@@ -1111,7 +1135,8 @@ void COpenGLRenderForwardShader::AddShader( SShaderKey &key )
 		wrapper.m_piShader->AddUniform("uModel",identity,false);
 		wrapper.m_piShader->AddUniform("uView",m_pScene?m_pScene->camera.m_ViewMatrix:identity,false);
 		wrapper.m_piShader->AddUniform("uProjection",m_pScene?m_pScene->camera.m_ProjectionMatrix:identity,false);
-		
+	
+	
 		m_mShaders[key]=wrapper;
 		m_mShaderNames[key]=sDescription;
 	}

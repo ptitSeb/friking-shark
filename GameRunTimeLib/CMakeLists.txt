@@ -6,6 +6,7 @@ SET (SRCS_GAMERUNTIMELIB
 	./GameRunTimeLib/Persistency.h
 	./GameRunTimeLib/PersistentTypes.h
 	./GameRunTimeLib/PlatformDependent.h
+	./GameRunTimeLib/TimeMeter.h
 	./GameRunTimeLib/stdafx.h
 	./GameRunTimeLib/SystemLoaderHelper.h
 	./GameRunTimeLib/SystemModuleHelpers.h
@@ -18,6 +19,7 @@ SET (SRCS_GAMERUNTIMELIB
 	./GameRunTimeLib/Persistency.cpp
 	./GameRunTimeLib/PersistentTypes.cpp
 	./GameRunTimeLib/PlatformDependent.cpp
+	./GameRunTimeLib/TimeMeter.cpp
 	./GameRunTimeLib/stdafx.cpp
 	./GameRunTimeLib/SystemLoaderHelper.cpp
 	./GameRunTimeLib/SystemModuleHelpers.cpp

@@ -280,6 +280,51 @@ public:
 	~CMatrix33();
 };
 
+
+struct SGameRect;
+
+struct SGamePos
+{
+	double x;
+	double y;
+	
+	void ClipToUnit();
+	void ClipToRect(SGameRect *pRect);
+	void CenterOnRect(SGameRect *pRect);
+	
+	SGamePos(double _x,double _y);
+	SGamePos();
+};
+
+struct SGameSize
+{
+	double w;
+	double h;
+	
+	SGameSize(double _w,double _h);
+	SGameSize();
+};
+
+struct SGameRect
+{
+	double x;
+	double y;
+	double w;
+	double h;
+	
+	void ClipToUnit();
+	void ClipToRect(SGameRect *pRect);
+	void CenterOnRect(SGameRect *pRect);
+	
+	bool operator==(const SGameRect &rect) const;
+	bool operator!=(const SGameRect &rect) const;
+	bool Contains(SGamePos point);
+	
+	SGameRect(double _x,double _y,double _w,double _h);
+	SGameRect();
+};
+
+
 bool		 IsPointInPolyhedron(CPolyhedron *pPoly,CVector point,double dTolerance);
 bool		 IsPointInRegion(int nPlanes,CPlane *pPlanes,CVector point,double dPrecision=FP_PRECISION);
 bool		 PointFromPlanes(CPlane plane0,CPlane plane1,CPlane plane2,CVector *pPoint);

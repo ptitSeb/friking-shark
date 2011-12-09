@@ -112,6 +112,7 @@ int afclose(AFILE * _File);
 #endif
 
 unsigned int GetTimeStamp();
+double       GetMicrosecondTimeStamp();
 
 void RTTRACE(const char *format, ...);
 

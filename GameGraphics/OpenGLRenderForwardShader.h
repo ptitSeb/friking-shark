@@ -93,6 +93,9 @@ class COpenGLRenderForwardShader: virtual public CSystemObjectBase, virtual publ
 {
 	SSceneData     *m_pScene;
 	bool            m_bAnyShadowInTheScene;
+	CVector         m_vClearColor;
+	bool			m_bClippingActive;
+	SGameRect		m_rClipRect;
 
 	SHardwareSupport m_sHardwareSupport;
 
@@ -149,6 +152,7 @@ class COpenGLRenderForwardShader: virtual public CSystemObjectBase, virtual publ
 	
 	IGenericViewport *m_piCurrentViewport;
 	
+
 	void PrepareSunShadows();
 	void UnprepareSunShadows();
 

@@ -265,3 +265,6 @@ public:
 #define ADD(x) __make_addref(x,__FILE__,__LINE__)
 #define REL(x) {if((x)){__make_release(x,__FILE__,__LINE__);(x)=NULL;}}
 #define QI(i,x) __make_qi<i>((x),(i*)NULL,__FILE__,__LINE__)
+
+class CTimeMeter;
+CTimeMeter GAMERUNTIME_API *GetTimeMeter();

@@ -188,12 +188,20 @@ bool CParticleSystem::ProcessFrame(IPhysicManager *piPhysicManager,unsigned int 
 
 void CParticleSystem::CustomRender(IGenericRender *piRender,IGenericCamera *piCamera)
 {
-    list<IParticle *>::iterator i;
+	if(m_lParticles.size()==0){return;}
+	
+	piRender->PushState();
+	piRender->DeactivateLighting();
+	piRender->DeactivateShadowEmission();
+	piRender->DeactivateShadowReception();
+	
+	list<IParticle *>::iterator i;
     for(i=m_lParticles.begin();i!=m_lParticles.end();i++)
     {
         IParticle *pParticle = *i;
         pParticle->CustomRender(piRender,piCamera);    
     }
+    piRender->PopState();
 }
 
 CVector CParticleSystem::GetPosition(){return m_vPosition;}

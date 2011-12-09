@@ -1006,6 +1006,7 @@ bool COpenGLViewport::CreateWindowed(unsigned x, unsigned y, unsigned w, unsigne
 	{
 		SetWindowed(x,y,w,h);
 		bOk=(m_XWindow!=None);
+		if(bOk){SetupBasicRenderOptions();}
 	}
 	if(!bOk){RTTRACE("COpenGLViewport::CreateWindowed -> Failed to get OpenGL render context");}
 #else
@@ -1066,6 +1067,7 @@ bool COpenGLViewport::CreateFullScreen(unsigned int w,unsigned int h,unsigned in
 	{
 		SetFullScreen(w,h,bpp,rate);
 		bOk=(m_XWindow!=None);
+		if(bOk){SetupBasicRenderOptions();}
 	}
 	if(!bOk){RTTRACE("COpenGLViewport::CreateFullScreen -> Failed to get OpenGL render context");}
 #else
@@ -1163,6 +1165,7 @@ void COpenGLViewport::SetupBasicRenderOptions()
 	glEnable(GL_CULL_FACE);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 	glDepthFunc(GL_LESS);
+	glClearColor(0,0,0,1.0);
 	
 #ifndef ANDROID
 	glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
@@ -1182,7 +1185,8 @@ void COpenGLViewport::Render()
 {
 	unsigned int nStartTime=GetTimeStamp();
 	//RTTRACE("COpenGLViewport::Render --------------------------------------------- %d",nStartTime);
-	
+	//GetTimeMeter()->SetActive(true);
+	GetTimeMeter()->Start();
 #ifdef ANDROID
 	if(m_AndroidRenderContext==EGL_NO_CONTEXT){return;}
 #endif
@@ -1201,6 +1205,9 @@ void COpenGLViewport::Render()
 	eglSwapBuffers(m_AndroidDisplay,m_AndroidSurface);
 #endif
 	unsigned int nEndTime=GetTimeStamp();
+	
+	GetTimeMeter()->End();
+	GetTimeMeter()->Dump(1000);
 	
 	//RTTRACE("COpenGLViewport::Render -> Total swap time %dms",nEndTime-nFlushStartTime);
 	//RTTRACE("COpenGLViewport::Render -> Total frame time %dms",nEndTime-nStartTime);
@@ -1894,7 +1901,6 @@ bool COpenGLViewport::SetFullScreen(unsigned int w,unsigned int h,unsigned int b
 	XMapWindow(m_pXDisplay,m_XWindow);
 	WaitForXEvent(MapNotify);
 	glXMakeCurrent(m_pXDisplay,m_XWindow,m_pGLXContext);
-	SetupBasicRenderOptions();
 	
 	SetVideoMode(&mode);
 	GetCurrentVideoMode(&mode);// Get mode to get the fullscreen rect.
@@ -1978,7 +1984,6 @@ bool COpenGLViewport::SetWindowed(unsigned int x,unsigned int y,unsigned int w,u
 	XMapWindow(m_pXDisplay,m_XWindow);
 	WaitForXEvent(MapNotify);
 	glXMakeCurrent(m_pXDisplay,m_XWindow,m_pGLXContext);	
-	SetupBasicRenderOptions();
 	
 	XWindowChanges changes;
 	changes.width=w;

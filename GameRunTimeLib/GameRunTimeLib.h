@@ -32,6 +32,7 @@
 #include "Persistency.h"
 #include "PersistentTypes.h"
 #include "ConfigFile.h"
+#include "TimeMeter.h"
 #include "SystemObjectBase.h"
 #include "SystemModuleHelpers.h"
 #include "SystemObjectWrapper.h"

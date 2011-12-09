@@ -26,12 +26,6 @@ const unsigned int SPointBuffer::buffer_size=POINT_BUFFER_SIZE;
 const unsigned int SLineBuffer::buffer_size=LINE_BUFFER_SIZE;
 const unsigned int STriangleBuffer::buffer_size=TRIANGLE_BUFFER_SIZE;
 
-#ifndef ANDROID 
-SGamePos::SGamePos():x(0),y(0)
-{
-}
-#endif
-
 COpenGLRender::COpenGLRender()
 {
 	m_bIgnoreShaderSupport=false;
@@ -202,34 +196,33 @@ void COpenGLRender::InternalSetCamera(const CVector &vPosition,double dYaw, doub
 
 void COpenGLRender::ActivateClipping()
 {
-	glEnable(GL_SCISSOR_TEST);
+	m_sScene.clipping.bEnabled=true;
 }
 
 void COpenGLRender::DeactivateClipping()
 {
-	glDisable(GL_SCISSOR_TEST);
+	m_sScene.clipping.bEnabled=false;
 }
 
 void COpenGLRender::SetClipRect(double x,double y,double cx, double cy)
 {
-	glScissor((int)x,(int)y,(int)cx,(int)cy);
+	m_sScene.clipping.rRect.x=x;
+	m_sScene.clipping.rRect.y=y;
+	m_sScene.clipping.rRect.w=cx;
+	m_sScene.clipping.rRect.h=cy;
 }
 
 void COpenGLRender::GetClipRect(double *px,double *py,double *pcx, double *pcy)
 {
-	float pdScissorBox[4];
-	glGetFloatv(GL_SCISSOR_BOX,pdScissorBox);
-	*px=pdScissorBox[0];
-	*py=pdScissorBox[1];
-	*pcx=pdScissorBox[2];
-	*pcy=pdScissorBox[3];
+	*px=m_sScene.clipping.rRect.x;
+	*py=m_sScene.clipping.rRect.y;
+	*pcx=m_sScene.clipping.rRect.w;
+	*pcy=m_sScene.clipping.rRect.h;
 }
 
 bool COpenGLRender::IsClippingActive()
 {
-	GLboolean bActive=0;
-	glGetBooleanv(GL_SCISSOR_TEST,&bActive);
-	return bActive!=0;
+	return m_sScene.clipping.bEnabled;
 }
 
 void COpenGLRender::SelectTexture(IGenericTexture *pTexture,int nTextureLevel)
@@ -1038,6 +1031,16 @@ void COpenGLRender::RenderArrowHead(const CVector &vPosition,const CVector &vDir
 	}
 }
 
+void COpenGLRender::Clear(const CVector &vColor)
+{
+	if(!m_bStagedRendering)
+	{
+		Flush();
+	}
+	m_sScene.bClear=true;
+	m_sScene.vClearColor=vColor;
+}
+
 void COpenGLRender::RenderPoint( const CVector &vPosition,double dSize,const CVector &vColor,double dAlpha )
 {
 	SPointStageKey key(m_sStagedRenderingState,(unsigned long)dSize);
@@ -1564,6 +1567,7 @@ void COpenGLRender::Flush()
 	m_sScene.objects.mTriangleStages.clear();
 	m_sScene.objects.mLineStages.clear();
 	m_sScene.objects.mPointStages.clear();
+	m_sScene.bClear=false;
 }
 
 void COpenGLRender::EndStagedRendering()
@@ -1640,6 +1644,7 @@ void COpenGLRender::EndStagedRendering()
 	m_sScene.objects.mTriangleStages.clear();
 	m_sScene.objects.mLineStages.clear();
 	m_sScene.objects.mPointStages.clear();
+	m_sScene.bClear=false;
 	
 	if(m_sRenderOptions.bEnableStagedRenderingStats)
 	{
@@ -1647,11 +1652,10 @@ void COpenGLRender::EndStagedRendering()
 		m_sStagedStats.nRenderTime=GetTimeStamp()-nRenderStart;
 	}
 }
-
 void COpenGLRender::StartFrame()
 {
 	//RTTRACE("StartFrame");	
-	
+		
 	if(!m_bHardwareSupportRead)
 	{
 		m_bHardwareSupportRead=true;
@@ -1676,6 +1680,7 @@ void COpenGLRender::StartFrame()
 
 		if(m_sHardwareSupport.bShaders)
 		{
+//*
 			if(m_Kernel.m_piOpenGLRender==NULL)
 			{
 				if(m_Kernel.Create(m_piSystem,"RenderDeferred",""))
@@ -1691,7 +1696,7 @@ void COpenGLRender::StartFrame()
 					RTTRACE("COpenGLRender::StartFrame -> Failed to create deferred render, falling back to shader render");
 				}
 			}
-			
+//*/	
 			if(m_Kernel.m_piOpenGLRender==NULL)
 			{
 				if(m_Kernel.Create(m_piSystem,"RenderForwardShader",""))
@@ -1814,11 +1819,14 @@ void COpenGLRender::ComputeSunShadowCamera()
 	vLightForward=m_vLastShadowCameraTarget-vLightPosition;
 	vLightForward.N();
 	vLightAngles=AnglesFromVector(vLightForward);
+	/*
+	Disabled until properly implemented
 	vLightRight=AxisPosX;
 	vLightUp=vLightRight^vLightForward;
 	vLightRight=vLightUp^vLightForward;
 	vLightAngles=AnglesFromVectors(vLightForward,vLightRight,vLightUp);
-	//VectorsFromAngles(vLightAngles,NULL,&vLightRight,&vLightUp);
+	*/
+	VectorsFromAngles(vLightAngles,NULL,&vLightRight,&vLightUp);
 
 	double dLightMinRigthAngle=0,dLightMaxRigthAngle=0;
 	double dLightMinUpAngle=0,dLightMaxUpAngle=0;
