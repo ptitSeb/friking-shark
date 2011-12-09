@@ -798,6 +798,7 @@ public:
 
 	void OnWantFocus(bool *pbWant);
 	void OnDraw(IGenericRender *piRender);
+	void OnDrawBackground(IGenericRender *piRender);
 	void OnButtonClicked(IGameGUIButton *piControl);
 	void OnSelectionChanged(IGameGUIList *piControl,int nElement,std::string sElement);
 	void OnSelectionDoubleCliked(IGameGUIList *piControl,int nElement,std::string sElement);

@@ -203,7 +203,7 @@ bool COpenGLShader::Compile()
 		//if(error!=GL_NO_ERROR){RTTRACE("COpenGLShader::Compile -> %s: failed to bomd attrib location for %s, error %x",m_sFragmentShader.c_str(),iAttribute->first.c_str(),error);}
 		pData->bModified=false;
 	}
-	
+#ifndef ANDROID
 	std::map<std::string,SDataLocationData>::iterator iDataLocation;
 	for(iDataLocation=m_mDataLocations.begin();iDataLocation!=m_mDataLocations.end();iDataLocation++)
 	{
@@ -211,6 +211,7 @@ bool COpenGLShader::Compile()
 		glBindFragDataLocation(m_hShaderProgram,pData->nIndex,iDataLocation->first.c_str());
 		pData->bModified=false;
 	}
+#endif
 	
 	if(bOk)
 	{

@@ -215,7 +215,6 @@ void CEntityEditorMainWindow::SetupRenderOptions(IGenericRender *piRender,IGener
 	piRender->SetPerspectiveProjection(dViewAngle,dNearPlane,dFarPlane);
 	piRender->SetCamera(vPosition,vAngles.c[YAW],vAngles.c[PITCH],vAngles.c[ROLL]);
 }
-
 void CEntityEditorMainWindow::OnDraw(IGenericRender *piRender)
 {
 	if(!m_FrameManager.m_piFrameManager)
@@ -279,6 +278,8 @@ void CEntityEditorMainWindow::OnDraw(IGenericRender *piRender)
 	SetupRenderOptions(piRender,m_Camera.m_piCamera);
 	
 	piRender->StartStagedRendering();
+	piRender->Clear(m_vBackgroundColor);
+	
 	if(m_piAnimation){m_piAnimation->CustomRender(m_Render.m_piRender,m_Camera.m_piCamera);}
 	// Pintado de las entidades hijas
 	if(m_pEntity && m_EntityType.m_piEntityTypeDesign)

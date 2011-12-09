@@ -156,11 +156,12 @@ class CWorldManager:virtual public CSystemObjectBase, virtual public IGameManage
 	std::vector<STerrainColorLayerData>  m_vTerrainColorLayers;
 
 	std::vector<CGenericModelWrapper> m_TerrainSectors;
+	std::vector<CGenericModelWrapper> m_TerrainSectorsWaterFloors;
 	CGenericModelWrapper			  m_WaterModel;
 	
 	int m_nWaterRenderBuffer;
 	
-	void Render(IGenericRender *piRender,IGenericCamera *piCurrentCamera,bool bAllSectors);
+	void Render(IGenericRender *piRender,IGenericCamera *piCurrentCamera,bool bAllSectors,bool bWaterFloor);
 	
 public:
 

@@ -26,6 +26,11 @@
 #include "InterfaceLeakAPI.h"
 
 #ifdef ANDROID
+CTimeMeter g_RunTimeLibTimeMeter(100);
+CTimeMeter *GetTimeMeter(){return &g_RunTimeLibTimeMeter;}
+#endif
+
+#ifdef ANDROID
 #include "android_native_app_glue.h"
 #include <android/sensor.h>
 #include <android/log.h>

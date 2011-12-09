@@ -20,7 +20,7 @@
 
 #include "OpenGLRender.h"
 
-struct SRenderDeferredVertexBufferState
+struct SDeferredVertexBufferState
 {
 	bool bVertexBufferEnabled;
 	bool bColorBufferEnabled;
@@ -30,7 +30,7 @@ struct SRenderDeferredVertexBufferState
 	bool bBitangentBufferEnabled;
 	bool pbTexCoordEnabled[MAX_OPENGL_TEXTURE_COORDS];
 	
-	SRenderDeferredVertexBufferState()
+	SDeferredVertexBufferState()
 	{
 		bVertexBufferEnabled=false;
 		bColorBufferEnabled=false;
@@ -42,9 +42,18 @@ struct SRenderDeferredVertexBufferState
 	}
 };
 
+enum EDeferredMode
+{
+	eDeferredMode_None,
+	eDeferredMode_NoWater,
+	eDeferredMode_Water,
+	eDeferredMode_Forward,
+	eDeferredMode_Count
+};
+
 struct SDeferredShaderKey
 {
-	bool bDeferred;
+	EDeferredMode eMode;
 	bool bHeightFog;
 	bool bShadows;
 	int  nTextureUnits;
@@ -59,8 +68,8 @@ struct SDeferredShaderKey
 	
 	bool operator <(const SDeferredShaderKey &otherKey) const
 	{
-		if(bDeferred<otherKey.bDeferred){return true;}
-		if(bDeferred>otherKey.bDeferred){return false;}
+		if(eMode<otherKey.eMode){return true;}
+		if(eMode>otherKey.eMode){return false;}
 		if(eShadingModel<otherKey.eShadingModel){return true;}
 		if(eShadingModel>otherKey.eShadingModel){return false;}
 		if(bPoints<otherKey.bPoints){return true;}
@@ -82,14 +91,15 @@ struct SDeferredShaderKey
 		return false;
 	}
 
-	SDeferredShaderKey(){bDeferred=false;eShadingModel=eShadingModel_Gouraud;bHeightFog=false;bShadows=false;nTextureUnits=0;bLighting=false;bWater=false;bNormalMap=false;bSkyShadow=false;bPoints=false;}
-	SDeferredShaderKey(bool deferred,EShadingModel shading,bool heightFog,bool shadows,int textureUnits,bool lighting,bool water,bool normalMap,bool sky,bool points){bDeferred=deferred;eShadingModel=shading;bHeightFog=heightFog;bShadows=shadows;nTextureUnits=textureUnits;bLighting=lighting;bWater=water;bNormalMap=normalMap;bSkyShadow=sky;bPoints=points;}
+	SDeferredShaderKey(){eMode=eDeferredMode_Forward;eShadingModel=eShadingModel_Gouraud;bHeightFog=false;bShadows=false;nTextureUnits=0;bLighting=false;bWater=false;bNormalMap=false;bSkyShadow=false;bPoints=false;}
+	SDeferredShaderKey(EDeferredMode mode,EShadingModel shading,bool heightFog,bool shadows,int textureUnits,bool lighting,bool water,bool normalMap,bool sky,bool points){eMode=mode;eShadingModel=shading;bHeightFog=heightFog;bShadows=shadows;nTextureUnits=textureUnits;bLighting=lighting;bWater=water;bNormalMap=normalMap;bSkyShadow=sky;bPoints=points;}
 };
-enum EDeferredLightingState
+
+enum EDeferredState
 {
-	eDeferredLightingState_DontCare,
-	eDeferredLightingState_Active,
-	eDeferredLightingState_Inactive,
+	eDeferredState_ALL,
+	eDeferredState_LightingActive,
+	eDeferredState_LightingInactive
 };
 
 enum EDeferredStateChangeShader
@@ -98,31 +108,35 @@ enum EDeferredStateChangeShader
 	eDeferredStateChange_UpdateShader,
 };
 
-struct SGBuffers
+struct SDeferredGBuffers
 {
 	unsigned int nDepthBuffer;
-	unsigned int nColorBuffer;
+	unsigned int nDiffuseBuffer;
+	unsigned int nSunSceneBuffer;
 	unsigned int nNormalBuffer;
 	unsigned int nFrameBuffer;
 	
 	unsigned int nWidth;
 	unsigned int nHeight;
 	
-	SGBuffers(){nWidth=nHeight=0;nDepthBuffer=nColorBuffer=nNormalBuffer=0;nFrameBuffer=0;}
+	SDeferredGBuffers(){nWidth=nHeight=0;nDepthBuffer=nDiffuseBuffer=nNormalBuffer=nSunSceneBuffer=0;nFrameBuffer=0;}
 };
 
 class COpenGLRenderDeferred: virtual public CSystemObjectBase, virtual public IOpenGLRender
 {
 	SSceneData     *m_pScene;
 	bool            m_bAnyShadowInTheScene;
-	bool			m_bDeferredScene;
+	EDeferredMode m_eRenderMode;
+	CVector         m_vClearColor;
+	bool			m_bClippingActive;
+	SGameRect		m_rClipRect;
 	
-	SGBuffers       m_GBuffers;
+	SDeferredGBuffers       m_GBuffers;
 	
 	SHardwareSupport m_sHardwareSupport;
 
 	SRenderState                          m_sRenderState;
-	SRenderDeferredVertexBufferState m_sBufferState;
+	SDeferredVertexBufferState m_sBufferState;
 	
 	int	              m_nSkyShadowTextureLevel;
 	int 	          m_nNormalMapTextureLevel;
@@ -155,7 +169,8 @@ class COpenGLRenderDeferred: virtual public CSystemObjectBase, virtual public IO
 	
 	CGenericShaderWrapper m_ShadowShader;
 	CGenericShaderWrapper m_SelectionShader;
-	CGenericShaderWrapper m_DeferredShaderSun;
+	CGenericShaderWrapper m_DeferredShaderWaterSun;
+	CGenericShaderWrapper m_DeferredShaderNoWaterSun;
 	CGenericShaderWrapper m_DeferredShaderDynamic;
 	CGenericShaderWrapper *m_pCurrentShader;
 	CGenericShaderWrapper *m_pShaderBeforeSelection;
@@ -176,7 +191,7 @@ class COpenGLRenderDeferred: virtual public CSystemObjectBase, virtual public IO
 	
 	IGenericViewport *m_piCurrentViewport;
 	
-	void RenderDeferred(bool bShadowsPresent,bool bSkyPresent,bool bLightingPresent);
+	void RenderDeferred(bool bShadowsPresent,bool bWaterPresent,bool bSkyPresent,bool bLightingPresent);
 	void RenderForward();
 	
 	void PrepareSunShadows();
@@ -194,9 +209,9 @@ class COpenGLRenderDeferred: virtual public CSystemObjectBase, virtual public IO
 	void RenderPointStages(bool bRenderingShadow);
 	void RenderLineStages(bool bRenderingShadow);
 	void RenderTriangleStages(bool bRenderingShadow);
-	void RenderModelStages(bool bRenderingShadow,EDeferredLightingState eLightingState);
+	void RenderModelStages(bool bRenderingShadow,EDeferredState eLightingState);
 
-	void AnalyzeStages(bool *pbShadowsPresent,bool *pbSkyPresent,bool *pbLightingPresent);
+	void AnalyzeStages(bool *pbShadowsPresent,bool *pbWaterPresent,bool *pbSkyPresent,bool *pbLightingPresent);
 	
 	void AddShader(SDeferredShaderKey &key);
 	bool PrecompileShaderByName(const char *psName,EShadingModel shading);
@@ -211,8 +226,8 @@ class COpenGLRenderDeferred: virtual public CSystemObjectBase, virtual public IO
 	
 	void InternalSetCamera(const CVector &vPosition,double dYaw, double dPitch, double dRoll);
 	
-	void          FreeGBuffers(SGBuffers *pGBuffers);
-	SGBuffers     CreateGBuffers( unsigned nWidth,unsigned nHeight);
+	void          FreeGBuffers(SDeferredGBuffers *pGBuffers);
+	SDeferredGBuffers     CreateGBuffers( unsigned nWidth,unsigned nHeight);
 	unsigned int  CreateRenderBuffer( unsigned nWidth,unsigned nHeight,unsigned int nComponent,unsigned int nFormat);
 	
 	void RenderScreenRect(const CVector &vOrigin,double s1,double s2,double dTexX,double dTexY,double dTexW,double dTexH);

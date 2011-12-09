@@ -142,4 +142,9 @@ DECLARE_CUSTOM_WRAPPER1(CGenericLightWrapper,IGenericLight,m_piLight)
 DECLARE_CUSTOM_WRAPPER1(CGenericShaderWrapper,IGenericShader,m_piShader)
 DECLARE_CUSTOM_WRAPPER1(COpenGLRenderWrapper,IOpenGLRender,m_piOpenGLRender)
 
+//#define RTTIMEMETER_SETGLSTEP(name)  {if(g_RunTimeLibTimeMeter.IsActive()){glFlush();glFinish();RTTIMEMETER_SETSTEP(name);}}
+//#define RTTIMEMETER_ENDGLSTEP() 	 {if(g_RunTimeLibTimeMeter.IsActive()){glFlush();glFinish();RTTIMEMETER_ENDSTEP();}}
+#define RTTIMEMETER_SETGLSTEP(name)  {if(GetTimeMeter()->IsActive()){RTTIMEMETER_SETSTEP(name);}}
+#define RTTIMEMETER_ENDGLSTEP()          {if(GetTimeMeter()->IsActive()){RTTIMEMETER_ENDSTEP();}}
+
 #endif

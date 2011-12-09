@@ -32,7 +32,7 @@ COpenGLRenderForwardFixed::COpenGLRenderForwardFixed(void)
 {
 	m_pScene=NULL;
 	m_piCurrentViewport=NULL;
-
+	m_bClippingActive=false;
 	m_bSelecting=false;
 	m_nTextureLevels=0;
 	m_nCurrentVertexBufferObject=0;
@@ -424,12 +424,33 @@ void COpenGLRenderForwardFixed::RenderScene(SSceneData &sScene)
 		glRotatef((0-(sScene.camera.m_vCameraAngles.c[YAW]-90))	,AxisPosY.c[0],AxisPosY.c[1],AxisPosY.c[2]);
 		glTranslatef(-sScene.camera.m_vCameraPos.c[0],-sScene.camera.m_vCameraPos.c[1],-sScene.camera.m_vCameraPos.c[2]);
 	}
-
+		
 	if(sScene.camera.bViewportModified)
 	{
 		glViewport(sScene.camera.m_nViewportX,sScene.camera.m_nViewportY,sScene.camera.m_nViewportW,sScene.camera.m_nViewportH);
 	}
-
+	
+	if(sScene.clipping.bEnabled && !m_bClippingActive){m_bClippingActive=true;glEnable(GL_SCISSOR_TEST);}
+	else if(!sScene.clipping.bEnabled && m_bClippingActive){m_bClippingActive=false;glDisable(GL_SCISSOR_TEST);}
+	if(m_rClipRect!=sScene.clipping.rRect){m_rClipRect=sScene.clipping.rRect;glScissor(m_rClipRect.x,m_rClipRect.y,m_rClipRect.w,m_rClipRect.h);}
+	if(sScene.bClear)
+	{
+		if(m_vClearColor!=sScene.vClearColor)
+		{
+			m_vClearColor=sScene.vClearColor;
+			glClearColor(sScene.vClearColor.c[0],sScene.vClearColor.c[1],sScene.vClearColor.c[2],1.0);
+		}
+		
+		SGameRect rClearRect(sScene.camera.m_nViewportX,sScene.camera.m_nViewportY,sScene.camera.m_nViewportW,sScene.camera.m_nViewportH);
+		if(sScene.clipping.bEnabled){rClearRect.ClipToRect(&m_rClipRect);}
+		glScissor(rClearRect.x,rClearRect.y,rClearRect.w,rClearRect.h);
+		if(!m_bClippingActive){glEnable(GL_SCISSOR_TEST);}
+		glClear(GL_COLOR_BUFFER_BIT);
+		if(!m_bClippingActive){glDisable(GL_SCISSOR_TEST);}
+		glScissor(m_rClipRect.x,m_rClipRect.h,m_rClipRect.w,m_rClipRect.h);
+	}
+	
+	
 	m_pScene=&sScene;
 	
 	bool bShadowsPresent=false,bLightingPresent=false;
@@ -444,7 +465,6 @@ void COpenGLRenderForwardFixed::RenderScene(SSceneData &sScene)
 
 void COpenGLRenderForwardFixed::StartFrame()
 {
-
 }
 
 void COpenGLRenderForwardFixed::EndFrame()

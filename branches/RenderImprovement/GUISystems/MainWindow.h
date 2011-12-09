@@ -143,6 +143,7 @@ public:
 	void OnKeyDown(int nKey,bool *pbProcessed);
 	void OnWantFocus(bool *pbWant);
 	void OnDraw(IGenericRender *piRender);
+	void OnDrawBackground(IGenericRender *piRender);
 	void OnDrawMouseCursor(SGamePos position,IGenericRender *piRender,bool *pbDrawed);
 	
 	void	OnScenarioFinished(eScenarioFinishedReason eReason);

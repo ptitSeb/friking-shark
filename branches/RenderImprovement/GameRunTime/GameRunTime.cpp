@@ -23,6 +23,11 @@
 #include "GameRunTime.h"
 #include "GameRunTimeLib.h"
 
+#ifndef ANDROID
+CTimeMeter g_RunTimeLibTimeMeter(100);
+CTimeMeter *GetTimeMeter(){return &g_RunTimeLibTimeMeter;}
+#endif
+
 #ifdef WIN32
 BOOL APIENTRY DllMain( HANDLE hModule, unsigned int ul_reason_for_call, LPVOID lpReserved)
 {

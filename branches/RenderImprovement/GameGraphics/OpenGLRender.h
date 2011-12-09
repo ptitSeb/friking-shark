@@ -184,6 +184,8 @@ public:
 	void RenderPolygon(unsigned int nVertexes,const CVector *pVertexes,const CVector *pColors,const double *pdAlphas);
 	void RenderArrowHead(const CVector &vPosition,const CVector &vDirection,CVector &vUp,double dForward,double dUp,double dRight,const CVector &vColor,double dAlpha);
 	
+	void Clear(const CVector &vColor);
+	
 	void ActivateHeightFog(const CVector &vMins,const CVector &vMaxs,const CVector &vColor);
 	void DeactivateHeightFog();
 	bool IsHeightFogActive();

@@ -22,47 +22,6 @@
 #include "GameRunTimeLib.h"
 #include "GameKeys.h"
 
-struct SGameRect;
-
-struct SGamePos
-{
-	double x;
-	double y;
-
-	void ClipToUnit();
-	void ClipToRect(SGameRect *pRect);
-	void CenterOnRect(SGameRect *pRect);
-
-	SGamePos(double _x,double _y);
-	SGamePos();
-};
-
-struct SGameSize
-{
-	double w;
-	double h;
-
-	SGameSize(double _w,double _h);
-	SGameSize();
-};
-
-struct SGameRect
-{
-	double x;
-	double y;
-	double w;
-	double h;
-
-	void ClipToUnit();
-	void ClipToRect(SGameRect *pRect);
-	void CenterOnRect(SGameRect *pRect);
-
-	bool Contains(SGamePos point);
-
-	SGameRect(double _x,double _y,double _w,double _h);
-	SGameRect();
-};
-
 struct SVideoMode
 {
   	unsigned int w;
@@ -505,6 +464,7 @@ public:
 	virtual void RenderPolygon(unsigned int nVertexes,const CVector *pVertexes,const CVector *pColors,const double *pdAlphas)=0;
 	virtual void RenderArrowHead(const CVector &vPosition,const CVector &vDirection,CVector &vUp,double dForward,double dUp,double dRight,const CVector &vColor,double dAlpha)=0;
 	
+	virtual void Clear(const CVector &vColor)=0;
 
 	// Render state
 

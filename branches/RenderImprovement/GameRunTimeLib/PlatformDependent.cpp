@@ -306,6 +306,12 @@ unsigned int GetTimeStamp()
 	return now.tv_sec*1000L + now.tv_nsec/1000000L;
 }
 
+double GetMicrosecondTimeStamp()
+{
+	struct timespec now;
+	clock_gettime(CLOCK_MONOTONIC, &now);
+	return ((double)now.tv_sec)*1000000.0+((double)now.tv_nsec/1000L);
+}
 #elif defined LINUX
 void RTTRACE(const char *format, ...)
 {
@@ -325,6 +331,12 @@ unsigned int GetTimeStamp()
 	timeval tNow;
 	gettimeofday(&tNow, NULL);
 	return ((double)tNow.tv_sec)*1000.0+((double)tNow.tv_usec)/1000.0;
+}
+double GetMicrosecondTimeStamp()
+{
+	timeval tNow;
+	gettimeofday(&tNow, NULL);
+	return ((double)tNow.tv_sec)*1000000.0+((double)tNow.tv_usec);
 }
 #endif
 
