@@ -19,9 +19,7 @@
 // GameEngine.cpp : Defines the class behaviors for the application.
 //
 
-#include "./stdafx.h"
-#include "GameRuntime.h"
-#include "GameRuntimeLib.h"
+#include "./StdAfx.h"
 #include "VectorLib.h"
 #include "GameEngine.h"
 #include "GameGUI.h"
