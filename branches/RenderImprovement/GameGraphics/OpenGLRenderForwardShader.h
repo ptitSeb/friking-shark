@@ -147,6 +147,7 @@ class COpenGLRenderForwardShader: virtual public CSystemObjectBase, virtual publ
 	
 	IGenericTexture *				m_ppiEffectiveTextureLevels[MAX_TEXTURE_LEVELS];
 	IGenericTexture *				m_ppiTextureLevels[MAX_TEXTURE_LEVELS];
+	IGenericTexture *				m_piEffectiveNormalMap;
 	unsigned int 					m_nTextureLevels;
 	unsigned int 					m_nCurrentActiveTexture;
 	
@@ -182,6 +183,9 @@ class COpenGLRenderForwardShader: virtual public CSystemObjectBase, virtual publ
 	void PrepareTexture(IGenericTexture *piTexture,unsigned int nTextureLevel);
 	void UnprepareTexture(unsigned int nTextureLevel);
 	void SetEffectiveTexture(IGenericTexture *pTexture,int nTextureLevel);
+
+	void PrepareNormalMap(IGenericTexture *piNormalMap);
+	void UnprepareNormalMap();
 	
 	void InternalSetCamera(const CVector &vPosition,double dYaw, double dPitch, double dRoll);
 	

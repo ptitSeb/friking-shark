@@ -408,6 +408,7 @@ bool COpenGLTexture::CreateFrameBuffer(bool bDepth)
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_dwWidth,m_dwHeight, 0,GL_RGBA, GL_UNSIGNED_BYTE, 0);
 		}
+
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,m_nFrameBuffer);
 		if(!bDepth)
 		{		
@@ -416,6 +417,9 @@ bool COpenGLTexture::CreateFrameBuffer(bool bDepth)
 		}
 		else
 		{
+			// Some systems require no draw or read buffers for depth-only frame buffers
+			glDrawBuffer(GL_NONE);
+			glReadBuffer(GL_NONE);
 			glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,GL_TEXTURE_2D, m_nTextureIndex, 0);
 		}
 

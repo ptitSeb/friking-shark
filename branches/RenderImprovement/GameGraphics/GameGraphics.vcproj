@@ -237,6 +237,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OpenGLRenderDeferred.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenGLRenderForwardFixed.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenGLRenderForwardShader.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\OpenGLShader.cpp"
 				>
 			</File>
@@ -304,6 +316,18 @@
 			</File>
 			<File
 				RelativePath=".\OpenGLRender.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenGLRenderDeferred.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenGLRenderForwardFixed.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenGLRenderForwardShader.h"
 				>
 			</File>
 			<File

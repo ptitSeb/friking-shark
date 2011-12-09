@@ -783,6 +783,14 @@ void COpenGLRenderForwardFixed::UnprepareTexture(unsigned int nTextureLevel)
 	REL(m_ppiEffectiveTextureLevels[nTextureLevel]);
 }
 
+void COpenGLRenderForwardFixed::PrepareNormalMap(IGenericTexture *piNormalMap)
+{
+}
+
+void COpenGLRenderForwardFixed::UnprepareNormalMap()
+{
+}
+
 void COpenGLRenderForwardFixed::RenderTriangleStages(bool bRenderingShadow)
 {
 	// Flush Texture Particles Stages.

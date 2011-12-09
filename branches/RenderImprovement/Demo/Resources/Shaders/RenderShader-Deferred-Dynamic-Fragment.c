@@ -1,4 +1,4 @@
-#version 330 
+#version 150 
 
 #define PI 3.1416
 

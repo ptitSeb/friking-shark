@@ -25,9 +25,12 @@
 #include <string.h>
 #include <list>
 
+#ifdef WIN32
+#include <AL/alut.h>
+#else
 #include <AL/al.h>
 #include <AL/alc.h>
-	
+#endif	
 #include "GameRunTimeLib.h"
 #include "VectorLib.h"
 #endif

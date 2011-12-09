@@ -20,6 +20,8 @@
 //
 
 #include "./stdafx.h"
+#include "GameRuntime.h"
+#include "GameRuntimeLib.h"
 #include "VectorLib.h"
 #include "GameEngine.h"
 #include "GameGUI.h"
