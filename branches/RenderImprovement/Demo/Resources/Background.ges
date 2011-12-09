@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=230.435349
 			NearPlane=130.000000
-			Posicion=653.227616,228.570478,0.000023
+			Posicion=-1045.382060,228.570478,0.000023
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -515,7 +515,7 @@ Terrain
 		Color=0.078919,0.135307,0.279639
 		Enabled=1
 		Maxs=1931.621948,17.705995,93.074356
-		Mins=-1224.800293,-0.864871,-93.070404
+		Mins=-1224.800293,5.135129,-93.070404
 	}
 	HeightLayers
 	{
