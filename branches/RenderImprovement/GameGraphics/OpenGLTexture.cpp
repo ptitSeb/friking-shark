@@ -417,9 +417,11 @@ bool COpenGLTexture::CreateFrameBuffer(bool bDepth)
 		}
 		else
 		{
+#ifndef ANDROID
 			// Some systems require no draw or read buffers for depth-only frame buffers
 			glDrawBuffer(GL_NONE);
 			glReadBuffer(GL_NONE);
+#endif
 			glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,GL_TEXTURE_2D, m_nTextureIndex, 0);
 		}
 
