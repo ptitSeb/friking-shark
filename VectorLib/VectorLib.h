@@ -43,13 +43,12 @@
 #define ROLL	2
 
 class CMatrix;
+class CMatrix33;
 class CBSPDrawNode;
 
 class CVector
 {
 public:
-	char _debugtag_;
-
 	double c[3];
 
 	inline CVector operator+(const CVector v)const {CVector r;r.c[0]=c[0]+v.c[0];r.c[1]=c[1]+v.c[1];r.c[2]=c[2]+v.c[2];return r;}
@@ -59,7 +58,8 @@ public:
 	inline double  operator*(const CVector v)const {return c[0]*v.c[0] + c[1]*v.c[1] + c[2]*v.c[2];}
 	inline CVector operator*(double d)const {CVector r;r.c[0]=c[0]*d;r.c[1]=c[1]*d;r.c[2]=c[2]*d;return r;}
 	inline CVector operator*=(double d){c[0]*=d;c[1]*=d;c[2]*=d;return *this;}
-		   CVector operator*=(CMatrix &m);
+	CVector operator*=(CMatrix &m);
+	CVector operator*=(CMatrix33 &m);
 	inline CVector operator/(double d)const {CVector r;r.c[0]=c[0]/d;r.c[1]=c[1]/d;r.c[2]=c[2]/d;return r;}
 	inline CVector operator/=(double d){c[0]/=d;c[1]/=d;c[2]/=d;return *this;}
 	inline CVector operator^(const CVector v)const {CVector r(c[1]*v.c[2] - c[2]*v.c[1],c[2]*v.c[0] - c[0]*v.c[2],c[0]*v.c[1] - c[1]*v.c[0]);return r;}
@@ -73,9 +73,9 @@ public:
 	inline double N(){double mod=(*this);if(mod==0){c[0]=c[1]=c[2]=0;return mod;};c[0]/=mod;c[1]/=mod;c[2]/=mod;return mod;}
 
 
-	inline CVector(){_debugtag_='V';c[0]=c[1]=c[2]=0.0;}
-	inline CVector(const CVector &v){_debugtag_='V';c[0]=v.c[0];c[1]=v.c[1];c[2]=v.c[2];}
-	inline CVector(double c0, double c1, double c2){_debugtag_='V';c[0]=c0;c[1]=c1;c[2]=c2;}
+	inline CVector(){c[0]=c[1]=c[2]=0.0;}
+	inline CVector(const CVector &v){c[0]=v.c[0];c[1]=v.c[1];c[2]=v.c[2];}
+	inline CVector(double c0, double c1, double c2){c[0]=c0;c[1]=c1;c[2]=c2;}
 
 	CVector &Maxs(const CVector &v1,const CVector &v2);
 	CVector &Mins(const CVector &v1,const CVector &v2);
@@ -90,8 +90,8 @@ public:
 class CRGBColor:public CVector
 {
 public:
-    inline CRGBColor(double c0, double c1, double c2){_debugtag_='C';c[0]=c0;c[1]=c1;c[2]=c2;}
-    inline CRGBColor(const CVector &v){_debugtag_='C';c[0]=v.c[0];c[1]=v.c[1];c[2]=v.c[2];}
+    inline CRGBColor(double c0, double c1, double c2){c[0]=c0;c[1]=c1;c[2]=c2;}
+    inline CRGBColor(const CVector &v){c[0]=v.c[0];c[1]=v.c[1];c[2]=v.c[2];}
     inline CRGBColor(){}
 };
 
@@ -122,9 +122,9 @@ public:
 
 			CPlane(CVector p1,CVector p2,CVector p3);
 			CPlane(CVector vNormal,CVector vPoint);
-	inline	CPlane(double c1,double c2,double c3,double _d):CVector(c1,c2,c3),d(_d){_debugtag_='P';N();}
-	inline	CPlane(CVector v,double _d):CVector(v),d(_d){_debugtag_='P';N();}
-	inline	CPlane(){_debugtag_='P';d=0;}
+	inline	CPlane(double c1,double c2,double c3,double _d):CVector(c1,c2,c3),d(_d){N();}
+	inline	CPlane(CVector v,double _d):CVector(v),d(_d){N();}
+	inline	CPlane(){d=0;}
 };
 
 #define CONTENT_SOLID		1
@@ -146,7 +146,6 @@ public:
 class CBSPNode
 {
 public:
-	char _debugtag_;
 	int		content;
 	CPlane	plane;
 	CBSPDrawNode *m_pDrawNode;
@@ -158,10 +157,10 @@ public:
 	virtual CTraceInfo	GetTrace(const CVector &p1,const CVector &p2,const CVector &realp1,const CVector &realp2,std::vector<CBSPNode *> *pvNodePath=NULL);
 	virtual CTraceInfo	GetObjectTrace(const CVector &p1,const CVector &p2,const CVector &vPosition,const CVector &vAngles,const CVector &vMins,const CVector &vMaxs);
 
-	CBSPNode(CBSPNode *parent,CPlane p,int c,CBSPNode *p1,CBSPNode *p2){_debugtag_='B';pParent=parent;m_pDrawNode=NULL;plane=p;content=c;pChild[0]=p1,pChild[1]=p2;}
-	CBSPNode(CBSPNode *parent,CPlane p,int c){_debugtag_='B';pParent=parent;m_pDrawNode=NULL;plane=p;content=c;pChild[0]=NULL,pChild[1]=NULL;}
-	CBSPNode(CBSPNode *parent,int c){_debugtag_='B';pParent=parent;m_pDrawNode=NULL;content=c;pChild[0]=NULL,pChild[1]=NULL;}
-	CBSPNode(CBSPNode *parent){_debugtag_='B';pParent=parent;m_pDrawNode=NULL;content=CONTENT_SOLID;pChild[0]=NULL,pChild[1]=NULL;}
+	CBSPNode(CBSPNode *parent,CPlane p,int c,CBSPNode *p1,CBSPNode *p2){pParent=parent;m_pDrawNode=NULL;plane=p;content=c;pChild[0]=p1,pChild[1]=p2;}
+	CBSPNode(CBSPNode *parent,CPlane p,int c){pParent=parent;m_pDrawNode=NULL;plane=p;content=c;pChild[0]=NULL,pChild[1]=NULL;}
+	CBSPNode(CBSPNode *parent,int c){pParent=parent;m_pDrawNode=NULL;content=c;pChild[0]=NULL,pChild[1]=NULL;}
+	CBSPNode(CBSPNode *parent){pParent=parent;m_pDrawNode=NULL;content=CONTENT_SOLID;pChild[0]=NULL,pChild[1]=NULL;}
 	virtual ~CBSPNode();
 };
 
@@ -178,8 +177,6 @@ extern CVector AxisNegZ;
 class CPolygon
 {
 public:
-	char _debugtag_;
-
 	CPlane		m_Plane;
 	unsigned	m_nVertexes;
 	CVector		*m_pVertexes;
@@ -206,8 +203,6 @@ public:
 class CPolyhedron
 {
 public:
-	char _debugtag_;
-
 	std::vector<CPolygon *> m_vPolygons;
 
 	bool IsInternalPolygon(CPolygon *pPolygon);
@@ -276,6 +271,7 @@ public:
 	CMatrix33(CVector v0,CVector v1,CVector v2);
 	CMatrix33(double pMatrix33[3][3]);
 	CMatrix33(CMatrix33 &m);
+	CMatrix33(CMatrix &m);
 	CMatrix33();
 	~CMatrix33();
 };
