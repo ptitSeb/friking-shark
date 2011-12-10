@@ -121,6 +121,8 @@ void CFrameManager::ProcessFrame()
 	m_dwLastRealTime=m_dwCurrentRealTime;
 
 	ComputeFps();
+	//static int lastfps=0;
+	//if(m_dwCurrentRealTime>lastfps+1000){lastfps=m_dwCurrentRealTime;RTTRACE("FPS: %.03f",m_dCurrentFps);}
 }
 
 void CFrameManager::ComputeFps()

@@ -371,7 +371,9 @@ void EntityOperation_ProcessPhysicFrame(IEntity *piEntity,void *pParam1,void *pP
 
 void CPhysicManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
+	RTTIMEMETER_SETSTEP("Managers-Physics");
 	m_EntityManagerWrapper.m_piEntityManager->PerformUnaryOperation(EntityOperation_ProcessPhysicFrame,this,&dTimeFraction);
+	RTTIMEMETER_ENDSTEP();
 }
 
 void CPhysicManager::ApplyForce(SPhysicInfo *pInfo,SPhysicForce *pForce,double dInterval)

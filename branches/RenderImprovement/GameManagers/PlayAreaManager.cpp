@@ -145,6 +145,8 @@ void CPlayAreaManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFract
 {
 	if(!m_bStarted){return;}
 	
+	RTTIMEMETER_SETSTEP("Managers-PlayArea");
+	
 	UpdatePlayCameraPosition();
 
 	if(m_bMovingCamera && m_vPlayMovementPos.c[0]<m_vCameraRouteEnd.c[0])
@@ -185,6 +187,8 @@ void CPlayAreaManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFract
 		IPlayAreaElement *piElement=m_vDynamicElements[x].m_piElement;
 		piElement->ProcessFrame(m_vPlayMovementPos,&m_PlayArea,dwCurrentTime,dTimeFraction);
 	}
+	RTTIMEMETER_ENDSTEP();
+	
 }
 
 void CPlayAreaManager::GetCameraRoute(CVector *pvStart,CVector *pvEnd)

@@ -187,6 +187,8 @@ void CMusicManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction
 {
 	if(!m_bStarted){return;}
 	
+	RTTIMEMETER_SETSTEP("Managers-Music");
+	
 	EPlayerManagerGameStage eStage=m_PlayerManagerWrapper.m_piPlayerManager->GetStage();
 	
 	if(eStage==ePlayerManagerGameStage_Killed)
@@ -219,6 +221,7 @@ void CMusicManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction
 			m_piMusicSound->Play();
 		}
 	}
+	RTTIMEMETER_ENDSTEP();
 }
 
 bool CMusicManager::SetIntroMusic(std::string sMusicFile)
