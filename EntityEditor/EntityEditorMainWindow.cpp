@@ -365,7 +365,7 @@ void CEntityEditorMainWindow::OnDraw(IGenericRender *piRender)
 		
 		for(unsigned int b=0;b<vBBoxes.size();b++)
 		{
-			piRender->RenderBBox(m_pEntity->GetPhysicInfo()->vPosition,Origin,vBBoxes[b].vMins,vBBoxes[b].vMaxs,CVector(1,1,1));
+			piRender->RenderBBox(m_pEntity->GetPhysicInfo()->vPosition,Origin,vBBoxes[b].vMins,vBBoxes[b].vMaxs,0x8888,CVector(1,1,1),1.0);
 		}
 	}
 	m_Render.m_piRender->PopOptions();
