@@ -57,6 +57,16 @@ CVector CVector::operator*=(CMatrix &m)
 	return *this;
 }
 
+CVector CVector::operator*=(CMatrix33 &m)
+{
+	double x1,y1,z1;
+	x1=c[0]*m.e[0][0]+c[1]*m.e[0][1]+c[2]*m.e[0][2];
+	y1=c[0]*m.e[1][0]+c[1]*m.e[1][1]+c[2]*m.e[1][2];
+	z1=c[0]*m.e[2][0]+c[1]*m.e[2][1]+c[2]*m.e[2][2];
+	c[0]=x1;c[1]=y1;c[2]=z1;
+	return *this;
+}
+
 CVector CVector::Parse(const char *pString)
 {
 	CVector vVector;
@@ -292,7 +302,6 @@ CBSPDrawNode::~CBSPDrawNode()
 
 CPolygon::CPolygon()
 {
-	_debugtag_='O';
 	m_nVertexes=0;
 	m_pVertexes=NULL;
 	m_pEdges=NULL;
@@ -300,7 +309,6 @@ CPolygon::CPolygon()
 
 CPolygon::CPolygon(std::vector<CVector> *pvVertexes)
 {
-	_debugtag_='O';
 	m_nVertexes=0;
 	m_pVertexes=NULL;
 	m_pEdges=NULL;
@@ -323,7 +331,6 @@ CPolygon::CPolygon(std::vector<CVector> *pvVertexes)
 
 CPolygon::CPolygon(CPolygon &polygon,int nMode)
 {
-	_debugtag_='O';
 	m_nVertexes=0;
 	m_pVertexes=NULL;
 	m_pEdges=NULL;
@@ -357,7 +364,6 @@ CPolygon::CPolygon(CPolygon &polygon,int nMode)
 
 CPolygon::CPolygon(int nVertexes,CVector *pVertexes)
 {
-	_debugtag_='O';
 	m_nVertexes=0;
 	m_pVertexes=NULL;
 	m_pEdges=NULL;
@@ -449,13 +455,10 @@ CPolygon::~CPolygon()
 
 CPolyhedron::CPolyhedron()
 {
-	_debugtag_='E';
 }
 
 CPolyhedron::CPolyhedron(CPolygon base, double width)
 {
-	_debugtag_='E';
-
 	CVector normal=base.m_Plane;
 	CVector offset=normal*(0-width);
 	CPolygon *pBase1=new CPolygon(base);
@@ -1535,6 +1538,12 @@ CMatrix33::CMatrix33(CMatrix33 &m)
 	int x,y;
 	for(x=0;x<3;x++){for(y=0;y<3;y++){e[x][y]=m.e[x][y];}}
 }
+CMatrix33::CMatrix33(CMatrix &m)
+{
+    int x,y;
+    for(x=0;x<3;x++){for(y=0;y<3;y++){e[x][y]=m.e[x][y];}}
+}
+
 CMatrix33::CMatrix33()
 {
 	I();
@@ -1563,7 +1572,6 @@ double	CMatrix33::D()
 
 CPlane::CPlane(CVector p1,CVector p2,CVector p3)
 {
-	_debugtag_='P';
 	CVector normal=((p1-p2)^(p3-p2));
 	(*this)=normal;
 	normal.N();
@@ -1572,7 +1580,6 @@ CPlane::CPlane(CVector p1,CVector p2,CVector p3)
 
 CPlane::CPlane(CVector vNormal,CVector vPoint)
 {
-	_debugtag_='P';
 	(*this)=vNormal;
 	d=vNormal*vPoint;
 }
@@ -2205,7 +2212,6 @@ double RadiansToDegrees(double dAngle)
 
 CBSPNode::~CBSPNode()
 {
-	_debugtag_='B';
 	pParent=NULL;
 	m_pDrawNode=NULL;
 	if(pChild[0]){delete pChild[0];pChild[0]=NULL;}

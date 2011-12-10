@@ -204,8 +204,8 @@ public:
 class C3DSVector:public CVector
 {
 public:
-	inline C3DSVector(double c0, double c1, double c2){_debugtag_='C';c[0]=c0;c[1]=c1;c[2]=c2;}
-	inline C3DSVector(const CVector &v){_debugtag_='C';c[0]=v.c[0];c[1]=v.c[1];c[2]=v.c[2];}
+	inline C3DSVector(double c0, double c1, double c2){c[0]=c0;c[1]=c1;c[2]=c2;}
+	inline C3DSVector(const CVector &v){c[0]=v.c[0];c[1]=v.c[1];c[2]=v.c[2];}
 	inline C3DSVector(){}
 };
 
