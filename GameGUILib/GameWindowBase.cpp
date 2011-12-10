@@ -240,6 +240,10 @@ void CGameWindowBase::UpdateRealRect()
 		rTempRect.h=rParentRealRect.h;
 		m_rRealRect.CenterOnRect(&rTempRect);
 	}
+	m_rRealRect.x=round(m_rRealRect.x);
+	m_rRealRect.y=round(m_rRealRect.y);
+	m_rRealRect.w=round(m_rRealRect.w);
+	m_rRealRect.h=round(m_rRealRect.h);
 	UpdateChildrenRealRects();
 }
 
@@ -276,6 +280,12 @@ void CGameWindowBase::UpdateChildrenRealRects()
 			rChildRealRect.x=m_dLayoutMargin;
 			rChildRealRect.y=m_rRealRect.h-dUsedHeight;
 			rChildRealRect.w=m_rRealRect.w-m_dLayoutMargin*2;
+			
+			rChildRealRect.x=round(rChildRealRect.x);
+			rChildRealRect.y=round(rChildRealRect.y);
+			rChildRealRect.w=round(rChildRealRect.w);
+			rChildRealRect.h=round(rChildRealRect.h);
+			
 			piWindow->SetReferenceSystem(eGameGUIReferenceSystem_Absolute);
 			piWindow->SetRect(&rChildRealRect);
 		}
@@ -311,6 +321,12 @@ void CGameWindowBase::UpdateChildrenRealRects()
 			rChildRealRect.y=m_dLayoutMargin;
 			rChildRealRect.w=(dSizeInLayout>0)?dSizeInLayout:dVariableSize/dVariableChildCount;
 			rChildRealRect.h=m_rRealRect.h-m_dLayoutMargin*2;
+			
+			rChildRealRect.x=round(rChildRealRect.x);
+			rChildRealRect.y=round(rChildRealRect.y);
+			rChildRealRect.w=round(rChildRealRect.w);
+			rChildRealRect.h=round(rChildRealRect.h);
+			
 			piWindow->SetReferenceSystem(eGameGUIReferenceSystem_Absolute);
 			piWindow->SetRect(&rChildRealRect);
 		}
