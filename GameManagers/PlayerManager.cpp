@@ -145,6 +145,8 @@ void CPlayerManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFractio
 	IGenericCamera *piCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera();
 	if(!piCamera){return;}
 	
+	RTTIMEMETER_SETSTEP("Managers-Player");
+	
 	CVector vStart,vEnd;
 	m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCameraRoute(&vStart,&vEnd);
 	CVector vPlayMovementPos=m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetPlayMovementPosition();
@@ -240,6 +242,8 @@ void CPlayerManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFractio
 		m_PlayerKilledVelocity=Origin;
 	}	
 	REL(piCamera);
+
+	RTTIMEMETER_ENDSTEP();
 }
 
 void CPlayerManager::ProcessInput(IGameGUIManager *piGUIManager,unsigned int dwCurrentTime,double dTimeFraction)

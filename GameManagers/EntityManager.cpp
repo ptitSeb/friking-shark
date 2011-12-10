@@ -94,6 +94,7 @@ unsigned long CEntityManager::GetEntityCount()
 
 void CEntityManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
+	RTTIMEMETER_SETSTEP("Managers-Entity");
     // Run 
     list<IEntity *>::iterator i;
     for(i=m_lEntities.begin();i!=m_lEntities.end();)
@@ -136,6 +137,8 @@ void CEntityManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFractio
         }
     }
     m_lNewEntities.clear();
+	RTTIMEMETER_ENDSTEP();
+	
 }
 
 void CEntityManager::PerformUnaryOperation(EntityUnaryOperation pFunc,void *pParam1,void *pParam2)
