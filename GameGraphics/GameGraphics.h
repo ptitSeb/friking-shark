@@ -345,9 +345,9 @@ struct IGenericShader:virtual public ISystemUnknown
 enum EShadingModel
 {
 	eShadingModel_UNKNOWN=0,
-	eShadingModel_Gouraud,
-	eShadingModel_Balanced,
-	eShadingModel_Phong
+	eShadingModel_Vertex,
+	eShadingModel_Mixed,
+	eShadingModel_Fragment
 };
 
 struct SRenderStats
@@ -464,6 +464,8 @@ public:
 	virtual void RenderPolygon(unsigned int nVertexes,const CVector *pVertexes,const CVector *pColors,const double *pdAlphas)=0;
 	virtual void RenderArrowHead(const CVector &vPosition,const CVector &vDirection,CVector &vUp,double dForward,double dUp,double dRight,const CVector &vColor,double dAlpha)=0;
 	
+	virtual void SetModelTinting(CVector vTinting)=0;
+	
 	virtual void Clear(const CVector &vColor)=0;
 
 	// Render state
@@ -569,7 +571,6 @@ public:
 	
 	virtual void DumpStagedRenderingStats()=0;
 	
-	virtual void 			SetShadingModel(EShadingModel eModel)=0;
 	virtual EShadingModel 	GetShadingModel()=0;
 	
 	virtual void PushOptions()=0;

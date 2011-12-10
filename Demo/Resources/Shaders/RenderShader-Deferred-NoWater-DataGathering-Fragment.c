@@ -10,10 +10,6 @@ in vec4 g_Color;
 in vec2 g_TexCoord0;
 in vec2 g_TexCoord1;
 in vec2 g_SkyCoord;
-in vec4 g_EyeVertexPos;
-in vec4 g_ClipVertexPos;
-in vec4 g_WorldEyeDir;
-in vec4 g_WorldVertexPos;
 
 out vec4 oNormal;
 out vec4 oDiffuse;
@@ -23,8 +19,8 @@ uniform sampler2DShadow ShadowMap;
 in vec4 g_ShadowCoord;
 #endif
 #ifdef ENABLE_NORMAL_MAP
-in vec3  g_WorldTangent;
-in vec3  g_WorldBitangent;
+in vec3  g_EyeTangent;
+in vec3  g_EyeBitangent;
 uniform mat4 uModel[MAX_OBJECT_INSTANCES];
 uniform sampler2D NormalMap;
 #endif
@@ -35,17 +31,11 @@ uniform vec4 SkyData;
 
 
 uniform vec4 uMaterialSpecular;
-in vec3 g_WorldNormal;
+in vec3 g_EyeNormal;
 
 uniform vec3 uWorldEyeDir;
 uniform float uMaterialShininess;
 uniform vec4 uMaterialDiffuse;
-
-uniform vec4 uAmbient;
-uniform vec4 uSunDiffuse;
-uniform vec4 uSunSpecular;
-uniform vec3 uSunDirection;
-
 
 #ifdef ENABLE_FOG
 in float g_fFogFactor;
@@ -116,10 +106,10 @@ void main (void)
 	  // Compute final normal usign the normal map
 	  vec4 normalMapSample=texture2D(NormalMap,g_TexCoord0.xy);
 	  vec3 bump = vec3(normalMapSample.xy* 2.0 - vec2(1.0),normalMapSample.z);
-	  vec3 N=normalize(bump.x*normalize(g_WorldBitangent)+bump.y*normalize(g_WorldTangent)+bump.z*normalize(g_WorldNormal));
+	  vec3 N=normalize(bump.x*normalize(g_EyeBitangent)+bump.y*normalize(g_EyeTangent)+bump.z*normalize(g_EyeNormal));
 	 // ks=normalMapSample.a;
 #else
-	  vec3 N=normalize(g_WorldNormal+normalDisturbance.xyz);
+	  vec3 N=normalize(g_EyeNormal/*+normalDisturbance.xyz*/);
 #endif
 		
 #ifdef ENABLE_LIGHTING
@@ -133,6 +123,6 @@ void main (void)
 	finalcolor.rgb=mix(finalcolor.rgb,uFogColor,g_fFogFactor);
   #endif
 
-	oNormal=vec4((N.xyz*0.5)+vec3(0.5),uMaterialSpecular.r);
+	oNormal=vec4((N.xy*0.5)+vec2(0.5),uMaterialSpecular.r,finalcolor.a);
 	oDiffuse=finalcolor;
 }

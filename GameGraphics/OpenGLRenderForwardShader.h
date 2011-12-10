@@ -54,12 +54,8 @@ struct SShaderKey
 	bool  bPoints;
 	std::string sDescription;
 	
-	EShadingModel eShadingModel;
-	
 	bool operator <(const SShaderKey &otherKey) const
 	{
-		if(eShadingModel<otherKey.eShadingModel){return true;}
-		if(eShadingModel>otherKey.eShadingModel){return false;}
 		if(bPoints<otherKey.bPoints){return true;}
 		if(bPoints>otherKey.bPoints){return false;}
 		if(bHeightFog<otherKey.bHeightFog){return true;}
@@ -79,8 +75,8 @@ struct SShaderKey
 		return false;
 	}
 
-SShaderKey(){eShadingModel=eShadingModel_Gouraud;bHeightFog=false;bShadows=false;nTextureUnits=0;bLighting=false;bWater=false;bNormalMap=false;bSkyShadow=false;bPoints=false;}
-SShaderKey(EShadingModel shading,bool heightFog,bool shadows,int textureUnits,bool lighting,bool water,bool normalMap,bool sky,bool points){eShadingModel=shading;bHeightFog=heightFog;bShadows=shadows;nTextureUnits=textureUnits;bLighting=lighting;bWater=water;bNormalMap=normalMap;bSkyShadow=sky;bPoints=points;}
+SShaderKey(){bHeightFog=false;bShadows=false;nTextureUnits=0;bLighting=false;bWater=false;bNormalMap=false;bSkyShadow=false;bPoints=false;}
+SShaderKey(bool heightFog,bool shadows,int textureUnits,bool lighting,bool water,bool normalMap,bool sky,bool points){bHeightFog=heightFog;bShadows=shadows;nTextureUnits=textureUnits;bLighting=lighting;bWater=water;bNormalMap=normalMap;bSkyShadow=sky;bPoints=points;}
 };
 
 enum EStateChangeShader
@@ -174,7 +170,7 @@ class COpenGLRenderForwardShader: virtual public CSystemObjectBase, virtual publ
 	void AnalyzeStages(bool *pbShadowsPresent,bool *pbSkyPresent,bool *pbLightingPresent);
 	
 	void AddShader(SShaderKey &key);
-	bool PrecompileShaderByName(const char *psName,EShadingModel shading);
+	bool PrecompileShaderByName(const char *psName);
 	
 	
 	void SetVertexPointers(float *pVertex,float *pNormal,float *pColor,int nTex,float **pTex, float *pNormalTex=NULL,float *pTangent=NULL,float *pBiTangent=NULL);
@@ -207,6 +203,8 @@ public:
 	
 	void ReloadShaders();
 		
+	EShadingModel GetShadingModel(){return eShadingModel_Mixed;}
+	
 	COpenGLRenderForwardShader(void);
 	~COpenGLRenderForwardShader(void);
 };

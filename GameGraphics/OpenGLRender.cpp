@@ -328,8 +328,7 @@ void COpenGLRender::ActivateLighting(){m_sStagedRenderingState.bActiveLighting=m
 void COpenGLRender::DeactivateLighting(){m_sStagedRenderingState.bActiveLighting=false;}
 bool COpenGLRender::IsLightingActive(){return m_sStagedRenderingState.bActiveLighting;}
 
-void 			COpenGLRender::SetShadingModel(EShadingModel eModel){m_sStagedRenderingState.eShadingModel=eModel;}
-EShadingModel 	COpenGLRender::GetShadingModel(){return m_sStagedRenderingState.eShadingModel;}
+EShadingModel 	COpenGLRender::GetShadingModel(){return m_Kernel.m_piOpenGLRender?m_Kernel.m_piOpenGLRender->GetShadingModel():eShadingModel_UNKNOWN;}
 SRenderStats 	COpenGLRender::GetStagedRenderingStats(){return m_sStagedStats;}
 
 void COpenGLRender::EnableNormalMaps(){m_sRenderOptions.bEnableNormalMaps=true;}
@@ -1041,6 +1040,11 @@ void COpenGLRender::Clear(const CVector &vColor)
 	m_sScene.vClearColor=vColor;
 }
 
+void COpenGLRender::SetModelTinting(CVector vTinting)
+{
+	m_sStagedRenderingState.vModelTinting=vTinting;
+}
+
 void COpenGLRender::RenderPoint( const CVector &vPosition,double dSize,const CVector &vColor,double dAlpha )
 {
 	SPointStageKey key(m_sStagedRenderingState,(unsigned long)dSize);
@@ -1341,6 +1345,7 @@ void COpenGLRender::RenderModel(const CVector &vOrigin,const CVector &vOrientati
 	sInstance.dDistanceToCamera=m_sScene.camera.m_CameraForwardPlane.GetSide(vOrigin);
 	sInstance.bSkipRender=bSkip;
 	sInstance.nId=pStage->vInstances.size();
+	sInstance.vTinting=m_sStagedRenderingState.vModelTinting;
 	if(pStage->vInstances.size()==0 || sInstance.dDistanceToCamera<pStage->dNearestModel)
 	{
 		pStage->dNearestModel=sInstance.dDistanceToCamera;
@@ -1697,6 +1702,7 @@ void COpenGLRender::StartFrame()
 				}
 			}
 //*/	
+//*
 			if(m_Kernel.m_piOpenGLRender==NULL)
 			{
 				if(m_Kernel.Create(m_piSystem,"RenderForwardShader",""))
@@ -1712,6 +1718,7 @@ void COpenGLRender::StartFrame()
 					RTTRACE("COpenGLRender::StartFrame -> Failed to create shader based render, falling back to fixed pipeline");
 				}
 			}
+//*/
 		}
 		if(m_Kernel.m_piOpenGLRender==NULL)
 		{
