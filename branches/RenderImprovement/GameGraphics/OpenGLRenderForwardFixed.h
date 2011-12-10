@@ -129,6 +129,8 @@ public:
 	void SetSelectionId(unsigned int nId);
 	int EndSelection();
 	
+	EShadingModel GetShadingModel(){return eShadingModel_Vertex;}
+	
 	COpenGLRenderForwardFixed(void);
 	~COpenGLRenderForwardFixed(void);
 };

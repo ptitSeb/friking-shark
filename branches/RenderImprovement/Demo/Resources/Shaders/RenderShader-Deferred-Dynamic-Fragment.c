@@ -11,18 +11,17 @@ uniform sampler2D DiffuseSampler;
 
 uniform mat4 uUnprojectMatrix;
 
-uniform vec3 uWorldEyeDir;
 uniform float uDynamicRange;
 uniform vec3 uDynamicPosition;
 uniform vec4 uDynamicDiffuse;
 uniform vec4 uDynamicSpecular;
 
-void DynamicLight(const in vec3 worldposition,
+void DynamicLight(const in vec3 eyeposition,
 				  const in vec3 normal,
 				  inout    vec3 diffuse,
 				  inout    vec3 specular)
 {
-	vec3 lightVec=uDynamicPosition.xyz - worldposition.xyz;
+	vec3 lightVec=uDynamicPosition.xyz - eyeposition.xyz;
 	float dist=length(lightVec);
 	if(dist>uDynamicRange){discard;}
 	
@@ -37,7 +36,7 @@ void DynamicLight(const in vec3 worldposition,
 	diffuse+=uDynamicDiffuse.rgb*lambertTerm*fStrength;
 	
 	vec3 R = reflect(-lightVec, normal);
-	float specularFactor = pow(max(dot(R, -uWorldEyeDir), 0.0),48.0);
+	float specularFactor = pow(max(R.z, 0.0),48.0);
 	specular += uDynamicSpecular.rgb*specularFactor*fStrength;
 }
 
@@ -51,7 +50,9 @@ void main(void)
 	float fZ=textureProj(DepthSampler,vec4(gTexCoord,0.0,1.0));
 	vec3 position=ComputePosition(gTexCoord,fZ);
 	vec4 normalAndShin=texture2D(NormalSampler,gTexCoord);
-	vec3 normal=normalize((normalAndShin.xyz-vec3(0.5))*2.0);
+	vec3 normal;
+	normal.xy=(normalAndShin.xy-vec2(0.5))*2.0;
+	normal.z=sqrt(1.0-min(normal.x*normal.x+normal.y*normal.y,1.0));
 	
 	vec3 diffuse=texture2D(DiffuseSampler,gTexCoord).rgb;
 	// pixels with depth=1 are very likely to come from a clear
@@ -61,7 +62,7 @@ void main(void)
 	// this is a lot faster than clearing the normal buffer each frame
 	
 	float fDeactivateGarbageNormal=(1.0-trunc(fZ));
-	vec3 specular=vec3(normalAndShin.a*fDeactivateGarbageNormal);
+	vec3 specular=vec3(normalAndShin.z*fDeactivateGarbageNormal);
 	
 	vec3 dyndiff=vec3(0);
 	vec3 dynspec=vec3(0);

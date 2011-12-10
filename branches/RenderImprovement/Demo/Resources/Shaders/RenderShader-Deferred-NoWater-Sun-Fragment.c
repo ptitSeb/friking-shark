@@ -17,7 +17,9 @@ uniform vec4 uAmbient;
 uniform vec4 uSunDiffuse;
 uniform vec4 uSunSpecular;
 uniform vec3 uSunDirection;
+uniform vec3 uSunEyeDirection;
 uniform vec3 uSunHalfVector;
+uniform vec3 uSunEyeHalfVector;
 
 uniform sampler2D SkyShadowMap;
 uniform vec4 uSkyData;
@@ -30,8 +32,8 @@ vec3 ComputePosition(in vec2 screenCoords,in float fZ)
 
 void SunLight(const in vec3 normal,inout vec4 diffuse,inout vec4 specular)
 {
-	diffuse += uSunDiffuse * max(0.0, dot(normal,uSunDirection));
-	float nDotHV = max(0.0, dot(normal, uSunHalfVector));
+	diffuse+=uSunDiffuse * max(0.0, dot(normal,uSunEyeDirection));
+	float nDotHV = max(0.0, dot(normal, uSunEyeHalfVector));
 	specular += uSunSpecular * max(0.0,pow(nDotHV, 96.0));
 }
 
@@ -40,9 +42,10 @@ void main(void)
 	float fZ=textureProj(DepthSampler,vec4(gTexCoord,0.0,1.0));
 	vec3 position=ComputePosition(gTexCoord,fZ);
 	vec4 normalAndShin=texture2D(NormalSampler,gTexCoord);
-	vec3 normal=normalize((normalAndShin.xyz-vec3(0.5))*2.0);
+	vec3 normal;
+	normal.xy=(normalAndShin.xy-vec2(0.5))*2.0;
+	normal.z=sqrt(1.0-min(normal.x*normal.x+normal.y*normal.y,1.0));
 	vec3 diffuse=texture2D(DiffuseSampler,gTexCoord).rgb;
-
 	// pixels with depth=1 are very likely to come from a clear
 	// operation, to avoid clearing the normal buffer each frame
 	// we deactivate specular component if z=1.
@@ -50,7 +53,7 @@ void main(void)
 	// this is a lot faster than clearing the normal buffer each frame
 	
 	float fDeactivateGarbageNormal=(1.0-trunc(fZ));
-	vec3 specular=vec3(normalAndShin.a*fDeactivateGarbageNormal);
+	vec3 specular=vec3(normalAndShin.z*fDeactivateGarbageNormal);
 
 	vec4 sundiff=vec4(0);
 	vec4 sunspec=vec4(0);

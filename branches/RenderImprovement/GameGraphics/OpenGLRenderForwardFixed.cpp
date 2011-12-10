@@ -479,7 +479,6 @@ void COpenGLRenderForwardFixed::SetRenderState( const SRenderState &sNewState)
 {
 	m_sRenderState.bActiveShadowEmission=sNewState.bActiveShadowEmission;
 	m_sRenderState.bActiveWater=sNewState.bActiveWater;
-	m_sRenderState.eShadingModel=sNewState.eShadingModel;
 	
 	bool bStateChange=false;
 	if(m_sRenderState.bActiveSolid!=sNewState.bActiveSolid)

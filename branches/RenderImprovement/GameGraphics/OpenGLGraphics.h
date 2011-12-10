@@ -52,10 +52,9 @@ struct SRenderState
 	CVector vHeightFogMins;
 	CVector vHeightFogMaxs;
 	CVector vHeightFogColor;
+	CVector vModelTinting;
 
 	unsigned long nTextureLevels;
-
-	EShadingModel eShadingModel;
 
 	bool operator <(const SRenderState &otherState) const
 	{
@@ -74,9 +73,6 @@ struct SRenderState
 
 		if(nTextureLevels<otherState.nTextureLevels){return -1;}
 		if(nTextureLevels>otherState.nTextureLevels){return 1;}
-
-		if(eShadingModel<otherState.eShadingModel){return -1;}
-		if(eShadingModel>otherState.eShadingModel){return 1;}
 
 		if(bActiveDepthWrite<otherState.bActiveDepthWrite){return -1;}
 		if(bActiveDepthWrite>otherState.bActiveDepthWrite){return 1;}
@@ -119,7 +115,6 @@ struct SRenderState
 		bActiveShadowReception=false;
 		bActiveSkyShadow=false;
 		nTextureLevels=0;
-		eShadingModel=eShadingModel_Balanced;
 
 		bActiveDepth=true;
 		bActiveDepthWrite=true;
@@ -132,6 +127,7 @@ struct SRenderState
 
 		bActiveHeightFog=false;
 		bActiveWater=false;
+		vModelTinting=ColorWhite;
 	}
 };
 
@@ -343,6 +339,7 @@ struct SModelInstance
 {
 	CVector vPos;
 	CVector vAngles;
+	CVector vTinting;
 	double  dDistanceToCamera;
 	bool bSkipRender;
 	int nId;
@@ -354,7 +351,7 @@ struct SModelInstance
 		return nId<other.nId;
 	}
 
-	SModelInstance(){bSkipRender=false;dDistanceToCamera=0;nId=0;}
+	SModelInstance(){bSkipRender=false;dDistanceToCamera=0;nId=0;vTinting=ColorWhite;}
 };
 
 struct SModelStageKey
@@ -611,6 +608,8 @@ public:
 	virtual void StartSelection(SGameRect rWindowRect,IGenericCamera *piCamera,double dx,double dy,double dPrecision)=0;
 	virtual void SetSelectionId(unsigned int nId)=0;
 	virtual int EndSelection()=0;
+
+	virtual EShadingModel GetShadingModel()=0;
 };
 
 class IOpenGLModel:virtual public ISystemUnknown

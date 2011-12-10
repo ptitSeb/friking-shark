@@ -138,7 +138,7 @@ bool COpenGLRenderForwardShader::Setup(IGenericRender *piRender,IGenericViewport
 	while(bOk && *ppShaderCursor)
 	{
 		const char *pName=*ppShaderCursor;
-		bOk=PrecompileShaderByName(pName,eShadingModel_Balanced);
+		bOk=PrecompileShaderByName(pName);
 		if(!bOk){RTTRACE("COpenGLRenderForwardShader::Setup -> Failed to precompile shader: '%s'",pName);}
 		ppShaderCursor++;
 	}
@@ -474,7 +474,6 @@ void COpenGLRenderForwardShader::SetRenderState( const SRenderState &sNewState,E
 	m_sRenderState.bActiveShadowEmission=sNewState.bActiveShadowEmission;
 	m_sRenderState.bActiveShadowReception=sNewState.bActiveShadowReception;
 	m_sRenderState.bActiveWater=sNewState.bActiveWater;
-	m_sRenderState.eShadingModel=sNewState.eShadingModel;
 	
 	bool bStateChange=false;
 	if(m_sRenderState.bActiveSolid!=sNewState.bActiveSolid)
@@ -579,7 +578,7 @@ void COpenGLRenderForwardShader::SetCurrentRenderStateShader()
 	if(m_bSelecting){return;}
 	
 	bool bTempSkyShadow=m_pScene->sky.m_piSkyShadow && m_pScene->sky.m_piSkyShadow && m_sRenderState.bActiveSkyShadow && m_sRenderState.bActiveShadowReception;
-	SShaderKey key(m_sRenderState.eShadingModel,m_sRenderState.bActiveHeightFog,m_sRenderState.bActiveShadowReception && m_bAnyShadowInTheScene,m_sRenderState.bActiveTextures && m_nTextureLevels!=0,m_sRenderState.bActiveLighting,m_sRenderState.bActiveWater,/*m_pOptions->bEnableNormalMaps*/m_piEffectiveNormalMap!=NULL,bTempSkyShadow,m_bRenderingPoints);
+	SShaderKey key(m_sRenderState.bActiveHeightFog,m_sRenderState.bActiveShadowReception && m_bAnyShadowInTheScene,m_sRenderState.bActiveTextures && m_nTextureLevels!=0,m_sRenderState.bActiveLighting,m_sRenderState.bActiveWater,/*m_pOptions->bEnableNormalMaps*/m_piEffectiveNormalMap!=NULL,bTempSkyShadow,m_bRenderingPoints);
 	std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader=m_mShaders.find(key);
 	CGenericShaderWrapper *pNewShader=(iShader==m_mShaders.end())?NULL:&iShader->second;
 	if(!pNewShader)
@@ -1039,7 +1038,7 @@ void COpenGLRenderForwardShader::RenderAllStages(bool bRenderingShadow)
 	RenderPointStages(bRenderingShadow);
 }
 
-bool COpenGLRenderForwardShader::PrecompileShaderByName(const char *psName,EShadingModel shading)
+bool COpenGLRenderForwardShader::PrecompileShaderByName(const char *psName)
 {
 	bool bOk=true;
 	
@@ -1051,7 +1050,7 @@ bool COpenGLRenderForwardShader::PrecompileShaderByName(const char *psName,EShad
 	bool bNormalMap=(strchr(psName,'N')!=NULL);
 	bool bSky=(strchr(psName,'Y')!=NULL);
 	bool bPoints=(strchr(psName,'P')!=NULL);
-	SShaderKey key(shading,bHeightFog,bShadows,bTextures?1:0,bLighting,bWater,bNormalMap,bSky,bPoints);
+	SShaderKey key(bHeightFog,bShadows,bTextures?1:0,bLighting,bWater,bNormalMap,bSky,bPoints);
 	std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader=m_mShaders.find(key);
 	if(iShader==m_mShaders.end())
 	{
@@ -1113,24 +1112,10 @@ void COpenGLRenderForwardShader::AddShader( SShaderKey &key )
 	CGenericShaderWrapper wrapper;
 	if(wrapper.Create(m_piSystem,"Shader",""))
 	{
-		/*		if(key.eShadingModel==eShadingModel_Gouraud)
-		{
-			wrapper.m_piShader->Load("Shaders/RenderShader-Gouraud-Vertex.c","Shaders/RenderShader-Gouraud-Fragment.c",sPreprocessor);
-		 }
-		 */
 #ifdef ANDROID
 		wrapper.m_piShader->Load("Shaders/Android-RenderShader-Vertex.c","Shaders/Android-RenderShader-Fragment.c",sPreprocessor);
 #else
-		if(key.eShadingModel==eShadingModel_Balanced)
-		{
-			wrapper.m_piShader->Load("Shaders/RenderShader-Balanced-Vertex.c","Shaders/RenderShader-Balanced-Fragment.c",sPreprocessor);
-			sDescription+="-Balanced";
-		}
-		else if(key.eShadingModel==eShadingModel_Phong)
-		{
-			wrapper.m_piShader->Load("Shaders/RenderShader-Phong-Vertex.c","Shaders/RenderShader-Phong-Fragment.c",sPreprocessor);
-			sDescription+="-Phong";
-		}
+		wrapper.m_piShader->Load("Shaders/RenderShader-Forward-Vertex.c","Shaders/RenderShader-Forward-Fragment.c",sPreprocessor);
 #endif
 		
 		if(key.nTextureUnits>=1)

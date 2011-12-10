@@ -220,7 +220,7 @@ bool COpenGLRenderDeferred::Setup(IGenericRender *piRender,IGenericViewport *piV
 	while(bOk && *ppShaderCursor)
 	{
 		const char *pName=*ppShaderCursor;
-		bOk=PrecompileShaderByName(pName,eShadingModel_Balanced);
+		bOk=PrecompileShaderByName(pName);
 		if(!bOk){RTTRACE("COpenGLRenderDeferred::Setup -> Failed to precompile shader: '%s'",pName);}
 		ppShaderCursor++;
 	}
@@ -424,7 +424,8 @@ void COpenGLRenderDeferred::RenderDeferred(bool bShadowsPresent,bool bWaterPrese
 	if(m_DeferredShaderNoWaterSun.m_piShader==NULL){return;}
 	if(m_DeferredShaderWaterSun.m_piShader==NULL){return;}
 	if(m_DeferredShaderDynamic.m_piShader==NULL){return;}
-		
+	CMatrix33 mViewRotate(m_pScene->camera.m_ViewMatrix);
+	
 	RTTIMEMETER_SETGLSTEP("Render-Shader Setup");
 	std::vector<IGenericLight *>::iterator i;
 	for(i=m_pScene->lighting.m_vLights.begin(); i!=m_pScene->lighting.m_vLights.end();i++)
@@ -434,29 +435,47 @@ void COpenGLRenderDeferred::RenderDeferred(bool bShadowsPresent,bool bWaterPrese
 		
 		if(eType==eGenericLightType_Directional)
 		{
+			CVector vSunEyeDirection=piLight->GetDirectionalDirection();
+			
+			vSunEyeDirection*=mViewRotate;
+			vSunEyeDirection.N();
+			
+			CVector vHalfVector=piLight->GetDirectionalDirection()-m_pScene->camera.m_vCameraForward;
+			vHalfVector.N();
+			CVector vEyeHalfVector=vHalfVector;
+			vEyeHalfVector*=mViewRotate;
+			vEyeHalfVector.N();
+			
 			std::map<SDeferredShaderKey,CGenericShaderWrapper>::iterator iShader;
 			for(iShader=m_mShaders.begin();iShader!=m_mShaders.end();iShader++)
 			{
 				if(iShader->first.bLighting && iShader->first.eMode==eDeferredMode_Water)
 				{
-					iShader->second.m_piShader->AddUniform("uWorldEyeDir",m_pScene->camera.m_vCameraForward,false);
 					iShader->second.m_piShader->AddUniform("uAmbient",m_pScene->lighting.m_vAmbientColor,1.0,false);
 					iShader->second.m_piShader->AddUniform("uSunDiffuse",piLight->GetDiffuseColor(),1.0,false);
 					iShader->second.m_piShader->AddUniform("uSunSpecular",piLight->GetSpecularColor(),1.0,false);
-					iShader->second.m_piShader->AddUniform("uSunDirection",piLight->GetDirectionalDirection(),false);
+					iShader->second.m_piShader->AddUniform("uSunEyeDirection",vSunEyeDirection,false);
+					iShader->second.m_piShader->AddUniform("uSunEyeHalfVector",vEyeHalfVector,false);
 				}
 			}
 			m_DeferredShaderNoWaterSun.m_piShader->AddUniform("uAmbient",m_pScene->lighting.m_vAmbientColor,1.0,false);
 			m_DeferredShaderNoWaterSun.m_piShader->AddUniform("uSunDiffuse",piLight->GetDiffuseColor(),1.0,false);
 			m_DeferredShaderNoWaterSun.m_piShader->AddUniform("uSunSpecular",piLight->GetSpecularColor(),1.0,false);
-			m_DeferredShaderNoWaterSun.m_piShader->AddUniform("uSunDirection",piLight->GetDirectionalDirection(),false);
-
-			CVector vHalfVector=piLight->GetDirectionalDirection()-m_pScene->camera.m_vCameraForward;
-			vHalfVector.N();
-			m_DeferredShaderNoWaterSun.m_piShader->AddUniform("uSunHalfVector",vHalfVector,false);
+			m_DeferredShaderNoWaterSun.m_piShader->AddUniform("uSunEyeDirection",vSunEyeDirection,false);
+			m_DeferredShaderNoWaterSun.m_piShader->AddUniform("uSunEyeHalfVector",vEyeHalfVector,false);
 			break;
 		}
 	}
+
+	CVector vEyeWaterBitangent=AxisPosX;
+	CVector vEyeWaterTangent=AxisPosZ;
+	CVector vEyeWaterNormal=AxisPosY;
+	vEyeWaterBitangent*=mViewRotate;
+	vEyeWaterTangent*=mViewRotate;
+	vEyeWaterNormal*=mViewRotate;
+	vEyeWaterBitangent.N();
+	vEyeWaterTangent.N();
+	vEyeWaterNormal.N();
 	
 	std::map<SDeferredShaderKey,CGenericShaderWrapper>::iterator iShader;
 	for(iShader=m_mShaders.begin();iShader!=m_mShaders.end();iShader++)
@@ -465,9 +484,13 @@ void COpenGLRenderDeferred::RenderDeferred(bool bShadowsPresent,bool bWaterPrese
 		{
 			if(iShader->first.bWater && iShader->first.nTextureUnits)
 			{
-				iShader->second.m_piShader->AddUniform("CurrentRealTime",m_pScene->fTime,false);
-				iShader->second.m_piShader->AddUniform("WaterMappingSize",m_pScene->water.dSizeU,m_pScene->water.dSizeV,false);
-				iShader->second.m_piShader->AddUniform("WaterMappingOffset",m_pScene->water.dOffsetU,m_pScene->water.dOffsetV,false);
+				iShader->second.m_piShader->AddUniform("uCurrentRealTime",m_pScene->fTime,false);
+				iShader->second.m_piShader->AddUniform("uWaterMappingSize",m_pScene->water.dSizeU,m_pScene->water.dSizeV,false);
+				iShader->second.m_piShader->AddUniform("uWaterMappingOffset",m_pScene->water.dOffsetU,m_pScene->water.dOffsetV,false);
+				iShader->second.m_piShader->AddUniform("uEyeWaterTangent",vEyeWaterTangent,false);
+				iShader->second.m_piShader->AddUniform("uEyeWaterBitangent",vEyeWaterBitangent,false);
+				iShader->second.m_piShader->AddUniform("uEyeWaterNormal",vEyeWaterNormal,false);
+				
 			}
 			if(iShader->first.bSkyShadow && bSkyPresent){iShader->second.m_piShader->AddUniform("SkyData",CVector(m_pScene->fTime*m_pScene->sky.m_dSkyShadowSpeed,m_pScene->sky.m_dSkyShadowXResolution,m_pScene->sky.m_dSkyShadowZResolution),m_pScene->sky.m_dSkyShadowOpacity,false);}
 		}
@@ -501,7 +524,16 @@ void COpenGLRenderDeferred::RenderDeferred(bool bShadowsPresent,bool bWaterPrese
 	mCameraInverse*=mBias;
 	mCameraInverse*=mWindowScale;
 	mCameraInverse.Inverse();
-		
+	
+	
+	
+	CMatrix mCameraInverseToEye;
+	mCameraInverseToEye=m_pScene->camera.m_ProjectionMatrix;
+	mCameraInverseToEye*=mZScale;
+	mCameraInverseToEye*=mBias;
+	mCameraInverseToEye*=mWindowScale;
+	mCameraInverseToEye.Inverse();
+	
 	SRenderState deferredState=m_sRenderState;
 	
 	RTTIMEMETER_SETGLSTEP("Render-ShadowMap");
@@ -667,7 +699,7 @@ void COpenGLRenderDeferred::RenderDeferred(bool bShadowsPresent,bool bWaterPrese
 	
 	if(m_pScene->lighting.m_vLights.size()>1)
 	{
-		m_DeferredShaderDynamic.m_piShader->AddUniform("uUnprojectMatrix",mCameraInverse,false);
+		m_DeferredShaderDynamic.m_piShader->AddUniform("uUnprojectMatrix",mCameraInverseToEye,false);
 		m_DeferredShaderDynamic.m_piShader->AddUniform("uProjection",projMatrix,false);
 		m_DeferredShaderDynamic.m_piShader->AddUniform("uView",view,false);
 		
@@ -719,7 +751,8 @@ void COpenGLRenderDeferred::RenderDeferred(bool bShadowsPresent,bool bWaterPrese
 				dLightTexCoordU*=dWidthRatio;
 				dLightTexCoordV*=dHeightRatio;
 				
-				m_DeferredShaderDynamic.m_piShader->AddUniform("uWorldEyeDir",m_pScene->camera.m_vCameraForward,false);
+				vPosition*=m_pScene->camera.m_ViewMatrix;
+				
 				m_DeferredShaderDynamic.m_piShader->AddUniform("uDynamicPosition",vPosition,false);
 				m_DeferredShaderDynamic.m_piShader->AddUniform("uDynamicDiffuse",piLight->GetDiffuseColor(),1.0,false);
 				m_DeferredShaderDynamic.m_piShader->AddUniform("uDynamicSpecular",piLight->GetSpecularColor(),1.0,false);
@@ -815,7 +848,7 @@ void COpenGLRenderDeferred::RenderScene(SSceneData &sScene)
 	if(!bLightingPresent){m_eRenderMode=eDeferredMode_Forward;}
 	else if (bWaterPresent){m_eRenderMode=eDeferredMode_Water;}
 	else {m_eRenderMode=eDeferredMode_NoWater;}
-	
+		
 	m_fCurrentRealTime=sScene.fTime;
 	
 	if(m_eRenderMode!=eDeferredMode_Forward)
@@ -856,7 +889,6 @@ void COpenGLRenderDeferred::SetRenderState( const SRenderState &sNewState,EDefer
 	m_sRenderState.bActiveShadowEmission=sNewState.bActiveShadowEmission;
 	m_sRenderState.bActiveShadowReception=sNewState.bActiveShadowReception;
 	m_sRenderState.bActiveWater=sNewState.bActiveWater;
-	m_sRenderState.eShadingModel=sNewState.eShadingModel;
 	
 	bool bDeferredStateChange=false;
 	if(m_sRenderState.bActiveSolid!=sNewState.bActiveSolid)
@@ -880,13 +912,26 @@ void COpenGLRenderDeferred::SetRenderState( const SRenderState &sNewState,EDefer
 		if(sNewState.bActiveBlending)
 		{
 			glEnable(GL_BLEND);
-			glDisableIndexedEXT(GL_BLEND,1);
+			m_bNormalBlendingEnabled=true;
 		}
 		else
 		{
 			glDisable(GL_BLEND);
 		}
 		bDeferredStateChange=true;
+	}
+	if(sNewState.bActiveBlending)
+	{
+		if(m_eRenderMode==eDeferredMode_Water && m_bNormalBlendingEnabled)
+		{
+			m_bNormalBlendingEnabled=false;
+			glDisableIndexedEXT(GL_BLEND,1);
+		}
+		else if(m_eRenderMode!=eDeferredMode_Water && !m_bNormalBlendingEnabled)
+		{
+			m_bNormalBlendingEnabled=true;
+			glEnableIndexedEXT(GL_BLEND,1);
+		}
 	}
 	if(m_sRenderState.nBlendOperator1!=sNewState.nBlendOperator1 ||
 		m_sRenderState.nBlendOperator2!=sNewState.nBlendOperator2)
@@ -963,7 +1008,7 @@ void COpenGLRenderDeferred::SetCurrentRenderStateShader()
 	
 	bool bTempSkyShadow=m_pScene->sky.m_piSkyShadow && m_pScene->sky.m_piSkyShadow && m_sRenderState.bActiveSkyShadow && m_sRenderState.bActiveShadowReception;
 	bool bTempShadow=m_sRenderState.bActiveShadowReception && m_bAnyShadowInTheScene && m_eRenderMode!=eDeferredMode_Forward;
-	SDeferredShaderKey key(m_eRenderMode,m_sRenderState.eShadingModel,m_sRenderState.bActiveHeightFog,bTempShadow,m_sRenderState.bActiveTextures && m_nTextureLevels!=0,m_sRenderState.bActiveLighting,m_sRenderState.bActiveWater,/*m_pOptions->bEnableNormalMaps*/m_piEffectiveNormalMap!=NULL,bTempSkyShadow,m_bRenderingPoints);
+	SDeferredShaderKey key(m_eRenderMode,m_sRenderState.bActiveHeightFog,bTempShadow,m_sRenderState.bActiveTextures && m_nTextureLevels!=0,m_sRenderState.bActiveLighting,m_sRenderState.bActiveWater,/*m_pOptions->bEnableNormalMaps*/m_piEffectiveNormalMap!=NULL,bTempSkyShadow,m_bRenderingPoints);
 	std::map<SDeferredShaderKey,CGenericShaderWrapper>::iterator iShader=m_mShaders.find(key);
 	CGenericShaderWrapper *pNewShader=(iShader==m_mShaders.end())?NULL:&iShader->second;
 	if(!pNewShader)
@@ -1027,6 +1072,7 @@ void COpenGLRenderDeferred::RenderModelStages(bool bRenderingShadow,EDeferredSta
 				pStage->piModel->GetRenderBufferVertexes(pKey->nAnimation,pKey->nFrame,nBuffer,&nVertexes,0);
 			}
 			float fMatrixes[16*MAX_OBJECT_INSTANCES];
+			CVector vTintings[MAX_OBJECT_INSTANCES];
 			float *pfMatrixes=fMatrixes;
 			unsigned int nInstances=0;
 			
@@ -1089,6 +1135,8 @@ void COpenGLRenderDeferred::RenderModelStages(bool bRenderingShadow,EDeferredSta
 				if(vPos.c[0] || vPos.c[1] || vPos.c[2]){tmp.T(vPos);m*=tmp;}
 				m.Transpose();
 				for(int x=0;x<16;x++){*pfMatrixes++=((double*)m.e)[x];}
+				vTintings[nInstances]=pStage->vInstances[nInstance].vTinting;
+				
 				nInstances++;
 				
 				if(  m_sHardwareSupport.bObjectInstancing==false ||
@@ -1096,6 +1144,7 @@ void COpenGLRenderDeferred::RenderModelStages(bool bRenderingShadow,EDeferredSta
 				{
 					CMatrix identity;
 					if(m_pCurrentShader){m_pCurrentShader->m_piShader->AddUniformMatrixes("uModel",nInstances,fMatrixes,true);}
+					if(m_pCurrentShader && !bRenderingShadow && !m_bSelecting){m_pCurrentShader->m_piShader->AddUniformVectors("uTinting",nInstances,vTintings,true);}
 					pStage->piGLModel->CallRenderBuffer(this,pKey->nAnimation,pKey->nFrame,nBuffer,nInstances);
 					if(m_pCurrentShader){m_pCurrentShader->m_piShader->AddUniform("uModel",identity,true);}
 					
@@ -1108,6 +1157,7 @@ void COpenGLRenderDeferred::RenderModelStages(bool bRenderingShadow,EDeferredSta
 			{
 				CMatrix identity;
 				if(m_pCurrentShader){m_pCurrentShader->m_piShader->AddUniformMatrixes("uModel",nInstances,fMatrixes,true);}
+				if(m_pCurrentShader && !bRenderingShadow && !m_bSelecting){m_pCurrentShader->m_piShader->AddUniformVectors("uTinting",nInstances,vTintings,true);}
 				pStage->piGLModel->CallRenderBuffer(this,pKey->nAnimation,pKey->nFrame,nBuffer,nInstances);
 				if(m_pCurrentShader){m_pCurrentShader->m_piShader->AddUniform("uModel",identity,true);}
 			}
@@ -1399,7 +1449,7 @@ void COpenGLRenderDeferred::RenderAllStages(bool bRenderingShadow)
 	RenderPointStages(bRenderingShadow);
 }
 
-bool COpenGLRenderDeferred::PrecompileShaderByName(const char *psName,EShadingModel shading)
+bool COpenGLRenderDeferred::PrecompileShaderByName(const char *psName)
 {
 	bool bOk=true;
 	
@@ -1416,7 +1466,7 @@ bool COpenGLRenderDeferred::PrecompileShaderByName(const char *psName,EShadingMo
 	if(strchr(psName,'1')!=NULL){eMode=eDeferredMode_Water;}
 	if(strchr(psName,'0')!=NULL){eMode=eDeferredMode_NoWater;}
 	
-	SDeferredShaderKey key(eMode,shading,bHeightFog,bShadows,bTextures?1:0,bLighting,bWater,bNormalMap,bSky,bPoints);
+	SDeferredShaderKey key(eMode,bHeightFog,bShadows,bTextures?1:0,bLighting,bWater,bNormalMap,bSky,bPoints);
 	std::map<SDeferredShaderKey,CGenericShaderWrapper>::iterator iShader=m_mShaders.find(key);
 	if(iShader==m_mShaders.end())
 	{
@@ -1522,6 +1572,7 @@ void COpenGLRenderDeferred::AddShader( SDeferredShaderKey &key )
 		wrapper.m_piShader->AddUniform("uModel",identity,false);
 		wrapper.m_piShader->AddUniform("uView",m_pScene?m_pScene->camera.m_ViewMatrix:identity,false);
 		wrapper.m_piShader->AddUniform("uProjection",m_pScene?m_pScene->camera.m_ProjectionMatrix:identity,false);
+		wrapper.m_piShader->AddUniform("uTinting",ColorWhite,false);
 		
 		if(key.bShadows && key.eMode==eDeferredMode_Water)
 		{

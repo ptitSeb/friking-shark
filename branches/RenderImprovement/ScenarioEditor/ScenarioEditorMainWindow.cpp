@@ -91,7 +91,6 @@ CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 	InitializeChildren();
 	m_piGameSystem=NULL;
 	m_bSimulationStarted=false;
-	m_eShadingModel=eShadingModel_Balanced;
 }
 
 CScenarioEditorMainWindow::~CScenarioEditorMainWindow(void)
@@ -450,7 +449,6 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 			SetupRenderOptions(piRender,piCamera);
 			piRender->StartStagedRendering();
 			piRender->PushState();
-			piRender->SetShadingModel(m_eShadingModel);
 			m_WorldManagerWrapper.m_piWorldManager->SetupRenderingEnvironment(piRender);
 			m_EntityManagerWrapper.m_piEntityManager->RenderEntities(piRender,piCamera);
 			piRender->PopState();
@@ -464,7 +462,6 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 		SetupRenderOptions(piRender,m_Camera.m_piCamera);
 		piRender->StartStagedRendering();
 		piRender->PushState();
-		piRender->SetShadingModel(m_eShadingModel);
 		
 		m_WorldManagerWrapper.m_piWorldManager->SetupRenderingEnvironment(piRender);
 		m_WorldManagerWrapper.m_piTerrain->DesignRender(piRender);
@@ -2872,13 +2869,6 @@ void CScenarioEditorMainWindow::OnCharacter(int nKey,bool *pbProcessed)
 	else if(nKey=='5'){m_nStartingWeapon=5;*pbProcessed=true;bUpdatePlayerWeapon=true;}
 	else if(nKey=='6'){m_nStartingWeapon=6;*pbProcessed=true;bUpdatePlayerWeapon=true;}
 	else if(nKey==' '){m_FrameManager.m_piFrameManager->SetPauseOnNextFrame(false);m_bPauseOnNextFrame=true;*pbProcessed=true;}
-	else if(nKey=='M'|| nKey=='m')
-	{
-		if(m_eShadingModel==eShadingModel_Gouraud){m_eShadingModel=eShadingModel_Balanced;}
-		else if(m_eShadingModel==eShadingModel_Balanced){m_eShadingModel=eShadingModel_Phong;}
-		else if(m_eShadingModel==eShadingModel_Phong){m_eShadingModel=eShadingModel_Gouraud;}
-		*pbProcessed=true;
-	}
 	
 	if(bUpdatePlayerWeapon)
 	{

@@ -212,7 +212,7 @@ void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCam
 		}
 	}
 	
-	if(m_WaterModel.m_piModel)
+	if(m_WaterModel.m_piModel && m_TerrainWater.m_Config.bEnabled)
 	{
 		bool bRenderWater=true;
 		if(!bAllSectors && m_PlayAreaManagerWrapper.m_piPlayAreaManager)
@@ -230,16 +230,15 @@ void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCam
 			piRender->SetWaterMappingSize(m_TerrainWater.m_Config.dHorizontalResolution,m_TerrainWater.m_Config.dVerticalResolution);
 			piRender->SetWaterMappingOffset(dWaterOffset,0);
 			piRender->DeactivateShadowEmission();
-			piRender->ActivateShadowReception();/*
-			if(piRender->GetShadingModel()==eShadingModel_Phong)
+			piRender->ActivateShadowReception();
+			if(piRender->GetShadingModel()==eShadingModel_Fragment)
 			{
 				piRender->ActivateLighting();
 			}
 			else
 			{
-				piRender->DeactivateLighting();			
-		}*/
-			piRender->ActivateLighting();
+				piRender->DeactivateLighting();
+			}
 			piRender->ActivateBlending();
 			piRender->ActivateWater();
 			piRender->SetDepthFunction(eDepthFunction_LessOrEqual);
