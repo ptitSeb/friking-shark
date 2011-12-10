@@ -61,8 +61,8 @@ void CModelAnimationObjectType::DesignRender( IGenericRender *piRender,CVector &
 			if(m_bReceiveShadows){piRender->ActivateShadowReception();}
 			ComputeReferenceSystem(vPosition,vAngles,m_vPosition,m_vAngles,&vTempPos,&vTempAngles);
 			m_ModelWrapper.m_piModel->GetFrameBBox(0,0,&vMins,&vMaxs);
-			piRender->RenderBBox(vTempPos,vTempAngles,vMins,vMaxs,0x8888,ColorWhite,1);
 			piRender->PopState();
+			piRender->RenderBBox(vTempPos,vTempAngles,vMins,vMaxs,0x8888,ColorWhite,1);
 		}
 		else
 		{

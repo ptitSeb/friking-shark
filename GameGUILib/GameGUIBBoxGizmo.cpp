@@ -59,7 +59,7 @@ void CGameGUIBBoxGizmo::RenderArrow(IGenericRender *piRender,CVector vPosition,C
 
 void CGameGUIBBoxGizmo::Render(IGenericRender *piRender, IGenericCamera *piCamera)
 {
-	piRender->RenderBBox(m_vPosition,Origin,m_vMins,m_vMaxs,CVector(1,1,1));
+	piRender->RenderBBox(m_vPosition,Origin,m_vMins,m_vMaxs,0x8888,CVector(1,1,1),1.0);
 	RenderArrow(piRender,m_vPosition+CVector(m_vMaxs.c[0],m_vCenter.c[1],m_vCenter.c[2]),AxisPosX,AxisPosY,m_nSelectedElement==0?CVector(1,0,0):CVector(0.5,0,0));
 	RenderArrow(piRender,m_vPosition+CVector(m_vMins.c[0],m_vCenter.c[1],m_vCenter.c[2]),AxisNegX,AxisPosY,m_nSelectedElement==1?CVector(1,0,0):CVector(0.5,0,0));
 	RenderArrow(piRender,m_vPosition+CVector(m_vCenter.c[0],m_vMaxs.c[1],m_vCenter.c[2]),AxisPosY,AxisPosZ,m_nSelectedElement==2?CVector(0,0,1):CVector(0,0,0.5));
