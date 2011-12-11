@@ -215,7 +215,7 @@ bool COpenGLRenderDeferred::Setup(IGenericRender *piRender,IGenericViewport *piV
 		}
 	}
 	
-	const char *ppShadersToPrecompile[]={"1","2","P2","T2","T0","P0","PG0","PG1","GT0","GT1","GTL0","GTL1","SYL1","SYL0","TL0","SYT0","GSYT0","GSYT1","GSYTL0","GSYTL1","GSYL1","SYTL1","SYTL0","GWSYTL1",NULL};
+	const char *ppShadersToPrecompile[]={"1","2","P2","T2","T0","P0","PG0","PG1","GT0","GT1","GTL0","GTL1","SYL1","SYL0","TL0","SYT0","GSYT0","GSYT1","GSYTL0","GSYTL1","GSYL1","SYTL1","SYTL0","GWSYTL1","GWTL1","GSTL1","GWSTL1","GSNTL0","GSTL0","GSNTL1","GST0","GST1",NULL};
 	const char **ppShaderCursor=ppShadersToPrecompile;
 	while(bOk && *ppShaderCursor)
 	{
