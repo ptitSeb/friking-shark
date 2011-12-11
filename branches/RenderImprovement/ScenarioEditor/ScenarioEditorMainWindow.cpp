@@ -279,8 +279,8 @@ void CScenarioEditorMainWindow::ProcessKey(unsigned short nKey,double dTimeFract
 }
 void CScenarioEditorMainWindow::SetupRenderOptions(IGenericRender *piRender,IGenericCamera *piCamera)
 {
-	double cx=m_rRealRect.h*piCamera->GetAspectRatio();
-	double dx=(m_rRealRect.w-cx)*0.5;
+	double cx=round(m_rRealRect.h*piCamera->GetAspectRatio());
+	double dx=round((m_rRealRect.w-cx)*0.5);
 
 	double dNearPlane=0,dFarPlane=0;
 	CVector vAngles,vPosition;
@@ -448,6 +448,7 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 		{
 			SetupRenderOptions(piRender,piCamera);
 			piRender->StartStagedRendering();
+			if(m_bInspectionMode){piRender->Clear(m_vBackgroundColor);}
 			piRender->PushState();
 			m_WorldManagerWrapper.m_piWorldManager->SetupRenderingEnvironment(piRender);
 			m_EntityManagerWrapper.m_piEntityManager->RenderEntities(piRender,piCamera);
@@ -461,6 +462,7 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 	{
 		SetupRenderOptions(piRender,m_Camera.m_piCamera);
 		piRender->StartStagedRendering();
+		piRender->Clear(m_vBackgroundColor);
 		piRender->PushState();
 		
 		m_WorldManagerWrapper.m_piWorldManager->SetupRenderingEnvironment(piRender);
@@ -626,21 +628,17 @@ void CScenarioEditorMainWindow::OnDrawBackground(IGenericRender *piRender)
 	
 	IGenericCamera *piPlayCamera=m_PlayAreaManagerWrapper.m_piPlayAreaManager->GetCamera();
 	IGenericCamera *piCamera=ADD(m_bInspectionMode?m_Camera.m_piCamera:piPlayCamera);
-	
+
 	if(m_bSimulationStarted && !m_bInspectionMode && piCamera)
 	{
-		double cx=m_rRealRect.h*piCamera->GetAspectRatio();
-		double dx=(m_rRealRect.w-cx)*0.5;
+		double cx=round(m_rRealRect.h*piCamera->GetAspectRatio());
+		double dx=round((m_rRealRect.w-cx)*0.5);
 		
 		// Render interface lateral bands
-		piRender->RenderRect(m_rRealRect.x,m_rRealRect.y,dx+1,m_rRealRect.h,m_vBackgroundColor,m_dBackgroundAlpha);
-		piRender->RenderRect(m_rRealRect.x+cx+dx-1,m_rRealRect.y,dx+2,m_rRealRect.h,m_vBackgroundColor,m_dBackgroundAlpha);
+		piRender->RenderRect(m_rRealRect.x,m_rRealRect.y,dx,m_rRealRect.h,m_vBackgroundColor,m_dBackgroundAlpha);
+		piRender->RenderRect(m_rRealRect.x+cx+dx,m_rRealRect.y,dx,m_rRealRect.h,m_vBackgroundColor,m_dBackgroundAlpha);
 	}
-	else
-	{
-		// render full background
-		piRender->RenderRect(m_rRealRect.x,m_rRealRect.y,m_rRealRect.w,m_rRealRect.h,m_vBackgroundColor,m_dBackgroundAlpha);
-	}
+
 	REL(piCamera);
 	REL(piPlayCamera);
 }
