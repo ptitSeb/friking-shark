@@ -398,6 +398,7 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 {
 	if(!m_bGameSystemInitialized)
 	{
+		RenderCourtain(piRender);
 		UpdateGUI(0);
 		return;
 	}
@@ -470,6 +471,10 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 		{
 			m_eState=eGameInterfaceState_Idle;
 			m_bCompleted=true;
+			
+			RenderCourtain(piRender);
+			UpdateGUI(dwCurrentTime);
+			
 			NOTIFY_EVENT(IGameInterfaceWindowEvents,OnGameOverCourtainClosed());
 			return;
 		}
@@ -480,6 +485,8 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 		if(!m_bCourtainClosing && !m_bFrozen)
 		{
 			ResetGame();
+			RenderCourtain(piRender);
+			UpdateGUI(dwCurrentTime);
 			return;
 		}
 	}
@@ -490,6 +497,10 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 		{
 			m_eState=eGameInterfaceState_Idle;
 			m_bCompleted=true;
+			
+			RenderCourtain(piRender);
+			UpdateGUI(dwCurrentTime);
+			
 			NOTIFY_EVENT(IGameInterfaceWindowEvents,OnManualStopCourtainClosed());
 			return;
 		}
@@ -626,6 +637,9 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 			m_eState=eGameInterfaceState_Idle;
 			m_bCompleted=true;
 			
+			RenderCourtain(piRender);
+			UpdateGUI(dwCurrentTime);
+			
 			NOTIFY_EVENT(IGameInterfaceWindowEvents,OnScenarioFinished(eScenarioFinishedReason_Completed));
 			m_nLastCountTime=dwCurrentTime;
 			return;
@@ -644,15 +658,12 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 			m_piParent->GetRealRect(&sParentRect);
 		
 			sRect.y=0;
-			sRect.w=sParentRect.h*m_dOriginalPlayAreaAspectRatio;
-			sRect.x=(sParentRect.w-sRect.w)*0.5;
+			sRect.w=round(sParentRect.h*m_dOriginalPlayAreaAspectRatio);
+			sRect.x=round((sParentRect.w-sRect.w)*0.5);
 			sRect.h=sParentRect.h;
 			
-			if(sRect.w>sParentRect.w){sRect.w=sParentRect.w;sRect.x=(sParentRect.w-sRect.w)*0.5;}
-			if(sRect.h>sParentRect.h){sRect.h=sParentRect.h;sRect.y=(sParentRect.h-sRect.h)*0.5;}
-			
-			sRect.x=floor(sRect.x);
-			sRect.y=floor(sRect.y);
+			if(sRect.w>sParentRect.w){sRect.w=sParentRect.w;sRect.x=round((sParentRect.w-sRect.w)*0.5);}
+			if(sRect.h>sParentRect.h){sRect.h=sParentRect.h;sRect.y=round((sParentRect.h-sRect.h)*0.5);}
 			
 			IPlayAreaDesign *piDesign=QI(IPlayAreaDesign,m_PlayAreaManagerWrapper.m_piPlayAreaManager);
 			if(piDesign)
@@ -692,18 +703,18 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 			piRender->DisableAutoShadowVolume();
 			
 			piRender->StartStagedRendering();
+			piRender->ActivateClipping();
+			piRender->SetClipRect(sRect.x,sRect.y,sRect.w,sRect.h);
+			piRender->ClearDepth();
 			m_WorldManagerWrapper.m_piWorldManager->SetupRenderingEnvironment(piRender);
 			m_EntityManagerWrapper.m_piEntityManager->RenderEntities(piRender,piCamera);
-	//unsigned int nRenderStart=GetTimeStamp();
 			piRender->EndStagedRendering();
-	//unsigned int nRenderEnd=GetTimeStamp();
-
-			//RTTRACE("FrameTime %dms, render %d",nRenderEnd-nRenderStart,nRenderStart-nFrameStart);
+			
 			piRender->DeactivateDepth();
 			piRender->PopState();
 			piRender->PopOptions();
-			
 			m_piGUIManager->RestoreViewport();
+			piRender->DeactivateClipping();
 		}
 		REL(piCamera);
 	}

@@ -187,6 +187,7 @@ public:
 	void RenderArrowHead(const CVector &vPosition,const CVector &vDirection,CVector &vUp,double dForward,double dUp,double dRight,const CVector &vColor,double dAlpha);
 	
 	void Clear(const CVector &vColor);
+	void ClearDepth();
 	
 	void ActivateHeightFog(const CVector &vMins,const CVector &vMaxs,const CVector &vColor);
 	void DeactivateHeightFog();

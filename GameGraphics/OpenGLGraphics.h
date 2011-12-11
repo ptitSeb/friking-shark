@@ -574,6 +574,7 @@ struct SSceneClipping
 struct SSceneData
 {
 	float          fTime;
+	bool           bClearDepth;
 	bool           bClear;
 	CVector        vClearColor;
 	SSceneClipping clipping;   
@@ -583,7 +584,7 @@ struct SSceneData
 	SSceneSky	   sky;
 	SSceneWater	   water;
 
-	SSceneData(){bClear=false;fTime=0;}
+	SSceneData(){bClearDepth=false;bClear=false;fTime=0;}
 };
 
 class IOpenGLRender:virtual public ISystemUnknown

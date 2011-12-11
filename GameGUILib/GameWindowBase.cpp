@@ -752,14 +752,17 @@ void CGameWindowBase::OnDrawBackground(IGenericRender *piRender)
 		CVector vSize=vMaxs-vMins;
 		CVector vCenter=(vMaxs+vMins)*0.5;
 		vCenter.c[1]=vMaxs.c[1]+1;
+		piRender->ClearDepth();
+		piRender->ActivateClipping();
 		piRender->ActivateDepth();
+		piRender->SetClipRect(m_rRealRect.x,m_rRealRect.y,m_rRealRect.w,m_rRealRect.h);
 		piRender->SetOrthographicProjection(vSize.c[0],vSize.c[2]);
 		piRender->SetCamera(vCenter,0,-90,0);
 		piRender->SetViewport(m_rRealRect.x,m_rRealRect.y,m_rRealRect.w,m_rRealRect.h);
 		piRender->RenderModel(Origin,Origin,m_BackgroundModel.m_piModel);
 		piRender->DeactivateDepth();
-		
 		m_piGUIManager->RestoreViewport();
+		piRender->DeactivateClipping();
 	}
 }
 void CGameWindowBase::OnDraw(IGenericRender *piRender){}

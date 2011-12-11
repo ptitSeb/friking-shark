@@ -1040,6 +1040,15 @@ void COpenGLRender::Clear(const CVector &vColor)
 	m_sScene.vClearColor=vColor;
 }
 
+void COpenGLRender::ClearDepth()
+{
+	if(!m_bStagedRendering)
+	{
+		Flush();
+	}
+	m_sScene.bClearDepth=true;
+}
+
 void COpenGLRender::SetModelTinting(CVector vTinting)
 {
 	m_sStagedRenderingState.vModelTinting=vTinting;
@@ -1515,7 +1524,7 @@ void COpenGLRender::Flush()
 						m_sScene.objects.mPointStages.size()+
 						m_sScene.objects.mTriangleStages.size();
 
-	if(nStagesToRender==0 && m_sScene.bClear==false){return;}
+	if(nStagesToRender==0 && m_sScene.bClear==false && m_sScene.bClearDepth==false){return;}
 	
 	
 	if(m_Kernel.m_piOpenGLRender)
@@ -1573,6 +1582,7 @@ void COpenGLRender::Flush()
 	m_sScene.objects.mLineStages.clear();
 	m_sScene.objects.mPointStages.clear();
 	m_sScene.bClear=false;
+	m_sScene.bClearDepth=false;
 }
 
 void COpenGLRender::EndStagedRendering()
@@ -1588,7 +1598,7 @@ void COpenGLRender::EndStagedRendering()
 	m_sScene.objects.mPointStages.size()+
 	m_sScene.objects.mTriangleStages.size();
 	
-	if(nStagesToRender==0 && m_sScene.bClear==false){return;}
+	if(nStagesToRender==0 && m_sScene.bClear==false && m_sScene.bClearDepth==false){return;}
 	
 	unsigned int nRenderStart=0;
 	if(m_sRenderOptions.bEnableStagedRenderingStats){nRenderStart=GetTimeStamp();m_sStagedStats=SRenderStats();}
@@ -1650,6 +1660,7 @@ void COpenGLRender::EndStagedRendering()
 	m_sScene.objects.mLineStages.clear();
 	m_sScene.objects.mPointStages.clear();
 	m_sScene.bClear=false;
+	m_sScene.bClearDepth=false;
 	
 	if(m_sRenderOptions.bEnableStagedRenderingStats)
 	{

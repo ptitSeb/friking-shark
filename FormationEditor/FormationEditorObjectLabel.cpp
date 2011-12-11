@@ -42,6 +42,7 @@ void CFormationEditorObjectLabel::OnDrawBackground( IGenericRender *piRender )
 	SGameRect sClipRect;
 	ComputeClipRect(&sClipRect);
 	
+	piRender->ClearDepth();
 	piRender->ActivateClipping();
 	piRender->SetClipRect(sClipRect.x,sClipRect.y,sClipRect.w,sClipRect.h);
 	piRender->SetOrthographicProjection(dMaxSize*dAspectRatio,dMaxSize);

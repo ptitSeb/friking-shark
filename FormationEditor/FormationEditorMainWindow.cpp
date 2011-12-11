@@ -281,6 +281,9 @@ void CFormationEditorMainWindow::OnDraw(IGenericRender *piRender)
 		{
 			SetupRenderOptions(piRender,piCamera);
 			piRender->StartStagedRendering();
+			piRender->ClearDepth();
+			piRender->Clear(m_vBackgroundColor);
+			
 			m_WorldManagerWrapper.m_piWorldManager->SetupRenderingEnvironment(piRender);
 			m_EntityManagerWrapper.m_piEntityManager->RenderEntities(piRender,piCamera);
 			piRender->EndStagedRendering();
@@ -292,6 +295,8 @@ void CFormationEditorMainWindow::OnDraw(IGenericRender *piRender)
 	{
 		SetupRenderOptions(piRender,m_Camera.m_piCamera);
 		piRender->StartStagedRendering();
+		piRender->ClearDepth();
+		piRender->Clear(m_vBackgroundColor);
 		if(m_bRenderWorld && m_WorldManagerWrapper.m_piTerrain)
 		{
 			m_WorldManagerWrapper.m_piTerrain->DesignRender(piRender);

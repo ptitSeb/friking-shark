@@ -467,7 +467,8 @@ public:
 	virtual void SetModelTinting(CVector vTinting)=0;
 	
 	virtual void Clear(const CVector &vColor)=0;
-
+	virtual void ClearDepth()=0;
+	
 	// Render state
 
 	virtual void ActivateHeightFog(const CVector &vMins,const CVector &vMaxs,const CVector &vColor)=0;
