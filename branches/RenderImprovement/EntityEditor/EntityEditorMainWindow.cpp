@@ -278,6 +278,7 @@ void CEntityEditorMainWindow::OnDraw(IGenericRender *piRender)
 	SetupRenderOptions(piRender,m_Camera.m_piCamera);
 	
 	piRender->StartStagedRendering();
+	piRender->ClearDepth();
 	piRender->Clear(m_vBackgroundColor);
 	
 	if(m_piAnimation){m_piAnimation->CustomRender(m_Render.m_piRender,m_Camera.m_piCamera);}

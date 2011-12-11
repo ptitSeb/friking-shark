@@ -277,11 +277,17 @@ void CScenarioEditorMainWindow::ProcessKey(unsigned short nKey,double dTimeFract
 	}
 
 }
-void CScenarioEditorMainWindow::SetupRenderOptions(IGenericRender *piRender,IGenericCamera *piCamera)
+
+void CScenarioEditorMainWindow::SetupRenderOptions(IGenericRender *piRender,IGenericCamera *piCamera,SGameRect *pViewportRect)
 {
 	double cx=round(m_rRealRect.h*piCamera->GetAspectRatio());
 	double dx=round((m_rRealRect.w-cx)*0.5);
 
+	pViewportRect->x=dx;
+	pViewportRect->y=0;
+	pViewportRect->w=cx;
+	pViewportRect->h=m_rRealRect.h;
+	
 	double dNearPlane=0,dFarPlane=0;
 	CVector vAngles,vPosition;
 	vAngles=piCamera->GetAngles();
@@ -289,9 +295,10 @@ void CScenarioEditorMainWindow::SetupRenderOptions(IGenericRender *piRender,IGen
 	piCamera->GetClippingPlanes(dNearPlane,dFarPlane);
 	double dViewAngle=piCamera->GetViewAngle();
 
-	piRender->SetViewport(dx,0,cx,m_rRealRect.h);
+	piRender->SetViewport(pViewportRect->x,pViewportRect->y,pViewportRect->w,pViewportRect->h);
 	piRender->SetPerspectiveProjection(dViewAngle,dNearPlane,dFarPlane);
 	piRender->SetCamera(vPosition,vAngles.c[YAW],vAngles.c[PITCH],vAngles.c[ROLL]);
+	
 }
 
 void CScenarioEditorMainWindow::RenderPlayArea(bool bSelectionRender)
@@ -446,22 +453,31 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 		piCamera=ADD(m_bInspectionMode?m_Camera.m_piCamera:piPlayCamera);
 		if(piCamera)
 		{
-			SetupRenderOptions(piRender,piCamera);
+			SGameRect rViewport;
+			SetupRenderOptions(piRender,piCamera,&rViewport);
 			piRender->StartStagedRendering();
+			piRender->ActivateClipping();
+			piRender->SetClipRect(rViewport.x,rViewport.y,rViewport.w,rViewport.h);
+			piRender->ClearDepth();
 			if(m_bInspectionMode){piRender->Clear(m_vBackgroundColor);}
 			piRender->PushState();
 			m_WorldManagerWrapper.m_piWorldManager->SetupRenderingEnvironment(piRender);
 			m_EntityManagerWrapper.m_piEntityManager->RenderEntities(piRender,piCamera);
 			piRender->PopState();
 			piRender->EndStagedRendering();
+			piRender->DeactivateClipping();
 		}
 		REL(piCamera);
 		REL(piPlayCamera);
 	}
 	else
 	{
-		SetupRenderOptions(piRender,m_Camera.m_piCamera);
+		SGameRect rViewport;
+		SetupRenderOptions(piRender,m_Camera.m_piCamera,&rViewport);
 		piRender->StartStagedRendering();
+		piRender->ActivateClipping();
+		piRender->SetClipRect(rViewport.x,rViewport.y,rViewport.w,rViewport.h);
+		piRender->ClearDepth();
 		piRender->Clear(m_vBackgroundColor);
 		piRender->PushState();
 		
@@ -482,6 +498,7 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 		
 		piRender->PopState();
 		piRender->EndStagedRendering();
+		piRender->DeactivateClipping();
 
 		if(m_nSelectedEntity!=-1)
 		{

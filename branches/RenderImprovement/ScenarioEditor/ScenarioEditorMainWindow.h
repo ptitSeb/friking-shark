@@ -819,7 +819,7 @@ public:
 
 	bool GetHeightAt(CVector vPoint,bool bIgnoreTerrainObjects, double *pdHeight);
 
-	void SetupRenderOptions(IGenericRender *piRender,IGenericCamera *piCamera);
+	void SetupRenderOptions(IGenericRender *piRender,IGenericCamera *piCamera,SGameRect *pViewportRect);
 
 	bool GetTerrainCoordinatesFromLine(CLine line,bool bIgnoreTerrainObjects, CVector *pTerrainPos);
 	bool GetTerrainCoordinatesFromCursorPos(double x,double y,bool bIgnoreTerrainObjects, CVector *pTerrainPos);

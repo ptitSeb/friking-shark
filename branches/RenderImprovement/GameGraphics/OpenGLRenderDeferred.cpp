@@ -102,7 +102,7 @@ bool COpenGLRenderDeferred::Setup(IGenericRender *piRender,IGenericViewport *piV
 	m_piCurrentViewport=ADD(piViewport);
 	m_sHardwareSupport=support;
 	
-	if(m_ShadowTexture.m_piTexture==NULL)
+	if(bOk && m_ShadowTexture.m_piTexture==NULL)
 	{
 		bOk=m_ShadowTexture.Create(m_piSystem,"Texture","");
 		if(bOk)
@@ -119,7 +119,7 @@ bool COpenGLRenderDeferred::Setup(IGenericRender *piRender,IGenericViewport *piV
 			RTTRACE("COpenGLRenderDeferred::Setup -> Failed to create shadow texture");
 		}
 	}
-	if(m_ShadowShader.m_piShader==NULL)
+	if(bOk && m_ShadowShader.m_piShader==NULL)
 	{
 		bOk=m_ShadowShader.Create(m_piSystem,"Shader","");
 		if(bOk)
@@ -137,7 +137,7 @@ bool COpenGLRenderDeferred::Setup(IGenericRender *piRender,IGenericViewport *piV
 		}
 	}
 
-	if(m_DeferredShaderWaterSun.m_piShader==NULL)
+	if(bOk && m_DeferredShaderWaterSun.m_piShader==NULL)
 	{
 
 		bOk=m_DeferredShaderWaterSun.Create(m_piSystem,"Shader","");
@@ -162,7 +162,7 @@ bool COpenGLRenderDeferred::Setup(IGenericRender *piRender,IGenericViewport *piV
 		}
 	}
 	
-	if(m_DeferredShaderNoWaterSun.m_piShader==NULL)
+	if(bOk && m_DeferredShaderNoWaterSun.m_piShader==NULL)
 	{
 		
 		bOk=m_DeferredShaderNoWaterSun.Create(m_piSystem,"Shader","");
@@ -190,7 +190,7 @@ bool COpenGLRenderDeferred::Setup(IGenericRender *piRender,IGenericViewport *piV
 		}
 	}
 	
-	if(m_DeferredShaderDynamic.m_piShader==NULL)
+	if(bOk && m_DeferredShaderDynamic.m_piShader==NULL)
 	{
 		bOk=m_DeferredShaderDynamic.Create(m_piSystem,"Shader","");
 		if(bOk)
@@ -415,14 +415,17 @@ void COpenGLRenderDeferred::AnalyzeStages(bool *pbShadowsPresent,bool *pbWaterPr
 
 void COpenGLRenderDeferred::RenderForward()
 {
-	if(m_pScene->bClear)
+	if(m_pScene->bClear || m_pScene->bClearDepth)
 	{
-		if(m_vClearColor!=m_pScene->vClearColor)
+		if(m_pScene->bClear && m_vClearColor!=m_pScene->vClearColor)
 		{
 			m_vClearColor=m_pScene->vClearColor;
 			glClearColor(m_pScene->vClearColor.c[0],m_pScene->vClearColor.c[1],m_pScene->vClearColor.c[2],1.0);
 		}
-		glClear(GL_COLOR_BUFFER_BIT);
+		unsigned int nBuffersToClear=0;
+		if(m_pScene->bClear     ){nBuffersToClear|=GL_COLOR_BUFFER_BIT;}
+		if(m_pScene->bClearDepth){nBuffersToClear|=GL_DEPTH_BUFFER_BIT;}
+		glClear(nBuffersToClear);
 	}
 	RenderAllStages(false);
 }
@@ -546,6 +549,9 @@ void COpenGLRenderDeferred::RenderDeferred(bool bShadowsPresent,bool bWaterPrese
 	SRenderState deferredState=m_sRenderState;
 	
 	RTTIMEMETER_SETGLSTEP("Render-ShadowMap");
+
+	if(m_bClippingActive){m_bClippingActive=false;glDisable(GL_SCISSOR_TEST);}
+	
 	PrepareSunShadows();
 
 	if(bWaterPresent)

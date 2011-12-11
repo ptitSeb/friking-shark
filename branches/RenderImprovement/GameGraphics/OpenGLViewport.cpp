@@ -1190,8 +1190,6 @@ void COpenGLViewport::Render()
 #ifdef ANDROID
 	if(m_AndroidRenderContext==EGL_NO_CONTEXT){return;}
 #endif
-	
-	glClear(GL_DEPTH_BUFFER_BIT);
 
 	if(m_piCallBack){m_piCallBack->OnRender();}
 	
