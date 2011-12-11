@@ -37,6 +37,8 @@
 	#define strcasecmp _stricmp
 	#define strtok_r strtok_s
 
+	#define round(x) floor((x)+0.5)
+
 	#define RTASSERT(x) _ASSERTE((x))
 	#define __UNUSED_ATTRIB__
 #else

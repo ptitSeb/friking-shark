@@ -48,6 +48,8 @@ vec3 ComputePosition(in vec2 screenCoords,in float fZ)
 void main(void)
 {
 	float fZ=textureProj(DepthSampler,vec4(gTexCoord,0.0,1.0));
+	if(fZ==1.0){discard;}
+
 	vec3 position=ComputePosition(gTexCoord,fZ);
 	vec4 normalAndShin=texture2D(NormalSampler,gTexCoord);
 	vec3 normal;
