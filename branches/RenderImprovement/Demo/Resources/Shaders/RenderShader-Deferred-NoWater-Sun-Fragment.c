@@ -13,6 +13,7 @@ uniform sampler2DShadow ShadowMap;
 uniform mat4 uShadowMatrix;
 uniform mat4 uUnprojectMatrix;
 
+uniform vec4 uClearColor;
 uniform vec4 uAmbient;
 uniform vec4 uSunDiffuse;
 uniform vec4 uSunSpecular;
@@ -40,6 +41,9 @@ void SunLight(const in vec3 normal,inout vec4 diffuse,inout vec4 specular)
 void main(void)
 {
 	float fZ=textureProj(DepthSampler,vec4(gTexCoord,0.0,1.0));
+	gl_FragDepth=fZ;
+	if(fZ==1.0){oColor=uClearColor;return;}
+
 	vec3 position=ComputePosition(gTexCoord,fZ);
 	vec4 normalAndShin=texture2D(NormalSampler,gTexCoord);
 	vec3 normal;
@@ -52,9 +56,7 @@ void main(void)
 	// pixels not drawn on this frame will have garbage normal and z=1
 	// this is a lot faster than clearing the normal buffer each frame
 	
-	float fDeactivateGarbageNormal=(1.0-trunc(fZ));
-	vec3 specular=vec3(normalAndShin.z*fDeactivateGarbageNormal);
-
+	vec3 specular=vec3(normalAndShin.z);
 	vec4 sundiff=vec4(0);
 	vec4 sunspec=vec4(0);
 
@@ -77,8 +79,6 @@ void main(void)
 	
 	float skyshadowfactor=1.0-(texture2D(SkyShadowMap, skyCoord).r*uSkyData.a);
 	fShadowFactor*=skyshadowfactor;
-	
-	gl_FragDepth=fZ;
 	
 	oColor.rgb=diffuse.rgb*(uAmbient.rgb+sundiff.rgb*fShadowFactor)+specular*(sunspec.rgb*fShadowFactor);
 	oColor.a=1.0;

@@ -415,6 +415,15 @@ void COpenGLRenderDeferred::AnalyzeStages(bool *pbShadowsPresent,bool *pbWaterPr
 
 void COpenGLRenderDeferred::RenderForward()
 {
+	if(m_pScene->bClear)
+	{
+		if(m_vClearColor!=m_pScene->vClearColor)
+		{
+			m_vClearColor=m_pScene->vClearColor;
+			glClearColor(m_pScene->vClearColor.c[0],m_pScene->vClearColor.c[1],m_pScene->vClearColor.c[2],1.0);
+		}
+		glClear(GL_COLOR_BUFFER_BIT);
+	}
 	RenderAllStages(false);
 }
 
@@ -617,6 +626,7 @@ void COpenGLRenderDeferred::RenderDeferred(bool bShadowsPresent,bool bWaterPrese
 	else
 	{
 		float dSkyOpacity=bSkyPresent?m_pScene->sky.m_dSkyShadowOpacity:0.0;
+		m_DeferredShaderNoWaterSun.m_piShader->AddUniform("uClearColor",m_pScene->vClearColor,false);
 		m_DeferredShaderNoWaterSun.m_piShader->AddUniform("uProjection",projMatrix,false);
 		m_DeferredShaderNoWaterSun.m_piShader->AddUniform("uView",view,false);
 		m_DeferredShaderNoWaterSun.m_piShader->AddUniform("uUnprojectMatrix",mCameraInverse,false);
@@ -626,21 +636,7 @@ void COpenGLRenderDeferred::RenderDeferred(bool bShadowsPresent,bool bWaterPrese
 		glViewport(0,0,m_pScene->camera.m_nViewportW,m_pScene->camera.m_nViewportH);
 		
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,m_GBuffers.nFrameBuffer);
-		if(m_pScene->bClear)
-		{
-			GLenum pClearDrawBuffers[] = { GL_COLOR_ATTACHMENT2_EXT};
-			glDrawBuffers(1, pClearDrawBuffers);
-			if(m_vClearColor!=m_pScene->vClearColor)
-			{
-				m_vClearColor=m_pScene->vClearColor;
-				glClearColor(m_pScene->vClearColor.c[0],m_pScene->vClearColor.c[1],m_pScene->vClearColor.c[2],1.0);
-			}
-			glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
-		}
-		else
-		{
-			glClear(GL_DEPTH_BUFFER_BIT);
-		}
+		glClear(GL_DEPTH_BUFFER_BIT);
 		
 		GLenum pDestinationDrawBuffers[] = { GL_COLOR_ATTACHMENT2_EXT,GL_COLOR_ATTACHMENT1_EXT};
 		glDrawBuffers(2, pDestinationDrawBuffers);
@@ -783,8 +779,8 @@ void COpenGLRenderDeferred::RenderScreenRect(const CVector &vOrigin,double s1,do
 	float pTextureBuffer[8];
 	unsigned short pFaces[]={0,1,2,0,2,3};
 	
-	CVector vAxis1=CVector(s1/2.0,0,0);
-	CVector vAxis2=CVector(0,0,s2/2.0);
+	CVector vAxis1=CVector(round(s1/2.0),0,0);
+	CVector vAxis2=CVector(0,0,round(s2/2.0));
 	
 	CVector v[4];
 	v[0]=vOrigin+vAxis1+vAxis2;

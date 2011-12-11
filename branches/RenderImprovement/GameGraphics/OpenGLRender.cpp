@@ -1515,7 +1515,7 @@ void COpenGLRender::Flush()
 						m_sScene.objects.mPointStages.size()+
 						m_sScene.objects.mTriangleStages.size();
 
-	if(nStagesToRender==0){return;}
+	if(nStagesToRender==0 && m_sScene.bClear==false){return;}
 	
 	
 	if(m_Kernel.m_piOpenGLRender)
@@ -1588,7 +1588,7 @@ void COpenGLRender::EndStagedRendering()
 	m_sScene.objects.mPointStages.size()+
 	m_sScene.objects.mTriangleStages.size();
 	
-	if(nStagesToRender==0){return;}
+	if(nStagesToRender==0 && m_sScene.bClear==false){return;}
 	
 	unsigned int nRenderStart=0;
 	if(m_sRenderOptions.bEnableStagedRenderingStats){nRenderStart=GetTimeStamp();m_sStagedStats=SRenderStats();}
