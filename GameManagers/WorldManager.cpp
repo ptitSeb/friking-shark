@@ -252,7 +252,7 @@ void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCam
 {
 	bool bRenderWaterFloor=true;
 	
-	if(m_WaterModel.m_piModel && m_TerrainFog.bEnabled)
+	if(m_WaterModel.m_piModel && m_TerrainFog.bEnabled && piCurrentCamera->GetForwardVector()==AxisNegY)
 	{
 		bRenderWaterFloor=false;
 		piRender->Clear(m_TerrainFog.vColor);
@@ -1253,10 +1253,16 @@ void CWorldManager::GetTerrainSky( STerrainSky *pSky,IGenericTexture **ppiTextur
 	if(ppiTexture){*ppiTexture=ADD(m_TerrainSky.m_Texture.m_piTexture);}
 }
 
-bool CWorldManager::SetTerrainSun( STerrainSun *pSun ){m_TerrainSun=*pSun;return true;}
 void CWorldManager::GetTerrainSun( STerrainSun *pSun ){if(pSun){*pSun=m_TerrainSun;}}
-bool CWorldManager::SetTerrainFog( STerrainFog *pFog ){m_TerrainFog=*pFog;UpdateTerrain();return true;}
+bool CWorldManager::SetTerrainSun( STerrainSun *pSun ){m_TerrainSun=*pSun;return true;}
 void CWorldManager::GetTerrainFog( STerrainFog *pFog ){if(pFog){*pFog=m_TerrainFog;}}
+bool CWorldManager::SetTerrainFog( STerrainFog *pFog )
+{
+	bool bUpdate=(pFog->bEnabled!=m_TerrainFog.bEnabled || pFog->vMins!=m_TerrainFog.vMins|| pFog->vMaxs!=m_TerrainFog.vMaxs);
+	m_TerrainFog=*pFog;
+	if(bUpdate){UpdateTerrain();}
+	return true;
+}
 
 void	CWorldManager::SetTerrainAmbientColor(const CVector &vAmbientColor){m_vTerrainAmbientColor=vAmbientColor;}
 CVector CWorldManager::GetTerrainAmbientColor(){return m_vTerrainAmbientColor;}
