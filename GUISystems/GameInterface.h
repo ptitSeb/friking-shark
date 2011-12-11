@@ -58,6 +58,7 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	unsigned int 			 m_nBombs;
 	int 			 		 m_nCheckpoint;
 	std::set<double>		 m_sCheckpointPositions;
+	std::string				 m_sRenderDescription;
 	
 	unsigned int             m_nFirstExtraLivePoints;
 	unsigned int             m_nNextExtraLivePoints;
@@ -95,7 +96,7 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 
 	IGameGUILabel *m_piSTFrameRate;
 	IGameGUILabel *m_piSTGameTime;
-	IGameGUILabel *m_piSTObjectCount;
+	IGameGUILabel *m_piSTRender;
 	IGameGUILabel *m_piSTEntityCount;
 
 	bool		m_bCompleted;
@@ -129,7 +130,7 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 		CHILD_MAP_ENTRY_FLAGS("FrameRateLabel",m_piSTFrameRate,CMEF_OPTIONAL);
 		CHILD_MAP_ENTRY_FLAGS("GameTimeLabel",m_piSTGameTime,CMEF_OPTIONAL);
 		CHILD_MAP_ENTRY_FLAGS("EntityCountLabel",m_piSTEntityCount,CMEF_OPTIONAL);
-		CHILD_MAP_ENTRY_FLAGS("ObjectCountLabel",m_piSTObjectCount,CMEF_OPTIONAL);
+		CHILD_MAP_ENTRY_FLAGS("RenderLabel",m_piSTRender,CMEF_OPTIONAL);
 		CHILD_MAP_ENTRY("UpperIndicatorRow0",m_piSTUpperIndicatorRow0);
 		CHILD_MAP_ENTRY("UpperIndicatorRow1",m_piSTUpperIndicatorRow1);
 		CHILD_MAP_ENTRY("UpperIndicatorRow2",m_piSTUpperIndicatorRow2);
@@ -166,6 +167,7 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 		PROP_FLAGS(m_LiveSoundWrapper,"LiveSound",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_nFirstExtraLivePoints,"FirstExtraLivePoints",DEFAULT_FIRST_EXTRA_LIVE_POINTS,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_nNextExtraLivePoints,"NextExtraLivePoints",DEFAULT_NEXT_EXTRA_LIVE_POINTS,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_bShowPerformanceIndicators,"ShowPerformanceIndicators",false,MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP()
 	
 	#ifdef ANDROID

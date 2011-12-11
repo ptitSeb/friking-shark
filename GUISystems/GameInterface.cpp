@@ -45,7 +45,7 @@ CGameInterface::CGameInterface(void)
 	
 	m_piSTFrameRate=NULL;
 	m_piSTGameTime=NULL;
-	m_piSTObjectCount=NULL;
+	m_piSTRender=NULL;
 	m_piSTEntityCount=NULL;
 
 	m_bGameStarted=false;
@@ -80,7 +80,7 @@ bool CGameInterface::InitWindow(IGameWindow *piParent,bool bPopup)
 
 	if(m_piSTGameTime){m_piSTGameTime->Show(m_bShowPerformanceIndicators);}
 	if(m_piSTFrameRate){m_piSTFrameRate->Show(m_bShowPerformanceIndicators);}
-	if(m_piSTObjectCount){m_piSTObjectCount->Show(m_bShowPerformanceIndicators);}
+	if(m_piSTRender){m_piSTRender->Show(m_bShowPerformanceIndicators);}
 	if(m_piSTEntityCount){m_piSTEntityCount->Show(m_bShowPerformanceIndicators);}
 	return bResult;
 }
@@ -396,6 +396,17 @@ bool CGameInterface::IsPlayerInControl()
 
 void CGameInterface::OnDraw(IGenericRender *piRender)
 {
+	if(piRender && m_sRenderDescription.length()==0)
+	{
+		EShadingModel eModel=piRender->GetShadingModel();
+		switch(eModel)
+		{
+			case eShadingModel_Vertex:m_sRenderDescription="Forward Fixed";break;
+			case eShadingModel_Mixed:m_sRenderDescription="Forward Shader";break;
+			case eShadingModel_Fragment:m_sRenderDescription="Deferred";break;
+		}
+	}
+
 	if(!m_bGameSystemInitialized)
 	{
 		RenderCourtain(piRender);
@@ -801,7 +812,7 @@ void CGameInterface::ProcessInput()
 			m_bShowPerformanceIndicators=!m_bShowPerformanceIndicators;
 			if(m_piSTGameTime){m_piSTGameTime->Show(m_bShowPerformanceIndicators);}
 			if(m_piSTFrameRate){m_piSTFrameRate->Show(m_bShowPerformanceIndicators);}
-			if(m_piSTObjectCount){m_piSTObjectCount->Show(m_bShowPerformanceIndicators);}
+			if(m_piSTRender){m_piSTRender->Show(m_bShowPerformanceIndicators);}
 			if(m_piSTEntityCount){m_piSTEntityCount->Show(m_bShowPerformanceIndicators);}
 		}
 		if(m_piGUIManager->IsKeyDown(GK_F12))
@@ -952,10 +963,7 @@ void CGameInterface::UpdateGUI(unsigned int dwCurrentTime)
 	}
 	if(m_EntityManagerWrapper.m_piEntityManager)
 	{
-		ISystemManager *piSystemManager=GetSystemManager();
-		sprintf(sTempText,"%u objects",(unsigned int)piSystemManager->DebugGetRegisteredObjectCount());
-		if(m_piSTObjectCount){m_piSTObjectCount->SetText(sTempText);}
-		REL(piSystemManager);
+		if(m_piSTRender){m_piSTRender->SetText(m_sRenderDescription);}
 	}
 	if(m_FrameManagerWrapper.m_piFrameManager)
 	{
