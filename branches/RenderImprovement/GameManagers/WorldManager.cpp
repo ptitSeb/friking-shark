@@ -263,7 +263,6 @@ void CWorldManager::Render(IGenericRender *piRender,IGenericCamera *piCurrentCam
 
 void CWorldManager::DesignRender(IGenericRender *piRender)
 {
-	piRender->Clear(ColorBlack);
 	Render(piRender,NULL,true,true);
 }
 

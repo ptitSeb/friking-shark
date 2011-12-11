@@ -130,7 +130,7 @@ void CMainWindow::OnDrawBackground(IGenericRender *piRender)
 	if(m_piGameInterface==NULL){CGameWindowBase::OnDrawBackground(piRender);return;}
 	
 	SGameRect sInterfaceRect;
-	m_piGameInterface->GetRect(&sInterfaceRect);
+	m_piGameInterface->GetRealRect(&sInterfaceRect);
 	if(sInterfaceRect==m_rRealRect){return;}
 	
 	if(m_dBackgroundAlpha>0.0)
@@ -140,9 +140,6 @@ void CMainWindow::OnDrawBackground(IGenericRender *piRender)
 		leftRect.w=sInterfaceRect.x-m_rRealRect.x;
 		rightRect.x=sInterfaceRect.x+sInterfaceRect.w;
 		rightRect.w=m_rRealRect.x+m_rRealRect.w-rightRect.x;
-		// avoid problems with decimals (dirty :P)
-		leftRect.x--;leftRect.w+=2.0;
-		rightRect.x--;rightRect.w+=2.0;
 		// Render interface lateral bands
 		piRender->RenderRect(leftRect.x,leftRect.y,leftRect.w,leftRect.h,m_vBackgroundColor,m_dBackgroundAlpha);
 		piRender->RenderRect(rightRect.x,rightRect.y,rightRect.w,rightRect.h,m_vBackgroundColor,m_dBackgroundAlpha);
