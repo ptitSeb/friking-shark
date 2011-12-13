@@ -44,6 +44,12 @@ CGameGUIButton::~CGameGUIButton(void)
 bool CGameGUIButton::Unserialize(ISystemPersistencyNode *piNode)
 {
 	bool bOk=CGameWindowBase::Unserialize(piNode);
+	if(bOk)
+	{
+		SGameRect rEmpty;
+		if(m_rDeactivatedTextureCoords==rEmpty){m_rDeactivatedTextureCoords=SGameRect(0,0,1,1);}
+		if(m_rHoverTextureCoords==rEmpty){m_rHoverTextureCoords=SGameRect(0,0,1,1);}
+	}
 	if(bOk && m_HoverSound.m_piSoundType){m_piHoverSound=m_HoverSound.m_piSoundType->CreateInstance();}
 	if(bOk && m_ClickSound.m_piSoundType){m_piClickSound=m_ClickSound.m_piSoundType->CreateInstance();}
 	return bOk;
@@ -118,7 +124,7 @@ void CGameGUIButton::OnDrawBackground(IGenericRender *piRender)
 		if(m_DeactivatedTexture.m_piTexture)
 		{
 			piRender->SelectTexture(m_DeactivatedTexture.m_piTexture,0);
-			piRender->RenderTexture(CVector(m_rRealRect.x+m_rRealRect.w*0.5,m_rRealRect.y+m_rRealRect.h*0.5,0),m_rRealRect.w,m_rRealRect.h,m_vDeactivatedBackgroundColor,m_dDeactivatedBackgroundAlpha);
+			piRender->RenderTexture(CVector(m_rRealRect.x+m_rRealRect.w*0.5,m_rRealRect.y+m_rRealRect.h*0.5,0),m_rRealRect.w,m_rRealRect.h,m_rDeactivatedTextureCoords.x,m_rDeactivatedTextureCoords.y,m_rDeactivatedTextureCoords.w,m_rDeactivatedTextureCoords.h,m_vDeactivatedBackgroundColor,m_dDeactivatedBackgroundAlpha);
 			piRender->UnselectTexture(0);
 		}
 		else
@@ -135,7 +141,7 @@ void CGameGUIButton::OnDrawBackground(IGenericRender *piRender)
 		if(m_HoverTexture.m_piTexture)
 		{
 			piRender->SelectTexture(m_HoverTexture.m_piTexture,0);
-			piRender->RenderTexture(CVector(m_rRealRect.x+m_rRealRect.w*0.5,m_rRealRect.y+m_rRealRect.h*0.5,0),m_rRealRect.w,m_rRealRect.h,m_vHoverBackgroundColor,m_dHoverBackgroundAlpha);
+			piRender->RenderTexture(CVector(m_rRealRect.x+m_rRealRect.w*0.5,m_rRealRect.y+m_rRealRect.h*0.5,0),m_rRealRect.w,m_rRealRect.h,m_rHoverTextureCoords.x,m_rHoverTextureCoords.y,m_rHoverTextureCoords.w,m_rHoverTextureCoords.h,m_vHoverBackgroundColor,m_dHoverBackgroundAlpha);
 			piRender->UnselectTexture(0);
 		}
 		else

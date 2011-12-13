@@ -53,6 +53,7 @@ enum EFocusableSearchDirection
 class CGameWindowBase :	virtual public CSystemObjectBase, virtual public IGameWindow
 {
 protected:
+	
 	std::vector<IGameWindow*> m_vChildren;
 	std::vector<IGameWindow*> m_vChildrenZOrder;
 	std::vector<CGameWindowWrapper> m_vLoadedChildrenList;
@@ -63,6 +64,7 @@ protected:
 	CGenericTextureWrapper m_MouseCursorTexture;
 	CGenericTextureWrapper m_BackgroundTexture;
 	CGenericModelWrapper   m_BackgroundModel;
+	SGameRect              m_rBackgroundTextureCoords;
 	CGenericFontWrapper    m_Font;
 
 	bool					m_bCentered;
@@ -132,6 +134,7 @@ public:
 		PROP_VALUE_FLAGS(m_eReferenceSystem,"ReferenceSystem",eGameGUIReferenceSystem_Absolute,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_dBackgroundAlpha,"BkAlpha",1.0,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_vBackgroundColor,"BkColor",CVector(0.5,0.5,0.5),MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_FLAGS(m_rBackgroundTextureCoords,"TextureCoords",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_BackgroundTexture,"Texture",MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_FLAGS(m_BackgroundModel,"Model",MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_FLAGS(m_MouseCursorTexture,"MouseCursorTexture",MRPF_NORMAL|MRPF_OPTIONAL);

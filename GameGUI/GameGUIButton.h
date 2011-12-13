@@ -32,11 +32,13 @@ protected:
 
 	CGenericTextureWrapper m_DeactivatedTexture;
 	CGenericFontWrapper m_DeactivatedFont;
+	SGameRect	m_rDeactivatedTextureCoords;
 	CVector		m_vDeactivatedBackgroundColor;
 	double		m_dDeactivatedBackgroundAlpha;
 	CVector		m_vDeactivatedTextColor;
 	double		m_dDeactivatedTextAlpha;
 	
+	SGameRect	m_rHoverTextureCoords;
 	CGenericTextureWrapper m_HoverTexture;
 	CGenericFontWrapper m_HoverFont;
 	CVector		m_vHoverBackgroundColor;
@@ -55,12 +57,14 @@ protected:
 		PROP_CLASS_CHAIN(CGameGUILabel)
 		PROP_VALUE_FLAGS(m_bWantFocus,"WantFocus",false,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_bFocusOnHover,"FocusOnHover",false,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_FLAGS(m_rDeactivatedTextureCoords,"DeactivatedTextureCoords",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_DeactivatedTexture,"DeactivatedTexture",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_DeactivatedFont,"DeactivatedFont",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_dDeactivatedBackgroundAlpha,"DeactivatedBkAlpha",0.8,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_vDeactivatedBackgroundColor,"DeactivatedBkColor",CVector(0.3,0.3,0.3),MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_dDeactivatedTextAlpha,"DeactivatedTextAlpha",0.8,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_vDeactivatedTextColor,"DeactivatedTextColor",CVector(1,1,1),MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_FLAGS(m_rHoverTextureCoords,"HoverTextureCoords",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_HoverTexture,"HoverTexture",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_HoverFont,"HoverFont",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_bHoverEnabled,"HoverEnabled",true,MRPF_NORMAL|MRPF_OPTIONAL)

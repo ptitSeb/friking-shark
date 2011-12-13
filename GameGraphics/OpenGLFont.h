@@ -53,19 +53,27 @@ class COpenGLFont : virtual public CSystemObjectBase,virtual public IGenericFont
 	double			m_dTextureFontCharacterSeparation;
 	double			m_dTextureFontSpaceSize;
 	double			m_dTextureFontAlphaTolerance;
-
+	unsigned int	m_nTextureFontRowHeight;
+	unsigned int	m_nTextureFontRowCount;
+	bool			m_bTextureFontGenerateMipmaps;
+	
+	unsigned int	m_nTextureFontEffectiveHeight;
+	
 	bool LoadTextureFont();
 	bool Unserialize(ISystemPersistencyNode *piNode);
 
 public:
 
 	BEGIN_PROP_MAP(COpenGLFont)
+		PROP_VALUE_FLAGS(m_nTextureFontRowHeight,"RowHeight",0,MRPF_NORMAL|MRPF_OPTIONAL)
+		PROP_VALUE_FLAGS(m_nTextureFontRowCount,"RowCount",1,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_sTextureFontFileName,"Archivo",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_sTextureFontAlphaFileName,"ArchivoAlpha",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_sTextureFontCharacterSet,"JuegoDeCaracteres",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_dTextureFontCharacterSeparation,"SeparacionCaracteres",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_dTextureFontSpaceSize,"TamanoEspacio",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_dTextureFontAlphaTolerance,"ToleranciaAlpha",0,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_VALUE_FLAGS(m_bTextureFontGenerateMipmaps,"GenerateMipmaps",true,MRPF_NORMAL|MRPF_OPTIONAL);
 	END_PROP_MAP();
 
 	void CalcTextSize(double dFontHeight,const char *pText,double *pdWidth,double *pdHeight);

@@ -251,6 +251,20 @@ bool COpenGLTexture::LoadFromFile(bool bResident)
 	
 	if(bResult)
 	{
+		unsigned int nWidthBits=0,nHeightBits=0;
+		unsigned int nTempWidth=m_dwWidth,nTempHeight=m_dwHeight;
+		while(nTempWidth){nWidthBits+=nTempWidth&1;nTempWidth>>=1;}
+		while(nTempHeight){nHeightBits+=nTempHeight&1;nTempHeight>>=1;}
+		
+		if(nWidthBits!=1 || nHeightBits!=1)
+		{
+			RTTRACE("COpenGLTexture::LoadFromFile -> WARNING: Texture %s has non power of two dimensions %dx%d, this can be problematic on some systems",m_sFileName.c_str(),m_dwWidth,m_dwHeight);
+		}
+		if(m_dwWidth>1024 || m_dwHeight>1024)
+		{
+			RTTRACE("COpenGLTexture::LoadFromFile -> WARNING: Texture %s has dimensions greater than 1024 pixels %dx%d, this can be problematic on some systems",m_sFileName.c_str(),m_dwWidth,m_dwHeight);
+		}
+		
 		glGenTextures(1,&m_nTextureIndex);
 
 		if(m_nTextureIndex)
