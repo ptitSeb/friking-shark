@@ -24,9 +24,15 @@ bool LoadImageHelper(std::string sFile,unsigned int dwColorType,unsigned *pOpenG
 
 COpenGLFont::COpenGLFont(void)
 {
+	m_bTextureFontGenerateMipmaps=true;
+	m_nTextureFontEffectiveHeight=0;
+	
 	m_dwTextureWidth=0;
 	m_dwTextureHeight=0;
 
+	m_nTextureFontRowHeight=0;
+	m_nTextureFontRowCount=0;
+	
 	m_dTextureFontCharacterSeparation=0;
 	m_dTextureFontSpaceSize=0;
 	m_dTextureFontAlphaTolerance=0;
@@ -42,12 +48,14 @@ bool COpenGLFont::LoadTextureFont()
 	bool bResult=true;
 
 	bResult=m_Texture.Create(m_piSystem->GetName(),"Texture","");
-	if(bResult){bResult=m_Texture.m_piTexture->Load(m_sTextureFontFileName,NULL,&m_sTextureFontAlphaFileName,1.0,false,true);}
+	if(bResult){bResult=m_Texture.m_piTexture->Load(m_sTextureFontFileName,NULL,&m_sTextureFontAlphaFileName,1.0,m_bTextureFontGenerateMipmaps,true);}
 	if(bResult){m_Texture.m_piTexture->GetSize(&dwWidth,&dwHeight);}
 	if(bResult)
 	{
 		m_dwTextureWidth=dwWidth;
 		m_dwTextureHeight=dwHeight;
+		m_nTextureFontEffectiveHeight=m_nTextureFontRowHeight?m_nTextureFontRowHeight:dwHeight;
+		
 		// Se parsean los caracteres de la textura basandonos en el valor del alpha.
 
 		unsigned  nCharacterIndex=0;
@@ -56,48 +64,56 @@ bool COpenGLFont::LoadTextureFont()
 
 		bool bLookingForCharacterStart=true; // si es false se esta buscando el final del caracter.
 
-		for(unsigned int x=0;x<m_dwTextureWidth;x++)
+		unsigned int nRowStart=0;
+		
+		for(unsigned int r=0;r<m_nTextureFontRowCount && nRowStart<m_dwTextureHeight;r++,nRowStart+=m_nTextureFontEffectiveHeight)
 		{
-			bool bPixelFound=false;
-			for(unsigned int y=0;y<m_dwTextureHeight;y++)
+			bLookingForCharacterStart=true;
+			
+			for(unsigned int x=0;x<m_dwTextureWidth;x++)
 			{
-				if(m_Texture.m_piTexture->GetPixelAlpha(x,y)>m_dTextureFontAlphaTolerance)
+				bool bPixelFound=false;
+				for(unsigned int y=0;y<m_nTextureFontEffectiveHeight && (y+nRowStart)<m_dwTextureHeight;y++)
 				{
-					bPixelFound=true;
-					break;
+					if(m_Texture.m_piTexture->GetPixelAlpha(x,y+nRowStart)>m_dTextureFontAlphaTolerance)
+					{
+						bPixelFound=true;
+						break;
+					}
 				}
+				if(bLookingForCharacterStart && bPixelFound)
+				{
+					bLookingForCharacterStart=false;
+					nCharacterStartX=x;
+				}
+				else if(bLookingForCharacterStart==false && !bPixelFound)
+				{
+					bLookingForCharacterStart=true;
+					unsigned char cChar=m_sTextureFontCharacterSet.c_str()[nCharacterIndex];
+					SOpenGLTextureFontCharacterData *pData=&m_vTextureFontCharacters[cChar];
+					pData->bPresent=true;
+					pData->cCharacter=cChar;
+					pData->dPixelW=x-nCharacterStartX;
+					pData->dPixelH=m_nTextureFontEffectiveHeight;
+					pData->dTextCoordY=((double)(nRowStart))/(double)m_dwTextureHeight;
+					pData->dTextCoordH=((double)(m_nTextureFontEffectiveHeight))/(double)m_dwTextureHeight;
+					pData->dTextCoordX=(double)nCharacterStartX/(double)m_dwTextureWidth;
+					pData->dTextCoordW=pData->dPixelW/(double)m_dwTextureWidth;
+					nCharacterIndex++;
+				}
+				if(nCharacterIndex>=nMaxCharacters){break;}
 			}
-			if(bLookingForCharacterStart && bPixelFound)
-			{
-				bLookingForCharacterStart=false;
-				nCharacterStartX=x;
-			}
-			else if(bLookingForCharacterStart==false && !bPixelFound)
-			{
-				bLookingForCharacterStart=true;
-				unsigned char cChar=m_sTextureFontCharacterSet.c_str()[nCharacterIndex];
-				SOpenGLTextureFontCharacterData *pData=&m_vTextureFontCharacters[cChar];
-				pData->bPresent=true;
-				pData->cCharacter=cChar;
-				pData->dPixelW=x-nCharacterStartX;
-				pData->dPixelH=m_dwTextureHeight;
-				pData->dTextCoordY=0;
-				pData->dTextCoordH=1;
-				pData->dTextCoordX=(double)nCharacterStartX/(double)m_dwTextureWidth;
-				pData->dTextCoordW=pData->dPixelW/(double)m_dwTextureWidth;
-				nCharacterIndex++;
-			}
-			if(nCharacterIndex>=nMaxCharacters){break;}
 		}
+	
+		m_vTextureFontCharacters[' '].dPixelW=m_dTextureFontSpaceSize;
+		m_vTextureFontCharacters[' '].dPixelH=m_nTextureFontEffectiveHeight;
+		m_vTextureFontCharacters[' '].bPresent=true;
 	}
 	else
 	{
 		bResult=false;
 	}
 
-	m_vTextureFontCharacters[' '].dPixelW=m_dTextureFontSpaceSize;
-	m_vTextureFontCharacters[' '].dPixelH=m_dwTextureHeight;
-	m_vTextureFontCharacters[' '].bPresent=true;
 
 	if(m_Texture.m_piTexture){m_Texture.m_piTexture->ReleaseResidentData();}
 	if(!bResult){RTTRACE("COpenGLFont::Unserialize -> Failed to create texture font from file '%s'",m_sTextureFontFileName.c_str());}
@@ -113,7 +129,7 @@ bool COpenGLFont::Unserialize(ISystemPersistencyNode *piNode)
 
 void COpenGLFont::CalcTextSize(double dFontHeight,const char *pText,double *pdWidth,double *pdHeight)
 {
-	double dSizeFactor=dFontHeight/(double)m_dwTextureHeight;
+	double dSizeFactor=dFontHeight/(double)m_nTextureFontEffectiveHeight;
 
 	(*pdWidth)=0;
 	(*pdHeight)=0;
@@ -132,7 +148,7 @@ void COpenGLFont::CalcTextSize(double dFontHeight,const char *pText,double *pdWi
 }
 void COpenGLFont::RenderText(IGenericRender *piRender,double dFontHeight,double x,double y,const char *pText,const CVector &vColor,double dAlpha)
 {
-	double dSizeFactor=dFontHeight/(double)m_dwTextureHeight;
+	double dSizeFactor=dFontHeight/(double)m_nTextureFontEffectiveHeight;
 
 	piRender->PushState();
 	piRender->ActivateBlending();
@@ -168,7 +184,7 @@ void COpenGLFont::RenderText(IGenericRender *piRender,double dFontHeight,double 
 
 void COpenGLFont::RenderText(IGenericRender *piRender,double dFontHeight,CVector vPosition,const char *pText,const CVector &vColor,double dAlpha)
 {
-	double dSizeFactor=dFontHeight/(double)m_dwTextureHeight;
+	double dSizeFactor=dFontHeight/(double)m_nTextureFontEffectiveHeight;
 	
 	piRender->PushState();
 	piRender->ActivateBlending();

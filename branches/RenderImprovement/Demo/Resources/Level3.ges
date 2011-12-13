@@ -11,7 +11,7 @@ AreaDeJuego
 			AspectRatio=0.700000
 			FarPlane=200.435349
 			NearPlane=130.000000
-			Posicion=1680.951254,198.570478,-0.509799
+			Posicion=1813.201340,198.570478,0.000011
 		}
 		Name=PlayCamera
 		System=GameSystem
@@ -4271,9 +4271,9 @@ Terrain
 				Color=0.725490,0.694118,0.262745
 				ColorSaturationMargin=1.000000
 				ColorValueMargin=0.010000
-				HorzResolution=8.000000
+				HorzResolution=6.500000
 				Texture=./Textures/Bricks.png
-				VertResolution=6.000000
+				VertResolution=4.000000
 			}
 			NormalMap
 			Texture

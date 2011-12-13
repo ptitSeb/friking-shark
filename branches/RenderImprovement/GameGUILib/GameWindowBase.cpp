@@ -19,7 +19,6 @@
 #include "./stdafx.h"
 #include "GameWindowBase.h"
 
-
 CGameWindowBase::CGameWindowBase(void)
 {
 	m_bVisible=false;
@@ -734,7 +733,7 @@ void CGameWindowBase::OnDrawBackground(IGenericRender *piRender)
 	if(m_BackgroundTexture.m_piTexture)
 	{
 		piRender->SelectTexture(m_BackgroundTexture.m_piTexture,0);
-		piRender->RenderTexture(CVector(m_rRealRect.x+m_rRealRect.w*0.5,m_rRealRect.y+m_rRealRect.h*0.5,0),m_rRealRect.w,m_rRealRect.h,m_vBackgroundColor,m_dBackgroundAlpha);
+		piRender->RenderTexture(CVector(m_rRealRect.x+m_rRealRect.w*0.5,m_rRealRect.y+m_rRealRect.h*0.5,0),m_rRealRect.w,m_rRealRect.h,m_rBackgroundTextureCoords.x,m_rBackgroundTextureCoords.y,m_rBackgroundTextureCoords.w,m_rBackgroundTextureCoords.h,m_vBackgroundColor,m_dBackgroundAlpha);
 		piRender->UnselectTexture(0);
 	}
 	else
@@ -886,6 +885,11 @@ bool CGameWindowBase::DetectDrag(double dx,double dy)
 bool CGameWindowBase::Unserialize( ISystemPersistencyNode *piNode )
 {
 	bool bOk=CSystemObjectBase::Unserialize(piNode);
+	if(bOk)
+	{
+		SGameRect rEmpty;
+		if(m_rBackgroundTextureCoords==rEmpty){m_rBackgroundTextureCoords=SGameRect(0,0,1,1);}
+	}
 	if(bOk && m_bRegisterOnCreation)
 	{
 		CGameGUIManagerWrapper guiManager;
