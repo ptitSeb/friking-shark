@@ -144,17 +144,18 @@ bool COpenGLRenderDeferred::Setup(IGenericRender *piRender,IGenericViewport *piV
 		if(bOk)
 		{
 			m_DeferredShaderWaterSun.m_piShader->Load("Shaders/RenderShader-Deferred-Water-Sun-Vertex.c","Shaders/RenderShader-Deferred-Water-Sun-Fragment.c","");
+
+			m_DeferredShaderWaterSun.m_piShader->AddUniform("SunSceneSampler",(int)DEFERRED_SAMPLER_SUN,false);
+			m_DeferredShaderWaterSun.m_piShader->AddUniform("DepthSampler",(int)DEFERRED_SAMPLER_DEPTH,false);
+			m_DeferredShaderWaterSun.m_piShader->AddAttribute("aVertex",(int)m_RenderMappings.nVertexAttribIndex);
+			m_DeferredShaderWaterSun.m_piShader->AddAttribute("aTexCoord0",(int)m_RenderMappings.pTextureAttribIndex[0]);
+
 			bOk=m_DeferredShaderWaterSun.m_piShader->Compile();
 			if(!bOk)
 			{
 				RTTRACE("COpenGLRenderDeferred::Setup -> Failed to compile deferred sun shader");
 			}
 			
-			m_DeferredShaderWaterSun.m_piShader->AddUniform("SunSceneSampler",(int)DEFERRED_SAMPLER_SUN,false);
-			m_DeferredShaderWaterSun.m_piShader->AddUniform("DepthSampler",(int)DEFERRED_SAMPLER_DEPTH,false);
-			
-			m_DeferredShaderWaterSun.m_piShader->AddAttribute("aVertex",(int)m_RenderMappings.nVertexAttribIndex);
-			m_DeferredShaderWaterSun.m_piShader->AddAttribute("aTexCoord0",(int)m_RenderMappings.pTextureAttribIndex[0]);
 		}
 		else
 		{
@@ -169,20 +170,21 @@ bool COpenGLRenderDeferred::Setup(IGenericRender *piRender,IGenericViewport *piV
 		if(bOk)
 		{			
 			m_DeferredShaderNoWaterSun.m_piShader->Load("Shaders/RenderShader-Deferred-NoWater-Sun-Vertex.c","Shaders/RenderShader-Deferred-NoWater-Sun-Fragment.c","");
-			bOk=m_DeferredShaderNoWaterSun.m_piShader->Compile();
-			if(!bOk)
-			{
-				RTTRACE("COpenGLRenderDeferred::Setup -> Failed to compile deferred sun shader");
-			}
-			
+
 			m_DeferredShaderNoWaterSun.m_piShader->AddUniform("DiffuseSampler",(int)DEFERRED_SAMPLER_DIFFUSE,false);
 			m_DeferredShaderNoWaterSun.m_piShader->AddUniform("NormalSampler",(int)DEFERRED_SAMPLER_NORMAL,false);
 			m_DeferredShaderNoWaterSun.m_piShader->AddUniform("DepthSampler",(int)DEFERRED_SAMPLER_DEPTH,false);
 			m_DeferredShaderNoWaterSun.m_piShader->AddUniform("ShadowMap",(int)m_nShadowTextureLevel,false);
 			m_DeferredShaderNoWaterSun.m_piShader->AddUniform("SkyShadowMap",(int)DEFERRED_SAMPLER_SKY,false);
-			
+
 			m_DeferredShaderNoWaterSun.m_piShader->AddAttribute("aVertex",(int)m_RenderMappings.nVertexAttribIndex);
 			m_DeferredShaderNoWaterSun.m_piShader->AddAttribute("aTexCoord0",(int)m_RenderMappings.pTextureAttribIndex[0]);
+
+			bOk=m_DeferredShaderNoWaterSun.m_piShader->Compile();
+			if(!bOk)
+			{
+				RTTRACE("COpenGLRenderDeferred::Setup -> Failed to compile deferred sun shader");
+			}
 		}
 		else
 		{
@@ -196,18 +198,19 @@ bool COpenGLRenderDeferred::Setup(IGenericRender *piRender,IGenericViewport *piV
 		if(bOk)
 		{			
 			m_DeferredShaderDynamic.m_piShader->Load("Shaders/RenderShader-Deferred-Dynamic-Vertex.c","Shaders/RenderShader-Deferred-Dynamic-Fragment.c","");
+
+			m_DeferredShaderDynamic.m_piShader->AddUniform("DiffuseSampler",(int)DEFERRED_SAMPLER_DIFFUSE,false);
+			m_DeferredShaderDynamic.m_piShader->AddUniform("NormalSampler",(int)DEFERRED_SAMPLER_NORMAL,false);
+			m_DeferredShaderDynamic.m_piShader->AddUniform("DepthSampler",(int)DEFERRED_SAMPLER_DEPTH,false);
+
+			m_DeferredShaderDynamic.m_piShader->AddAttribute("aVertex",(int)m_RenderMappings.nVertexAttribIndex);
+			m_DeferredShaderDynamic.m_piShader->AddAttribute("aTexCoord0",(int)m_RenderMappings.pTextureAttribIndex[0]);
+
 			bOk=m_DeferredShaderDynamic.m_piShader->Compile();
 			if(!bOk)
 			{
 				RTTRACE("COpenGLRenderDeferred::Setup -> Failed to compile deferred dynamic shader");
 			}
-			
-			m_DeferredShaderDynamic.m_piShader->AddUniform("DiffuseSampler",(int)DEFERRED_SAMPLER_DIFFUSE,false);
-			m_DeferredShaderDynamic.m_piShader->AddUniform("NormalSampler",(int)DEFERRED_SAMPLER_NORMAL,false);
-			m_DeferredShaderDynamic.m_piShader->AddUniform("DepthSampler",(int)DEFERRED_SAMPLER_DEPTH,false);
-			
-			m_DeferredShaderDynamic.m_piShader->AddAttribute("aVertex",(int)m_RenderMappings.nVertexAttribIndex);
-			m_DeferredShaderDynamic.m_piShader->AddAttribute("aTexCoord0",(int)m_RenderMappings.pTextureAttribIndex[0]);
 		}
 		else
 		{
@@ -1603,11 +1606,7 @@ void COpenGLRenderDeferred::StartSelection(SGameRect rWindowRect,IGenericCamera 
 	{
 		if(m_SelectionShader.Create(m_piSystem,"Shader",""))
 		{
-			#ifdef ANDROID
-			m_SelectionShader.m_piShader->Load("Shaders/Android-SelectionShader-Vertex.c","Shaders/Android-SelectionShader-Fragment.c","");
-			#else
 			m_SelectionShader.m_piShader->Load("Shaders/SelectionShader-Vertex.c","Shaders/SelectionShader-Fragment.c","");
-			#endif
 		}
 	}
 	
