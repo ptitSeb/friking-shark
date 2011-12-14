@@ -90,15 +90,19 @@ class COpenGLShader: virtual public CSystemObjectBase, virtual public IGenericSh
   
   std::string m_sVertexShader;
   std::string m_sVertexShaderCode;
+  std::string m_sVertexShaderDecoratedCode;
+
   std::string m_sFragmentShader;
   std::string m_sFragmentShaderCode;
+  std::string m_sFragmentShaderDecoratedCode;
   std::string m_sPreprocessorDefinitions;
-  
+
   std::map<std::string,SUniformData*>  m_mUniforms;
   std::map<std::string,SAttributeData> m_mAttributes;
   std::map<std::string,SDataLocationData> m_mDataLocations;
   
   bool LoadCodeFile(std::string sSourceFile,std::string *psSourceCode);
+  void DecorateCode(std::string sPreprocessorDefinitions,std::string sOriginalCode,std::string *pFinalCode,std::string *pFinalDecoratedCode);
   void FreeShader();
 
 public:

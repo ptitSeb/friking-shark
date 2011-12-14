@@ -134,9 +134,17 @@ bool COpenGLShader::Compile()
 				sOuputBuffer[0]=0;
 				int nLength=0;
 				glGetShaderInfoLog(m_hVertexShader,sizeof(sOuputBuffer),&nLength,sOuputBuffer);
-				if(!bOk){RTTRACE("COpenGLShader::Compile -> %s: Vertex Shader compilation Failed",m_sFragmentShader.c_str());}
-				if(sOuputBuffer[0]!=0){RTTRACE(sOuputBuffer);}
-				//if(sOuputBuffer[0]!=0){RTTRACE(m_sVertexShaderCode.c_str());}
+				if(!bOk)
+				{
+					RTTRACE("COpenGLShader::Compile -> %s: Vertex Shader compilation Failed",m_sFragmentShader.c_str());
+					if(sOuputBuffer[0]!=0){RTTRACE(sOuputBuffer);}
+					RTTRACE(m_sVertexShaderDecoratedCode.c_str());
+				}
+				else
+				{
+					if(sOuputBuffer[0]!=0){RTTRACE(sOuputBuffer);}
+				}
+				//if(sOuputBuffer[0]!=0){}
 			}
 		}
 		else
@@ -163,8 +171,16 @@ bool COpenGLShader::Compile()
 				sOuputBuffer[0]=0;
 				int nLength=0;
 				glGetShaderInfoLog(m_hFragmentShader,sizeof(sOuputBuffer),&nLength,sOuputBuffer);
-				if(!bOk){RTTRACE("COpenGLShader::Compile -> %s : Fragment Shader compilation Failed",m_sFragmentShader.c_str());}
-				if(sOuputBuffer[0]!=0){RTTRACE(sOuputBuffer);}
+				if(!bOk)
+				{
+					RTTRACE("COpenGLShader::Compile -> %s : Fragment Shader compilation Failed",m_sFragmentShader.c_str());
+					if(sOuputBuffer[0]!=0){RTTRACE(sOuputBuffer);}
+					RTTRACE(m_sFragmentShaderDecoratedCode.c_str());
+				}
+				else
+				{
+					if(sOuputBuffer[0]!=0){RTTRACE(sOuputBuffer);}
+				}
 				//if(sOuputBuffer[0]!=0){RTTRACE(m_sFragmentShaderCode.c_str());}
 			}
 		}
@@ -858,8 +874,8 @@ bool COpenGLShader::Unserialize(ISystemPersistencyNode *piNode)
 	std::string sFragmentShaderCode;
 	if(m_sVertexShader.c_str()){LoadCodeFile(m_sVertexShader,&sVertexShaderCode);}
 	if(m_sFragmentShader.c_str()){LoadCodeFile(m_sFragmentShader,&sFragmentShaderCode);}
-	m_sVertexShaderCode=m_sPreprocessorDefinitions+"\n"+sVertexShaderCode;
-	m_sFragmentShaderCode=m_sPreprocessorDefinitions+"\n"+sFragmentShaderCode;
+	DecorateCode(m_sPreprocessorDefinitions,sVertexShaderCode,&m_sVertexShaderCode,&m_sVertexShaderDecoratedCode);
+	DecorateCode(m_sPreprocessorDefinitions,sFragmentShaderCode,&m_sFragmentShaderCode,&m_sFragmentShaderDecoratedCode);
 	m_bTriedToCompile=false;
 	return bOk;
 }
@@ -868,25 +884,70 @@ void COpenGLShader::Load( std::string sVertexShaderFile,std::string sFragmentSha
 {
 	m_sFragmentShader=sFragmentShaderFile;
 	m_sFragmentShaderCode="";
+	m_sFragmentShaderDecoratedCode="";
 	m_sVertexShader=sVertexShaderFile;
 	m_sVertexShaderCode="";
+	m_sVertexShaderDecoratedCode="";
 	m_sPreprocessorDefinitions=sPreprocessorDefinitions;
 	std::string sVertexShaderCode;
 	std::string sFragmentShaderCode;
 	if(m_sVertexShader.length()){LoadCodeFile(m_sVertexShader,&sVertexShaderCode);}
 	if(m_sFragmentShader.length()){LoadCodeFile(m_sFragmentShader,&sFragmentShaderCode);}
-	m_sVertexShaderCode=sPreprocessorDefinitions+"\n"+sVertexShaderCode;
-	m_sFragmentShaderCode=sPreprocessorDefinitions+"\n"+sFragmentShaderCode;
+	DecorateCode(sPreprocessorDefinitions,sVertexShaderCode,&m_sVertexShaderCode,&m_sVertexShaderDecoratedCode);
+	DecorateCode(sPreprocessorDefinitions,sFragmentShaderCode,&m_sFragmentShaderCode,&m_sFragmentShaderDecoratedCode);
 	m_bTriedToCompile=false;
 }
 
 void COpenGLShader::Create( std::string sVertexShaderCode,std::string sFragmentShaderCode,std::string sPreprocessorDefinitions)
 {
+	DecorateCode(sPreprocessorDefinitions,sVertexShaderCode,&m_sVertexShaderCode,&m_sVertexShaderDecoratedCode);
+	DecorateCode(sPreprocessorDefinitions,sFragmentShaderCode,&m_sFragmentShaderCode,&m_sFragmentShaderDecoratedCode);
 	m_sFragmentShader="";
-	m_sFragmentShaderCode=sPreprocessorDefinitions+"\n"+sFragmentShaderCode;
 	m_sVertexShader="";
-	m_sVertexShaderCode=sPreprocessorDefinitions+"\n"+sVertexShaderCode;
 	m_sPreprocessorDefinitions=sPreprocessorDefinitions;
 	m_bTriedToCompile=false;
 }
+
+void COpenGLShader::DecorateCode(std::string sPreprocessorDefinitions,std::string sOriginalCode,std::string *pFinalCode,std::string *pFinalDecoratedCode)
+{
+	(*pFinalCode)="";
+
+	std::string::size_type nOffset=0;
+	std::string::size_type nEnd=0;
+
+	bool bPreprocessorAdded=false;
+	while(nEnd!=std::string::npos)
+	{
+		nEnd=sOriginalCode.find_first_of('\n',nOffset);
+		std::string sLine=sOriginalCode.substr(nOffset,nEnd-nOffset);
+		if(!bPreprocessorAdded && sPreprocessorDefinitions.length())
+		{
+			if(strstr(sLine.c_str(),"#version")==NULL)
+			{
+				(*pFinalCode)+=sPreprocessorDefinitions;
+				(*pFinalCode)+="\n";
+				bPreprocessorAdded=true;
+			}
+		}
+		(*pFinalCode)+=sLine;
+		if(nEnd!=std::string::npos){(*pFinalCode)+="\n";}
+		nOffset=nEnd+1;
+	};
+
+	unsigned int nLine=1;
+	nEnd=nOffset=0;
+	while(nEnd!=std::string::npos)
+	{
+		nEnd=pFinalCode->find_first_of('\n',nOffset);
+		std::string sLine=pFinalCode->substr(nOffset,nEnd-nOffset);
+		char sTemp[128];
+		sprintf(sTemp,"%3d: ",nLine);
+		(*pFinalDecoratedCode)+=sTemp;
+		(*pFinalDecoratedCode)+=sLine;
+		if(nEnd!=std::string::npos){(*pFinalDecoratedCode)+="\n";}
+		nLine++;
+		nOffset=nEnd+1;
+	};
+}
+
 #endif
