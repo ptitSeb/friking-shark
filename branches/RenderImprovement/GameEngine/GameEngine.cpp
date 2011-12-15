@@ -36,6 +36,7 @@ CTimeMeter *GetTimeMeter(){return &g_RunTimeLibTimeMeter;}
 #include <android/log.h>
 #include <android/window.h>
 android_app *g_pAndroidApp=NULL;
+const char  *g_pAndroidDataFolder=NULL;
 #endif
 
 CGameEngineApp theApp;
@@ -214,6 +215,9 @@ void android_main(struct android_app* state)
 	// Make sure glue isn't stripped.
 	app_dummy();
 	g_pAndroidApp=state;
+	g_pAndroidDataFolder=g_pAndroidApp->activity->internalDataPath;
+	// Due to a bug, internalDataPath is null in 2.3 versions, fixed in 3.0
+	if(g_pAndroidDataFolder==NULL){g_pAndroidDataFolder="/data/data/com.games.frikingshark/";}
 	if(g_pAndroidApp->activity){ANativeActivity_setWindowFlags(g_pAndroidApp->activity,AWINDOW_FLAG_FULLSCREEN|AWINDOW_FLAG_KEEP_SCREEN_ON,0);}
 	std::string sFolder="";
 	std::vector<std::string> vParams;
