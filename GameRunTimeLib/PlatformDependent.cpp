@@ -38,6 +38,7 @@
 #include "../GameEngine/android_native_app_glue.h"
 #include <android/log.h>
 extern android_app *g_pAndroidApp;
+extern const char  *g_pAndroidDataFolder;
 #endif
 
 
@@ -433,7 +434,7 @@ struct AFILE
 AFILE *afopen_internal(const char * _Filename, const char * _Mode,bool bTrace)
 {
 	const char *pFileName=_Filename;
-	
+
 	// Remove ./ and ../ as they are not supported by the asset manager.
 	// In android, every accesible file is in the assets folder, that way actual
 	// file system paths and .apk packed files can be treated transparently
@@ -441,13 +442,35 @@ AFILE *afopen_internal(const char * _Filename, const char * _Mode,bool bTrace)
 	if(strncmp(_Filename,"./",2)==0){pFileName=_Filename+2;}
 	else if(strncmp(_Filename,"../",3)==0){pFileName=_Filename+3;}
 	bool bWrite=strchr(_Mode,'w')!=NULL || strchr(_Mode,'a')!=NULL || strchr(_Mode,'+')!=NULL;
-	
+
 	//RTTRACE("afopen -> Opening file %s",pFileName);
 	
 	bool bOk=false;
 	AFILE *pAFile=new AFILE;
 	pAFile->pFile=fopen(pFileName,_Mode);
 	bOk=(pAFile->pFile!=NULL);
+	if(!bOk)
+	{
+		// Try to open the file from /data/data/com.games.frikingshark
+		
+		char *pDataFileName=strdup(_Filename);
+		char *pDataFileNameCursor=pDataFileName;
+		while(*pDataFileNameCursor)
+		{
+			if(*pDataFileNameCursor=='/'||*pDataFileNameCursor=='\\')
+			{
+				*pDataFileNameCursor='-';
+			}
+			pDataFileNameCursor++;
+		}		
+		std::string sTemp=g_pAndroidDataFolder;
+		sTemp+=pDataFileName;
+		pAFile->pFile=fopen(sTemp.c_str(),_Mode);
+		bOk=(pAFile->pFile!=NULL);
+		
+		free(pDataFileName);
+		pDataFileName=NULL;
+	}
 	if(!bOk)
 	{
 		//RTTRACE("afopen -> File %s not found in the file system, looking for it in the asset manager",pFileName);
@@ -499,6 +522,7 @@ AFILE *afopen_internal(const char * _Filename, const char * _Mode,bool bTrace)
 		delete pAFile;
 		pAFile=NULL;
 	}
+	
 	return pAFile;
 }
 
