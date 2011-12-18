@@ -63,6 +63,8 @@ class COpenGLRenderForwardFixed: virtual public CSystemObjectBase, virtual publi
 	int	              m_nSkyShadowTextureLevel;
 	int 	          m_nNormalMapTextureLevel;
 	int 	          m_nShadowTextureLevel;
+	unsigned int      m_nLastDesiredSunShadowWidth;
+	unsigned int      m_nLastDesiredSunShadowHeight;
 
 	SOpenGLRenderMappings m_RenderMappings;
 		
@@ -74,6 +76,7 @@ class COpenGLRenderForwardFixed: virtual public CSystemObjectBase, virtual publi
 	float *m_pLastBitangentPointer;
 	float *m_pLastTexPointer[2];
 	
+	unsigned int        m_nCurrentVertexArrayObject;
 	unsigned int 		m_nCurrentVertexBufferObject;
 	unsigned int 		m_nCurrentIndexesBufferObject;
 	
@@ -86,6 +89,7 @@ class COpenGLRenderForwardFixed: virtual public CSystemObjectBase, virtual publi
 	
 	IGenericViewport *m_piCurrentViewport;
 	CGenericTextureWrapper m_ShadowTexture;
+	EShadowQuality m_eShadowQuality;
 	
 	void PrepareSunShadows();
 	void UnprepareSunShadows();
@@ -116,6 +120,10 @@ class COpenGLRenderForwardFixed: virtual public CSystemObjectBase, virtual publi
 public:
 	
 	bool Setup(IGenericRender *piRender,IGenericViewport *piViewport,SHardwareSupport &support);
+	void Cleanup();
+
+	std::string GetFriendlyName(){return "Forward Fixed";}
+
 	void Destroy();
 
 	void StartFrame();
@@ -130,7 +138,7 @@ public:
 	int EndSelection();
 	
 	EShadingModel GetShadingModel(){return eShadingModel_Vertex;}
-	
+
 	COpenGLRenderForwardFixed(void);
 	~COpenGLRenderForwardFixed(void);
 };

@@ -22,14 +22,12 @@
 #include "OpenGLGraphics.h"
 #include "OpenGLRenderForwardFixed.h"
 
-#ifdef ANDROID 
-#define DEFAULT_SHADOW_SIZE 512
-#else
-#define DEFAULT_SHADOW_SIZE 1024
-#endif
-
 COpenGLRenderForwardFixed::COpenGLRenderForwardFixed(void)
 {
+	m_nLastDesiredSunShadowWidth=0;
+	m_nLastDesiredSunShadowHeight=0;
+
+	m_eShadowQuality=eShadowQuality_High;
 	m_pScene=NULL;
 	m_piCurrentViewport=NULL;
 	m_bClippingActive=false;
@@ -70,11 +68,37 @@ bool COpenGLRenderForwardFixed::Setup(IGenericRender *piRender,IGenericViewport 
 	return true;
 }
 
-void COpenGLRenderForwardFixed::Destroy()
+void COpenGLRenderForwardFixed::Cleanup()
 {
+	for(unsigned int x=0;x<MAX_TEXTURE_LEVELS;x++)
+	{
+		if(m_ppiEffectiveTextureLevels[x])
+		{
+			m_ppiEffectiveTextureLevels[x]->UnprepareTexture(x);
+			REL(m_ppiEffectiveTextureLevels[x]);
+		}
+		REL(m_ppiTextureLevels[x]);
+	}
+	m_nTextureLevels=0;
+	if(m_nCurrentActiveTexture!=0){glActiveTexture(GL_TEXTURE0_ARB+0);m_nCurrentActiveTexture=0;}
+
+	float *pCleanTextures[MAX_TEXTURE_LEVELS]={0};
+	SetVertexPointers(NULL,NULL,NULL,MAX_TEXTURE_LEVELS,pCleanTextures,NULL,NULL,NULL);
+
+	SRenderState sResetState;
+	SetRenderState(sResetState);
+
+	if(m_vClearColor!=ColorBlack){m_vClearColor=ColorBlack;glClearColor(0,0,0,1);}
+
 	m_ShadowTexture.Destroy();
 	REL(m_piCurrentViewport);
-	
+
+	m_nLastDesiredSunShadowHeight=0;
+	m_nLastDesiredSunShadowWidth=0;
+}
+
+void COpenGLRenderForwardFixed::Destroy()
+{
 	CSystemObjectBase::Destroy();
 }
 
@@ -177,17 +201,30 @@ void COpenGLRenderForwardFixed::UnprepareSunShadows(){}
 #else
 void COpenGLRenderForwardFixed::PrepareSunShadows()
 {
-	if(m_piCurrentViewport==NULL){return;}
-	if(m_ShadowTexture.m_piTexture==NULL)
+	if(m_nLastDesiredSunShadowWidth!=m_pScene->lighting.m_nDesiredSunShadowWidth || 
+		m_nLastDesiredSunShadowHeight!=m_pScene->lighting.m_nDesiredSunShadowHeight)
 	{
-		if(m_ShadowTexture.Create(m_piSystem,"Texture",""))
+		if(m_ShadowTexture.m_piTexture){m_ShadowTexture.Destroy();}
+
+		bool bOk=m_ShadowTexture.Create(m_piSystem,"Texture","");
+		if(bOk)
 		{
-			if(!m_ShadowTexture.m_piTexture->CreateDepth(DEFAULT_SHADOW_SIZE,DEFAULT_SHADOW_SIZE,m_piCurrentViewport))
+			bOk=m_ShadowTexture.m_piTexture->CreateDepth(m_pScene->lighting.m_nDesiredSunShadowWidth,m_pScene->lighting.m_nDesiredSunShadowHeight,m_piCurrentViewport);
+			if(!bOk)
 			{
+				RTTRACE("COpenGLRenderForwardFixed::PrepareSunShadows -> Failed to initialize shadow texture");
 				m_ShadowTexture.Destroy();
 			}
 		}
+		else
+		{
+			RTTRACE("COpenGLRenderForwardFixed::PrepareSunShadows -> Failed to create shadow texture");
+		}
+		m_nLastDesiredSunShadowWidth=m_pScene->lighting.m_nDesiredSunShadowWidth;
+		m_nLastDesiredSunShadowHeight=m_pScene->lighting.m_nDesiredSunShadowHeight;
 	}
+
+	if(m_piCurrentViewport==NULL){return;}
 	if(m_ShadowTexture.m_piTexture==NULL){return;}
 		
 	SRenderState sShadowsState=m_sRenderState;

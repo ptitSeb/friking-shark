@@ -101,7 +101,10 @@ class COpenGLRenderForwardShader: virtual public CSystemObjectBase, virtual publ
 	int	              m_nSkyShadowTextureLevel;
 	int 	          m_nNormalMapTextureLevel;
 	int 	          m_nShadowTextureLevel;
+	unsigned int      m_nLastDesiredSunShadowWidth;
+	unsigned int      m_nLastDesiredSunShadowHeight;
 	float             m_fCurrentRealTime;
+
 
 	SOpenGLRenderMappings m_RenderMappings;
 	
@@ -148,7 +151,7 @@ class COpenGLRenderForwardShader: virtual public CSystemObjectBase, virtual publ
 	unsigned int 					m_nCurrentActiveTexture;
 	
 	IGenericViewport *m_piCurrentViewport;
-	
+	EShadowQuality    m_eShadowQuality;	
 
 	void PrepareSunShadows();
 	void UnprepareSunShadows();
@@ -188,6 +191,9 @@ class COpenGLRenderForwardShader: virtual public CSystemObjectBase, virtual publ
 public:
 
 	bool Setup(IGenericRender *piRender,IGenericViewport *piViewport,SHardwareSupport &support);
+	void Cleanup();
+
+	std::string GetFriendlyName(){return "Forward Shader";}
 	void Destroy();
 
 	void StartFrame();

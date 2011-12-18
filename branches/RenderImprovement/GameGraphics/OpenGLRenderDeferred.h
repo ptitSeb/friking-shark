@@ -137,6 +137,9 @@ class COpenGLRenderDeferred: virtual public CSystemObjectBase, virtual public IO
 	int	              m_nSkyShadowTextureLevel;
 	int 	          m_nNormalMapTextureLevel;
 	int 	          m_nShadowTextureLevel;
+	unsigned int      m_nLastDesiredSunShadowWidth;
+	unsigned int      m_nLastDesiredSunShadowHeight;
+
 	float             m_fCurrentRealTime;
 
 	SOpenGLRenderMappings m_RenderMappings;
@@ -188,6 +191,8 @@ class COpenGLRenderDeferred: virtual public CSystemObjectBase, virtual public IO
 	unsigned int 					m_nCurrentActiveTexture;
 	
 	IGenericViewport *m_piCurrentViewport;
+
+	EShadowQuality m_eShadowQuality;
 	
 	void RenderDeferred(bool bShadowsPresent,bool bWaterPresent,bool bSkyPresent,bool bLightingPresent);
 	void RenderForward();
@@ -201,8 +206,6 @@ class COpenGLRenderDeferred: virtual public CSystemObjectBase, virtual public IO
 	void SetRenderState(const SRenderState &sNewState,EDeferredStateChangeShader eShader=eDeferredStateChange_UpdateShader);
 	void SetCurrentRenderStateShader();
 	
-	void SetupLightsInShaders();
-
 	void RenderAllStages(bool bRenderingShadow);
 	void RenderPointStages(bool bRenderingShadow);
 	void RenderLineStages(bool bRenderingShadow);
@@ -231,11 +234,14 @@ class COpenGLRenderDeferred: virtual public CSystemObjectBase, virtual public IO
 	SDeferredGBuffers     CreateGBuffers( unsigned nWidth,unsigned nHeight);
 	unsigned int  CreateRenderBuffer( unsigned nWidth,unsigned nHeight,unsigned int nComponent,unsigned int nFormat);
 	
-	void RenderScreenRect(const CVector &vOrigin,double s1,double s2,double dTexX,double dTexY,double dTexW,double dTexH);
+	void RenderScreenRect(double x,double y,double w,double h,double dTexX,double dTexY,double dTexW,double dTexH);
 	
 public:
 
 	bool Setup(IGenericRender *piRender,IGenericViewport *piViewport,SHardwareSupport &support);
+	void Cleanup();
+
+	std::string GetFriendlyName(){return "Deferred";}
 	void Destroy();
 
 	void StartFrame();
@@ -250,7 +256,7 @@ public:
 	int EndSelection();
 	
 	void ReloadShaders();
-		
+
 	EShadingModel GetShadingModel(){return eShadingModel_Fragment;}
 	
 	COpenGLRenderDeferred(void);

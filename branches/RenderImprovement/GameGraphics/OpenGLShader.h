@@ -106,6 +106,9 @@ class COpenGLShader: virtual public CSystemObjectBase, virtual public IGenericSh
   void FreeShader();
 
 public:
+
+	void Destroy();
+
     bool Unserialize(ISystemPersistencyNode *piNode);
 
     // IGenericShader

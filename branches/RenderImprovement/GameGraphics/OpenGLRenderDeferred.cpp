@@ -31,15 +31,12 @@
 
 #define LIGHT_SIZE_INCREMENT 1.5
 
-#ifdef ANDROID 
-	#define DEFAULT_SHADOW_SIZE 512
-#else
-	#define DEFAULT_SHADOW_SIZE 1024
-#endif
-
 COpenGLRenderDeferred::COpenGLRenderDeferred(void)
 {
+	m_eShadowQuality=eShadowQuality_High;
 	m_eRenderMode=eDeferredMode_Forward;
+	m_nLastDesiredSunShadowWidth=0;
+	m_nLastDesiredSunShadowHeight=0;
 	m_bAnyShadowInTheScene=false;
 	m_pScene=NULL;
 	m_piCurrentViewport=NULL;
@@ -102,23 +99,6 @@ bool COpenGLRenderDeferred::Setup(IGenericRender *piRender,IGenericViewport *piV
 	m_piCurrentViewport=ADD(piViewport);
 	m_sHardwareSupport=support;
 	
-	if(bOk && m_ShadowTexture.m_piTexture==NULL)
-	{
-		bOk=m_ShadowTexture.Create(m_piSystem,"Texture","");
-		if(bOk)
-		{
-			bOk=m_ShadowTexture.m_piTexture->CreateDepth(DEFAULT_SHADOW_SIZE,DEFAULT_SHADOW_SIZE,m_piCurrentViewport);
-			if(!bOk)
-			{
-				RTTRACE("COpenGLRenderDeferred::Setup -> Failed to initialize shadow texture");
-				m_ShadowTexture.Destroy();
-			}
-		}
-		else
-		{
-			RTTRACE("COpenGLRenderDeferred::Setup -> Failed to create shadow texture");
-		}
-	}
 	if(bOk && m_ShadowShader.m_piShader==NULL)
 	{
 		bOk=m_ShadowShader.Create(m_piSystem,"Shader","");
@@ -230,15 +210,38 @@ bool COpenGLRenderDeferred::Setup(IGenericRender *piRender,IGenericViewport *piV
 	return bOk;
 }
 
-void COpenGLRenderDeferred::Destroy()
+void COpenGLRenderDeferred::Cleanup()
 {
+	for(unsigned int x=0;x<MAX_TEXTURE_LEVELS;x++)
+	{
+		if(m_ppiEffectiveTextureLevels[x])
+		{
+			m_ppiEffectiveTextureLevels[x]->UnprepareTexture(x);
+			REL(m_ppiEffectiveTextureLevels[x]);
+		}
+		REL(m_ppiTextureLevels[x]);
+	}
+	REL(m_piEffectiveNormalMap);
+	m_nTextureLevels=0;
+	if(m_nCurrentActiveTexture!=0){glActiveTexture(GL_TEXTURE0_ARB+0);m_nCurrentActiveTexture=0;}
+
+	float *pCleanTextures[MAX_TEXTURE_LEVELS]={0};
+	SetVertexPointers(NULL,NULL,NULL,MAX_TEXTURE_LEVELS,pCleanTextures,NULL,NULL,NULL);
+
+	SRenderState sResetState;
+	SetRenderState(sResetState,eDeferredStateChange_DoNotUpdateShader);
+	if(m_pCurrentShader){m_pCurrentShader->m_piShader->Deactivate();m_pCurrentShader=NULL;}
+	glUseProgramObjectARB(0);
+
+	if(m_vClearColor!=ColorBlack){m_vClearColor=ColorBlack;glClearColor(0,0,0,1);}
+
 	m_ShadowTexture.Destroy();
 	m_ShadowShader.Destroy();
 	m_SelectionShader.Destroy();
 	m_DeferredShaderNoWaterSun.Destroy();
 	m_DeferredShaderWaterSun.Destroy();
 	m_DeferredShaderDynamic.Destroy();
-	
+
 	std::map<SDeferredShaderKey,CGenericShaderWrapper>::iterator iShader;
 	for(iShader=m_mShaders.begin();iShader!=m_mShaders.end();iShader++)
 	{
@@ -247,6 +250,14 @@ void COpenGLRenderDeferred::Destroy()
 	m_mShaders.clear();
 	REL(m_piCurrentViewport);
 
+	FreeGBuffers(&m_GBuffers);
+
+	m_nLastDesiredSunShadowHeight=0;
+	m_nLastDesiredSunShadowWidth=0;
+}
+
+void COpenGLRenderDeferred::Destroy()
+{
 	CSystemObjectBase::Destroy();
 }
 
@@ -270,13 +281,30 @@ void COpenGLRenderDeferred::SetModelViewMatrix(CMatrix &matrix)
 	}
 }
 
-void COpenGLRenderDeferred::SetupLightsInShaders()
-{
-	
-}
-
 void COpenGLRenderDeferred::PrepareSunShadows()
 {
+	if(m_nLastDesiredSunShadowWidth!=m_pScene->lighting.m_nDesiredSunShadowWidth || 
+		m_nLastDesiredSunShadowHeight!=m_pScene->lighting.m_nDesiredSunShadowHeight)
+	{
+		if(m_ShadowTexture.m_piTexture){m_ShadowTexture.Destroy();}
+
+		bool bOk=m_ShadowTexture.Create(m_piSystem,"Texture","");
+		if(bOk)
+		{
+			bOk=m_ShadowTexture.m_piTexture->CreateDepth(m_pScene->lighting.m_nDesiredSunShadowWidth,m_pScene->lighting.m_nDesiredSunShadowHeight,m_piCurrentViewport);
+			if(!bOk)
+			{
+				RTTRACE("COpenGLRenderDeferred::PrepareSunShadows -> Failed to initialize shadow texture");
+				m_ShadowTexture.Destroy();
+			}
+		}
+		else
+		{
+			RTTRACE("COpenGLRenderDeferred::PrepareSunShadows -> Failed to create shadow texture");
+		}
+		m_nLastDesiredSunShadowWidth=m_pScene->lighting.m_nDesiredSunShadowWidth;
+		m_nLastDesiredSunShadowHeight=m_pScene->lighting.m_nDesiredSunShadowHeight;
+	}
 	if(m_piCurrentViewport==NULL){return;}
 	if(m_ShadowTexture.m_piTexture==NULL){return;}
 	if(m_ShadowShader.m_piShader==NULL){return;}
@@ -607,10 +635,8 @@ void COpenGLRenderDeferred::RenderDeferred(bool bShadowsPresent,bool bWaterPrese
 		unsigned int nWidth=m_GBuffers.nWidth;
 		unsigned int nHeight=m_GBuffers.nHeight;
 		
-		CVector vOrigin=CVector(m_pScene->camera.m_nViewportW/2,100,m_pScene->camera.m_nViewportH/2);
+		CVector vOrigin=CVector(m_pScene->camera.m_nViewportW/2,m_pScene->camera.m_nViewportH/2,0);
 		double s1=m_pScene->camera.m_nViewportW,s2=m_pScene->camera.m_nViewportH;
-		CVector vAxis1=AxisPosX;
-		CVector vAxis2=AxisNegZ;
 		
 		glViewport(m_pScene->camera.m_nViewportX,m_pScene->camera.m_nViewportY,m_pScene->camera.m_nViewportW,m_pScene->camera.m_nViewportH);
 		
@@ -624,7 +650,7 @@ void COpenGLRenderDeferred::RenderDeferred(bool bShadowsPresent,bool bWaterPrese
 		m_pCurrentShader=&m_DeferredShaderWaterSun;
 		m_DeferredShaderWaterSun.m_piShader->Activate();
 		
-		RenderScreenRect(vOrigin,s1,s2,0,0,dWidthRatio,dHeightRatio);
+		RenderScreenRect(0,0,s1,s2,0,0,dWidthRatio,dHeightRatio);
 		
 		if(m_nCurrentActiveTexture!=DEFERRED_SAMPLER_DIFFUSE){glActiveTexture(GL_TEXTURE0_ARB+DEFERRED_SAMPLER_DIFFUSE);}
 		glBindTexture(GL_TEXTURE_2D,m_GBuffers.nDiffuseBuffer);
@@ -673,8 +699,6 @@ void COpenGLRenderDeferred::RenderDeferred(bool bShadowsPresent,bool bWaterPrese
 		
 		CVector vOrigin=CVector(m_pScene->camera.m_nViewportW/2,100,m_pScene->camera.m_nViewportH/2);
 		double s1=m_pScene->camera.m_nViewportW,s2=m_pScene->camera.m_nViewportH;
-		CVector vAxis1=AxisPosX;
-		CVector vAxis2=AxisNegZ;
 		
 		glViewport(m_pScene->camera.m_nViewportX,m_pScene->camera.m_nViewportY,m_pScene->camera.m_nViewportW,m_pScene->camera.m_nViewportH);
 		
@@ -695,7 +719,7 @@ void COpenGLRenderDeferred::RenderDeferred(bool bShadowsPresent,bool bWaterPrese
 		m_pCurrentShader=&m_DeferredShaderNoWaterSun;
 		m_DeferredShaderNoWaterSun.m_piShader->Activate();
 		
-		RenderScreenRect(vOrigin,s1,s2,0,0,dWidthRatio,dHeightRatio);
+		RenderScreenRect(0,0,s1,s2,0,0,dWidthRatio,dHeightRatio);
 	}
 	
 	UnprepareSunShadows();
@@ -763,10 +787,7 @@ void COpenGLRenderDeferred::RenderDeferred(bool bShadowsPresent,bool bWaterPrese
 				m_DeferredShaderDynamic.m_piShader->AddUniform("uDynamicSpecular",piLight->GetSpecularColor(),1.0,false);
 				m_DeferredShaderDynamic.m_piShader->AddUniform("uDynamicRange",(float)(piLight->GetOmniRadius()*LIGHT_SIZE_INCREMENT),false);
 
-				CVector vLightOrigin;
-				vLightOrigin=CVector(dLightViewportX,100,dLightViewportY);
-				
-				RenderScreenRect(vLightOrigin,dSize*2.0,dSize*2.0,dLightTexCoordU-dTexSizeU*0.5,dLightTexCoordV-dTexSizeV*0.5,dTexSizeU,dTexSizeV);
+				RenderScreenRect(dLightViewportX-dSize,dLightViewportY-dSize,dSize*2.0,dSize*2.0,dLightTexCoordU-dTexSizeU*0.5,dLightTexCoordV-dTexSizeV*0.5,dTexSizeU,dTexSizeV);
 			}
 		}
 	}
@@ -782,21 +803,28 @@ void COpenGLRenderDeferred::RenderDeferred(bool bShadowsPresent,bool bWaterPrese
 	RTTIMEMETER_ENDGLSTEP();
 }
 
-void COpenGLRenderDeferred::RenderScreenRect(const CVector &vOrigin,double s1,double s2,double dTexX,double dTexY,double dTexW,double dTexH)
+void COpenGLRenderDeferred::RenderScreenRect(double x,double y,double w,double h,double dTexX,double dTexY,double dTexW,double dTexH)
 {
 	float pVertexBuffer[12];
 	float pTextureBuffer[8];
 	unsigned short pFaces[]={0,1,2,0,2,3};
-	
-	CVector vAxis1=CVector(round(s1/2.0),0,0);
-	CVector vAxis2=CVector(0,0,round(s2/2.0));
-	
-	CVector v[4];
-	v[0]=vOrigin+vAxis1+vAxis2;
-	v[1]=vOrigin-vAxis1+vAxis2;
-	v[2]=vOrigin-vAxis1-vAxis2;
-	v[3]=vOrigin+vAxis1-vAxis2;
-	
+		
+	pVertexBuffer[0]=x+w;
+	pVertexBuffer[1]=0;
+	pVertexBuffer[2]=y+h;
+
+	pVertexBuffer[3]=x;
+	pVertexBuffer[4]=0;
+	pVertexBuffer[5]=y+h;
+
+	pVertexBuffer[6]=x;
+	pVertexBuffer[7]=0;
+	pVertexBuffer[8]=y;
+
+	pVertexBuffer[9]=x+w;
+	pVertexBuffer[10]=0;
+	pVertexBuffer[11]=y;
+
 	pTextureBuffer[0]=dTexX+dTexW;
 	pTextureBuffer[1]=dTexY+dTexH;
 	pTextureBuffer[2]=dTexX;
@@ -805,22 +833,6 @@ void COpenGLRenderDeferred::RenderScreenRect(const CVector &vOrigin,double s1,do
 	pTextureBuffer[5]=dTexY;
 	pTextureBuffer[6]=dTexX+dTexW;
 	pTextureBuffer[7]=dTexY;
-
-	pVertexBuffer[0]=v[0].c[0];
-	pVertexBuffer[1]=v[0].c[1];
-	pVertexBuffer[2]=v[0].c[2];
-	
-	pVertexBuffer[3]=v[1].c[0];
-	pVertexBuffer[4]=v[1].c[1];
-	pVertexBuffer[5]=v[1].c[2];
-	
-	pVertexBuffer[6]=v[2].c[0];
-	pVertexBuffer[7]=v[2].c[1];
-	pVertexBuffer[8]=v[2].c[2];
-	
-	pVertexBuffer[9]=v[3].c[0];
-	pVertexBuffer[10]=v[3].c[1];
-	pVertexBuffer[11]=v[3].c[2];
 	
 	float *pTextureBufferTemp=pTextureBuffer;
 	SetVertexPointers(pVertexBuffer,NULL,NULL,1,&pTextureBufferTemp);
@@ -858,8 +870,8 @@ void COpenGLRenderDeferred::RenderScene(SSceneData &sScene)
 	
 	if(m_eRenderMode!=eDeferredMode_Forward)
 	{
-		if(m_GBuffers.nWidth<sScene.camera.m_nViewportW || 
-			m_GBuffers.nHeight<sScene.camera.m_nViewportH)
+		if( (int)m_GBuffers.nWidth<sScene.camera.m_nViewportW || 
+			(int)m_GBuffers.nHeight<sScene.camera.m_nViewportH)
 		{
 			RTTRACE("COpenGLRenderDeferred::RenderScene -> Resizing GBuffers from %dx%d to %dx%d",m_GBuffers.nWidth,m_GBuffers.nHeight,sScene.camera.m_nViewportW,sScene.camera.m_nViewportH);
 			FreeGBuffers(&m_GBuffers);
@@ -1841,6 +1853,8 @@ SDeferredGBuffers COpenGLRenderDeferred::CreateGBuffers( unsigned nWidth,unsigne
 
 void COpenGLRenderDeferred::FreeGBuffers(SDeferredGBuffers *pGBuffers)
 {
+	pGBuffers->nHeight=0;
+	pGBuffers->nWidth=0;
 	if(pGBuffers->nFrameBuffer){glDeleteFramebuffersEXT(1,&pGBuffers->nFrameBuffer);pGBuffers->nFrameBuffer=0;}
 	if(pGBuffers->nDepthBuffer){glDeleteTextures(1,&pGBuffers->nDepthBuffer);pGBuffers->nDepthBuffer=0;}
 	if(pGBuffers->nDiffuseBuffer){glDeleteTextures(1,&pGBuffers->nDiffuseBuffer);pGBuffers->nDiffuseBuffer=0;}
