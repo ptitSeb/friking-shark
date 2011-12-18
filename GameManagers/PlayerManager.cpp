@@ -205,19 +205,22 @@ void CPlayerManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFractio
 	}
 		
 	
-	if(dTimeFraction!=0 && m_piPlayerEntity->GetHealth()>0)
+	if(m_piPlayerEntity->GetHealth()>0)
 	{
-		if(m_dwPlayMovementLastRollTime+10<dwCurrentTime)
+		if(dTimeFraction!=0)
 		{
-			if(m_dPlayMovementCurrentRoll>0)
+			if(m_dwPlayMovementLastRollTime+10<dwCurrentTime)
 			{
-				m_dPlayMovementCurrentRoll-=m_dPlayMovementRollVelocity*dwCurrentTime;
-				if(m_dPlayMovementCurrentRoll<0){m_dPlayMovementCurrentRoll=0;}
-			}
-			if(m_dPlayMovementCurrentRoll<0)
-			{
-				m_dPlayMovementCurrentRoll+=m_dPlayMovementRollVelocity*dwCurrentTime;
-				if(m_dPlayMovementCurrentRoll>0){m_dPlayMovementCurrentRoll=0;}
+				if(m_dPlayMovementCurrentRoll>0)
+				{
+					m_dPlayMovementCurrentRoll-=m_dPlayMovementRollVelocity*dwCurrentTime;
+					if(m_dPlayMovementCurrentRoll<0){m_dPlayMovementCurrentRoll=0;}
+				}
+				if(m_dPlayMovementCurrentRoll<0)
+				{
+					m_dPlayMovementCurrentRoll+=m_dPlayMovementRollVelocity*dwCurrentTime;
+					if(m_dPlayMovementCurrentRoll>0){m_dPlayMovementCurrentRoll=0;}
+				}
 			}
 		}
 

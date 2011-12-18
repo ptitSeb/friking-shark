@@ -120,7 +120,7 @@ void CPlayAreaManager::Start()
 	{
 		IPlayAreaElement *piElement=m_vEntityLayerElements[x].m_piElement;
 		piElement->Start();
-	}    
+	}
 }
 
 void CPlayAreaManager::Stop()
@@ -447,6 +447,7 @@ bool CPlayAreaManager::UpdateEntityLayers()
 				wrapper.m_piElement->SetEntityType(pLayer->m_EntityType.m_piEntityType);
 				wrapper.m_piElement->SetPosition(*i);
 				wrapper.m_piElement->SetAngles(CVector(((double)rand()/(double)RAND_MAX)*dYawJitter,0,0));
+				if(m_bStarted){wrapper.m_piElement->Start();}
 				m_vEntityLayerElements.push_back(wrapper);
 			}
 		}

@@ -121,6 +121,11 @@ void CMusicManager::Start()
 			m_piIntermissionMusicSound->SetLoop(false);
 		}
 	}
+	if(m_FrameManagerWrapper.m_piFrameManager && m_FrameManagerWrapper.m_piFrameManager->IsPaused())
+	{
+		OnPaused();
+	}
+
 }
 
 void CMusicManager::Stop()
@@ -186,6 +191,7 @@ void CMusicManager::OnPaused()
 void CMusicManager::ProcessFrame(unsigned int dwCurrentTime,double dTimeFraction)
 {
 	if(!m_bStarted){return;}
+	if(dTimeFraction==0){return;}
 	
 	RTTIMEMETER_SETSTEP("Managers-Music");
 	
