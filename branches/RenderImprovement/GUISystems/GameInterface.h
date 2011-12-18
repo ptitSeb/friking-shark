@@ -44,6 +44,8 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 	ISystemManager			*m_piSystemManager;
 	ISystem					*m_piGameSystem;
 	
+	bool                     m_bEnableShadows;
+	EShadowQuality           m_eShadowQuality;
 	EGameInterfaceState      m_eState;
 	EGameMode 				 m_eGameMode;
 	EGameDifficulty			 m_eGameDifficulty;
@@ -225,7 +227,13 @@ class CGameInterface: virtual public CGameWindowBase, virtual public IGameInterf
 
 	void SetHighScore(unsigned int nScore);
 	unsigned int GetScore();
-	
+
+	void			EnableShadows(bool bEnable);
+	bool			AreShadowsEnabled();
+
+	void			SetShadowQuality(EShadowQuality eQuality);
+	EShadowQuality  GetShadowQuality();
+
 	// IEntityEvents
 
 	void OnRemoved(IEntity *piEntity);

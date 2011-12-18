@@ -50,6 +50,10 @@ void COptionsMenu::OnButtonClicked(IGameGUIButton *piControl)
 	{
 		EndDialog(eOptionsMenuAction_Controls);
 	}
+	if(piControl==m_piBTVideo)
+	{
+		EndDialog(eOptionsMenuAction_Video);
+	}
 	if(piControl==m_piBTAudio)
 	{
 		EndDialog(eOptionsMenuAction_Audio);

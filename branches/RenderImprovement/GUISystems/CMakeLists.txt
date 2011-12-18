@@ -20,6 +20,7 @@ SET (SRCS_GUISYSTEMS
 	./GUISystems/SavedGameRow.h
 	./GUISystems/OptionsMenu.h
 	./GUISystems/AudioOptions.h
+	./GUISystems/VideoOptions.h
 
 	./GUISystems/GameInterface.cpp
 	./GUISystems/GameMenu.cpp
@@ -39,6 +40,7 @@ SET (SRCS_GUISYSTEMS
 	./GUISystems/SavedGameRow.cpp
 	./GUISystems/OptionsMenu.cpp
 	./GUISystems/AudioOptions.cpp
+	./GUISystems/VideoOptions.cpp
 )
 
 IF(ANDROID)

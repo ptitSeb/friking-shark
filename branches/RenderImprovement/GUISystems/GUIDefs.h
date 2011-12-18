@@ -34,6 +34,7 @@ enum eOptionsMenuAction
 	eOptionsMenuAction_UNKNOWN,
 	eOptionsMenuAction_Controls=0x1000,
 	eOptionsMenuAction_Audio,
+	eOptionsMenuAction_Video,
 	eOptionsMenuAction_Back
 };
 

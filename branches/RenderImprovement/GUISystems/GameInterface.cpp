@@ -26,6 +26,8 @@
 CGameInterface::CGameInterface(void)
 {
 	m_eState=eGameInterfaceState_Idle;
+	m_bEnableShadows=true;
+	m_eShadowQuality=eShadowQuality_High;
 	m_bActive=true;
 	m_eGameMode=eGameMode_Normal;
 	m_eGameDifficulty=eGameDifficulty_Easy;
@@ -396,15 +398,9 @@ bool CGameInterface::IsPlayerInControl()
 
 void CGameInterface::OnDraw(IGenericRender *piRender)
 {
-	if(piRender && m_sRenderDescription.length()==0)
+	if(piRender )
 	{
-		EShadingModel eModel=piRender->GetShadingModel();
-		switch(eModel)
-		{
-			case eShadingModel_Vertex:m_sRenderDescription="Forward Fixed";break;
-			case eShadingModel_Mixed:m_sRenderDescription="Forward Shader";break;
-			case eShadingModel_Fragment:m_sRenderDescription="Deferred";break;
-		}
+		m_sRenderDescription=piRender->GetCurrentRenderPath();
 	}
 
 	if(!m_bGameSystemInitialized)
@@ -709,9 +705,17 @@ void CGameInterface::OnDraw(IGenericRender *piRender)
 			piRender->EnableSolid();
 			piRender->EnableBlending();
 			piRender->EnableLighting();	
-			piRender->EnableShadows();
 			piRender->EnableHeightFog();
 			piRender->DisableAutoShadowVolume();
+			if(m_bEnableShadows)
+			{
+				piRender->EnableShadows();
+				piRender->SetShadowQuality(m_eShadowQuality);
+			}
+			else
+			{
+				piRender->DisableShadows();
+			}
 			
 			piRender->StartStagedRendering();
 			piRender->ActivateClipping();
@@ -1039,3 +1043,8 @@ void CGameInterface::GetGameState(SGameState *pState)
 	pState->nCheckpoint=m_nCheckpoint;
 }
 
+void CGameInterface::EnableShadows(bool bEnable){m_bEnableShadows=bEnable;}
+bool CGameInterface::AreShadowsEnabled(){return m_bEnableShadows;}
+
+void CGameInterface::SetShadowQuality(EShadowQuality eQuality){m_eShadowQuality=eQuality;}
+EShadowQuality CGameInterface::GetShadowQuality(){return m_eShadowQuality;}
