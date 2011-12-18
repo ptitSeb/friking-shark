@@ -15,7 +15,7 @@ out vec4 oNormal;
 out vec4 oDiffuse;
 
 #ifdef ENABLE_SHADOWS
-uniform sampler2DShadow ShadowMap;
+uniform sampler2D ShadowMap;
 in vec4 g_ShadowCoord;
 #endif
 #ifdef ENABLE_NORMAL_MAP
@@ -128,13 +128,13 @@ void main (void)
 	
 	#ifdef ENABLE_SHADOWS
 	float ndc=g_ShadowCoord.z/g_ShadowCoord.w;
-	fShadowFactor=step(ndc,textureProj(ShadowMap,g_ShadowCoord));
+	fShadowFactor=step(ndc,textureProj(ShadowMap,g_ShadowCoord).r);
 	#ifdef ENABLE_SOFT_SHADOWS
 	float offset=3.0;
-	fShadowFactor+=step(ndc,textureProj(ShadowMap,g_ShadowCoord+vec4(-offset,-offset,0,0)));
-	fShadowFactor+=step(ndc,textureProj(ShadowMap,g_ShadowCoord+vec4(offset,-offset,0,0)));
-	fShadowFactor+=step(ndc,textureProj(ShadowMap,g_ShadowCoord+vec4(-offset,offset,0,0)));
-	fShadowFactor+=step(ndc,textureProj(ShadowMap,g_ShadowCoord+vec4(offset,offset,0,0)));
+	fShadowFactor+=step(ndc,textureProj(ShadowMap,g_ShadowCoord+vec4(-offset,-offset,0,0)).r);
+	fShadowFactor+=step(ndc,textureProj(ShadowMap,g_ShadowCoord+vec4(offset,-offset,0,0)).r);
+	fShadowFactor+=step(ndc,textureProj(ShadowMap,g_ShadowCoord+vec4(-offset,offset,0,0)).r);
+	fShadowFactor+=step(ndc,textureProj(ShadowMap,g_ShadowCoord+vec4(offset,offset,0,0)).r);
 	fShadowFactor/=5.0;
 	#endif
 	#endif

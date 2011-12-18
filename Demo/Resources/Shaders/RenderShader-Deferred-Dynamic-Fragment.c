@@ -5,7 +5,7 @@
 in vec2 gTexCoord;
 out vec4 oColor;
 
-uniform sampler2DShadow DepthSampler;
+uniform sampler2D DepthSampler;
 uniform sampler2D NormalSampler;
 uniform sampler2D DiffuseSampler;
 
@@ -47,7 +47,7 @@ vec3 ComputePosition(in vec2 screenCoords,in float fZ)
 }
 void main(void)
 {
-	float fZ=textureProj(DepthSampler,vec4(gTexCoord,0.0,1.0));
+	float fZ=texture(DepthSampler,gTexCoord).r;
 	if(fZ==1.0){discard;}
 
 	vec3 position=ComputePosition(gTexCoord,fZ);

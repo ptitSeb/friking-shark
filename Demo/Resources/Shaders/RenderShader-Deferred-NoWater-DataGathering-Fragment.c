@@ -15,7 +15,7 @@ out vec4 oNormal;
 out vec4 oDiffuse;
 
 #ifdef ENABLE_SHADOWS
-uniform sampler2DShadow ShadowMap;
+uniform sampler2D ShadowMap;
 in vec4 g_ShadowCoord;
 #endif
 #ifdef ENABLE_NORMAL_MAP

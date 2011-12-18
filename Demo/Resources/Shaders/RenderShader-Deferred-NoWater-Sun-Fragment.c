@@ -5,10 +5,10 @@ in vec3 gPositionMin;
 in vec3 gPositionMax;
 out vec4 oColor;
 
-uniform sampler2DShadow DepthSampler;
+uniform sampler2D DepthSampler;
 uniform sampler2D NormalSampler;
 uniform sampler2D DiffuseSampler;
-uniform sampler2DShadow ShadowMap;
+uniform sampler2D ShadowMap;
 
 uniform mat4 uShadowMatrix;
 uniform mat4 uUnprojectMatrix;
@@ -40,7 +40,7 @@ void SunLight(const in vec3 normal,inout vec4 diffuse,inout vec4 specular)
 
 void main(void)
 {
-	float fZ=textureProj(DepthSampler,vec4(gTexCoord,0.0,1.0));
+	float fZ=texture(DepthSampler,gTexCoord).r;
 	gl_FragDepth=fZ;
 	if(fZ==1.0){oColor=uClearColor;return;}
 
@@ -65,12 +65,12 @@ void main(void)
 	float fShadowFactor=1.0;
 	vec4 shadowCoord=uShadowMatrix*vec4(position,1.0);
 	float ndc=shadowCoord.z/shadowCoord.w;
-	fShadowFactor=step(ndc,textureProj(ShadowMap,shadowCoord));
+	fShadowFactor=step(ndc,textureProj(ShadowMap,shadowCoord).r);
 	float offset=3.0;
-	fShadowFactor+=step(ndc,textureProj(ShadowMap,shadowCoord+vec4(-offset,-offset,0,0)));
-	fShadowFactor+=step(ndc,textureProj(ShadowMap,shadowCoord+vec4(offset,-offset,0,0)));
-	fShadowFactor+=step(ndc,textureProj(ShadowMap,shadowCoord+vec4(-offset,offset,0,0)));
-	fShadowFactor+=step(ndc,textureProj(ShadowMap,shadowCoord+vec4(offset,offset,0,0)));
+	fShadowFactor+=step(ndc,textureProj(ShadowMap,shadowCoord+vec4(-offset,-offset,0,0)).r);
+	fShadowFactor+=step(ndc,textureProj(ShadowMap,shadowCoord+vec4(offset,-offset,0,0)).r);
+	fShadowFactor+=step(ndc,textureProj(ShadowMap,shadowCoord+vec4(-offset,offset,0,0)).r);
+	fShadowFactor+=step(ndc,textureProj(ShadowMap,shadowCoord+vec4(offset,offset,0,0)).r);
 	fShadowFactor/=5.0;
 	
 	vec2 skyCoord;
