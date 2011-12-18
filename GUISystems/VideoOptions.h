@@ -18,36 +18,44 @@
 
 #pragma once
 
-class COptionsMenu: virtual public CGameDialogBase,virtual public IOptionsMenu,virtual public IGameGUIButtonEvents
+
+class CVideoOptions: virtual public CGameDialogBase,virtual public IGameGUIButtonEvents, virtual public IVideoOptions
 {
-	IGameGUIButton *m_piBTControls;
-	IGameGUIButton *m_piBTVideo;
-	IGameGUIButton *m_piBTAudio;
-	IGameGUIButton *m_piBTBack;
-	IGameWindow    *m_piLastFocusedWindow;
+	IGameGUIButton *m_piBTFullScreen;
+	IGameGUIButton *m_piBTVerticalSync;
+	IGameGUIButton *m_piBTShadows;
+	IGameGUIButton *m_piBTRender;
+	IGameGUIButton *m_piBTOk;
+
+	int                      m_nCurrentRenderPath;
+	std::vector<std::string> m_vRenderPaths;
+	CGenericRenderWrapper    m_Render;
+	CGameInterfaceWrapper    m_GameInterface;
 	
 	BEGIN_CHILD_MAP()
-		CHILD_MAP_ENTRY_EX("Controls",m_piBTControls,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("Video",m_piBTVideo,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("Audio",m_piBTAudio,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("Back",m_piBTBack,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("FullScreen",m_piBTFullScreen,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("VerticalSync",m_piBTVerticalSync,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("Shadows",m_piBTShadows,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("Render",m_piBTRender,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("Ok",m_piBTOk,IGameGUIButtonEvents);
 	END_CHILD_MAP()
 
-	void OnKeyDown(int nKey,bool *pbProcessed);
+
+	void OnDraw(IGenericRender *piRender);
+	void UpdateGUI();
 	
 public:
+	
 	void OnInitDialog();
 	void OnEndDialog();
-	void Destroy();
+	void OnKeyDown(int nKey,bool *pbProcessed);
 	
-	// IOptionsMenu
-	
-	eOptionsMenuAction Show(IGameWindow *piParent);
+	bool Show(IGameWindow *piParent);
 	
 	// IGameButtonEvents
 
 	void OnButtonClicked(IGameGUIButton *piControl);
-
-	 COptionsMenu(void);
-	~COptionsMenu(void);
+	
+	CVideoOptions(void);
+	~CVideoOptions(void);
 };

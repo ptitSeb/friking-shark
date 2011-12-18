@@ -52,11 +52,15 @@ bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 
 		if(bResult)
 		{
+			CConfigFile highScoresConfigFile;
+			CConfigFile playerProfileConfigFile;
+
 			m_SoundManager.Attach("GameGUI","SoundManager");
 			m_MainMenuDialog.Attach("GameGUI","MainMenu");
 			m_GameMenuDialog.Attach("GameGUI","GameMenu");
 			m_OptionsMenuDialog.Attach("GameGUI","OptionsMenu");
 			m_AudioOptionsDialog.Attach("GameGUI","AudioOptions");
+			m_VideoOptionsDialog.Attach("GameGUI","VideoOptions");
 			m_GameOverDialog.Attach("GameGUI","GameOverDialog");
 			m_HighScoresDialog.Attach("GameGUI","HighScoresDialog");
 			m_ControlsDialog.Attach("GameGUI","ControlsDialog");			
@@ -65,13 +69,13 @@ bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 			m_LoadDialog.Attach("GameGUI","LoadDialog");
 			m_SaveDialog.Attach("GameGUI","SaveDialog");
 			m_HighScoresTable.Create("GameGUI","CHighScoresTable","HighScoreTable");
-			if(m_HighScoresConfigFile.Open("../Player/HighScores.cfg"))
+			if(highScoresConfigFile.Open("../Player/HighScores.cfg"))
 			{
-				m_HighScoresTable.m_piSerializable->Unserialize(m_HighScoresConfigFile.GetNode("Local"));
+				m_HighScoresTable.m_piSerializable->Unserialize(highScoresConfigFile.GetNode("Local"));
 			}
-			if(m_PlayerProfileConfigFile.Open("../Player/PlayerProfiles.cfg"))
+			if(playerProfileConfigFile.Open("../Player/PlayerProfiles.cfg"))
 			{
-				m_PlayerData.Unserialize(m_PlayerProfileConfigFile.GetNode("Default"));
+				m_PlayerData.Unserialize(playerProfileConfigFile.GetNode("Default"));
 			}
 			if(m_PlayerData.m_PlayerProfile.m_piPlayerProfile==NULL)
 			{
@@ -82,6 +86,16 @@ bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 				m_SoundManager.m_piSoundManager->SetMasterVolume(m_PlayerData.m_nMasterVolume);
 				m_SoundManager.m_piSoundManager->SetGroupVolume("Music",m_PlayerData.m_nMusicVolume);
 				m_SoundManager.m_piSoundManager->SetGroupVolume("SoundFX",m_PlayerData.m_nSoundFXVolume);
+			}
+
+			CGenericRenderWrapper render;
+			render.Attach("GameGUI","Render");
+			if(render.m_piRender && m_PlayerData.m_RenderOptions.m_sRenderPath.length()){render.m_piRender->SetCurrentRenderPath(m_PlayerData.m_RenderOptions.m_sRenderPath);}
+
+			if(m_piGameInterface)
+			{
+				m_piGameInterface->EnableShadows(m_PlayerData.m_RenderOptions.m_bEnableShadows);
+				m_piGameInterface->SetShadowQuality(m_PlayerData.m_RenderOptions.m_eShadowQuality);
 			}
 		}
 		
@@ -104,23 +118,44 @@ bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 	return bResult;
 }
 
-void CMainWindow::Destroy()
+void CMainWindow::SavePlayerData()
 {
+	CConfigFile highScoresConfigFile;
+	CConfigFile playerProfileConfigFile;
+
+	highScoresConfigFile.Open("../Player/HighScores.cfg");
+	playerProfileConfigFile.Open("../Player/PlayerProfiles.cfg");
+
+	CGenericRenderWrapper render;
+	render.Attach("GameGUI","Render",false);
+	if(render.m_piRender){m_PlayerData.m_RenderOptions.m_sRenderPath=render.m_piRender->GetCurrentRenderPath();}
+	if(m_piGameInterface)
+	{
+		m_PlayerData.m_RenderOptions.m_bEnableShadows=m_piGameInterface->AreShadowsEnabled();
+		m_PlayerData.m_RenderOptions.m_eShadowQuality=m_piGameInterface->GetShadowQuality();
+	}
+
 	if(m_SoundManager.m_piSoundManager)
 	{
 		m_PlayerData.m_nMasterVolume=m_SoundManager.m_piSoundManager->GetMasterVolume();
 		m_PlayerData.m_nMusicVolume=m_SoundManager.m_piSoundManager->GetGroupVolume("Music");
 		m_PlayerData.m_nSoundFXVolume=m_SoundManager.m_piSoundManager->GetGroupVolume("SoundFX");
 	}
-	
+
 	if(m_HighScoresTable.m_piSerializable)
 	{
-		m_HighScoresTable.m_piSerializable->Serialize(m_HighScoresConfigFile.AddNode("Local"));
+		m_HighScoresTable.m_piSerializable->Serialize(highScoresConfigFile.AddNode("Local"));
 	}
-	m_PlayerData.Serialize(m_PlayerProfileConfigFile.AddNode("Default"));
-	
-	m_HighScoresConfigFile.Save("../Player/HighScores.cfg");
-	m_PlayerProfileConfigFile.Save("../Player/PlayerProfiles.cfg");
+	m_PlayerData.Serialize(playerProfileConfigFile.AddNode("Default"));
+
+	highScoresConfigFile.Save("../Player/HighScores.cfg");
+	playerProfileConfigFile.Save("../Player/PlayerProfiles.cfg");
+}
+
+void CMainWindow::Destroy()
+{
+	SavePlayerData();
+
 	m_SoundManager.Detach();
 	CGameWindowBase::Destroy();
 }
@@ -166,6 +201,7 @@ void CMainWindow::OnDraw(IGenericRender *piRender)
 		&& !m_MainMenuDialog.m_piDialog->IsVisible()
 		&& !m_OptionsMenuDialog.m_piDialog->IsVisible()
 		&& !m_AudioOptionsDialog.m_piDialog->IsVisible()
+		&& !m_VideoOptionsDialog.m_piDialog->IsVisible()
 		&& !m_LevelOptionsDialog.m_piDialog->IsVisible()
 		&& !m_HighScoresDialog.m_piDialog->IsVisible()
 		&& !m_ControlsDialog.m_piDialog->IsVisible()
@@ -285,6 +321,11 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 					{
 						m_AudioOptionsDialog.m_piAudioOptions->Show(this);
 					}
+					else if(eOptionsResult==eOptionsMenuAction_Video)
+					{
+						m_VideoOptionsDialog.m_piVideoOptions->Show(this);
+					}
+					SavePlayerData();
 				}
 				while(eOptionsResult!=eOptionsMenuAction_Back);
 			}
@@ -304,6 +345,7 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 					m_piGameInterface->StopManuallyWithCourtain();
 					m_eStage=eInterfaceStage_WaitingForDemoEndCourtainLoading;
 				}
+				SavePlayerData();
 			}
 			m_piGUIManager->SetFocus(this);
 		}
@@ -353,6 +395,11 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 						{
 							m_AudioOptionsDialog.m_piAudioOptions->Show(this);
 						}
+						else if(eOptionsResult==eOptionsMenuAction_Video)
+						{
+							m_VideoOptionsDialog.m_piVideoOptions->Show(this);
+						}
+						SavePlayerData();
 					}
 					while(eOptionsResult!=eOptionsMenuAction_Back);
 				}

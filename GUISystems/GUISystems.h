@@ -45,6 +45,12 @@ public:
 	virtual bool	IsPaused()=0;
 	virtual bool	IsPlayerInControl()=0;
 
+	virtual void			EnableShadows(bool bEnable)=0;
+	virtual bool			AreShadowsEnabled()=0;
+
+	virtual void			SetShadowQuality(EShadowQuality eQuality)=0;
+	virtual EShadowQuality  GetShadowQuality()=0;
+
 	virtual ~IGameInterfaceWindow(){}
 };
 
@@ -140,6 +146,15 @@ public:
 	virtual bool Show(IGameWindow *piParent)=0;
 	
 	virtual ~IAudioOptions(){}
+};
+
+class IVideoOptions: virtual public IGameWindow
+{	
+public:
+	
+	virtual bool Show(IGameWindow *piParent)=0;
+	
+	virtual ~IVideoOptions(){}
 };
 
 class ISavedGameRow: virtual public IGameWindow

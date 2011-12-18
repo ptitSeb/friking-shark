@@ -20,9 +20,9 @@
 
 DECLARE_CUSTOM_WRAPPER1(CViewportWrapper,IGenericViewport,m_piViewport)
 DECLARE_CUSTOM_WRAPPER1(CGameDialogWrapper,IGameDialog,m_piDialog)
-DECLARE_CUSTOM_WRAPPER1(CGameInterfaceWrapper,IGameInterfaceWindow,m_piInterfaceWindow)
 DECLARE_CUSTOM_WRAPPER2(CLevelOptionsDialogWrapper,IGameDialog,m_piDialog,ILevelOptions,m_piLevelOptions)
 DECLARE_CUSTOM_WRAPPER2(CAudioOptionsDialogWrapper,IGameDialog,m_piDialog,IAudioOptions,m_piAudioOptions)
+DECLARE_CUSTOM_WRAPPER2(CVideoOptionsDialogWrapper,IGameDialog,m_piDialog,IVideoOptions,m_piVideoOptions)
 DECLARE_CUSTOM_WRAPPER1(CHighScoresTableWrapper,IHighScoresTable,m_piHighScoresTable)
 DECLARE_CUSTOM_WRAPPER2(CHighScoresDialogWrapper,IGameDialog,m_piDialog,IHighScoresDialog,m_piHighScoresDialog)
 DECLARE_CUSTOM_WRAPPER2(CControlsDialogWrapper,IGameDialog,m_piDialog,IControlsDialog,m_piControlsDialog)
@@ -61,6 +61,23 @@ BEGIN_STRUCT_PROPS(SGameState)
 	PROP_VALUE(eDifficulty,"Difficulty",eGameDifficulty_Easy)
 END_STRUCT_PROPS()
 
+struct SPlayerRenderOptions: public CSystemSerializableBase
+{
+public:
+
+	bool				  m_bEnableShadows;
+	EShadowQuality		  m_eShadowQuality;
+	std::string			  m_sRenderPath;
+
+	SPlayerRenderOptions(){m_bEnableShadows=true;m_eShadowQuality=eShadowQuality_High;}
+};
+
+BEGIN_STRUCT_PROPS(SPlayerRenderOptions)
+	PROP_VALUE_FLAGS(m_bEnableShadows,"EnableShadows",true,MRPF_NORMAL|MRPF_OPTIONAL);
+	PROP_VALUE_FLAGS(m_eShadowQuality,"ShadowQuality",eShadowQuality_High,MRPF_NORMAL|MRPF_OPTIONAL);
+	PROP_VALUE_FLAGS(m_sRenderPath,"RenderPath","",MRPF_NORMAL|MRPF_OPTIONAL);
+END_STRUCT_PROPS()
+
 class SPlayerData: public CSystemSerializableBase
 {
 public:
@@ -77,17 +94,24 @@ public:
 	unsigned int 		  m_nMasterVolume;
 	unsigned int 		  m_nMusicVolume;
 	unsigned int 		  m_nSoundFXVolume;
+
+	SPlayerRenderOptions  m_RenderOptions;
 	
+
 	BEGIN_PROP_MAP(SPlayerData)
 		PROP_VALUE_FLAGS(m_eLastMode,"LastMode",eGameMode_Normal,MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_VALUE_FLAGS(m_eLastDifficulty,"LastDifficulty",eGameDifficulty_Easy,MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_VALUE_FLAGS(m_nLastLevel,"LastLevel",0,MRPF_NORMAL|MRPF_OPTIONAL);
+
 		PROP_VALUE_FLAGS(m_nMasterVolume,"MasterVolume",100,MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_VALUE_FLAGS(m_nMusicVolume,"MusicVolume",100,MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_VALUE_FLAGS(m_nSoundFXVolume,"SoundFXVolume",100,MRPF_NORMAL|MRPF_OPTIONAL);
+
 		PROP_FLAGS(m_CurrentGame,"CurrentGame",MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_FLAGS(m_vSavedGames,"SavedGames",MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_FLAGS(m_PlayerProfile,"Profile",MRPF_NORMAL|MRPF_OPTIONAL);
+
+		PROP_FLAGS(m_RenderOptions,"Render",MRPF_NORMAL|MRPF_OPTIONAL);
 	END_PROP_MAP()
 	
 	SPlayerData(){PersistencyDefaultValue();}
@@ -114,6 +138,7 @@ class CMainWindow: virtual public CGameWindowBase,virtual public IGameInterfaceW
 	CGameDialogWrapper m_CreditsDialog;
 	CLevelOptionsDialogWrapper m_LevelOptionsDialog;
 	CAudioOptionsDialogWrapper m_AudioOptionsDialog;
+	CVideoOptionsDialogWrapper m_VideoOptionsDialog;
 	CHighScoresDialogWrapper m_HighScoresDialog;
 	CHighScoresTableWrapper  m_HighScoresTable;
 	CControlsDialogWrapper   m_ControlsDialog;
@@ -126,7 +151,8 @@ class CMainWindow: virtual public CGameWindowBase,virtual public IGameInterfaceW
 	SPlayerData m_PlayerData;
 	
 	void Destroy();
-	
+	void SavePlayerData();
+
 public:
 	// Sobrecarga para cambiar el valor por defecto del sistema de referencia.
 
