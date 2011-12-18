@@ -46,12 +46,24 @@ bool CGameGUIManager::Init(std::string sClass,std::string sName,ISystem *piSyste
 	m_piFocusedWindow=ADD(m_piMainWindow);
 
 	if(m_Viewport.m_piViewport){m_Viewport.m_piViewport->SetCallBack(this);}
-	if(m_Render.m_piRender){m_Render.m_piRender->SetViewport(m_Viewport.m_piViewport);}
 	
 	return true;
 }
 void CGameGUIManager::Destroy()
 {
+	if(m_sUserSettingsFile.length())
+	{
+		SGameGUIManagerUserSettings userSettings;
+		userSettings.sScreenProperties=m_sScreenProperties;
+		userSettings.sScreenProperties.bWindowCentered=false;
+
+		CConfigFile configFile;
+		configFile.Open(m_sUserSettingsFile);
+		bool bUserOk=userSettings.Serialize(m_sUserSettingsNode.length()?configFile.AddNode(m_sUserSettingsNode):configFile.GetRoot());
+		if(bUserOk){m_sScreenProperties=userSettings.sScreenProperties;}
+		if(bUserOk){configFile.Save(m_sUserSettingsFile);}
+	}
+
 	if(m_Viewport.m_piViewport)
 	{
 	    m_Viewport.m_piViewport->ShowMouseCursor(true);
@@ -70,7 +82,6 @@ void CGameGUIManager::Destroy()
 		REL(piWindow);
 	}
 
-	if(m_Render.m_piRender){m_Render.m_piRender->SetViewport(NULL);}
 	REL(m_piMainWindow);
 	REL(m_piFocusedWindow);
 	m_Viewport.Detach();
@@ -278,7 +289,7 @@ void CGameGUIManager::OnRender()
 void CGameGUIManager::GetWindowSize(SGameSize *pSize)
 {
 	unsigned w=0,h=0;
-	m_Viewport.m_piViewport->GetSize(&w,&h);
+	if(m_Viewport.m_piViewport){m_Viewport.m_piViewport->GetSize(&w,&h);}
 	pSize->w=w;
 	pSize->h=h;
 }
@@ -788,7 +799,14 @@ void CGameGUIManager::UpdateScreenPlacement()
 bool CGameGUIManager::Unserialize(ISystemPersistencyNode *piNode)
 {
 	bool bOk=CSystemObjectBase::Unserialize(piNode);
-	
+	if(m_sUserSettingsFile.length())
+	{
+		SGameGUIManagerUserSettings userSettings;
+		CConfigFile configFile;
+		bool bUserOk=configFile.Open(m_sUserSettingsFile);
+		if(bUserOk){bUserOk=userSettings.Unserialize(m_sUserSettingsNode.length()?configFile.GetNode(m_sUserSettingsNode):configFile.GetRoot());}
+		if(bUserOk){m_sScreenProperties=userSettings.sScreenProperties;}
+	}
 	if(bOk && m_Viewport.m_piViewport)
 	{
 		SVideoMode sVideoMode;
@@ -874,8 +892,18 @@ bool CGameGUIManager::Unserialize(ISystemPersistencyNode *piNode)
 			if(!bOk){RTTRACE("CGameGUIManager::UpdateScreenPlacement -> Failed create windowed viewport");}
 		}
 		if(bOk){m_Viewport.m_piViewport->ShowMouseCursor(false);}
+		if(bOk){m_Viewport.m_piViewport->SetVSync(m_sScreenProperties.bVerticalSync);}
+		if(bOk)
+		{
+			bOk=m_Render.m_piRender->Setup(m_Viewport.m_piViewport);
+			if(!bOk){RTTRACE("CGameGUIManager::UpdateScreenPlacement -> Failed to setup render");}
+		}
 	}
-
+	if(!bOk)
+	{
+		m_Render.Detach();
+		m_Viewport.Detach();
+	}
 	return bOk;
 }
 

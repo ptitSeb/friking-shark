@@ -405,13 +405,8 @@ void COpenGLModel::UpdateBufferObjects()
 						}
 					}
 				}
-				glGenVertexArrays(1,&pBuffer->nVertexArrayObject);
 				pBuffer->bVertexArrayConfigured=false;
-				if(pBuffer->nVertexArrayObject==0)
-				{
-					RTTRACE("COpenGLModel::UpdateBufferObjects -> Failed to create vertex array object");
-				}
-				
+
 				// Generacion del buffer object
 				glGenBuffers(1,&pBuffer->nBufferObject);
 				int nError=glGetError();
@@ -919,36 +914,44 @@ void COpenGLModel::PrepareRenderBuffer(IOpenGLRender *piGLRender, unsigned int n
 		}
 	}
 	
-	if(pBuffer->nVertexArrayObject && !pBuffer->bVertexArrayConfigured)
+	if(!pBuffer->bVertexArrayConfigured && pRenderMappings->nVertexAttribIndex!=-1)
 	{
 		pBuffer->bVertexArrayConfigured=true;
-		glBindVertexArray(pBuffer->nVertexArrayObject);
-		glBindBuffer(GL_ARRAY_BUFFER,pBuffer->nBufferObject);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,pBuffer->nIndexesBufferObject);
-		
-		if(object.nVertexOffset!=-1)   {glEnableVertexAttribArray(pRenderMappings->nVertexAttribIndex);}
-		if(object.nColorOffset!=-1)    {glEnableVertexAttribArray(pRenderMappings->nColorAttribIndex);}
-		if(object.nNormalOffset!=-1)   {glEnableVertexAttribArray(pRenderMappings->nNormalAttribIndex);}
-		if(object.nNormalMapOffset!=-1){glEnableVertexAttribArray(pRenderMappings->nNormalMapCoordAttribIndex);}
-		if(object.nTangentOffset!=-1)  {glEnableVertexAttribArray(pRenderMappings->nTangentAttribIndex);}
-		if(object.nBitangentOffset!=-1){glEnableVertexAttribArray(pRenderMappings->nBitangentAttribIndex);}
-		
-		if(object.nVertexOffset!=-1){glVertexAttribPointer(pRenderMappings->nVertexAttribIndex,3,GL_FLOAT,GL_FALSE,object.nVertexStride,(void*)object.nVertexOffset);}
-		if(object.nColorOffset!=-1){glVertexAttribPointer(pRenderMappings->nColorAttribIndex,4,GL_FLOAT,GL_FALSE,object.nColorStride,(void*)object.nColorOffset);}
-		if(object.nNormalOffset!=-1){glVertexAttribPointer(pRenderMappings->nNormalAttribIndex,3,GL_FLOAT,GL_FALSE,object.nNormalStride,(void*)object.nNormalOffset);}
-		if(object.nNormalMapOffset!=-1){glVertexAttribPointer(pRenderMappings->nNormalMapCoordAttribIndex,2,GL_FLOAT,GL_FALSE,object.nNormalMapStride,(void*)object.nNormalMapOffset);}
-		if(object.nTangentOffset!=-1){glVertexAttribPointer(pRenderMappings->nTangentAttribIndex,3,GL_FLOAT,GL_FALSE,object.nTangentStride,(void*)object.nTangentOffset);}
-		if(object.nBitangentOffset!=-1){glVertexAttribPointer(pRenderMappings->nBitangentAttribIndex,3,GL_FLOAT,GL_FALSE,object.nBitangentStride,(void*)object.nBitangentOffset);}
-		for(unsigned int x=0;x<2;x++)
+		glGenVertexArrays(1,&pBuffer->nVertexArrayObject);
+		if(pBuffer->nVertexArrayObject==0)
 		{
-			if(object.pTexOffsets[x]!=-1)
-			{
-				glEnableVertexAttribArray(pRenderMappings->pTextureAttribIndex[x]);
-				glVertexAttribPointer(pRenderMappings->pTextureAttribIndex[x],2,GL_FLOAT,GL_FALSE,object.pTexStrides[x],(void*)object.pTexOffsets[x]);
-			}
+			RTTRACE("COpenGLModel::PrepareRenderBuffer -> Failed to create vertex array object");
 		}
-		glBindBuffer(GL_ARRAY_BUFFER,0);
-		glBindVertexArray(0);
+		else
+		{
+			glBindVertexArray(pBuffer->nVertexArrayObject);
+			glBindBuffer(GL_ARRAY_BUFFER,pBuffer->nBufferObject);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,pBuffer->nIndexesBufferObject);
+			
+			if(object.nVertexOffset!=-1)   {glEnableVertexAttribArray(pRenderMappings->nVertexAttribIndex);}
+			if(object.nColorOffset!=-1)    {glEnableVertexAttribArray(pRenderMappings->nColorAttribIndex);}
+			if(object.nNormalOffset!=-1)   {glEnableVertexAttribArray(pRenderMappings->nNormalAttribIndex);}
+			if(object.nNormalMapOffset!=-1){glEnableVertexAttribArray(pRenderMappings->nNormalMapCoordAttribIndex);}
+			if(object.nTangentOffset!=-1)  {glEnableVertexAttribArray(pRenderMappings->nTangentAttribIndex);}
+			if(object.nBitangentOffset!=-1){glEnableVertexAttribArray(pRenderMappings->nBitangentAttribIndex);}
+			
+			if(object.nVertexOffset!=-1){glVertexAttribPointer(pRenderMappings->nVertexAttribIndex,3,GL_FLOAT,GL_FALSE,object.nVertexStride,(void*)object.nVertexOffset);}
+			if(object.nColorOffset!=-1){glVertexAttribPointer(pRenderMappings->nColorAttribIndex,4,GL_FLOAT,GL_FALSE,object.nColorStride,(void*)object.nColorOffset);}
+			if(object.nNormalOffset!=-1){glVertexAttribPointer(pRenderMappings->nNormalAttribIndex,3,GL_FLOAT,GL_FALSE,object.nNormalStride,(void*)object.nNormalOffset);}
+			if(object.nNormalMapOffset!=-1){glVertexAttribPointer(pRenderMappings->nNormalMapCoordAttribIndex,2,GL_FLOAT,GL_FALSE,object.nNormalMapStride,(void*)object.nNormalMapOffset);}
+			if(object.nTangentOffset!=-1){glVertexAttribPointer(pRenderMappings->nTangentAttribIndex,3,GL_FLOAT,GL_FALSE,object.nTangentStride,(void*)object.nTangentOffset);}
+			if(object.nBitangentOffset!=-1){glVertexAttribPointer(pRenderMappings->nBitangentAttribIndex,3,GL_FLOAT,GL_FALSE,object.nBitangentStride,(void*)object.nBitangentOffset);}
+			for(unsigned int x=0;x<2;x++)
+			{
+				if(object.pTexOffsets[x]!=-1)
+				{
+					glEnableVertexAttribArray(pRenderMappings->pTextureAttribIndex[x]);
+					glVertexAttribPointer(pRenderMappings->pTextureAttribIndex[x],2,GL_FLOAT,GL_FALSE,object.pTexStrides[x],(void*)object.pTexOffsets[x]);
+				}
+			}
+			glBindBuffer(GL_ARRAY_BUFFER,0);
+			glBindVertexArray(0);
+		}
 	}
 
 	if(pBuffer->nBufferObject)

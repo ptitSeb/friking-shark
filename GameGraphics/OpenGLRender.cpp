@@ -28,12 +28,13 @@ const unsigned int STriangleBuffer::buffer_size=TRIANGLE_BUFFER_SIZE;
 
 COpenGLRender::COpenGLRender()
 {
+	SetShadowQuality(eShadowQuality_High);
 	m_bIgnoreShaderSupport=false;
 	m_bIgnoreInstancingSupport=false;
+	m_piCurrentRenderPath=NULL;
 	
 	m_nStagedTextureLevels=0;
 	
-	m_bHardwareSupportRead=false;
 	m_bShadowVolumeFirstVertex=false;
 	m_dShadowAntiFlickeringMargin=10;
 	
@@ -61,6 +62,7 @@ COpenGLRender::COpenGLRender()
 	
 	m_nCreationTime=GetTimeStamp();
 	m_sScene.sky.m_piSkyShadow=NULL;
+	m_piCurrentRenderPath=NULL;
 	
 	memset(m_ppiStagedTextureLevels,0,sizeof(m_ppiStagedTextureLevels));
 }
@@ -90,7 +92,9 @@ bool COpenGLRender::Init(std::string sClass,std::string sName,ISystem *piSystem)
 
 void COpenGLRender::Destroy()
 {
-	m_Kernel.Destroy();
+	if(m_piCurrentRenderPath){m_piCurrentRenderPath->Cleanup();}
+	REL(m_piCurrentRenderPath);
+	m_vRenderPaths.clear();
 	
 	REL(m_piCurrentViewport);
 	REL(m_sScene.lighting.m_piSunLight);
@@ -102,17 +106,53 @@ void COpenGLRender::Destroy()
 	CSystemObjectBase::Destroy();
 }
 
-void COpenGLRender::SetViewport(IGenericViewport *piViewPort)
+bool COpenGLRender::Setup(IGenericViewport *piViewport)
 {
 	REL(m_piCurrentViewport);
-	m_piCurrentViewport=ADD(piViewPort);
+	m_piCurrentViewport=ADD(piViewport);
+
+#ifdef ANDROID_GLES1
+	m_sHardwareSupport.bShaders=false;
+#elif defined ANDROID_GLES2
+	m_sHardwareSupport.bShaders=true;
+#else
+	m_sHardwareSupport.bShaders=GLEE_VERSION_3_0 && !m_bIgnoreShaderSupport;
+#endif
+
+#ifdef ANDROID
+	m_sHardwareSupport.bObjectInstancing=false;
+#else
+	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS,&m_sHardwareSupport.nMaxTextureUnits);
+	m_sHardwareSupport.bObjectInstancing=GLEE_ARB_draw_instanced && !m_bIgnoreInstancingSupport;
+#endif		
+
+	bool bOk=false;
+
+	for(unsigned int x=0;m_piCurrentRenderPath==NULL && x<m_vRenderPaths.size();x++)
+	{
+		std::string sName=m_vRenderPaths[x].m_piOpenGLRender->GetFriendlyName();
+		if(!m_vRenderPaths[x].m_piOpenGLRender->Setup(this,m_piCurrentViewport,m_sHardwareSupport))
+		{
+			RTTRACE("COpenGLRender::Setup -> Failed to setup %s render path",sName.c_str());
+		}
+		else
+		{
+			bOk=true;
+			m_piCurrentRenderPath=ADD(m_vRenderPaths[x].m_piOpenGLRender);
+			RTTRACE("COpenGLRender::Setup -> Render path %s initialized",sName.c_str());
+		}
+	}
+	if(!bOk)
+	{
+		RTTRACE("COpenGLRender::Setup -> ERROR: Failed to setup a render path!");
+	}
+	return bOk;
 }
 
 IGenericViewport *COpenGLRender::GetViewPort()
 {
 	return ADD(m_piCurrentViewport);
 }
-
 
 void COpenGLRender::SetOrthographicProjection(double cx,double cy)
 {
@@ -328,7 +368,66 @@ void COpenGLRender::ActivateLighting(){m_sStagedRenderingState.bActiveLighting=m
 void COpenGLRender::DeactivateLighting(){m_sStagedRenderingState.bActiveLighting=false;}
 bool COpenGLRender::IsLightingActive(){return m_sStagedRenderingState.bActiveLighting;}
 
-EShadingModel 	COpenGLRender::GetShadingModel(){return m_Kernel.m_piOpenGLRender?m_Kernel.m_piOpenGLRender->GetShadingModel():eShadingModel_UNKNOWN;}
+EShadingModel 	COpenGLRender::GetShadingModel(){return m_piCurrentRenderPath?m_piCurrentRenderPath->GetShadingModel():eShadingModel_UNKNOWN;}
+EShadowQuality  COpenGLRender::GetShadowQuality(){return m_eShadowQuality;}
+void            COpenGLRender::SetShadowQuality(EShadowQuality eQuality)
+{
+	m_eShadowQuality=eQuality;
+	m_sScene.lighting.m_nDesiredSunShadowWidth=512;
+	m_sScene.lighting.m_nDesiredSunShadowHeight=512;
+	switch(m_eShadowQuality)
+	{
+	case eShadowQuality_High:
+		m_sScene.lighting.m_nDesiredSunShadowWidth=1024;
+		m_sScene.lighting.m_nDesiredSunShadowHeight=1024;
+	break;
+	case eShadowQuality_Medium:
+		m_sScene.lighting.m_nDesiredSunShadowWidth=768;
+		m_sScene.lighting.m_nDesiredSunShadowHeight=768;
+	break;
+	case eShadowQuality_Low:
+		m_sScene.lighting.m_nDesiredSunShadowWidth=512;
+		m_sScene.lighting.m_nDesiredSunShadowHeight=512;
+	break;
+	}
+}
+
+void COpenGLRender::SetCurrentRenderPath(std::string sRenderPath)
+{
+	for(unsigned int x=0;x<m_vRenderPaths.size();x++)
+	{
+		if(m_vRenderPaths[x].m_piOpenGLRender->GetFriendlyName()==sRenderPath)
+		{
+			IOpenGLRender *piNewPath=m_vRenderPaths[x].m_piOpenGLRender;
+			if(m_piCurrentRenderPath==piNewPath){return;}
+			m_piCurrentRenderPath->Cleanup();
+			REL(m_piCurrentRenderPath);
+			m_piCurrentRenderPath=ADD(piNewPath);
+			if(!m_piCurrentRenderPath->Setup(this,m_piCurrentViewport,m_sHardwareSupport))
+			{
+				RTTRACE("COpenGLRender::SetCurrentRenderPath -> Failed to setup %s render path",sRenderPath.c_str());
+			}
+			else
+			{
+				RTTRACE("COpenGLRender::Setup -> Render path %s initialized",sRenderPath.c_str());
+			}
+		}
+	}
+}
+
+std::string	COpenGLRender::GetCurrentRenderPath()
+{
+	return m_piCurrentRenderPath?m_piCurrentRenderPath->GetFriendlyName():"Unknown";
+}
+
+void COpenGLRender::GetRenderPaths(std::vector<std::string> *pvRenderPaths)
+{
+	for(unsigned int x=0;x<m_vRenderPaths.size();x++)
+	{
+		pvRenderPaths->push_back(m_vRenderPaths[x].m_piOpenGLRender->GetFriendlyName());
+	}
+}
+
 SRenderStats 	COpenGLRender::GetStagedRenderingStats(){return m_sStagedStats;}
 
 void COpenGLRender::EnableNormalMaps(){m_sRenderOptions.bEnableNormalMaps=true;}
@@ -1527,9 +1626,9 @@ void COpenGLRender::Flush()
 	if(nStagesToRender==0 && m_sScene.bClear==false && m_sScene.bClearDepth==false){return;}
 	
 	
-	if(m_Kernel.m_piOpenGLRender)
+	if(m_piCurrentRenderPath)
 	{
-		m_Kernel.m_piOpenGLRender->RenderScene(m_sScene);
+		m_piCurrentRenderPath->RenderScene(m_sScene);
 		m_sScene.camera.bViewModified=false;
 		m_sScene.camera.bProjectionModified=false;
 		m_sScene.camera.bViewportModified=false;
@@ -1603,11 +1702,11 @@ void COpenGLRender::EndStagedRendering()
 	unsigned int nRenderStart=0;
 	if(m_sRenderOptions.bEnableStagedRenderingStats){nRenderStart=GetTimeStamp();m_sStagedStats=SRenderStats();}
 
-	if(m_Kernel.m_piOpenGLRender)
+	if(m_piCurrentRenderPath)
 	{
 		ComputeSunShadowCamera();
 
-		m_Kernel.m_piOpenGLRender->RenderScene(m_sScene);
+		m_piCurrentRenderPath->RenderScene(m_sScene);
 		m_sScene.camera.bViewModified=false;
 		m_sScene.camera.bProjectionModified=false;
 		m_sScene.camera.bViewportModified=false;
@@ -1670,78 +1769,10 @@ void COpenGLRender::EndStagedRendering()
 }
 void COpenGLRender::StartFrame()
 {
-	//RTTRACE("StartFrame");	
-		
-	if(!m_bHardwareSupportRead)
-	{
-		m_bHardwareSupportRead=true;
-		
-		//	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS,&m_sHardwareSupport.nMaxTextureUnits);
-		
-#ifdef ANDROID_GLES1
-		m_sHardwareSupport.bShaders=false;
-#elif defined ANDROID_GLES2
-		m_sHardwareSupport.bShaders=true;
-#else
-		m_sHardwareSupport.bShaders=GLEE_VERSION_3_0 && !m_bIgnoreShaderSupport;
-#endif
-		
-#ifdef ANDROID
-		m_sHardwareSupport.bObjectInstancing=false;
-#else
-		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS,&m_sHardwareSupport.nMaxTextureUnits);
-		m_sHardwareSupport.bObjectInstancing=GLEE_ARB_draw_instanced && !m_bIgnoreInstancingSupport;
-#endif		
-		
-
-		if(m_sHardwareSupport.bShaders)
-		{
-//*
-			if(m_Kernel.m_piOpenGLRender==NULL)
-			{
-				if(m_Kernel.Create(m_piSystem,"RenderDeferred",""))
-				{
-					if(!m_Kernel.m_piOpenGLRender->Setup(this,m_piCurrentViewport,m_sHardwareSupport))
-					{
-						m_Kernel.Destroy();
-						RTTRACE("COpenGLRender::StartFrame -> Failed to setup deferred render, falling back to shader render");
-					}
-				}
-				else
-				{
-					RTTRACE("COpenGLRender::StartFrame -> Failed to create deferred render, falling back to shader render");
-				}
-			}
-//*/	
-//*
-			if(m_Kernel.m_piOpenGLRender==NULL)
-			{
-				if(m_Kernel.Create(m_piSystem,"RenderForwardShader",""))
-				{
-					if(!m_Kernel.m_piOpenGLRender->Setup(this,m_piCurrentViewport,m_sHardwareSupport))
-					{
-						m_Kernel.Destroy();
-						RTTRACE("COpenGLRender::StartFrame -> Failed to setup shader based render, falling back to fixed pipeline");
-					}
-				}
-				else
-				{
-					RTTRACE("COpenGLRender::StartFrame -> Failed to create shader based render, falling back to fixed pipeline");
-				}
-			}
-//*/
-		}
-		if(m_Kernel.m_piOpenGLRender==NULL)
-		{
-			m_Kernel.Create(m_piSystem,"RenderForwardFixed","");
-			m_Kernel.m_piOpenGLRender->Setup(this,m_piCurrentViewport,m_sHardwareSupport);
-		}
-	}
-	
 	float fCurrentTime=((double)(GetTimeStamp()-m_nCreationTime))*0.001;
 	m_sScene.fTime=fCurrentTime;
 
-	if(m_Kernel.m_piOpenGLRender){m_Kernel.m_piOpenGLRender->StartFrame();}
+	if(m_piCurrentRenderPath){m_piCurrentRenderPath->StartFrame();}
 }
 
 void COpenGLRender::EndFrame()
@@ -1755,7 +1786,7 @@ void COpenGLRender::EndFrame()
 	{
 		Flush();
 	}
-	if(m_Kernel.m_piOpenGLRender){m_Kernel.m_piOpenGLRender->EndFrame();}
+	if(m_piCurrentRenderPath){m_piCurrentRenderPath->EndFrame();}
 }
 
 void COpenGLRender::DumpStagedRenderingStats()
@@ -1917,23 +1948,23 @@ void COpenGLRender::StartSelection(SGameRect rWindowRect,IGenericCamera *piCamer
 {
 	Flush();
 	ActivateDepth();
-	if(m_Kernel.m_piOpenGLRender){m_Kernel.m_piOpenGLRender->StartSelection(rWindowRect,piCamera,dx,dy,dPrecision);}
+	if(m_piCurrentRenderPath){m_piCurrentRenderPath->StartSelection(rWindowRect,piCamera,dx,dy,dPrecision);}
 }
 
 void COpenGLRender::SetSelectionId( unsigned int nId )
 {
 	Flush();
-	if(m_Kernel.m_piOpenGLRender){m_Kernel.m_piOpenGLRender->SetSelectionId(nId);}
+	if(m_piCurrentRenderPath){m_piCurrentRenderPath->SetSelectionId(nId);}
 }
 
 int COpenGLRender::EndSelection()
 {
 	Flush();
-	if(m_Kernel.m_piOpenGLRender){return m_Kernel.m_piOpenGLRender->EndSelection();}
+	if(m_piCurrentRenderPath){return m_piCurrentRenderPath->EndSelection();}
 	return -1;
 }
 
 void COpenGLRender::ReloadShaders()
 {
-	if(m_Kernel.m_piOpenGLRender){m_Kernel.m_piOpenGLRender->ReloadShaders();}
+	if(m_piCurrentRenderPath){m_piCurrentRenderPath->ReloadShaders();}
 }

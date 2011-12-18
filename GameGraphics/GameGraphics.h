@@ -349,6 +349,16 @@ enum EShadingModel
 	eShadingModel_Mixed,
 	eShadingModel_Fragment
 };
+DECLARE_SERIALIZABLE_ENUMERATION(EShadingModel)
+
+enum EShadowQuality
+{
+	eShadowQuality_Low=0,
+	eShadowQuality_Medium,
+	eShadowQuality_High,
+	eShadowQuality_Count
+};
+DECLARE_SERIALIZABLE_ENUMERATION(EShadowQuality)
 
 struct SRenderStats
 {
@@ -411,6 +421,7 @@ enum EDepthFunction
 class IGenericRender:virtual public ISystemUnknown
 {
 public:
+	virtual bool Setup(IGenericViewport *piViewport)=0;
 
 	virtual void StartStagedRendering()=0;
 	virtual void EndStagedRendering()=0;
@@ -422,7 +433,6 @@ public:
 
 	virtual void ReloadShaders()=0;
 	
-	virtual void              SetViewport(IGenericViewport *piViewport)=0;
 	virtual IGenericViewport *GetViewPort()=0; // solo valido entre StartFrame y EndFrame.
 
 	virtual void SetOrthographicProjection(double cx,double cy)=0;
@@ -573,7 +583,13 @@ public:
 	virtual void DumpStagedRenderingStats()=0;
 	
 	virtual EShadingModel 	GetShadingModel()=0;
-	
+	virtual EShadowQuality  GetShadowQuality()=0;
+	virtual void            SetShadowQuality(EShadowQuality eQuality)=0;
+
+	virtual void			SetCurrentRenderPath(std::string sRenderPath)=0;
+	virtual std::string		GetCurrentRenderPath()=0;
+	virtual void			GetRenderPaths(std::vector<std::string> *pvRenderPaths)=0;
+
 	virtual void PushOptions()=0;
 	virtual void PopOptions()=0;
 	

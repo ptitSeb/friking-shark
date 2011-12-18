@@ -22,14 +22,12 @@
 #include "OpenGLGraphics.h"
 #include "OpenGLRenderForwardShader.h"
 
-#ifdef ANDROID 
-	#define DEFAULT_SHADOW_SIZE 768
-#else
-	#define DEFAULT_SHADOW_SIZE 1024
-#endif
-
 COpenGLRenderForwardShader::COpenGLRenderForwardShader(void)
 {
+	m_nLastDesiredSunShadowWidth=0;
+	m_nLastDesiredSunShadowHeight=0;
+
+	m_eShadowQuality=eShadowQuality_High;
 	m_bClippingActive=false;
 	m_bAnyShadowInTheScene=false;
 	m_pScene=NULL;
@@ -93,23 +91,6 @@ bool COpenGLRenderForwardShader::Setup(IGenericRender *piRender,IGenericViewport
 	m_piCurrentViewport=ADD(piViewport);
 	m_sHardwareSupport=support;
 	
-	if(bOk && m_ShadowTexture.m_piTexture==NULL)
-	{
-		bOk=m_ShadowTexture.Create(m_piSystem,"Texture","");
-		if(bOk)
-		{
-			bOk=m_ShadowTexture.m_piTexture->CreateDepth(DEFAULT_SHADOW_SIZE,DEFAULT_SHADOW_SIZE,m_piCurrentViewport);
-			if(!bOk)
-			{
-				RTTRACE("COpenGLRenderForwardShader::Setup -> Failed to initialize shadow texture");
-				m_ShadowTexture.Destroy();
-			}
-		}
-		else
-		{
-			RTTRACE("COpenGLRenderForwardShader::Setup -> Failed to create shadow texture");
-		}
-	}
 	if(bOk && m_ShadowShader.m_piShader==NULL)
 	{
 		bOk=m_ShadowShader.Create(m_piSystem,"Shader","");
@@ -145,12 +126,35 @@ bool COpenGLRenderForwardShader::Setup(IGenericRender *piRender,IGenericViewport
 	return bOk;
 }
 
-void COpenGLRenderForwardShader::Destroy()
+void COpenGLRenderForwardShader::Cleanup()
 {
+	for(unsigned int x=0;x<MAX_TEXTURE_LEVELS;x++)
+	{
+		if(m_ppiEffectiveTextureLevels[x])
+		{
+			m_ppiEffectiveTextureLevels[x]->UnprepareTexture(x);
+			REL(m_ppiEffectiveTextureLevels[x]);
+		}
+		REL(m_ppiTextureLevels[x]);
+	}
+	REL(m_piEffectiveNormalMap);
+	m_nTextureLevels=0;
+	if(m_nCurrentActiveTexture!=0){glActiveTexture(GL_TEXTURE0_ARB+0);m_nCurrentActiveTexture=0;}
+
+	float *pCleanTextures[MAX_TEXTURE_LEVELS]={0};
+	SetVertexPointers(NULL,NULL,NULL,MAX_TEXTURE_LEVELS,pCleanTextures,NULL,NULL,NULL);
+
+	SRenderState sResetState;
+	SetRenderState(sResetState,eStateChange_DoNotUpdateShader);
+	if(m_pCurrentShader){m_pCurrentShader->m_piShader->Deactivate();m_pCurrentShader=NULL;}
+	glUseProgramObjectARB(0);
+
+	if(m_vClearColor!=ColorBlack){m_vClearColor=ColorBlack;glClearColor(0,0,0,1);}
+
 	m_ShadowTexture.Destroy();
 	m_ShadowShader.Destroy();
 	m_SelectionShader.Destroy();
-	
+
 	std::map<SShaderKey,CGenericShaderWrapper>::iterator iShader;
 	for(iShader=m_mShaders.begin();iShader!=m_mShaders.end();iShader++)
 	{
@@ -159,6 +163,12 @@ void COpenGLRenderForwardShader::Destroy()
 	m_mShaders.clear();
 	REL(m_piCurrentViewport);
 
+	m_nLastDesiredSunShadowHeight=0;
+	m_nLastDesiredSunShadowWidth=0;
+}
+
+void COpenGLRenderForwardShader::Destroy()
+{
 	CSystemObjectBase::Destroy();
 }
 
@@ -241,6 +251,29 @@ void COpenGLRenderForwardShader::SetupLightsInShaders()
 
 void COpenGLRenderForwardShader::PrepareSunShadows()
 {
+	if(m_nLastDesiredSunShadowWidth!=m_pScene->lighting.m_nDesiredSunShadowWidth || 
+		m_nLastDesiredSunShadowHeight!=m_pScene->lighting.m_nDesiredSunShadowHeight)
+	{
+		if(m_ShadowTexture.m_piTexture){m_ShadowTexture.Destroy();}
+
+		bool bOk=m_ShadowTexture.Create(m_piSystem,"Texture","");
+		if(bOk)
+		{
+			bOk=m_ShadowTexture.m_piTexture->CreateDepth(m_pScene->lighting.m_nDesiredSunShadowWidth,m_pScene->lighting.m_nDesiredSunShadowHeight,m_piCurrentViewport);
+			if(!bOk)
+			{
+				RTTRACE("COpenGLRenderForwardShader::PrepareSunShadows -> Failed to initialize shadow texture");
+				m_ShadowTexture.Destroy();
+			}
+		}
+		else
+		{
+			RTTRACE("COpenGLRenderForwardShader::PrepareSunShadows -> Failed to create shadow texture");
+		}
+		m_nLastDesiredSunShadowWidth=m_pScene->lighting.m_nDesiredSunShadowWidth;
+		m_nLastDesiredSunShadowHeight=m_pScene->lighting.m_nDesiredSunShadowHeight;
+	}
+
 	if(m_piCurrentViewport==NULL){return;}
 	if(m_ShadowTexture.m_piTexture==NULL){return;}
 	if(m_ShadowShader.m_piShader==NULL){return;}
@@ -386,7 +419,7 @@ void COpenGLRenderForwardShader::RenderScene(SSceneData &sScene)
 	if(sScene.camera.bViewportModified){glViewport(sScene.camera.m_nViewportX,sScene.camera.m_nViewportY,sScene.camera.m_nViewportW,sScene.camera.m_nViewportH);}
 
 	m_pScene=&sScene;
-	
+
 	bool bShadowsPresent=false,bSkyPresent=false,bLightingPresent=false;
 	AnalyzeStages(&bShadowsPresent,&bSkyPresent,&bLightingPresent);
 	m_bAnyShadowInTheScene=bShadowsPresent;

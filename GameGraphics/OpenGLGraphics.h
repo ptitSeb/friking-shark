@@ -538,8 +538,11 @@ struct SSceneLighting
 	double		m_dSunShadowViewAngle;
 	double		m_dSunShadowNearPlane;
 	double		m_dSunShadowFarPlane;
+	unsigned int m_nDesiredSunShadowWidth;		
+	unsigned int m_nDesiredSunShadowHeight;		
 
-	SSceneLighting(){m_piSunLight=NULL;m_dSunShadowViewAngle=0;m_dSunShadowNearPlane=0;m_dSunShadowFarPlane=0;}
+
+	SSceneLighting(){m_piSunLight=NULL;m_dSunShadowViewAngle=0;m_dSunShadowNearPlane=0;m_dSunShadowFarPlane=0;m_nDesiredSunShadowWidth=0;m_nDesiredSunShadowHeight=0;}
 };
 
 struct SSceneSky
@@ -591,6 +594,10 @@ class IOpenGLRender:virtual public ISystemUnknown
 {
 public:
 	virtual bool Setup(IGenericRender *piRender,IGenericViewport *piViewport,SHardwareSupport &support)=0;
+	virtual void Cleanup()=0;
+
+	virtual std::string GetFriendlyName()=0;
+
 	virtual void StartFrame()=0;
 	virtual void RenderScene(SSceneData &pScene)=0;
 	virtual void EndFrame()=0;

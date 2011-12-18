@@ -38,7 +38,15 @@ COpenGLShader::~COpenGLShader(void)
 		delete pData;
 	}
 	m_mUniforms.clear();
+	FreeShader();
 }
+
+void COpenGLShader::Destroy()
+{
+	FreeShader();
+	CSystemObjectBase::Destroy();
+}
+
 #ifdef ANDROID_GLES1
 
 bool COpenGLShader::Unserialize(ISystemPersistencyNode *piNode){return true;}

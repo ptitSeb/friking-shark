@@ -21,6 +21,17 @@
 DECLARE_CUSTOM_WRAPPER1(CRenderWrapper,IGenericRender,m_piRender)
 DECLARE_CUSTOM_WRAPPER1(CViewportWrapper,IGenericViewport,m_piViewport)
 
+class SGameGUIManagerUserSettings:virtual public CSystemSerializableBase
+{
+public:
+
+	SGameScreenProperties sScreenProperties;
+
+	BEGIN_PROP_MAP(SGameGUIManagerUserSettings)
+		PROP(sScreenProperties,"ScreenProperties");
+	END_PROP_MAP()
+};
+
 class CGameGUIManager :	virtual public CSystemObjectBase,virtual public IGameGUIManager,virtual public IGenericViewportCallBack
 {
 	IGameWindow *m_piMainWindow;
@@ -30,7 +41,8 @@ class CGameGUIManager :	virtual public CSystemObjectBase,virtual public IGameGUI
 	bool		m_bShowMouseCursor;
 	SGameSize   m_sWindowedResolution;
 	SGameScreenProperties m_sScreenProperties;
-
+	std::string m_sUserSettingsFile;
+	std::string m_sUserSettingsNode;
 
 	CRenderWrapper m_Render;
 	CViewportWrapper m_Viewport;
@@ -71,6 +83,8 @@ class CGameGUIManager :	virtual public CSystemObjectBase,virtual public IGameGUI
 public:
 
 	BEGIN_PROP_MAP(CGameGUIManager)
+		PROP_FLAGS(m_sUserSettingsFile,"UserSettingsFile",MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_FLAGS(m_sUserSettingsNode,"UserSettingsNode",MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_FLAGS(m_sScreenProperties,"Screen",MRPF_NORMAL|MRPF_OPTIONAL);
 	END_PROP_MAP()
 

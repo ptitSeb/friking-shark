@@ -51,7 +51,6 @@ struct TBufferPool
 
 class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRender
 {
-	bool				m_bHardwareSupportRead;
 	bool				m_bIgnoreShaderSupport;
 	bool				m_bIgnoreInstancingSupport;
 	
@@ -69,9 +68,12 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	TBufferPool<SLineBuffer>  		m_LineBuffers;
 	TBufferPool<STriangleBuffer>  	m_TriangleBuffers;
 
+	std::vector<COpenGLRenderWrapper> m_vRenderPaths;
+
 	SSceneData m_sScene;
 
-	COpenGLRenderWrapper m_Kernel;
+	IOpenGLRender					*m_piCurrentRenderPath;
+	EShadowQuality					 m_eShadowQuality;
 
 	template<typename stagekeytype,typename stagetype>
 	stagetype *GetStage(stagekeytype &key,std::map<stagekeytype,stagetype> &stageMap);
@@ -132,11 +134,11 @@ public:
 	void Destroy();
 
 	// IGenericRender
+	bool Setup(IGenericViewport *piViewport);
+
 	void StartFrame();
 	void EndFrame();
 	
-	void SetViewport(IGenericViewport *piViewport);
-
 	IGenericViewport *GetViewPort(); // solo valido entre StartFrame y EndFrame.
 
 	void SetOrthographicProjection(double cx,double cy);
@@ -292,7 +294,14 @@ public:
 	
 	void 			SetShadingModel(EShadingModel eModel);
 	EShadingModel 	GetShadingModel();
-	
+
+	EShadowQuality  GetShadowQuality();
+	void            SetShadowQuality(EShadowQuality eQuality);
+
+	void			SetCurrentRenderPath(std::string sRenderPath);
+	std::string		GetCurrentRenderPath();
+	void			GetRenderPaths(std::vector<std::string> *pvRenderPaths);
+
 	void PushOptions();
 	void PopOptions();
 
@@ -314,6 +323,7 @@ public:
 	PROP_VALUE_FLAGS(m_dShadowAntiFlickeringMargin,"ShadowAntiFlickeringMargin",10,MRPF_NORMAL|MRPF_OPTIONAL)
 	PROP_VALUE_FLAGS(m_bIgnoreShaderSupport,"IgnoreShaderSupport",false,MRPF_NORMAL|MRPF_OPTIONAL)
 	PROP_VALUE_FLAGS(m_bIgnoreInstancingSupport,"IgnoreInstancingSupport",false,MRPF_NORMAL|MRPF_OPTIONAL)
+	PROP_FLAGS(m_vRenderPaths,"RenderPaths",MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP();
 	
 	COpenGLRender();
