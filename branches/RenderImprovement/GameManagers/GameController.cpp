@@ -160,6 +160,11 @@ void CGameController::Start()
 		IGameManager *piManager=i->second;
 		piManager->Start();
 	}
+	for(i=m_mManagers.begin();i!=m_mManagers.end();i++)
+	{
+		IGameManager *piManager=i->second;
+		piManager->ProcessFrame(0,0);
+	}
 }
 
 void CGameController::Stop()
