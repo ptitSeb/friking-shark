@@ -980,9 +980,25 @@ bool COpenGLViewport::CreateWindowed(unsigned x, unsigned y, unsigned w, unsigne
 
 	unsigned int dwStyle=WS_CAPTION|WS_MINIMIZEBOX|WS_MAXIMIZEBOX|WS_THICKFRAME|WS_OVERLAPPED;
 	if(dwStyle==0xFFFFFFFF){dwStyle=WS_OVERLAPPED;}
-	m_hWnd = CreateWindowEx(WS_EX_DLGMODALFRAME,VIEWPORT_CLASSNAME,"Loading...",dwStyle,x,y,w,h,NULL,NULL,NULL,(void *)this);
+	m_hWnd = CreateWindowEx(WS_EX_DLGMODALFRAME,VIEWPORT_CLASSNAME,"Loading...",dwStyle,0,0,0,0,NULL,NULL,NULL,(void *)this);
 	if(m_hWnd)
 	{
+		RECT wr={0},cr={0};
+		GetWindowRect(m_hWnd,&wr);
+		GetClientRect(m_hWnd,&cr);
+		SIZE ws,cs;
+		ws.cx=wr.right-wr.left;
+		ws.cy=wr.bottom-wr.top;
+		cs.cx=cr.right-cr.left;
+		cs.cy=cr.bottom-cr.top;
+		SIZE nonclientsize;
+		nonclientsize.cx=ws.cx-cs.cx;
+		nonclientsize.cy=ws.cy-cs.cy;
+
+		POINT p={0};
+		ClientToScreen(m_hWnd,&p);
+		SetWindowPos(m_hWnd,NULL,x-(p.x-wr.left),y-(p.y-wr.top),w+nonclientsize.cx,h+nonclientsize.cy,SWP_NOZORDER);
+
 		unsigned int dwStyle=GetWindowLong(m_hWnd,GWL_STYLE);
 		SetWindowLong(m_hWnd,GWL_STYLE,dwStyle);
 		ShowWindow(m_hWnd,SW_SHOW);
