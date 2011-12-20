@@ -197,7 +197,10 @@ void CBSPDebuggerMainWindow::OnDraw(IGenericRender *piRender)
 	
 	SetupRenderOptions(piRender,m_Camera.m_piCamera);
 	
-	//piRender->StartStagedRendering();
+	piRender->StartStagedRendering();
+	piRender->ClearDepth();
+	piRender->Clear(m_vBackgroundColor);
+	
 	
 	if(m_pCurrentBSPNode && m_pCurrentBSPNode->m_pDrawNode)
 	{
@@ -270,7 +273,6 @@ void CBSPDebuggerMainWindow::OnDraw(IGenericRender *piRender)
 	{
 		piRender->RenderModel(Origin,Origin,m_Model.m_piModel);
 	}
-	//piRender->EndStagedRendering();
 	
 	if(m_pCurrentBSPNode && m_pCurrentBSPNode->m_pDrawNode)
 	{
@@ -278,16 +280,18 @@ void CBSPDebuggerMainWindow::OnDraw(IGenericRender *piRender)
 		for(int y=0,x=m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_nVertexes-1;x>=0;x--,y++){pInverted[y]=m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_pVertexes[x];}
 
 		CVector vColor=CVector(0,0,1);
-		piRender->PushOptions();
+		piRender->PushState();
 		piRender->ActivateSolid();
 		piRender->RenderPolygon(m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_nVertexes,m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_pVertexes,vColor,1);
 		piRender->RenderPolygon(m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon->m_nVertexes,pInverted,vColor,1);
 		if(m_bShowNormals){RenderNormal(piRender,m_pCurrentBSPNode->m_pDrawNode->m_pNodePolygon,vColor*0.5);}
-		piRender->PopOptions();
+		piRender->PopState();
 
 		delete [] pInverted;
 	
 	}
+	std::vector<std::pair<SGamePos,std::string> > vTexts;
+	
 	if(m_TraceInfo.m_bTraceHit)
 	{
 		piRender->RenderPoint(m_TraceInfo.m_vTracePos,10,ColorYellow,1);
@@ -302,23 +306,18 @@ void CBSPDebuggerMainWindow::OnDraw(IGenericRender *piRender)
 			piRender->RenderPoint(vPlaneProj,10,dSide>=0?ColorBlue:ColorRed,1);
 			piRender->RenderLine(vPlaneProj,m_TraceInfo.m_vTracePos,0x8888,dSide>=0?ColorBlue:ColorRed,1);
 			
-			double dFontSize=0;
-			IGenericFont *piFont=NULL;
-			GetFont(&piFont,&dFontSize);
-			if(m_d3DFontSize>0){dFontSize=m_d3DFontSize;}
-			if(piFont && dFontSize>0)
-			{
-				char sDescr[1024];
-				sprintf(sDescr,"%s: %f",dSide>=0?"O":"I",dSide);
-				piFont->RenderText(piRender,dFontSize,vPlaneProj,sDescr,ColorWhite,1);
-			}
-			REL(piFont);
+			char sDescr[1024];
+			sprintf(sDescr,"%s: %f",dSide>=0?"O":"I",dSide);
+			double dx=0,dy=0;
+			piRender->Project(vPlaneProj,&dx,&dy);
+			vTexts.push_back(std::pair<SGamePos,std::string>(SGamePos(round(dx),round(dy)),sDescr));
 		}
 		piRender->ActivateDepth();
 	}
 	
-	piRender->PopOptions();
+	piRender->EndStagedRendering();
 	piRender->PopState();
+	piRender->PopOptions();
 	
 	if(m_piSTFps)
 	{
@@ -329,6 +328,21 @@ void CBSPDebuggerMainWindow::OnDraw(IGenericRender *piRender)
 	}
 	
 	m_piGUIManager->RestoreViewport();
+	
+	if(vTexts.size())
+	{
+		double dFontSize=0;
+		IGenericFont *piFont=NULL;
+		GetFont(&piFont,&dFontSize);
+		
+		for(unsigned int x=0;x<vTexts.size();x++)
+		{
+			SGamePos pos=vTexts[x].first;
+			std::string &sText=vTexts[x].second;
+			if(piFont){piFont->RenderText(piRender,dFontSize,pos.x,pos.y,sText.c_str(),ColorWhite,1);}
+		}
+		REL(piFont);
+	}
 }
 
 void CBSPDebuggerMainWindow::ProcessFileOpen()

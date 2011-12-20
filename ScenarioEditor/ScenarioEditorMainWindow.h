@@ -120,7 +120,6 @@ public:
 	std::string							m_sFile;
 
 	unsigned long		m_dwNexControlKey;
-	double				m_d3DFontSize;
 	bool				m_bBlend;
 	bool				m_bSolid;
 	bool				m_bTextures;
@@ -789,7 +788,6 @@ public:
 		PROP_VALUE_FLAGS(m_eReferenceSystem,"ReferenceSystem",eGameGUIReferenceSystem_Relative,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_bAutoGenerateBSP,"GenerateBSP",1,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_bAutoUpdateBSP,"UpdateBSP",0,MRPF_NORMAL|MRPF_OPTIONAL)
-		PROP_VALUE_FLAGS(m_d3DFontSize,"3DFontSize",0,MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP()
 
 	bool InitWindow(IGameWindow *piParent,bool bPopup);
