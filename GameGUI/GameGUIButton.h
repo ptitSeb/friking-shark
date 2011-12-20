@@ -76,6 +76,8 @@ protected:
 		PROP_FLAGS(m_ClickSound,"ClickSound",MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP()
 
+	bool InitWindow(IGameWindow *piParent,bool bPopup);
+	
 	bool Unserialize(ISystemPersistencyNode *piNode);
 	void Destroy();
 	

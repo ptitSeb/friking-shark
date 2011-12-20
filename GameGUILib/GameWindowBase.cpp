@@ -53,7 +53,9 @@ bool CGameWindowBase::InitWindow(IGameWindow *piParent,bool bPopup)
 	m_piGUIManager =	piParent->GetGUIManager();
 	m_bVisible=(bPopup==false);
 
-
+	SGameRect rEmpty;
+	if(m_rBackgroundTextureCoords==rEmpty){m_rBackgroundTextureCoords=SGameRect(0,0,1,1);}
+	
 	if(m_bPopup)
 	{
 		m_piGUIManager->AddPopup(this);
@@ -885,11 +887,6 @@ bool CGameWindowBase::DetectDrag(double dx,double dy)
 bool CGameWindowBase::Unserialize( ISystemPersistencyNode *piNode )
 {
 	bool bOk=CSystemObjectBase::Unserialize(piNode);
-	if(bOk)
-	{
-		SGameRect rEmpty;
-		if(m_rBackgroundTextureCoords==rEmpty){m_rBackgroundTextureCoords=SGameRect(0,0,1,1);}
-	}
 	if(bOk && m_bRegisterOnCreation)
 	{
 		CGameGUIManagerWrapper guiManager;
