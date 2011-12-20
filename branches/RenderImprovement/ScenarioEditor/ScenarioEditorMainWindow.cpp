@@ -44,7 +44,6 @@ CScenarioEditorMainWindow::CScenarioEditorMainWindow(void)
 	m_bAutoGenerateBSP=true;
 	m_bAutoUpdateBSP=false;
 	m_bRenderPlayArea=false;
-	m_d3DFontSize=0;
 	m_dMouseTraceDistance=0;
 	m_dDifficulty=0;
 	m_bGodMode=true;
@@ -416,6 +415,8 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 		return;
 	}
 	m_Camera.m_piCamera->SetAspectRatio(m_rRealRect.w/m_rRealRect.h);
+	
+	std::vector<std::pair<SGamePos,std::string> > vTexts;
 /*
 // For debugging purposes
 	if(m_bSimulationStarted && !m_FrameManager.m_piFrameManager->IsPaused() && m_FrameManager.m_piFrameManager->GetCurrentTime()>2000)
@@ -502,10 +503,6 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 
 		if(m_nSelectedEntity!=-1)
 		{
-			double dFontSize=0;
-			IGenericFont *piFont=NULL;
-			GetFont(&piFont,&dFontSize);
-			if(m_d3DFontSize>0){dFontSize=m_d3DFontSize;}
 			char sDescr[128];
 			unsigned int nDescrLen=0;
 			unsigned int nCount=m_vEntityControls[m_nSelectedEntity]->m_piPlayAreaEntity->GetCount();
@@ -527,13 +524,13 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 					vPos+=m_Camera.m_piCamera->GetUpVector()*piType->DesignGetRadius();
 					vPos-=m_Camera.m_piCamera->GetRightVector()*piType->DesignGetRadius();
 				}
-				if(piFont){piFont->RenderText(piRender,dFontSize,vPos,sDescr,ColorWhite,1);}
+				double dx=0,dy=0;
+				piRender->Project(vPos,&dx,&dy);
+				vTexts.push_back(std::pair<SGamePos,std::string>(SGamePos(round(dx),round(dy)),sDescr));
 				REL(piType);
-			}
-			REL(piFont);		
+			}	
 		}
 	}
-
 	m_Render.m_piRender->PopOptions();
 	m_Render.m_piRender->PopState();
 
@@ -637,6 +634,21 @@ void CScenarioEditorMainWindow::OnDraw(IGenericRender *piRender)
 	UpdateLayerPanel();
 	
 	m_piGUIManager->RestoreViewport();
+	
+	if(vTexts.size())
+	{
+		double dFontSize=0;
+		IGenericFont *piFont=NULL;
+		GetFont(&piFont,&dFontSize);
+		
+		for(unsigned int x=0;x<vTexts.size();x++)
+		{
+			SGamePos pos=vTexts[x].first;
+			std::string &sText=vTexts[x].second;
+			if(piFont){piFont->RenderText(piRender,dFontSize,pos.x,pos.y,sText.c_str(),ColorWhite,1);}
+		}
+		REL(piFont);
+	}
 }
 
 void CScenarioEditorMainWindow::OnDrawBackground(IGenericRender *piRender)

@@ -67,7 +67,6 @@ public:
 	unsigned int			 m_nFormationId;
 	std::string 			 m_sFormationName;
 	
-	double					 m_d3DFontSize;
 	std::string 			 m_sWorldModelFile;
 	std::string 			 m_sWorldTextureFile;
 	double					 m_dAutoAlignThreshold;
@@ -282,7 +281,6 @@ public:
 		PROP_CLASS_CHAIN(CGameWindowBase)
 		PROP_VALUE_FLAGS(m_sWorldModelFile,"WorldModelFile","",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_sWorldTextureFile,"WorldTextureFile","",MRPF_NORMAL|MRPF_OPTIONAL)
-		PROP_VALUE_FLAGS(m_d3DFontSize,"3DFontSize",0,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_dAutoAlignThreshold,"AutoAlignThreshold",3,MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP();
 public:

@@ -29,7 +29,6 @@ extern CSystemModuleHelper *g_pSystemModuleHelper;
 CFormationEditorMainWindow::CFormationEditorMainWindow(void)
 {
 	m_bPauseOnNextFrame=false;
-	m_d3DFontSize=0;
 	m_nFormationId=0;
 	m_bMovingRoutePoint=false;
 	m_bRenderPlayArea=true;
@@ -253,6 +252,9 @@ void CFormationEditorMainWindow::OnDraw(IGenericRender *piRender)
 	{
 		return;
 	}
+	
+	std::vector<std::pair<SGamePos,std::string> > vTexts;
+	
 	m_Camera.m_piCamera->SetAspectRatio(m_rRealRect.w/m_rRealRect.h);
 
 	m_FrameManager.m_piFrameManager->ProcessFrame();
@@ -327,43 +329,37 @@ void CFormationEditorMainWindow::OnDraw(IGenericRender *piRender)
 
 		piRender->EndStagedRendering();
 
-		double dFontSize=0;
-		IGenericFont *piFont=NULL;
-		GetFont(&piFont,&dFontSize);
-		if(m_d3DFontSize>0){dFontSize=m_d3DFontSize;}
-		if(piFont && dFontSize>0)
+		char sDescr[128];
+		for(unsigned int x=0;x<m_vEntityControls.size();x++)
 		{
-			char sDescr[128];
-			for(unsigned int x=0;x<m_vEntityControls.size();x++)
+			SRoutePoint sPoint;
+			unsigned int nDescrLen=0;
+			m_FormationType.m_piFormationTypeDesign->GetElementRoutePoint(x,0,&sPoint);
+			unsigned int nCount=m_FormationType.m_piFormationTypeDesign->GetElementEntityCount(x);
+			unsigned int nDelay=m_FormationType.m_piFormationTypeDesign->GetElementEntityDelay(x);
+			if(nCount>1)
 			{
-				SRoutePoint sPoint;
-				unsigned int nDescrLen=0;
-				m_FormationType.m_piFormationTypeDesign->GetElementRoutePoint(x,0,&sPoint);
-				unsigned int nCount=m_FormationType.m_piFormationTypeDesign->GetElementEntityCount(x);
-				unsigned int nDelay=m_FormationType.m_piFormationTypeDesign->GetElementEntityDelay(x);
-				if(nCount>1)
+				nDescrLen+=sprintf(sDescr+nDescrLen,"x%d",nCount);
+				unsigned int nInterval=m_FormationType.m_piFormationTypeDesign->GetElementEntityInterval(x);
+				if(nInterval){nDescrLen+=sprintf(sDescr+nDescrLen," (%.02f s)",((double)nInterval)/1000.0);}		
+			}
+			if(nDelay){nDescrLen+=sprintf(sDescr+nDescrLen," + %.02f s",((double)nDelay)/1000.0);}
+			if(nDescrLen)
+			{
+				CVector vPos=FormationToWorld(sPoint.vPosition);
+				IEntityType *piType=NULL;
+				m_FormationType.m_piFormationTypeDesign->GetElementEntityType(x,&piType);
+				if(piType)
 				{
-					nDescrLen+=sprintf(sDescr+nDescrLen,"x%d",nCount);
-					unsigned int nInterval=m_FormationType.m_piFormationTypeDesign->GetElementEntityInterval(x);
-					if(nInterval){nDescrLen+=sprintf(sDescr+nDescrLen," (%.02f s)",((double)nInterval)/1000.0);}		
+					vPos+=m_Camera.m_piCamera->GetUpVector()*piType->DesignGetRadius();
+					vPos-=m_Camera.m_piCamera->GetRightVector()*piType->DesignGetRadius();
 				}
-				if(nDelay){nDescrLen+=sprintf(sDescr+nDescrLen," + %.02f s",((double)nDelay)/1000.0);}
-				if(nDescrLen)
-				{
-					CVector vPos=FormationToWorld(sPoint.vPosition);
-					IEntityType *piType=NULL;
-					m_FormationType.m_piFormationTypeDesign->GetElementEntityType(x,&piType);
-					if(piType)
-					{
-						vPos+=m_Camera.m_piCamera->GetUpVector()*piType->DesignGetRadius();
-						vPos-=m_Camera.m_piCamera->GetRightVector()*piType->DesignGetRadius();
-					}
-					piFont->RenderText(piRender,dFontSize,vPos,sDescr,ColorWhite,1);
-					REL(piType);
-				}
+				double dx=0,dy=0;
+				piRender->Project(vPos,&dx,&dy);
+				vTexts.push_back(std::pair<SGamePos,std::string>(SGamePos(round(dx),round(dy)),sDescr));
+				REL(piType);
 			}
 		}
-		REL(piFont);
 	}
 
 	m_Render.m_piRender->PopOptions();
@@ -416,7 +412,23 @@ void CFormationEditorMainWindow::OnDraw(IGenericRender *piRender)
 
 	UpdateLayerPanel();
 	m_piGUIManager->RestoreViewport();
+	
+	if(vTexts.size())
+	{
+		double dFontSize=0;
+		IGenericFont *piFont=NULL;
+		GetFont(&piFont,&dFontSize);
+		
+		for(unsigned int x=0;x<vTexts.size();x++)
+		{
+			SGamePos pos=vTexts[x].first;
+			std::string &sText=vTexts[x].second;
+			if(piFont){piFont->RenderText(piRender,dFontSize,pos.x,pos.y,sText.c_str(),ColorWhite,1);}
+		}
+		REL(piFont);
+	}
 }
+
 void CFormationEditorMainWindow::ProcessFileNew()
 {
 	if(ConfirmDialog("Reset all and start a new project?","New project",eMessageDialogType_Warning))
