@@ -433,18 +433,23 @@ public:
 
 	virtual void ReloadShaders()=0;
 	
-	virtual IGenericViewport *GetViewPort()=0; // solo valido entre StartFrame y EndFrame.
-
 	virtual void SetOrthographicProjection(double cx,double cy)=0;
 	virtual void SetPerspectiveProjection(double dViewAngle,double dNearPlane,double dFarPlane)=0;
 	virtual void SetViewport(double x,double y,double cx, double cy)=0;
+	
+	virtual bool    IsPerspectiveProjection()=0;
+	virtual void    GetOrthographicProjection(double *pcx,double *pcy)=0;
+	virtual void    GetPerspectiveProjection(double *pdViewAngle,double *pdNearPlane,double *pdFarPlane)=0;
+	virtual void    GetViewport(double *px,double *py,double *pcx, double *pcy)=0;
+	
 	virtual void SetCamera(const CVector &vPosition,double dYaw, double dPitch, double dRoll)=0;
 	virtual CVector GetCameraPosition()=0;
 	virtual CVector GetCameraForward()=0;
 	virtual CVector GetCameraRight()=0;
 	virtual CVector GetCameraUp()=0;
-
-
+	
+	virtual void Project(CVector vPos,double *px,double *py)=0;
+	
 	virtual void ActivateClipping()=0;
 	virtual void DeactivateClipping()=0;
 	virtual bool IsClippingActive()=0;
