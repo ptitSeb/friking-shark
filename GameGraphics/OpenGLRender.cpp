@@ -29,6 +29,7 @@ const unsigned int STriangleBuffer::buffer_size=TRIANGLE_BUFFER_SIZE;
 COpenGLRender::COpenGLRender()
 {
 	SetShadowQuality(eShadowQuality_High);
+	
 	m_bIgnoreShaderSupport=false;
 	m_bIgnoreInstancingSupport=false;
 	m_piCurrentRenderPath=NULL;
@@ -37,6 +38,8 @@ COpenGLRender::COpenGLRender()
 	
 	m_bShadowVolumeFirstVertex=false;
 	m_dShadowAntiFlickeringMargin=10;
+	
+	m_bVectorProjectMatrixesUpdated=false;
 	
 	m_sScene.lighting.m_vAmbientColor=CVector(0.5,0.5,0.5);
 	m_bStagedRendering=false;
@@ -149,11 +152,6 @@ bool COpenGLRender::Setup(IGenericViewport *piViewport)
 	return bOk;
 }
 
-IGenericViewport *COpenGLRender::GetViewPort()
-{
-	return ADD(m_piCurrentViewport);
-}
-
 void COpenGLRender::SetOrthographicProjection(double cx,double cy)
 {
 	Flush();
@@ -162,6 +160,7 @@ void COpenGLRender::SetOrthographicProjection(double cx,double cy)
 
 void COpenGLRender::InternalSetOrthographicProjection(double cx,double cy)
 {
+	m_bVectorProjectMatrixesUpdated=false;
 	m_sScene.camera.m_bPerspectiveProjection=false;
 	m_sScene.camera.m_dProjectionWidth=cx;
 	m_sScene.camera.m_dProjectionHeight=cy;
@@ -181,6 +180,7 @@ void COpenGLRender::SetPerspectiveProjection(double dViewAngle,double dNearPlane
 
 void COpenGLRender::InternalSetPerspectiveProjection(double dViewAngle,double dNearPlane,double dFarPlane)
 {
+	m_bVectorProjectMatrixesUpdated=false;
 	m_sScene.camera.m_bPerspectiveProjection=true;
 	m_sScene.camera.m_dPerspectiveNearPlane=dNearPlane;
 	m_sScene.camera.m_dPerspectiveFarPlane=dFarPlane;
@@ -201,12 +201,38 @@ void COpenGLRender::InternalSetViewport(double x,double y,double cx, double cy)
 {
 	if(m_sScene.camera.m_nViewportX!=(int)x || m_sScene.camera.m_nViewportY!=(int)y || m_sScene.camera.m_nViewportW!=(int)cx || m_sScene.camera.m_nViewportH!=(int)cy)
 	{
+		m_bVectorProjectMatrixesUpdated=false;
 		m_sScene.camera.m_nViewportX=(int)x;
 		m_sScene.camera.m_nViewportY=(int)y;
 		m_sScene.camera.m_nViewportW=(int)cx;
 		m_sScene.camera.m_nViewportH=(int)cy;
 		m_sScene.camera.bViewportModified=true;
 	}
+}
+bool COpenGLRender::IsPerspectiveProjection()
+{
+	return m_sScene.camera.m_bPerspectiveProjection;
+}
+
+void COpenGLRender::GetOrthographicProjection(double *pcx,double *pcy)
+{
+	if(pcx){*pcx=m_sScene.camera.m_dProjectionWidth;}
+	if(pcy){*pcy=m_sScene.camera.m_dProjectionHeight;}
+}
+
+void COpenGLRender::GetPerspectiveProjection(double *pdViewAngle,double *pdNearPlane,double *pdFarPlane)
+{
+	if(pdViewAngle){*pdViewAngle=m_sScene.camera.m_dPerspectiveViewAngle;}
+	if(pdNearPlane){*pdNearPlane=m_sScene.camera.m_dPerspectiveNearPlane;}
+	if(pdFarPlane){*pdFarPlane=m_sScene.camera.m_dPerspectiveFarPlane;}
+}
+
+void COpenGLRender::GetViewport(double *px,double *py,double *pcx, double *pcy)
+{
+	if(px){*px=m_sScene.camera.m_nViewportX;}
+	if(py){*py=m_sScene.camera.m_nViewportY;}
+	if(pcx){*pcx=m_sScene.camera.m_nViewportW;}
+	if(pcy){*pcy=m_sScene.camera.m_nViewportH;}
 }
 
 CVector COpenGLRender::GetCameraPosition(){return m_sScene.camera.m_vCameraPos;}
@@ -222,6 +248,7 @@ void COpenGLRender::SetCamera(const CVector &vPosition,double dYaw, double dPitc
 
 void COpenGLRender::InternalSetCamera(const CVector &vPosition,double dYaw, double dPitch, double dRoll)
 {
+	m_bVectorProjectMatrixesUpdated=false;
 	m_sScene.camera.bViewModified=true;
 	
 	ComputeCameraMatrix(&m_sScene.camera.m_ViewMatrix,vPosition,dYaw,dPitch,dRoll);
@@ -1968,3 +1995,44 @@ void COpenGLRender::ReloadShaders()
 {
 	if(m_piCurrentRenderPath){m_piCurrentRenderPath->ReloadShaders();}
 }
+
+void COpenGLRender::ComputeVectorProjectMatrixes()
+{
+	double dScale=1.0/(m_sScene.camera.m_dPerspectiveFarPlane-m_sScene.camera.m_dPerspectiveNearPlane);
+	
+	CMatrix mBias;
+	mBias.T(CVector(1,1,1));
+	CMatrix mWindowScale;
+	mWindowScale.e[0][0]=0.5;
+	mWindowScale.e[1][1]=0.5;
+	mWindowScale.e[2][2]=0.5;
+	mWindowScale.e[3][3]=1.0;
+	CMatrix mZScale;
+	mZScale.e[0][0]=dScale;
+	mZScale.e[1][1]=dScale;
+	mZScale.e[2][2]=dScale;
+	mZScale.e[3][3]=dScale;
+	
+	m_ProjectMatrix=m_sScene.camera.m_ViewMatrix;
+	m_ProjectMatrix*=m_sScene.camera.m_ProjectionMatrix;
+	m_ProjectMatrix*=mZScale;
+	m_ProjectMatrix*=mBias;
+	m_ProjectMatrix*=mWindowScale;
+}
+
+void COpenGLRender::Project(CVector vPos,double *px,double *py)
+{
+	if(!m_bVectorProjectMatrixesUpdated)
+	{
+		ComputeVectorProjectMatrixes();
+		m_bVectorProjectMatrixesUpdated=true;
+	}
+	
+	CVector vTemp=vPos;
+	double w=vTemp.c[0]*m_ProjectMatrix.e[3][0]+vTemp.c[1]*m_ProjectMatrix.e[3][1]+vTemp.c[2]*m_ProjectMatrix.e[3][2]+m_ProjectMatrix.e[3][3];
+	vTemp*=m_ProjectMatrix;
+	vTemp/=w;
+	*px=m_sScene.camera.m_nViewportX+vTemp.c[0]*(double)m_sScene.camera.m_nViewportW;
+	*py=m_sScene.camera.m_nViewportY+vTemp.c[1]*(double)m_sScene.camera.m_nViewportH;
+}
+

@@ -58,6 +58,9 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 
 	SRenderState   		m_sStagedRenderingState;
 	bool			 	m_bShadowVolumeFirstVertex;
+	bool 				m_bVectorProjectMatrixesUpdated;
+	
+	CMatrix 			m_ProjectMatrix;
 
 	IGenericTexture *				m_ppiStagedTextureLevels[MAX_TEXTURE_LEVELS];
 	unsigned int 					m_nStagedTextureLevels;
@@ -84,7 +87,8 @@ class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRen
 	template<typename stagetype>
 	typename stagetype::buffer_type *GetNextStageBufferElement(stagetype *pStage,TBufferPool<typename stagetype::buffer_type> &stagePool,typename stagetype::buffer_type *pBuffer);
 
-
+	void ComputeVectorProjectMatrixes();
+	
 	void ProcessCameraVertex( const CVector &vVertex );
 	void SortModels();
 	void ComputeSunShadowCamera();
@@ -139,8 +143,6 @@ public:
 	void StartFrame();
 	void EndFrame();
 	
-	IGenericViewport *GetViewPort(); // solo valido entre StartFrame y EndFrame.
-
 	void SetOrthographicProjection(double cx,double cy);
 	void SetPerspectiveProjection(double dViewAngle,double dNearPlane,double dFarPlane);
 	void SetViewport(double x,double y,double cx, double cy);
@@ -150,7 +152,12 @@ public:
 	CVector GetCameraForward();
 	CVector GetCameraRight();
 	CVector GetCameraUp();
-
+	
+	bool    IsPerspectiveProjection();
+	void    GetOrthographicProjection(double *pcx,double *pcy);
+	void    GetPerspectiveProjection(double *pdViewAngle,double *pdNearPlane,double *pdFarPlane);
+	void    GetViewport(double *px,double *py,double *pcx, double *pcy);
+	
 	void ActivateClipping();
 	void DeactivateClipping();
 	bool IsClippingActive();
@@ -316,6 +323,8 @@ public:
 	void StartSelection(SGameRect rWindowRect,IGenericCamera *piCamera,double dx,double dy,double dPrecision);
 	void SetSelectionId(unsigned int nId);
 	int EndSelection();
+
+	void Project(CVector vPos,double *px,double *py);
 	
 	void ReloadShaders();
 	
