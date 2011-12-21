@@ -21,6 +21,7 @@
 #include "OpenGLViewport.h"
 
 #ifdef WIN32
+  #include <mmsystem.h>
   #define VIEWPORT_CLASSNAME "OpenGLViewport"
   #define WM_GL_VIEWPORT_END_LOOP WM_USER+0x001
 #elif defined LINUX
@@ -628,6 +629,9 @@ COpenGLViewport::COpenGLViewport(void)
 #ifdef WIN32
 	m_nLastMouseMoveX=-100000;
 	m_nLastMouseMoveY=-100000;
+	m_nJoystickButtons=0;
+	m_nJoystickXAxis=0;
+	m_nJoystickYAxis=0;
 	m_hDC=NULL;
 	m_hWnd=NULL;
 	m_hRenderContext=NULL;
@@ -803,7 +807,28 @@ void COpenGLViewport::InitializeKeyNames()
 	m_mKeyNames[GK_RMENU]="Right Alt";
 	m_mKeyNames[GK_MENU]="Menu";
 	m_mKeyNames[GK_ALTGR]="Alt Gr";
-}
+
+	m_mKeyNames[GK_JOYLEFT]="Joystick Left";
+	m_mKeyNames[GK_JOYUP]="Joystick Up";
+	m_mKeyNames[GK_JOYRIGHT]="Joystick Right";
+	m_mKeyNames[GK_JOYDOWN]="Joystick Down";
+	m_mKeyNames[GK_JOY0]="Joystick 1";
+	m_mKeyNames[GK_JOY1]="Joystick 2";
+	m_mKeyNames[GK_JOY2]="Joystick 3";
+	m_mKeyNames[GK_JOY3]="Joystick 4";
+	m_mKeyNames[GK_JOY4]="Joystick 5";
+	m_mKeyNames[GK_JOY5]="Joystick 6";
+	m_mKeyNames[GK_JOY6]="Joystick 7";
+	m_mKeyNames[GK_JOY7]="Joystick 8";
+	m_mKeyNames[GK_JOY8]="Joystick 9";
+	m_mKeyNames[GK_JOY9]="Joystick 10";
+	m_mKeyNames[GK_JOY10]="Joystick 11";
+	m_mKeyNames[GK_JOY11]="Joystick 12";
+	m_mKeyNames[GK_JOY12]="Joystick 13";
+	m_mKeyNames[GK_JOY13]="Joystick 14";
+	m_mKeyNames[GK_JOY14]="Joystick 15";
+	m_mKeyNames[GK_JOY15]="Joystick 16";
+}					  
 #ifdef WIN32
 void COpenGLViewport::OnCreate(HWND hWnd)
 {
@@ -1276,6 +1301,58 @@ std::string COpenGLViewport::GetCaption()
 	return m_sCaption;
 }
 
+#ifdef WIN32
+void COpenGLViewport::UpdateJoystick()
+{
+	int nJoys=joyGetNumDevs();
+	JOYCAPS joyCaps={0};
+	for(int id=JOYSTICKID1;id<JOYSTICKID1+nJoys;id++)
+	{
+		MMRESULT result=joyGetDevCaps(id,&joyCaps,sizeof(joyCaps));
+		if(result!=JOYERR_NOERROR)
+		{
+			continue;
+		}
+		int xCenter=(joyCaps.wXmin+joyCaps.wXmax)/2;
+		int yCenter=(joyCaps.wYmin+joyCaps.wYmax)/2;
+
+		JOYINFOEX joyInfo={0};
+		joyInfo.dwSize=sizeof(joyInfo);
+		joyInfo.dwFlags=JOY_RETURNALL;
+		result=joyGetPosEx(id,&joyInfo);
+
+		unsigned int nOldButtons=m_nJoystickButtons;
+		int nOldXAxis=m_nJoystickXAxis;
+		int nOldYAxis=m_nJoystickYAxis;
+
+		m_nJoystickXAxis=joyInfo.dwXpos-xCenter;
+		m_nJoystickYAxis=joyInfo.dwYpos-yCenter;
+		m_nJoystickButtons=joyInfo.dwButtons;
+
+		int xThreshold=xCenter/4;
+		int yThreshold=yCenter/4;
+		if(fabs((double)m_nJoystickXAxis)<xThreshold){m_nJoystickXAxis=0;}
+		if(fabs((double)m_nJoystickYAxis)<yThreshold){m_nJoystickYAxis=0;}
+
+		if(nOldXAxis>=0 && m_nJoystickXAxis<0){OnKeyDown(GK_JOYLEFT);}
+		if(nOldXAxis<0 && m_nJoystickXAxis>=0){OnKeyUp(GK_JOYLEFT);}
+		if(nOldXAxis<=0 && m_nJoystickXAxis>0){OnKeyDown(GK_JOYRIGHT);}
+		if(nOldXAxis>0 && m_nJoystickXAxis<=0){OnKeyUp(GK_JOYRIGHT);}
+
+		if(nOldYAxis>=0 && m_nJoystickYAxis<0){OnKeyDown(GK_JOYUP);}
+		if(nOldYAxis<0 && m_nJoystickYAxis>=0){OnKeyUp(GK_JOYUP);}
+		if(nOldYAxis<=0 && m_nJoystickYAxis>0){OnKeyDown(GK_JOYDOWN);}
+		if(nOldYAxis>0 && m_nJoystickYAxis<=0){OnKeyUp(GK_JOYDOWN);}
+
+		for(int x=0;x<32;x++)
+		{
+			if((nOldButtons&(1<<x))!=0 && (m_nJoystickButtons&(1<<x))==0){OnKeyUp(GK_JOY0+x);}
+			if((nOldButtons&(1<<x))==0 && (m_nJoystickButtons&(1<<x))!=0){OnKeyDown(GK_JOY0+x);}
+		}
+	}
+}
+#endif
+
 void COpenGLViewport::EnterLoop()
 {
 #ifdef WIN32
@@ -1293,6 +1370,7 @@ void COpenGLViewport::EnterLoop()
 			GetMessage(&msg,NULL,0,0);
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+			UpdateJoystick();
 		}
 		if(m_hWnd)
 		{
@@ -1450,6 +1528,12 @@ bool  COpenGLViewport::IsKeyDown(unsigned int nKey)
 	{
 		return false;
 	}
+	if(nKey==GK_JOYLEFT && m_nJoystickXAxis<0){return true;}
+	if(nKey==GK_JOYRIGHT && m_nJoystickXAxis>0){return true;}
+	if(nKey==GK_JOYUP && m_nJoystickYAxis<0){return true;}
+	if(nKey==GK_JOYDOWN && m_nJoystickYAxis>0){return true;}
+	if(nKey>=GK_JOY0 && nKey<=GK_JOY15){return (m_nJoystickButtons&(1<<(nKey-GK_JOY0)))!=0;}
+
 	USHORT nKeyState=GetKeyState(TranslateKeyToWindows(nKey));
 	return (nKeyState&0x8000)!=0;
 #elif defined LINUX

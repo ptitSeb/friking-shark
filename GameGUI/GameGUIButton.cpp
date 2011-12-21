@@ -93,7 +93,7 @@ void CGameGUIButton::PlayHoverSound()
 
 void CGameGUIButton::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(m_bWantFocus && (nKey==' ' || nKey==GK_RETURN))
+	if(m_bWantFocus && (nKey==' ' || nKey==GK_RETURN || nKey==GK_JOY0))
 	{
 		*pbProcessed=true;
 		if(m_bSoundsEnabled && m_piClickSound){m_piClickSound->Play();}

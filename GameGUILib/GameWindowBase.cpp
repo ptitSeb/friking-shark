@@ -664,21 +664,21 @@ void CGameWindowBase::OnKeyDown(int nKey,bool *pbProcessed)
 			if(piNew){m_piGUIManager->SetFocus(piNew);}
 			REL(piNew);
 		}
-		else if(nKey==GK_RIGHT || nKey==GK_DOWN)
+		else if(nKey==GK_RIGHT || nKey==GK_DOWN || nKey==GK_JOYRIGHT || nKey==GK_JOYDOWN)
 		{
 			*pbProcessed=true;
 			IGameWindow *piCurrentFocusedWindow=GetFocusedDescendant();
-			IGameWindow *piNew=FindClosestFocusableWindow(piCurrentFocusedWindow,nKey==GK_RIGHT?eFocusableSearchRight:eFocusableSearchDown);
+			IGameWindow *piNew=FindClosestFocusableWindow(piCurrentFocusedWindow,(nKey==GK_RIGHT || nKey==GK_JOYRIGHT)?eFocusableSearchRight:eFocusableSearchDown);
 			if(piNew==NULL){piNew=FindNextFocusableWindow(NULL);}
 			if(piNew){m_piGUIManager->SetFocus(piNew);}
 			REL(piNew);
 			REL(piCurrentFocusedWindow);
 		}
-		else if(nKey==GK_LEFT || nKey==GK_UP)
+		else if(nKey==GK_LEFT || nKey==GK_UP || nKey==GK_JOYLEFT || nKey==GK_JOYUP)
 		{
 			*pbProcessed=true;
 			IGameWindow *piCurrentFocusedWindow=GetFocusedDescendant();
-			IGameWindow *piNew=FindClosestFocusableWindow(piCurrentFocusedWindow,nKey==GK_LEFT?eFocusableSearchLeft:eFocusableSearchUp);
+			IGameWindow *piNew=FindClosestFocusableWindow(piCurrentFocusedWindow,(nKey==GK_LEFT || nKey==GK_JOYLEFT)?eFocusableSearchLeft:eFocusableSearchUp);
 			if(piNew==NULL){piNew=FindPreviousFocusableWindow(NULL);}
 			if(piNew){m_piGUIManager->SetFocus(piNew);}
 			REL(piNew);
@@ -706,10 +706,7 @@ void CGameWindowBase::OnKeyDown(int nKey,bool *pbProcessed)
 		}
 	}
 }
-void CGameWindowBase::OnKeyUp(int nKey,bool *pbProcessed)
-{
-}
-
+void CGameWindowBase::OnKeyUp(int nKey,bool *pbProcessed){}
 void CGameWindowBase::OnMouseDown(int nButton,double x,double y){}
 void CGameWindowBase::OnMouseUp(int nButton,double x,double y){}
 void CGameWindowBase::OnMouseMove(double x,double y){}
