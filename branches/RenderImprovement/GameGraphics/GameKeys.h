@@ -95,4 +95,25 @@
 #define GK_MENU           0x01A6
 #define GK_ALTGR          0x01A7
 
+#define GK_JOYLEFT        0x01E0
+#define GK_JOYUP          0x01E1
+#define GK_JOYRIGHT       0x01E2
+#define GK_JOYDOWN        0x01E3
+#define GK_JOY0           0x01F0
+#define GK_JOY1           0x01F1
+#define GK_JOY2           0x01F2
+#define GK_JOY3           0x01F3
+#define GK_JOY4           0x01F4
+#define GK_JOY5           0x01F5
+#define GK_JOY6           0x01F6
+#define GK_JOY7           0x01F7
+#define GK_JOY8           0x01F8
+#define GK_JOY9           0x01F9
+#define GK_JOY10          0x01FA
+#define GK_JOY11          0x01FB
+#define GK_JOY12          0x01FC
+#define GK_JOY13          0x01FD
+#define GK_JOY14          0x01FE
+#define GK_JOY15          0x01FF
+
 #endif

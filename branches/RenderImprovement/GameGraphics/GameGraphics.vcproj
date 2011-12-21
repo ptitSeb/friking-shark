@@ -65,7 +65,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libpngd.lib zlibd.lib"
+				AdditionalDependencies="libpngd.lib zlibd.lib Winmm.lib"
 				OutputFile="$(OutDir)/GameGraphics.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\GameRunTime\Debug;..\GameRunTimeLib\Debug;..\GameEntityLib\Debug;..\GameManagers\Debug;..\VectorLib\Debug;..\GameGraphicsLib\Debug;..\JPEGLibrary\lib;D:\Desarrollo\libpng\projects\visualc71\Win32_LIB_Debug;D:\Desarrollo\libpng\projects\visualc71\Win32_LIB_Debug\ZLib"
@@ -147,7 +147,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libpng.lib zlib.lib"
+				AdditionalDependencies="libpng.lib zlib.lib Winmm.lib"
 				OutputFile="$(OutDir)/GameGraphics.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\GameRunTime\Release;..\GameRunTimeLib\Release;..\GameEntityLib\Release;..\GameManagers\Release;..\VectorLib\Release;..\JPEGLibrary\lib;D:\Desarrollo\libpng\projects\visualc71\Win32_LIB_Release;D:\Desarrollo\libpng\projects\visualc71\Win32_LIB_Release\ZLib"

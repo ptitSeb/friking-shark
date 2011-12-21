@@ -60,6 +60,12 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 		int			m_nLastMouseMoveX;
 		int			m_nLastMouseMoveY;
 
+		unsigned int m_nJoystickButtons;
+		int m_nJoystickXAxis;
+		int m_nJoystickYAxis;
+
+		void UpdateJoystick();
+
 		void OnCreate(HWND hWnd);
 		void OnDestroy();
 		LRESULT ProcessMessage(HWND hWnd,UINT  uMsg, WPARAM  wParam,LPARAM  lParam);
