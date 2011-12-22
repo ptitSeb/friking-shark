@@ -413,8 +413,12 @@ bool CConfigFile::Open(const char *pFileName)
         }
         else if (eState==eNormalizationState_InString)
         {
-
-            if (pNormalizationReadCursor[0]=='\n')
+            if (pNormalizationReadCursor[0]=='\\' && pNormalizationReadCursor[1]=='"' )
+            {
+                *pNormalizationResult++=*pNormalizationReadCursor++;
+                *pNormalizationResult++=*pNormalizationReadCursor++;
+            }
+            else if (pNormalizationReadCursor[0]=='\n')
             {
                 // escapamos el \n para soportar textos multilinea
                 *pNormalizationResult++='\\';
@@ -603,8 +607,8 @@ void CConfigFile::SaveValue(const char *sName,const char *sValue)
     std::string sLine=sName;
     sLine+="=";
     // Se determina si hay que entrecomillar.
-    // se entrecomilla si hay un espacio o \r \n \" o "\"
-    if (sValue[0]==0 || strchr(sValue,'\r') || strchr(sValue,'\n') || strchr(sValue,' ') || strchr(sValue,'"')|| strchr(sValue,'\\'))
+    // se entrecomilla si hay un espacio o \r \n \" "\" '"' \\ { }
+	if (sValue[0]==0 || strchr(sValue,'\r') || strchr(sValue,'\n') || strchr(sValue,' ') || strchr(sValue,'"')|| strchr(sValue,'\\') || strchr(sValue,'{') || strchr(sValue,'}'))
     {
         char *pEscapedValue=EscapeString(sValue);
         sLine+="\"";
