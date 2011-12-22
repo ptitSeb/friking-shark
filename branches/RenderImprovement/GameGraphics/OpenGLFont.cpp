@@ -137,15 +137,29 @@ void COpenGLFont::CalcTextSize(double dFontHeight,const char *pText,double *pdWi
 	int x=0;
 	while(pText[x]!=0)
 	{
-		double dCharWidth,dCharHeight;
-		dCharWidth=m_vTextureFontCharacters[(int)pText[x]].dPixelW*dSizeFactor;
-		dCharHeight=m_vTextureFontCharacters[(int)pText[x]].dPixelH*dSizeFactor;
-		(*pdWidth)+=dCharWidth;
-		if(x!=0){(*pdWidth)+=m_dTextureFontCharacterSeparation*dSizeFactor;}
-		if(dCharHeight>(*pdHeight)){(*pdHeight)=dCharHeight;}
+		SOpenGLTextureFontCharacterData *pCharacterData=&m_vTextureFontCharacters[(int)pText[x]];
+		int nCount=1;
+		// Code to draw " as two ' characters in case this character is not present in the charset
+		// This is made because " character can be problematic with the texture auto crop, in most fonts
+		// it is auto cropped as two independent ' characters.
+		if(pText[x]=='"' && m_vTextureFontCharacters['"'].bPresent==false && m_vTextureFontCharacters['\''].bPresent)
+		{
+			nCount=2;
+			pCharacterData=&m_vTextureFontCharacters['\''];
+		}
+		for(int c=0;c<nCount;c++)
+		{
+			double dCharWidth,dCharHeight;
+			dCharWidth=pCharacterData->dPixelW*dSizeFactor;
+			dCharHeight=pCharacterData->dPixelH*dSizeFactor;
+			(*pdWidth)+=dCharWidth;
+			if(dCharHeight>(*pdHeight)){(*pdHeight)=dCharHeight;}
+			(*pdWidth)+=m_dTextureFontCharacterSeparation*dSizeFactor;
+		}
 		x++;
 	}
 }
+
 void COpenGLFont::RenderText(IGenericRender *piRender,double dFontHeight,double x,double y,const char *pText,const CVector &vColor,double dAlpha)
 {
 	double dSizeFactor=dFontHeight/(double)m_nTextureFontEffectiveHeight;
@@ -160,20 +174,33 @@ void COpenGLFont::RenderText(IGenericRender *piRender,double dFontHeight,double 
 	while(pText[i]!=0)
 	{
 		SOpenGLTextureFontCharacterData *pCharacterData=&m_vTextureFontCharacters[(int)pText[i]];
-
-		if(pText[i]!=' ')
+		
+		// Code to draw " as two ' characters in case this character is not present in the charset
+		// This is made because " character can be problematic with the texture auto crop, in most fonts 
+		// it is auto cropped as two independent ' characters.
+		
+		int nCount=1;
+		if(pText[i]=='"' && m_vTextureFontCharacters['"'].bPresent==false && m_vTextureFontCharacters['\''].bPresent)
 		{
-			double s1=pCharacterData->dPixelW*dSizeFactor,s2=pCharacterData->dPixelH*dSizeFactor;
-			CVector vCharCenter=vOrigin+piRender->GetCameraRight()*s1*0.5-piRender->GetCameraUp()*s2*0.5;
-			if(!bTextureSelected)
-			{
-				bTextureSelected=true;
-				piRender->SelectTexture(m_Texture.m_piTexture,0);
-			}
-			piRender->RenderTexture(vCharCenter,s1,s2,pCharacterData->dTextCoordX,pCharacterData->dTextCoordY,pCharacterData->dTextCoordW,pCharacterData->dTextCoordH,vColor,dAlpha);
+			nCount=2;
+			pCharacterData=&m_vTextureFontCharacters['\''];
 		}
-
-		vOrigin+=piRender->GetCameraRight()*((pCharacterData->dPixelW+m_dTextureFontCharacterSeparation)*dSizeFactor);
+		for(int c=0;c<nCount;c++)
+		{			
+			if(pText[i]!=' ')
+			{
+				double s1=pCharacterData->dPixelW*dSizeFactor,s2=pCharacterData->dPixelH*dSizeFactor;
+				CVector vCharCenter=vOrigin+piRender->GetCameraRight()*s1*0.5-piRender->GetCameraUp()*s2*0.5;
+				if(!bTextureSelected)
+				{
+					bTextureSelected=true;
+					piRender->SelectTexture(m_Texture.m_piTexture,0);
+				}
+				piRender->RenderTexture(vCharCenter,s1,s2,pCharacterData->dTextCoordX,pCharacterData->dTextCoordY,pCharacterData->dTextCoordW,pCharacterData->dTextCoordH,vColor,dAlpha);
+			}
+			
+			vOrigin+=piRender->GetCameraRight()*((pCharacterData->dPixelW+m_dTextureFontCharacterSeparation)*dSizeFactor);
+		}
 		i++;
 	}
 	
