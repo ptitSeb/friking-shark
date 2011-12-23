@@ -1384,7 +1384,7 @@ void CEntityEditorMainWindow::ProcessNewModel()
 	
 	CModelWrapper model;
 	
-	if(OpenFileDialog("Select Model...",".ase;.ASE",&sBaseModel))
+	if(OpenFileDialog("Select Model...",".ase;.ASE;.obj",&sBaseModel))
 	{
 		std::vector<IGenericModel*> vModels;
 		GetSystemObjects("GameResources",&vModels);

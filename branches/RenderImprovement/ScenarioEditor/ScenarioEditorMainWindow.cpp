@@ -892,7 +892,7 @@ void CScenarioEditorMainWindow::OnButtonClicked(IGameGUIButton *piControl)
 	if(m_piBTGeneralChangeModel==piControl)
 	{
 		std::string sBaseModel="./Models/";
-		if(OpenFileDialog("Select model...",".ase",&sBaseModel))
+		if(OpenFileDialog("Select model...",".ase;.obj",&sBaseModel))
 		{
 			m_WorldManagerWrapper.m_piTerrain->SetTerrainBaseModel(sBaseModel);
 		}
