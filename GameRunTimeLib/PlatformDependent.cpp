@@ -102,11 +102,14 @@ void GetFileFolder(const char *pFilePath,char *pFolder)
 	strcpy(pTempFilePath,pFilePath);
 	int nLen=strlen(pTempFilePath);
 	if(nLen && pTempFilePath[nLen-1]==PATH_SEPARATOR_CHAR){pTempFilePath[nLen-1]=0;}
-	// SplitPath devuelve FileName "" para c:\Temp\ en lugar de Temp
-	// Para evitarlo se le quita la barra final
+	// SplitPath returns FileName "" for ./Temp/ instead of returning "Temp"
+	// To avoid this, the trailing / is removed
 	_splitpath(pTempFilePath,sDrive,sFolder,NULL,NULL);
 	strcpy(pFolder,sDrive);
 	strcat(pFolder,sFolder);
+	// GetFileFolder must behave as linux dirname, that is, no trailing / is returned
+	nLen=strlen(pFolder);
+	if(nLen && pFolder[nLen-1]==PATH_SEPARATOR_CHAR){pFolder[nLen-1]=0;}
 }
 
 void GetFileName(const char *pFilePath,char *pFileName)
@@ -114,10 +117,10 @@ void GetFileName(const char *pFilePath,char *pFileName)
 	char sFile[MAX_PATH]={0};
 	char sExt[MAX_PATH]={0};
 	char pTempFilePath[MAX_PATH]={0};
-	// SplitPath devuelve FileName "" para c:\Temp\ en lugar de Temp
-	// Para evitarlo se le quita la barra final
 	strcpy(pTempFilePath,pFilePath);
 	int nLen=strlen(pTempFilePath);
+	// SplitPath returns FileName "" for ./Temp/ instead of returning "Temp"
+	// To avoid this, the trailing / is removed
 	if(nLen && pTempFilePath[nLen-1]==PATH_SEPARATOR_CHAR){pTempFilePath[nLen-1]=0;}
 	_splitpath(pFilePath,NULL,NULL,sFile,sExt);
 	strcpy(pFileName,sFile);
@@ -130,14 +133,16 @@ std::string GetFileFolder(std::string sFilePath)
 	char sDrive[MAX_PATH]={0};
 	char sFolder[MAX_PATH]={0};
 	
-	// SplitPath devuelve Folder "C:\Temp\" para C:\Temp\ en lugar de C:\.
-	// Para evitarlo se le quita la barra final
+	// SplitPath returns FileName "" for ./Temp/ instead of returning "Temp"
+	// To avoid this, the trailing / is removed
 	if(sFilePath.length() && sFilePath.at(sFilePath.length()-1)==PATH_SEPARATOR_CHAR)
 	{
 		sFilePath.replace(sFilePath.length()-1,1,"");
 	}
-
 	_splitpath(sFilePath.c_str(),sDrive,sFolder,NULL,NULL);
+	// GetFileFolder must behave as linux dirname, that is, no trailing / is returned
+	int nLen=strlen(sFolder);
+	if(nLen&& sFolder[nLen-1]==PATH_SEPARATOR_CHAR){sFolder[nLen-1]=0;}
 	sFileFolder=sDrive;
 	sFileFolder+=sFolder;
 	return sFileFolder;
@@ -148,8 +153,9 @@ std::string GetFileName(std::string sFilePath)
 	std::string sFileName;
 	char sFile[MAX_PATH]={0};
 	char sExt[MAX_PATH]={0};
-	// SplitPath devuelve FileName "" para c:\Temp\ en lugar de Temp
-	// Para evitarlo se le quita la barra final
+
+	// SplitPath returns FileName "" for ./Temp/ instead of returning "Temp"
+	// To avoid this, the trailing / is removed
 	bool bSeparatorRemoved=false;
 	std::string sTempPath=sFilePath;
 	if(sFilePath.length() && sFilePath.at(sFilePath.length()-1)==PATH_SEPARATOR_CHAR)
@@ -162,6 +168,7 @@ std::string GetFileName(std::string sFilePath)
 	sFileName+=sExt;
 	return sFileName;
 }
+
 void RTTRACE(const char *format, ...)
 {
 	va_list vargs;
@@ -192,10 +199,16 @@ double GetMicrosecondTimeStamp()
 	QueryPerformanceCounter(&ldNow);
 	return (double)(ldNow.QuadPart*1000/(ldPerformanceFrequency.QuadPart/1000));
 }
+void WindowsPathToGamePath(char *pPath)
+{
+	while(*pPath){if(*pPath=='\\'){*pPath=PATH_SEPARATOR_CHAR;}pPath++;}
+}
+
 std::string GetWorkingFolder()
 {
 	char sCurrentPath[MAX_PATH]={0};
 	GetCurrentDirectory(MAX_PATH,sCurrentPath);
+	WindowsPathToGamePath(sCurrentPath);
 	return sCurrentPath;
 }
 
