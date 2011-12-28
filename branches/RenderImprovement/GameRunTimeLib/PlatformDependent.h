@@ -32,8 +32,9 @@
 	// warning C4250: 'xxx' : inherits 'CSystemObjectBase::AddReference' via dominance
 	#pragma warning ( disable : 4250 )
 
-	#define PATH_SEPARATOR "\\"
-	#define PATH_SEPARATOR_CHAR '\\'
+	#define PATH_SEPARATOR "/"
+	#define PATH_SEPARATOR_CHAR '/'
+	
 	#define strcasecmp _stricmp
 	#define strtok_r strtok_s
 
@@ -41,6 +42,8 @@
 
 	#define RTASSERT(x) _ASSERTE((x))
 	#define __UNUSED_ATTRIB__
+
+	void WindowsPathToGamePath(char *pPath);
 #else
 	#include <libgen.h>
 
