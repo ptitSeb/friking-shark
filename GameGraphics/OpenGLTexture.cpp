@@ -116,6 +116,8 @@ bool LoadImageHelper(std::string sFile,unsigned *pOpenGLSkinWidth,unsigned *pOpe
 
 COpenGLTexture::COpenGLTexture(void)
 {
+	m_bOpenGLSetupPending=false;
+	m_bResident=false;
 	m_bDepth=false;
 	m_bRenderTarget=false;
 	m_dwWidth=0;
@@ -123,8 +125,6 @@ COpenGLTexture::COpenGLTexture(void)
 	m_pBuffer=NULL;
 
 	m_dwColorType=GL_RGB;
-	m_bColorKey=false;
-	m_fOpacity=1.0;
 
 	m_nTextureIndex=0;
 	m_nFrameBuffer=0;
@@ -158,6 +158,9 @@ void COpenGLTexture::Clear()
 		m_nTextureIndex=0;
 	}
 	m_dwColorType=GL_RGB;
+	
+	m_bOpenGLSetupPending=false;
+	m_bResident=false;
 }
 
 COpenGLTexture::~COpenGLTexture(void)
@@ -166,88 +169,19 @@ COpenGLTexture::~COpenGLTexture(void)
 }
 
 std::string	COpenGLTexture::GetFileName(){return m_sFileName;}
-bool		COpenGLTexture::HasAlphaFile(){return m_sAlphaFileName!="";}
-std::string COpenGLTexture::GetAlphaFileName(){return m_sAlphaFileName;}
-void		COpenGLTexture::GetSize(unsigned *pdwWidth,unsigned *pdwHeight){*pdwWidth=m_dwWidth;*pdwHeight=m_dwHeight;}
-bool		COpenGLTexture::HasColorKey(){return m_bColorKey;}
-CVector		COpenGLTexture::GetColorKey(){return m_vColorKey;}
+void		COpenGLTexture::GetSize(unsigned *pdwWidth,unsigned *pdwHeight)
+{
+	*pdwWidth=m_dwWidth;
+	*pdwHeight=m_dwHeight;
+}
+
 bool COpenGLTexture::LoadFromFile(bool bResident)
 {
 	int nStartTime=GetTimeStamp();
-	bool bForceAlpha=(m_bColorKey || m_sAlphaFileName!="" || m_fOpacity<=1.0 || m_bRenderTarget);
+	bool bForceAlpha=(m_bRenderTarget);
 	bool bResult=true;
 	m_dwColorType=GL_RGB;
-	if(LoadImageHelper(m_sFileName,&m_dwWidth,&m_dwHeight,&m_pBuffer,bForceAlpha,&m_dwColorType))
-	{
-		
-		if(m_sAlphaFileName!="")
-		{
-			unsigned char	*pAlphaBuffer=NULL;
-			unsigned nAlphaOpenGLSkinWidth=0,nAlphaOpenGLSkinHeight=0;
-
-			unsigned int dwAlphaColorType=GL_RGB;
-			if(LoadImageHelper(m_sAlphaFileName,&nAlphaOpenGLSkinWidth,&nAlphaOpenGLSkinHeight,&pAlphaBuffer,false,&dwAlphaColorType))
-			{
-				if(nAlphaOpenGLSkinWidth==m_dwWidth && m_dwHeight==nAlphaOpenGLSkinHeight)
-				{
-					unsigned char *pTempBuffer=m_pBuffer;
-					unsigned char *pTempAlpha=pAlphaBuffer;
-
-					for(unsigned y=0; y < m_dwHeight; y++)
-					{
-						unsigned int nAlphaColorLen=dwAlphaColorType==GL_RGB?3:4;
-						for(unsigned x = 0; x < m_dwWidth; x++,pTempBuffer+=4,pTempAlpha+=nAlphaColorLen)
-						{
-							pTempBuffer[3] = (unsigned char)((((unsigned int)pTempAlpha[0])+((unsigned int)pTempAlpha[1])+((unsigned int)pTempAlpha[2]))/3);
-						}
-					}
-				}
-				else
-				{
-					bResult=false;
-					RTTRACE("COpenGLTexture::LoadFromFile -> Texture %s size does not match with alpha texture %s",m_sFileName.c_str(),m_sAlphaFileName.c_str());
-				}
-			}
-			else
-			{
-				bResult=false;
-				RTTRACE("COpenGLTexture::LoadFromFile -> Failed to load alpha texture %s",m_sAlphaFileName.c_str());
-			} 
-			if(pAlphaBuffer){delete [] pAlphaBuffer;pAlphaBuffer=NULL;}
-		}	
-		else if(m_bColorKey)
-		{
-			unsigned char red=(unsigned char)(m_vColorKey.c[0]*255.0);
-			unsigned char green=(unsigned char)(m_vColorKey.c[1]*255.0);
-			unsigned char blue=(unsigned char)(m_vColorKey.c[2]*255.0);
-
-			unsigned char *pTempBuffer=m_pBuffer;
-
-			for(unsigned y=0; y < m_dwHeight; y++)
-			{
-				for(unsigned x = 0; x < m_dwWidth; x++,pTempBuffer+=4)
-				{
-					pTempBuffer[3] = (pTempBuffer[0]==red && pTempBuffer[1]==green && pTempBuffer[2]==blue)?0:255;
-				}
-			}
-		}
-		else if(m_fOpacity<1.0)
-		{
-			unsigned char *pTempBuffer=m_pBuffer;
-
-			for(unsigned int y=0; y < m_dwWidth; y++)
-			{
-				for(unsigned int x = 0; x < m_dwHeight; x++,pTempBuffer+=4)
-				{
-					pTempBuffer[3] = (unsigned char)(255.0*m_fOpacity);
-				}
-			}
-		}
-	}
-	else
-	{
-		bResult=false;
-	}
+	bResult=LoadImageHelper(m_sFileName,&m_dwWidth,&m_dwHeight,&m_pBuffer,bForceAlpha,&m_dwColorType);
 	
 	if(bResult)
 	{
@@ -265,59 +199,71 @@ bool COpenGLTexture::LoadFromFile(bool bResident)
 			RTTRACE("COpenGLTexture::LoadFromFile -> WARNING: Texture %s has dimensions greater than 1024 pixels %dx%d, this can be problematic on some systems",m_sFileName.c_str(),m_dwWidth,m_dwHeight);
 		}
 		
-		glGenTextures(1,&m_nTextureIndex);
-
-		if(m_nTextureIndex)
-		{
-			glBindTexture(GL_TEXTURE_2D,m_nTextureIndex);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-#ifdef ANDROID
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_bGenerateMipMaps?GL_LINEAR:GL_NEAREST);
-			glTexImage2D(GL_TEXTURE_2D, 0, m_dwColorType, m_dwWidth,m_dwHeight, 0,m_dwColorType, GL_UNSIGNED_BYTE, m_pBuffer);
-			
-#ifdef ANDROID_GLES1
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_bGenerateMipMaps?GL_LINEAR:GL_NEAREST);
-#else
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_bGenerateMipMaps?GL_LINEAR_MIPMAP_LINEAR:GL_NEAREST);
-			if(m_bGenerateMipMaps){glGenerateMipmap(GL_TEXTURE_2D);}
-#endif
-			//int error=glGetError();
-			//if(error!=GL_NO_ERROR){RTTRACE("COpenGLTexture::LoadFromFile -> glTexImage2D, error for %s: %d",m_sFileName.c_str(),error);}
-#else
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_bGenerateMipMaps?GL_LINEAR_MIPMAP_LINEAR:GL_NEAREST);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_bGenerateMipMaps?GL_LINEAR:GL_NEAREST);
-			if(m_bGenerateMipMaps)
-			{
-				gluBuild2DMipmaps(GL_TEXTURE_2D,m_dwColorType,m_dwWidth,m_dwHeight,m_dwColorType,GL_UNSIGNED_BYTE,m_pBuffer);
-			}
-			else
-			{
-				glTexImage2D(GL_TEXTURE_2D, 0, m_dwColorType, m_dwWidth,m_dwHeight, 0,m_dwColorType, GL_UNSIGNED_BYTE, m_pBuffer);
-			}
-			
-#endif
-			RTTRACE("COpenGLTexture::LoadFromFile -> Loaded texture %s-id %d, %dx%d (%d ms)",m_sFileName.c_str(),m_nTextureIndex,m_dwWidth,m_dwHeight,GetTimeStamp()-nStartTime);
-		}
-		else
-		{
-			RTTRACE("COpenGLTexture::LoadFromFile -> Failed to create texture id for %s",m_sFileName.c_str());
-		}
-		m_bRenderTarget=false;
+		RTTRACE("COpenGLTexture::LoadFromFile -> Loaded texture %s, %dx%d (%d ms)",m_sFileName.c_str(),m_dwWidth,m_dwHeight,GetTimeStamp()-nStartTime);
 		
+		m_bRenderTarget=false;
+		m_bResident=bResident;
+		
+		// OpenGL setup can fail if the texture is loaded before a render context has been created
+		// if this is the case we must retry the first time the texture is prepared for rendering.
+		
+		m_bOpenGLSetupPending=!SetupOpenGL(true);
+		if(!m_bOpenGLSetupPending)
+		{
+			if(!m_bResident){delete [] m_pBuffer;m_pBuffer=NULL;}
+		}
 	}
 	else
 	{
 		RTTRACE("COpenGLTexture::LoadFromFile -> Failed to load texture %s",m_sFileName.c_str());
 	}
 	
-	if(!bResident)
-	{
-		delete [] m_pBuffer;
-		m_pBuffer=NULL;
-	}
-
 	return bResult;
+}
+
+bool COpenGLTexture::SetupOpenGL(bool bFailureAllowed)
+{
+	if(m_nTextureIndex!=0){return true;}
+	
+	glGenTextures(1,&m_nTextureIndex);
+	if(m_nTextureIndex)
+	{
+		glBindTexture(GL_TEXTURE_2D,m_nTextureIndex);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		#ifdef ANDROID
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_bGenerateMipMaps?GL_LINEAR:GL_NEAREST);
+		glTexImage2D(GL_TEXTURE_2D, 0, m_dwColorType, m_dwWidth,m_dwHeight, 0,m_dwColorType, GL_UNSIGNED_BYTE, m_pBuffer);
+		
+		#ifdef ANDROID_GLES1
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_bGenerateMipMaps?GL_LINEAR:GL_NEAREST);
+		#else
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_bGenerateMipMaps?GL_LINEAR_MIPMAP_LINEAR:GL_NEAREST);
+		if(m_bGenerateMipMaps){glGenerateMipmap(GL_TEXTURE_2D);}
+		#endif
+		//int error=glGetError();
+		//if(error!=GL_NO_ERROR){RTTRACE("COpenGLTexture::SetupOpenGL -> glTexImage2D, error for %s: %d",m_sFileName.c_str(),error);}
+		#else
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_bGenerateMipMaps?GL_LINEAR_MIPMAP_LINEAR:GL_NEAREST);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_bGenerateMipMaps?GL_LINEAR:GL_NEAREST);
+		if(m_bGenerateMipMaps)
+		{
+			gluBuild2DMipmaps(GL_TEXTURE_2D,m_dwColorType,m_dwWidth,m_dwHeight,m_dwColorType,GL_UNSIGNED_BYTE,m_pBuffer);
+		}
+		else
+		{
+			glTexImage2D(GL_TEXTURE_2D, 0, m_dwColorType, m_dwWidth,m_dwHeight, 0,m_dwColorType, GL_UNSIGNED_BYTE, m_pBuffer);
+		}
+		#endif
+	}
+	else
+	{
+		if(!bFailureAllowed)
+		{
+			RTTRACE("COpenGLTexture::SetupOpenGL -> Failed to create texture id for %s",m_sFileName.c_str());
+		}
+	}
+	return m_nTextureIndex!=0;
 }
 
 bool COpenGLTexture::Unserialize(ISystemPersistencyNode *piNode)
@@ -328,22 +274,20 @@ bool COpenGLTexture::Unserialize(ISystemPersistencyNode *piNode)
 }
 bool COpenGLTexture::HasAlphaChannel(){return (m_dwColorType==GL_RGBA);}
 
-unsigned long COpenGLTexture::GetByteBufferLength(){return HasAlphaChannel()?m_dwHeight*m_dwWidth*4:m_dwHeight*m_dwWidth*3;}
-void		  *COpenGLTexture::GetByteBuffer(){return m_pBuffer;}
+unsigned long COpenGLTexture::GetByteBufferLength()
+{
+	return HasAlphaChannel()?m_dwHeight*m_dwWidth*4:m_dwHeight*m_dwWidth*3;
+}
+void *COpenGLTexture::GetByteBuffer()
+{
+	return m_pBuffer;
+}
 
-bool COpenGLTexture::Load(std::string sFileName,CVector *pColorKey,std::string *pAlphaFile,float fOpacity,bool bGenerateMipmaps, bool bResident)
+bool COpenGLTexture::Load(std::string sFileName,bool bGenerateMipmaps, bool bResident)
 {
 	Clear();
 	m_sFileName=sFileName;
-	m_sAlphaFileName=pAlphaFile?*pAlphaFile:"";
-	m_bColorKey=false;
-	m_fOpacity=fOpacity;
 	m_bGenerateMipMaps=bGenerateMipmaps;
-	if(pColorKey)
-	{
-		m_vColorKey=*pColorKey;
-		m_bColorKey=true;
-	}
 	if(m_pBuffer)
 	{
 		delete [] m_pBuffer;
@@ -368,8 +312,8 @@ CVector COpenGLTexture::GetPixelColor( unsigned long x, unsigned long y )
 
 double COpenGLTexture::GetPixelAlpha( unsigned long x, unsigned long y )
 {
-	if(m_pBuffer==NULL){return Origin;}
-	if(!HasAlphaChannel()){return m_fOpacity;}
+	if(m_pBuffer==NULL){return 1.0;}
+	if(!HasAlphaChannel()){return 1.0;}
 	if(x<m_dwWidth && y<m_dwHeight)
 	{
 		unsigned long nPixel=x+(y*m_dwWidth);
@@ -377,7 +321,7 @@ double COpenGLTexture::GetPixelAlpha( unsigned long x, unsigned long y )
 		unsigned char *pPixel=m_pBuffer+(nPixel*nPixelSize);
 		return ((double)pPixel[3])/255.0;
 	}
-	return m_fOpacity;
+	return 1.0;
 }
 
 bool COpenGLTexture::CreateFrameBuffer(bool bDepth)
@@ -464,9 +408,6 @@ bool COpenGLTexture::Create( unsigned nWidth,unsigned nHeight,IGenericViewport *
 	if((int)m_dwHeight>nMaxTextureSize){m_dwHeight=nMaxTextureSize;}
 
 	m_sFileName="";
-	m_sAlphaFileName="";
-	m_bColorKey=false;
-	m_fOpacity=1.0;
 	m_dwWidth=nWidth;
 	m_dwHeight=nHeight;
 	m_bDepth=false;
@@ -482,9 +423,6 @@ bool COpenGLTexture::CreateDepth( unsigned nWidth,unsigned nHeight,IGenericViewp
 	Clear();
 
 	m_sFileName="";
-	m_sAlphaFileName="";
-	m_bColorKey=false;
-	m_fOpacity=1.0;
 	m_dwWidth=nWidth;
 	m_dwHeight=nHeight;
 	m_bDepth=true;
@@ -531,6 +469,14 @@ void COpenGLTexture::StopRenderingToTexture()
 
 bool COpenGLTexture::PrepareTexture(int nTextureLevel)
 {
+	if(m_bOpenGLSetupPending)
+	{
+		SetupOpenGL(false);
+		m_bOpenGLSetupPending=false;
+		
+		if(!m_bResident){delete [] m_pBuffer;m_pBuffer=NULL;}
+	}
+	
 	if(m_nTextureIndex)
 	{
 		glBindTexture(GL_TEXTURE_2D,m_nTextureIndex);
@@ -544,6 +490,13 @@ void COpenGLTexture::UnprepareTexture(int nTextureLevel)
 
 void COpenGLTexture::ReleaseResidentData()
 {
-	delete [] m_pBuffer;
-	m_pBuffer=NULL;
+	if(m_bOpenGLSetupPending)
+	{
+		m_bResident=false;
+	}
+	else
+	{
+		delete [] m_pBuffer;
+		m_pBuffer=NULL;
+	}
 }

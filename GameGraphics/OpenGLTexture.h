@@ -21,6 +21,9 @@
 
 class COpenGLTexture : virtual public CSystemObjectBase,virtual public IGenericTexture
 {
+	bool m_bOpenGLSetupPending;
+	bool m_bResident;
+	
 	unsigned m_dwWidth;
 	unsigned m_dwHeight;
 
@@ -28,31 +31,15 @@ class COpenGLTexture : virtual public CSystemObjectBase,virtual public IGenericT
 
 	unsigned int m_nTextureIndex;
 	unsigned int m_dwColorType;
-
+	
 	std::string m_sFileName;
-	std::string m_sAlphaFileName;
 	
 	bool m_bGenerateMipMaps;
-
-	bool		m_bColorKey;
-	CRGBColor	m_vColorKey;
-	float		m_fOpacity;
 
 	bool		m_bRenderTarget;
 	unsigned int m_nFrameBuffer;
 	unsigned int m_nFrameBufferDepth;
 	
-#ifdef WIN32
-// PBuffers are currently supporter only in windows
-	HDC			m_hPBufferDC;
-	HGLRC		m_hPBufferRC;
-	int			m_nPBufferPixelFormatIndex;
-	HPBUFFERARB m_hPBuffer;
-
-	HDC			m_hPBufferOldDC;
-	HGLRC		m_hPBufferOldRC;
-#endif
-
 	bool		m_bDepth;
 
 	void Clear();
@@ -63,27 +50,20 @@ class COpenGLTexture : virtual public CSystemObjectBase,virtual public IGenericT
 	bool CreateBackBuffer(bool bDepth,IGenericViewport *piViewport);
 	bool CreatePBuffer(bool bDepth);
 	bool CreateFrameBuffer(bool bDepth);
+	
+	bool SetupOpenGL(bool bFailureAllowed);
 
 public:
 	
 	BEGIN_PROP_MAP(COpenGLTexture)
 		PROP_FLAGS(m_sFileName,"Archivo",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_bGenerateMipMaps,"GenerateMipmaps",true,MRPF_NORMAL|MRPF_OPTIONAL)
-		PROP_VALUE_FLAGS(m_sAlphaFileName,"ArchivoAlpha","",MRPF_NORMAL|MRPF_OPTIONAL)
-		PROP_VALUE_FLAGS(m_bColorKey,"UsarColorKey",0,MRPF_NORMAL|MRPF_OPTIONAL)
-		PROP_VALUE_FLAGS(m_vColorKey,"ColorKey",CVector(0,0,0),MRPF_NORMAL|MRPF_OPTIONAL)
 	END_PROP_MAP();
 	// IGenericTexture
 
 	std::string	 GetFileName();
 
-	bool				 HasAlphaFile();
-	std::string  GetAlphaFileName();
-
 	void GetSize(unsigned *pdwWidth,unsigned *pdwHeight);
-
-	bool		 HasColorKey();
-	CVector		 GetColorKey();
 
 	bool		HasAlphaChannel();
 
@@ -93,15 +73,15 @@ public:
 	CVector		GetPixelColor(unsigned long x, unsigned long y);
 	double		GetPixelAlpha(unsigned long x, unsigned long y);
 	
-	virtual bool Load(std::string sFileName,CVector *pColorKey,std::string *pAlphaFile,float fOpacity,bool bGenerateMipmaps, bool bResident);
-	virtual bool Create( unsigned nWidth,unsigned nHeight,IGenericViewport *piViewport );
-	virtual bool CreateDepth( unsigned nWidth,unsigned nHeight ,IGenericViewport *piViewport);
-	virtual bool StartRenderingToTexture();
-	virtual void StopRenderingToTexture();
+	bool Load(std::string sFileName,bool bGenerateMipmaps, bool bResident);
+	bool Create( unsigned nWidth,unsigned nHeight,IGenericViewport *piViewport );
+	bool CreateDepth( unsigned nWidth,unsigned nHeight ,IGenericViewport *piViewport);
+	bool StartRenderingToTexture();
+	void StopRenderingToTexture();
 
-	virtual void ReleaseResidentData();
-	virtual bool PrepareTexture(int nTextureLevel);
-	virtual void UnprepareTexture(int nTextureLevel);
+	void ReleaseResidentData();
+	bool PrepareTexture(int nTextureLevel);
+	void UnprepareTexture(int nTextureLevel);
 
 	COpenGLTexture(void);
 	~COpenGLTexture(void);
