@@ -121,7 +121,7 @@
 	static void glDisableLineStipple(){};
 	static void glLineStipple( GLint factor, GLushort pattern ){};
 	static void glPolygonMode( GLenum face, GLenum mode ){};
-	static void glGenVertexArrays(GLsizei n, GLuint * arrays){for(GLsizei x=0;x<n;x++){arrays[n]=0;}}
+	static void glGenVertexArrays(GLsizei n, GLuint * arrays){for(GLsizei x=0;x<n;x++){arrays[x]=0;}}
 	static void glDeleteVertexArrays(GLsizei n, const GLuint * arrays){}
 	static void glBindVertexArray(GLuint array){}
 	static void glDrawElementsInstancedARB(GLenum mode, GLsizei count, GLenum type, const GLvoid * indices, GLsizei primcount){}
