@@ -145,33 +145,6 @@ void CGameGUISlider::OnMouseUp(int nButton,double x,double y)
 		}
 		NOTIFY_EVENT(IGameGUISliderEvents,OnSliderValueChanged(this,m_dValue))
 	}
-	
-	/*if(nButton!=GK_LBUTTON){return;}
-
-	m_bClickInProgress=false;
-
-	if(m_piGUIManager->HasMouseCapture(this))
-	{
-		SGamePos pos;
-		pos.x=x+m_rRealRect.x;
-		pos.y=y+m_rRealRect.y;
-
-		if(m_rRealRect.Contains(pos))
-		{
-			if(m_bSoundsEnabled && m_piClickSound){m_piClickSound->Play();}
-			NOTIFY_EVENT(IGameGUISliderEvents,OnButtonClicked(this))
-		}
-		else
-		{
-			m_piGUIManager->ReleaseMouseCapture();
-			if(m_bFocusOnHover && m_piGUIManager->HasFocus(this))
-			{
-				IGameWindow *piAncestor=GetFocusableAncestor();
-				m_piGUIManager->SetFocus(piAncestor);
-				REL(piAncestor);
-			}
-		}
-	}*/
 	CGameGUIButton::OnMouseUp(nButton,x,y);
 }
 

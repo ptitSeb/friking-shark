@@ -39,10 +39,7 @@ protected:
 	void OnMouseDown(int nButton,double x,double y);
 	void OnMouseUp(int nButton,double x,double y);
 	void OnKeyDown(int nKey,bool *pbProcessed);
-/*	
-	void OnSetFocus();
-	void OnKillFocus(IGameWindow *piFocusedWindow);
-	*/
+	
 public:
 	// IGameGUISlider
 	
