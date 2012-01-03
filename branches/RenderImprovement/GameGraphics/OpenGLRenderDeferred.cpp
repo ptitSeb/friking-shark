@@ -207,6 +207,8 @@ bool COpenGLRenderDeferred::Setup(IGenericRender *piRender,IGenericViewport *piV
 		if(!bOk){RTTRACE("COpenGLRenderDeferred::Setup -> Failed to precompile shader: '%s'",pName);}
 		ppShaderCursor++;
 	}
+	
+	if(!bOk){Cleanup();}
 	return bOk;
 }
 

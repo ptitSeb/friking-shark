@@ -123,6 +123,8 @@ bool COpenGLRenderForwardShader::Setup(IGenericRender *piRender,IGenericViewport
 		if(!bOk){RTTRACE("COpenGLRenderForwardShader::Setup -> Failed to precompile shader: '%s'",pName);}
 		ppShaderCursor++;
 	}
+	if(!bOk){Cleanup();}
+	
 	return bOk;
 }
 
