@@ -165,10 +165,6 @@ class IGenericTexture:virtual public ISystemUnknown
 public:
 
 	virtual std::string	GetFileName()=0;
-
-	virtual bool		HasAlphaFile()=0;
-	virtual std::string	GetAlphaFileName()=0;
-
 	virtual void		GetSize(unsigned *pdwWidth,unsigned *pdwHeight)=0;
 
 	virtual bool		HasAlphaChannel()=0;
@@ -176,13 +172,10 @@ public:
 	virtual unsigned long GetByteBufferLength()=0;
 	virtual void		  *GetByteBuffer()=0;
 
-	virtual bool		HasColorKey()=0;
-	virtual CVector		GetColorKey()=0;
-
 	virtual CVector		GetPixelColor(unsigned long x, unsigned long y)=0;
 	virtual double		GetPixelAlpha(unsigned long x, unsigned long y)=0;
 	
-	virtual bool		Load(std::string sFileName,CVector *pColorKey=NULL,std::string *pAlphaFile=NULL,float fOpacity=1.0,bool bGenerateMipmaps=true, bool bResident=false)=0;
+	virtual bool		Load(std::string sFileName,bool bGenerateMipmaps=true, bool bResident=false)=0;
 	virtual bool		Create( unsigned nWidth,unsigned nHeight,IGenericViewport *piViewport)=0;
 	virtual bool		CreateDepth( unsigned nWidth,unsigned nHeight,IGenericViewport *piViewport)=0;
 
@@ -249,8 +242,8 @@ public:
 	virtual void		  GetRenderBufferNormalMap(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,IGenericTexture **ppiTexture)=0;
 	virtual void		  GetRenderBufferNormalMapCoords(unsigned long nAnimation,unsigned long nFrame,unsigned long nBuffer,float **ppNormalMapVertexes)=0;
 	
-	// Method to ensure that the model is resident.
-	virtual bool 		  Prepare()=0;
+	// Method to ensure that the resource is ready for usage
+	virtual bool Prepare()=0;
 	
 	virtual void UpdateBufferObjects()=0;
 

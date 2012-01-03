@@ -158,13 +158,10 @@ bool COpenGLModel::LoadFromFile()
 			}
 			if(pNormalMapArray)
 			{
-				if(!pBuffer->normalMap.Attach(m_piSystem,sNormalMap,false))
+				pBuffer->normalMap.Create(m_piSystem,"Texture","");
+				if (pBuffer->normalMap.m_piTexture)
 				{
-					pBuffer->normalMap.Create(m_piSystem,"Texture",sNormalMap);
-					if (pBuffer->normalMap.m_piTexture)
-					{
-						pBuffer->normalMap.m_piTexture->Load(sNormalMap,NULL,NULL,1.0);
-					}
+					pBuffer->normalMap.m_piTexture->Load(sNormalMap);
 				}
 				
 				pBuffer->pNormalMapArray=new GLfloat[nVertexes*2];
@@ -183,13 +180,10 @@ bool COpenGLModel::LoadFromFile()
 					pLevel->pTexVertexArray=new GLfloat[nVertexes*2];
 					memcpy(pLevel->pTexVertexArray,pTexVertexArray,sizeof(GLfloat)*pBuffer->nVertexes*2);
 					
-					if(!pLevel->texture.Attach(m_piSystem,sTexture,false))
+					pLevel->texture.Create(m_piSystem,"Texture","");
+					if (pLevel->texture.m_piTexture)
 					{
-						pLevel->texture.Create(m_piSystem,"Texture",sTexture);
-						if (pLevel->texture.m_piTexture)
-						{
-							pLevel->texture.m_piTexture->Load(sTexture,NULL,NULL,pBuffer->fOpacity);
-						}
+						pLevel->texture.m_piTexture->Load(sTexture);
 					}
 					pBuffer->vTextureLevels.push_back(pLevel);
 				}

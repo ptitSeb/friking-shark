@@ -74,7 +74,7 @@ void CWorldManager::LoadScenario(ISystemPersistencyNode *piNode)
 	if(m_sTerrainColorMap.length())
 	{
 		bool bOk=m_TerrainColorMap.Create("GameResources","Texture","");
-		if(bOk){bOk=m_TerrainColorMap.m_piTexture->Load(m_sTerrainColorMap,NULL,NULL,1.0,true,true);}
+		if(bOk){bOk=m_TerrainColorMap.m_piTexture->Load(m_sTerrainColorMap,true,true);}
 		if(!bOk){m_TerrainColorMap.Destroy();}
 	}
 	UpdateTerrain();
@@ -281,7 +281,7 @@ bool CWorldManager::SetTerrainColorMap( std::string sColorMap )
 	bool bOk=false;
 	m_sTerrainColorMap=sColorMap;
 	bOk=m_TerrainColorMap.Create("GameResources","Texture","");
-	if(bOk){bOk=m_TerrainColorMap.m_piTexture->Load(sColorMap,NULL,NULL,1.0,true,true);}
+	if(bOk){bOk=m_TerrainColorMap.m_piTexture->Load(sColorMap,true,true);}
 	return bOk;
 }
 
@@ -654,9 +654,9 @@ bool CWorldManager::UpdateTerrain()
 			buffer.nTextureHeight=0;
 			buffer.piTexture=ADD(m_vTerrainHeightLayers[x].m_Texture.m_piTexture);
 			buffer.piNormalMap=ADD(m_vTerrainHeightLayers[x].m_NormalMap.m_piTexture);
-			if(m_vTerrainHeightLayers[x].m_Texture.m_piTexture)
+			if(buffer.piTexture)
 			{
-				m_vTerrainHeightLayers[x].m_Texture.m_piTexture->GetSize(&buffer.nTextureWidth,&buffer.nTextureHeight);
+				buffer.piTexture->GetSize(&buffer.nTextureWidth,&buffer.nTextureHeight);
 			}
 			pvTempBuffers[s].push_back(buffer);
 		}
@@ -679,9 +679,9 @@ bool CWorldManager::UpdateTerrain()
 			buffer.piTexture=ADD(m_vTerrainColorLayers[x].m_Texture.m_piTexture);
 			buffer.piNormalMap=ADD(m_vTerrainColorLayers[x].m_NormalMap.m_piTexture);
 			
-			if(m_vTerrainColorLayers[x].m_Texture.m_piTexture)
+			if(buffer.piTexture)
 			{
-				m_vTerrainColorLayers[x].m_Texture.m_piTexture->GetSize(&buffer.nTextureWidth,&buffer.nTextureHeight);
+				buffer.piTexture->GetSize(&buffer.nTextureWidth,&buffer.nTextureHeight);
 			}
 			pvTempBuffers[s].push_back(buffer);
 		}

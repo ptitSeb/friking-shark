@@ -40,6 +40,7 @@ struct SOpenGLTextureFontCharacterData
 
 class COpenGLFont : virtual public CSystemObjectBase,virtual public IGenericFont
 {
+	
 	CGenericTextureWrapper m_Texture;
 	
 	unsigned 	 		m_dwTextureWidth;
@@ -48,7 +49,6 @@ class COpenGLFont : virtual public CSystemObjectBase,virtual public IGenericFont
 	SOpenGLTextureFontCharacterData m_vTextureFontCharacters[256];
 
 	std::string		m_sTextureFontFileName;
-	std::string		m_sTextureFontAlphaFileName;
 	std::string		m_sTextureFontCharacterSet;
 	double			m_dTextureFontCharacterSeparation;
 	double			m_dTextureFontSpaceSize;
@@ -61,14 +61,13 @@ class COpenGLFont : virtual public CSystemObjectBase,virtual public IGenericFont
 	
 	bool LoadTextureFont();
 	bool Unserialize(ISystemPersistencyNode *piNode);
-
+	
 public:
 
 	BEGIN_PROP_MAP(COpenGLFont)
 		PROP_VALUE_FLAGS(m_nTextureFontRowHeight,"RowHeight",0,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_nTextureFontRowCount,"RowCount",1,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_sTextureFontFileName,"Archivo",MRPF_NORMAL|MRPF_OPTIONAL)
-		PROP_FLAGS(m_sTextureFontAlphaFileName,"ArchivoAlpha",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_sTextureFontCharacterSet,"JuegoDeCaracteres",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_dTextureFontCharacterSeparation,"SeparacionCaracteres",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_dTextureFontSpaceSize,"TamanoEspacio",MRPF_NORMAL|MRPF_OPTIONAL)
