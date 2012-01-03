@@ -349,7 +349,7 @@ void CBSPDebuggerMainWindow::ProcessFileOpen()
 {
 	std::string sBaseModel="./Models/";
 
-	if(OpenFileDialog("Select Model...",".ase;.ASE",&sBaseModel))
+	if(OpenFileDialog("Select Model...",".ase;.ASE;.obj",&sBaseModel))
 	{
 		Reset();
 		
