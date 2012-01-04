@@ -140,7 +140,6 @@ void COpenGLTexture::Clear()
 		delete [] m_pBuffer;
 		m_pBuffer=NULL;
 	}
-#ifndef ANDROID_GLES1
 	if(m_nFrameBuffer)
 	{
 		glDeleteFramebuffersEXT(1,&m_nFrameBuffer);
@@ -151,7 +150,6 @@ void COpenGLTexture::Clear()
 		glDeleteRenderbuffersEXT(1,&m_nFrameBufferDepth);
 		m_nFrameBufferDepth=0;
 	}
-#endif
 	if(m_nTextureIndex)
 	{
 		glDeleteTextures(1,&m_nTextureIndex);
@@ -327,9 +325,6 @@ double COpenGLTexture::GetPixelAlpha( unsigned long x, unsigned long y )
 bool COpenGLTexture::CreateFrameBuffer(bool bDepth)
 {
 	// FrameBuffer Implementation
-#ifdef ANDROID_GLES1
-	return false;
-#else
 	
 	glGenTextures(1,&m_nTextureIndex);
 	if(m_nTextureIndex==0){RTTRACE("COpenGLTexture::CreateFrameBuffer -> Failed to create texture id for frame buffer object");}
@@ -344,7 +339,8 @@ bool COpenGLTexture::CreateFrameBuffer(bool bDepth)
 	if(m_nTextureIndex && m_nFrameBuffer && (m_nFrameBufferDepth|| bDepth))
 	{
 		m_bRenderTarget=true;
-
+		int nPreviousTexture=0;
+		glGetIntegerv(GL_TEXTURE_BINDING_2D,&nPreviousTexture);
 		glBindTexture(GL_TEXTURE_2D,m_nTextureIndex);
 		if(bDepth)
 		{
@@ -387,6 +383,8 @@ bool COpenGLTexture::CreateFrameBuffer(bool bDepth)
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,0);
 		bool bOk=(status == GL_FRAMEBUFFER_COMPLETE_EXT);
 		if(!bOk){RTTRACE("COpenGLTexture::CreateFrameBuffer -> Failed to complete frame buffer, error 0x%08x",status);}
+
+		glBindTexture(GL_TEXTURE_2D,nPreviousTexture);
 		return bOk;
 	}
 	else
@@ -394,9 +392,75 @@ bool COpenGLTexture::CreateFrameBuffer(bool bDepth)
 		RTTRACE("COpenGLTexture::CreateFrameBuffer -> Failed to create frame buffer object");
 		return false;
 	}
-#endif
 }
 
+bool COpenGLTexture::CreateBackBuffer(bool bDepth,IGenericViewport *piViewport)
+{
+	bool bOk=true;
+	// BackBuffer Implementation
+	glGenTextures(1,&m_nTextureIndex);
+	bOk=(m_nTextureIndex!=0);
+	if(bOk)
+	{
+		SVideoMode mode;
+		piViewport->GetCurrentVideoMode(&mode);		
+		
+		// Restrict size to the current video mode
+		while(m_dwWidth>mode.w){m_dwWidth=mode.w;}
+		while(m_dwHeight>mode.h){m_dwHeight=mode.h;}
+
+		// Ensure a size of a power of 2 (growing if neccesary)
+		unsigned int nTempWidth=1,nTempHeight=1;
+		while(nTempWidth<m_dwWidth){nTempWidth*=2;}
+		while(nTempHeight<m_dwHeight){nTempHeight*=2;}
+		m_dwWidth=nTempWidth;
+		m_dwHeight=nTempHeight;
+
+		m_bRenderTarget=true;
+		int nPreviousTexture=0;
+		glGetIntegerv(GL_TEXTURE_BINDING_2D,&nPreviousTexture);
+		glBindTexture(GL_TEXTURE_2D,m_nTextureIndex);
+		if(bDepth)
+		{
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,  GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,  GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+			//cleanup previous errors
+			glGetError();
+			do
+			{
+				glTexImage2D(GL_TEXTURE_2D, 0,  GL_DEPTH_COMPONENT, m_dwWidth,m_dwHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+				bOk=(glGetError()==GL_NO_ERROR);
+				if(!bOk)
+				{
+					m_dwWidth/=2;m_dwHeight/=2;
+				}
+			}
+			while(!bOk && (m_dwWidth>1 || m_dwHeight>1));
+		}
+		else
+		{
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+			//cleanup previous errors
+			glGetError();
+			do
+			{
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_dwWidth,m_dwHeight, 0,GL_RGBA, GL_UNSIGNED_BYTE, 0);
+				bOk=(glGetError()==GL_NO_ERROR);
+				if(!bOk){m_dwWidth/=2;m_dwHeight/=2;}
+			}
+			while(!bOk && (m_dwWidth>1 || m_dwHeight>1));
+		}
+		glBindTexture(GL_TEXTURE_2D, nPreviousTexture);
+	}
+	return bOk;
+}
 
 bool COpenGLTexture::Create( unsigned nWidth,unsigned nHeight,IGenericViewport *piViewport)
 {
@@ -414,6 +478,7 @@ bool COpenGLTexture::Create( unsigned nWidth,unsigned nHeight,IGenericViewport *
 
 	bool bOk=false;
 	if(!bOk){bOk=CreateFrameBuffer(false);}
+	if(!bOk){bOk=CreateBackBuffer(false,piViewport);}
 	if(!bOk){Clear();}
 	return bOk;
 }
@@ -429,42 +494,48 @@ bool COpenGLTexture::CreateDepth( unsigned nWidth,unsigned nHeight,IGenericViewp
 
 	bool bOk=false;
 	if(!bOk){bOk=CreateFrameBuffer(true);}
+	if(!bOk){bOk=CreateBackBuffer(true,piViewport);}
 	if(!bOk){Clear();}
 	return bOk;
 }
 
 bool COpenGLTexture::StartRenderingToTexture()
 {
-#ifndef ANDROID_GLES1
 	// FrameBuffer Implementation
 	if(m_nFrameBuffer)
 	{
-		//glDisable(GL_SCISSOR_TEST);
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,m_nFrameBuffer);
 		return true;
 	}
 	else if(m_bDepth && m_nFrameBufferDepth)
 	{
-		//glDisable(GL_SCISSOR_TEST);
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,m_nFrameBufferDepth);
 		return true;
 	}
-#endif
+	else if(m_bDepth && m_nTextureIndex)
+	{
+		glColorMask(false,false,false,false);
+		return true;
+	}
 	return false;
 }
+
 void COpenGLTexture::StopRenderingToTexture()
 {
 	// FrameBuffer Implementation
-#ifndef ANDROID_GLES1
-	if(m_nFrameBuffer)
+	if(m_nFrameBuffer || m_nFrameBufferDepth)
 	{
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,0);
 	}
-	else if(m_bDepth && m_nFrameBufferDepth)
+	else if(m_nTextureIndex)
 	{
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,0);
+		int nPreviousTexture=0;
+		glGetIntegerv(GL_TEXTURE_BINDING_2D,&nPreviousTexture);
+		glBindTexture(GL_TEXTURE_2D, m_nTextureIndex);
+		glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, m_dwWidth, m_dwHeight);
+		glBindTexture(GL_TEXTURE_2D, nPreviousTexture);
+		if(m_bDepth){glColorMask(true,true,true,true);}
 	}
-#endif
 }
 
 bool COpenGLTexture::PrepareTexture(int nTextureLevel)
