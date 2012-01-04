@@ -89,9 +89,15 @@ void CVideoOptions::OnButtonClicked(IGameGUIButton *piControl)
 	}
 	if(piControl==m_piBTRender && m_Render.m_piRender)
 	{
-		m_nCurrentRenderPath--;
-		if(m_nCurrentRenderPath<0){m_nCurrentRenderPath=m_vRenderPaths.size()-1;}
-		if(m_vRenderPaths.size()){m_Render.m_piRender->SetCurrentRenderPath(m_vRenderPaths[m_nCurrentRenderPath]);}
+		for(int x=0;x<m_vRenderPaths.size();x++)
+		{
+			m_nCurrentRenderPath--;
+			if(m_nCurrentRenderPath<0){m_nCurrentRenderPath=m_vRenderPaths.size()-1;}
+			if(m_Render.m_piRender->SetCurrentRenderPath(m_vRenderPaths[m_nCurrentRenderPath]))
+			{
+				break;
+			}
+		}
 		m_piBTRender->PlayClickSound();
 		UpdateGUI();
 	}
@@ -219,9 +225,15 @@ void CVideoOptions::OnKeyDown(int nKey,bool *pbProcessed)
 
 	if(nKey==GK_LEFT && m_piBTRender && m_Render.m_piRender && m_piGUIManager->HasFocus(m_piBTRender))
 	{
-		m_nCurrentRenderPath++;
-		if(m_nCurrentRenderPath>=(int)m_vRenderPaths.size()){m_nCurrentRenderPath=0;}
-		if(m_vRenderPaths.size()){m_Render.m_piRender->SetCurrentRenderPath(m_vRenderPaths[m_nCurrentRenderPath]);}
+		for(unsigned int x=0;x<m_vRenderPaths.size();x++)
+		{
+			m_nCurrentRenderPath++;
+			if(m_nCurrentRenderPath>=(int)m_vRenderPaths.size()){m_nCurrentRenderPath=0;}
+			if(m_Render.m_piRender->SetCurrentRenderPath(m_vRenderPaths[m_nCurrentRenderPath]))
+			{
+				break;
+			}
+		}
 		m_piBTRender->PlayClickSound();
 		UpdateGUI();
 
@@ -230,9 +242,14 @@ void CVideoOptions::OnKeyDown(int nKey,bool *pbProcessed)
 	}
 	if(nKey==GK_RIGHT && m_piBTRender && m_Render.m_piRender && m_piGUIManager->HasFocus(m_piBTRender))
 	{
-		m_nCurrentRenderPath--;
-		if(m_nCurrentRenderPath<0){m_nCurrentRenderPath=m_vRenderPaths.size()-1;}
-		if(m_vRenderPaths.size()){m_Render.m_piRender->SetCurrentRenderPath(m_vRenderPaths[m_nCurrentRenderPath]);}
+		for(unsigned int x=0;x<m_vRenderPaths.size();x++)
+		{
+			m_nCurrentRenderPath--;
+			if(m_nCurrentRenderPath<0){m_nCurrentRenderPath=m_vRenderPaths.size()-1;}
+			if(m_Render.m_piRender->SetCurrentRenderPath(m_vRenderPaths[m_nCurrentRenderPath]))
+			{break;}
+		}
+		
 		m_piBTRender->PlayClickSound();
 		UpdateGUI();
 		*pbProcessed=true;
