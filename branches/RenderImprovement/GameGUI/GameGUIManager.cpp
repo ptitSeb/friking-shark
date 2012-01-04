@@ -233,6 +233,8 @@ void CGameGUIManager::RestoreViewport()
 
 void CGameGUIManager::OnRender()
 {
+	if(!m_bSetup){return;}
+
 	SGameSize size;
 	GetWindowSize(&size);
 	
