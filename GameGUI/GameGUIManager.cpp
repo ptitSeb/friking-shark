@@ -23,10 +23,11 @@
 
 CGameGUIManager::CGameGUIManager()
 {
+	m_bSetup=false;
 	m_bShowMouseCursor=true;
-	m_piMainWindow=NULL;
 	m_piFocusedWindow=NULL;
 	m_piMouseCaptureWindow=NULL;
+	m_piRootWindow=NULL;
 }
 
 CGameGUIManager::~CGameGUIManager()
@@ -40,40 +41,24 @@ bool CGameGUIManager::Init(std::string sClass,std::string sName,ISystem *piSyste
 
 	m_Render.Attach("GameGUI","Render");
 	m_Viewport.Attach("GameGUI","Viewport");
-
-	m_piMainWindow=new CGameMainWindow(this);
-	m_piMainWindow->InitWindow(NULL,true);
-	m_piFocusedWindow=ADD(m_piMainWindow);
-
+	
 	if(m_Viewport.m_piViewport){m_Viewport.m_piViewport->SetCallBack(this);}
 	
 	return true;
 }
+
 void CGameGUIManager::Destroy()
 {
-	if(m_sUserSettingsFile.length())
-	{
-		SGameGUIManagerUserSettings userSettings;
-		userSettings.sScreenProperties=m_sScreenProperties;
-		userSettings.sScreenProperties.bWindowCentered=false;
-
-		CConfigFile configFile;
-		configFile.Open(m_sUserSettingsFile);
-		bool bUserOk=userSettings.Serialize(m_sUserSettingsNode.length()?configFile.AddNode(m_sUserSettingsNode):configFile.GetRoot());
-		if(bUserOk){m_sScreenProperties=userSettings.sScreenProperties;}
-		if(bUserOk){configFile.Save(m_sUserSettingsFile);}
-	}
-
 	if(m_Viewport.m_piViewport)
 	{
 	    m_Viewport.m_piViewport->ShowMouseCursor(true);
 		m_Viewport.m_piViewport->SetCallBack(NULL);
 	}
-	if(m_piMainWindow)
+	if(m_piRootWindow)
 	{
-		m_piMainWindow->DestroyWindow();
+		m_piRootWindow->DestroyWindow();
 	}
-
+	
 	while(m_vPopups.size())
 	{
 		IGameWindow *piWindow=m_vPopups[0];
@@ -82,8 +67,9 @@ void CGameGUIManager::Destroy()
 		REL(piWindow);
 	}
 
-	REL(m_piMainWindow);
+	m_MainWindow.Detach();
 	REL(m_piFocusedWindow);
+	REL(m_piRootWindow);
 	m_Viewport.Detach();
 	m_Render.Detach();
 
@@ -208,7 +194,7 @@ IGameWindow *CGameGUIManager::GetWindowFromPos(SGamePos *pPosition,bool bOnlyAct
 		// El popup mas alto siempre bloquea la interaccion con los demas.
 		return GetWindowFromPos(m_vPopups[m_vPopups.size()-1],pPosition,bOnlyActive);
 	}
-	return GetWindowFromPos(m_piMainWindow,pPosition,bOnlyActive);
+	return GetWindowFromPos(m_piRootWindow,pPosition,bOnlyActive);
 }
 
 void CGameGUIManager::RenderWindow(IGenericRender *piRender,IGameWindow *piWindow)
@@ -256,7 +242,7 @@ void CGameGUIManager::OnRender()
 	
 	RestoreViewport();
 
-	RenderWindow(m_Render.m_piRender,m_piMainWindow);
+	RenderWindow(m_Render.m_piRender,m_piRootWindow);
 	for(unsigned x=0;x<m_vPopups.size();x++)
 	{
 		if(m_vPopups[x]->IsVisible())
@@ -273,7 +259,7 @@ void CGameGUIManager::OnRender()
 		SGamePos pos;
 		pos.x=px;
 		pos.y=size.h-py;
-		IGameWindow *piWindow=m_piMouseCaptureWindow?ADD(m_piMouseCaptureWindow):GetWindowFromPos(m_piMainWindow,&pos,true);
+		IGameWindow *piWindow=m_piMouseCaptureWindow?ADD(m_piMouseCaptureWindow):GetWindowFromPos(m_piRootWindow,&pos,true);
 		while(!bDrawed && piWindow)
 		{
 			piWindow->OnDrawMouseCursor(pos,m_Render.m_piRender,&bDrawed);
@@ -437,8 +423,7 @@ void CGameGUIManager::RedrawAll()
 
 IGameWindow *CGameGUIManager::GetMainWindow()
 {
-	ADD(m_piMainWindow);
-	return m_piMainWindow;
+	return ADD(m_piRootWindow);
 }
 
 void CGameGUIManager::ProcessMouseActivation(IGameWindow *piWindow)
@@ -732,7 +717,7 @@ void CGameGUIManager::OnSize(unsigned w,unsigned h)
 	}
 
 
-	if(m_piMainWindow){m_piMainWindow->UpdateRealRect();}
+	if(m_piRootWindow){m_piRootWindow->UpdateRealRect();}
 	for(unsigned int x=0;x<m_vPopups.size();x++)
 	{
 		IGameWindow *piWindow=m_vPopups[x];
@@ -768,7 +753,7 @@ void CGameGUIManager::GetScreenProperties(SGameScreenProperties *pProperties)
 void CGameGUIManager::SetScreenProperties(SGameScreenProperties *pProperties)
 {
 	m_sScreenProperties=*pProperties;
-	UpdateScreenPlacement();
+	if(m_bSetup){UpdateScreenPlacement();}
 }
 
 void CGameGUIManager::UpdateScreenPlacement()
@@ -796,17 +781,9 @@ void CGameGUIManager::UpdateScreenPlacement()
  	m_Viewport.m_piViewport->SetVSync(m_sScreenProperties.bVerticalSync);
 }
 
-bool CGameGUIManager::Unserialize(ISystemPersistencyNode *piNode)
+bool CGameGUIManager::Setup()
 {
-	bool bOk=CSystemObjectBase::Unserialize(piNode);
-	if(m_sUserSettingsFile.length())
-	{
-		SGameGUIManagerUserSettings userSettings;
-		CConfigFile configFile;
-		bool bUserOk=configFile.Open(m_sUserSettingsFile);
-		if(bUserOk){bUserOk=userSettings.Unserialize(m_sUserSettingsNode.length()?configFile.GetNode(m_sUserSettingsNode):configFile.GetRoot());}
-		if(bUserOk){m_sScreenProperties=userSettings.sScreenProperties;}
-	}
+	bool bOk=true;
 	if(bOk && m_Viewport.m_piViewport)
 	{
 		SVideoMode sVideoMode;
@@ -824,7 +801,7 @@ bool CGameGUIManager::Unserialize(ISystemPersistencyNode *piNode)
 		// Esto es un apaño de un problema en la persistencia por el que no se pueden especificar valores por defecto
 		// para SGameRect ni SGameSize, ademas no hacerlo supondria un problema para obtener los valores por defecto para
 		// los bpp y el refreshrate.
-
+		
 		if(m_sScreenProperties.rWindowRect.x==0 && m_sScreenProperties.rWindowRect.y==0 && m_sScreenProperties.rWindowRect.w==0 && m_sScreenProperties.rWindowRect.h==0)
 		{
 			m_sScreenProperties.eWindowReferenceSystem=eGameGUIReferenceSystem_Relative;
@@ -846,7 +823,7 @@ bool CGameGUIManager::Unserialize(ISystemPersistencyNode *piNode)
 		{
 			m_sScreenProperties.dFullScreenRefreshBitsPerPixel=sVideoMode.bpp;
 		}
-
+		
 		// Se crea la ventana.
 		
 		SGameRect rWindowRect;
@@ -884,26 +861,43 @@ bool CGameGUIManager::Unserialize(ISystemPersistencyNode *piNode)
 		if(m_sScreenProperties.bFullScreen)
 		{
 			bOk=m_Viewport.m_piViewport->CreateFullScreen(m_sScreenProperties.sFullScreenResolution.w,m_sScreenProperties.sFullScreenResolution.h,m_sScreenProperties.dFullScreenRefreshBitsPerPixel,m_sScreenProperties.dFullScreenRefreshRate);
-			if(!bOk){RTTRACE("CGameGUIManager::UpdateScreenPlacement -> Failed create full screen viewport");}
+			if(!bOk){RTTRACE("CGameGUIManager::Setup -> Failed create full screen viewport");}
 		}
 		else
 		{
 			bOk=m_Viewport.m_piViewport->CreateWindowed((unsigned int)rWindowRect.x,(unsigned int)rWindowRect.y,(unsigned int)rWindowRect.w,(unsigned int)rWindowRect.h);
-			if(!bOk){RTTRACE("CGameGUIManager::UpdateScreenPlacement -> Failed create windowed viewport");}
+			if(!bOk){RTTRACE("CGameGUIManager::Setup -> Failed create windowed viewport");}
 		}
 		if(bOk){m_Viewport.m_piViewport->ShowMouseCursor(false);}
 		if(bOk){m_Viewport.m_piViewport->SetVSync(m_sScreenProperties.bVerticalSync);}
-		if(bOk)
-		{
-			bOk=m_Render.m_piRender->Setup(m_Viewport.m_piViewport);
-			if(!bOk){RTTRACE("CGameGUIManager::UpdateScreenPlacement -> Failed to setup render");}
-		}
 	}
 	if(!bOk)
 	{
 		m_Render.Detach();
 		m_Viewport.Detach();
 	}
+	
+	if(bOk)
+	{
+		bOk=m_Render.m_piRender->Setup(m_Viewport.m_piViewport);
+		if(!bOk){RTTRACE("CGameGUIManager::Setup -> Failed to setup render");}
+	}
+	
+	if(bOk)
+	{
+		bOk=(m_MainWindow.Attach("GameGUI","MainWindow"));
+		if(!bOk){RTTRACE("CGameGUIManager::Setup -> Main window not found");}
+	}
+	if(bOk)
+	{
+		if(m_piRootWindow==NULL){m_piRootWindow=new CGameMainWindow(this);}
+		bOk=m_piRootWindow->InitWindow(m_piRootWindow,true);
+		if(bOk){bOk=m_MainWindow.m_piWindow->InitWindow(m_piRootWindow,false);}
+		if(bOk){m_piFocusedWindow=ADD(m_MainWindow.m_piWindow);}
+	}	
+	
+	m_bSetup=bOk;
+	
 	return bOk;
 }
 

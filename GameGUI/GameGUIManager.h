@@ -18,23 +18,14 @@
 
 #pragma once
 
+DECLARE_CUSTOM_WRAPPER1(CWindowWapper,IGameWindow,m_piWindow)
 DECLARE_CUSTOM_WRAPPER1(CRenderWrapper,IGenericRender,m_piRender)
 DECLARE_CUSTOM_WRAPPER1(CViewportWrapper,IGenericViewport,m_piViewport)
 
-class SGameGUIManagerUserSettings:virtual public CSystemSerializableBase
-{
-public:
-
-	SGameScreenProperties sScreenProperties;
-
-	BEGIN_PROP_MAP(SGameGUIManagerUserSettings)
-		PROP(sScreenProperties,"ScreenProperties");
-	END_PROP_MAP()
-};
-
 class CGameGUIManager :	virtual public CSystemObjectBase,virtual public IGameGUIManager,virtual public IGenericViewportCallBack
 {
-	IGameWindow *m_piMainWindow;
+	bool m_bSetup;
+	
 	IGameWindow *m_piFocusedWindow;
 	IGameWindow *m_piMouseCaptureWindow;
 
@@ -46,6 +37,8 @@ class CGameGUIManager :	virtual public CSystemObjectBase,virtual public IGameGUI
 
 	CRenderWrapper m_Render;
 	CViewportWrapper m_Viewport;
+	CWindowWapper m_MainWindow;
+	IGameWindow  *m_piRootWindow;
 
 	std::vector<IGameWindow*> m_vPopups;
 
@@ -56,7 +49,9 @@ class CGameGUIManager :	virtual public CSystemObjectBase,virtual public IGameGUI
 	IGameWindow *GetWindowFromPos(IGameWindow *piWindow,SGamePos *pPosition,bool bOnlyActive);
 
 	// IGenericViewportCallBack
-
+	
+	bool Setup();
+	
 	void OnRender();
 
 	void OnLButtonDown(unsigned x,unsigned y);
@@ -78,13 +73,9 @@ class CGameGUIManager :	virtual public CSystemObjectBase,virtual public IGameGUI
 	
 	void UpdateScreenPlacement();
 
-	bool Unserialize(ISystemPersistencyNode *piNode);
-
 public:
 
 	BEGIN_PROP_MAP(CGameGUIManager)
-		PROP_FLAGS(m_sUserSettingsFile,"UserSettingsFile",MRPF_NORMAL|MRPF_OPTIONAL);
-		PROP_FLAGS(m_sUserSettingsNode,"UserSettingsNode",MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_FLAGS(m_sScreenProperties,"Screen",MRPF_NORMAL|MRPF_OPTIONAL);
 	END_PROP_MAP()
 

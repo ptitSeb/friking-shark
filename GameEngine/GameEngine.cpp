@@ -86,7 +86,22 @@ void CGameEngineApp::Run()
 		{
 			CGameGUIManagerWrapper   guiManager;
 			guiManager.Attach("GameGUI","GUIManager");
-			if(guiManager.m_piInterface){guiManager.m_piInterface->EnterGUILoop();}
+			if(guiManager.m_piInterface)
+			{
+				if(guiManager.m_piInterface->Setup())
+				{
+					guiManager.m_piInterface->EnterGUILoop();
+				}
+				else
+				{
+					RTTRACE("CGameEngineApp::Run -> Failed to setup GUI Manager...");
+				}
+			}
+			else
+			{
+				RTTRACE("CGameEngineApp::Run -> Failed to attach to GUI Manager...");
+			}
+			
 			guiManager.Detach();
 			
 			RTTRACE("CGameEngineApp::Run -> Exiting, destroying game system ...");

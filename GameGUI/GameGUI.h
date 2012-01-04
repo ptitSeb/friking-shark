@@ -93,7 +93,8 @@ public:
 class IGameGUIManager:virtual public ISystemUnknown
 {
 public:
-
+	virtual bool Setup()=0; 
+	
 	virtual void EnterGUILoop()=0; 
 	virtual void ExitGUILoop()=0; 
 

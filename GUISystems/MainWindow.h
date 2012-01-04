@@ -68,6 +68,7 @@ public:
 	bool				  m_bEnableShadows;
 	EShadowQuality		  m_eShadowQuality;
 	std::string			  m_sRenderPath;
+	SGameScreenProperties m_sScreenProperties;
 
 	SPlayerRenderOptions(){m_bEnableShadows=true;m_eShadowQuality=eShadowQuality_High;}
 };
@@ -76,6 +77,7 @@ BEGIN_STRUCT_PROPS(SPlayerRenderOptions)
 	PROP_VALUE_FLAGS(m_bEnableShadows,"EnableShadows",true,MRPF_NORMAL|MRPF_OPTIONAL);
 	PROP_VALUE_FLAGS(m_eShadowQuality,"ShadowQuality",eShadowQuality_High,MRPF_NORMAL|MRPF_OPTIONAL);
 	PROP_VALUE_FLAGS(m_sRenderPath,"RenderPath","",MRPF_NORMAL|MRPF_OPTIONAL);
+	PROP_FLAGS(m_sScreenProperties,"Screen",MRPF_NORMAL|MRPF_OPTIONAL);
 END_STRUCT_PROPS()
 
 class SPlayerData: public CSystemSerializableBase
@@ -111,7 +113,7 @@ public:
 		PROP_FLAGS(m_vSavedGames,"SavedGames",MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_FLAGS(m_PlayerProfile,"Profile",MRPF_NORMAL|MRPF_OPTIONAL);
 
-		PROP_FLAGS(m_RenderOptions,"Render",MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_FLAGS(m_RenderOptions,"Video",MRPF_NORMAL|MRPF_OPTIONAL);
 	END_PROP_MAP()
 	
 	SPlayerData(){PersistencyDefaultValue();}
@@ -151,8 +153,11 @@ class CMainWindow: virtual public CGameWindowBase,virtual public IGameInterfaceW
 	SPlayerData m_PlayerData;
 	
 	void Destroy();
+	void DestroyWindow();
 	void SavePlayerData();
-
+	
+	bool Unserialize(ISystemPersistencyNode *piNode);
+	
 public:
 	// Sobrecarga para cambiar el valor por defecto del sistema de referencia.
 
