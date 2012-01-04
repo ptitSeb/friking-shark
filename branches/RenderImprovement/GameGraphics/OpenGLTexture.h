@@ -48,7 +48,6 @@ class COpenGLTexture : virtual public CSystemObjectBase,virtual public IGenericT
 	bool Unserialize(ISystemPersistencyNode *piNode);
 
 	bool CreateBackBuffer(bool bDepth,IGenericViewport *piViewport);
-	bool CreatePBuffer(bool bDepth);
 	bool CreateFrameBuffer(bool bDepth);
 	
 	bool SetupOpenGL(bool bFailureAllowed);
