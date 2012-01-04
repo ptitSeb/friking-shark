@@ -51,6 +51,8 @@ struct TBufferPool
 
 class COpenGLRender: virtual public CSystemObjectBase,virtual public IGenericRender
 {
+	bool				m_bSetup;
+	
 	bool				m_bIgnoreShaderSupport;
 	bool				m_bIgnoreInstancingSupport;
 	
@@ -305,7 +307,7 @@ public:
 	EShadowQuality  GetShadowQuality();
 	void            SetShadowQuality(EShadowQuality eQuality);
 
-	void			SetCurrentRenderPath(std::string sRenderPath);
+	bool			SetCurrentRenderPath(std::string sRenderPath);
 	std::string		GetCurrentRenderPath();
 	void			GetRenderPaths(std::vector<std::string> *pvRenderPaths);
 

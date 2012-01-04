@@ -30,6 +30,7 @@ COpenGLRender::COpenGLRender()
 {
 	SetShadowQuality(eShadowQuality_High);
 	
+	m_bSetup=false;
 	m_bIgnoreShaderSupport=false;
 	m_bIgnoreInstancingSupport=false;
 	m_piCurrentRenderPath=NULL;
@@ -105,6 +106,7 @@ void COpenGLRender::Destroy()
 	
 	RemoveLight(m_SunLight.m_piLight);
 	m_SunLight.Destroy();
+	m_bSetup=false;
 	
 	CSystemObjectBase::Destroy();
 }
@@ -129,8 +131,20 @@ bool COpenGLRender::Setup(IGenericViewport *piViewport)
 	m_sHardwareSupport.bObjectInstancing=GLEE_ARB_draw_instanced && !m_bIgnoreInstancingSupport;
 #endif		
 
+	if(m_piCurrentRenderPath)
+	{
+		if(!m_piCurrentRenderPath->Setup(this,m_piCurrentViewport,m_sHardwareSupport))
+		{
+			RTTRACE("COpenGLRender::Setup -> Failed to setup configured %s render path",m_piCurrentRenderPath->GetFriendlyName().c_str());
+			REL(m_piCurrentRenderPath);
+		}
+		else
+		{
+			RTTRACE("COpenGLRender::Setup -> Render path %s initialized",m_piCurrentRenderPath->GetFriendlyName().c_str());
+		}
+	}
+	
 	bool bOk=false;
-
 	for(unsigned int x=0;m_piCurrentRenderPath==NULL && x<m_vRenderPaths.size();x++)
 	{
 		std::string sName=m_vRenderPaths[x].m_piOpenGLRender->GetFriendlyName();
@@ -145,6 +159,7 @@ bool COpenGLRender::Setup(IGenericViewport *piViewport)
 			RTTRACE("COpenGLRender::Setup -> Render path %s initialized",sName.c_str());
 		}
 	}
+	m_bSetup=bOk=(m_piCurrentRenderPath!=NULL);
 	if(!bOk)
 	{
 		RTTRACE("COpenGLRender::Setup -> ERROR: Failed to setup a render path!");
@@ -419,27 +434,41 @@ void            COpenGLRender::SetShadowQuality(EShadowQuality eQuality)
 	}
 }
 
-void COpenGLRender::SetCurrentRenderPath(std::string sRenderPath)
+bool COpenGLRender::SetCurrentRenderPath(std::string sRenderPath)
 {
+	bool bOk=false;
+	
 	for(unsigned int x=0;x<m_vRenderPaths.size();x++)
 	{
 		if(m_vRenderPaths[x].m_piOpenGLRender->GetFriendlyName()==sRenderPath)
 		{
 			IOpenGLRender *piNewPath=m_vRenderPaths[x].m_piOpenGLRender;
-			if(m_piCurrentRenderPath==piNewPath){return;}
-			m_piCurrentRenderPath->Cleanup();
-			REL(m_piCurrentRenderPath);
+			IOpenGLRender *piOldPath=m_piCurrentRenderPath;
+			if(piOldPath==piNewPath){return true;}
 			m_piCurrentRenderPath=ADD(piNewPath);
-			if(!m_piCurrentRenderPath->Setup(this,m_piCurrentViewport,m_sHardwareSupport))
+			
+			if(m_bSetup)
 			{
-				RTTRACE("COpenGLRender::SetCurrentRenderPath -> Failed to setup %s render path",sRenderPath.c_str());
+				if(piOldPath){piOldPath->Cleanup();}
+				if(m_piCurrentRenderPath->Setup(this,m_piCurrentViewport,m_sHardwareSupport))
+				{
+					bOk=true;
+					RTTRACE("COpenGLRender::SetCurrentRenderPath -> Render path %s initialized",sRenderPath.c_str());
+				}
+				else
+				{
+					RTTRACE("COpenGLRender::SetCurrentRenderPath -> Failed to setup %s render path",sRenderPath.c_str());
+				}
 			}
 			else
 			{
-				RTTRACE("COpenGLRender::Setup -> Render path %s initialized",sRenderPath.c_str());
+				bOk=true;
+				RTTRACE("COpenGLRender::SetCurrentRenderPath -> Render path %s configured for delayed setup",sRenderPath.c_str());
 			}
+			REL(piOldPath);
 		}
 	}
+	return bOk;
 }
 
 std::string	COpenGLRender::GetCurrentRenderPath()
