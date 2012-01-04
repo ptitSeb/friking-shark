@@ -584,7 +584,7 @@ public:
 	virtual EShadowQuality  GetShadowQuality()=0;
 	virtual void            SetShadowQuality(EShadowQuality eQuality)=0;
 
-	virtual void			SetCurrentRenderPath(std::string sRenderPath)=0;
+	virtual bool			SetCurrentRenderPath(std::string sRenderPath)=0;
 	virtual std::string		GetCurrentRenderPath()=0;
 	virtual void			GetRenderPaths(std::vector<std::string> *pvRenderPaths)=0;
 
