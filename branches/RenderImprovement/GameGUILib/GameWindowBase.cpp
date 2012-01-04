@@ -32,7 +32,6 @@ CGameWindowBase::CGameWindowBase(void)
 	m_eReferenceSystem=eGameGUIReferenceSystem_Absolute;
 	m_eChildrenLayout=eGameGUIChildrenLayout_None;
 	m_dFontSize=0;
-	m_bRegisterOnCreation=false;
 	m_dSizeInLayout=0;
 	m_dLayoutMargin=0;
 	m_dLayoutSeparation=0;
@@ -881,20 +880,6 @@ bool CGameWindowBase::DetectDrag(double dx,double dy)
   return m_piGUIManager->DetectDrag(m_rRealRect.x+dx,m_rRealRect.y+dy);
 }
 
-bool CGameWindowBase::Unserialize( ISystemPersistencyNode *piNode )
-{
-	bool bOk=CSystemObjectBase::Unserialize(piNode);
-	if(bOk && m_bRegisterOnCreation)
-	{
-		CGameGUIManagerWrapper guiManager;
-		guiManager.Attach("GameGUI","GUIManager");
-		IGameWindow *piMainWindow=guiManager.m_piInterface->GetMainWindow();
-		InitWindow(piMainWindow,false);
-		Show(true);
-		REL(piMainWindow);
-	}
-	return bOk;
-}
 
 double  CGameWindowBase::GetSizeInLayout(){return m_dSizeInLayout;}
 void    CGameWindowBase::SetSizeInLayout(double dSize){m_dSizeInLayout=dSize;}

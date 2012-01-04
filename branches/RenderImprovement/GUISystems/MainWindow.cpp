@@ -39,6 +39,50 @@ CMainWindow::~CMainWindow(void)
 {
 }
 
+bool CMainWindow::Unserialize(ISystemPersistencyNode *piNode)
+{
+	bool bOk=CGameWindowBase::Unserialize(piNode);
+	if(bOk)
+	{
+		m_SoundManager.Attach("GameGUI","SoundManager");
+		
+		CConfigFile highScoresConfigFile;
+		CConfigFile playerProfileConfigFile;
+		
+		m_HighScoresTable.Create("GameGUI","CHighScoresTable","HighScoreTable");
+		if(highScoresConfigFile.Open("../Player/HighScores.cfg"))
+		{
+			m_HighScoresTable.m_piSerializable->Unserialize(highScoresConfigFile.GetNode("Local"));
+		}
+		if(playerProfileConfigFile.Open("../Player/PlayerProfiles.cfg"))
+		{
+			// Window is not initialized yet, we must attach GUI Manager by name.
+			CGenericRenderWrapper render;
+			CGameGUIManagerWrapper guiManager;
+			
+			render.Attach("GameGUI","Render");
+			guiManager.Attach("GameGUI","GUIManager");
+			
+			if(guiManager.m_piInterface){guiManager.m_piInterface->GetScreenProperties(&m_PlayerData.m_RenderOptions.m_sScreenProperties);}
+			m_PlayerData.Unserialize(playerProfileConfigFile.GetNode("Default"));
+			if(guiManager.m_piInterface){guiManager.m_piInterface->SetScreenProperties(&m_PlayerData.m_RenderOptions.m_sScreenProperties);}
+			if(render.m_piRender && m_PlayerData.m_RenderOptions.m_sRenderPath.length()){render.m_piRender->SetCurrentRenderPath(m_PlayerData.m_RenderOptions.m_sRenderPath);}
+		}
+		if(m_PlayerData.m_PlayerProfile.m_piPlayerProfile==NULL)
+		{
+			m_PlayerData.m_PlayerProfile.Create(m_piSystem,"CPlayerProfile","");
+		}
+		
+		if(m_SoundManager.m_piSoundManager)
+		{
+			m_SoundManager.m_piSoundManager->SetMasterVolume(m_PlayerData.m_nMasterVolume);
+			m_SoundManager.m_piSoundManager->SetGroupVolume("Music",m_PlayerData.m_nMusicVolume);
+			m_SoundManager.m_piSoundManager->SetGroupVolume("SoundFX",m_PlayerData.m_nSoundFXVolume);
+		}
+	}
+	return bOk;
+}
+
 bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 {
 	bool bResult=CGameWindowBase::InitWindow(piParent,bPopup);
@@ -52,10 +96,6 @@ bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 
 		if(bResult)
 		{
-			CConfigFile highScoresConfigFile;
-			CConfigFile playerProfileConfigFile;
-
-			m_SoundManager.Attach("GameGUI","SoundManager");
 			m_MainMenuDialog.Attach("GameGUI","MainMenu");
 			m_GameMenuDialog.Attach("GameGUI","GameMenu");
 			m_OptionsMenuDialog.Attach("GameGUI","OptionsMenu");
@@ -68,29 +108,6 @@ bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 			m_CreditsDialog.Attach("GameGUI","CreditsDialog");
 			m_LoadDialog.Attach("GameGUI","LoadDialog");
 			m_SaveDialog.Attach("GameGUI","SaveDialog");
-			m_HighScoresTable.Create("GameGUI","CHighScoresTable","HighScoreTable");
-			if(highScoresConfigFile.Open("../Player/HighScores.cfg"))
-			{
-				m_HighScoresTable.m_piSerializable->Unserialize(highScoresConfigFile.GetNode("Local"));
-			}
-			if(playerProfileConfigFile.Open("../Player/PlayerProfiles.cfg"))
-			{
-				m_PlayerData.Unserialize(playerProfileConfigFile.GetNode("Default"));
-			}
-			if(m_PlayerData.m_PlayerProfile.m_piPlayerProfile==NULL)
-			{
-				m_PlayerData.m_PlayerProfile.Create(m_piSystem,"CPlayerProfile","");
-			}
-			if(m_SoundManager.m_piSoundManager)
-			{
-				m_SoundManager.m_piSoundManager->SetMasterVolume(m_PlayerData.m_nMasterVolume);
-				m_SoundManager.m_piSoundManager->SetGroupVolume("Music",m_PlayerData.m_nMusicVolume);
-				m_SoundManager.m_piSoundManager->SetGroupVolume("SoundFX",m_PlayerData.m_nSoundFXVolume);
-			}
-
-			CGenericRenderWrapper render;
-			render.Attach("GameGUI","Render");
-			if(render.m_piRender && m_PlayerData.m_RenderOptions.m_sRenderPath.length()){render.m_piRender->SetCurrentRenderPath(m_PlayerData.m_RenderOptions.m_sRenderPath);}
 
 			if(m_piGameInterface)
 			{
@@ -146,10 +163,17 @@ void CMainWindow::SavePlayerData()
 	{
 		m_HighScoresTable.m_piSerializable->Serialize(highScoresConfigFile.AddNode("Local"));
 	}
+	
 	m_PlayerData.Serialize(playerProfileConfigFile.AddNode("Default"));
 
 	highScoresConfigFile.Save("../Player/HighScores.cfg");
 	playerProfileConfigFile.Save("../Player/PlayerProfiles.cfg");
+}
+
+void CMainWindow::DestroyWindow()
+{
+	if(m_piGUIManager){m_piGUIManager->GetScreenProperties(&m_PlayerData.m_RenderOptions.m_sScreenProperties);}
+	CGameWindowBase::DestroyWindow();
 }
 
 void CMainWindow::Destroy()

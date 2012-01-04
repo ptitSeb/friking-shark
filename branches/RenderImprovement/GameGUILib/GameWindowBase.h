@@ -79,7 +79,6 @@ protected:
 	double 					m_dLayoutMargin; // Desde los bordes de esta ventana al los hijos
 	double 					m_dLayoutSeparation; // Entre los hijos
 
-	bool m_bRegisterOnCreation;
 	bool m_bNavigateChildren;
 
 protected:
@@ -101,8 +100,6 @@ protected:
 
 	void UpdateChildrenRealRects();
 
-	bool Unserialize(ISystemPersistencyNode *piNode);
-
 	CLine GetMouseRay(double x,double y,double dLength,IGenericCamera *piCamera);
 
 	void 		 GetFocusableDescendants(IGameWindow *piParent,std::vector<IGameWindow *> *pvFocusableWindows);
@@ -118,7 +115,6 @@ protected:
 public:
 
 	BEGIN_PROP_MAP(CGameWindowBase)
-		PROP_VALUE_FLAGS(m_bRegisterOnCreation,"RegisterOnCreation",false,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_VALUE_FLAGS(m_bNavigateChildren,"NavigateChildren",false,MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_rRect,"Position",MRPF_NORMAL|MRPF_OPTIONAL)
 		PROP_FLAGS(m_vLoadedChildrenList,"Children",MRPF_NORMAL|MRPF_OPTIONAL)
