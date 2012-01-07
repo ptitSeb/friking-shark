@@ -70,6 +70,7 @@ class CPlayerManager: virtual public CSystemObjectBase,
 	double m_dPlayerDestinationForward;
 	
 	std::map<std::string,SKeyMapping> m_KeyboardMapping;
+	std::map<std::string,SJoystickButtonMapping> m_JoystickMapping;
 	
 	void PrepareResources();
 	
@@ -110,6 +111,7 @@ public:
 	void OnPlayerNameChanged(const std::string &sName);
 	void OnDifficultyChanged(double dDifficulty);
 	void OnKeyboardMappingChanged();
+	void OnJoystickMappingChanged();
 	
     // IGameManager
 

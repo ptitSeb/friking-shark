@@ -343,8 +343,16 @@ bool CPlayerManager::CheckKey(IGameGUIManager *piGUIManager,const char *pKeyName
 				}
 		}
 	}
+	std::map<std::string,SJoystickButtonMapping>::iterator iJoy=m_JoystickMapping.find(pKeyName);
+	if(iJoy!=m_JoystickMapping.end())
+	{
+		SJoystickButtonMapping &buttonMapping=iJoy->second;
+		if(piGUIManager->IsKeyDown(buttonMapping.nButton))
+		{
+			return true;
+		}
+	}
 	return false;
-	
 }
 
 void CPlayerManager::MovePlayer(unsigned long nKey,unsigned int dwCurrentTime,double dTimeFraction)
@@ -526,6 +534,7 @@ void CPlayerManager::SetPlayerProfile(IPlayerProfile *piProfile)
 	{
 		SUBSCRIBE_TO_CAST(m_PlayerProfile.m_piProfile,IPlayerProfileEvents);
 		m_PlayerProfile.m_piProfile->GetKeyboardMapping(&m_KeyboardMapping);
+		m_PlayerProfile.m_piProfile->GetJoystickMapping(&m_JoystickMapping);
 	}
 }
 
@@ -534,6 +543,11 @@ void CPlayerManager::OnDifficultyChanged(double dDifficulty){}
 void CPlayerManager::OnKeyboardMappingChanged()
 {
 	m_PlayerProfile.m_piProfile->GetKeyboardMapping(&m_KeyboardMapping);
+}
+
+void CPlayerManager::OnJoystickMappingChanged()
+{
+	m_PlayerProfile.m_piProfile->GetJoystickMapping(&m_JoystickMapping);
 }
 
 
