@@ -84,12 +84,12 @@ void CGameDialogBase::OnWantFocus(bool *pbWant){*pbWant=true;}
 
 void CGameDialogBase::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(nKey==GK_ESCAPE)
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Cancel,nKey))
 	{
 		EndDialog(DIALOG_CANCEL);
 		(*pbProcessed)=true;
 	}
-	else if(nKey==GK_RETURN)
+	else if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Accept,nKey))
 	{
 		EndDialog(DIALOG_OK);
 		(*pbProcessed)=true;

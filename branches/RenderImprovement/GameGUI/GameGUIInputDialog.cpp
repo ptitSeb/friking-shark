@@ -57,8 +57,8 @@ void CGameGUIInputDialog::OnButtonClicked(IGameGUIButton *piControl)
 
 void CGameGUIInputDialog::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(nKey==GK_ESCAPE){EndDialog(DIALOG_CANCEL);*pbProcessed=true;}
-	if(nKey==GK_RETURN)
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Cancel,nKey)){EndDialog(DIALOG_CANCEL);*pbProcessed=true;}
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Accept,nKey))
 	{
 		if(m_piEDText){m_sText=m_piEDText->GetText();}
 		EndDialog(DIALOG_OK);

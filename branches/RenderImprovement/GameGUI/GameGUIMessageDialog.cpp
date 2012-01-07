@@ -63,8 +63,8 @@ void CGameGUIMessageDialog::OnButtonClicked(IGameGUIButton *piControl)
 
 void CGameGUIMessageDialog::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(nKey==GK_ESCAPE){EndDialog(DIALOG_OK);*pbProcessed=true;}
-	if(nKey==GK_RETURN){EndDialog(DIALOG_OK);*pbProcessed=true;}
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Cancel,nKey)){EndDialog(DIALOG_OK);*pbProcessed=true;}
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Accept,nKey)){EndDialog(DIALOG_OK);*pbProcessed=true;}
 }
 
 void CGameGUIMessageDialog::ShowMessage(IGameWindow *piParent,std::string sText,std::string sTitle,EMessageDialogType eType)

@@ -93,7 +93,7 @@ void CGameGUIButton::PlayHoverSound()
 
 void CGameGUIButton::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(m_bWantFocus && (nKey==' ' || nKey==GK_RETURN || nKey==GK_JOY0))
+	if(m_bWantFocus && m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Accept,nKey))
 	{
 		*pbProcessed=true;
 		if(m_bSoundsEnabled && m_piClickSound){m_piClickSound->Play();}

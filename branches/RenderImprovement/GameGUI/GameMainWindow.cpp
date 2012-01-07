@@ -205,7 +205,7 @@ void CGameMainWindow::OnCharacter( int nKey,bool *pbProcessed )
 
 void CGameMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(nKey==GK_ESCAPE)
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Cancel,nKey))
 	{
 		m_piGUIManager->ExitGUILoop();
 	}
