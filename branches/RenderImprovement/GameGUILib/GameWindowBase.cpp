@@ -519,7 +519,7 @@ IGameWindow *CGameWindowBase::GetFocusableAncestor()
 
 IGameWindow *CGameWindowBase::FindClosestFocusableWindow(IGameWindow *pReference,EFocusableSearchDirection eDirection)
 {
-	if(pReference==NULL){return FindNextFocusableWindow(NULL);}
+	if(pReference==NULL){return NULL;}
 	
 	IGameWindow *piResult=NULL;
 	std::vector<IGameWindow *> vFocusableWindows;
@@ -570,14 +570,7 @@ IGameWindow *CGameWindowBase::FindClosestFocusableWindow(IGameWindow *pReference
 		REL(piWindow);
 	}
 	
-	if(piResult)
-	{
-		return piResult;
-	}
-	else
-	{
-		return ADD(pReference);
-	}
+	return piResult;
 }
 
 IGameWindow *CGameWindowBase::FindNextFocusableWindow(IGameWindow *pReference)
