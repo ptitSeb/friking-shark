@@ -59,7 +59,8 @@ struct SAndroidInputEvent
 		y=0;
 	}
 };
-
+#elif defined WIN32
+	#include <mmsystem.h>
 #endif
 
 
@@ -67,6 +68,7 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 {
 	
 	unsigned int m_nJoystickButtons;
+	int m_nJoystickDevice;
 	int m_nJoystickXAxis;
 	int m_nJoystickYAxis;
 	double m_dJoystickDeadZone;
@@ -78,7 +80,7 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 		int			m_nPixelFormatIndex;
 		int			m_nLastMouseMoveX;
 		int			m_nLastMouseMoveY;
-
+		JOYCAPS		m_JoystickCaps;
 		void UpdateJoystick();
 		
 		void OnCreate(HWND hWnd);
@@ -88,8 +90,6 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 		static BOOL CALLBACK PrimaryMonitorEnumerationCallBack(HMONITOR hMonitor,HDC hdcMonitor,LPRECT lprcMonitor,LPARAM dwData);
 	#elif defined LINUX
 
-		int m_nJoystickDevice;
-		
 		void UpdateJoystick(bool bGenerateEvents);
 		
 		static int CustomXIOErrorHandler(Display*);
