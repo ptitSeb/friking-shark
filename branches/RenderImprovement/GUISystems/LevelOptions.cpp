@@ -169,10 +169,10 @@ bool CLevelOptions::SelectOptions(IGameWindow *piParent,unsigned int nAvailableL
 
 void CLevelOptions::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(nKey==GK_RETURN){return;}
-	if(nKey==GK_ESCAPE){m_piBTOk->PlayClickSound();}
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Accept,nKey)){return;}
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Cancel,nKey)){m_piBTOk->PlayClickSound();}
 	
-	if(nKey==GK_LEFT && m_piBTDifficulty && m_piGUIManager->HasFocus(m_piBTDifficulty))
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Left,nKey) && m_piBTDifficulty && m_piGUIManager->HasFocus(m_piBTDifficulty))
 	{
 		int nDifficulty=m_eDifficulty;
 		nDifficulty--;
@@ -184,7 +184,7 @@ void CLevelOptions::OnKeyDown(int nKey,bool *pbProcessed)
 		*pbProcessed=true;
 		return;
 	}
-	if(nKey==GK_RIGHT && m_piBTDifficulty && m_piGUIManager->HasFocus(m_piBTDifficulty))
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Right,nKey) && m_piBTDifficulty && m_piGUIManager->HasFocus(m_piBTDifficulty))
 	{
 		unsigned int nDifficulty=m_eDifficulty;
 		nDifficulty++;
@@ -196,7 +196,7 @@ void CLevelOptions::OnKeyDown(int nKey,bool *pbProcessed)
 		*pbProcessed=true;
 		return;
 	}
-	if(nKey==GK_LEFT && m_piBTMode && m_piGUIManager->HasFocus(m_piBTMode))
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Left,nKey) && m_piBTMode && m_piGUIManager->HasFocus(m_piBTMode))
 	{
 		int nMode=m_eMode;
 		nMode--;
@@ -208,7 +208,7 @@ void CLevelOptions::OnKeyDown(int nKey,bool *pbProcessed)
 		*pbProcessed=true;
 		return;
 	}
-	if(nKey==GK_RIGHT && m_piBTMode && m_piGUIManager->HasFocus(m_piBTMode))
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Right,nKey) && m_piBTMode && m_piGUIManager->HasFocus(m_piBTMode))
 	{
 		unsigned int nMode=m_eMode;
 		nMode++;

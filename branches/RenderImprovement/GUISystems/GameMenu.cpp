@@ -70,8 +70,8 @@ eGameMenuAction CGameMenu::Show(IGameWindow *piParent)
 
 void CGameMenu::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(nKey==GK_RETURN){return;}
-	if(nKey==GK_ESCAPE){m_piBTContinue->PlayClickSound();}
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Accept,nKey)){return;}
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Cancel,nKey)){m_piBTContinue->PlayClickSound();}
 	CGameDialogBase::OnKeyDown(nKey,pbProcessed);
 }
 

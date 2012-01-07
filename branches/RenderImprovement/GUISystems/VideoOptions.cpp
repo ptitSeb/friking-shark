@@ -161,24 +161,24 @@ bool CVideoOptions::Show(IGameWindow *piParent)
 
 void CVideoOptions::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(nKey==GK_RETURN){return;}
-	if(nKey==GK_ESCAPE){m_piBTOk->PlayClickSound();}
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Accept,nKey)){return;}
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Cancel,nKey)){m_piBTOk->PlayClickSound();}
 
-	if((nKey==GK_LEFT || nKey==GK_RIGHT )&& m_piBTFullScreen && m_piGUIManager->HasFocus(m_piBTFullScreen))
+	if((m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Left,nKey) || m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Right,nKey)) && m_piBTFullScreen && m_piGUIManager->HasFocus(m_piBTFullScreen))
 	{
 		m_piBTFullScreen->PlayClickSound();
 		OnButtonClicked(m_piBTFullScreen);
 		*pbProcessed=true;
 		return;
 	}
-	if((nKey==GK_LEFT || nKey==GK_RIGHT )&& m_piBTVerticalSync && m_piGUIManager->HasFocus(m_piBTVerticalSync))
+	if((m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Left,nKey) || m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Right,nKey) )&& m_piBTVerticalSync && m_piGUIManager->HasFocus(m_piBTVerticalSync))
 	{
 		m_piBTVerticalSync->PlayClickSound();
 		OnButtonClicked(m_piBTVerticalSync);
 		*pbProcessed=true;
 		return;
 	}
-	if(nKey==GK_LEFT && m_piBTShadows && m_GameInterface.m_piInterfaceWindow && m_piGUIManager->HasFocus(m_piBTShadows))
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Left,nKey) && m_piBTShadows && m_GameInterface.m_piInterfaceWindow && m_piGUIManager->HasFocus(m_piBTShadows))
 	{
 		bool bEnable=true;
 		int nShadows=m_GameInterface.m_piInterfaceWindow->AreShadowsEnabled()?m_GameInterface.m_piInterfaceWindow->GetShadowQuality():eShadowQuality_Count;
@@ -200,7 +200,7 @@ void CVideoOptions::OnKeyDown(int nKey,bool *pbProcessed)
 		*pbProcessed=true;
 		return;
 	}
-	if(nKey==GK_RIGHT && m_piBTShadows && m_GameInterface.m_piInterfaceWindow && m_piGUIManager->HasFocus(m_piBTShadows))
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Right,nKey) && m_piBTShadows && m_GameInterface.m_piInterfaceWindow && m_piGUIManager->HasFocus(m_piBTShadows))
 	{
 		bool bEnable=true;
 		int nShadows=m_GameInterface.m_piInterfaceWindow->AreShadowsEnabled()?m_GameInterface.m_piInterfaceWindow->GetShadowQuality():eShadowQuality_Count;
@@ -223,7 +223,7 @@ void CVideoOptions::OnKeyDown(int nKey,bool *pbProcessed)
 		return;
 	}
 
-	if(nKey==GK_LEFT && m_piBTRender && m_Render.m_piRender && m_piGUIManager->HasFocus(m_piBTRender))
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Left,nKey) && m_piBTRender && m_Render.m_piRender && m_piGUIManager->HasFocus(m_piBTRender))
 	{
 		for(unsigned int x=0;x<m_vRenderPaths.size();x++)
 		{
@@ -240,7 +240,7 @@ void CVideoOptions::OnKeyDown(int nKey,bool *pbProcessed)
 		*pbProcessed=true;
 		return;
 	}
-	if(nKey==GK_RIGHT && m_piBTRender && m_Render.m_piRender && m_piGUIManager->HasFocus(m_piBTRender))
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Right,nKey) && m_piBTRender && m_Render.m_piRender && m_piGUIManager->HasFocus(m_piBTRender))
 	{
 		for(unsigned int x=0;x<m_vRenderPaths.size();x++)
 		{

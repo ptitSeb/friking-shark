@@ -35,12 +35,12 @@ CMainMenu::~CMainMenu(void)
 
 void CMainMenu::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(nKey==GK_ESCAPE)
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Cancel,nKey))
 	{
 		*pbProcessed=true;
 		return;
 	}
-	if(nKey==GK_RETURN){return;}
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Accept,nKey)){return;}
 	CGameDialogBase::OnKeyDown(nKey,pbProcessed);
 }
 

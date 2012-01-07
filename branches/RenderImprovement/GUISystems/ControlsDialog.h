@@ -22,9 +22,10 @@
 
 DECLARE_CUSTOM_WRAPPER1(CKeyCaptureDialogWrapper,IKeyCaptureDialog,m_piKeyCaptureDialog)
 
-
-class CControlsDialog: virtual public CGameDialogBase,virtual public IGameGUIButtonEvents, virtual public IControlsDialog
+class CControlsDialog: virtual public CGameDialogBase,virtual public IGameGUISliderEvents,virtual public IGameGUIButtonEvents, virtual public IControlsDialog
 {
+	bool m_bShowKeyboardControls;	
+
 	CKeyCaptureDialogWrapper m_KeyCaptureDialog;
 	
 	SKeyMapping m_UpKeyMapping;
@@ -33,23 +34,44 @@ class CControlsDialog: virtual public CGameDialogBase,virtual public IGameGUIBut
 	SKeyMapping m_RightKeyMapping;
 	SKeyMapping m_FireKeyMapping;
 	SKeyMapping m_BombKeyMapping;
-	
-	IGameGUIButton *m_piBTUpA;
-	IGameGUIButton *m_piBTDownA;
-	IGameGUIButton *m_piBTLeftA;
-	IGameGUIButton *m_piBTRightA;
-	IGameGUIButton *m_piBTBombA;
-	IGameGUIButton *m_piBTFireA;
+
+	double m_dJoystickDeadZone;
+
+	SJoystickButtonMapping m_FireJoyMapping;
+	SJoystickButtonMapping m_BombJoyMapping;
+	SJoystickButtonMapping m_BackJoyMapping;
+
+	IGameWindow    *m_piSTKeyboardControls;
+	IGameWindow    *m_piSTJoystickControls;
+	IGameGUIButton *m_piBTControls;
+
+	IGameGUIButton *m_piBTKeyUp;
+	IGameGUIButton *m_piBTKeyDown;
+	IGameGUIButton *m_piBTKeyLeft;
+	IGameGUIButton *m_piBTKeyRight;
+	IGameGUIButton *m_piBTKeyBomb;
+	IGameGUIButton *m_piBTKeyFire;
+	IGameGUIButton *m_piBTJoyBomb;
+	IGameGUIButton *m_piBTJoyFire;
+	IGameGUIButton *m_piBTJoyBack;
 	IGameGUIButton *m_piBTOk;
-	
-	
+	IGameGUISlider *m_piSLJoyDeadZone;
+
+		
 	BEGIN_CHILD_MAP()
-		CHILD_MAP_ENTRY_EX("UpA",m_piBTUpA,IGameGUIButtonEvents);	
-		CHILD_MAP_ENTRY_EX("DownA",m_piBTDownA,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("LeftA",m_piBTLeftA,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("RightA",m_piBTRightA,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("BombA",m_piBTBombA,IGameGUIButtonEvents);
-		CHILD_MAP_ENTRY_EX("FireA",m_piBTFireA,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY("KeyboardControls",m_piSTKeyboardControls);	
+		CHILD_MAP_ENTRY("JoystickControls",m_piSTJoystickControls);	
+		CHILD_MAP_ENTRY_EX("Controls",m_piBTControls,IGameGUIButtonEvents);	
+		CHILD_MAP_ENTRY_EX("KeyUp",m_piBTKeyUp,IGameGUIButtonEvents);	
+		CHILD_MAP_ENTRY_EX("KeyDown",m_piBTKeyDown,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("KeyLeft",m_piBTKeyLeft,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("KeyRight",m_piBTKeyRight,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("KeyBomb",m_piBTKeyBomb,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("KeyFire",m_piBTKeyFire,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("JoyDeadZone",m_piSLJoyDeadZone,IGameGUISliderEvents);
+		CHILD_MAP_ENTRY_EX("JoyBomb",m_piBTJoyBomb,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("JoyFire",m_piBTJoyFire,IGameGUIButtonEvents);
+		CHILD_MAP_ENTRY_EX("JoyBack",m_piBTJoyBack,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("Ok",m_piBTOk,IGameGUIButtonEvents);
 	END_CHILD_MAP()
 	
@@ -59,9 +81,12 @@ class CControlsDialog: virtual public CGameDialogBase,virtual public IGameGUIBut
 	END_PROP_MAP()
 	
 	void UpdateRow(IGameGUIButton *piKey1Button, SKeyMapping *pKeyMapping);
+	void UpdateRow(IGameGUIButton *piJoyButton,SJoystickButtonMapping *pJoyMapping);
 	void UpdateGUI();
+	void UpdateGUIControls();
 	
-	void ProcessKeyChange(SKeyMapping *pKeyMapping, unsigned int nIndex);
+	void ProcessKeyChange(SKeyMapping *pKeyMapping);
+	void ProcessJoystickButtonChange(SJoystickButtonMapping *pJoyMapping);
 	
 public:
 	void OnInitDialog();
@@ -72,6 +97,10 @@ public:
 	// IGameButtonEvents
 
 	void OnButtonClicked(IGameGUIButton *piControl);
+
+	// IGameSliderEvents
+
+	void OnSliderValueChanged(IGameGUISlider *piControl,double dValue);
 
 	CControlsDialog(void);
 	~CControlsDialog(void);
