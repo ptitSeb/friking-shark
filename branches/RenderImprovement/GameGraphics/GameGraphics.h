@@ -156,6 +156,8 @@ public:
 	virtual bool SetWindowed(unsigned int x,unsigned int y,unsigned int w,unsigned int h)=0;
 	virtual bool SetFullScreen(unsigned int w,unsigned int h,unsigned int bpp,unsigned int rate)=0;
 
+	virtual void 	SetJoystickDeadZone(double dDeadZone)=0;
+	virtual double  GetJoystickDeadZone()=0;
 };
 
 class IGenericRender;
