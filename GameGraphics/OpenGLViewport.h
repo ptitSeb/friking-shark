@@ -22,6 +22,19 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
+
+struct SJoystickEvent 
+{
+	u_int32_t time;     /* event timestamp in milliseconds */
+	int16_t value;    /* value */
+	u_int8_t type;      /* event type */
+	u_int8_t number;    /* axis/button number */
+};
+
+#define JS_EVENT_BUTTON         0x01    /* button pressed/released */
+#define JS_EVENT_AXIS           0x02    /* joystick moved */
+#define JS_EVENT_INIT           0x80    /* initial state of device */
+
 #elif defined ANDROID
 #include <android/configuration.h>
 #include <android/looper.h>
@@ -52,6 +65,12 @@ struct SAndroidInputEvent
 
 class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericViewport
 {
+	
+	unsigned int m_nJoystickButtons;
+	int m_nJoystickXAxis;
+	int m_nJoystickYAxis;
+	double m_dJoystickDeadZone;
+	
 	#ifdef WIN32
 		HDC			m_hDC;
 		HGLRC		m_hRenderContext;
@@ -60,18 +79,18 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 		int			m_nLastMouseMoveX;
 		int			m_nLastMouseMoveY;
 
-		unsigned int m_nJoystickButtons;
-		int m_nJoystickXAxis;
-		int m_nJoystickYAxis;
-
 		void UpdateJoystick();
-
+		
 		void OnCreate(HWND hWnd);
 		void OnDestroy();
 		LRESULT ProcessMessage(HWND hWnd,UINT  uMsg, WPARAM  wParam,LPARAM  lParam);
 		static LRESULT WindowProc(HWND  hWnd,UINT  uMsg, WPARAM  wParam,LPARAM  lParam);
 		static BOOL CALLBACK PrimaryMonitorEnumerationCallBack(HMONITOR hMonitor,HDC hdcMonitor,LPRECT lprcMonitor,LPARAM dwData);
 	#elif defined LINUX
+
+		int m_nJoystickDevice;
+		
+		void UpdateJoystick(bool bGenerateEvents);
 		
 		static int CustomXIOErrorHandler(Display*);
 		
@@ -207,6 +226,9 @@ public:
 
 	bool SetWindowed(unsigned int x,unsigned int y,unsigned int w,unsigned int h);
 	bool SetFullScreen(unsigned int w,unsigned int h,unsigned int bpp,unsigned int rate);
+	
+	void 	SetJoystickDeadZone(double dDeadZone);
+	double  GetJoystickDeadZone();
 	
 	 COpenGLViewport(void);
 	~COpenGLViewport(void);
