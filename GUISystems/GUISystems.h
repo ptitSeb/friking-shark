@@ -126,7 +126,8 @@ class IKeyCaptureDialog: virtual public ISystemUnknown
 public:
 	
 	virtual bool CaptureKey(IGameWindow *piParent,unsigned int *pKey)=0;
-	
+	virtual bool CaptureJoystickButton(IGameWindow *piParent,unsigned int *pButton)=0;
+
 	virtual ~IKeyCaptureDialog(){}
 };
 

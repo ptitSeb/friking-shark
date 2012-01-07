@@ -133,12 +133,12 @@ int	CHighScoresDialog::Execute(IGameWindow *piParent)
 
 void CHighScoresDialog::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(nKey==GK_ESCAPE){m_piBTOk->PlayClickSound();}
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Cancel,nKey)){m_piBTOk->PlayClickSound();}
 	
 	if(m_nEditConfirmBlinkStart==0 &&
 		m_nEditCommittedStart==0 && 
 		m_nScoreToEdit!=-1 &&
-		(nKey==GK_ESCAPE || nKey==GK_RETURN))
+		(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Cancel,nKey) || m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Accept,nKey)))
 	{
 		if(m_piEDName){m_piEDName->Show(false);}
 		m_nEditConfirmBlinkStart=GetTimeStamp();

@@ -20,15 +20,26 @@
 
 class CKeyCaptureDialog: virtual public CGameDialogBase,virtual public IKeyCaptureDialog
 {
+	bool m_bCapturingJoystickButton;
+
 	unsigned int m_nKey;
+	
+	IGameGUILabel *m_piSTText;
+	IGameGUILabel *m_piSTCancelText;
 	
 public:
 
 	bool CaptureKey(IGameWindow *piParent,unsigned int *pKey);
+	bool CaptureJoystickButton(IGameWindow *piParent,unsigned int *pButton);
 	
+	void OnInitDialog();
 	void OnKeyDown(int nKey,bool *pbProcessed);
 	
-
+	BEGIN_CHILD_MAP()
+		CHILD_MAP_ENTRY("Text",m_piSTText);
+		CHILD_MAP_ENTRY("CancelText",m_piSTCancelText);
+	END_CHILD_MAP()
+	
 	CKeyCaptureDialog(void);
 	~CKeyCaptureDialog(void);
 };

@@ -33,14 +33,14 @@ COptionsMenu::~COptionsMenu(void)
 
 void COptionsMenu::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(nKey==GK_ESCAPE)
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Cancel,nKey))
 	{
 		m_piBTBack->PlayClickSound();
 		EndDialog(eOptionsMenuAction_Back);
 		*pbProcessed=true;
 		return;
 	}
-	if(nKey==GK_RETURN){return;}
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Accept,nKey)){return;}
 	CGameDialogBase::OnKeyDown(nKey,pbProcessed);
 }
 

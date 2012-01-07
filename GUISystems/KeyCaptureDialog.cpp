@@ -24,6 +24,7 @@
 
 CKeyCaptureDialog::CKeyCaptureDialog(void)
 {
+	m_bCapturingJoystickButton=false;
 	m_nKey=0;
 }
 
@@ -31,16 +32,53 @@ CKeyCaptureDialog::~CKeyCaptureDialog(void)
 {
 }
 
+void CKeyCaptureDialog::OnInitDialog()
+{
+	CGameDialogBase::OnInitDialog();
+	if(m_piSTText){m_piSTText->SetText(m_bCapturingJoystickButton?"Press the joystick button now...":"Press the key now...");}
+	if(m_piSTCancelText)
+	{
+		std::string sKeyName;
+		std::string sText="(";
+		SGameGUIAdditionalNavigationControls sControls;
+		m_piGUIManager->GetAdditionalNavigationControls(&sControls);
+		m_piGUIManager->GetKeyName(GK_ESCAPE,&sKeyName);
+		sText+=sKeyName;
+		
+		if(sControls.nKeyboardCancel)
+		{
+			m_piGUIManager->GetKeyName(sControls.nKeyboardCancel,&sKeyName);
+			sText+=" or ";
+			sText+=sKeyName;
+		}
+		if(sControls.nJoystickCancel)
+		{
+			m_piGUIManager->GetKeyName(sControls.nJoystickCancel,&sKeyName);
+			sText+=" or ";
+			sText+=sKeyName;
+		}
+		
+		sText+=" to cancel)";
+		m_piSTCancelText->SetText(sText);
+	}
+}
+	
 void CKeyCaptureDialog::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(nKey==GK_ESCAPE)
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Cancel,nKey))
 	{
 		CGameDialogBase::OnKeyDown(nKey,pbProcessed);
 		return;	
 	}
-	
-	m_nKey=nKey;
-	EndDialog(DIALOG_OK);
+	bool bJoyButton=(nKey>=GK_JOY_BUTTON_FIRST && nKey<=GK_JOY_BUTTON_LAST);
+	bool bJoyKey=(nKey>=GK_JOY_FIRST && nKey<=GK_JOY_LAST);
+	if((m_bCapturingJoystickButton && bJoyButton) ||
+	   (!m_bCapturingJoystickButton && !bJoyKey))
+	{
+		*pbProcessed=true;
+		m_nKey=nKey;
+		EndDialog(DIALOG_OK);
+	}
 }
 
 bool CKeyCaptureDialog::CaptureKey(IGameWindow *piParent,unsigned int *pKey)
@@ -48,5 +86,15 @@ bool CKeyCaptureDialog::CaptureKey(IGameWindow *piParent,unsigned int *pKey)
 	m_nKey=0;
 	Execute(piParent);
 	*pKey=m_nKey;
+	return m_nKey!=0;
+}
+
+bool CKeyCaptureDialog::CaptureJoystickButton(IGameWindow *piParent,unsigned int *pButton)
+{
+	m_bCapturingJoystickButton=true;
+	m_nKey=0;
+	Execute(piParent);
+	*pButton=m_nKey;
+	m_bCapturingJoystickButton=false;
 	return m_nKey!=0;
 }

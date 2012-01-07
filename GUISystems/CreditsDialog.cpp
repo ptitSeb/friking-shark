@@ -52,7 +52,7 @@ void CCreditsDialog::OnButtonClicked(IGameGUIButton *piControl)
 
 void CCreditsDialog::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(nKey==GK_RETURN){return;}
-	if(nKey==GK_ESCAPE){m_piBTOk->PlayClickSound();}
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Accept,nKey)){return;}
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Cancel,nKey)){m_piBTOk->PlayClickSound();}
 	CGameDialogBase::OnKeyDown(nKey,pbProcessed);
 }

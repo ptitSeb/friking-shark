@@ -116,6 +116,33 @@ bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 			}
 		}
 		
+		if(m_PlayerData.m_PlayerProfile.m_piPlayerProfile)
+		{
+			SKeyMapping upKeyMapping,downKeyMapping,leftKeyMapping,rightKeyMapping,fireKeyMapping;
+			SJoystickButtonMapping fireJoyMapping,backJoyMapping;
+			
+			SGameGUIAdditionalNavigationControls controls;
+			m_PlayerData.m_PlayerProfile.m_piPlayerProfile->GetKeyMapping("MoveForward",&upKeyMapping);
+			m_PlayerData.m_PlayerProfile.m_piPlayerProfile->GetKeyMapping("MoveBackward",&downKeyMapping);
+			m_PlayerData.m_PlayerProfile.m_piPlayerProfile->GetKeyMapping("MoveLeft",&leftKeyMapping);
+			m_PlayerData.m_PlayerProfile.m_piPlayerProfile->GetKeyMapping("MoveRight",&rightKeyMapping);
+			m_PlayerData.m_PlayerProfile.m_piPlayerProfile->GetKeyMapping("FireBullets",&fireKeyMapping);
+			m_PlayerData.m_PlayerProfile.m_piPlayerProfile->GetJoystickButtonMapping("FireBullets",&fireJoyMapping);
+			m_PlayerData.m_PlayerProfile.m_piPlayerProfile->GetJoystickButtonMapping("Back",&backJoyMapping);
+			
+			controls.nKeyboardLeft=(leftKeyMapping.vValidCombinations.size())?leftKeyMapping.vValidCombinations[0].nKey:0;
+			controls.nKeyboardRight=(rightKeyMapping.vValidCombinations.size())?rightKeyMapping.vValidCombinations[0].nKey:0;
+			controls.nKeyboardUp=(upKeyMapping.vValidCombinations.size())?upKeyMapping.vValidCombinations[0].nKey:0;
+			controls.nKeyboardDown=(downKeyMapping.vValidCombinations.size())?downKeyMapping.vValidCombinations[0].nKey:0;
+			controls.nKeyboardAccept=(fireKeyMapping.vValidCombinations.size())?fireKeyMapping.vValidCombinations[0].nKey:0;
+			controls.nKeyboardCancel=0;
+			controls.nJoystickAccept=fireJoyMapping.nButton;
+			controls.nJoystickCancel=backJoyMapping.nButton;
+			
+			m_piGUIManager->SetJoystickDeadZone(m_PlayerData.m_PlayerProfile.m_piPlayerProfile->GetJoystickDeadZone());
+			m_piGUIManager->SetAdditionalNavigationControls(&controls);
+		}
+		
 		if(m_piSTBackground)
 		{
 			m_piSTBackground->Show(true);
@@ -294,10 +321,10 @@ void CMainWindow::OnKeyDown(int nKey,bool *pbProcessed)
 		m_piSTBackground->Show(false);
 		m_piSTBackground->SetText("");
 		
-		if(nKey==GK_ESCAPE){*pbProcessed=true;return;}
+		if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Cancel,nKey)){*pbProcessed=true;return;}
 	}
 	
-	if(nKey==GK_ESCAPE)
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Cancel,nKey))
 	{
 		*pbProcessed=true;
 		if(m_eStage==eInterfaceStage_MainMenu)
