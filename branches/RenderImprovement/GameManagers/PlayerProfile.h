@@ -18,6 +18,7 @@
 
 #pragma once
 
+#define DEFAULT_JOYSTICK_DEAD_ZONE 0.25
 
 BEGIN_STRUCT_PROPS(SKeyCombination)
 	PROP(nKey,"Key");
@@ -30,14 +31,21 @@ BEGIN_STRUCT_PROPS(SKeyMapping)
 	PROP(sFriendlyName,"FriendlyName");
 END_STRUCT_PROPS()
 
+BEGIN_STRUCT_PROPS(SJoystickButtonMapping)
+	PROP(nButton,"Button");
+	PROP(sFriendlyName,"FriendlyName");
+END_STRUCT_PROPS()
+
 class CPlayerProfile: virtual public CSystemObjectBase,
                         virtual public CSystemSerializableBase,
                         virtual public IPlayerProfile
 {
 	
 	std::map<std::string,SKeyMapping> m_KeyboardMapping;
+	std::map<std::string,SJoystickButtonMapping> m_JoystickMapping;
 	double		m_dDifficulty;
 	std::string m_sPlayerName;
+	double      m_dJoystickDeadZone;
 
 public:
 
@@ -56,10 +64,21 @@ public:
 	void 	GetKeyMapping(std::string,SKeyMapping *pMapping);
 	void 	SetKeyMapping(std::string,SKeyMapping *pMapping);
 	
+	double  GetJoystickDeadZone();
+	void    SetJoystickDeadZone(double dZone);
+	
+	void 	GetJoystickMapping(std::map<std::string,SJoystickButtonMapping> *pMapping);
+	void 	SetJoystickMapping(std::map<std::string,SJoystickButtonMapping> *pMapping);
+	
+	void 	GetJoystickButtonMapping(std::string,SJoystickButtonMapping *pMapping);
+	void 	SetJoystickButtonMapping(std::string,SJoystickButtonMapping *pMapping);
+	
 	BEGIN_PROP_MAP(CPlayerProfile)
 		PROP(m_sPlayerName,"Name");
 		PROP(m_dDifficulty,"Difficulty");
 		PROP(m_KeyboardMapping,"KeyboardMapping");
+		PROP_FLAGS(m_JoystickMapping,"JoystickMapping",MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_VALUE_FLAGS(m_dJoystickDeadZone,"JoystickDeadZone",DEFAULT_JOYSTICK_DEAD_ZONE,MRPF_NORMAL|MRPF_OPTIONAL);
 	END_PROP_MAP();
 
     CPlayerProfile(void);

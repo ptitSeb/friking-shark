@@ -609,6 +609,14 @@ struct SKeyMapping
 	std::string sFriendlyName;
 };
 
+struct SJoystickButtonMapping
+{
+	int nButton;
+	std::string sFriendlyName;
+
+	SJoystickButtonMapping(){nButton=0;}
+};
+
 struct IPlayerProfile:virtual public ISystemUnknown
 {
 	virtual void 		SetPlayerName(std::string sName)=0;
@@ -623,6 +631,15 @@ struct IPlayerProfile:virtual public ISystemUnknown
 	virtual void 	GetKeyMapping(std::string,SKeyMapping *pMapping)=0;
 	virtual void 	SetKeyMapping(std::string,SKeyMapping *pMapping)=0;
 	
+	virtual double  GetJoystickDeadZone()=0;
+	virtual void    SetJoystickDeadZone(double dZone)=0;
+	
+	virtual void 	GetJoystickMapping(std::map<std::string,SJoystickButtonMapping> *pMapping)=0;
+	virtual void 	SetJoystickMapping(std::map<std::string,SJoystickButtonMapping> *pMapping)=0;
+	
+	virtual void 	GetJoystickButtonMapping(std::string,SJoystickButtonMapping *pMapping)=0;
+	virtual void 	SetJoystickButtonMapping(std::string,SJoystickButtonMapping *pMapping)=0;
+	
 };
 
 struct IPlayerProfileEvents:virtual public ISystemUnknown
@@ -630,6 +647,7 @@ struct IPlayerProfileEvents:virtual public ISystemUnknown
 	virtual void OnPlayerNameChanged(const std::string &sName)=0;
 	virtual void OnDifficultyChanged(double dDifficulty)=0;
 	virtual void OnKeyboardMappingChanged()=0;
+	virtual void OnJoystickMappingChanged()=0;
 };
 
 enum EPlayerManagerGameStage
