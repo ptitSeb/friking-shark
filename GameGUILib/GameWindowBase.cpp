@@ -493,7 +493,10 @@ void CGameWindowBase::GetFocusableDescendants(IGameWindow *piParent,std::vector<
 		}
 		else
 		{
-			GetFocusableDescendants(piChild,pvFocusableWindows);
+			if(piChild->IsVisible())
+			{
+				GetFocusableDescendants(piChild,pvFocusableWindows);
+			}
 			REL(piChild);
 		}
 	}
@@ -663,21 +666,21 @@ void CGameWindowBase::OnKeyDown(int nKey,bool *pbProcessed)
 			if(piNew){m_piGUIManager->SetFocus(piNew);}
 			REL(piNew);
 		}
-		else if(nKey==GK_RIGHT || nKey==GK_DOWN || nKey==GK_JOYRIGHT || nKey==GK_JOYDOWN)
+		else if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Right,nKey) || m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Down,nKey))
 		{
 			*pbProcessed=true;
 			IGameWindow *piCurrentFocusedWindow=GetFocusedDescendant();
-			IGameWindow *piNew=FindClosestFocusableWindow(piCurrentFocusedWindow,(nKey==GK_RIGHT || nKey==GK_JOYRIGHT)?eFocusableSearchRight:eFocusableSearchDown);
+			IGameWindow *piNew=FindClosestFocusableWindow(piCurrentFocusedWindow,m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Right,nKey)?eFocusableSearchRight:eFocusableSearchDown);
 			if(piNew==NULL){piNew=FindNextFocusableWindow(NULL);}
 			if(piNew){m_piGUIManager->SetFocus(piNew);}
 			REL(piNew);
 			REL(piCurrentFocusedWindow);
 		}
-		else if(nKey==GK_LEFT || nKey==GK_UP || nKey==GK_JOYLEFT || nKey==GK_JOYUP)
+		else if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Left,nKey) || m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Up,nKey))
 		{
 			*pbProcessed=true;
 			IGameWindow *piCurrentFocusedWindow=GetFocusedDescendant();
-			IGameWindow *piNew=FindClosestFocusableWindow(piCurrentFocusedWindow,(nKey==GK_LEFT || nKey==GK_JOYLEFT)?eFocusableSearchLeft:eFocusableSearchUp);
+			IGameWindow *piNew=FindClosestFocusableWindow(piCurrentFocusedWindow,m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Left,nKey)?eFocusableSearchLeft:eFocusableSearchUp);
 			if(piNew==NULL){piNew=FindPreviousFocusableWindow(NULL);}
 			if(piNew){m_piGUIManager->SetFocus(piNew);}
 			REL(piNew);

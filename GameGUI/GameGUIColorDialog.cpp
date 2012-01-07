@@ -54,8 +54,8 @@ void CGameGUIColorDialog::OnButtonClicked(IGameGUIButton *piControl)
 
 void CGameGUIColorDialog::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(nKey==GK_ESCAPE){EndDialog(DIALOG_CANCEL);*pbProcessed=true;}
-	if(nKey==GK_RETURN){EndDialog(DIALOG_OK);*pbProcessed=true;}
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Cancel,nKey)){EndDialog(DIALOG_CANCEL);*pbProcessed=true;}
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Accept,nKey)){EndDialog(DIALOG_OK);*pbProcessed=true;}
 }
 
 bool CGameGUIColorDialog::SelectColor(IGameWindow *piParent,std::string sTitle,CVector *pvColor)

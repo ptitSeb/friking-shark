@@ -34,21 +34,23 @@ CGameGUISlider::~CGameGUISlider(void)
 
 void CGameGUISlider::OnKeyDown(int nKey,bool *pbProcessed)
 {
-	if(m_bWantFocus && nKey==GK_LEFT)
+	if(m_bWantFocus && m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Left,nKey))
 	{
 		m_dValue-=m_dStep;
 		if(m_dValue<0){m_dValue=0;}
 		if(m_dValue>1){m_dValue=1;}		
 		NOTIFY_EVENT(IGameGUISliderEvents,OnSliderValueChanged(this,m_dValue))
 		if(m_bSoundsEnabled && m_piClickSound){m_piClickSound->Play();}
+		*pbProcessed=true;
 	}
-	if(m_bWantFocus && nKey==GK_RIGHT)
+	if(m_bWantFocus && m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Right,nKey))
 	{
 		m_dValue+=m_dStep;
 		if(m_dValue<0){m_dValue=0;}
 		if(m_dValue>1){m_dValue=1;}		
 		NOTIFY_EVENT(IGameGUISliderEvents,OnSliderValueChanged(this,m_dValue))
 		if(m_bSoundsEnabled && m_piClickSound){m_piClickSound->Play();}
+		*pbProcessed=true;
 	}
 	CGameGUIButton::OnKeyDown(nKey,pbProcessed);
 }

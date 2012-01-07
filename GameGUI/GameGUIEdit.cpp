@@ -193,7 +193,7 @@ void CGameGUIEdit::OnKeyDown( int nKey,bool *pbProcessed )
 	strcpy(sCommand,m_sText.c_str());
 	nCommand=m_sText.length();
 
-	if(nKey==GK_LEFT)
+	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Left,nKey))
 	{
 		if(m_piGUIManager->IsKeyDown(GK_LCONTROL))
 		{
@@ -209,7 +209,7 @@ void CGameGUIEdit::OnKeyDown( int nKey,bool *pbProcessed )
 		if(!m_piGUIManager->IsKeyDown(GK_LSHIFT)){m_nSelectionPos=m_nEditionPos;}
 		*pbProcessed=true;
 	}
-	else if(nKey==GK_RIGHT)
+	else if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Right,nKey))
 	{
 		if(m_piGUIManager->IsKeyDown(GK_LCONTROL))
 		{
