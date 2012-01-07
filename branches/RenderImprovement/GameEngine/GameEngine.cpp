@@ -191,6 +191,7 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
   
 	char szExecutableFullPath[MAX_PATH]={0};
 	GetModuleFileName(NULL,szExecutableFullPath,sizeof(szExecutableFullPath));
+	WindowsPathToGamePath(szExecutableFullPath);
 	std::string sFolder=GetFileFolder(szExecutableFullPath);
 	
 	wchar_t *pWCommand=GetCommandLineW();
