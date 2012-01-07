@@ -90,6 +90,33 @@ public:
 	virtual ~IGameWindowEnumerationCallback(){}
 };
 
+enum EGameGUINavigationControl
+{
+	eGameGUINavigationControl_None,
+	eGameGUINavigationControl_Left,
+	eGameGUINavigationControl_Right,
+	eGameGUINavigationControl_Up,
+	eGameGUINavigationControl_Down,
+	eGameGUINavigationControl_Accept,
+	eGameGUINavigationControl_Cancel,
+	eGameGUINavigationControl_Count
+};
+
+struct SGameGUIAdditionalNavigationControls
+{
+	int nKeyboardLeft;
+	int nKeyboardRight;
+	int nKeyboardUp;
+	int nKeyboardDown;
+	int nKeyboardAccept;
+	int nKeyboardCancel;
+
+	int nJoystickAccept;
+	int nJoystickCancel;
+	
+	SGameGUIAdditionalNavigationControls(){nKeyboardLeft=nKeyboardRight=nKeyboardUp=nKeyboardDown=nKeyboardAccept=nKeyboardCancel=nJoystickAccept=nJoystickCancel=0;}
+};
+
 class IGameGUIManager:virtual public ISystemUnknown
 {
 public:
@@ -136,6 +163,13 @@ public:
 	
 	virtual void		RestoreViewport()=0;
 	
+	virtual bool 	IsNavigationControl(EGameGUINavigationControl eNavigationControl,int nKey)=0;
+	
+	virtual void 	GetAdditionalNavigationControls(SGameGUIAdditionalNavigationControls *psControls)=0;
+	virtual void 	SetAdditionalNavigationControls(SGameGUIAdditionalNavigationControls *psControls)=0;
+
+	virtual void 	SetJoystickDeadZone(double dDeadZone)=0;
+	virtual double  GetJoystickDeadZone()=0;
 };
 
 class IGameWindow: virtual public ISystemObject

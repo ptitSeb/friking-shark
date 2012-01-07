@@ -909,3 +909,35 @@ bool CGameGUIManager::DetectDrag(double dx,double dy)
 	return m_Viewport.m_piViewport->DetectDrag(dx,dy);
 }
 	
+bool CGameGUIManager::IsNavigationControl(EGameGUINavigationControl eNavigationControl,int nKey)
+{
+	if(nKey==0){return false;}
+	switch(eNavigationControl)
+	{
+		case eGameGUINavigationControl_Up:return nKey==GK_UP || nKey==GK_JOYUP || nKey==m_AdditionalNavigationControls.nKeyboardUp;
+		case eGameGUINavigationControl_Down:return nKey==GK_DOWN || nKey==GK_JOYDOWN || nKey==m_AdditionalNavigationControls.nKeyboardDown;
+		case eGameGUINavigationControl_Left:return nKey==GK_LEFT || nKey==GK_JOYLEFT || nKey==m_AdditionalNavigationControls.nKeyboardLeft;
+		case eGameGUINavigationControl_Right:return nKey==GK_RIGHT || nKey==GK_JOYRIGHT || nKey==m_AdditionalNavigationControls.nKeyboardRight;
+		case eGameGUINavigationControl_Accept:return nKey==GK_RETURN || nKey==m_AdditionalNavigationControls.nKeyboardAccept || nKey==m_AdditionalNavigationControls.nJoystickAccept;
+		case eGameGUINavigationControl_Cancel:return nKey==GK_ESCAPE || nKey==m_AdditionalNavigationControls.nKeyboardCancel || nKey==m_AdditionalNavigationControls.nJoystickCancel;
+	}
+	return false;
+}
+
+void CGameGUIManager::GetAdditionalNavigationControls(SGameGUIAdditionalNavigationControls *psControls)
+{
+	*psControls=m_AdditionalNavigationControls;
+}
+
+void CGameGUIManager::SetAdditionalNavigationControls(SGameGUIAdditionalNavigationControls *psControls)
+{
+	m_AdditionalNavigationControls=*psControls;
+}
+void CGameGUIManager::SetJoystickDeadZone(double dDeadZone)
+{
+	if(m_Viewport.m_piViewport){m_Viewport.m_piViewport->SetJoystickDeadZone(dDeadZone);}
+}
+double CGameGUIManager::GetJoystickDeadZone()
+{
+	return m_Viewport.m_piViewport?m_Viewport.m_piViewport->GetJoystickDeadZone():0;
+}
