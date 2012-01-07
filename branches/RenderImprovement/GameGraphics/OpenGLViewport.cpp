@@ -1377,7 +1377,6 @@ void COpenGLViewport::UpdateJoystick()
 			if((joyInfo.dwButtons&(1<<x))!=0 && (m_nJoystickButtons&(1<<x))==0){m_nJoystickButtons|=(1<<x);OnKeyUp(GK_JOY_BUTTON_FIRST+x);}
 			if((joyInfo.dwButtons&(1<<x))==0 && (m_nJoystickButtons&(1<<x))!=0){m_nJoystickButtons&=~(1<<x);OnKeyDown(GK_JOY_BUTTON_FIRST+x);}
 		}
-		while(!bChange);
 	}
 }
 #endif
