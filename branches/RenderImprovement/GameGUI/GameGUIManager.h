@@ -41,6 +41,8 @@ class CGameGUIManager :	virtual public CSystemObjectBase,virtual public IGameGUI
 	IGameWindow  *m_piRootWindow;
 
 	std::vector<IGameWindow*> m_vPopups;
+	
+	SGameGUIAdditionalNavigationControls m_AdditionalNavigationControls;
 
 	void RenderWindow(IGenericRender *piRender,IGameWindow *piWindow);
 	void ProcessMouseActivation(IGameWindow *piWindow);
@@ -112,7 +114,15 @@ public:
 
 	void		GetScreenProperties(SGameScreenProperties *pProperties);
 	void    	SetScreenProperties(SGameScreenProperties *pProperties);
-
+	
+	bool 		IsNavigationControl(EGameGUINavigationControl eNavigationControl,int nKey);
+	
+	void 		GetAdditionalNavigationControls(SGameGUIAdditionalNavigationControls *psControls);
+	void 		SetAdditionalNavigationControls(SGameGUIAdditionalNavigationControls *psControls);
+	
+	void 	    SetJoystickDeadZone(double dDeadZone);
+	double      GetJoystickDeadZone();
+	
 	// Popup management.
 
 	void		 AddPopup(IGameWindow *);
