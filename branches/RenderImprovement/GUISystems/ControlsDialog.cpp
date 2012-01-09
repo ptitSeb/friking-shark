@@ -239,21 +239,33 @@ void CControlsDialog::UpdateGUI()
 	UpdateRow(m_piBTKeyFire,&m_FireKeyMapping);
 	UpdateRow(m_piBTKeyBomb,&m_BombKeyMapping);
 
-	UpdateRow(m_piBTJoyFire,&m_FireJoyMapping);
-	UpdateRow(m_piBTJoyBomb,&m_BombJoyMapping);
-	UpdateRow(m_piBTJoyBack,&m_BackJoyMapping);
-	
 	std::string sJoystick=m_piGUIManager->GetCurrentJoystick();
-	if(m_piBTJoyDevice){m_piBTJoyDevice->SetText(sJoystick.length()?sJoystick.c_str():"<None>");}
-	if(m_piBTControls){m_piBTControls->SetText(m_bShowKeyboardControls?"Keyboard":"Joystick / Gamepad");}
-	if(m_piSTKeyboardControls){m_piSTKeyboardControls->Show(m_bShowKeyboardControls);}
-	if(m_piSTJoystickControls){m_piSTJoystickControls->Show(!m_bShowKeyboardControls);}
+	if(sJoystick.length())
+	{
+		UpdateRow(m_piBTJoyFire,&m_FireJoyMapping);
+		UpdateRow(m_piBTJoyBomb,&m_BombJoyMapping);
+		UpdateRow(m_piBTJoyBack,&m_BackJoyMapping);
+		if(m_piBTJoyDevice){m_piBTJoyDevice->SetText(sJoystick.c_str());}
+	}
+	else
+	{
+		if(m_piBTJoyFire){m_piBTJoyFire->SetText("Not Detected");}
+		if(m_piBTJoyBomb){m_piBTJoyBomb->SetText("Not Detected");}
+		if(m_piBTJoyBack){m_piBTJoyBack->SetText("Not Detected");}
+		if(m_piBTJoyDevice){m_piBTJoyDevice->SetText("Not Detected");}
+	}
 	if(m_piSLJoyDeadZone)
 	{
 		char sTemp[100];
 		sprintf(sTemp,"%d%%",(int)(m_piSLJoyDeadZone->GetValue()*100.0));
 		m_piSLJoyDeadZone->SetText(sTemp);
 	}
+	if(m_piBTJoyFire){m_piBTJoyFire->Activate(sJoystick.length()!=0);}
+	if(m_piBTJoyBomb){m_piBTJoyBomb->Activate(sJoystick.length()!=0);}
+	if(m_piBTJoyBack){m_piBTJoyBack->Activate(sJoystick.length()!=0);}
+	if(m_piBTControls){m_piBTControls->SetText(m_bShowKeyboardControls?"Keyboard":"Joystick / Gamepad");}
+	if(m_piSTKeyboardControls){m_piSTKeyboardControls->Show(m_bShowKeyboardControls);}
+	if(m_piSTJoystickControls){m_piSTJoystickControls->Show(!m_bShowKeyboardControls);}
 }
 
 void CControlsDialog::OnInitDialog()
