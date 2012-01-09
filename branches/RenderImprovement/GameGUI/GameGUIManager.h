@@ -120,6 +120,10 @@ public:
 	void 		GetAdditionalNavigationControls(SGameGUIAdditionalNavigationControls *psControls);
 	void 		SetAdditionalNavigationControls(SGameGUIAdditionalNavigationControls *psControls);
 	
+	void		GetJoysticks(std::vector<std::string> *psJoysticks);
+	std::string GetCurrentJoystick();
+	bool        SetCurrentJoystick(std::string sJoystick);
+
 	void 	    SetJoystickDeadZone(double dDeadZone);
 	double      GetJoystickDeadZone();
 	

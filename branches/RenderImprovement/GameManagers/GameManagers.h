@@ -633,7 +633,10 @@ struct IPlayerProfile:virtual public ISystemUnknown
 	
 	virtual double  GetJoystickDeadZone()=0;
 	virtual void    SetJoystickDeadZone(double dZone)=0;
-	
+
+	virtual void 	    SetJoystickDevice(const std::string &sDevice)=0;
+	virtual std::string GetJoystickDevice()=0;
+
 	virtual void 	GetJoystickMapping(std::map<std::string,SJoystickButtonMapping> *pMapping)=0;
 	virtual void 	SetJoystickMapping(std::map<std::string,SJoystickButtonMapping> *pMapping)=0;
 	

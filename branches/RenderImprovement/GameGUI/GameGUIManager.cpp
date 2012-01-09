@@ -884,7 +884,7 @@ bool CGameGUIManager::Setup()
 		bOk=m_Render.m_piRender->Setup(m_Viewport.m_piViewport);
 		if(!bOk){RTTRACE("CGameGUIManager::Setup -> Failed to setup render");}
 	}
-	
+
 	if(bOk)
 	{
 		bOk=(m_MainWindow.Attach("GameGUI","MainWindow"));
@@ -897,7 +897,22 @@ bool CGameGUIManager::Setup()
 		if(bOk){bOk=m_MainWindow.m_piWindow->InitWindow(m_piRootWindow,false);}
 		if(bOk){m_piFocusedWindow=ADD(m_MainWindow.m_piWindow);}
 	}	
-	
+	if(bOk)
+	{
+		if(m_Viewport.m_piViewport->GetCurrentJoystick()=="")
+		{
+			// Set default device (if any)
+			std::vector<std::string> vJoysticks;
+			m_Viewport.m_piViewport->GetJoysticks(&vJoysticks);
+			for(int x=0;x<(int)vJoysticks.size();x++)
+			{
+				if(m_Viewport.m_piViewport->SetCurrentJoystick(vJoysticks[x]))
+				{
+					break;
+				}
+			}
+		}
+	}
 	m_bSetup=bOk;
 	
 	return bOk;
@@ -933,10 +948,30 @@ void CGameGUIManager::SetAdditionalNavigationControls(SGameGUIAdditionalNavigati
 {
 	m_AdditionalNavigationControls=*psControls;
 }
+
+void CGameGUIManager::GetJoysticks(std::vector<std::string> *psJoysticks)
+{
+	psJoysticks->clear();
+	if(m_Viewport.m_piViewport){m_Viewport.m_piViewport->GetJoysticks(psJoysticks);}
+}
+
+std::string CGameGUIManager::GetCurrentJoystick()
+{
+	if(m_Viewport.m_piViewport){return m_Viewport.m_piViewport->GetCurrentJoystick();}
+	return "";
+}
+
+bool CGameGUIManager::SetCurrentJoystick(std::string sJoystick)
+{
+	if(m_Viewport.m_piViewport){return m_Viewport.m_piViewport->SetCurrentJoystick(sJoystick);}
+	return false;
+}
+
 void CGameGUIManager::SetJoystickDeadZone(double dDeadZone)
 {
 	if(m_Viewport.m_piViewport){m_Viewport.m_piViewport->SetJoystickDeadZone(dDeadZone);}
 }
+
 double CGameGUIManager::GetJoystickDeadZone()
 {
 	return m_Viewport.m_piViewport?m_Viewport.m_piViewport->GetJoystickDeadZone():0;

@@ -68,6 +68,7 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 {
 	
 	unsigned int m_nJoystickButtons;
+	std::string  m_sJoystickName;
 	int m_nJoystickDevice;
 	int m_nJoystickXAxis;
 	int m_nJoystickYAxis;
@@ -81,7 +82,7 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 		int			m_nLastMouseMoveX;
 		int			m_nLastMouseMoveY;
 		JOYCAPS		m_JoystickCaps;
-		void UpdateJoystick();
+		bool UpdateJoystick();
 		
 		void OnCreate(HWND hWnd);
 		void OnDestroy();
@@ -90,7 +91,7 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 		static BOOL CALLBACK PrimaryMonitorEnumerationCallBack(HMONITOR hMonitor,HDC hdcMonitor,LPRECT lprcMonitor,LPARAM dwData);
 	#elif defined LINUX
 
-		void UpdateJoystick(bool bGenerateEvents);
+		bool UpdateJoystick(bool bGenerateEvents);
 		
 		static int CustomXIOErrorHandler(Display*);
 		
@@ -227,8 +228,12 @@ public:
 	bool SetWindowed(unsigned int x,unsigned int y,unsigned int w,unsigned int h);
 	bool SetFullScreen(unsigned int w,unsigned int h,unsigned int bpp,unsigned int rate);
 	
-	void 	SetJoystickDeadZone(double dDeadZone);
-	double  GetJoystickDeadZone();
+	void		GetJoysticks(std::vector<std::string> *psJoysticks);
+	std::string GetCurrentJoystick();
+	bool        SetCurrentJoystick(std::string sJoystick);
+
+	void 		SetJoystickDeadZone(double dDeadZone);
+	double		GetJoystickDeadZone();
 	
 	 COpenGLViewport(void);
 	~COpenGLViewport(void);

@@ -139,6 +139,9 @@ bool CMainWindow::InitWindow(IGameWindow *piParent,bool bPopup)
 			controls.nJoystickAccept=fireJoyMapping.nButton;
 			controls.nJoystickCancel=backJoyMapping.nButton;
 			
+			std::string sDevice=m_PlayerData.m_PlayerProfile.m_piPlayerProfile->GetJoystickDevice();
+			if(sDevice.length()){m_piGUIManager->SetCurrentJoystick(sDevice);}
+
 			m_piGUIManager->SetJoystickDeadZone(m_PlayerData.m_PlayerProfile.m_piPlayerProfile->GetJoystickDeadZone());
 			m_piGUIManager->SetAdditionalNavigationControls(&controls);
 		}
