@@ -46,6 +46,7 @@ class CPlayerProfile: virtual public CSystemObjectBase,
 	double		m_dDifficulty;
 	std::string m_sPlayerName;
 	double      m_dJoystickDeadZone;
+	std::string m_sJoystickDevice;
 
 public:
 
@@ -73,12 +74,16 @@ public:
 	void 	GetJoystickButtonMapping(std::string,SJoystickButtonMapping *pMapping);
 	void 	SetJoystickButtonMapping(std::string,SJoystickButtonMapping *pMapping);
 	
+	void 	    SetJoystickDevice(const std::string &sDevice);
+	std::string GetJoystickDevice();
+
 	BEGIN_PROP_MAP(CPlayerProfile)
 		PROP(m_sPlayerName,"Name");
 		PROP(m_dDifficulty,"Difficulty");
 		PROP(m_KeyboardMapping,"KeyboardMapping");
 		PROP_FLAGS(m_JoystickMapping,"JoystickMapping",MRPF_NORMAL|MRPF_OPTIONAL);
 		PROP_VALUE_FLAGS(m_dJoystickDeadZone,"JoystickDeadZone",DEFAULT_JOYSTICK_DEAD_ZONE,MRPF_NORMAL|MRPF_OPTIONAL);
+		PROP_FLAGS(m_sJoystickDevice,"JoystickDevice",MRPF_NORMAL|MRPF_OPTIONAL);
 	END_PROP_MAP();
 
     CPlayerProfile(void);

@@ -36,6 +36,7 @@ class CControlsDialog: virtual public CGameDialogBase,virtual public IGameGUISli
 	SKeyMapping m_BombKeyMapping;
 
 	double m_dJoystickDeadZone;
+	std::string m_sJoystickDevice;
 
 	SJoystickButtonMapping m_FireJoyMapping;
 	SJoystickButtonMapping m_BombJoyMapping;
@@ -51,6 +52,7 @@ class CControlsDialog: virtual public CGameDialogBase,virtual public IGameGUISli
 	IGameGUIButton *m_piBTKeyRight;
 	IGameGUIButton *m_piBTKeyBomb;
 	IGameGUIButton *m_piBTKeyFire;
+	IGameGUIButton *m_piBTJoyDevice;
 	IGameGUIButton *m_piBTJoyBomb;
 	IGameGUIButton *m_piBTJoyFire;
 	IGameGUIButton *m_piBTJoyBack;
@@ -69,6 +71,7 @@ class CControlsDialog: virtual public CGameDialogBase,virtual public IGameGUISli
 		CHILD_MAP_ENTRY_EX("KeyBomb",m_piBTKeyBomb,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("KeyFire",m_piBTKeyFire,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("JoyDeadZone",m_piSLJoyDeadZone,IGameGUISliderEvents);
+		CHILD_MAP_ENTRY_EX("JoyDevice",m_piBTJoyDevice,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("JoyBomb",m_piBTJoyBomb,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("JoyFire",m_piBTJoyFire,IGameGUIButtonEvents);
 		CHILD_MAP_ENTRY_EX("JoyBack",m_piBTJoyBack,IGameGUIButtonEvents);
@@ -84,7 +87,8 @@ class CControlsDialog: virtual public CGameDialogBase,virtual public IGameGUISli
 	void UpdateRow(IGameGUIButton *piJoyButton,SJoystickButtonMapping *pJoyMapping);
 	void UpdateGUI();
 	void UpdateGUIControls();
-	
+	void CycleJoystick(int nIncrement);
+
 	void ProcessKeyChange(SKeyMapping *pKeyMapping);
 	void ProcessJoystickButtonChange(SJoystickButtonMapping *pJoyMapping);
 	

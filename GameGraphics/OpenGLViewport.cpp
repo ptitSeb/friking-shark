@@ -719,30 +719,7 @@ bool COpenGLViewport::Init(std::string sClass,std::string sName,ISystem *piSyste
 	}
 	
 	RTTRACE("COpenGLViewport::InitializeAndroidViewPort -> Exit");
-	#elif defined LINUX
-	m_nJoystickDevice = open("/dev/input/js0", O_RDONLY|O_NONBLOCK);
-	if(m_nJoystickDevice!=-1)
-	{
-		RTTRACE("COpenGLViewport::InitializeAndroidViewPort -> Joystick 0 found");
-		UpdateJoystick(false);
-	}
-	#elif defined WIN32
-	int nJoys=joyGetNumDevs();
-	if(nJoys)
-	{
-		for(int x=0;x<nJoys;x++)
-		{
-			MMRESULT result=joyGetDevCaps(x,&m_JoystickCaps,sizeof(m_JoystickCaps));
-			if(result==JOYERR_NOERROR)
-			{
-				m_nJoystickDevice=x;
-				RTTRACE("COpenGLViewport::InitializeAndroidViewPort -> Joystick %d found",nJoys);
-				break;
-			}
-		}
-	}
 	#endif
-	
 	return  bOk;
 }
 
@@ -1097,6 +1074,7 @@ bool COpenGLViewport::CreateWindowed(unsigned x, unsigned y, unsigned w, unsigne
 	bOk=true;
 	RTTRACE("COpenGLViewport::CreateWindowed -> Windowed called");
 #endif
+
 	return bOk;
 }
 
@@ -1347,9 +1325,9 @@ std::string COpenGLViewport::GetCaption()
 }
 
 #ifdef WIN32
-void COpenGLViewport::UpdateJoystick()
+bool COpenGLViewport::UpdateJoystick()
 {
-	if(m_nJoystickDevice==-1){return;}
+	if(m_nJoystickDevice==-1){return false;}
 
 	int xCenter=(m_JoystickCaps.wXmin+m_JoystickCaps.wXmax)/2;
 	int yCenter=(m_JoystickCaps.wYmin+m_JoystickCaps.wYmax)/2;
@@ -1359,42 +1337,48 @@ void COpenGLViewport::UpdateJoystick()
 	joyInfo.dwFlags=JOY_RETURNALL;
 	MMRESULT result=joyGetPosEx(m_nJoystickDevice,&joyInfo);
 
-	int nOldXAxis=m_nJoystickXAxis;
-	int nOldYAxis=m_nJoystickYAxis;
-
-	m_nJoystickXAxis=joyInfo.dwXpos-xCenter;
-	m_nJoystickYAxis=joyInfo.dwYpos-yCenter;
-
-	int xThreshold=((double)xCenter)*m_dJoystickDeadZone;
-	int yThreshold=((double)yCenter)*m_dJoystickDeadZone;
-	if(fabs((double)m_nJoystickXAxis)<xThreshold){m_nJoystickXAxis=0;}
-	if(fabs((double)m_nJoystickYAxis)<yThreshold){m_nJoystickYAxis=0;}
-
-	if(nOldXAxis>=0 && m_nJoystickXAxis<0){OnKeyDown(GK_JOYLEFT);}
-	if(nOldXAxis<0 && m_nJoystickXAxis>=0){OnKeyUp(GK_JOYLEFT);}
-	if(nOldXAxis<=0 && m_nJoystickXAxis>0){OnKeyDown(GK_JOYRIGHT);}
-	if(nOldXAxis>0 && m_nJoystickXAxis<=0){OnKeyUp(GK_JOYRIGHT);}
-
-	if(nOldYAxis>=0 && m_nJoystickYAxis<0){OnKeyDown(GK_JOYUP);}
-	if(nOldYAxis<0 && m_nJoystickYAxis>=0){OnKeyUp(GK_JOYUP);}
-	if(nOldYAxis<=0 && m_nJoystickYAxis>0){OnKeyDown(GK_JOYDOWN);}
-	if(nOldYAxis>0 && m_nJoystickYAxis<=0){OnKeyUp(GK_JOYDOWN);}
-
-	for(int x=0;x<32;x++)
+	bool bEventGenerated=false;
+	if(!bEventGenerated)
 	{
-		if((joyInfo.dwButtons&(1<<x))!=0 && (m_nJoystickButtons&(1<<x))==0){m_nJoystickButtons|=(1<<x);OnKeyDown(GK_JOY_BUTTON_FIRST+x);}
-		if((joyInfo.dwButtons&(1<<x))==0 && (m_nJoystickButtons&(1<<x))!=0){m_nJoystickButtons&=~(1<<x);OnKeyUp(GK_JOY_BUTTON_FIRST+x);}
+		int xThreshold=((double)xCenter)*m_dJoystickDeadZone;
+		int nOldXAxis=m_nJoystickXAxis;
+		m_nJoystickXAxis=joyInfo.dwXpos-xCenter;
+		if(fabs((double)m_nJoystickXAxis)<xThreshold){m_nJoystickXAxis=0;}
+		if(nOldXAxis>=0 && m_nJoystickXAxis<0){OnKeyDown(GK_JOYLEFT);bEventGenerated=true;}
+		if(nOldXAxis<0 && m_nJoystickXAxis>=0){OnKeyUp(GK_JOYLEFT);bEventGenerated=true;}
+		if(nOldXAxis<=0 && m_nJoystickXAxis>0){OnKeyDown(GK_JOYRIGHT);bEventGenerated=true;}
+		if(nOldXAxis>0 && m_nJoystickXAxis<=0){OnKeyUp(GK_JOYRIGHT);bEventGenerated=true;}
 	}
+	if(!bEventGenerated)
+	{
+		int yThreshold=((double)yCenter)*m_dJoystickDeadZone;
+		int nOldYAxis=m_nJoystickYAxis;
+		m_nJoystickYAxis=joyInfo.dwYpos-yCenter;
+		if(fabs((double)m_nJoystickYAxis)<yThreshold){m_nJoystickYAxis=0;}
+		if(nOldYAxis>=0 && m_nJoystickYAxis<0){OnKeyDown(GK_JOYUP);bEventGenerated=true;}
+		if(nOldYAxis<0 && m_nJoystickYAxis>=0){OnKeyUp(GK_JOYUP);bEventGenerated=true;}
+		if(nOldYAxis<=0 && m_nJoystickYAxis>0){OnKeyDown(GK_JOYDOWN);bEventGenerated=true;}
+		if(nOldYAxis>0 && m_nJoystickYAxis<=0){OnKeyUp(GK_JOYDOWN);bEventGenerated=true;}
+	}
+	if(!bEventGenerated)
+	{
+		for(int x=0;x<32;x++)
+		{
+			if((joyInfo.dwButtons&(1<<x))!=0 && (m_nJoystickButtons&(1<<x))==0){m_nJoystickButtons|=(1<<x);OnKeyDown(GK_JOY_BUTTON_FIRST+x);bEventGenerated=true;break;}
+			if((joyInfo.dwButtons&(1<<x))==0 && (m_nJoystickButtons&(1<<x))!=0){m_nJoystickButtons&=~(1<<x);OnKeyUp(GK_JOY_BUTTON_FIRST+x);bEventGenerated=true;break;}
+		}
+	}
+	return bEventGenerated;
 }
 #endif
 
 #ifdef LINUX
-void COpenGLViewport::UpdateJoystick(bool bGenerateEvents)
+bool COpenGLViewport::UpdateJoystick(bool bGenerateEvents)
 {
-	if(m_nJoystickDevice==-1){return;}
-	
-	int nOldXAxis=m_nJoystickXAxis;
-	int nOldYAxis=m_nJoystickYAxis;
+	if(m_nJoystickDevice==-1){return false;}
+
+	int nNewJoystickXAxis=m_nJoystickXAxis;
+	int nNewJoystickYAxis=m_nJoystickYAxis;
 	unsigned int nNewButtons=m_nJoystickButtons;
 	
 	SJoystickEvent joystickEvent={0};
@@ -1415,38 +1399,52 @@ void COpenGLViewport::UpdateJoystick(bool bGenerateEvents)
 		{
 			if(joystickEvent.number==0)
 			{
-				m_nJoystickXAxis=joystickEvent.value;
+				nNewJoystickXAxis=joystickEvent.value;
 			}
 			else if(joystickEvent.number==1)
 			{
-				m_nJoystickYAxis=joystickEvent.value;
+				nNewJoystickYAxis=joystickEvent.value;
 			}
 		}
 	}
-	
-	int xThreshold=(32767.0)*m_dJoystickDeadZone;
-	int yThreshold=(32767.0)*m_dJoystickDeadZone;
-	if(fabs((double)m_nJoystickXAxis)<xThreshold){m_nJoystickXAxis=0;}
-	if(fabs((double)m_nJoystickYAxis)<yThreshold){m_nJoystickYAxis=0;}
-	
-	if(bGenerateEvents)
+	bool bEventGenerated=false;
+	if(!bEventGenerated)
 	{
-		if(nOldXAxis>=0 && m_nJoystickXAxis<0){OnKeyDown(GK_JOYLEFT);}
-		if(nOldXAxis<0 && m_nJoystickXAxis>=0){OnKeyUp(GK_JOYLEFT);}
-		if(nOldXAxis<=0 && m_nJoystickXAxis>0){OnKeyDown(GK_JOYRIGHT);}
-		if(nOldXAxis>0 && m_nJoystickXAxis<=0){OnKeyUp(GK_JOYRIGHT);}
-		
-		if(nOldYAxis>=0 && m_nJoystickYAxis<0){OnKeyDown(GK_JOYUP);}
-		if(nOldYAxis<0 && m_nJoystickYAxis>=0){OnKeyUp(GK_JOYUP);}
-		if(nOldYAxis<=0 && m_nJoystickYAxis>0){OnKeyDown(GK_JOYDOWN);}
-		if(nOldYAxis>0 && m_nJoystickYAxis<=0){OnKeyUp(GK_JOYDOWN);}
-		
-		for(int x=0;x<32;x++)
+		int xThreshold=(32767.0)*m_dJoystickDeadZone;
+		if(fabs((double)nNewJoystickXAxis)<xThreshold){m_nJoystickXAxis=0;return true;}
+		int nOldXAxis=m_nJoystickXAxis;
+		m_nJoystickXAxis=nNewJoystickXAxis;
+		if(bGenerateEvents)
 		{
-			if((nNewButtons&(1<<x))!=0 && (m_nJoystickButtons&(1<<x))==0){m_nJoystickButtons|=(1<<x);OnKeyDown(GK_JOY_BUTTON_FIRST+x);}
-			if((nNewButtons&(1<<x))==0 && (m_nJoystickButtons&(1<<x))!=0){m_nJoystickButtons&=~(1<<x);OnKeyUp(GK_JOY_BUTTON_FIRST+x);}
+			if(nOldXAxis>=0 && m_nJoystickXAxis<0){OnKeyDown(GK_JOYLEFT);bEventGenerated=true;}
+			if(nOldXAxis<0 && m_nJoystickXAxis>=0){OnKeyUp(GK_JOYLEFT);bEventGenerated=true;}
+			if(nOldXAxis<=0 && m_nJoystickXAxis>0){OnKeyDown(GK_JOYRIGHT);bEventGenerated=true;}
+			if(nOldXAxis>0 && m_nJoystickXAxis<=0){OnKeyUp(GK_JOYRIGHT);bEventGenerated=true;}
 		}
 	}
+	if(!bEventGenerated)
+	{
+		int yThreshold=(32767.0)*m_dJoystickDeadZone;
+		if(fabs((double)nNewJoystickYAxis)<yThreshold){m_nJoystickYAxis=0;return true;}
+		int nOldYAxis=m_nJoystickYAxis;
+		m_nJoystickYAxis=nNewJoystickYAxis;
+		if(bGenerateEvents)
+		{
+			if(nOldYAxis>=0 && m_nJoystickYAxis<0){OnKeyDown(GK_JOYUP);bEventGenerated=true;}
+			if(nOldYAxis<0 && m_nJoystickYAxis>=0){OnKeyUp(GK_JOYUP);bEventGenerated=true;}
+			if(nOldYAxis<=0 && m_nJoystickYAxis>0){OnKeyDown(GK_JOYDOWN);bEventGenerated=true;}
+			if(nOldYAxis>0 && m_nJoystickYAxis<=0){OnKeyUp(GK_JOYDOWN);bEventGenerated=true;}
+		}
+	}
+	if(!bEventGenerated)
+	{
+		for(int x=0;x<32;x++)
+		{
+			if((nNewButtons&(1<<x))!=0 && (m_nJoystickButtons&(1<<x))==0){m_nJoystickButtons|=(1<<x);if(bGenerateEvents){OnKeyDown(GK_JOY_BUTTON_FIRST+x);bEventGenerated=true;break;}}
+			if((nNewButtons&(1<<x))==0 && (m_nJoystickButtons&(1<<x))!=0){m_nJoystickButtons&=~(1<<x);if(bGenerateEvents){OnKeyUp(GK_JOY_BUTTON_FIRST+x);bEventGenerated=true;break;}}
+		}
+	}
+	return false;
 }
 #endif
 
@@ -1467,7 +1465,7 @@ void COpenGLViewport::EnterLoop()
 			GetMessage(&msg,NULL,0,0);
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
-			UpdateJoystick();
+			while(UpdateJoystick()){}
 		}
 		if(m_hWnd)
 		{
@@ -1489,7 +1487,7 @@ void COpenGLViewport::EnterLoop()
 		}
 		
 		glXMakeCurrent(m_pXDisplay,m_XWindow,m_pGLXContext);
-		UpdateJoystick(true);
+		while(UpdateJoystick(true)){}
 		Render();
 	}
 
@@ -2203,6 +2201,104 @@ bool COpenGLViewport::SetWindowed(unsigned int x,unsigned int y,unsigned int w,u
 
 void 	COpenGLViewport::SetJoystickDeadZone(double dDeadZone){m_dJoystickDeadZone=dDeadZone;}
 double  COpenGLViewport::GetJoystickDeadZone(){return m_dJoystickDeadZone;}
+void	COpenGLViewport::GetJoysticks(std::vector<std::string> *psJoysticks)
+{
+	#ifdef LINUX
+	for(int x=0;x<32;x++)
+	{
+		char sTemp[1024];
+		sprintf(sTemp,"/dev/input/js%d",x);
+		int nJoystickDevice = open(sTemp, O_RDONLY|O_NONBLOCK);
+		if(nJoystickDevice!=-1)
+		{
+			psJoysticks->push_back(sTemp);
+			close(nJoystickDevice);
+		}
+	}
+	#elif defined WIN32
+	int nJoys=joyGetNumDevs();
+	for(int x=0;x<nJoys;x++)
+	{
+		JOYCAPS joyCaps={0};
+		MMRESULT result=joyGetDevCaps(x,&joyCaps,sizeof(joyCaps));
+		if(result==JOYERR_NOERROR)
+		{
+			char sId[1024];
+			sprintf(sId,"Joystick %d",x+1);
+			psJoysticks->push_back(sId);
+		}
+	}
+	#endif
+}
+
+std::string COpenGLViewport::GetCurrentJoystick()
+{
+	return m_sJoystickName;
+
+}
+
+bool COpenGLViewport::SetCurrentJoystick(std::string sJoystick)
+{
+	if(sJoystick==m_sJoystickName){return true;}
+
+	#ifdef LINUX
+
+	std::vector<std::string> vJoysticks;
+	GetJoysticks(&vJoysticks);
+	int nSelectedJoystick=-1;
+	for(int x=0;x<(int)vJoysticks.size();x++){if(vJoysticks[x]==sJoystick){nSelectedJoystick=x;break;}}
+	if(nSelectedJoystick==-1)
+	{
+		RTTRACE("COpenGLViewport::InitializeAndroidViewPort -> Cannot find joystick '%s'",sJoystick.c_str());
+		return false;
+	}
+
+	int nJoystickDevice = open(sJoystick.c_str(), O_RDONLY|O_NONBLOCK);
+	if(nJoystickDevice!=-1)
+	{
+		if(m_nJoystickDevice!=-1){close(m_nJoystickDevice);m_nJoystickDevice=-1;}
+		m_nJoystickDevice=nJoystickDevice;
+		m_nJoystickXAxis=0;
+		m_nJoystickYAxis=0;
+		m_nJoystickButtons=0;
+		m_sJoystickName=sJoystick;
+		while(UpdateJoystick(false)){}
+		RTTRACE("COpenGLViewport::InitializeAndroidViewPort -> Joystick '%s' (%d) initialized",sJoystick.c_str(),nSelectedJoystick);
+		return true;
+	}
+	else
+	{
+		RTTRACE("COpenGLViewport::InitializeAndroidViewPort -> Failed to initialize joystick '%s' (%d)",sJoystick.c_str(),nSelectedJoystick);
+		return false;
+	}
+	#elif defined WIN32
+
+	int nJoys=joyGetNumDevs();
+	for(int x=0;x<nJoys;x++)
+	{
+		JOYCAPS joyCaps={0};
+		MMRESULT result=joyGetDevCaps(x,&joyCaps,sizeof(joyCaps));
+		if(result==JOYERR_NOERROR)
+		{
+			char sId[1024];
+			sprintf(sId,"Joystick %d",x+1);
+			if(sJoystick==sId)
+			{
+				m_sJoystickName=sJoystick;
+				m_JoystickCaps=joyCaps;
+				m_nJoystickDevice=x;
+				m_nJoystickXAxis=0;
+				m_nJoystickYAxis=0;
+				m_nJoystickButtons=0;
+				RTTRACE("COpenGLViewport::InitializeAndroidViewPort -> Joystick '%s' (%d) initialized",sJoystick.c_str(),x);
+				return true;
+			}
+		}
+	}
+	RTTRACE("COpenGLViewport::InitializeAndroidViewPort -> Cannot find joystick '%s'",sJoystick.c_str());
+	return false;
+	#endif
+}
 
 #ifdef ANDROID
 

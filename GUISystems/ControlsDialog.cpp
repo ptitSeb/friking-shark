@@ -70,6 +70,39 @@ void CControlsDialog::OnButtonClicked(IGameGUIButton *piControl)
 		m_bShowKeyboardControls=!m_bShowKeyboardControls;
 		UpdateGUI();
 	}
+	else if(piControl==m_piBTJoyDevice)
+	{
+		CycleJoystick(1);
+	}
+}
+
+void CControlsDialog::CycleJoystick(int nIncrement)
+{
+	std::vector<std::string> vJoysticks;
+	m_piGUIManager->GetJoysticks(&vJoysticks);
+	if(vJoysticks.size())
+	{
+		int nStartId=0;
+		for(unsigned int x=0;x<vJoysticks.size();x++)
+		{
+			if(vJoysticks[x]==m_piGUIManager->GetCurrentJoystick())
+			{
+				nStartId=x;
+				break;
+			}
+		}
+		// Cycle all joysticks starting from the current next one until one can be configured.
+		for(unsigned int x=0;x<vJoysticks.size();x++)
+		{
+			unsigned int id=(x+nStartId+nIncrement+vJoysticks.size())%vJoysticks.size();
+			if(m_piGUIManager->SetCurrentJoystick(vJoysticks[id]))
+			{
+				m_sJoystickDevice=vJoysticks[id];
+				break;
+			}
+		}
+	}
+	UpdateGUI();
 }
 
 void CControlsDialog::OnSliderValueChanged(IGameGUISlider *piControl,double dValue)
@@ -210,6 +243,8 @@ void CControlsDialog::UpdateGUI()
 	UpdateRow(m_piBTJoyBomb,&m_BombJoyMapping);
 	UpdateRow(m_piBTJoyBack,&m_BackJoyMapping);
 	
+	std::string sJoystick=m_piGUIManager->GetCurrentJoystick();
+	if(m_piBTJoyDevice){m_piBTJoyDevice->SetText(sJoystick.length()?sJoystick.c_str():"<None>");}
 	if(m_piBTControls){m_piBTControls->SetText(m_bShowKeyboardControls?"Keyboard":"Joystick / Gamepad");}
 	if(m_piSTKeyboardControls){m_piSTKeyboardControls->Show(m_bShowKeyboardControls);}
 	if(m_piSTJoystickControls){m_piSTJoystickControls->Show(!m_bShowKeyboardControls);}
@@ -251,6 +286,7 @@ bool CControlsDialog::SelectControls(IGameWindow *piParent,IPlayerProfile *piPro
 		piProfile->GetJoystickButtonMapping("FireBomb",&m_BombJoyMapping);
 		piProfile->GetJoystickButtonMapping("Back",&m_BackJoyMapping);
 		m_dJoystickDeadZone=piProfile->GetJoystickDeadZone();
+		m_sJoystickDevice=piProfile->GetJoystickDevice();
 	}
 
 	Execute(piParent);
@@ -265,6 +301,7 @@ bool CControlsDialog::SelectControls(IGameWindow *piParent,IPlayerProfile *piPro
 	piProfile->SetJoystickButtonMapping("FireBomb",&m_BombJoyMapping);
 	piProfile->SetJoystickButtonMapping("Back",&m_BackJoyMapping);
 	piProfile->SetJoystickDeadZone(m_dJoystickDeadZone);
+	piProfile->SetJoystickDevice(m_sJoystickDevice);
 	return true;
 }
 
@@ -273,15 +310,22 @@ void CControlsDialog::OnKeyDown(int nKey,bool *pbProcessed)
 	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Accept,nKey)){return;}
 	if(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Left,nKey) || m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Right,nKey))
 	{
-		m_bShowKeyboardControls=!m_bShowKeyboardControls;
-		if(m_piBTControls)
+		if(m_piGUIManager->HasFocus(m_piBTJoyDevice))
 		{
-			m_piBTControls->DisableSounds();
-			m_piGUIManager->SetFocus(m_piBTControls);
-			m_piBTControls->EnableSounds();		
+			CycleJoystick(m_piGUIManager->IsNavigationControl(eGameGUINavigationControl_Left,nKey)?-1:1);
 		}
-		
-		UpdateGUI();
+		else
+		{
+			m_bShowKeyboardControls=!m_bShowKeyboardControls;
+			if(m_piBTControls)
+			{
+				m_piBTControls->DisableSounds();
+				m_piGUIManager->SetFocus(m_piBTControls);
+				m_piBTControls->EnableSounds();		
+			}
+
+			UpdateGUI();
+		}
 		
 		*pbProcessed=true;
 		return;

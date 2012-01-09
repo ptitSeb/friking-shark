@@ -120,6 +120,9 @@ void CPlayerProfile::GetJoystickButtonMapping(std::string sName,SJoystickButtonM
 	*pMapping=(i==m_JoystickMapping.end())?SJoystickButtonMapping():i->second;
 }
 
+void 	    CPlayerProfile::SetJoystickDevice(const std::string &sDevice){m_sJoystickDevice=sDevice;}
+std::string CPlayerProfile::GetJoystickDevice(){return m_sJoystickDevice;}
+
 bool CPlayerProfile::Init(std::string sClass,std::string sName,ISystem *piSystem)
 {
     bool bOk=CSystemObjectBase::Init(sClass,sName,piSystem);

@@ -156,6 +156,10 @@ public:
 	virtual bool SetWindowed(unsigned int x,unsigned int y,unsigned int w,unsigned int h)=0;
 	virtual bool SetFullScreen(unsigned int w,unsigned int h,unsigned int bpp,unsigned int rate)=0;
 
+	virtual void		GetJoysticks(std::vector<std::string> *psJoysticks)=0;
+	virtual std::string GetCurrentJoystick()=0;
+	virtual bool        SetCurrentJoystick(std::string sJoystick)=0;
+
 	virtual void 	SetJoystickDeadZone(double dDeadZone)=0;
 	virtual double  GetJoystickDeadZone()=0;
 };
