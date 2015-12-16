@@ -32,6 +32,7 @@
 #include <sys/time.h>
 #include <libgen.h>
 #include <glob.h>
+#include <unistd.h>
 #else
 #include <io.h>
 #endif
