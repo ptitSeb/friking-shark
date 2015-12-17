@@ -1092,6 +1092,13 @@ bool  COpenGLViewport::IsKeyDown(unsigned int nKey)
 		char keys[32];
 		XQueryKeymap(m_pXDisplay,keys);
 		KeyCode nKeyCode=XKeysymToKeycode(m_pXDisplay,TranslateKeyToX11(nKey));
+#ifdef PANDORA
+		// Hugly hack to make Pandora buttons works
+		if (nKey == GK_PAGEDOWN) nKeyCode = 117;
+		else if (nKey == GK_PAGEUP) nKeyCode = 112;
+		else if (nKey == GK_HOME) nKeyCode = 110;
+		else if (nKey == GK_END) nKeyCode = 115;
+#endif
 		if(nKeyCode<sizeof(keys)*8)
 		{  
 		  if(keys[nKeyCode>>3]&(1<<(nKeyCode&0x7)))

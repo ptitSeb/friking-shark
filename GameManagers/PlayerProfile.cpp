@@ -34,9 +34,17 @@ CPlayerProfile::CPlayerProfile(void)
 	m_KeyboardMapping["MoveRight"].sFriendlyName="Right";
 	m_KeyboardMapping["MoveRight"].vValidCombinations.push_back(SKeyCombination(GK_RIGHT));
 	m_KeyboardMapping["FireBullets"].sFriendlyName="Fire";
+#ifdef PANDORA
+	m_KeyboardMapping["FireBullets"].vValidCombinations.push_back(SKeyCombination(GK_PAGEDOWN));
+#else
 	m_KeyboardMapping["FireBullets"].vValidCombinations.push_back(SKeyCombination(GK_LCONTROL));
+#endif
 	m_KeyboardMapping["FireBomb"].sFriendlyName="Bomb";
+#ifdef PANDORA
+	m_KeyboardMapping["FireBomb"].vValidCombinations.push_back(SKeyCombination(GK_END));
+#else
 	m_KeyboardMapping["FireBomb"].vValidCombinations.push_back(SKeyCombination(GK_LMENU));
+#endif
 }
 
 CPlayerProfile::~CPlayerProfile(void)
