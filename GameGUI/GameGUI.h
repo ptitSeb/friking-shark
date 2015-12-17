@@ -74,7 +74,11 @@ BEGIN_STRUCT_PROPS(SGameScreenProperties)
 // Se ha pasado el codigo de default al Unserialize del GUIManager.
 	PROP_FLAGS(rWindowRect,"WindowRect",MRPF_NORMAL|MRPF_OPTIONAL) 
 	PROP_FLAGS(sFullScreenResolution,"Resolution",MRPF_NORMAL|MRPF_OPTIONAL)
+	#ifdef PANDORA
+	PROP_VALUE_FLAGS(bFullScreen,"FullScreen",true,MRPF_NORMAL|MRPF_OPTIONAL)
+	#else
 	PROP_VALUE_FLAGS(bFullScreen,"FullScreen",false,MRPF_NORMAL|MRPF_OPTIONAL)
+	#endif
 	PROP_VALUE_FLAGS(bWindowCentered,"CenterWindow",true,MRPF_NORMAL|MRPF_OPTIONAL)
 	PROP_VALUE_FLAGS(eWindowReferenceSystem,"WindowReferenceSystem",eGameGUIReferenceSystem_Relative,MRPF_NORMAL|MRPF_OPTIONAL)
 	PROP_VALUE_FLAGS(dFullScreenRefreshRate,"RefreshRate",0,MRPF_NORMAL|MRPF_OPTIONAL)
