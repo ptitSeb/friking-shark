@@ -298,9 +298,17 @@ void RTTRACE(const char *format, ...)
 
 unsigned int GetTimeStamp()
 {
+	#if 1
+	//Pandora, use clock_gettime instead og gettimeofday (gettimeofday tend to not work in some multithread with codeblocks env.)
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	return ((double)ts.tv_sec)*1000.0+((double)ts.tv_nsec)/1000000.0;
+
+	#else
 	timeval tNow;
 	gettimeofday(&tNow, NULL);
 	return ((double)tNow.tv_sec)*1000.0+((double)tNow.tv_usec)/1000.0;
+	#endif
 }
 
 bool FindFiles(const char *psPattern, EFindFilesMode eMode,std::set<std::string> *psFiles)
