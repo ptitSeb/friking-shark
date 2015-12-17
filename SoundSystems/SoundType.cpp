@@ -19,7 +19,12 @@
 #include "./stdafx.h"
 #include "SoundSystems.h"
 #include "SoundType.h"
+#ifdef PANDORA
+#define USE_TREMOR
+#include "tremor/ivorbisfile.h"
+#else
 #include "vorbis/vorbisfile.h"
+#endif
 
 #define OGG_PACKET_SIZE (4096)
 #define OGG_REALLOC_SIZE (1024*512)
@@ -106,7 +111,11 @@ bool CSoundType::LoadOgg()
 			char temp[OGG_PACKET_SIZE];
 			do 
 			{
+				#ifdef USE_TREMOR
+				nDecodedBytes=ov_read(&oggFile, temp, OGG_PACKET_SIZE, &bitStream);
+				#else
 				nDecodedBytes=ov_read(&oggFile, temp, OGG_PACKET_SIZE, 0, 2, 1, &bitStream);
+				#endif
 				if(nDecodedBytes)
 				{
 					if(nAllocatedSize<nBufferSize+nDecodedBytes)

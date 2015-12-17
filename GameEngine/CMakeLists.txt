@@ -9,10 +9,14 @@ SET (SRCS_GAMEENGINE
 )
 
 link_libraries (
-	${INCLUDED_LIBRARIES}
+	${INCLUDED_LIBRARIES} rt
 )
 
+if(MACOS)
 ADD_EXECUTABLE ( GameEngine MACOSX_BUNDLE ${SRCS_GAMEENGINE} )
+else()
+ADD_EXECUTABLE ( GameEngine ${SRCS_GAMEENGINE} )
+endif()
 
 TARGET_LINK_LIBRARIES (
          GameEngine
