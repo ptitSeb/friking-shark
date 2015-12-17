@@ -111,7 +111,11 @@ void CGameEngineApp::Run()
 void CGameEngineApp::InterpretCommandLine(std::string sExecutableFolder,std::vector<std::string> &vParams)
 {
 	g_sRootFolder=AppendPathSeparator(sExecutableFolder)+".." PATH_SEPARATOR ".." PATH_SEPARATOR "Resources";
+#ifdef PANDORA
+	g_sInitialConfigFile="Scripts" PATH_SEPARATOR "GameGUI_LR.cfg";
+#else
 	g_sInitialConfigFile="Scripts" PATH_SEPARATOR "GameGUI.cfg";
+#endif
 	g_sExecutableFolder=sExecutableFolder;
 	
 	// Si se ejecuta con un solo parametro y sin opciones presuponemos que es la forma abreviada
