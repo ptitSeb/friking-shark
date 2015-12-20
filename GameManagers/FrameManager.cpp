@@ -107,12 +107,12 @@ void CFrameManager::ProcessFrame()
 	if(!m_bPaused)
 	{
 		m_dwCurrentTime=m_dwCurrentRealTime-m_dwTimeBase;
-		// Limitacion del tiempo maximo de procesado de framerate a 50 ms (20fps).
+		// Limitacion del tiempo maximo de procesado de framerate a 100 ms (10fps) (was 50 ms = 20fps before).
 		// Con esto se evitan saltos al depurar y cuando se produce un tiron de disco.
-		if(m_dwCurrentTime>(m_dwLastTime+50))
+		if(m_dwCurrentTime>(m_dwLastTime+100))
 		{
-			m_dwTimeBase+=(m_dwCurrentTime-(m_dwLastTime+50));
-			m_dwCurrentTime=m_dwLastTime+50;
+			m_dwTimeBase+=(m_dwCurrentTime-(m_dwLastTime+100));
+			m_dwCurrentTime=m_dwLastTime+100;
 		}
 	}
 	m_dTimeFraction=((double)(m_dwCurrentTime-m_dwLastTime))/1000.0;
