@@ -679,10 +679,12 @@ bool COpenGLTexture::CreateDepth( unsigned nWidth,unsigned nHeight,IGenericViewp
 	m_bDepth=true;
 
 	bool bOk=false;
+	/* Don't support Depth texture for now
 	if(!bOk){bOk=CreateFrameBuffer(true);}
 	if(!bOk){bOk=CreatePBuffer(true);}
 	if(!bOk){bOk=CreateBackBuffer(true,piViewport);}
 	if(!bOk){Clear();}
+	*/
 	return bOk;
 }
 

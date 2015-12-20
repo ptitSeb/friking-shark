@@ -1761,6 +1761,8 @@ void COpenGLRender::EndStagedRendering()
 				if(!m_ShadowTexture.m_piTexture->CreateDepth(1024,1024,m_piCurrentViewport))
 				{
 					m_ShadowTexture.Destroy();
+					m_sRenderOptions.bEnableShadows = false;	// no depth textures, no shadows
+					m_sRenderOptions.bEnableSkyShadow = false;  // and the other effects have to be deactivated too
 				}
 			}
 		}
