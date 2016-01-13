@@ -23,7 +23,11 @@
 #include "OpenGLTexture.h"
 #define PNG_SKIP_SETJMP_CHECK
 #define PNG_NO_PEDANTIC_WARNINGS
+#ifdef PANDORA
 #include <libpng14/png.h>
+#else
+#include <png.h>
+#endif
 
 #pragma pack(push,1)
 struct BMPFILEHEADER
