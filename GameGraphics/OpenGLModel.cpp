@@ -15,7 +15,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //  
 
-
+#include <gsalt/gsalt.h>
 #include "./stdafx.h"
 #include "GCMFiles.h"
 #include "OpenGLModel.h"
@@ -177,7 +177,45 @@ bool COpenGLModel::LoadFromFile()
 					}
 					pBuffer->vTextureLevels.push_back(pLevel);
 				}
-			}			
+			}
+			// check size and simplifie if a huge array is detected
+			// only single texture is supported...
+			#define SIMPLE_MAX 1000
+			if (nFaces > SIMPLE_MAX) {
+				if ((nTextureLevels<2) && !(pNormalMapArray)) {
+printf("Going to simplify stucture of %d triangles, %d vertex\n", nFaces, nVertexes);
+					unsigned int flags = GSALT_FACE | GSALT_VERTEX;
+					if(pColorArray) flags |= GSALT_COLOR;
+					if(pNormalArray) flags |= GSALT_NORMAL;
+					if(nTextureLevels>0) flags |= GSALT_TEXCOORD;
+					GSalt gsalt = gsalt_new(nVertexes, nFaces, flags);
+
+					gsalt_array_vertex(gsalt, GSALT_FLOAT, 3, 0, pBuffer->pVertexArray);
+					if(pColorArray)
+						gsalt_array_color(gsalt, GSALT_FLOAT, 4, 0, pBuffer->pColorArray);
+					if(pNormalArray)
+						gsalt_array_normal(gsalt, GSALT_FLOAT, 0, pBuffer->pNormalArray);
+					if(nTextureLevels>0)
+						gsalt_array_texcoord(gsalt, GSALT_FLOAT, 2, 0, pBuffer->vTextureLevels[0]->pTexVertexArray);
+
+					gsalt_array_indexes(gsalt, GSALT_UINT32, pBuffer->pFaceVertexIndexes);
+
+					int new_triangles = gsalt_simplify(gsalt, SIMPLE_MAX);
+
+					if (new_triangles < nFaces && new_triangles>0) {
+						nFaces = gsalt_query_numtriangles(gsalt);
+						nVertexes = gsalt_query_numvertex(gsalt);
+					}
+
+					pBuffer->nFaces = nFaces;
+					pBuffer->nVertexes = nVertexes;
+
+					gsalt_delete(gsalt);
+
+				} else
+					printf("Large Array of %lu triangles, with %lu textures%s, not simplified\n", nVertexes, nFaces, (pNormalMapArray)?" and a Normal Map":"");
+			}
+			// done
 			if (pBuffer->nVertexes)
 			{
 				pFrame->vRenderBuffers.push_back(pBuffer);
