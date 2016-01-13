@@ -18,6 +18,8 @@
 
 #pragma once
 
+template<typename T1,typename T2> static void MRPersistencyAsign(T1 *pVar1,T2 *pVar2);
+
 #define MRPF_READ					0x0001
 #define MRPF_WRITE					0x0002
 #define MRPF_OPTIONAL				0x0004
