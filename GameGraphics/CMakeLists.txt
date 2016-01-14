@@ -41,6 +41,9 @@ TARGET_LINK_LIBRARIES (
 	${OPENGL_LIBRARY}
 	${XINERAMA_LIBRARY}
 	${XRANDR_LIBARY}
-	gsalt
 )
+
+if(GSALT)
+ TARGET_LINK_LIBRARIES (GameGraphics gsalt)
+endif()
 

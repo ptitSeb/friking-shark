@@ -10,6 +10,7 @@ endif(COMMAND cmake_policy)
 
 option(PANDORA "Set to ON if targeting an OpenPandora device" ${PANDORA})
 option(MACOS "Set to ON if targeting a MAC" ${MACOS})
+option(GSALT "Set to ON for using libgsalt to reduce triangle count" ${GSALT})
 
 FIND_PACKAGE ( X11 REQUIRED )
 FIND_PACKAGE ( OpenGL REQUIRED )
@@ -20,10 +21,11 @@ FIND_LIBRARY (XINERAMA_LIBRARY Xinerama /usr/local/lib /usr/lib /sw/lib)
 FIND_LIBRARY (ALUT_LIBRARY alut /usr/local/lib /usr/lib /sw/lib)
 if(PANDORA)
  FIND_LIBRARY (VORBISFILE_LIBRARY vorbisidec /usr/local/lib /usr/lib /sw/lib)
+ FIND_LIBRARY (VORBIS_LIBRARY vorbisidec /usr/local/lib /usr/lib /sw/lib)
 else()
  FIND_LIBRARY (VORBISFILE_LIBRARY vorbisfile /usr/local/lib /usr/lib /sw/lib)
+ FIND_LIBRARY (VORBIS_LIBRARY vorbis /usr/local/lib /usr/lib /sw/lib)
 endif()
-FIND_LIBRARY (VORBIS_LIBRARY vorbis /usr/local/lib /usr/lib /sw/lib)
 FIND_LIBRARY (OGG_LIBRARY ogg /usr/local/lib /usr/lib /sw/lib)
 
 # FIND_PACKAGE ( Vorbis REQUIRED )
@@ -34,6 +36,10 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/Demo/Bin/Release/)
 if(PANDORA)
 	add_definitions(-DPANDORA)
 endif()
+if(GSALT)
+        add_definitions(-DUSE_GSALT)
+endif()
+
 
 # Libraries
 INCLUDE_DIRECTORIES (
