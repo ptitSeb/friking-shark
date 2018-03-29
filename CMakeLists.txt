@@ -15,7 +15,23 @@ option(GSALT "Set to ON for using libgsalt to reduce triangle count" ${GSALT})
 FIND_PACKAGE ( X11 REQUIRED )
 FIND_PACKAGE ( OpenGL REQUIRED )
 FIND_PACKAGE ( OpenAL REQUIRED )
-FIND_PACKAGE ( PNG REQUIRED )
+IF (NOT WINDOWS)
+	include (FindPkgConfig)
+	if (NOT PKG_CONFIG_FOUND)
+		message (FATAL_ERROR "pkg-config not found")
+	endif ()
+	pkg_check_modules (LIBPNG libpng16 REQUIRED)
+	if (NOT LIBPNG_FOUND)
+		message(FATAL_ERROR "libpng16 development libraries not found")
+	else ()
+		include_directories (${LIBPNG_INCLUDE_DIRS})
+		link_directories (${LIBPNG_LIBRARY_DIRS})
+		#link_libraries (${LIBPNG_LIBRARIES})
+		set(PNG_LIBRARY ${LIBPNG_LIBRARIES})
+	endif ()
+ELSE()
+	FIND_PACKAGE ( PNG REQUIRED )
+ENDIF()
 FIND_LIBRARY (XRANDR_LIBARY Xrandr /usr/local/lib /usr/lib /sw/lib)
 FIND_LIBRARY (XINERAMA_LIBRARY Xinerama /usr/local/lib /usr/lib /sw/lib)
 FIND_LIBRARY (ALUT_LIBRARY alut /usr/local/lib /usr/lib /sw/lib)
@@ -105,10 +121,10 @@ ENDIF(UNIX AND NOT WIN32)
 # Main build details.
 
 ADD_SUBDIRECTORY (
-./GameGUILib
+./GameRunTimeLib
 )
 ADD_SUBDIRECTORY (
-./GameRunTimeLib
+./GameGUILib
 )
 ADD_SUBDIRECTORY (
 ./VectorLib
@@ -117,7 +133,7 @@ ADD_SUBDIRECTORY (
 ./GameEntityLib
 )
 
-install(TARGETS GameEngine ./GameRunTime GameGraphics GameGUI AirUnitTypes AnimationSystems BonusTypes GameManagers GroundUnitTypes GUISystems ParticleSystems PlayAreaElements SoundSystems WeaponTypes EntityEditor FormationEditor ScenarioEditor DESTINATION share/frikingshark/Bin/Release)
+install(TARGETS GameEngine GameRunTime GameGraphics GameGUI AirUnitTypes AnimationSystems BonusTypes GameManagers GroundUnitTypes GUISystems ParticleSystems PlayAreaElements SoundSystems WeaponTypes EntityEditor FormationEditor ScenarioEditor DESTINATION share/frikingshark/Bin/Release)
 install(DIRECTORY Demo/Resources/Models/ DESTINATION share/frikingshark/Resources/Models/ FILES_MATCHING PATTERN "*.gbs")
 install(DIRECTORY Demo/Resources/Models/ DESTINATION share/frikingshark/Resources/Models/ FILES_MATCHING PATTERN "*.gcm")
 install(DIRECTORY Demo/Resources/Sounds/ DESTINATION share/frikingshark/Resources/Sounds/ FILES_MATCHING PATTERN "*.ogg")

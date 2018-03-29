@@ -24,7 +24,7 @@ TARGET_LINK_LIBRARIES (
 	GameRunTimeLib
 	VectorLib
 	GameEntityLib
-	./GameRunTime
+	GameRunTime
 	${PNG_LIBRARY}
 	${OPENAL_LIBRARY}
 	${OPENGL_LIBRARY}

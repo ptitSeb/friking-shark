@@ -37,7 +37,7 @@ SET (SRCS_GAMEGUI
 ADD_LIBRARY ( GameGUI SHARED ${SRCS_GAMEGUI} )
 
 TARGET_LINK_LIBRARIES (
-         GameGUI
+	GameGUI
 	GameGUILib
 	GameRunTimeLib
 	VectorLib

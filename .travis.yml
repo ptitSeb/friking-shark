@@ -11,6 +11,7 @@ addons:
     - libopenal-dev
     - libalut-dev
     - libvorbis-dev
+    - libpng16-dev
     - gcc-5
     - g++-5
 
