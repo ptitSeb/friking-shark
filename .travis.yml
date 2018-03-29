@@ -19,13 +19,13 @@ compiler:
 
 #Build steps
 before_install:
-    - wget https://cmake.org/files/v3.6/cmake-3.6.1-Linux-x86_64.tar.gz
-    - tar xf cmake-3.6.1-Linux-x86_64.tar.gz
-    - rm -v cmake-3.6.1-Linux-x86_64.tar.gz
-    - mv -v cmake-3.6.1-Linux-x86_64 cmake361
+    - wget https://cmake.org/files/v3.9/cmake-3.9.2-Linux-x86_64.tar.gz
+    - tar xf cmake-3.9.2-Linux-x86_64.tar.gz
+    - rm -v cmake-3.9.2-Linux-x86_64.tar.gz
+    - mv -v cmake-3.9.2-Linux-x86_64 cmake392
     - sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc
     - sudo unlink /usr/bin/g++ && sudo ln -s /usr/bin/g++-5 /usr/bin/g++
-    - cmake361/bin/cmake .
+    - cmake392/bin/cmake .
 
 script:
     - make
