@@ -131,22 +131,22 @@ bool LoadPngFile(const char *pFileName,unsigned int nBits,unsigned int *pnWidth,
 	if(bOk){png_init_io(pPNGHeader, pFile);}
 	if(bOk){png_set_sig_bytes(pPNGHeader, 0);}
 	if(bOk){png_read_png(pPNGHeader, pPNGInfo, PNG_TRANSFORM_STRIP_16 | PNG_TRANSFORM_PACKING | PNG_TRANSFORM_EXPAND, NULL);}
-	if(bOk){bOk=(pPNGInfo->color_type==PNG_COLOR_TYPE_RGBA || pPNGInfo->color_type==PNG_COLOR_TYPE_RGB);}
+	if(bOk){bOk=(png_get_color_type(pPNGHeader, pPNGInfo)==PNG_COLOR_TYPE_RGBA || png_get_color_type(pPNGHeader, pPNGInfo)==PNG_COLOR_TYPE_RGB);}
 	if(bOk)
 	{
-		*pnWidth= pPNGInfo->width;
-		*pnHeight= pPNGInfo->height;
-		unsigned int nFileBits=pPNGInfo->color_type==PNG_COLOR_TYPE_RGBA?32:24;
+		*pnWidth= png_get_image_width(pPNGHeader, pPNGInfo);
+		*pnHeight= png_get_image_height(pPNGHeader, pPNGInfo);
+		unsigned int nFileBits=png_get_color_type(pPNGHeader, pPNGInfo)==PNG_COLOR_TYPE_RGBA?32:24;
 		unsigned int nRequestedBits=(nBits==GL_RGBA)?32:24;
 	
 		if(nFileBits==nRequestedBits)
 		{
 			unsigned int nRowSize = png_get_rowbytes(pPNGHeader, pPNGInfo);
-			*ppPixels = new unsigned char [nRowSize* pPNGInfo->height];
+			*ppPixels = new unsigned char [nRowSize* png_get_image_height(pPNGHeader, pPNGInfo)];
 			png_bytepp ppRows = png_get_rows(pPNGHeader, pPNGInfo);
-			for(unsigned int y=0;y<pPNGInfo->height;y++) 
+			for(unsigned int y=0;y<png_get_image_height(pPNGHeader, pPNGInfo);y++)
 			{
-				memcpy(*ppPixels+(nRowSize* (pPNGInfo->height-1-y)), ppRows[y], nRowSize);
+				memcpy(*ppPixels+(nRowSize* (png_get_image_height(pPNGHeader, pPNGInfo)-1-y)), ppRows[y], nRowSize);
 			}
 		}
 		else
@@ -155,22 +155,22 @@ bool LoadPngFile(const char *pFileName,unsigned int nBits,unsigned int *pnWidth,
 			int nFileBytesPerColor=(nFileBits>>3);
 			
 			png_get_rowbytes(pPNGHeader, pPNGInfo);
-			unsigned int nDestRowSize = nDestBytesPerColor*pPNGInfo->width;
-			*ppPixels = new unsigned char [nDestBytesPerColor*pPNGInfo->width*pPNGInfo->height];
+			unsigned int nDestRowSize = nDestBytesPerColor*png_get_image_height(pPNGHeader, pPNGInfo);
+			*ppPixels = new unsigned char [nDestBytesPerColor*png_get_image_width(pPNGHeader, pPNGInfo)*png_get_image_height(pPNGHeader, pPNGInfo)];
 
 			if(nDestBytesPerColor>nFileBytesPerColor)
 			{
 				// Alpha channel to full opacity if missing.
-				memset(*ppPixels,255,nDestBytesPerColor*pPNGInfo->width*pPNGInfo->height);
+				memset(*ppPixels,255,nDestBytesPerColor*png_get_image_width(pPNGHeader, pPNGInfo)*png_get_image_height(pPNGHeader, pPNGInfo));
 			}
 		
 			png_bytepp ppRows = png_get_rows(pPNGHeader, pPNGInfo);
-			for(unsigned int y=0;y<pPNGInfo->height;y++) 
+			for(unsigned int y=0;y<png_get_image_height(pPNGHeader, pPNGInfo);y++)
 			{
 				unsigned char *pFile=ppRows[y];
-				unsigned char *pDest=(*ppPixels)+(nDestRowSize* (pPNGInfo->height-1-y));
+				unsigned char *pDest=(*ppPixels)+(nDestRowSize* (png_get_image_height(pPNGHeader, pPNGInfo)-1-y));
 				
-				for(unsigned int x=0;x<pPNGInfo->width;x++) 
+				for(unsigned int x=0;x<png_get_image_width(pPNGHeader, pPNGInfo);x++)
 				{
 					pDest[0]=pFile[0];
 					pDest[1]=pFile[1];
