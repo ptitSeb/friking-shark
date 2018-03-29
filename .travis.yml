@@ -9,6 +9,8 @@ addons:
     - libsdl2-dev
     - libsdl2-image-dev
     - libopenal-dev
+    - libalut-dev
+    - libvorbis-dev
     - gcc-5
     - g++-5
 
