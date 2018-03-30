@@ -23,166 +23,9 @@
 #include "OpenGLTexture.h"
 #define PNG_SKIP_SETJMP_CHECK
 #define PNG_NO_PEDANTIC_WARNINGS
-#include <libpng16/png.h>
-
-#pragma pack(push,1)
-struct BMPFILEHEADER
-{
-	uint16_t bfType; 
-	uint32_t bfSize; 
-	uint16_t bfReserved1; 
-	uint16_t bfReserved2; 
-	uint32_t bfOffBits; 
-};
-struct BMPINFOHEADER 
-{ 
-	uint32_t biSize; 
-	uint32_t biWidth; 
-	uint32_t biHeight; 
-	uint16_t biPlanes; 
-	uint16_t biBitCount;
-	uint32_t biCompression; 
-	uint32_t biSizeImage; 
-	uint32_t biXPelsPerMeter; 
-	uint32_t biYPelsPerMeter; 
-	uint32_t biClrUsed; 
-	uint32_t biClrImportant; 
-}; 
-#pragma pack(pop)
-
-bool LoadBMPFile(const char *pFileName,unsigned int nBits,unsigned int *pnWidth,unsigned int *pnHeight,unsigned char **ppPixels)
-{
-	BMPFILEHEADER fileHeader={0};
-	BMPINFOHEADER fileInfo={0};
-
-	FILE *pFile=fopen(pFileName,"rb");
-	if(!pFile){return false;}
-	// Make room for the header
-	bool bOk=(fread(&fileHeader,sizeof(fileHeader),1,pFile)==1);
-	if(bOk){bOk=(fileHeader.bfType == 0x4d42);}
-	if(bOk){bOk=(fread(&fileInfo,sizeof(fileInfo),1,pFile)==1);}
-	if(bOk){bOk=(fileInfo.biSize==sizeof(fileInfo));}
-	if(bOk){bOk=(fileInfo.biPlanes==1);}
-	if(bOk){bOk=(fileInfo.biBitCount==24 || fileInfo.biBitCount==32);}
-	if(bOk){bOk=(fileInfo.biCompression==0);} // BI_RGB
-	if(bOk){fseek(pFile,fileHeader.bfOffBits,SEEK_SET);}
-	if(bOk)
-	{
-		unsigned char *pFileBits=(unsigned char*)malloc(fileInfo.biSizeImage);
-		if(bOk){bOk=(fread(pFileBits,fileInfo.biSizeImage,1,pFile)==1);}
-		if(bOk)
-		{
-			*pnHeight=fileInfo.biHeight;
-			*pnWidth=fileInfo.biWidth;
-			*ppPixels = new unsigned char[fileInfo.biHeight * fileInfo.biWidth * nBits/8];
-			// Set alpha to 1
-			if(nBits==32){memset(*ppPixels,0xFF,fileInfo.biHeight * fileInfo.biWidth * nBits/8);}
-
-			int sourceLineSize = fileInfo.biWidth *  fileInfo.biBitCount/8;
-			int paddedLineSize = ((sourceLineSize/4)*4);
-			int pad=0;
-			if(paddedLineSize < sourceLineSize){pad=4;}
-
-			unsigned char *bufferPointer = (*ppPixels);// + (lineSize * (fileInfo.biHeight-1));
-			unsigned char *imagePointer = pFileBits;
-
-			int x, y;
-			int nSourceExcess=fileInfo.biBitCount>nBits?1:0;
-			int nDestExcess=nBits>fileInfo.biBitCount?1:0;
-			int nCommon=fileInfo.biBitCount==nBits?fileInfo.biBitCount/8:3;
-
-			for(x = fileInfo.biHeight-1; x >= 0; x--)
-			{
-				for(y = 0; y < (int)fileInfo.biWidth; y++)
-				{
-					bufferPointer[0] = imagePointer[2];
-					bufferPointer[1] = imagePointer[1];
-					bufferPointer[2] = imagePointer[0];
-					bufferPointer+=nCommon+nDestExcess;
-					imagePointer+=nCommon+nSourceExcess;
-				}
-				imagePointer  += pad;
-			}
-		}
-		free(pFileBits);
-		pFileBits=NULL;
-	}
-
-	fclose(pFile);
-	pFile=NULL;
-	return bOk;
-}
-
-bool LoadPngFile(const char *pFileName,unsigned int nBits,unsigned int *pnWidth,unsigned int *pnHeight,unsigned char **ppPixels)
-{
-	png_structp pPNGHeader=NULL;
-	png_infop pPNGInfo=NULL;
-
-	bool bOk;
-	FILE *pFile=fopen(pFileName,"rb");
-	bOk=(pFile!=NULL);
-	if(bOk){pPNGHeader=png_create_read_struct(PNG_LIBPNG_VER_STRING,NULL,NULL,NULL);bOk=(pPNGHeader!=NULL);}
-	if(bOk){pPNGInfo=png_create_info_struct(pPNGHeader);bOk=(pPNGInfo!=NULL);}
-	if(bOk){bOk=(setjmp(png_jmpbuf(pPNGHeader))==0);}
-	if(bOk){png_init_io(pPNGHeader, pFile);}
-	if(bOk){png_set_sig_bytes(pPNGHeader, 0);}
-	if(bOk){png_read_png(pPNGHeader, pPNGInfo, PNG_TRANSFORM_STRIP_16 | PNG_TRANSFORM_PACKING | PNG_TRANSFORM_EXPAND, NULL);}
-	if(bOk){bOk=(png_get_color_type(pPNGHeader, pPNGInfo)==PNG_COLOR_TYPE_RGBA || png_get_color_type(pPNGHeader, pPNGInfo)==PNG_COLOR_TYPE_RGB);}
-	if(bOk)
-	{
-		*pnWidth= png_get_image_width(pPNGHeader, pPNGInfo);
-		*pnHeight= png_get_image_height(pPNGHeader, pPNGInfo);
-		unsigned int nFileBits=png_get_color_type(pPNGHeader, pPNGInfo)==PNG_COLOR_TYPE_RGBA?32:24;
-		unsigned int nRequestedBits=(nBits==GL_RGBA)?32:24;
-	
-		if(nFileBits==nRequestedBits)
-		{
-			unsigned int nRowSize = png_get_rowbytes(pPNGHeader, pPNGInfo);
-			*ppPixels = new unsigned char [nRowSize* png_get_image_height(pPNGHeader, pPNGInfo)];
-			png_bytepp ppRows = png_get_rows(pPNGHeader, pPNGInfo);
-			for(unsigned int y=0;y<png_get_image_height(pPNGHeader, pPNGInfo);y++)
-			{
-				memcpy(*ppPixels+(nRowSize* (png_get_image_height(pPNGHeader, pPNGInfo)-1-y)), ppRows[y], nRowSize);
-			}
-		}
-		else
-		{
-			int nDestBytesPerColor=(nRequestedBits>>3);
-			int nFileBytesPerColor=(nFileBits>>3);
-			
-			png_get_rowbytes(pPNGHeader, pPNGInfo);
-			unsigned int nDestRowSize = nDestBytesPerColor*png_get_image_height(pPNGHeader, pPNGInfo);
-			*ppPixels = new unsigned char [nDestBytesPerColor*png_get_image_width(pPNGHeader, pPNGInfo)*png_get_image_height(pPNGHeader, pPNGInfo)];
-
-			if(nDestBytesPerColor>nFileBytesPerColor)
-			{
-				// Alpha channel to full opacity if missing.
-				memset(*ppPixels,255,nDestBytesPerColor*png_get_image_width(pPNGHeader, pPNGInfo)*png_get_image_height(pPNGHeader, pPNGInfo));
-			}
-		
-			png_bytepp ppRows = png_get_rows(pPNGHeader, pPNGInfo);
-			for(unsigned int y=0;y<png_get_image_height(pPNGHeader, pPNGInfo);y++)
-			{
-				unsigned char *pFile=ppRows[y];
-				unsigned char *pDest=(*ppPixels)+(nDestRowSize* (png_get_image_height(pPNGHeader, pPNGInfo)-1-y));
-				
-				for(unsigned int x=0;x<png_get_image_width(pPNGHeader, pPNGInfo);x++)
-				{
-					pDest[0]=pFile[0];
-					pDest[1]=pFile[1];
-					pDest[2]=pFile[2];
-					pDest+=nDestBytesPerColor;
-					pFile+=nFileBytesPerColor;
-				}
-			}
-		}
-	}
-
-	if(pPNGHeader){png_destroy_read_struct(&pPNGHeader, &pPNGInfo,NULL);}
-	if(pFile){fclose(pFile);}	
-	return bOk;	
-}
-
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_STATIC
+#include "stb_image.h"
 
 bool LoadImageHelper(std::string sFile,unsigned int dwColorType,unsigned *pOpenGLSkinWidth,unsigned *pOpenGLSkinHeight,unsigned char **ppBuffer)
 {
@@ -205,20 +48,18 @@ bool LoadImageHelper(std::string sFile,unsigned int dwColorType,unsigned *pOpenG
 		sTemp+=path;
 		path=sTemp;
 	}
-	if(sExt[0]==0)
-	{
-		path+=".bmp";
-	}
-	else
-	{
-		if(strcasecmp(sExt,".PNG")==0)
-		{
-			return LoadPngFile(path.c_str(),dwColorType,pOpenGLSkinWidth,pOpenGLSkinHeight,ppBuffer);
-		}
-	}
-	return LoadBMPFile(path.c_str(),(dwColorType==GL_RGBA)?32:24,pOpenGLSkinWidth,pOpenGLSkinHeight,ppBuffer);
-}
 
+	int w, h, channels;
+	int bits=(dwColorType==GL_RGBA)?4:3;
+	stbi_set_flip_vertically_on_load(1);
+	*ppBuffer = stbi_load(path.c_str(), &w, &h, &channels, bits);
+	if(!*ppBuffer)
+		return false;
+
+	*pOpenGLSkinWidth = w;
+	*pOpenGLSkinHeight = h;
+	return true;
+}
 
 COpenGLTexture::COpenGLTexture(void)
 {
@@ -250,7 +91,7 @@ void COpenGLTexture::Clear()
 {
 	if(m_pBuffer)
 	{
-		delete [] m_pBuffer;
+		free(m_pBuffer);
 		m_pBuffer=NULL;
 	}
 	
@@ -328,7 +169,7 @@ bool COpenGLTexture::LoadFromFile()
 				bResult=false;
 				RTTRACE("COpenGLTexture::LoadFromFile -> Failed to load alpha texture %s",m_sAlphaFileName.c_str());
 			} 
-			if(pAlphaBuffer){delete [] pAlphaBuffer;pAlphaBuffer=NULL;}
+			if(pAlphaBuffer){free(pAlphaBuffer);pAlphaBuffer=NULL;}
 		}	
 		else if(m_bColorKey)
 		{
@@ -416,7 +257,7 @@ bool COpenGLTexture::Load(std::string sFileName,CVector *pColorKey,std::string *
 	}
 	if(m_pBuffer)
 	{
-		delete [] m_pBuffer;
+		free(m_pBuffer);
 		m_pBuffer=NULL;
 	}
 	return LoadFromFile();
