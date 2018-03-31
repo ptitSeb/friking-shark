@@ -2647,7 +2647,9 @@ void COpenGLRender::AddShader( const SShaderKey &key )
 	char sTemp[128];
 	std::string sPreprocessor;
 	if(key.bHeightFog){sPreprocessor+="#define ENABLE_FOG\n";}
+#ifndef PANDORA
 	if(key.bWater){sPreprocessor+="#define ENABLE_WATER\n";}
+#endif
 	if(key.bShadows)
 	{
 		sPreprocessor+="#define ENABLE_SHADOWS\n";
