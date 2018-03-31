@@ -26,7 +26,7 @@ COpenGLRender::COpenGLRender(void)
 	m_bRestoreTextureMatrix=false;
 	m_bHardwareSupportRead=false;
 	#ifdef PANDORA
-	m_bIgnoreShaderSupport=true;
+	m_bIgnoreShaderSupport=false;
 	#else
 	m_bIgnoreShaderSupport=false;
 	#endif
