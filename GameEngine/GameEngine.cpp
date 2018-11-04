@@ -24,6 +24,9 @@
 #include "GameEngine.h"
 #include "GameGUI.h"
 #include "InterfaceLeakAPI.h"
+#ifdef USE_SDL2
+#include <SDL2/SDL.h>
+#endif
 
 CGameEngineApp theApp;
 
@@ -181,6 +184,13 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,i
 #else
 int main(int argc, char *argv[])
 {
+#ifdef USE_SDL2
+	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER | SDL_INIT_EVENTS)!=0)
+	{
+		printf("Error initializing SDL2, aborting!\n");
+		return -1;
+	}
+#endif
 	std::string sFolder=GetFileFolder(argv[0]);
 	std::vector<std::string> vParams;
 	for(int x=1;x<argc;x++)
@@ -189,6 +199,9 @@ int main(int argc, char *argv[])
 	}
 	theApp.InterpretCommandLine(sFolder,vParams);
 	theApp.Run();
+#ifdef USE_SDL2
+	SDL_Quit();
+#endif
 	return 0;
 }
 #endif

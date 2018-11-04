@@ -19,9 +19,13 @@
 #pragma once
 #include "GameGraphics.h"
 #ifndef WIN32
+#ifdef USE_SDL2
+#include <SDL2/SDL.h>
+#else
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
+#endif
 #endif
 
 class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericViewport
@@ -41,6 +45,29 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 		static BOOL CALLBACK PrimaryMonitorEnumerationCallBack(HMONITOR hMonitor,HDC hdcMonitor,LPRECT lprcMonitor,LPARAM dwData);
 	#else
 		
+	#ifdef USE_SDL2
+		SDL_Window 	*m_pWindow;
+		SDL_GLContext	m_pContext;
+		bool		 m_bSDLExit;
+
+		unsigned int m_nDblClkDetectLastButton;
+		int 		 m_nDblClkDetectLastX;
+		int 		 m_nDblClkDetectLastY;
+		int 		 m_nDblClkDetectLastTime;
+		int 		 m_nDblClkDetectMilliseconds;
+		int 		 m_nDblClkDetectDistance;
+
+
+		int          m_nLoopDepth;
+		int 		 m_nDetectDragX;
+		int 		 m_nDetectDragY;
+		unsigned int m_nDetectDragButton;
+		bool 		 m_bDetectedDrag;
+
+		void SetupSDLWindowParameters();
+		bool WaitForSDLEvent(int nEventType);
+		void ProcessSDLEvent(SDL_Event &event,bool *pbBreakLoop);
+	#else
 		static int CustomXIOErrorHandler(Display*);
 		
 		Display 	*m_pXDisplay;
@@ -72,7 +99,7 @@ class COpenGLViewport: virtual public CSystemObjectBase,virtual public IGenericV
 		void SetupXWindowParameters();
 		bool WaitForXEvent(int nEventType);
 		void ProcessXEvent(XEvent &event,bool *pbBreakLoop);
-		
+	#endif	
 	#endif
 		
 	SVideoMode  	m_OriginalVideoMode;

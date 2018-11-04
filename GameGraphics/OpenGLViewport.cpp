@@ -23,6 +23,8 @@
 #ifdef WIN32
   #define VIEWPORT_CLASSNAME "OpenGLViewport"
   #define WM_GL_VIEWPORT_END_LOOP WM_USER+0x001
+#elif defined(USE_SDL2)
+	#define DETECT_DRAG_SIZE 3
 #else
 	#include <X11/extensions/Xrandr.h>
 	#include <X11/extensions/Xinerama.h>
@@ -231,6 +233,251 @@ int TranslateKeyToWindows(int nGameKey)
 
 	return 0;
 }
+#elif defined(USE_SDL2)
+int TranslateKeyFromSDL(int nSDLKey)
+{
+	switch(nSDLKey)
+	{
+	case SDL_SCANCODE_SPACE:return ' ';
+	case SDL_SCANCODE_0:return '0';
+	case SDL_SCANCODE_1:return '1';
+	case SDL_SCANCODE_2:return '2';
+	case SDL_SCANCODE_3:return '3';
+	case SDL_SCANCODE_4:return '4';
+	case SDL_SCANCODE_5:return '5';
+	case SDL_SCANCODE_6:return '6';
+	case SDL_SCANCODE_7:return '7';
+	case SDL_SCANCODE_8:return '8';
+	case SDL_SCANCODE_9:return '9';
+	case SDL_SCANCODE_A:return 'A';
+	case SDL_SCANCODE_B:return 'B';
+	case SDL_SCANCODE_C:return 'C';
+	case SDL_SCANCODE_D:return 'D';
+	case SDL_SCANCODE_E:return 'E';
+	case SDL_SCANCODE_F:return 'F';
+	case SDL_SCANCODE_G:return 'G';
+	case SDL_SCANCODE_H:return 'H';
+	case SDL_SCANCODE_I:return 'I';
+	case SDL_SCANCODE_J:return 'J';
+	case SDL_SCANCODE_K:return 'K';
+	case SDL_SCANCODE_L:return 'L';
+	case SDL_SCANCODE_M:return 'M';
+	case SDL_SCANCODE_N:return 'N';
+	case SDL_SCANCODE_O:return 'O';
+	case SDL_SCANCODE_P:return 'P';
+	case SDL_SCANCODE_Q:return 'Q';
+	case SDL_SCANCODE_R:return 'R';
+	case SDL_SCANCODE_S:return 'S';
+	case SDL_SCANCODE_T:return 'T';
+	case SDL_SCANCODE_U:return 'U';
+	case SDL_SCANCODE_V:return 'V';
+	case SDL_SCANCODE_W:return 'W';
+	case SDL_SCANCODE_X:return 'X';
+	case SDL_SCANCODE_Y:return 'Y';
+	case SDL_SCANCODE_Z:return 'Z';
+	case SDL_SCANCODE_PERIOD:return '.';
+	case SDL_SCANCODE_SEMICOLON:return ';';
+	case SDL_SCANCODE_SLASH:return '/';
+	case SDL_SCANCODE_TAB:return '\t';
+	case SDL_SCANCODE_UP:return GK_UP;
+	case SDL_SCANCODE_DOWN:return GK_DOWN;
+	case SDL_SCANCODE_LEFT:return GK_LEFT;
+	case SDL_SCANCODE_RIGHT:return GK_RIGHT;
+	case SDL_SCANCODE_KP_0:return GK_NUMPAD0;
+	case SDL_SCANCODE_KP_1:return GK_NUMPAD1;
+	case SDL_SCANCODE_KP_2:return GK_NUMPAD2;
+	case SDL_SCANCODE_KP_3:return GK_NUMPAD3;
+	case SDL_SCANCODE_KP_4:return GK_NUMPAD4;
+	case SDL_SCANCODE_KP_5:return GK_NUMPAD5;
+	case SDL_SCANCODE_KP_6:return GK_NUMPAD6;
+	case SDL_SCANCODE_KP_7:return GK_NUMPAD7;
+	case SDL_SCANCODE_KP_8:return GK_NUMPAD8;
+	case SDL_SCANCODE_KP_9:return GK_NUMPAD9;
+	case SDL_SCANCODE_LCTRL:return GK_LCONTROL;
+	case SDL_SCANCODE_HOME:return GK_HOME;
+	case SDL_SCANCODE_END:return GK_END;
+	case SDL_SCANCODE_BACKSPACE:return GK_BACK;
+	case SDL_SCANCODE_DELETE:return GK_DELETE;
+	case SDL_SCANCODE_ESCAPE:return GK_ESCAPE;
+	case SDL_SCANCODE_RETURN:return GK_RETURN;
+	case SDL_SCANCODE_LALT:return GK_LMENU;
+	case SDL_SCANCODE_LSHIFT:return GK_LSHIFT;
+	case SDL_SCANCODE_INSERT:return GK_INSERT;
+	case SDL_SCANCODE_F1:return GK_F1;
+	case SDL_SCANCODE_F2:return GK_F2;
+	case SDL_SCANCODE_F3:return GK_F3;
+	case SDL_SCANCODE_F4:return GK_F4;
+	case SDL_SCANCODE_F5:return GK_F5;
+	case SDL_SCANCODE_F6:return GK_F6;
+	case SDL_SCANCODE_F7:return GK_F7;
+	case SDL_SCANCODE_F8:return GK_F8;
+	case SDL_SCANCODE_F9:return GK_F9;
+	case SDL_SCANCODE_F10:return GK_F10;
+	case SDL_SCANCODE_F11:return GK_F11;
+	case SDL_SCANCODE_F12:return GK_F12;
+	case SDL_SCANCODE_PAUSE:return GK_PAUSE;
+	case SDL_SCANCODE_PAGEUP:return GK_PAGEUP;
+	case SDL_SCANCODE_PAGEDOWN:return GK_PAGEDOWN;
+	case SDL_SCANCODE_RCTRL:return GK_RCONTROL;
+	case SDL_SCANCODE_RALT:return GK_RMENU;
+	case SDL_SCANCODE_RSHIFT:return GK_RSHIFT;
+	case SDL_SCANCODE_F13:return GK_F13;
+	case SDL_SCANCODE_F14:return GK_F14;
+	case SDL_SCANCODE_F15:return GK_F15;
+	case SDL_SCANCODE_F16:return GK_F16;
+	case SDL_SCANCODE_F17:return GK_F17;
+	case SDL_SCANCODE_F18:return GK_F18;
+	case SDL_SCANCODE_F19:return GK_F19;
+	case SDL_SCANCODE_F20:return GK_F20;
+	case SDL_SCANCODE_F21:return GK_F21;
+	case SDL_SCANCODE_F22:return GK_F22;
+	case SDL_SCANCODE_F23:return GK_F23;
+	case SDL_SCANCODE_F24:return GK_F24;
+	case SDL_SCANCODE_CLEAR:return GK_CLEAR;
+	case SDL_SCANCODE_CAPSLOCK:return GK_CAPITAL;
+	case SDL_SCANCODE_SELECT:return GK_SELECT;
+	case SDL_SCANCODE_PRINTSCREEN:return GK_PRINT;
+	case SDL_SCANCODE_EXECUTE:return GK_EXECUTE;
+	case SDL_SCANCODE_HELP:return GK_HELP;
+	case SDL_SCANCODE_LGUI:return GK_LWIN;
+	case SDL_SCANCODE_RGUI:return GK_RWIN;
+	case SDL_SCANCODE_KP_MULTIPLY:return GK_MULTIPLY;
+	case SDL_SCANCODE_KP_PLUS:return GK_ADD;
+	case SDL_SCANCODE_KP_PERIOD:return GK_SEPARATOR;
+	case SDL_SCANCODE_KP_LESS:return GK_SUBTRACT;
+	case SDL_SCANCODE_KP_DECIMAL:return GK_DECIMAL;
+	case SDL_SCANCODE_KP_DIVIDE:return GK_DIVIDE;
+	case SDL_SCANCODE_NUMLOCKCLEAR:return GK_NUMLOCK;
+	case SDL_SCANCODE_SCROLLLOCK:return GK_SCROLL;
+	case SDL_SCANCODE_MENU:return GK_MENU;
+	};
+	return 0;
+}
+
+int TranslateKeyToSDL(int nGameKey)
+{
+	switch(nGameKey)
+	{
+	case ' ':return SDL_SCANCODE_SPACE;
+	case '0':return SDL_SCANCODE_0;
+	case '1':return SDL_SCANCODE_1;
+	case '2':return SDL_SCANCODE_2;
+	case '3':return SDL_SCANCODE_3;
+	case '4':return SDL_SCANCODE_4;
+	case '5':return SDL_SCANCODE_5;
+	case '6':return SDL_SCANCODE_6;
+	case '7':return SDL_SCANCODE_7;
+	case '8':return SDL_SCANCODE_8;
+	case '9':return SDL_SCANCODE_9;
+	case 'A':return SDL_SCANCODE_A;
+	case 'B':return SDL_SCANCODE_B;
+	case 'C':return SDL_SCANCODE_C;
+	case 'D':return SDL_SCANCODE_D;
+	case 'E':return SDL_SCANCODE_E;
+	case 'F':return SDL_SCANCODE_F;
+	case 'G':return SDL_SCANCODE_G;
+	case 'H':return SDL_SCANCODE_H;
+	case 'I':return SDL_SCANCODE_I;
+	case 'J':return SDL_SCANCODE_J;
+	case 'K':return SDL_SCANCODE_K;
+	case 'L':return SDL_SCANCODE_L;
+	case 'M':return SDL_SCANCODE_M;
+	case 'N':return SDL_SCANCODE_N;
+	case 'O':return SDL_SCANCODE_O;
+	case 'P':return SDL_SCANCODE_P;
+	case 'Q':return SDL_SCANCODE_Q;
+	case 'R':return SDL_SCANCODE_R;
+	case 'S':return SDL_SCANCODE_S;
+	case 'T':return SDL_SCANCODE_T;
+	case 'U':return SDL_SCANCODE_U;
+	case 'V':return SDL_SCANCODE_V;
+	case 'W':return SDL_SCANCODE_W;
+	case 'X':return SDL_SCANCODE_X;
+	case 'Y':return SDL_SCANCODE_Y;
+	case 'Z':return SDL_SCANCODE_Z;
+	case '.':return SDL_SCANCODE_PERIOD;
+	case ';':return SDL_SCANCODE_SEMICOLON;
+	case '/':return SDL_SCANCODE_SLASH;
+	case '\t':return SDL_SCANCODE_TAB;
+	case GK_UP:return SDL_SCANCODE_UP;
+	case GK_DOWN:return SDL_SCANCODE_DOWN;
+	case GK_LEFT:return SDL_SCANCODE_LEFT;
+	case GK_RIGHT:return SDL_SCANCODE_RIGHT;
+	case GK_NUMPAD0:return SDL_SCANCODE_KP_0;
+	case GK_NUMPAD1:return SDL_SCANCODE_KP_1;
+	case GK_NUMPAD2:return SDL_SCANCODE_KP_2;
+	case GK_NUMPAD3:return SDL_SCANCODE_KP_3;
+	case GK_NUMPAD4:return SDL_SCANCODE_KP_4;
+	case GK_NUMPAD5:return SDL_SCANCODE_KP_5;
+	case GK_NUMPAD6:return SDL_SCANCODE_KP_6;
+	case GK_NUMPAD7:return SDL_SCANCODE_KP_7;
+	case GK_NUMPAD8:return SDL_SCANCODE_KP_8;
+	case GK_NUMPAD9:return SDL_SCANCODE_KP_9;
+	case GK_LCONTROL:return SDL_SCANCODE_LCTRL;
+	case GK_HOME:return SDL_SCANCODE_HOME;
+	case GK_END:return SDL_SCANCODE_END;
+	case GK_BACK:return SDL_SCANCODE_BACKSPACE;
+	case GK_DELETE:return SDL_SCANCODE_DELETE;
+	case GK_ESCAPE:return SDL_SCANCODE_ESCAPE;
+	case GK_RETURN:return SDL_SCANCODE_RETURN;
+	case GK_LMENU:return SDL_SCANCODE_LALT;
+	case GK_LSHIFT:return SDL_SCANCODE_LSHIFT;
+	case GK_INSERT:return SDL_SCANCODE_INSERT;
+	case GK_F1:return SDL_SCANCODE_F1;
+	case GK_F2:return SDL_SCANCODE_F2;
+	case GK_F3:return SDL_SCANCODE_F3;
+	case GK_F4:return SDL_SCANCODE_F4;
+	case GK_F5:return SDL_SCANCODE_F5;
+	case GK_F6:return SDL_SCANCODE_F6;
+	case GK_F7:return SDL_SCANCODE_F7;
+	case GK_F8:return SDL_SCANCODE_F8;
+	case GK_F9:return SDL_SCANCODE_F9;
+	case GK_F10:return SDL_SCANCODE_F10;
+	case GK_F11:return SDL_SCANCODE_F11;
+	case GK_F12:return SDL_SCANCODE_F12;
+	case GK_PAUSE:return SDL_SCANCODE_PAUSE;
+	case GK_PAGEUP:return SDL_SCANCODE_PAGEUP;
+	case GK_PAGEDOWN:return SDL_SCANCODE_PAGEDOWN;
+	
+	case GK_RCONTROL: return SDL_SCANCODE_RCTRL;
+	case GK_RMENU: return SDL_SCANCODE_RALT;
+	case GK_RSHIFT: return SDL_SCANCODE_RSHIFT;
+	case GK_F13: return SDL_SCANCODE_F13;
+	case GK_F14: return SDL_SCANCODE_F14;
+	case GK_F15: return SDL_SCANCODE_F15;
+	case GK_F16: return SDL_SCANCODE_F16;
+	case GK_F17: return SDL_SCANCODE_F17;
+	case GK_F18: return SDL_SCANCODE_F18;
+	case GK_F19: return SDL_SCANCODE_F19;
+	case GK_F20: return SDL_SCANCODE_F20;
+	case GK_F21: return SDL_SCANCODE_F21;
+	case GK_F22: return SDL_SCANCODE_F22;
+	case GK_F23: return SDL_SCANCODE_F23;
+	case GK_F24: return SDL_SCANCODE_F24;
+	case GK_LBUTTON: return 0; //???
+	case GK_RBUTTON: return 0; //???
+	case GK_MBUTTON: return 0; //???
+	case GK_CLEAR: return SDL_SCANCODE_CLEAR;
+	case GK_CAPITAL: return SDL_SCANCODE_CAPSLOCK;
+	case GK_SELECT: return SDL_SCANCODE_SELECT;
+	case GK_PRINT: return SDL_SCANCODE_PRINTSCREEN;
+	case GK_EXECUTE: return SDL_SCANCODE_EXECUTE;
+	case GK_HELP: return SDL_SCANCODE_HELP;
+	case GK_LWIN: return SDL_SCANCODE_LGUI;
+	case GK_RWIN: return SDL_SCANCODE_RGUI;
+	case GK_MULTIPLY: return SDL_SCANCODE_KP_MULTIPLY;
+	case GK_ADD: return SDL_SCANCODE_KP_PLUS;
+	case GK_SEPARATOR: return SDL_SCANCODE_KP_PERIOD;
+	case GK_SUBTRACT: return SDL_SCANCODE_KP_LESS;
+	case GK_DECIMAL: return SDL_SCANCODE_KP_DECIMAL;
+	case GK_DIVIDE: return SDL_SCANCODE_KP_DIVIDE;
+	case GK_NUMLOCK: return SDL_SCANCODE_NUMLOCKCLEAR;
+	case GK_SCROLL: return SDL_SCANCODE_SCROLLLOCK;
+	case GK_MENU: return SDL_SCANCODE_MENU;
+	case GK_ALTGR: return SDL_SCANCODE_RALT;
+	};
+	return 0;
+}
 #else
 
 int TranslateKeyFromX11(int nX11Key)
@@ -437,6 +684,23 @@ COpenGLViewport::COpenGLViewport(void)
 	m_hWnd=NULL;
 	m_hRenderContext=NULL;
 	m_nPixelFormatIndex=0;
+#elif defined(USE_SDL2)
+	m_pWindow = NULL;
+	m_pContext = NULL;
+	m_nLoopDepth=0;
+	m_bSDLExit=false;
+
+	m_bDetectedDrag=false;
+	m_nDetectDragX=0;
+	m_nDetectDragY=0;
+	m_nDetectDragButton=0;
+	
+	m_nDblClkDetectLastButton=0;
+	m_nDblClkDetectLastX=0;
+	m_nDblClkDetectLastY=0;
+	m_nDblClkDetectLastTime=0;
+	m_nDblClkDetectMilliseconds=300;
+	m_nDblClkDetectDistance=3;
 #else
 	m_bShowSystemMouseCursor=true;
 	m_pXDisplay=NULL;
@@ -463,7 +727,6 @@ COpenGLViewport::COpenGLViewport(void)
 	m_nDblClkDetectLastTime=0;
 	m_nDblClkDetectMilliseconds=300;
 	m_nDblClkDetectDistance=3;
-	
 #endif
 	
 	GetCurrentVideoMode(&m_OriginalVideoMode);
@@ -747,6 +1010,20 @@ bool COpenGLViewport::CreateWindowed(unsigned x, unsigned y, unsigned w, unsigne
 	}
 	bOk=(m_hRenderContext!=NULL);
 	if(!bOk){RTTRACE("COpenGLViewport::Create -> Failed to get OpenGL render context");}
+#elif defined(USE_SDL2)
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 8);
+    m_pWindow = SDL_CreateWindow("Friking Shark", x, y, w, h, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+	bOk=(m_pWindow!=NULL);
+	if(!bOk){RTTRACE("COpenGLViewport::Create -> Failed to create SDL Window"); return bOk;}
+    m_pContext = SDL_GL_CreateContext(m_pWindow);
+	bOk=(m_pContext!=NULL);
+	if(!bOk){RTTRACE("COpenGLViewport::Create -> Failed to create OpenGL Context"); return bOk;}
 #else
 	m_pXDisplay=XOpenDisplay(NULL);
 	if(m_pXDisplay)
@@ -771,7 +1048,7 @@ bool COpenGLViewport::CreateWindowed(unsigned x, unsigned y, unsigned w, unsigne
 bool COpenGLViewport::CreateFullScreen(unsigned int w,unsigned int h,unsigned int bpp,unsigned int rate)
 {
 	bool bOk=false;
-	#ifdef WIN32
+#ifdef WIN32
 	WNDCLASSEX		wcex={0};
 	wcex.cbSize=sizeof(wcex);
 	if(!GetClassInfoEx(NULL,VIEWPORT_CLASSNAME,&wcex))
@@ -804,7 +1081,21 @@ bool COpenGLViewport::CreateFullScreen(unsigned int w,unsigned int h,unsigned in
 	}
 	bOk=(m_hRenderContext!=NULL);
 	if(!bOk){RTTRACE("COpenGLViewport::Create -> Failed to get OpenGL render context");}
-	#else
+#elif defined(USE_SDL2)
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 8);
+    m_pWindow = SDL_CreateWindow("Friking Shark", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP);
+	bOk=(m_pWindow!=NULL);
+	if(!bOk){RTTRACE("COpenGLViewport::Create -> Failed to create SDL Window"); return bOk;}
+    m_pContext = SDL_GL_CreateContext(m_pWindow);
+	bOk=(m_pContext!=NULL);
+	if(!bOk){RTTRACE("COpenGLViewport::Create -> Failed to create OpenGL Context"); return bOk;}
+#else
 	m_pXDisplay=XOpenDisplay(NULL);
 	if(m_pXDisplay)
 	{
@@ -821,7 +1112,7 @@ bool COpenGLViewport::CreateFullScreen(unsigned int w,unsigned int h,unsigned in
 		bOk=(m_XWindow!=None);
 	}
 	if(!bOk){RTTRACE("COpenGLViewport::Create -> Failed to get OpenGL render context");}
-	#endif
+#endif
 	return bOk;
 }
 
@@ -831,6 +1122,11 @@ void COpenGLViewport::Destroy()
 #ifdef WIN32
 	if(m_hWnd){DestroyWindow(m_hWnd);m_hWnd=NULL;}
 	SetVideoMode(&m_OriginalVideoMode);
+#elif defined(USE_SDL2)
+	SDL_GL_DeleteContext(m_pContext);
+	SDL_DestroyWindow(m_pWindow);
+	m_pContext = NULL;
+	m_pWindow = NULL;
 #else
 	if(m_XWindow!=None)
 	{
@@ -868,8 +1164,7 @@ void COpenGLViewport::Destroy()
 	  m_pXDisplay=NULL;
 	}
 	if(m_pXVisualInfo){XFree(m_pXVisualInfo);m_pXVisualInfo=NULL;}
-	
-#endif
+#endif	
 	
 	CSystemObjectBase::Destroy();
 }
@@ -881,6 +1176,14 @@ void COpenGLViewport::GetSize(unsigned *pdwWidth,unsigned *pdwHeight)
 	GetClientRect(m_hWnd,&R);
 	*pdwWidth=R.right-R.left;
 	*pdwHeight=R.bottom-R.top;
+#elif defined(USE_SDL2)
+	if(m_pWindow)
+		SDL_GetWindowSize(m_pWindow, (int*)pdwWidth, (int*)pdwHeight);
+	else
+	{
+		*pdwWidth=0;
+		*pdwHeight=0;
+	}
 #else
 	if(m_XWindow!=None)
 	{
@@ -927,6 +1230,8 @@ void COpenGLViewport::Render()
 	
 #ifdef WIN32
 	SwapBuffers(m_hDC);
+#elif defined(USE_SDL2)
+	SDL_GL_SwapWindow(m_pWindow);
 #else
 	glXSwapBuffers(m_pXDisplay,m_XWindow);
 #endif
@@ -953,6 +1258,8 @@ void COpenGLViewport::SetVSync(bool bVSync)
 
 #ifdef WIN32
 	wglSwapIntervalEXT(m_bVerticalSync);
+#elif defined(USE_SDL2)
+	SDL_GL_SetSwapInterval(m_bVerticalSync);
 #else
 	glXSwapIntervalSGI(m_bVerticalSync);
 #endif
@@ -968,6 +1275,9 @@ void COpenGLViewport::SetCaption(std::string sCaption)
 	m_sCaption=sCaption;
 #ifdef WIN32
 	if(m_hWnd){SetWindowText(m_hWnd,m_sCaption.c_str());}
+#elif defined(USE_SDL2)
+	if(m_pWindow)
+		SDL_SetWindowTitle(m_pWindow, m_sCaption.c_str());
 #else
 	if(m_XWindow!=None)
 	{
@@ -1004,6 +1314,21 @@ void COpenGLViewport::EnterLoop()
 			InvalidateRect(m_hWnd,NULL,FALSE);
 		}
 	}
+#elif defined(USE_SDL2)
+	SDL_Event event;
+	int nLoopId=++m_nLoopDepth;
+
+	while(m_pWindow!=NULL && m_nLoopDepth>=nLoopId && !m_bSDLExit)
+	{
+		while(m_pWindow!=NULL && SDL_PollEvent(&event))
+		{
+			bool bBreakLoop=false;
+			ProcessSDLEvent(event,&bBreakLoop);
+			if(bBreakLoop){return;}
+		}
+		SDL_GL_MakeCurrent(m_pWindow, m_pContext);
+		Render();
+	}
 #else
 	XEvent event;
 	int nLoopId=++m_nLoopDepth;
@@ -1039,6 +1364,16 @@ void  COpenGLViewport::GetCursorPos(int *pX,int *pY)
 	ScreenToClient(m_hWnd,&P);
 	*pX=P.x;
 	*pY=P.y;
+#elif defined(USE_SDL2)
+	if(m_pWindow)
+	{
+		SDL_GetMouseState(pX, pY);
+	}
+	else
+	{
+		*pX=0;
+		*pY=0;
+	}
 #else
 	if(m_XWindow!=None)
 	{
@@ -1062,6 +1397,8 @@ void  COpenGLViewport::SetCursorPos(int x,int y)
 	P.y=y;
 	ClientToScreen(m_hWnd,&P);
 	SetCursorPos(P.x,P.y);
+#elif defined(USE_SDL2)
+	if(m_pWindow){SDL_WarpMouseInWindow(m_pWindow, x, y);}
 #else
 	if(m_XWindow!=None){XWarpPointer(m_pXDisplay,None,m_XWindow,0,0,0,0,x,y);}
 #endif
@@ -1086,6 +1423,14 @@ bool  COpenGLViewport::IsKeyDown(unsigned int nKey)
 	}
 	USHORT nKeyState=GetKeyState(TranslateKeyToWindows(nKey));
 	return (nKeyState&0x8000)!=0;
+#elif defined(USE_SDL2)
+	if(m_pWindow!=NULL)
+	{
+		const Uint8 *state = SDL_GetKeyboardState(NULL);
+		int k = TranslateKeyToSDL(nKey);
+		return state[k];
+	}
+	return false;
 #else
 	if(m_pXDisplay!=None)
 	{
@@ -1130,6 +1475,10 @@ void  COpenGLViewport::ShowMouseCursor(bool bShow)
 {
     // en windows el cursor se pone WM_SETCURSOR
 #ifndef WIN32
+#ifdef USE_SDL2
+	if(m_pWindow)
+		SDL_ShowCursor(bShow);
+#else
 	if(m_XWindow!=None && m_bShowSystemMouseCursor!=bShow)
 	{
 	  if(bShow)
@@ -1141,6 +1490,7 @@ void  COpenGLViewport::ShowMouseCursor(bool bShow)
 		  XDefineCursor(m_pXDisplay,m_XWindow,m_pXHollowCursor);
 	  }
 	}
+#endif
 #endif
 	m_bShowSystemMouseCursor=bShow;
 	
@@ -1222,6 +1572,16 @@ void COpenGLViewport::GetCurrentVideoMode(SVideoMode *pMode)
 		pMode->fullscreenW=pMode->w;
 		pMode->fullscreenH=pMode->h;
 	}
+#elif defined(USE_SDL2)
+	SDL_DisplayMode dm;
+	if (SDL_GetDesktopDisplayMode(0, &dm) == 0) {
+		pMode->fullscreenX=0;
+		pMode->fullscreenY=0;
+		pMode->fullscreenW=dm.w;
+		pMode->fullscreenH=dm.h;
+		pMode->rate=0;
+		pMode->bpp=SDL_BITSPERPIXEL(dm.format);
+	}
 #else
 	Display *pDisplay=XOpenDisplay(NULL);
 	if(pDisplay)
@@ -1257,6 +1617,14 @@ bool COpenGLViewport::SetVideoMode(SVideoMode *pMode)
 	mode.dmDisplayFrequency=(DWORD)pMode->rate;
 	mode.dmFields=DM_BITSPERPEL|DM_PELSWIDTH|DM_PELSHEIGHT|DM_DISPLAYFREQUENCY;
 	return ChangeDisplaySettings(&mode,CDS_FULLSCREEN)==DISP_CHANGE_SUCCESSFUL;
+#elif defined(USE_SDL2)
+	SDL_DisplayMode dm={0};
+	dm.w = pMode->w;
+	dm.h = pMode->h;
+	dm.refresh_rate = pMode->rate;
+	// set bpp?
+
+	return (SDL_SetWindowDisplayMode(m_pWindow, &dm)==0);
 #else
 	int nSizeIndex=-1;
 	int nScreenSizes=0;
@@ -1322,6 +1690,119 @@ bool COpenGLViewport::SetVideoMode(SVideoMode *pMode)
 }
 
 #ifndef WIN32
+#ifdef USE_SDL2
+bool COpenGLViewport::WaitForSDLEvent(int nEventType)
+{
+	SDL_Event event;
+	do
+	{
+		SDL_WaitEvent(&event);
+		{
+			bool bBreakLoop=false;
+			ProcessSDLEvent(event,&bBreakLoop);
+		}
+	}while(event.type!=nEventType);
+}
+
+void COpenGLViewport::ProcessSDLEvent(SDL_Event &event,bool *pbBreakLoop)
+{
+	(*pbBreakLoop)=false;
+	
+	if (event.type==SDL_KEYDOWN) 
+	{
+		OnKeyDown(TranslateKeyFromSDL(event.key.keysym.scancode));
+	}
+	else if (event.type==SDL_KEYUP) 
+	{
+		OnKeyUp(TranslateKeyFromSDL(event.key.keysym.scancode));
+	}
+	else if (event.type==SDL_TEXTINPUT)
+	{
+		char c = 0;
+		int i =0 ;
+		while((c=event.text.text[i++]))
+			OnCharacter(c);
+	}
+	else if (event.type==SDL_MOUSEBUTTONDOWN) 
+	{
+		int nCurrentTime=GetTimeStamp();
+		
+		// Regular click processing
+		if(event.button.button==SDL_BUTTON_LEFT){OnLButtonDown(event.button.x,event.button.y);}
+		else if(event.button.button==SDL_BUTTON_RIGHT){OnRButtonDown(event.button.x,event.button.y);}
+		// Double click Detection
+		if((event.button.button==SDL_BUTTON_LEFT || event.button.button==SDL_BUTTON_RIGHT) &&
+			m_nDblClkDetectLastButton==event.button.button && 
+			(nCurrentTime-m_nDblClkDetectLastTime)<=m_nDblClkDetectMilliseconds &&
+			fabs(m_nDblClkDetectLastX-event.button.x)<=m_nDblClkDetectDistance &&
+			fabs(m_nDblClkDetectLastY-event.button.y)<=m_nDblClkDetectDistance)
+		{
+			m_nDblClkDetectLastButton=0;
+			m_nDblClkDetectLastX=0;
+			m_nDblClkDetectLastY=0;
+			m_nDblClkDetectLastTime=0;
+			
+			if(event.button.button==SDL_BUTTON_LEFT){OnLButtonDoubleClick(event.button.x,event.button.y);}
+			else if(event.button.button==SDL_BUTTON_RIGHT){OnRButtonDoubleClick(event.button.x,event.button.y);}
+		}
+		else
+		{
+			m_nDblClkDetectLastButton=event.button.button;
+			m_nDblClkDetectLastX=event.button.x;
+			m_nDblClkDetectLastY=event.button.y;
+			m_nDblClkDetectLastTime=nCurrentTime;
+		}
+	}
+	else if (event.type==SDL_MOUSEBUTTONUP) 
+	{
+		if(event.button.button==SDL_BUTTON_LEFT){OnLButtonUp(event.button.x,event.button.y);}
+		else if(event.button.button==SDL_BUTTON_RIGHT){OnRButtonUp(event.button.x,event.button.y);}
+		
+		if(m_nDetectDragButton==event.button.button)
+		{
+			m_nLoopDepth--;
+			*pbBreakLoop=true;
+			return;
+		}			  
+	}
+	else if (event.type==SDL_MOUSEWHEEL)
+	{
+		int mx,my;
+		SDL_GetMouseState(&mx, &my);
+		if(event.wheel.y<0){OnMouseWheelUp(mx,my);}
+		else if(event.wheel.y>0){OnMouseWheelDown(mx,my);}
+	}
+	else if (event.type==SDL_MOUSEMOTION) 
+	{
+		OnMouseMove(event.motion.x,event.motion.y);
+		
+		if(m_nDetectDragButton!=0)
+		{
+			int nXDist=event.motion.x-m_nDetectDragX;
+			int nYDist=event.motion.y-m_nDetectDragY;
+			
+			if(nXDist>DETECT_DRAG_SIZE || nXDist<(0-DETECT_DRAG_SIZE) ||
+				nYDist>DETECT_DRAG_SIZE || nYDist<(0-DETECT_DRAG_SIZE))
+			{
+				m_bDetectedDrag=true;
+				m_nLoopDepth--;
+				*pbBreakLoop=true;
+				return;
+			}
+		}
+	}
+	else if (event.type==SDL_QUIT) 
+	{
+		m_bSDLExit=true;
+	}
+	*pbBreakLoop=false;
+	return;
+}
+
+void COpenGLViewport::SetupSDLWindowParameters()
+{
+}
+#else
 bool COpenGLViewport::GetFirstXineramaScreen(int *pX,int *pY,int *pW,int *pH)
 {
 	*pX=*pY=*pW=*pH=0;
@@ -1502,6 +1983,7 @@ void COpenGLViewport::SetupXWindowParameters()
 	}	
 }
 #endif
+#endif
 
 
 bool COpenGLViewport::SetFullScreen(unsigned int w,unsigned int h,unsigned int bpp,unsigned int rate)
@@ -1521,6 +2003,10 @@ bool COpenGLViewport::SetFullScreen(unsigned int w,unsigned int h,unsigned int b
 	SetWindowLong(m_hWnd,GWL_STYLE,dwStyle);
 	SetWindowPos(m_hWnd,NULL,mode.fullscreenX,mode.fullscreenY,mode.fullscreenW,mode.fullscreenH,SWP_NOZORDER);
 	ShowWindow(m_hWnd,SW_MAXIMIZE);
+	return true;
+#elif defined(USE_SDL2)
+	if(m_pWindow)
+		SDL_SetWindowFullscreen(m_pWindow, SDL_WINDOW_FULLSCREEN_DESKTOP);
 	return true;
 #else
 	
@@ -1578,7 +2064,7 @@ bool COpenGLViewport::SetWindowed(unsigned int x,unsigned int y,unsigned int w,u
 {
 
 #ifdef WIN32
-	// Las coordenadas y tamaños que se gestion siempre son del area cliente.
+	// Las coordenadas y tamaï¿½os que se gestion siempre son del area cliente.
 	// por lo que al establecer la pos de la ventana se deben convertir a coordenadas
 	// de pantalla.
 	SetVideoMode(&m_OriginalVideoMode);
@@ -1604,6 +2090,10 @@ bool COpenGLViewport::SetWindowed(unsigned int x,unsigned int y,unsigned int w,u
 	POINT p={0};
 	ClientToScreen(m_hWnd,&p);
 	SetWindowPos(m_hWnd,NULL,x-(p.x-wr.left),y-(p.y-wr.top),w+nonclientsize.cx,h+nonclientsize.cy,SWP_NOZORDER);
+	return true;
+#elif defined(USE_SDL2)
+	if(m_pWindow)
+		SDL_SetWindowFullscreen(m_pWindow, 0);
 	return true;
 #else
 	
