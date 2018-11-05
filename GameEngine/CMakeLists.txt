@@ -8,9 +8,11 @@ SET (SRCS_GAMEENGINE
 	./GameEngine/StdAfx.cpp
 )
 
-link_libraries (
-	${INCLUDED_LIBRARIES} rt
-)
+if(NOT AMIGAOS4)
+	link_libraries (
+		${INCLUDED_LIBRARIES} rt
+	)
+endif()
 
 if(MACOS)
 ADD_EXECUTABLE ( GameEngine MACOSX_BUNDLE ${SRCS_GAMEENGINE} )

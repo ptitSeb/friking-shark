@@ -298,7 +298,7 @@ void RTTRACE(const char *format, ...)
 
 unsigned int GetTimeStamp()
 {
-	#if 1
+	#if !defined(AMIGAOS4)
 	//Pandora, use clock_gettime instead og gettimeofday (gettimeofday tend to not work in some multithread with codeblocks env.)
 	struct timespec ts;
 	clock_gettime(CLOCK_MONOTONIC, &ts);
