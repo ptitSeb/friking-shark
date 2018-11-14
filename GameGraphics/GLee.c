@@ -15473,7 +15473,7 @@ void initWGLLoadFunctions(void)
     __GLeeWGLLoadFunction[36]=__GLeeLink_WGL_NV_video_output;
 }
 
-#elif defined(__APPLE__) || defined(__APPLE_CC__)
+#elif defined(__APPLE__) || defined(__APPLE_CC__) || defined(USE_SDL2)
 #else /* Linux */
 GLuint __GLeeLink_GLX_VERSION_1_3(void)
 {
@@ -15935,7 +15935,7 @@ const char *__GLeeGetExtStrPlat( void )
 
 	if (wglGetExtensionsStringARB)
 		return (const char *)wglGetExtensionsStringARB(wglGetCurrentDC());
-#elif defined(__APPLE__) || defined(__APPLE_CC__) || defined(AMIGAOS4)
+#elif defined(__APPLE__) || defined(__APPLE_CC__) || defined(USE_SDL2)
 #else
 	Display *dpy=glXGetCurrentDisplay();
 	if(dpy)
@@ -16116,6 +16116,8 @@ GLEE_EXTERN GLint GLeeForceLink(const char * extensionName)
 #ifdef WIN32
 		initWGLLoadFunctions();
 #elif defined(__APPLE__) || defined(__APPLE_CC__)
+#elif defined(USE_SDL2)
+// do I need to init SDL / load GL functions?
 #else
 		initGLXLoadFunctions();
 #endif
@@ -16128,7 +16130,7 @@ GLEE_EXTERN GLint GLeeForceLink(const char * extensionName)
 	if (type==0) return __GLeeGLLoadFunction[extNum]();
 #ifdef WIN32
 	if (type==1) return __GLeeWGLLoadFunction[extNum]();
-#elif defined(__APPLE__) || defined(__APPLE_CC__)	
+#elif defined(__APPLE__) || defined(__APPLE_CC__)	 || defined(USE_SDL2)
 #else
 	if (type==2) return __GLeeGLXLoadFunction[extNum]();
 #endif
@@ -17963,7 +17965,7 @@ GLEE_EXTERN GLboolean GLeeInit( void )
         _GLEE_WGL_NV_video_output = GL_TRUE;
         __GLeeLink_WGL_NV_video_output();
     }
-#elif defined(__APPLE__) || defined(__APPLE_CC__)
+#elif defined(__APPLE__) || defined(__APPLE_CC__) || defined(USE_SDL2)
 #else /* GLX */
     if (__GLeeCheckExtension("GLX_VERSION_1_3", &extensionNames) )
     {

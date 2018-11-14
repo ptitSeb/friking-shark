@@ -16552,7 +16552,7 @@ GLEE_EXTERN GLboolean _GLEE_WGL_NV_video_output;
   #define wglGetVideoInfoNV GLeeFuncPtr_wglGetVideoInfoNV
 #endif
 #endif 
-#elif defined(__APPLE__) || defined(__APPLE_CC__) || defined(AMIGAOS4)
+#elif defined(__APPLE__) || defined(__APPLE_CC__) || defined(USE_SDL2)
 #else /* GLX */
 
 /* Extension querying variables */
