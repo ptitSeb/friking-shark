@@ -26,6 +26,7 @@
 #include "InterfaceLeakAPI.h"
 #ifdef USE_SDL2
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #endif
 
 CGameEngineApp theApp;
@@ -190,6 +191,11 @@ int main(int argc, char *argv[])
 		printf("Error initializing SDL2, aborting!\n");
 		return -1;
 	}
+	if(TTF_Init()==-1)
+	{
+		printf("Error initializing SDL2_ttf, aborting!\n");
+		return -1;
+	}
 #endif
 	std::string sFolder=GetFileFolder(argv[0]);
 	std::vector<std::string> vParams;
@@ -200,6 +206,7 @@ int main(int argc, char *argv[])
 	theApp.InterpretCommandLine(sFolder,vParams);
 	theApp.Run();
 #ifdef USE_SDL2
+	TTF_Quit();
 	SDL_Quit();
 #endif
 	return 0;

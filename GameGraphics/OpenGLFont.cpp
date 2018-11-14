@@ -29,6 +29,8 @@ SOpenGLSystemFont::SOpenGLSystemFont()
 #ifdef WIN32
 	hFont=NULL;
 	memset(&sFontMetrics,0,sizeof(sFontMetrics));
+#elif USE_SDL2
+	hFont=NULL;
 #else
 	pDisplay=NULL;
 	pFontStruct=NULL;
@@ -40,6 +42,8 @@ SOpenGLSystemFont::~SOpenGLSystemFont()
 #ifdef WIN32
 	if(nTexturesBaseIndex){glDeleteLists(nTexturesBaseIndex,255);nTexturesBaseIndex=0;}
 	if(hFont){DeleteObject(hFont);hFont=NULL;}
+#elif defined(USE_SDL2)
+	if(hFont) {TTF_CloseFont(hFont); hFont=NULL;}
 #else
 	if(pFontStruct){XFreeFont(pDisplay,pFontStruct);pFontStruct=NULL;}
 #endif
@@ -55,7 +59,7 @@ COpenGLFont::COpenGLFont(void)
 	m_dTextureFontSpaceSize=0;
 	m_dTextureFontAlphaTolerance=0;
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(USE_SDL2)
 	m_pXDisplay=NULL;
 #endif
 }
@@ -68,7 +72,7 @@ eGenericFontType COpenGLFont::GetType(){return m_eFontType;}
 bool COpenGLFont::Init(std::string sClass,std::string sName,ISystem *piSystem)
 {
 	bool bOk=CSystemObjectBase::Init(sClass,sName,piSystem);
-#ifndef WIN32
+#if !defined(WIN32) && !defined(USE_SDL2)
 	if(bOk)
 	{
 		m_pXDisplay=XOpenDisplay(getenv("DISPLAY"));
@@ -87,7 +91,7 @@ void COpenGLFont::Destroy()
 		delete  pFont;
 	}
 	m_mSystemFontHeights.clear();
-#ifndef WIN32
+#if !defined(WIN32) && !defined(USE_SDL2)
 	if(m_pXDisplay){XCloseDisplay(m_pXDisplay);m_pXDisplay=NULL;}
 #endif
 	CSystemObjectBase::Destroy();
@@ -202,6 +206,11 @@ void COpenGLFont::CalcTextSize(double dFontHeight,const char *pText,double *pdWi
 			*pdWidth=rect.right;
 			*pdHeight=rect.bottom;
 			SelectObject(hDC,hOlfFont);
+#elif defined(USE_SDL2)
+			int w, h;
+			TTF_SizeText(pFont->hFont, pText, &w, &h);
+			*pdWidth = w;
+			*pdHeight = h;
 #else
 			if(pFont->pFontStruct)
 			{
@@ -379,6 +388,39 @@ SOpenGLSystemFont *COpenGLFont::GetSystemFontForHeight(unsigned int nHeight)
 			}
 			SelectObject(hdc,hOlfFont);
 		}
+#elif defined(USE_SDL2)
+		pFont->hFont = TTF_OpenFont(m_sSystemFontName.c_str(), nHeight);
+		// simulate glXUseXFont....
+		SDL_Color white = {255, 255, 255};
+		char *bm = (char*)malloc(nHeight*nHeight); //plenty of space
+		for(int c=0; c<256; ++c) {
+			char t[2] = {0};
+			sprintf(t, "%c", c);
+			SDL_Surface* surf = TTF_RenderText_Solid(pFont->hFont, t, white);
+			glNewList(pFont->nTexturesBaseIndex+c, GL_COMPILE);
+			if (surf) {
+				int width = surf->w;
+				int height = surf->h;
+				int bm_width = (width+7)/8;
+				int bm_height = height;
+				if(bm_width && bm_height) {
+					memset(bm, 0, bm_width*bm_height);
+					for(int y=0; y<bm_height; ++y)
+						for(int x=0; x<8*bm_width; ++x) {
+							uint32_t b = ((uint32_t*)surf->pixels)[y*surf->w+x];
+							if(b)
+								bm[bm_width*(bm_height - y - 1) + x/8 ] |= (1 << (7 - (x%8)));
+						}
+					glBitmap(bm_width, bm_height, 0.0, 0.0, bm_width, 0, NULL);
+				} else
+					glBitmap(0, 0, 0.0, 0.0, nHeight, 0, NULL);
+				SDL_free(surf);
+			} else {
+				glBitmap(0, 0, 0.0, 0.0, nHeight, 0, NULL);
+			}
+			glEndList();
+		}
+		free(bm);
 #else
 		if(m_pXDisplay!=NULL)
 		{

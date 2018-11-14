@@ -234,6 +234,7 @@ int TranslateKeyToWindows(int nGameKey)
 	return 0;
 }
 #elif defined(USE_SDL2)
+#define Button1 1
 int TranslateKeyFromSDL(int nSDLKey)
 {
 	switch(nSDLKey)

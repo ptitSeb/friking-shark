@@ -18,6 +18,9 @@
 
 #pragma once
 #include "GameGraphics.h"
+#ifdef USE_SDL2
+#include <SDL2/SDL_ttf.h>
+#endif
 
 #define FONT_NAME_MAX 128
 struct SOpenGLSystemFont
@@ -25,6 +28,8 @@ struct SOpenGLSystemFont
 #ifdef WIN32
 	HFONT hFont;
 	TEXTMETRIC sFontMetrics;
+#elif defined(USE_SDL2)
+	TTF_Font* hFont;
 #else
 	XFontStruct *pFontStruct;
 	Display     *pDisplay;
@@ -86,7 +91,7 @@ class COpenGLFont : virtual public CSystemObjectBase,virtual public IGenericFont
 	double			m_dTextureFontSpaceSize;
 	double			m_dTextureFontAlphaTolerance;
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(USE_SDL2)
 	Display 		*m_pXDisplay;
 #endif
 	std::string		m_sSystemFontName;

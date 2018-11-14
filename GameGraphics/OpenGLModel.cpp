@@ -187,7 +187,7 @@ bool COpenGLModel::LoadFromFile()
 			if (nFaces > SIMPLE_MAX) {
 				if ((nTextureLevels<2) && !(pNormalMapArray)) {
 printf("Going to simplify stucture of %d triangles, %d vertex\n", nFaces, nVertexes);
-					unsigned int flags = GSALT_FACE | GSALT_VERTEX;
+					unsigned int flags = GSALT_EDGE | GSALT_VERTEX;
 					if(pColorArray) flags |= GSALT_COLOR;
 					if(pNormalArray) flags |= GSALT_NORMAL;
 					if(nTextureLevels>0) flags |= GSALT_TEXCOORD;
