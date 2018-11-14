@@ -76,6 +76,8 @@ void * __GLeeGetProcAddress(const char *extname)
     CFRelease(bundle);
 
     return function;
+#elif defined(USE_SDL2)
+  return SDL_GL_GetProcAddress(extname);
 #else
 	return (void*)glXGetProcAddressARB((const GLubyte *)extname);
 #endif
@@ -15933,7 +15935,7 @@ const char *__GLeeGetExtStrPlat( void )
 
 	if (wglGetExtensionsStringARB)
 		return (const char *)wglGetExtensionsStringARB(wglGetCurrentDC());
-#elif defined(__APPLE__) || defined(__APPLE_CC__)
+#elif defined(__APPLE__) || defined(__APPLE_CC__) || defined(AMIGAOS4)
 #else
 	Display *dpy=glXGetCurrentDisplay();
 	if(dpy)

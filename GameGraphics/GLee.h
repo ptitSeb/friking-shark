@@ -59,6 +59,9 @@
 #elif defined(__APPLE__) || defined(__APPLE_CC__)
     #define GL_GLEXT_LEGACY
 	#include <OpenGL/gl.h>
+#elif defined(USE_SDL2)
+	#define GL_GLEXT_LEGACY
+	#include <SDL2/SDL_opengl.h>
 #else // GLX
 	#define __glext_h_  /* prevent glext.h from being included  */
 	#define __glxext_h_ /* prevent glxext.h from being included */
@@ -806,9 +809,15 @@ GLEE_EXTERN GLboolean _GLEE_SGIX_texture_range;
         } GPU_DEVICE, *PGPU_DEVICE;
     #endif
 	
-#elif defined(__APPLE__) || defined(__APPLE_CC__)
+#elif defined(__APPLE__) || defined(__APPLE_CC__) 
 
 	/* Mac OS X */
+
+#elif defined(USE_SDL2)
+  
+  /* AMIGAOS4 with GL4ES */
+
+  void* SDL_GL_GetProcAddress(const char* proc);
 
 #else          
 
@@ -16543,7 +16552,7 @@ GLEE_EXTERN GLboolean _GLEE_WGL_NV_video_output;
   #define wglGetVideoInfoNV GLeeFuncPtr_wglGetVideoInfoNV
 #endif
 #endif 
-#elif defined(__APPLE__) || defined(__APPLE_CC__)
+#elif defined(__APPLE__) || defined(__APPLE_CC__) || defined(AMIGAOS4)
 #else /* GLX */
 
 /* Extension querying variables */
