@@ -12,7 +12,11 @@ SET (SRCS_SOUNDSYSTEMS
 	./SoundSystems/stdafx.cpp
 )
 
-ADD_LIBRARY ( SoundSystems SHARED ${SRCS_SOUNDSYSTEMS} )
+if(STATIC_BUILD)
+	ADD_LIBRARY ( SoundSystems STATIC ${SRCS_SOUNDSYSTEMS} )
+else()
+	ADD_LIBRARY ( SoundSystems SHARED ${SRCS_SOUNDSYSTEMS} )
+endif()
 
 TARGET_LINK_LIBRARIES (
          SoundSystems

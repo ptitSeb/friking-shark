@@ -21,7 +21,11 @@ link_libraries (
 	${INCLUDED_LIBRARIES}
 )
 
-ADD_LIBRARY ( ScenarioEditor SHARED ${SRCS_FORMATIONEDITOR} )
+if(STATIC_BUILD)
+	ADD_LIBRARY ( ScenarioEditor STATIC ${SRCS_FORMATIONEDITOR} )
+else()
+	ADD_LIBRARY ( ScenarioEditor SHARED ${SRCS_FORMATIONEDITOR} )
+endif()
 
 TARGET_LINK_LIBRARIES (
          ScenarioEditor

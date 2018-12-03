@@ -16,7 +16,11 @@ SET (SRCS_SOUNDSYSTEMS
 	./WeaponTypes/WeaponTypes.cpp
 )
 
-ADD_LIBRARY ( WeaponTypes SHARED ${SRCS_SOUNDSYSTEMS} )
+if(STATIC_BUILD)
+	ADD_LIBRARY ( WeaponTypes STATIC ${SRCS_SOUNDSYSTEMS} )
+else()
+	ADD_LIBRARY ( WeaponTypes SHARED ${SRCS_SOUNDSYSTEMS} )
+endif()
 
 TARGET_LINK_LIBRARIES (
          WeaponTypes

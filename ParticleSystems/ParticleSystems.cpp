@@ -33,7 +33,7 @@
 #include "LightParticleType.h"
 #include "PointParticleType.h"
 
-BEGIN_SYSTEM_MODULE()
+BEGIN_SYSTEM_MODULE(ParticleSystems)
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CParticleSystemType,"ParticleSystemType")
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CParticleEmitterType,"ParticleEmitterType")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CParticleSphereEmitterType,"ParticleSphereEmitter")
@@ -43,7 +43,7 @@ BEGIN_SYSTEM_MODULE()
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CTextureParticleType,"TextureParticleType")
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CLightParticleType,"LightParticleType")
     SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CPointParticleType,"PointParticleType")
-END_SYSTEM_MODULE()
+END_SYSTEM_MODULE(ParticleSystems)
 
 IParticle::IParticle()
 {

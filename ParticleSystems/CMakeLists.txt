@@ -31,7 +31,11 @@ SET (SRCS_PARTICLESYSTEMS
 	./ParticleSystems/TextureParticleType.cpp
 )
 
-ADD_LIBRARY ( ParticleSystems SHARED ${SRCS_PARTICLESYSTEMS} )
+if(STATIC_BUILD)
+	ADD_LIBRARY ( ParticleSystems STATIC ${SRCS_PARTICLESYSTEMS} )
+else()
+	ADD_LIBRARY ( ParticleSystems SHARED ${SRCS_PARTICLESYSTEMS} )
+endif()
 
 TARGET_LINK_LIBRARIES (
          ParticleSystems

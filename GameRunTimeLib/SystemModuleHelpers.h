@@ -48,14 +48,29 @@ public:
     ~CSystemModuleHelper();
 };
 
+#ifdef STATIC_BUILD
+#define BEGIN_SYSTEM_MODULE(CLASS) \
+    void CSystemModuleHelper_##CLASS(CSystemModuleHelper *pModuleHelper)\
+    {
+#define SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CLASS,NAME) {ISystemClass *piClass=new CSystemClassHelperT<CLASS>(NAME);pModuleHelper->AddClass(piClass);REL(piClass);}
+#define SYSTEM_MODULE_CUSTOM_CLASS_FACTORY_ENTRY(INSTANCE) pModuleHelper->AddClass(INSTANCE);REL(INSTANCE);
+#define END_SYSTEM_MODULE(CLASS)\
+    }\
+    CSystemModuleHelper g_SystemModuleHelper_##CLASS(CSystemModuleHelper_##CLASS);\
+    extern "C" \
+    {\
+        bool SystemModuleRegister_##CLASS(ISystem *piSystem){g_SystemModuleHelper_##CLASS.RegisterClasses(piSystem);return true;}\
+        void SystemModuleUnregister_##CLASS(ISystem *piSystem){g_SystemModuleHelper_##CLASS.UnregisterClasses(piSystem);}\
+    }
+#else
 #ifdef WIN32
-#define BEGIN_SYSTEM_MODULE() \
+#define BEGIN_SYSTEM_MODULE(CLASS) \
     CSystemModuleHelper *g_pSystemModuleHelper=NULL;\
     void CSystemModuleHelper_BuildClassMap(CSystemModuleHelper *pModuleHelper)\
     {
 #define SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CLASS,NAME) {ISystemClass *piClass=new CSystemClassHelperT<CLASS>(NAME);pModuleHelper->AddClass(piClass);REL(piClass);}
 #define SYSTEM_MODULE_CUSTOM_CLASS_FACTORY_ENTRY(INSTANCE) pModuleHelper->AddClass(INSTANCE);REL(INSTANCE);
-#define END_SYSTEM_MODULE()\
+#define END_SYSTEM_MODULE(CLASS)\
     }\
     extern "C" \
     {\
@@ -72,12 +87,12 @@ public:
         return TRUE;\
     }
 #else
-#define BEGIN_SYSTEM_MODULE() \
+#define BEGIN_SYSTEM_MODULE(CLASS) \
     void CSystemModuleHelper_BuildClassMap(CSystemModuleHelper *pModuleHelper)\
     {
 #define SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CLASS,NAME) {ISystemClass *piClass=new CSystemClassHelperT<CLASS>(NAME);pModuleHelper->AddClass(piClass);REL(piClass);}
 #define SYSTEM_MODULE_CUSTOM_CLASS_FACTORY_ENTRY(INSTANCE) pModuleHelper->AddClass(INSTANCE);REL(INSTANCE);
-#define END_SYSTEM_MODULE()\
+#define END_SYSTEM_MODULE(CLASS)\
     }\
     CSystemModuleHelper g_SystemModuleHelper(CSystemModuleHelper_BuildClassMap);\
     extern "C" \
@@ -86,3 +101,4 @@ public:
         void SystemModuleUnregister(ISystem *piSystem){g_SystemModuleHelper.UnregisterClasses(piSystem);}\
     }
 #endif
+#endif //STATIC_BUILD

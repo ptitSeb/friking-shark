@@ -25,6 +25,11 @@
 #pragma comment (lib, "GameEntityLib.lib")
 #endif
 
+#ifdef STATIC_BUILD
+extern CSingletonWrapper<IPlayAreaManager> g_PlayAreaManagerWrapper;
+extern CSingletonWrapper<IPlayerManager> g_PlayerManagerWrapper;
+#else
 CSingletonWrapper<IPlayAreaManager> g_PlayAreaManagerWrapper("GameSystem","PlayAreaManager");
 CSingletonWrapper<IPlayerManager> g_PlayerManagerWrapper("GameSystem","PlayerManager");
+#endif
 CSingletonWrapper<IPhysicManager>  g_PhysicsManagerWrapper("GameSystem","PhysicManager");

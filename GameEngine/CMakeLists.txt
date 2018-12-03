@@ -27,7 +27,7 @@ else()
 endif()
 
 TARGET_LINK_LIBRARIES (
-         GameEngine
+    GameEngine
 	GameGUILib
 	GameRunTimeLib
 	VectorLib

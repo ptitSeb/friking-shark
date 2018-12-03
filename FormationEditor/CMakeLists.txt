@@ -18,7 +18,11 @@ link_libraries (
 	${INCLUDED_LIBRARIES}
 )
 
-ADD_LIBRARY ( FormationEditor SHARED ${SRCS_FORMATIONEDITOR} )
+if(STATIC_BUILD)
+	ADD_LIBRARY ( FormationEditor STATIC ${SRCS_FORMATIONEDITOR} )
+else()
+	ADD_LIBRARY ( FormationEditor SHARED ${SRCS_FORMATIONEDITOR} )
+endif()
 
 TARGET_LINK_LIBRARIES (
          FormationEditor

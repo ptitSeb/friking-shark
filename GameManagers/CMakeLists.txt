@@ -27,10 +27,15 @@ SET (SRCS_GAMEMANAGERS
 	./GameManagers/WorldEntity.cpp
 	./GameManagers/WorldManager.cpp
 )
-ADD_LIBRARY ( GameManagers SHARED ${SRCS_GAMEMANAGERS} )
+
+if(STATIC_BUILD)
+	ADD_LIBRARY ( GameManagers STATIC ${SRCS_GAMEMANAGERS} )
+else()
+	ADD_LIBRARY ( GameManagers SHARED ${SRCS_GAMEMANAGERS} )
+endif()
 
 TARGET_LINK_LIBRARIES (
-         GameManagers
+    GameManagers
 	GameGUILib
 	GameRunTimeLib
 	VectorLib

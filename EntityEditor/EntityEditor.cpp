@@ -33,7 +33,7 @@
 #include "EntityEditorParticleSystemPropertyPanel.h"
 #include "EntityEditorEntityPropertyPanel.h"
 
-BEGIN_SYSTEM_MODULE()
+BEGIN_SYSTEM_MODULE(EntityEditor)
 SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityEditorMainWindow,"CEntityEditorMainWindow")
 SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityEditorObjectListSelector,"CEntityEditorObjectListSelector")
 SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityEditorClassSelector,"CEntityEditorClassSelector")
@@ -45,4 +45,4 @@ SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityEditorEventPropertyPanel,"CEntityEditor
 SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityEditorSoundPropertyPanel,"CEntityEditorSoundPropertyPanel")
 SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityEditorParticleSystemPropertyPanel,"CEntityEditorParticleSystemPropertyPanel")
 SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CEntityEditorEntityPropertyPanel,"CEntityEditorEntityPropertyPanel")
-END_SYSTEM_MODULE()
+END_SYSTEM_MODULE(EntityEditor)

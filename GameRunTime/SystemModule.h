@@ -22,10 +22,12 @@ class CSystemModule:virtual public CSystemUnknownBase,
                     virtual public ISystemModule
 {
     std::string m_sPath;
+#ifndef STATIC_BUILD
 #ifdef WIN32
     HMODULE     m_hModule;
 #else
     void*       m_pLibrary;
+#endif
 #endif
     ISystem     *m_piSystem;
     bool        m_bRegistered;

@@ -29,7 +29,7 @@
 #include "TurretType.h"
 #include "DreadnoughtTowerType.h"
 
-BEGIN_SYSTEM_MODULE()
+BEGIN_SYSTEM_MODULE(GroundUnitTypes)
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CVehicleType,"CVehicle")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGroundBossType,"CGroundBoss")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CGroundBossHatchType,"CGroundBossHatch")
@@ -37,5 +37,5 @@ BEGIN_SYSTEM_MODULE()
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CTurretType,"CTurret")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CStaticEntityType,"CStaticEntity")
 	SYSTEM_MODULE_CLASS_FACTORY_ENTRY(CStaticStructureType,"CStaticStructure")
-END_SYSTEM_MODULE()
+END_SYSTEM_MODULE(GroundUnitTypes)
 

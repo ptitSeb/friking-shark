@@ -17,5 +17,5 @@ SET (SRCS_VECTORLIB
 	./VectorLib.cpp
 )
 
-ADD_LIBRARY ( VectorLib ${SRCS_VECTORLIB} )
+ADD_LIBRARY ( VectorLib STATIC ${SRCS_VECTORLIB} )
 

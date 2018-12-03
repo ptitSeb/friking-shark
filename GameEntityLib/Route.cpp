@@ -20,6 +20,9 @@
 #include "Route.h"
 #include "SingletonWrapper.h"
 
+#ifdef STATIC_BUILD
+CSingletonWrapper<IPlayerManager> g_PlayerManagerWrapper("GameSystem","PlayerManager");
+#endif
 CSingletonWrapper<IPlayAreaManager> g_PlayAreaManagerWrapper("GameSystem","PlayAreaManager");
 
 CRoute::CRoute()

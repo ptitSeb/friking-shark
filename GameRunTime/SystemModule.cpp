@@ -19,18 +19,51 @@
 #include "./stdafx.h"
 #include "GameRunTimeLib.h"
 #include "SystemModule.h"
+#ifdef STATIC_BUILD
+#include "SystemModuleHelpers.h"
+#define GO_ALL_CLASS() \
+GO(AirUnitTypes)\
+GO(AnimationSystems)\
+GO(BonusTypes)\
+GO(BSPDebugger)\
+GO(EntityEditor)\
+GO(FormationEditor)\
+GO(GameGraphics)\
+GO(GameGUI)\
+GO(GameManagers)\
+GO(GroundUnitTypes)\
+GO(GUISystems)\
+GO(IATestSystems)\
+GO(ParticleSystems)\
+GO(PlayAreaElements)\
+GO(ScenarioEditor)\
+GO(SoundSystems)\
+GO(WeaponTypes)\
 
+#define GO(CLASS) \
+extern bool SystemModuleRegister_##CLASS(ISystem *piSystem);\
+extern void SystemModuleUnregister_##CLASS(ISystem *piSystem);
+
+extern "C" {
+GO_ALL_CLASS()
+}
+
+#undef GO
+#else
 #ifndef WIN32
 	#include <dlfcn.h>
 	#include "valgrind.h"
 #endif
+#endif
 
 CSystemModule::CSystemModule(void)
 {
+#ifndef STATIC_BUILD
 #ifdef WIN32
 	m_hModule=NULL;
 #else
 	m_pLibrary=NULL;
+#endif
 #endif
 	
     m_piSystem=NULL;
@@ -46,6 +79,18 @@ bool CSystemModule::Init(std::string sPath,ISystem *piSystem)
     bool bOk=false;
 	std::string sFileName=sPath;
     m_sPath=sPath;
+#ifdef STATIC_BUILD
+    printf("Init(\"%s\", piSystem=%p, this=%p)\n", sPath.c_str(), piSystem, this);
+    #define GO(CLASS) \
+    if(sPath == #CLASS) {\
+        m_pSystemModuleRegister=(tSystemModuleRegister)SystemModuleRegister_##CLASS;\
+        m_pSystemModuleUnregister=(tSystemModuleUnregister)SystemModuleUnregister_##CLASS;\
+        bOk=true;\
+    } else
+
+    GO_ALL_CLASS() {};
+    #undef GO
+#else
 #ifdef WIN32	
 	char fileName[MAX_PATH]={0},fileExt[MAX_PATH]={0};
 	_splitpath(sPath.c_str(),NULL,NULL,fileName,fileExt);
@@ -123,6 +168,7 @@ bool CSystemModule::Init(std::string sPath,ISystem *piSystem)
 		}
     }
 #endif
+#endif //STATIC_BUILD
 
     if(bOk){bOk=m_bRegistered=piSystem->RegisterModule(this);}
     if(bOk){bOk=m_pSystemModuleRegister(piSystem);}
@@ -130,11 +176,13 @@ bool CSystemModule::Init(std::string sPath,ISystem *piSystem)
     if(!bOk)
     {
         if(m_bRegistered){piSystem->UnregisterModule(this);m_bRegistered=false;}
+#ifndef STATIC_BUILD
 #ifdef WIN32
         if(m_hModule){FreeLibrary(m_hModule);m_hModule=NULL;}
 #else
         if(m_pLibrary){dlclose(m_pLibrary);m_pLibrary=NULL;}
 #endif
+#endif // STATIC_BUILD
         m_pSystemModuleRegister=NULL;
         m_pSystemModuleUnregister=NULL;        
         m_sPath="";
@@ -146,6 +194,7 @@ void CSystemModule::Destroy()
 {
     if(m_pSystemModuleUnregister){m_pSystemModuleUnregister(m_piSystem);}
     if(m_bRegistered){m_piSystem->UnregisterModule(this);m_bRegistered=false;}
+#ifndef STATIC_BUILD
 #ifdef WIN32
     if(m_hModule){FreeLibrary(m_hModule);m_hModule=NULL;}
 #else
@@ -155,6 +204,7 @@ void CSystemModule::Destroy()
 		if(m_pLibrary){dlclose(m_pLibrary);m_pLibrary=NULL;}
 	}
 #endif
+#endif // STATIC_BUILD
     REL(m_piSystem);
 }
 

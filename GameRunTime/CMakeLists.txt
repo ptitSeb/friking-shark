@@ -15,12 +15,40 @@ SET (SRCS_GAMERUNTIME
 	./GameRunTime/SystemModule.cpp
 )
 
-ADD_LIBRARY ( GameRunTime SHARED ${SRCS_GAMERUNTIME} )
+if(STATIC_BUILD)
+	ADD_LIBRARY ( GameRunTime STATIC ${SRCS_GAMERUNTIME} )
 
 	TARGET_LINK_LIBRARIES ( GameRunTime
-		GameGUILib
-		GameRunTimeLib
-		VectorLib
-		dl
-	)
+	GameGUILib
+	GameRunTimeLib
+	VectorLib
 
+	AirUnitTypes
+	AnimationSystems
+	BonusTypes
+	BSPDebugger
+	EntityEditor
+	FormationEditor
+	GroundUnitTypes
+	GameGraphics
+	GameGUI
+	GameManagers
+	GUISystems
+	IATestSystems
+	ParticleSystems
+	PlayAreaElements
+	ScenarioEditor
+	SoundSystems
+	WeaponTypes
+	)
+else()
+	ADD_LIBRARY ( GameRunTime SHARED ${SRCS_GAMERUNTIME} )
+	
+	TARGET_LINK_LIBRARIES ( GameRunTime
+	GameGUILib
+	GameRunTimeLib
+	VectorLib
+	dl
+	)
+	
+endif()

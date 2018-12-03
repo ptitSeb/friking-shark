@@ -33,7 +33,11 @@ link_libraries (
 	${INCLUDED_LIBRARIES}
 )
 
-ADD_LIBRARY ( EntityEditor SHARED ${SRCS_ENTITYEDITOR} )
+if(STATIC_BUILD)
+	ADD_LIBRARY ( EntityEditor STATIC ${SRCS_ENTITYEDITOR} )
+else()
+	ADD_LIBRARY ( EntityEditor SHARED ${SRCS_ENTITYEDITOR} )
+endif()
 
 TARGET_LINK_LIBRARIES (
          EntityEditor
