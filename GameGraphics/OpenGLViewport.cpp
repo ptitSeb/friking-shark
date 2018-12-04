@@ -982,7 +982,7 @@ LRESULT COpenGLViewport::WindowProc(HWND  hWnd,UINT  uMsg, WPARAM  wParam,LPARAM
 }
 #endif
 
-bool COpenGLViewport::CreateWindowed(unsigned x, unsigned y, unsigned w, unsigned h)
+bool COpenGLViewport::CreateWindowed(unsigned int x, unsigned int y, unsigned int w, unsigned int h)
 {
 	bool bOk=false;
 #ifdef WIN32
@@ -1170,7 +1170,7 @@ void COpenGLViewport::Destroy()
 	CSystemObjectBase::Destroy();
 }
 
-void COpenGLViewport::GetSize(unsigned *pdwWidth,unsigned *pdwHeight)
+void COpenGLViewport::GetSize(unsigned int *pdwWidth,unsigned int *pdwHeight)
 {
 #ifdef WIN32
 	RECT R={0};
@@ -1578,8 +1578,8 @@ void COpenGLViewport::GetCurrentVideoMode(SVideoMode *pMode)
 	if (SDL_GetDesktopDisplayMode(0, &dm) == 0) {
 		pMode->fullscreenX=0;
 		pMode->fullscreenY=0;
-		pMode->fullscreenW=dm.w;
-		pMode->fullscreenH=dm.h;
+		pMode->w = pMode->fullscreenW=dm.w;
+		pMode->h = pMode->fullscreenH=dm.h;
 		pMode->rate=0;
 		pMode->bpp=SDL_BITSPERPIXEL(dm.format);
 	}

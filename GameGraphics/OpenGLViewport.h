@@ -144,10 +144,10 @@ public:
 	//IGenericViewport
 
 	bool CreateFullScreen(unsigned int w,unsigned int h,unsigned int bpp,unsigned int rate);
-	bool CreateWindowed(unsigned x, unsigned y, unsigned w, unsigned h);
+	bool CreateWindowed(unsigned int x, unsigned int y, unsigned int w, unsigned int h);
 	void Destroy();
 
-	void GetSize(unsigned *pdwWidth,unsigned *pdwHeight);
+	void GetSize(unsigned int *pdwWidth,unsigned int *pdwHeight);
 	
 	void SetCallBack(IGenericViewportCallBack *pCallBack);
 

@@ -817,11 +817,10 @@ bool CGameGUIManager::Unserialize(ISystemPersistencyNode *piNode)
 		rRelativeFullScreenRect.y=((double)sVideoMode.fullscreenY)/(double)sVideoMode.h;
 		rRelativeFullScreenRect.w=((double)sVideoMode.fullscreenW)/(double)sVideoMode.w;
 		rRelativeFullScreenRect.h=((double)sVideoMode.fullscreenH)/(double)sVideoMode.h;
-		
 		m_sWindowedResolution.w=sVideoMode.w;
 		m_sWindowedResolution.h=sVideoMode.h;
 		
-		// Esto es un apaño de un problema en la persistencia por el que no se pueden especificar valores por defecto
+		// Esto es un apaï¿½o de un problema en la persistencia por el que no se pueden especificar valores por defecto
 		// para SGameRect ni SGameSize, ademas no hacerlo supondria un problema para obtener los valores por defecto para
 		// los bpp y el refreshrate.
 
