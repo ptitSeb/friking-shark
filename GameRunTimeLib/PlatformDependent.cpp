@@ -40,6 +40,77 @@
 #ifndef GLOB_ONLYDIR
 #define GLOB_ONLYDIR (1 << 13)
 #endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#ifndef MAX_PATH
+#define MAX_PATH 4096
+#endif
+
+static void convertPath2Amiga(char* newpath)
+{
+    // let's parse using '/' as separator...
+    char* p = newpath;
+    int l;
+    // remove all "./" at beggining
+    while((l=strlen(p))>1 && p[0]=='.' && p[1]=='/')
+        memmove(p, p+2, l-1); // delete the "./"
+    // also test BLA:./
+    p = strchr(p, ':');
+    while(p && (l=strlen(p))>1 && p[1]=='.' && p[2]=='/')
+        memmove(p+1, p+3, l-2); // delete the "./"
+    p = newpath;
+    while((p=strchr(p, '/'))!=NULL) {
+        l = strlen(p);
+        if(p!=newpath && p[-1]==':') {
+            // special case for "BLA:/something" => "BLA:something"
+            memmove(p, p+1, l); // delete the "/"
+        } else {
+            char* p2=strchr(p+1, '/');
+            if(p2) {
+                char tmp[MAX_PATH] = {0};
+                memcpy(tmp, p, (p2-p));
+                if(strcmp(tmp, "/..")==0) {
+                    // go up 1 folder
+                    p2=p-1;
+                    while(p2!=newpath && *p2!='/' && *p2!=':') --p2;
+                    if(p2==newpath)
+                        memmove(p2, p+4, l-3);
+                    else
+                        memmove(p2+1, p+3, l-2);
+                    p = p2;
+                } else if(strcmp(tmp, "/.")==0) {
+                    // stay here
+                    memmove(p, p+2, l-1);
+                } else if(strcmp(tmp, "/")==0) {
+                    // double //, let's remove it
+                    memmove(p, p+1, l+1);
+                } else {
+                    ++p;
+                }
+            } else ++p;
+        }
+    }
+}
+
+const char* Path2Amiga(const char * p)
+{
+    static char tmppath[MAX_PATH];  // it's a static, so don't use 2 Path2Amiga in the same function call!
+    if(!p) return NULL;
+    if(!p[0]) return p;
+    if(strlen(p)>=MAX_PATH) return NULL;    // should warn...
+    memset(tmppath, 0, sizeof(tmppath));
+    strcpy(tmppath, p);
+    convertPath2Amiga(tmppath);
+    return tmppath;
+}
+void AmigaPath(std::string& path)
+{
+	path = Path2Amiga(path.c_str());
+}
+
 #endif
 
 

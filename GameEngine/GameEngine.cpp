@@ -114,7 +114,11 @@ void CGameEngineApp::Run()
 
 void CGameEngineApp::InterpretCommandLine(std::string sExecutableFolder,std::vector<std::string> &vParams)
 {
+#ifdef AMIGAOS4
+	g_sRootFolder = "PROGDIR:Resources";
+#else
 	g_sRootFolder=AppendPathSeparator(sExecutableFolder)+".." PATH_SEPARATOR ".." PATH_SEPARATOR "Resources";
+#endif
 #ifdef PANDORA
 	g_sInitialConfigFile="Scripts" PATH_SEPARATOR "GameGUI_LR.cfg";
 #else

@@ -26,6 +26,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_STATIC
 #include "stb_image.h"
+#ifdef AMIGAOS4
+#include "PlatformDependent.h"
+#endif
 
 bool LoadImageHelper(std::string sFile,unsigned int dwColorType,unsigned *pOpenGLSkinWidth,unsigned *pOpenGLSkinHeight,unsigned char **ppBuffer)
 {
@@ -48,6 +51,9 @@ bool LoadImageHelper(std::string sFile,unsigned int dwColorType,unsigned *pOpenG
 		sTemp+=path;
 		path=sTemp;
 	}
+	#ifdef AMIGAOS4
+	AmigaPath(path);
+	#endif
 
 	int w, h, channels;
 	int bits=(dwColorType==GL_RGBA)?4:3;

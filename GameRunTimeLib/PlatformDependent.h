@@ -53,6 +53,10 @@
 #endif
 #include <set>
 #include <string>
+#ifdef AMIGAOS4
+const char* Path2Amiga(const char * p);
+void AmigaPath(std::string& path);
+#endif
 
 enum EFindFilesMode
 {

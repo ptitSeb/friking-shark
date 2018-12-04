@@ -25,6 +25,9 @@
 #else
 #include "vorbis/vorbisfile.h"
 #endif
+#ifdef AMIGAOS4
+#include "PlatformDependent.h"
+#endif
 
 #define OGG_PACKET_SIZE (4096)
 #define OGG_REALLOC_SIZE (1024*512)
@@ -53,6 +56,9 @@ bool CSoundType::Unserialize(ISystemPersistencyNode *piNode)
 bool CSoundType::Load(std::string sFileName,std::string sGroup)
 {
 	m_sFileName=sFileName;
+	#ifdef AMIGAOS4
+	AmigaPath(m_sFileName);
+	#endif
 	m_sGroup=sGroup;
 	return LoadFromFile();
 }
@@ -114,7 +120,11 @@ bool CSoundType::LoadOgg()
 				#ifdef USE_TREMOR
 				nDecodedBytes=ov_read(&oggFile, temp, OGG_PACKET_SIZE, &bitStream);
 				#else
+				#ifdef __BIG_ENDIAN__
+				nDecodedBytes=ov_read(&oggFile, temp, OGG_PACKET_SIZE, 1, 2, 1, &bitStream);
+				#else
 				nDecodedBytes=ov_read(&oggFile, temp, OGG_PACKET_SIZE, 0, 2, 1, &bitStream);
+				#endif
 				#endif
 				if(nDecodedBytes)
 				{

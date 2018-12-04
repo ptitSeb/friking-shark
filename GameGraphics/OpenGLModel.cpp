@@ -21,6 +21,9 @@
 #include "./stdafx.h"
 #include "GCMFiles.h"
 #include "OpenGLModel.h"
+#ifdef AMIGAOS4
+#include "PlatformDependent.h"
+#endif
 
 COpenGLModel::COpenGLModel(void)
 {
@@ -54,6 +57,10 @@ bool COpenGLModel::LoadFromFile()
 	std::string sFileName=sGCMFile;
 	char pPath[MAX_PATH];
 	GetFileFolder(sFileName.c_str(),pPath);
+	#ifdef AMIGAOS4
+	AmigaPath(sFileName);
+	strcpy(sGCMFile, Path2Amiga(sGCMFile));
+	#endif
 	
 	bool bGCMOutdated=false;
 	bool bLoadedGCM=false;
