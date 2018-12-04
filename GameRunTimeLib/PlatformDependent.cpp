@@ -36,6 +36,11 @@
 #else
 #include <io.h>
 #endif
+#ifdef AMIGAOS4
+#ifndef GLOB_ONLYDIR
+#define GLOB_ONLYDIR (1 << 13)
+#endif
+#endif
 
 
 void ReplaceExtension(char *pFileName,const char *pExt)
