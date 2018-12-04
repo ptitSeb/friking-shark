@@ -22,6 +22,9 @@
 
 #include "./StdAfx.h"
 #include "GBSFiles.h"
+#ifdef AMIGAOS4
+#include "PlatformDependent.h"
+#endif
 
 SGBSHeader::SGBSHeader()
 {
@@ -50,7 +53,11 @@ CGBSFileType::~CGBSFileType(){}
 
 bool CGBSFileType::Load(const char *pFileName,CBSPNode **ppBSPNode,std::vector<CPolygon *> *pGeometricData)
 {
+	#ifdef AMIGAOS4
+	FILE *pFile=fopen(Path2Amiga(pFileName),"rb");
+	#else
 	FILE *pFile=fopen(pFileName,"rb");
+	#endif
 	if(pFile==NULL){return false;}
 
 	bool bHeaderOk=false;
@@ -121,7 +128,11 @@ CBSPNode *CGBSFileType::ReadNode(FILE *pFile,CBSPNode *pParent)
 
 bool CGBSFileType::Save(const char *pFileName,CBSPNode *pBSPNode,std::vector<CPolygon *> *pGeometricData,SGBSFileNodeStats *pStats)
 {
+	#ifdef AMIGAOS4
+	FILE *pFile=fopen(Path2Amiga(pFileName),"wb");
+	#else
 	FILE *pFile=fopen(pFileName,"wb");
+	#endif
 	if(pFile==NULL){return false;}
 	if(fwrite(&m_Header,sizeof(m_Header),1,pFile)!=1){fclose(pFile);pFile=NULL;return false;}
 	if(pGeometricData)

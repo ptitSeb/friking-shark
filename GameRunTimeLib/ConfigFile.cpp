@@ -20,6 +20,9 @@
 #include <stack>
 #include "./GameRunTimeLib.h"
 #include "./ConfigFile.h"
+#ifdef AMIGAOS4
+#include "PlatformDependent.h"
+#endif
 
 #define NODE_PATH_MAX 512
 #define CONFIG_FILE_DELIMITER " \t\r\n="
@@ -326,7 +329,11 @@ bool CConfigFile::Open(const char *pFileName)
 
     m_RootNode.Clear();
 
+	#ifdef AMIGAOS4
+    m_pFile=fopen(Path2Amiga(pFileName),"rb");
+	#else
     m_pFile=fopen(pFileName,"rb");
+    #endif
     if (m_pFile==NULL) {return false;}
 
 	fseek(m_pFile,0,SEEK_END);
@@ -544,7 +551,11 @@ bool CConfigFile::Save(std::string &sFileName) {
 }
 bool CConfigFile::Save(const char *pFileName)
 {
+    #ifdef AMIGAOS4
+    m_pFile=fopen(Path2Amiga(pFileName),"wb");
+    #else
     m_pFile=fopen(pFileName,"wb");
+    #endif
     if (m_pFile)
     {
         m_dwSaveTabCount=0;

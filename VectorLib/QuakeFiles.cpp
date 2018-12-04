@@ -24,6 +24,9 @@
 #include "QuakeFiles.h"
 #include "float.h"
 #include <string>
+#ifdef AMIGAOS4
+#include "PlatformDependent.h"
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -113,7 +116,11 @@ bool CMdlFileType::Open(const char *pFileName)
 	long Tipo_Frame=0;
 	long Tipo_Skin=0;
 	
+	#ifdef AMIGAOS4
+	FILE *pFile=fopen(Path2Amiga(pFileName),"rb");
+	#else
 	FILE *pFile=fopen(pFileName,"rb");
+	#endif
 	if(pFile==NULL){return false;}
 
 	// Header
@@ -463,7 +470,11 @@ bool CMapFileType::Open(const char *pMap)
 	char *pBuffer=new char [MAX_TEXT_FILE_LENGHT];
 	unsigned int fileLen=0;
 	unsigned int offset=0;
+	#ifdef AMIGAOS4
+	FILE *pFile=fopen(Path2Amiga(pMap),"rb");
+	#else
 	FILE *pFile=fopen(pMap,"rb");
+	#endif
 	if(pFile!=NULL)
 	{
 		fileLen=fread(pBuffer,1,MAX_TEXT_FILE_LENGHT,pFile);

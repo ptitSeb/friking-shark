@@ -28,6 +28,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#ifdef AMIGAOS4
+#include "PlatformDependent.h"
+#endif
 
 SGCMHeader::SGCMHeader()
 {
@@ -123,7 +126,11 @@ bool CGCMFileType::Open(const char *psFileName)
 	Clear();
 
 	bool bOk=true;
+	#ifdef AMIGAOS4
+	FILE *pFile=fopen(Path2Amiga(psFileName),"rb");
+	#else
 	FILE *pFile=fopen(psFileName,"rb");
+	#endif
 	bOk=(pFile!=NULL);
 
 	SGCMHeader header;
@@ -234,7 +241,11 @@ bool CGCMFileType::Save(const char *psFileName)
 	UpdateSizes();
 
 	bool bOk=true;
+	#ifdef AMIGAOS4
+	FILE *pFile=fopen(Path2Amiga(psFileName),"wb");
+	#else
 	FILE *pFile=fopen(psFileName,"wb");
+	#endif
 	bOk=(pFile!=NULL);
 	
 	SGCMHeader header;

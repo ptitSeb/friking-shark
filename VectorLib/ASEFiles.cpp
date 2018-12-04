@@ -30,6 +30,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#ifdef AMIGAOS4
+#include "PlatformDependent.h"
+#endif
 
 
 using namespace std;
@@ -165,7 +168,11 @@ bool CASEFileType::Open(const char *sFileName)
 {
 	unsigned int dwFileLength=0;
 
+	#ifdef AMIGAOS4
+	if ((m_pFile=fopen (Path2Amiga(sFileName), "rb"))== NULL) return false; //Open the file
+	#else
 	if ((m_pFile=fopen (sFileName, "rb"))== NULL) return false; //Open the file
+	#endif
 
 	fseek(m_pFile,0,SEEK_END);
     dwFileLength=ftell(m_pFile);
@@ -794,7 +801,7 @@ void CASEFileType::ProcessObjectFrameSubMaterials(S3DSObject *pObject,S3DSFrame 
 		S3DSMaterial *pMaterial=m_vMaterials[y];
 		if(pMaterial->dwMaterialId==pObject->dwMaterialId)
 		{
-			// Se miran cuantas caras tienen el submaterial, y si lo tienen se añade a la lista de materiales
+			// Se miran cuantas caras tienen el submaterial, y si lo tienen se aï¿½ade a la lista de materiales
 			// del objeto y se construye el buffer de caras con el material.
 			int nFacesWithSubMaterial=0;
 			if(pMaterial->bSubMaterial)
@@ -915,7 +922,7 @@ void CASEFileType::ToGCM(CGCMFileType *pFile)
 			}
 			
 			// Prealocacion con el maximo posible de vertices (caras*3)
-			// Despues se realocaran estos buffers a su tamaño correcto
+			// Despues se realocaran estos buffers a su tamaï¿½o correcto
 			
 			unsigned int *pFaceVertexIndexes=new unsigned int [nMaterialFaces*3];
 			float *pVertexArray=new float[nMaterialFaces*3*3];
@@ -1105,8 +1112,8 @@ void CASEFileType::ToGCM(CGCMFileType *pFile)
 				delete [] ppColorFaces;
 				delete [] ppTextureFaces;
 			}
-			// Se reducen los buffers de los vertices a su tamaño correcto
-			// han sido alocados a su tamaño maximo por comodidad
+			// Se reducen los buffers de los vertices a su tamaï¿½o correcto
+			// han sido alocados a su tamaï¿½o maximo por comodidad
 			
 			unsigned int nVertexes=mVertexes.size();
 			unsigned int nFaces=nMaterialFaces;
@@ -1136,7 +1143,7 @@ void CASEFileType::ToGCM(CGCMFileType *pFile)
 				pTexVertexArray=pFinalTextArray;
 			}
 			
-			// Si hay vertices para el material se añade el render buffer 
+			// Si hay vertices para el material se aï¿½ade el render buffer 
 			// y se carga la textura si hay alguna asignada
 			if (nVertexes)
 			{

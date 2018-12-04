@@ -19,6 +19,9 @@
 #include "./stdafx.h"
 #include "OpenGLGraphics.h"
 #include "OpenGLShader.h"
+#ifdef AMIGAOS4
+#include "PlatformDependent.h"
+#endif
 
 COpenGLShader::COpenGLShader(void)
 {
@@ -38,7 +41,11 @@ bool COpenGLShader::LoadCodeFile(std::string sSourceFile,std::string *psSourceCo
 	unsigned int dwSize=0;
 	bool bOk=false;
 
+	#ifdef AMIGAOS4
+	FILE *pFile=fopen(Path2Amiga(sSourceFile.c_str()),"rb");
+	#else
 	FILE *pFile=fopen(sSourceFile.c_str(),"rb");
+	#endif
 	if(pFile!=NULL)
 	{
 		fseek(pFile,0,SEEK_END);

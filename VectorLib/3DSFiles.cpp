@@ -27,6 +27,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#ifdef AMIGAOS4
+#include "PlatformDependent.h"
+#endif
 
 using namespace std;
 
@@ -167,8 +170,11 @@ string C3DSFileType::ReadString()
 bool C3DSFileType::Open(const char *sFileName)
 {
 	Close();
-
+	#ifdef AMIGAOS4
+	if ((m_pFile=fopen (Path2Amiga(sFileName), "rb"))== NULL) return false; //Open the file
+	#else
 	if ((m_pFile=fopen (sFileName, "rb"))== NULL) return false; //Open the file
+	#endif
 	
 	unsigned short	wChunckId=0; //Chunk identifier
 	unsigned int	dwChunckLength=0; //Chunk lenght
