@@ -378,12 +378,12 @@ unsigned int GetTimeStamp()
 	//Pandora, use clock_gettime instead og gettimeofday (gettimeofday tend to not work in some multithread with codeblocks env.)
 	struct timespec ts;
 	clock_gettime(CLOCK_MONOTONIC, &ts);
-	return ((double)ts.tv_sec)*1000.0+((double)ts.tv_nsec)/1000000.0;
+	return ts.tv_sec*1000+ts.tv_nsec/1000000;
 
 	#else
 	timeval tNow;
 	gettimeofday(&tNow, NULL);
-	return ((double)tNow.tv_sec)*1000.0+((double)tNow.tv_usec)/1000.0;
+	return tNow.tv_sec*1000+tNow.tv_usec/1000;
 	#endif
 }
 
