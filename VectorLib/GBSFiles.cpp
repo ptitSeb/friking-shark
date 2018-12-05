@@ -97,9 +97,9 @@ bool CGBSFileType::Load(const char *pFileName,CBSPNode **ppBSPNode,std::vector<C
 					  for(v=0;v<dwVertexCount;v++)
 					  {
 						  #ifdef __BIG_ENDIAN__
-						  bool bOk=(freadBE(pPolygon->m_pVertexes[v].c,sizeof(double),1,pFile)==1)
-						  if(bOk) bOk=(freadBE(pPolygon->m_pVertexes[v].c+1,sizeof(double),1,pFile)==1)
-						  if(bOk) bOk=(freadBE(pPolygon->m_pVertexes[v].c+2,sizeof(double),1,pFile)==1)
+						  bool bOk=(freadBE(pPolygon->m_pVertexes[v].c,sizeof(double),1,pFile)==1);
+						  if(bOk) bOk=(freadBE(pPolygon->m_pVertexes[v].c+1,sizeof(double),1,pFile)==1);
+						  if(bOk) bOk=(freadBE(pPolygon->m_pVertexes[v].c+2,sizeof(double),1,pFile)==1);
 						  if(!bOk)
 						  #else
 						  if(fread(pPolygon->m_pVertexes[v].c,sizeof(pPolygon->m_pVertexes[v].c),1,pFile)!=1)
