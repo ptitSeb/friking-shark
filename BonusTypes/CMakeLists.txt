@@ -21,7 +21,6 @@ if(STATIC_BUILD)
 	ADD_LIBRARY ( BonusTypes STATIC ${SRCS_BONUSTYPES} )
 else()
 	ADD_LIBRARY ( BonusTypes SHARED ${SRCS_BONUSTYPES} )
-endif()
 
 TARGET_LINK_LIBRARIES (
          BonusTypes
@@ -34,3 +33,4 @@ TARGET_LINK_LIBRARIES (
 	${OPENGL_LIBRARY}
 )
 
+endif()

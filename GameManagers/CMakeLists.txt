@@ -32,7 +32,6 @@ if(STATIC_BUILD)
 	ADD_LIBRARY ( GameManagers STATIC ${SRCS_GAMEMANAGERS} )
 else()
 	ADD_LIBRARY ( GameManagers SHARED ${SRCS_GAMEMANAGERS} )
-endif()
 
 TARGET_LINK_LIBRARIES (
     GameManagers
@@ -45,3 +44,4 @@ TARGET_LINK_LIBRARIES (
 	${OPENGL_LIBRARY}
 )
 
+endif()

@@ -61,7 +61,7 @@ class CIAEntityBase
 
 	unsigned long m_dwRenderFlags;
 
-	CSteeringBehaviours m_Behaviours;
+	CIASteeringBehaviours m_Behaviours;
 
 public:
 

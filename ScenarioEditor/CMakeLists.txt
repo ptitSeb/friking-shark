@@ -25,7 +25,6 @@ if(STATIC_BUILD)
 	ADD_LIBRARY ( ScenarioEditor STATIC ${SRCS_FORMATIONEDITOR} )
 else()
 	ADD_LIBRARY ( ScenarioEditor SHARED ${SRCS_FORMATIONEDITOR} )
-endif()
 
 TARGET_LINK_LIBRARIES (
          ScenarioEditor
@@ -37,3 +36,5 @@ TARGET_LINK_LIBRARIES (
 	${OPENAL_LIBRARY}
 	${OPENGL_LIBRARY}
 )
+
+endif()

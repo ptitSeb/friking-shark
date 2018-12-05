@@ -22,7 +22,6 @@ if(STATIC_BUILD)
 	ADD_LIBRARY ( PlayAreaElements STATIC ${SRCS_PLAYAREAELEMENTS} )
 else()
 	ADD_LIBRARY ( PlayAreaElements SHARED ${SRCS_PLAYAREAELEMENTS} )
-endif()
 
 TARGET_LINK_LIBRARIES (
          PlayAreaElements
@@ -35,3 +34,4 @@ TARGET_LINK_LIBRARIES (
 	${OPENGL_LIBRARY}
 )
 
+endif()

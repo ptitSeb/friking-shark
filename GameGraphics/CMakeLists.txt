@@ -32,7 +32,6 @@ if(STATIC_BUILD)
 	ADD_LIBRARY ( GameGraphics STATIC ${SRCS_GAMEGRAPHICS} )
 else()
 	ADD_LIBRARY ( GameGraphics SHARED ${SRCS_GAMEGRAPHICS} )
-endif()
 
 if(SDL)
 	SET(LIBS_GAMEGRAPHICS 
@@ -59,4 +58,5 @@ TARGET_LINK_LIBRARIES ( GameGraphics
 	${LIBS_GAMEGRAPHICS}
 )
 
+endif()
 

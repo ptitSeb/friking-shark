@@ -20,7 +20,6 @@ if(STATIC_BUILD)
 	ADD_LIBRARY ( WeaponTypes STATIC ${SRCS_SOUNDSYSTEMS} )
 else()
 	ADD_LIBRARY ( WeaponTypes SHARED ${SRCS_SOUNDSYSTEMS} )
-endif()
 
 TARGET_LINK_LIBRARIES (
          WeaponTypes
@@ -33,3 +32,4 @@ TARGET_LINK_LIBRARIES (
 	${OPENGL_LIBRARY}
 )
 
+endif()

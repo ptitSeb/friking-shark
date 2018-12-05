@@ -19,16 +19,16 @@ if(STATIC_BUILD)
 	ADD_LIBRARY ( AirUnitTypes STATIC ${SRCS_AIRUNITTYPES} )
 else()
 	ADD_LIBRARY ( AirUnitTypes SHARED ${SRCS_AIRUNITTYPES} )
+	
+	TARGET_LINK_LIBRARIES (
+		AirUnitTypes
+		GameGUILib
+		GameRunTimeLib
+		VectorLib
+		GameEntityLib
+		${PNG_LIBRARY}
+		${OPENAL_LIBRARY}
+		${OPENGL_LIBRARY}
+		)
 endif()
-
-TARGET_LINK_LIBRARIES (
-         AirUnitTypes
-	GameGUILib
-	GameRunTimeLib
-	VectorLib
-	GameEntityLib
-	${PNG_LIBRARY}
-	${OPENAL_LIBRARY}
-	${OPENGL_LIBRARY}
-)
-
+		

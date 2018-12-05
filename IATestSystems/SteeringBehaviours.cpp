@@ -22,15 +22,15 @@
 #include "SteeringBehaviours.h"
 #include "IATestUtils.h"
 
-CSteeringBehaviours::CSteeringBehaviours(void)
+CIASteeringBehaviours::CIASteeringBehaviours(void)
 {
 }
 
-CSteeringBehaviours::~CSteeringBehaviours(void)
+CIASteeringBehaviours::~CIASteeringBehaviours(void)
 {
 }
 
-CVector CSteeringBehaviours::Seek(CIAEntityBase *pEntity,CVector &vTarget)
+CVector CIASteeringBehaviours::Seek(CIAEntityBase *pEntity,CVector &vTarget)
 {
 	CVector vDesiredDir=vTarget-pEntity->GetPosition();
 	vDesiredDir.N();
@@ -40,7 +40,7 @@ CVector CSteeringBehaviours::Seek(CIAEntityBase *pEntity,CVector &vTarget)
 	return vForce;
 }
 
-CVector CSteeringBehaviours::Flee(CIAEntityBase *pEntity,CVector &vTarget)
+CVector CIASteeringBehaviours::Flee(CIAEntityBase *pEntity,CVector &vTarget)
 {
 	CVector vDesiredDir=pEntity->GetPosition()-vTarget;
 	vDesiredDir.N();
@@ -51,7 +51,7 @@ CVector CSteeringBehaviours::Flee(CIAEntityBase *pEntity,CVector &vTarget)
 }
 
 
-CVector CSteeringBehaviours::Arrive(CIAEntityBase *pEntity,CVector &vTarget,ESBArriveSpeed eArriveSpeed)
+CVector CIASteeringBehaviours::Arrive(CIAEntityBase *pEntity,CVector &vTarget,ESBArriveSpeed eArriveSpeed)
 {
 	CVector vDesiredDir=vTarget-pEntity->GetPosition();
 	double dDistance=vDesiredDir.N();
@@ -69,7 +69,7 @@ CVector CSteeringBehaviours::Arrive(CIAEntityBase *pEntity,CVector &vTarget,ESBA
 }
 
 
-CVector CSteeringBehaviours::Pursue(CIAEntityBase *pEntity,CIAEntityBase *pTarget,CVector *pOutEstimatedPosition)
+CVector CIASteeringBehaviours::Pursue(CIAEntityBase *pEntity,CIAEntityBase *pTarget,CVector *pOutEstimatedPosition)
 {
 	CVector vEntityDistance=pTarget->GetPosition()-pEntity->GetPosition();
 	double dRelativeHeading=pTarget->GetVelocity()*pEntity->GetVelocity();
@@ -85,7 +85,7 @@ CVector CSteeringBehaviours::Pursue(CIAEntityBase *pEntity,CIAEntityBase *pTarge
 	return Seek(pEntity,*pOutEstimatedPosition);
 }
 
-CVector CSteeringBehaviours::Evade(CIAEntityBase *pEntity,CIAEntityBase *pTarget,CVector *pOutEstimatedPosition)
+CVector CIASteeringBehaviours::Evade(CIAEntityBase *pEntity,CIAEntityBase *pTarget,CVector *pOutEstimatedPosition)
 {
 	CVector vEntityDistance=pTarget->GetPosition()-pEntity->GetPosition();
 	double dRelativeHeading=pTarget->GetHeading()*pEntity->GetHeading();
@@ -107,7 +107,7 @@ inline double RandFloat()      {return ((rand())/(RAND_MAX+1.0));}
 inline double RandomClamped()    {return RandFloat() - RandFloat();}
 
 
-CVector CSteeringBehaviours::Wander(CIAEntityBase *pEntity,double dDistance,double dRadius,double dJitter,double dTimeFraction)
+CVector CIASteeringBehaviours::Wander(CIAEntityBase *pEntity,double dDistance,double dRadius,double dJitter,double dTimeFraction)
 {
 	double dJitterFraction=dJitter*dTimeFraction;
 	m_vWanderTarget+=CVector(RandomClamped()*dJitterFraction,RandomClamped()*dJitterFraction,0);
@@ -131,19 +131,19 @@ CVector CSteeringBehaviours::Wander(CIAEntityBase *pEntity,double dDistance,doub
 	return (worldTarget-pEntity->GetPosition());
 }
 
-void CSteeringBehaviours::RenderWanderLocal(CIAEntityBase *pEntity,double dDistance,double dRadius,double dJitter)
+void CIASteeringBehaviours::RenderWanderLocal(CIAEntityBase *pEntity,double dDistance,double dRadius,double dJitter)
 {
 	glColor3d(1,1,1);
 	Circle3D(dDistance,0,dRadius);
 }
 
-void CSteeringBehaviours::RenderWanderGlobal(CIAEntityBase *pEntity,double dDistance,double dRadius,double dJitter)
+void CIASteeringBehaviours::RenderWanderGlobal(CIAEntityBase *pEntity,double dDistance,double dRadius,double dJitter)
 {
 	CVector localTarget=m_vLastWanderTarget;
 	RenderBox(localTarget-CVector(5,5,5),localTarget+CVector(5,5,5),CVector(1,0,1));
 }
 
-CVector CSteeringBehaviours::Interpose(CIAEntityBase *pEntity,CIAEntityBase *pTarget1,CIAEntityBase *pTarget2,CVector *pOutEstimatedPosition)
+CVector CIASteeringBehaviours::Interpose(CIAEntityBase *pEntity,CIAEntityBase *pTarget1,CIAEntityBase *pTarget2,CVector *pOutEstimatedPosition)
 {
 	CVector vMidway=(pTarget1->GetPosition()+pTarget2->GetPosition())*0.5;
 	double dMidwayDistance=(vMidway-pEntity->GetPosition()).N();
@@ -156,7 +156,7 @@ CVector CSteeringBehaviours::Interpose(CIAEntityBase *pEntity,CIAEntityBase *pTa
 	return Arrive(pEntity,vTarget,eSBArriveSpeed_Fast);
 }
 
-CVector CSteeringBehaviours::OffsetPursue(CIAEntityBase *pEntity,CIAEntityBase *pTarget,CVector &vOffset)
+CVector CIASteeringBehaviours::OffsetPursue(CIAEntityBase *pEntity,CIAEntityBase *pTarget,CVector &vOffset)
 {
 	CVector vWorldTarget;
 	CVector vAxisX,vAxisY;

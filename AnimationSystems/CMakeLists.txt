@@ -29,7 +29,6 @@ if(STATIC_BUILD)
 	ADD_LIBRARY ( AnimationSystems STATIC ${SRCS_ANIMATIONSYSTEMS} )
 else()
 	ADD_LIBRARY ( AnimationSystems SHARED ${SRCS_ANIMATIONSYSTEMS} )
-endif()
 
 TARGET_LINK_LIBRARIES (
          AnimationSystems
@@ -42,3 +41,4 @@ TARGET_LINK_LIBRARIES (
 	${OPENGL_LIBRARY}
 )
 
+endif()

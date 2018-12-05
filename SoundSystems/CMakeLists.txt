@@ -16,7 +16,6 @@ if(STATIC_BUILD)
 	ADD_LIBRARY ( SoundSystems STATIC ${SRCS_SOUNDSYSTEMS} )
 else()
 	ADD_LIBRARY ( SoundSystems SHARED ${SRCS_SOUNDSYSTEMS} )
-endif()
 
 TARGET_LINK_LIBRARIES (
          SoundSystems
@@ -31,3 +30,4 @@ TARGET_LINK_LIBRARIES (
 	${OGG_LIBRARY}
 )
 
+endif()

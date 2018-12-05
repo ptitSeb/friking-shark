@@ -22,7 +22,6 @@ if(STATIC_BUILD)
 	ADD_LIBRARY ( IATestSystems STATIC ${SRCS_IATESTSYSTEMS} )
 else()
 	ADD_LIBRARY ( IATestSystems SHARED ${SRCS_IATESTSYSTEMS} )
-endif()
 
 TARGET_LINK_LIBRARIES (
          IATestSystems
@@ -31,3 +30,4 @@ TARGET_LINK_LIBRARIES (
 	VectorLib
 )
 
+endif()

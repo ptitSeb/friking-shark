@@ -22,7 +22,6 @@ if(STATIC_BUILD)
 	ADD_LIBRARY ( FormationEditor STATIC ${SRCS_FORMATIONEDITOR} )
 else()
 	ADD_LIBRARY ( FormationEditor SHARED ${SRCS_FORMATIONEDITOR} )
-endif()
 
 TARGET_LINK_LIBRARIES (
          FormationEditor
@@ -34,3 +33,4 @@ TARGET_LINK_LIBRARIES (
 	${OPENAL_LIBRARY}
 	${OPENGL_LIBRARY}
 )
+endif()

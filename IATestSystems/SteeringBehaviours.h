@@ -27,7 +27,7 @@ enum ESBArriveSpeed
 	eSBArriveSpeed_Slow
 };
 
-class CSteeringBehaviours
+class CIASteeringBehaviours
 {
 	CVector m_vWanderTarget;
 	CVector m_vLastWanderTarget;
@@ -46,6 +46,6 @@ public:
 	void RenderWanderLocal(CIAEntityBase *pEntity,double dDistance,double dRadius,double dJitter);
 	void RenderWanderGlobal(CIAEntityBase *pEntity,double dDistance,double dRadius,double dJitter);
 
-	CSteeringBehaviours(void);
-	~CSteeringBehaviours(void);
+	CIASteeringBehaviours(void);
+	~CIASteeringBehaviours(void);
 };

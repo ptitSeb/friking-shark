@@ -37,7 +37,6 @@ if(STATIC_BUILD)
 	ADD_LIBRARY ( EntityEditor STATIC ${SRCS_ENTITYEDITOR} )
 else()
 	ADD_LIBRARY ( EntityEditor SHARED ${SRCS_ENTITYEDITOR} )
-endif()
 
 TARGET_LINK_LIBRARIES (
          EntityEditor
@@ -49,3 +48,5 @@ TARGET_LINK_LIBRARIES (
 	${OPENAL_LIBRARY}
 	${OPENGL_LIBRARY}
 )
+
+endif()

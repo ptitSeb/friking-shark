@@ -26,7 +26,6 @@ if(STATIC_BUILD)
 	ADD_LIBRARY ( GroundUnitTypes STATIC ${SRCS_GROUNDUNITTYPES} )
 else()
 	ADD_LIBRARY ( GroundUnitTypes SHARED ${SRCS_GROUNDUNITTYPES} )
-endif()
 
 TARGET_LINK_LIBRARIES (
          GroundUnitTypes
@@ -39,3 +38,4 @@ TARGET_LINK_LIBRARIES (
 	${OPENGL_LIBRARY}
 )
 
+endif()

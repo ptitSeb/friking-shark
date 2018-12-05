@@ -14,7 +14,6 @@ if(STATIC_BUILD)
 	ADD_LIBRARY ( BSPDebugger STATIC ${SRCS_BSPDEBUGGER} )
 else()
 	ADD_LIBRARY ( BSPDebugger SHARED ${SRCS_BSPDEBUGGER} )
-endif()
 
 TARGET_LINK_LIBRARIES (
          BSPDebugger
@@ -23,3 +22,4 @@ TARGET_LINK_LIBRARIES (
 	VectorLib
 )
 
+endif()
