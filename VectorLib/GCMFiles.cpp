@@ -149,7 +149,7 @@ bool CGCMFileType::Open(const char *psFileName)
 
 		if(bOk){bOk=(fread(&pFrame->data,sizeof(pFrame->data),1,pFile)==1);}
 		#ifdef __BIG_ENDIAN__
-		if(bOk){littleBigEndian(&pFrame.dRadius); for(int ii=0; ii<3; ++i) {littleBigEndian(pFrame.vMaxs+ii);littleBigEndian(pFrame.vMins+ii);littleBigEndian(pFrame.vSize+ii);}}
+		if(bOk){littleBigEndian(&pFrame.dRadius); for(int ii=0; ii<3; ++ii) {littleBigEndian(pFrame.vMaxs+ii);littleBigEndian(pFrame.vMins+ii);littleBigEndian(pFrame.vSize+ii);}}
 		#endif
 		if(bOk){bOk=(freadBE(&nBuffers,sizeof(nBuffers),1,pFile)==1);}
 
@@ -165,7 +165,7 @@ bool CGCMFileType::Open(const char *psFileName)
 					littleBigEndian(&pBuffer->data.fOpacity); 
 					littleBigEndian(&pBuffer->data.nVertexes);
 					littleBigEndian(&pBuffer->data.nFaces); 
-					for(int ii=0; ii<3; ++i) {littleBigEndian(pBuffer->data.vAmbientColor+ii);littleBigEndian(pBuffer->data.vDiffuseColor+ii);littleBigEndian(pBuffer->data.vSpecularColor+ii);}}
+					for(int ii=0; ii<3; ++ii) {littleBigEndian(pBuffer->data.vAmbientColor+ii);littleBigEndian(pBuffer->data.vDiffuseColor+ii);littleBigEndian(pBuffer->data.vSpecularColor+ii);}}
 			#endif
 			if(bOk){bOk=(freadBE(&nTextureLevels,sizeof(nTextureLevels),1,pFile)==1);}
 			if(bOk){bOk=(freadBE(&nFlags,sizeof(nFlags),1,pFile)==1);}
@@ -298,7 +298,7 @@ bool CGCMFileType::Save(const char *psFileName)
 		#ifdef __BIG_ENDIAN__
 		if(bOk){SGCMFrameData tmp; memcpy(&tmp, &pFrame->data, sizeof(tmp));
 				littleBigEndian(&tmp.dRadius); 
-				for(int ii=0; ii<3; ++i) {littleBigEndian(tmp.vMaxs+ii);littleBigEndian(tmp.vMins+ii);littleBigEndian(tmp.vSize+ii);}
+				for(int ii=0; ii<3; ++ii) {littleBigEndian(tmp.vMaxs+ii);littleBigEndian(tmp.vMins+ii);littleBigEndian(tmp.vSize+ii);}
 				bOk=(fwrite(&tmp,sizeof(tmp),1,pFile)==1);}
 		#else
 		if(bOk){bOk=(fwrite(&pFrame->data,sizeof(pFrame->data),1,pFile)==1);}
@@ -320,7 +320,7 @@ bool CGCMFileType::Save(const char *psFileName)
 					littleBigEndian(&tmp.fOpacity); 
 					littleBigEndian(&tmp.nVertexes);
 					littleBigEndian(&tmp.nFaces); 
-					for(int ii=0; ii<3; ++i) {littleBigEndian(tmp.vAmbientColor+ii);littleBigEndian(tmp.vDiffuseColor+ii);littleBigEndian(tmp.vSpecularColor+ii);}					bOk=(fwrite(tmp,sizeof(tmp),1,pFile)==1);}
+					for(int ii=0; ii<3; ++ii) {littleBigEndian(tmp.vAmbientColor+ii);littleBigEndian(tmp.vDiffuseColor+ii);littleBigEndian(tmp.vSpecularColor+ii);}					bOk=(fwrite(tmp,sizeof(tmp),1,pFile)==1);}
 			#else
 			if(bOk){bOk=(fwrite(&pBuffer->data,sizeof(pBuffer->data),1,pFile)==1);}			
 			#endif
