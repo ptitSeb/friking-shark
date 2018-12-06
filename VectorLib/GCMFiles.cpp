@@ -28,9 +28,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#ifdef AMIGAOS4
 #include "PlatformDependent.h"
-#endif
 
 SGCMHeader::SGCMHeader()
 {
@@ -138,6 +136,9 @@ bool CGCMFileType::Open(const char *psFileName)
 	// Read and check file header,
 
 	if(bOk){bOk=(fread(&header,sizeof(header),1,pFile)==1);}
+	#ifdef __BIG_ENDIAN__
+	if(bOk){littleBigEndian(&header.nVersion); littleBigEndian(&header.nFrames);}
+	#endif
 	if(bOk){bOk=(memcmp(&header.sMagic,GCM_FILE_MAGIC,GCM_FILE_MAGIC_LENGTH)==0 && header.nVersion<=GCM_FILE_VERSION);}
 
 	// Read frames.
@@ -148,7 +149,10 @@ bool CGCMFileType::Open(const char *psFileName)
 		unsigned int nBuffers=0;
 
 		if(bOk){bOk=(fread(&pFrame->data,sizeof(pFrame->data),1,pFile)==1);}
-		if(bOk){bOk=(fread(&nBuffers,sizeof(nBuffers),1,pFile)==1);}
+		#ifdef __BIG_ENDIAN__
+		if(bOk){littleBigEndian(&pFrame.dRadius); for(int ii=0; ii<3; ++i) {littleBigEndian(pFrame.vMaxs+ii);littleBigEndian(pFrame.vMins+ii);littleBigEndian(pFrame.vSize+ii);}}
+		#endif
+		if(bOk){bOk=(freadBE(&nBuffers,sizeof(nBuffers),1,pFile)==1);}
 
 		for(unsigned int b=0;bOk && b<nBuffers;b++)
 		{
@@ -157,28 +161,47 @@ bool CGCMFileType::Open(const char *psFileName)
 			unsigned int nFlags=0;
 
 			if(bOk){bOk=(fread(&pBuffer->data,sizeof(pBuffer->data),1,pFile)==1);}
-			if(bOk){bOk=(fread(&nTextureLevels,sizeof(nTextureLevels),1,pFile)==1);}
-			if(bOk){bOk=(fread(&nFlags,sizeof(nFlags),1,pFile)==1);}
+			#ifdef __BIG_ENDIAN__
+			if(bOk){littleBigEndian(&pBuffer->data.fShininess); 
+					littleBigEndian(&pBuffer->data.fOpacity); 
+					littleBigEndian(&pBuffer->data.nVertexes);
+					littleBigEndian(&pBuffer->data.nFaces); 
+					for(int ii=0; ii<3; ++i) {littleBigEndian(pBuffer->data.vAmbientColor+ii);littleBigEndian(pBuffer->data.vDiffuseColor+ii);littleBigEndian(pBuffer->data.vSpecularColor+ii);}}
+			#endif
+			if(bOk){bOk=(freadBE(&nTextureLevels,sizeof(nTextureLevels),1,pFile)==1);}
+			if(bOk){bOk=(freadBE(&nFlags,sizeof(nFlags),1,pFile)==1);}
 
 			if(bOk)
 			{
 				pBuffer->pVertexArray=new float [pBuffer->data.nVertexes*3];
 				bOk=(fread(pBuffer->pVertexArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);
+				#ifdef __BIG_ENDIAN__
+				if(bOk){for(int ii=0; ii<pBuffer->data.nVertexes*3; ++ii) littleBigEndian(pBuffer->pVertexArray+ii);}
+				#endif
 			}
 			if(bOk)
 			{
 				pBuffer->pFaceVertexIndexes=new unsigned int [pBuffer->data.nFaces*3];
 				bOk=(fread(pBuffer->pFaceVertexIndexes,sizeof(unsigned int)*pBuffer->data.nFaces*3,1,pFile)==1);
+				#ifdef __BIG_ENDIAN__
+				if(bOk){for(int ii=0; ii<pBuffer->data.nFaces*3; ++ii) littleBigEndian(pBuffer->pFaceVertexIndexes+ii);}
+				#endif
 			}
 			if(bOk && nFlags&GCM_BUFFER_FLAG_HAS_COLORS)
 			{
 				pBuffer->pColorArray=new float [pBuffer->data.nVertexes*4];
 				bOk=(fread(pBuffer->pColorArray,sizeof(float)*pBuffer->data.nVertexes*4,1,pFile)==1);
+				#ifdef __BIG_ENDIAN__
+				if(bOk){for(int ii=0; ii<pBuffer->data.nVertexes*4; ++ii) littleBigEndian(pBuffer->pColorArray+ii);}
+				#endif
 			}			
 			if(bOk && nFlags&GCM_BUFFER_FLAG_HAS_NORMALS)
 			{
 				pBuffer->pNormalArray=new float [pBuffer->data.nVertexes*3];
 				bOk=(fread(pBuffer->pNormalArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);
+				#ifdef __BIG_ENDIAN__
+				if(bOk){for(int ii=0; ii<pBuffer->data.nVertexes*3; ++ii) littleBigEndian(pBuffer->pNormalArray+ii);}
+				#endif
 			}
 			if(bOk && nFlags&GCM_BUFFER_FLAG_HAS_NORMAL_MAP)
 			{
@@ -197,6 +220,9 @@ bool CGCMFileType::Open(const char *psFileName)
 				{
 					pBuffer->pNormalMapArray=new float [pBuffer->data.nVertexes*2];
 					bOk=(fread(pBuffer->pNormalMapArray,sizeof(float)*pBuffer->data.nVertexes*2,1,pFile)==1);
+					#ifdef __BIG_ENDIAN__
+					if(bOk){for(int ii=0; ii<pBuffer->data.nVertexes*2; ++ii) littleBigEndian(pBuffer->pNormalMapArray+ii);}
+					#endif
 				}
 			}
 			
@@ -204,7 +230,7 @@ bool CGCMFileType::Open(const char *psFileName)
 			{
 				SGCMTextureLevel *pTextureLevel=new SGCMTextureLevel;
 				unsigned int nFileNameSize=0;
-				if(bOk){bOk=(fread(&nFileNameSize,sizeof(nFileNameSize),1,pFile)==1);}
+				if(bOk){bOk=(freadBE(&nFileNameSize,sizeof(nFileNameSize),1,pFile)==1);}
 				if(bOk)
 				{
 					char *pFileName=new char [nFileNameSize+1];
@@ -218,6 +244,9 @@ bool CGCMFileType::Open(const char *psFileName)
 				{
 					pTextureLevel->pTexVertexArray=new float [pBuffer->data.nVertexes*2];
 					bOk=(fread(pTextureLevel->pTexVertexArray,sizeof(float)*pBuffer->data.nVertexes*2,1,pFile)==1);
+					#ifdef __BIG_ENDIAN__
+					if(bOk){for(int ii=0; ii<pBuffer->data.nVertexes*2; ++ii) littleBigEndian(pBuffer->pTexVertexArray+ii);}
+					#endif
 				}
 				pBuffer->vTextureLevels.push_back(pTextureLevel);
 			}
@@ -253,7 +282,13 @@ bool CGCMFileType::Save(const char *psFileName)
 	// Write file header,
 	
 	header.nFrames=m_vFrames.size();
+	#ifdef __BIG_ENDIAN__
+	if(bOk){bOk=(fwrite(header.sMagic,sizeof(header.sMagic),1,pFile)==1);}
+	if(bOk){bOk=(fwriteBE(&header.nVersion,sizeof(header.nVersion),1,pFile)==1);}
+	if(bOk){bOk=(fwriteBE(&header.nFrames,sizeof(header.nFrames),1,pFile)==1);}
+	#else
 	if(bOk){bOk=(fwrite(&header,sizeof(header),1,pFile)==1);}
+	#endif
 	
 	// Write frames.
 	
@@ -261,9 +296,15 @@ bool CGCMFileType::Save(const char *psFileName)
 	{
 		SGCMFrame *pFrame=m_vFrames[f];
 		unsigned int nBuffers=pFrame->vBuffers.size();
-		
+		#ifdef __BIG_ENDIAN__
+		if(bOk){SGCMFrameData tmp; memcpy(&tmp, &pFrame->data, sizeof(tmp));
+				littleBigEndian(&tmp.dRadius); 
+				for(int ii=0; ii<3; ++i) {littleBigEndian(tmp.vMaxs+ii);littleBigEndian(tmp.vMins+ii);littleBigEndian(tmp.vSize+ii);}
+				bOk=(fwrite(&tmp,sizeof(tmp),1,pFile)==1);}
+		#else
 		if(bOk){bOk=(fwrite(&pFrame->data,sizeof(pFrame->data),1,pFile)==1);}
-		if(bOk){bOk=(fwrite(&nBuffers,sizeof(nBuffers),1,pFile)==1);}
+		#endif
+		if(bOk){bOk=(fwriteBE(&nBuffers,sizeof(nBuffers),1,pFile)==1);}
 		
 		for(unsigned int b=0;bOk && b<nBuffers;b++)
 		{
@@ -274,33 +315,62 @@ bool CGCMFileType::Save(const char *psFileName)
 			nFlags|=pBuffer->pNormalArray?GCM_BUFFER_FLAG_HAS_NORMALS:0;
 			nFlags|=pBuffer->pNormalMapArray?GCM_BUFFER_FLAG_HAS_NORMAL_MAP:0;
 			
+			#ifdef __BIG_ENDIAN__
+			if(bOk){SGCMBufferData tmp; memcpy(&tmp, &pBuffer->data, sizeof(tmp));
+					littleBigEndian(&tmp.fShininess); 
+					littleBigEndian(&tmp.fOpacity); 
+					littleBigEndian(&tmp.nVertexes);
+					littleBigEndian(&tmp.nFaces); 
+					for(int ii=0; ii<3; ++i) {littleBigEndian(tmp.vAmbientColor+ii);littleBigEndian(tmp.vDiffuseColor+ii);littleBigEndian(tmp.vSpecularColor+ii);}					bOk=(fwrite(tmp,sizeof(tmp),1,pFile)==1);}
+			#else
 			if(bOk){bOk=(fwrite(&pBuffer->data,sizeof(pBuffer->data),1,pFile)==1);}			
-			if(bOk){bOk=(fwrite(&nTextureLevels,sizeof(nTextureLevels),1,pFile)==1);}
-			if(bOk){bOk=(fwrite(&nFlags,sizeof(nFlags),1,pFile)==1);}
+			#endif
+			if(bOk){bOk=(fwriteBE(&nTextureLevels,sizeof(nTextureLevels),1,pFile)==1);}
+			if(bOk){bOk=(fwriteBE(&nFlags,sizeof(nFlags),1,pFile)==1);}
+			#ifdef __BIG_ENDIAN__
+			for(int ii=0; ii<pBuffer->data.nVertexes*3 && bOk; ++ii) bOk=(fwriteBE(pBuffer->pVertexArray+ii,sizeof(float),1,pFile)==1);
+			for(int ii=0; ii<pBuffer->data.nFaces*3 && bOk; ++ii) bOk=(fwriteBE(pBuffer->pFaceVertexIndexes+ii,sizeof(unsigned int),1,pFile)==1);
+			#else
 			if(bOk){bOk=(fwrite(pBuffer->pVertexArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);}
 			if(bOk){bOk=(fwrite(pBuffer->pFaceVertexIndexes,sizeof(unsigned int)*pBuffer->data.nFaces*3,1,pFile)==1);}
+			#endif
 			if(bOk && nFlags&GCM_BUFFER_FLAG_HAS_COLORS)
 			{
+				#ifdef __BIG_ENDIAN__
+				for(int ii=0; ii<pBuffer->data.nVertexes*4 && bOk; ++ii) bOk=(fwriteBE(pBuffer->pColorArray+ii,sizeof(float),1,pFile)==1);
+				#else
 				bOk=(fwrite(pBuffer->pColorArray,sizeof(float)*pBuffer->data.nVertexes*4,1,pFile)==1);
+				#endif
 			}			
 			if(bOk && nFlags&GCM_BUFFER_FLAG_HAS_NORMALS)
 			{
+				#ifdef __BIG_ENDIAN__
+				for(int ii=0; ii<pBuffer->data.nVertexes*3 && bOk; ++ii) bOk=(fwrite(pBuffer->pNormalArray+ii,sizeof(float),1,pFile)==1);
+				#else
 				bOk=(fwrite(pBuffer->pNormalArray,sizeof(float)*pBuffer->data.nVertexes*3,1,pFile)==1);
+				#endif
 			}
 			if(bOk && nFlags&GCM_BUFFER_FLAG_HAS_NORMAL_MAP)
 			{
 				unsigned int nNormalMapFileSize=pBuffer->sNormalMap.length();
-				if(bOk){bOk=(fwrite(&nNormalMapFileSize,sizeof(nNormalMapFileSize),1,pFile)==1);}
+				if(bOk){bOk=(fwriteBE(&nNormalMapFileSize,sizeof(nNormalMapFileSize),1,pFile)==1);}
 				if(bOk && nNormalMapFileSize){bOk=(fwrite(pBuffer->sNormalMap.c_str(),nNormalMapFileSize,1,pFile)==1);}
+				#ifdef __BIG_ENDIAN__
+				for(int ii=0; ii<pBuffer->data.nVertexes*2 && bOk; ++ii) bOk=(fwrite(pBuffer->pNormalMapArray+ii,sizeof(float),1,pFile)==1);
+				#else
 				if(bOk){bOk=(fwrite(pBuffer->pNormalMapArray,sizeof(float)*pBuffer->data.nVertexes*2,1,pFile)==1);}
+				#endif
 			}
 			for(unsigned int l=0;bOk && l<nTextureLevels;l++)
 			{
 				SGCMTextureLevel *pTextureLevel=pBuffer->vTextureLevels[l];
 				unsigned int nFileNameSize=pTextureLevel->sTexture.length();
-				if(bOk){bOk=(fwrite(&nFileNameSize,sizeof(nFileNameSize),1,pFile)==1);}
+				if(bOk){bOk=(fwriteBE(&nFileNameSize,sizeof(nFileNameSize),1,pFile)==1);}
 				if(bOk && nFileNameSize){bOk=(fwrite(pTextureLevel->sTexture.c_str(),nFileNameSize,1,pFile)==1);}
+				#ifdef __BIG_ENDIAN__
+				for(int ii=0; ii<pBuffer->data.nVertexes*2 && bOk; ++ii) bOk=(fwrite(pTextureLevel->pTexVertexArray+ii,sizeof(float),1,pFile)==1);
 				if(bOk){bOk=(fwrite(pTextureLevel->pTexVertexArray,sizeof(float)*pBuffer->data.nVertexes*2,1,pFile)==1);}
+				#endif
 			}
 		}
 	}
