@@ -149,7 +149,7 @@ bool CGCMFileType::Open(const char *psFileName)
 
 		if(bOk){bOk=(fread(&pFrame->data,sizeof(pFrame->data),1,pFile)==1);}
 		#ifdef __BIG_ENDIAN__
-		if(bOk){littleBigEndian(&pFrame.dRadius); for(int ii=0; ii<3; ++ii) {littleBigEndian(pFrame.vMaxs+ii);littleBigEndian(pFrame.vMins+ii);littleBigEndian(pFrame.vSize+ii);}}
+		if(bOk){littleBigEndian(&pFrame->dRadius); for(int ii=0; ii<3; ++ii) {littleBigEndian(pFrame->vMaxs+ii);littleBigEndian(pFrame->vMins+ii);littleBigEndian(pFrame->vSize+ii);}}
 		#endif
 		if(bOk){bOk=(freadBE(&nBuffers,sizeof(nBuffers),1,pFile)==1);}
 
