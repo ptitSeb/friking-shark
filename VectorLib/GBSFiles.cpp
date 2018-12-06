@@ -63,6 +63,11 @@ bool CGBSFileType::Load(const char *pFileName,CBSPNode **ppBSPNode,std::vector<C
 	bool bHeaderOk=false;
 	if(fread(&m_Header,sizeof(m_Header),1,pFile)==1)
 	{
+		#ifdef __BIG_ENDIAN__
+		littleBigEndian(&m_Header.dwVersion);
+		littleBigEndian(&m_Header.dwFlags);
+		littleBigEndian(&m_Header.dwDataOffset);
+		#endif
 		if(memcmp(&m_Header.sMagic,GBS_FILE_MAGIC,GBS_FILE_MAGIC_LENGTH)==0 && m_Header.dwVersion<=GBS_FILE_VERSION)
 		{
 			bHeaderOk=true;
@@ -77,12 +82,12 @@ bool CGBSFileType::Load(const char *pFileName,CBSPNode **ppBSPNode,std::vector<C
 		if(pGeometricData && m_Header.dwFlags&GBS_FILE_FLAG_CONTAINS_GEOMETRIC_DATA)
 		{
 			unsigned int x=0,dwPolygonCount=0;
-			if(fread(&dwPolygonCount,sizeof(dwPolygonCount),1,pFile)==1)
+			if(freadBE(&dwPolygonCount,sizeof(dwPolygonCount),1,pFile)==1)
 			{
 			  for(x=0;x<dwPolygonCount;x++)
 			  {
 				  unsigned int v=0,dwVertexCount=0;
-				  if(fread(&dwVertexCount,sizeof(dwVertexCount),1,pFile)!=1){break;}
+				  if(freadBE(&dwVertexCount,sizeof(dwVertexCount),1,pFile)!=1){break;}
 				  
 				  CPolygon *pPolygon=new CPolygon;
 				  pPolygon->m_nVertexes=dwVertexCount;
@@ -91,7 +96,14 @@ bool CGBSFileType::Load(const char *pFileName,CBSPNode **ppBSPNode,std::vector<C
 					  pPolygon->m_pVertexes=new CVector[pPolygon->m_nVertexes];
 					  for(v=0;v<dwVertexCount;v++)
 					  {
+						  #ifdef __BIG_ENDIAN__
+						  bool bOk=(freadBE(pPolygon->m_pVertexes[v].c,sizeof(double),1,pFile)==1)
+						  if(bOk) bOk=(freadBE(pPolygon->m_pVertexes[v].c+1,sizeof(double),1,pFile)==1)
+						  if(bOk) bOk=(freadBE(pPolygon->m_pVertexes[v].c+2,sizeof(double),1,pFile)==1)
+						  if(!bOk)
+						  #else
 						  if(fread(pPolygon->m_pVertexes[v].c,sizeof(pPolygon->m_pVertexes[v].c),1,pFile)!=1)
+						  #endif
 						  {
 							break;
 						  }
@@ -116,6 +128,11 @@ CBSPNode *CGBSFileType::ReadNode(FILE *pFile,CBSPNode *pParent)
 	CBSPNode *pNode=NULL;
 	SGBSFileNodeInfo info;
 	if(fread(&info,sizeof(info),1,pFile)!=1){return pNode;}
+	#ifdef __BIG_ENDIAN__
+	littleBigEndian(info.vNormal+0); littleBigEndian(info.vNormal+1); littleBigEndian(info.vNormal+2);
+	littleBigEndian(&info.vDist);
+	littleBigEndian(&info.nContent);
+	#endif
 	CPlane plane(CVector(info.vNormal[0],info.vNormal[1],info.vNormal[2]),info.vDist);
 	pNode=new CBSPNode(pParent,plane,info.nContent);
 	if(pNode->content==CONTENT_NODE)
@@ -134,21 +151,36 @@ bool CGBSFileType::Save(const char *pFileName,CBSPNode *pBSPNode,std::vector<CPo
 	FILE *pFile=fopen(pFileName,"wb");
 	#endif
 	if(pFile==NULL){return false;}
-	if(fwrite(&m_Header,sizeof(m_Header),1,pFile)!=1){fclose(pFile);pFile=NULL;return false;}
+	#ifdef __BIG_ENDIAN__
+	SGBSHeader tmp = m_Header;
+	littleBigEndian(&tmp.dwVersion);
+	littleBigEndian(&tmp.dwFlags);
+	littleBigEndian(&tmp.dwDataOffset);
+	if(fwrite(&tmp,sizeof(tmp),1,pFile)!=1)
+	#else
+	if(fwrite(&m_Header,sizeof(m_Header),1,pFile)!=1)
+	#endif
+		{fclose(pFile);pFile=NULL;return false;}
 	if(pGeometricData)
 	{
 		m_Header.dwFlags|=GBS_FILE_FLAG_CONTAINS_GEOMETRIC_DATA;
 		unsigned int x=0,dwPolygonCount=pGeometricData->size();
-		if(fwrite(&dwPolygonCount,sizeof(dwPolygonCount),1,pFile)!=1){fclose(pFile);pFile=NULL;return false;}
+		if(fwriteBE(&dwPolygonCount,sizeof(dwPolygonCount),1,pFile)!=1){fclose(pFile);pFile=NULL;return false;}
 		
 		for(x=0;x<dwPolygonCount;x++)
 		{
 			CPolygon *pPolygon=(*pGeometricData)[x];
 			unsigned int v=0,dwVertexCount=pPolygon->m_nVertexes;
-			if(fwrite(&dwVertexCount,sizeof(dwVertexCount),1,pFile)!=1){fclose(pFile);pFile=NULL;return false;}
+			if(fwriteBE(&dwVertexCount,sizeof(dwVertexCount),1,pFile)!=1){fclose(pFile);pFile=NULL;return false;}
 			for(v=0;v<dwVertexCount;v++)
 			{
-				if(fwrite(pPolygon->m_pVertexes[v].c,sizeof(pPolygon->m_pVertexes[v].c),1,pFile)!=1){fclose(pFile);pFile=NULL;return false;}
+				#ifdef __BIG_ENDIAN__
+				for (int ii=0; ii<3; ++ii)
+					if(fwriteBE(pPolygon->m_pVertexes[v].c+ii,sizeof(double),1,pFile)!=1)
+				#else
+				if(fwrite(pPolygon->m_pVertexes[v].c,sizeof(pPolygon->m_pVertexes[v].c),1,pFile)!=1)
+				#endif
+					{fclose(pFile);pFile=NULL;return false;}
 			}
 		}
 	}	
@@ -161,7 +193,16 @@ bool CGBSFileType::Save(const char *pFileName,CBSPNode *pBSPNode,std::vector<CPo
 
 	//Update header dwDataOffset
 	fseek(pFile,0,SEEK_SET);
-	if(fwrite(&m_Header,sizeof(m_Header),1,pFile)!=1){fclose(pFile);pFile=NULL;return false;}
+	#ifdef __BIG_ENDIAN__
+	tmp = m_Header;
+	littleBigEndian(&tmp.dwVersion);
+	littleBigEndian(&tmp.dwFlags);
+	littleBigEndian(&tmp.dwDataOffset);
+	if(fwrite(&tmp,sizeof(tmp),1,pFile)!=1)
+	#else
+	if(fwrite(&m_Header,sizeof(m_Header),1,pFile)!=1)
+	#endif
+		{fclose(pFile);pFile=NULL;return false;}
 	fclose(pFile);pFile=NULL;	
 	return true;
 }
@@ -180,6 +221,11 @@ bool CGBSFileType::WriteNode(FILE *pFile,CBSPNode *pNode,SGBSFileNodeStats *pSta
 	info.vNormal[2]=(float)pNode->plane.c[2];
 	info.vDist=(float)pNode->plane.d;
 	info.nContent=pNode->content;
+	#ifdef __BIG_ENDIAN__
+	littleBigEndian(info.vNormal+0); littleBigEndian(info.vNormal+1); littleBigEndian(info.vNormal+2);
+	littleBigEndian(&info.vDist);
+	littleBigEndian(&info.nContent);
+	#endif
 	if(fwrite(&info,sizeof(info),1,pFile)!=1){return false;}
 	if(pNode->content==CONTENT_NODE)
 	{
