@@ -149,7 +149,7 @@ bool CGCMFileType::Open(const char *psFileName)
 
 		if(bOk){bOk=(fread(&pFrame->data,sizeof(pFrame->data),1,pFile)==1);}
 		#ifdef __BIG_ENDIAN__
-		if(bOk){littleBigEndian(&pFrame->dRadius); for(int ii=0; ii<3; ++ii) {littleBigEndian(pFrame->vMaxs+ii);littleBigEndian(pFrame->vMins+ii);littleBigEndian(pFrame->vSize+ii);}}
+		if(bOk){littleBigEndian(&pFrame->data.dRadius); for(int ii=0; ii<3; ++ii) {littleBigEndian(pFrame->data.vMaxs+ii);littleBigEndian(pFrame->data.vMins+ii);littleBigEndian(pFrame->data.vSize+ii);}}
 		#endif
 		if(bOk){bOk=(freadBE(&nBuffers,sizeof(nBuffers),1,pFile)==1);}
 
@@ -244,7 +244,7 @@ bool CGCMFileType::Open(const char *psFileName)
 					pTextureLevel->pTexVertexArray=new float [pBuffer->data.nVertexes*2];
 					bOk=(fread(pTextureLevel->pTexVertexArray,sizeof(float)*pBuffer->data.nVertexes*2,1,pFile)==1);
 					#ifdef __BIG_ENDIAN__
-					if(bOk){for(int ii=0; ii<pBuffer->data.nVertexes*2; ++ii) littleBigEndian(pBuffer->pTexVertexArray+ii);}
+					if(bOk){for(int ii=0; ii<pBuffer->data.nVertexes*2; ++ii) littleBigEndian(pTextureLevel->pTexVertexArray+ii);}
 					#endif
 				}
 				pBuffer->vTextureLevels.push_back(pTextureLevel);
