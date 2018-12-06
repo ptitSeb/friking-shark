@@ -320,7 +320,9 @@ bool CGCMFileType::Save(const char *psFileName)
 					littleBigEndian(&tmp.fOpacity); 
 					littleBigEndian(&tmp.nVertexes);
 					littleBigEndian(&tmp.nFaces); 
-					for(int ii=0; ii<3; ++ii) {littleBigEndian(tmp.vAmbientColor+ii);littleBigEndian(tmp.vDiffuseColor+ii);littleBigEndian(tmp.vSpecularColor+ii);}					bOk=(fwrite(tmp,sizeof(tmp),1,pFile)==1);}
+					for(int ii=0; ii<3; ++ii) {littleBigEndian(tmp.vAmbientColor+ii);littleBigEndian(tmp.vDiffuseColor+ii);littleBigEndian(tmp.vSpecularColor+ii);}
+					bOk=(fwrite(&tmp,sizeof(tmp),1,pFile)==1);
+				}
 			#else
 			if(bOk){bOk=(fwrite(&pBuffer->data,sizeof(pBuffer->data),1,pFile)==1);}			
 			#endif
