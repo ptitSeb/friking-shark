@@ -446,3 +446,27 @@ time_t GetFileTimeStamp(const char *pFileName)
 
 #endif
 
+#ifdef __BIG_ENDIAN__
+size_t freadBE(void *ptr, size_t size, size_t nmemb, FILE *stream)
+{
+	size_t ret = fread(ptr, size, nmemb, stream);
+	char* p = (char*)ptr;
+	for (int i=0; i<nmemb; ++i) {
+		littleBigEndian(p, size);
+		p+=size;
+	}
+	return ret;
+}
+size_t fwriteBE(const void *ptr, size_t size, size_t nmemb, FILE *stream)
+{
+	char tmp[size*nmemb];
+	memcpy(tmp, ptr, size*nmemb);
+	char* p = tmp;
+	for (int i=0; i<nmemb; ++i) {
+		littleBigEndian(p, size);
+		p+=size;
+	}
+	return fwrite(tmp, size, nmemb, stream);
+}
+#endif
+
