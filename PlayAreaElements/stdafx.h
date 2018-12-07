@@ -30,7 +30,11 @@
 #include "PlayAreaElements.h"
 
 DECLARE_CUSTOM_WRAPPER1(CEntityTypeWrapper,IEntityType,m_piEntityType)
+#ifdef STATIC_BUILD
+DECLARE_CUSTOM_WRAPPER2(CFormationTypeWrapper,IFormationType,m_piFormationType,IFormationTypeDesign,m_piFormationTypeDesign)
+#else
 DECLARE_CUSTOM_WRAPPER1(CFormationTypeWrapper,IFormationType,m_piFormationType)
+#endif
 
 extern CSingletonWrapper<IEntityManager> g_EntityManagerWrapper;
 extern CSingletonWrapper<IPlayAreaManager> g_PlayAreaManagerWrapper;

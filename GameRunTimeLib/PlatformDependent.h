@@ -49,7 +49,11 @@
 		#define RTASSERT(x) assert(x)
 	#endif
 
+	#ifdef STATIC_BUILD
+	#define __UNUSED_ATTRIB__
+	#else
 	#define __UNUSED_ATTRIB__ __attribute__((unused))
+	#endif
 #endif
 #include <set>
 #include <string>

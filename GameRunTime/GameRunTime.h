@@ -240,34 +240,28 @@ public:
     _destination *__make_qi(_origin *pOrg,_destination *pDestFake,const char *pfile,int nLine)
     {
         _destination *temp=dynamic_cast<_destination*>(pOrg);
-        #ifndef STATIC_BUILD
         if(temp)
 		{
 			temp->AddReference();
 		}
-        #endif
         return temp;
     }
     template<class INTERFACE>
     inline INTERFACE *__make_addref(INTERFACE *piUnk,const char *pfile,int nLine)
     {
-        #ifndef STATIC_BUILD
         if(piUnk!=NULL)
 		{
 			piUnk->AddReference();
 		}
-        #endif
         return piUnk;
     }
 	template<class INTERFACE>
 	inline INTERFACE *__make_release(INTERFACE *piUnk,const char *pfile,int nLine)
 	{
-        #ifndef STATIC_BUILD
 		if(piUnk!=NULL)
 		{
 			piUnk->ReleaseReference();
 		}
-        #endif
 		return piUnk;
 	}
 

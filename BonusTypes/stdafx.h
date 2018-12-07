@@ -27,6 +27,10 @@
 #include "VectorLib.h"
 #include "GameEntityLib.h"
 
+#ifdef STATIC_BUILD
+DECLARE_CUSTOM_WRAPPER2(CPlayAreaManagerWrapper,IPlayAreaManager,m_piPlayAreaManager,IPlayAreaDesign,m_piPlayAreaDesign)
+#else
 DECLARE_CUSTOM_WRAPPER1(CPlayAreaManagerWrapper,IPlayAreaManager,m_piPlayAreaManager)
+#endif
 
 #endif
