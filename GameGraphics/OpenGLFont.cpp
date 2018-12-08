@@ -389,39 +389,53 @@ SOpenGLSystemFont *COpenGLFont::GetSystemFontForHeight(unsigned int nHeight)
 			SelectObject(hdc,hOlfFont);
 		}
 #elif defined(USE_SDL2)
-		pFont->hFont = TTF_OpenFont(m_sSystemFontName.c_str(), nHeight);
-		// simulate glXUseXFont....
-		SDL_Color white = {255, 255, 255};
-		char *bm = (char*)malloc(nHeight*nHeight); //plenty of space
-		for(int c=0; c<256; ++c) {
-			char t[2] = {0};
-			sprintf(t, "%c", c);
-			SDL_Surface* surf = TTF_RenderText_Solid(pFont->hFont, t, white);
-			glNewList(pFont->nTexturesBaseIndex+c, GL_COMPILE);
-			if (surf) {
-				int width = surf->w;
-				int height = surf->h;
-				int bm_width = (width+7)/8;
-				int bm_height = height;
-				if(bm_width && bm_height) {
-					memset(bm, 0, bm_width*bm_height);
-					for(int y=0; y<bm_height; ++y)
-						for(int x=0; x<8*bm_width; ++x) {
-							uint32_t b = ((uint32_t*)surf->pixels)[y*surf->w+x];
-							if(b)
-								bm[bm_width*(bm_height - y - 1) + x/8 ] |= (1 << (7 - (x%8)));
+		int mHeight = nHeight;
+		pFont->hFont = TTF_OpenFont("DroidSansMono.ttf", mHeight);
+		bOk=(pFont->hFont!=NULL);
+		if(bOk) {
+			// simulate glXUseXFont....
+			SDL_Color white = {255, 255, 255};
+			unsigned char *bm = (unsigned char*)malloc(mHeight*mHeight); //plenty of space
+			for(int c=0; c<256; ++c) {
+				char t[4] = {0};
+				sprintf(t, "%c", c);
+				SDL_Surface* surf = TTF_RenderText_Solid(pFont->hFont, t, white);
+				glNewList(pFont->nTexturesBaseIndex+c, GL_COMPILE);
+				if (surf) {
+					int width = surf->w;
+					int height = surf->h;
+					int pitch = surf->pitch;
+					int bm_width = (width+7)/8;
+					int bm_height = height;
+					if(bm_width && bm_height) {
+						memset(bm, 0, bm_width*bm_height);
+						if(surf->format->BytesPerPixel==1) {
+							for(int y=0; y<bm_height; ++y)
+								for(int x=0; x<width; ++x) {
+									uint8_t b = ((uint8_t*)surf->pixels)[y*pitch+x];
+									if(b)
+										bm[bm_width*(bm_height - y - 1) + x/8 ] |= (1 << (7 - (x%8)));
+								}
+						} else {
+							for(int y=0; y<bm_height; ++y)
+								for(int x=0; x<width; ++x) {
+									uint32_t b = ((uint32_t*)surf->pixels)[y*pitch+x];
+									if(b)
+										bm[bm_width*(bm_height - y - 1) + x/8 ] |= (1 << (7 - (x%8)));
+								}
 						}
-					glBitmap(bm_width, bm_height, 0.0, 0.0, bm_width, 0, NULL);
-				} else
-					glBitmap(0, 0, 0.0, 0.0, nHeight, 0, NULL);
-				SDL_free(surf);
-			} else {
-				glBitmap(0, 0, 0.0, 0.0, nHeight, 0, NULL);
+						glBitmap(width, height, 0.0, 0.0, width, 0, (GLubyte*)bm);
+					} else
+						glBitmap(0, 0, 0.0, 0.0, mHeight, 0, NULL);
+					SDL_free(surf);
+				} else {
+					glBitmap(0, 0, 0.0, 0.0, mHeight, 0, NULL);
+				}
+				glEndList();
 			}
-			glEndList();
+			free(bm);
 		}
-		free(bm);
-#else
+	#else
 		if(m_pXDisplay!=NULL)
 		{
 			char sFontName[1024];
