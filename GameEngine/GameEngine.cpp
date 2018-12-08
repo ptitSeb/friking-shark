@@ -29,6 +29,10 @@
 #include <SDL2/SDL_ttf.h>
 #endif
 
+#ifdef AMIGAOS4
+static const char* __attribute__((used)) stackcookie = "$STACK: 1000000";
+#endif
+
 CGameEngineApp theApp;
 
 DECLARE_CUSTOM_WRAPPER1(CGameGUIManagerWrapper,IGameGUIManager,m_piInterface)
