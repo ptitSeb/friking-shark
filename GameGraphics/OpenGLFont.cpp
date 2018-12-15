@@ -389,6 +389,22 @@ SOpenGLSystemFont *COpenGLFont::GetSystemFontForHeight(unsigned int nHeight)
 			SelectObject(hdc,hOlfFont);
 		}
 #elif defined(USE_SDL2)
+		GLint swapbytes, lsbfirst, rowlength;
+		GLint skiprows, skippixels, alignment;
+		glGetIntegerv(GL_UNPACK_SWAP_BYTES, &swapbytes);
+		glGetIntegerv(GL_UNPACK_LSB_FIRST, &lsbfirst);
+		glGetIntegerv(GL_UNPACK_ROW_LENGTH, &rowlength);
+		glGetIntegerv(GL_UNPACK_SKIP_ROWS, &skiprows);
+		glGetIntegerv(GL_UNPACK_SKIP_PIXELS, &skippixels);
+		glGetIntegerv(GL_UNPACK_ALIGNMENT, &alignment);
+		// Set Safe Texture params
+		glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_FALSE);
+		glPixelStorei(GL_UNPACK_LSB_FIRST, GL_FALSE);
+		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+		glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+		glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
 		int mHeight = nHeight;
 		pFont->hFont = TTF_OpenFont("DroidSansMono.ttf", mHeight);
 		bOk=(pFont->hFont!=NULL);
@@ -435,6 +451,13 @@ SOpenGLSystemFont *COpenGLFont::GetSystemFontForHeight(unsigned int nHeight)
 			}
 			free(bm);
 		}
+		// Restore saved packing modes.
+		glPixelStorei(GL_UNPACK_SWAP_BYTES, swapbytes);
+		glPixelStorei(GL_UNPACK_LSB_FIRST, lsbfirst);
+		glPixelStorei(GL_UNPACK_ROW_LENGTH, rowlength);
+		glPixelStorei(GL_UNPACK_SKIP_ROWS, skiprows);
+		glPixelStorei(GL_UNPACK_SKIP_PIXELS, skippixels);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, alignment);
 	#else
 		if(m_pXDisplay!=NULL)
 		{
