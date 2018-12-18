@@ -821,8 +821,13 @@ void COpenGLViewport::InitializeKeyNames()
 	m_mKeyNames[GK_SCROLL]="Scroll Lock";
 	m_mKeyNames[GK_LSHIFT]="Left Shift";
 	m_mKeyNames[GK_RSHIFT]="Right Shift";
+#ifdef AMIGAOS4
+	m_mKeyNames[GK_LCONTROL]="Control";
+	m_mKeyNames[GK_RCONTROL]="Control";
+#else
 	m_mKeyNames[GK_LCONTROL]="Left Control";
 	m_mKeyNames[GK_RCONTROL]="Right Control";
+#endif
 	m_mKeyNames[GK_LMENU]="Left Alt";
 	m_mKeyNames[GK_RMENU]="Right Alt";
 	m_mKeyNames[GK_MENU]="Menu";
