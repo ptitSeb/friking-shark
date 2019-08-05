@@ -8,13 +8,12 @@ uniform int  g_ActiveLights;
 uniform vec3 g_vHeightFogMins;
 uniform vec3 g_vHeightFogMaxs;
 uniform mat4 CameraModelViewInverse;
-varying vec3 g_WorldVertexPos;
-varying vec4 g_EyeVertexPos;
 
 #ifdef ENABLE_SKY_SHADOW
 uniform vec4 SkyData;
 #endif
 #ifdef ENABLE_LIGHTING
+varying vec4 g_EyeVertexPos;
 #ifdef ENABLE_NORMAL_MAP
 	varying vec3 g_TangentSpaceX;
 	varying vec3 g_TangentSpaceY;
@@ -39,9 +38,8 @@ void GetTagent(const in vec3 normal,
 void main (void)
 {
 	vec4 LocalVertexPos=gl_Vertex;
-	g_EyeVertexPos=gl_ModelViewMatrix * LocalVertexPos;
-	vec4 WorldVertexPos=CameraModelViewInverse * g_EyeVertexPos;
-	g_WorldVertexPos=WorldVertexPos.xyz;
+	vec4 EyeVertexPos=gl_ModelViewMatrix * LocalVertexPos;
+	vec4 WorldVertexPos=CameraModelViewInverse * EyeVertexPos;
 
 	#ifdef ENABLE_LIGHTING
 	#ifdef ENABLE_NORMAL_MAP
@@ -84,13 +82,14 @@ void main (void)
 #endif
 	
 #ifdef ENABLE_SKY_SHADOW
-	gl_TexCoord[SKY_TEXTURE_LEVEL].s = (g_WorldVertexPos.x/SkyData.y)+SkyData.x;
-	gl_TexCoord[SKY_TEXTURE_LEVEL].t = (g_WorldVertexPos.z/SkyData.z);
+	gl_TexCoord[SKY_TEXTURE_LEVEL].s = (WorldVertexPos.x/SkyData.y)+SkyData.x;
+	gl_TexCoord[SKY_TEXTURE_LEVEL].t = (WorldVertexPos.z/SkyData.z);
 	gl_TexCoord[SKY_TEXTURE_LEVEL].p = 0.0;
 	gl_TexCoord[SKY_TEXTURE_LEVEL].q = 0.0;
 #endif
 	
 #ifdef ENABLE_SHADOWS
+	g_EyeVertexPos = EyeVertexPos;
 	gl_TexCoord[SHADOW_TEXTURE_LEVEL].s = dot(g_EyeVertexPos, gl_EyePlaneS[SHADOW_TEXTURE_LEVEL]);
 	gl_TexCoord[SHADOW_TEXTURE_LEVEL].t = dot(g_EyeVertexPos, gl_EyePlaneT[SHADOW_TEXTURE_LEVEL]);
 	gl_TexCoord[SHADOW_TEXTURE_LEVEL].p = dot(g_EyeVertexPos, gl_EyePlaneR[SHADOW_TEXTURE_LEVEL]);

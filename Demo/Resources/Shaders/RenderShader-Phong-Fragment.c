@@ -24,12 +24,10 @@ uniform sampler2D SkyShadowMap;
 uniform vec4 SkyData;
 #endif
 
-varying vec4 g_EyeVertexPos;
-
 #define LIGHTING_SATURATION 1.5
 
-varying vec3 g_WorldVertexPos;
 #ifdef ENABLE_LIGHTING
+varying vec4 g_EyeVertexPos;
 #ifdef ENABLE_NORMAL_MAP
 	varying vec3 g_TangentSpaceX;
 	varying vec3 g_TangentSpaceY;

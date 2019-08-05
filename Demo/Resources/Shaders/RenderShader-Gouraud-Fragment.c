@@ -15,7 +15,6 @@ uniform sampler2D Texture1;
 
 #define LIGHTING_SATURATION 1.5
 
-varying vec3 g_WorldVertexPos;
 #ifdef ENABLE_LIGHTING
 varying vec4 g_ambdiffspec;
 varying vec4 g_sunambdiffspec;
